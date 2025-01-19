@@ -1,10 +1,13 @@
 @startgantt
 Project starts 2025-01-08
+thursdays are colored in BlanchedAlmond
 [Project presentation] requires 8 days
 [Preliminary report] requires 16 days 
 [Preliminary report] starts at [Project presentation]'s end
 [Project development] requires 8 weeks
 [Project development] starts at [Preliminary report]'s end
+[Project report] ends on 2025-04-03
+[Project report] starts at [Preliminary report]'s end
 [Final presentation] requires 1 day
 [Final presentation] starts at 2025-04-03
 -- During all the project --
@@ -57,6 +60,49 @@ Project starts 2025-01-08
 [F27 Moves syntax] as [F27] requires 1 day and starts at [F24]'s start
 [F28 Historic] as [F28] requires 1 day and starts at [F27]'s end
 [F33 Display messages] as [F33] requires 1 day and starts at [F24]'s start
+
+-- 2nd module (AI and Features) --
+[F23 AI Mode] as [F23] requires 2 weeks and starts on 2025-02-14
+[F53 Heuristic of position's evaluation] as [F53] requires 1 day and starts at [F23]'s start
+[F54 Minimax] as [F54] requires 1 day and starts at [F53]'s end
+[F55 AlphaBeta Pruning] as [F55] requires 1 day and starts at [F53]'s end
+[F56 Monte-Carlo Tree Search] as [F56] requires 1 day and starts at [F53]'s end
+[F57 Search Depth] as [F57] requires 1 day and starts at [F56]'s end
+[F60 Bounded Search Time] as [F60] requires 1 day and starts at [F56]'s end
+[F59 End of game Heuristic] as [F59] requires 1 day and starts at [F23]'s start
+
+[Features] requires 2 weeks and starts on 2025-02-14
+[F32 Giving up] as [F32] requires 1 day and starts at [Features]'s start
+[F37 Restart a game] as [F37] requires 1 day and starts at [Features]'s start
+[Load and Save] requires 2 weeks and starts on 2025-02-14
+[F40 Simplified File format] as [F40] requires 1 day and starts at [Load and Save]'s start
+[F41 Historic's format] as [F41] requires 1 day and starts at [Load and Save]'s start
+[F42 Configuration file] as [F42] requires 1 day and starts at [Load and Save]'s start
+[F34 Quitting and saving game] as [F34] requires 1 day and starts at [F42]'s end
+[F35 Save game history] as [F35] requires 1 day and starts at [F42]'s end
+[F36 Naviguate in game history] as [F36] requires 1 day and starts at [F35]'s end
+
+-- 3rd module (GUI and last features) --
+[F25 GUI] as [F25] requires 2 weeks and starts on 2025-02-28
+[F46 Basic functions] as [F46] requires 2 days and starts at [F25]'s start
+[F47 File menu] as [F47] requires 1 day and starts at [F46]'s end
+[F48 Game menu] as [F48] requires 1 day and starts at [F46]'s end
+[F49 About menu] as [F49] requires 1 day and starts at [F46]'s end
+[F50 Game Display] as [F50] requires 1 day and starts at [F46]'s end
+[F51 Display played moves] as [F51] requires 1 day and starts at [F46]'s end
+[F52 New game Configuration] as [F52] requires 1 day and starts at [F46]'s end
+
+[Last features] requires 2 weeks and starts on 2025-02-28
+[F20 Blitz mode] as [F20] requires 1 day and starts at [Last features]'s start
+[F20 Blitz duration] as [F21] requires 1 day and starts at [Last features]'s start
+[F20 Contest mode] as [F22] requires 1 day and starts at [Last features]'s start
+[F39 Replay game] as [F39] requires 1 day and starts at [Last features]'s start
+[F58 Heuristic choice] as [F58] requires 1 day and starts at [Last features]'s start
+
+-- Final part (Code review and final report) --
+[Code Review] requires 2 weeks and starts on 2025-03-14
+[Implement missing/unfisnished features] requires 2 weeks and starts on 2025-03-14
+[Final report] requires 3 weeks and starts on 2025-03-14
 
 2025-01-30 to 2025-02-13 are colored in LightPink
 2025-02-14 to 2025-02-27 are colored in PeachPuff
