@@ -1,0 +1,11 @@
+@startgantt
+Project starts 2025-01-08
+[Project presentation] requires 8 days
+[Preliminary report] requires 16 days 
+[Preliminary report] starts at [Project presentation]'s end
+[Project development] requires 8 weeks
+[Project development] starts at [Preliminary report]'s end
+[Final presentation] requires 1 day
+[Final presentation] starts at 2025-04-03
+@endgantt
+
