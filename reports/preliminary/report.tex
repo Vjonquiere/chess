@@ -49,7 +49,7 @@ complémentaires pour plusieurs raisons.
     \item Utilisation de la programmation objet. Même s'il n'y a pas d'extension de prévue,
     ce paradigme est le plus simple et adopté lors du développement d'un jeu.
 \end{itemize}
-\subsection{Langage C}
+\subsubsection{Langage C}
 La première option qui nous était proposée été le langage C. Le projet contenant des besoins posant
 des contraintes de performances (cf. besoin), ce langage a donc semblé être une bonne idée, car il est
 de loin celui permettant d'obtenir un logiciel performant. Cependant, celui-ci ne proposant pas de 
@@ -58,6 +58,10 @@ De plus, la gestion de la mémoire étant à la charge du développeur, nous aur
 précieux sur un pointeur mal alloué. Cette gestion de la mémoire apporte également le problème des fuites
 mémoire qui demandent, elle aussi, parfois beaucoup de travail pour être résolues.
 
+\subsubsection{Python}
+Nous pouvions également utiliser \textit{Python} pour réaliser ce projet. Cependant, le fait que ce langage
+soit non typé a vite écarté ce choix. En effet, les types étant vérifiés directement à l'exécution, il est
+beaucoup plus dangereux d'avoir une ligne non couverte par un test (il faut donc un coverage maximal).
 \section{Explication du sujet}
 
 \section{Besoins visés}
