@@ -1,0 +1,148 @@
+@startuml
+top to bottom direction
+
+package "Model" #DDDDDD{
+    class Game {
+        - Board board
+        - History history
+        + boolean isOver()
+        + String getStringHistory()
+        + List<Move> getMovesHistory()
+    }
+
+    class History {
+        - Tree<HistoryNode> tree
+        - HistoryNode currentState
+        + Move getPrevious()
+        + List<Move> getNext()
+        + addMove()
+        + setCurrent(HistoryNode)
+    }
+
+    class HistoryNode {
+        - Board state
+        - Move previousMove
+        - HistoryNode parent 
+        - List<HistoryNode> children
+        + addChildren(HistoryNode)
+    }
+
+    class Board {
+        - Bitmap[12] board
+        - boolean player
+        - boolean enPassant
+        + List<Move> getAvailableMoves()
+        + boolean makeMove(Move move)
+        + Board getCopy()
+        + boolean isAttacked(int i, int j)
+        + boolean isCheck()
+        + boolean isCheckMate()
+        + String getPieceAt(int, int)
+    }
+
+    class Bitboard {
+        - long board
+    }
+
+    class Move {
+        - String move
+        + Piece getPiece()
+        + getOriginalCol()
+        + getOriginalRow()
+        + getTargetCol()
+        + getTargetRow()
+        + Move getReverse()
+        + String toString()
+    }
+
+    abstract Piece {
+        + List<Move> getAvailableMoves(Board b)
+        - boolean isWhite
+    } 
+
+    class Pawn {}
+    class King {}
+    class Queen {}
+    class Rook {}
+    class Bishop {}
+    class Knight {}
+}
+
+package "View" #DDDDDD{
+    interface Vue
+    class CLIVue
+}
+
+package "Controller" #DDDDDD{
+    class GameController {
+        - Vue vue
+        - Game model
+        + void handleEvent(GameEvent event)
+    }
+}
+
+package "Events" #DDDDDD{
+    class EventSource {
+        - List<GameEventObserver> observers
+        + void addObserver(GameEventObserver observer)
+        + void removeObserver(GameEventObserver observer)
+        + void notifyObservers(GameEvent event)
+    }
+
+    class GameEvent {
+        - GameEventType eventType
+        - Object data
+        + GameEventType getEventType()
+        + Object getEventData()
+    }
+
+    interface GameEventObserver {
+        + void onGameEvent(GameEvent event)
+    }
+
+    enum GameEventType {
+        PIECE_MOVED
+        TIME_OUT
+        GAME_WON
+    }
+}
+
+package "Utils" #DDDDDD{
+    class TextGetter {
+        - Locale locale
+        - ResourceBundle messages
+        + void init(Locale)
+        + TextGetter getInstance()
+        + String getText(String tag)
+    }
+
+    class Tree<T> {
+        - T root
+    }
+}
+
+Main --> GameController
+Game --> Board
+Game --> Move
+Game --> EventSource
+Game --> History
+Board --> Move
+Board --> Piece
+Board --> Bitboard
+GameController --> Vue
+GameController --> Game
+GameController --> GameEventObserver
+EventSource --> GameEventObserver
+GameEvent --> GameEventType
+History --> Tree
+History --> HistoryNode
+Vue <|-- CLIVue
+
+Piece <|-- Pawn
+Piece <|-- King
+Piece <|-- Queen
+Piece <|-- Rook
+Piece <|-- Bishop
+Piece <|-- Knight
+
+@enduml
