@@ -258,6 +258,29 @@ Dans cette partie Intelligence Artificelle, on va essentiellement se servir des 
 on utilisera surtout deux techniques: le Forward-prunig et la Reduction.
 
 \subsection{Zobrist hashing}
+Le hachage Zobrist est une fonction utilisée en particulier dans les jeux comme les échecs ou le go, où le but est d'attribuer un codage "complexe" à
+une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on peut gagner en performance, notamment dans les algorithmes d'IA, où les
+états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des "tables de transposition", qui sont des tables de
+hachage indexées par une position. Comment cela fonctionne-t-il ? Dans notre cas, les positions sont encodées par 12 bitmaps, et quelques bits
+supplémentaires pour les règles spécifiques. Pour chaque combinaison case-pièce, on va générer un nombre aléatoire. De cette façon, toutes les configurations
+de plateaux vont être rencontrées. Le hachage va consister à combiner toutes ces chaînes de bits pour chaque configuration avec l'opérateur XOR,
+pour à la fin obtenir un hachage final pour chaque position. Ainsi, en utilisant une HashMap, on va conserver tous les hachages représantant toutes les
+configurations possibles pour les utiliser plus tard. Par exemple, pour la règle "Threefold repetition", il faut vérifier si dans cette table de hachage
+il existe un hachage H tel que H >= 3. Si c'est le cas, alors la partie se termine en égalité.
+\\Donc, dans notre cas, on aura quelque chose de la sorte:\\
+\begin{itemize}
+    \item ZobristBoardTable[64][12]
+    \item ZobristEnPassantTable[64]
+    \item ZobristCastlingRightsTable[16]
+    \item ZobristFiftyMoveRuleTable[51]
+    \item ZobristFullMoveTable[1025]
+\end{itemize}
+
+\par Chaque élément sera donc en premier aléatoire, puis bits à bits, des opérations avec XOR seront réalisées. C'est avantageux car lorsque l'on joue
+un coup, donc que l'on change l'état du jeu, il n'y a pas à tout recalculer. D'abord, on XOR le nombre aléatoire correspondant à la pièce qui quitte
+sa case de départ, puis celui pour la case d'arrivée de cette pièce, et éventuellement changer les bits pour les règles spécifiques.
+Pour l'IA, cette méthode sera clé car elle fera gagner en performance, car les états de jeu peuvent se répéter un grand nombre de fois (même si pas
+toujours dans le même ordre).
 
 \section{Besoins visés}
 \subsection{Quels besoins ?}
