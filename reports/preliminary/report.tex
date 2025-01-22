@@ -112,7 +112,7 @@ Cela se présenterait comme ceci:\\
 S'il n'y a pas de fonctionnalité de game review
 
 \section{Besoins visés}
-\subsection{Quels besoins?}
+\subsection{Quels besoins ?}
 Dans le sujet donné, il y avait une liste de 60 besoins.
 Nous avons pris la décision ambitieuse de répondre à tous ces besoins. C'est un travail conséquent,
 mais avec une équipe de 5 personnes, codant pendant huit semaines,
@@ -126,7 +126,7 @@ une intelligence artificielle bâclée et une interface graphique peu fonctionne
 
 \subsection{Dépendances entre les besoins}
 \subsubsection{Gestion des options}
-La première dépendance que nous avons concerne la gestion des options.
+La première dépendance que nous avons concerne la gestion des options (Figure \ref{fig:needs_options}).
 
 \begin{figure}[h]
     \caption{Besoins concernant la gestion d'options}
@@ -135,8 +135,8 @@ La première dépendance que nous avons concerne la gestion des options.
     \label{fig:needs_options}
 \end{figure}
 
-L'implémentation de la gestion des options permettra de rajouter de nombreuses fonctionnalités.
-En effet, ceci nous permettra d'implémenter le Mode contest, la version du jeu, l'aide en ligne de commande. Nous pourrons également gérer les messages affichés grâce au mode verbose ou au mode debug.
+L'implémentation de la \textit{gestion des options }permettra de rajouter de nombreuses fonctionnalités.
+En effet, ceci nous permettra d'implémenter le Mode contest, la version du jeu ou l'aide en ligne de commande. Nous pourrons également gérer les messages affichés grâce au mode verbose ou au mode debug.
 Lorsque cela sera implémenté, l'utilisateur aura également le choix entre afficher le jeu en ligne de commande ou avec une interface graphique.
 Le mode Blitz inclura le besoin Durée du blitz afin de paramétrer ce mode.
 Le mode IA, qui a besoin de la gestion des options, possède quant à lui de nombreuses extensions. En effet, nous pourrons paramétrer
@@ -144,7 +144,7 @@ notre intelligence artificielle grâce à d'autres options, que nous verrons cel
 
 
 \subsubsection{Sauvegarde de l'historique}
-La gestion de l'historique est un besoin indispensable pour notre jeu.
+La gestion de l'historique est un besoin indispensable pour notre jeu (Figure \ref{fig:needs_files}).
 Beaucoup de besoins dépendent de cette fonctionnalité.
 \begin{figure}[h]
     \caption{Besoins concernant la sauvegarde de l'historique}
@@ -154,17 +154,17 @@ Beaucoup de besoins dépendent de cette fonctionnalité.
 \end{figure}
 
 Avant de pouvoir implémenter la gestion de l'historique, il faudra d'abord choisir les formats de fichiers.
-Pour cela, il faudra remplir les besoins suivants : Format de fichier simplifié, Format de l'historique et Fichier de Configuration.
+Pour cela, il faudra remplir les besoins suivants: \textit{Format de fichier simplifié}, \textit{Format de l'historique} et \textit{Fichier de Configuration}.
 Une fois ces besoins implémentés, la sauvegarde de l'historique sera donc possible.
 Des besoins utiles au bon déroulement du jeu en dépendent. Grâce à cela, l'utilisateur pourra sauvegarder
 sa partie, rejouer ou recommencer une partie. Il pourra également configurer sa partie en modifiant les données du fichier de configuration.
 Cela permettrait aussi d'afficher les coups précédemment joués, et même de remonter dans l'historique pour annuler un coup et revenir en arrière.
-Certains menus de l'interface graphique permettront également de gérer ces fichiers de sauvegarde, de configuration,..
+Certains menus de l'interface graphique permettront également de gérer ces fichiers de sauvegarde et de configuration (voir figure \ref{fig:needs_gui}).
 
 \subsubsection{Intelligence artificielle}
 \label{IA}
 L'implémentation d'une intelligence artificielle est un autre besoin central du jeu. En effet, cela pourra
-permettre à l'utilisateur de jouer contre une machine. Cela pourrait permettre également de donner des
+permettre à l'utilisateur de jouer contre une machine. Cela pourrait également permettre de donner des
 indications sur les meilleurs coups à jouer pour le joueur.
 
 \begin{figure}[h]
@@ -174,16 +174,31 @@ indications sur les meilleurs coups à jouer pour le joueur.
     \label{fig:needs_ai}
 \end{figure}
 
-
-Comme affiché Figure \ref{fig:needs_ai}, nous pouvons voir que de nombreux besoins concernent l'intelligence artificielle.
-
+Comme affiché Figure \ref{fig:needs_ai}, nous pouvons voir que de nombreux besoins
+concernent l'intelligence artificielle.
+La plupart des besoins affichés sont également présent dans la Figure \ref{fig:needs_options}, car ils sont paramétrables
+en ligne de commande.
+Le mode IA contient différentes fonctionnalités concernant les heuristiques. Nous devons implémenter différentes \textit{heuristiques}
+d'évaluation de position, mais également au moins une heuristique de fin de partie. Ces heuristiques permettront "d'aider" le joueur IA
+à jouer. Ces heuristiques pourront être utilisées avec l'\textit{algorithme de recherche Minimax} mais également lors de l'\textit{AlphaBeta pruning} 
+et le \textit{Monte Carlo Tree Search}. Ces algorithmes dépendent tous de l'option \textit{Profondeur de recherche}. En effet, le jeu des échecs est bien 
+trop complexe pour simuler une partie entière, et nous devons nous limiter à une certaine profondeur de recherche (nombre de coups à jouer puis analyser).
+Borner le temps de "réflexion" de l'IA est aussi un moyen de limiter les calculs de ces algorithmes. Cela pourrait permettre à l'utilisateur de jouer une partie contre
+un joueur IA plus ou moins efficace ou d'attendre plus ou moins longtemps entre ses tours.
 \subsubsection{Interface graphique}
+Les derniers besoins que nous avons rassemblé sont ceux concernant l'interface graphique (Figure \ref{fig:needs_gui}).
 \begin{figure}[h]
     \caption{Besoins concernant l'interface graphique}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_gui}
     \label{fig:needs_gui}
 \end{figure}
+
+L'interface graphique dépend de la \textit{bibliothèque graphique} choisie, ici elle est imposée, il s'agit de \textit{JavaFX}.
+L'utilisateur peut choisir de l'utiliser grâce aux options en ligne de commande (Figure \ref{fig:needs_options}).
+Elle doit permettre d'utiliser les fonctions de base que nous avons implémenté pour le jeu en ligne de commande. Nous devons 
+pouvoir afficher la partie en cours, les coups joués, ainsi que des messages selon le mode utilisé (Verbose ou Debug, voir figure \ref{fig:needs_options}).
+L'utilisateur doit également pouvoir utiliser différents menus afin de pouvoir paramétrer ou sauvegarder sa partie (voir figure \ref{fig:needs_files}) ou obtenir des informations sur le jeu.
 
 \section{Agenda prévisionnel}
 \label{agenda}
