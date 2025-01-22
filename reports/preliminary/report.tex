@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{natbib}
 \graphicspath{ {./res/} }
 
 \author{
@@ -37,6 +38,17 @@ cours d'intelligence artificielle au semestre dernier avec celui-ci, mais
 également un cours d'algorithmie par le passé. Nous avons donc quelques connaissances 
 utiles pour réaliser certains des besoins et qui nous permettent plus généralement de ne pas
 découvrir entièrement le sujet.
+
+\subsection{Existant}
+Les échecs étant un jeu universel, ils ont été étudiés et un grand nombre de papiers scientifiques
+sont disponibles. Ceux-ci nous seront très utiles tout au long du projet, car ils concernent des
+besoins différents. Tout d'abord une grande partie des papiers que nous allons utiliser sont en rapport
+avec la partie intelligence artificielle du développement. C'est pour cela que nous avons par exemple
+choisi de nous baser sur l'article `Programming a computer for playing chess' \cite{Shannon1950}, 
+puisqu'il possède une partie consacrée à la construction d'heuristiques efficace pour les échecs.
+Nous avons également basé nos recherches sur la thèse `Using Monte Carlo Tree Search to play chess' \cite{Kral2021}
+de Jakub Král sur l'utlisation de différents algorithmes au service des échecs, tels que AlphaBeta ou
+Monte Carlo Tree Seach  \cite{ZobristHashing}
 
 \subsection{Langage de programmation choisi}
 Avec ce sujet, nous avions 3 choix de langage possibles :
@@ -103,11 +115,11 @@ de données, on garde n coups en mémoire, et revenir à une certaine position d
 Avec une interface graphique, on pourrait cliquer sur un certain coup pour savoir combien de coups dépiler, car un coup peut arriver
 plusieurs fois dans une partie donc sa représentation ne suffit pas.\\
 Cela se présenterait comme ceci:\\
-\begin{figure}[h]
-    \caption{Exemple historique de coups}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pile-historique-coups.png}
-\end{figure}
+%\begin{figure}[h]
+%    \caption{Exemple historique de coups}
+%    \centering
+%    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pile-historique-coups.png}
+%\end{figure}
 
 S'il n'y a pas de fonctionnalité de game review
 
@@ -307,4 +319,7 @@ Création de l'interface graphique et finalisation des fonctionnalités utilisat
 
 \section{Spécifications étendues}
 
+\section{Bibliographie}
+\bibliographystyle{plain}
+\bibliography{references}
 \end{document}
