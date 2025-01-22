@@ -166,6 +166,121 @@ Comme affiché Figure ???, nous pouvons voir que de nombreux besoins concernent 
 \section{Agenda prévisionnel}
 \label{agenda}
 
+Nous avons décidé de séparer le temps de programmation en quatre parties. Les trois premières seront rythmées besoin par besoin, et la dernière quant à elle sera dédiée à la finalisation du projet et la préparation d'un livrable.
+Une partie des besoins sera également suivie tout au long du projet afin de maintenir une base cohérente.
+
+\subsection{Tout au long du projet}
+
+Gestion des aspects fondamentaux et comme le style de codage, les tests, les performances, et la documentation pour garantir la cohérence et la qualité globale du code.
+
+\begin{itemize}
+    \item F1. Langage de programmation
+    \item F2. Style de codage
+    \item F3. Langue par défaut dans le code
+    \item F4. Système cible
+    \item F5. Documentation
+    \item F6. Tests
+    \item F10. Frameworks de tests
+    \item F7. Bugs
+    \item F8. Performances
+    \item F9. Build-system
+    \item F14. Nom de l’exécutable principal
+    \item F15. Usage général
+\end{itemize}
+
+\subsection{Semaines 0-2}
+
+Mise en place des fonctionnalités essentielles pour le jeu en ligne de commande, telles que la gestion des options CLI, les règles de jeu, et l'affichage de l'échiquier.
+
+\begin{itemize}
+    \item \textbf{Options CLI :}
+    \begin{itemize}
+        \item F11. Gestion des options
+        \item F16. Aide en ligne de commande
+        \item F17. Version
+        \item F18. Mode verbose
+        \item F19. Mode debug
+        \item F13. Internationalisation
+    \end{itemize}
+    \item \textbf{Gestion du jeu :}
+    \begin{itemize}
+        \item F43. Plateau de jeu
+        \item F44. Module bitboard
+        \item F45. État du jeu
+    \end{itemize}
+    \item \textbf{Règles :}
+    \begin{itemize}
+        \item F29. Prise en passant
+        \item F30. Roque
+        \item F31. Promotion du pion
+        \item F38. Fin de partie
+    \end{itemize}
+    \item \textbf{Jeu CLI :}
+    \begin{itemize}
+        \item F24. Interface en ligne de commande
+        \item F26. Affichage de l’échiquier
+        \item F27. Notation des coups
+        \item F28. Représentation de l’historique
+        \item F33. Affichage des messages
+    \end{itemize}
+\end{itemize}
+
+\subsection{Semaines 2-4}
+
+Développement de l'IA, avec des algorithmes comme Minimax et Monte Carlo, et ajout de fonctionnalités avancées comme la sauvegarde, la navigation dans l'historique, et le fichier de configuration.
+
+\begin{itemize}
+    \item \textbf{IA :}
+    \begin{itemize}
+        \item F23. Mode IA
+        \item F53. Heuristique d’évaluation de position
+        \item F54. Algorithme de recherche Minimax
+        \item F55. $\alpha\beta$-pruning
+        \item F56. Monte Carlo Tree Search
+        \item F57. Profondeur de recherche
+        \item F59. Heuristique de fin de partie
+        \item F60. Temps de réflexion borné
+    \end{itemize}
+    \item \textbf{Fonctionnalités :}
+    \begin{itemize}
+        \item F32. Abandon
+        \item F34. Quitter et sauvegarde une partie
+        \item F35. Sauvegarde de l’historique
+        \item F36. Naviguer dans l’historique
+        \item F37. Recommencer une partie
+        \item F40. Format de fichier simplifié
+        \item F41. Format de l’historique
+        \item F42. Fichier de configuration
+    \end{itemize}
+\end{itemize}
+
+\subsection{Semaines 4-6}
+
+Création de l'interface graphique et finalisation des fonctionnalités utilisateurs, incluant les menus interactifs, la gestion des parties, et les modes spéciaux comme le mode blitz et contest.
+
+\begin{itemize}
+    \item \textbf{Interface graphique :}
+    \begin{itemize}
+        \item F12. Bibliothèque graphique
+        \item F25. Interface graphique
+        \item F46. Fonctions de base
+        \item F47. Menu ’File’
+        \item F48. Menu ’Game’
+        \item F49. Menu ’About’
+        \item F50. Affichage d’une partie en cours
+        \item F51. Affichage des coups joués
+        \item F52. Configuration d’une nouvelle partie
+    \end{itemize}
+    \item \textbf{Fonctionnalités :}
+    \begin{itemize}
+        \item F20. Mode blitz
+        \item F21. Durée du blitz
+        \item F22. Mode contest
+        \item F39. Rejouer une partie
+        \item F58. Choix des heuristiques
+    \end{itemize}
+\end{itemize}
+
 \section{Architecture visée pour le projet}
 
 \section{Spécifications étendues}
