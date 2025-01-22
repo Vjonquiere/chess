@@ -89,9 +89,41 @@ et en master étant souvent des projets java, tous les membres du groupe connais
 outils et environnements de développement. Cela permettra de gagner du temps lors de la mise en place du projet. 
 
 \section{Explication du sujet}
+\subsection{Plateau sous forme de bitmaps}
+Un échiquier est finalement une matrice 8x8 (64 cases donc) sur lesquelles il y a une pièce, ou non. On voit ici une
+notion de binaire. Pour une pièce: "Blanche ou Noire", "Présente ou Non" (pour les cases). Une méthode existe pour
+représenter l'échiquier en se servant de bitmaps plutôt que d'utiliser des arrays, vecteurs ou listes en deux dimensions.
+Il s'agit du bitboard. On observera un gain de performance en temps et un gain d'espace énormes pour la représentation
+de l'échiquier (et des règles spécifiques).\\
+Comment cela va-t-il fonctionner ? Comme on vient de le voir, sur une case, soit il y a une pièce, soit il n'y en a pas.
+Encodons le fait qu'une case soit occupée par 1 et le fait qu'une case soit vide (libre) par 0. Il y a 64 cases au total.
+Donc, en attribuant un indice à chaque case (de 0 à 63), on va pouvoir chiffrer l'échiquier par un entier de 64 bits.
+Chaque bit de cet entier est à 0 ou à 1. S'il est à 0 pour l'indice i, alors la case i est libre. S'il est à 1, alors la
+case i est occupée. Un entier n'est cependant pas suffisant, car il faut pouvoir différencier les types de pièce, ainsi
+que la couleur des pièces (noire ou blanche). Il y a au total 6 types de pièces aux échecs: le Pion, le Cavalier, le Fou,
+la Tour, la Dame, le Roi. Donc finalement, on aura besoin de 12 entiers codés sur 64 bits, car 6 pour les types de pièces
+blanches et 6 pour les types de pièces noires.
+\\Il important de noter que cela n'est pas réalisable pour des ordinateurs qui possèdent une architecture en 32 bits.
+Aujourd'hui, la quasi-totalité des ordinateurs utilisent du 64 bits, donc il ne faut pas trop s'en soucier. C'est néanmoins
+crucial de relever les inconvénients des méthodes que l'on va utiliser pour ce projet. Un autre désavantage de cette méthode
+est le fait qu'il faudra faire une gymnastique pour "décoder" pour l'humain une position. En effet, si l'on prend l'entier
+112, on ne visualise pas (du tout) la position, même si l'ordinateur si.
+Retenons aussi que l'on aura à faire à des représentations et opérations binaires, pour lesquelles un ordinateur est très
+performant. En Java, chaque entier sera un long (type primitif).
+\\Il faut aussi se pencher sur les règles spécifiques que l'on encodera avec les 12 bitmaps pour représneter une position
+dans son entièreté. Effectivement, pour le moment, nous n'avons que l'emplacement des pièces sur l'échiquier. Mais une position
+est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendre en compte sont:\\
+\begin{itemize}
+    \item En passant: 
+    \item Roques: on compte le grand roque et le petit roque des deux côtés (noirs et blancs). On a donc besoin de 4 bits.
+    \item Temps à la pendule:
+    \item Règle des 50 coups:
+    \item Nombre de "FullMoves":
+\end{itemize}
+
 \subsection{Structures de données}
 \subsubsection{Historique des coups}
-Le groupe s'est posé la question de quelles structures de donneés utiliser pour stocker l'historique des coups d'une
+\par Le groupe s'est posé la question de quelles structures de donneés utiliser pour stocker l'historique des coups d'une
 partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, la ou les difficultés d'implémentation,
 la compatibilité avec les bitboards pour représenter le plateau de jeu, ainsi que les ajouts potentiels de fonctionnalités.
 \\La première idée fut une pile. En effet, cette structure est très simple d'utilisation et parfaitement adaptée pour stocker
@@ -106,10 +138,54 @@ Cela se présenterait comme ceci:\\
 \begin{figure}[h]
     \caption{Exemple historique de coups}
     \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pile-historique-coups.png}
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pile-historique-coups}
 \end{figure}
 
-S'il n'y a pas de fonctionnalité de game review
+S'il n'y a pas de fonctionnalité de game review ou de game analysis, et que l'on part du principe qu'il y a écrasement de l'historique
+lorsque l'on joue des coups différents de ceux joués initialement, alors la pile est un très bon choix.\\
+
+\par En se projetant, le groupe a réfléchi aux inconvénients de la pile et à l'évolution du projet.
+Peut-être est-ce optimiste, mais nous avons prévu deux semaines (deux dernières) pour se pencher vers les améliorations
+(fonctionnalités bonus) pouvant être implémentées, ainsi que les apsects qui méritent d'être revus. En particulier, nous avons
+pensé à la possibilité de réaliser une game review et/ou une game analysis. Aussi, une fonctionnalité selon laquelle on pourrait 
+revenir à une position déjà jouée après avoir joué par dessus des coups repris. En d'autres mots, il n'y aurait pas d'écrasement
+(overwritting) des coups.
+En prenant cela en compte, il faudrait cette fois utiliser les arbres. En effet, lorsque l'on déroule les branches ou variations de coups,
+l'arbre est en fait la structure de données naturelle dont on va se servir.\\
+Regardons un exemple pour ensuite discuter les avantages et les inconvénients des arbres:\\
+\begin{center}
+    \includegraphics[height=8.0cm]{arbres-branchement-coups.png}
+\end{center}
+
+Dans notre exemple, les noeuds représentent les positions,
+et les arêtes représentent les coups. Si l'on est au noeud rouge, et que l'on souhaite revenir aux noeud vert pour aller vers le noeud bleu,
+alors la nouvelle branche "main" pour l'historique des coups va du noeud R (Root) jusqu'au noeud bleu. Avant, il allait du noeud R jusqu'au
+noeud rouge. \'A chaque noeuf de branchement (ici noeud vert), on aurait la possibilité de changer de branche. C'est-à-dire que si l'on revient
+au noeud vert, on pourrait retourner au noeud bleu, comme on pourrait retourner au noeud rouge, ou comme on pourrait explorer d'autres coups,
+créant ainsi une nouvelle variation depuis ce noeud de branchement.
+
+En terme de performance, au niveau de la complexité en temps, cela serait imbattable, car on pourrait revenir à une position en O(1). En effet,
+en se servant d'une Java HashMap\textless Integer, Node\textgreater. On obtiendrait ainsi une référence à partir d'un entier en se servant de
+l'interface graphique:\\
+\includegraphics[height=8.0cm]{arbres-reprise-coups.png}
+
+En ce qui concerne la complexité en espace, cela devient un petit peu plus délicat si l'on souhaite être précis. Avant tout, pour permettre de
+revenir dans l'orbre en O(1), il faut conserver toutes les références des noeuds de cet arbre. Cela signifie que l'on garde en mémoire n+1 positions 
+si n est le nombre de coups joués au total (branches comprises). Comme nous l'avons vu précédemment, une position est encodée par 847 bits.
+Finalement, on se retrouve avec une complexité de O(847*n) bits. Pour donner un ordre d'idée, si une partie a enregistré 300 coups, alors en mémoire,
+on aura un peu moins de 52KB. Ce n'est donc pas très coûteux en ce qui concerne une partie. En revanche, pour la partie Intelligence Artificielle,
+où l'on va tester des milliers de branchements, cela peut devenir assez lourd. Il faudra certainement faire des tests et limiter les opérations
+sur ces arbres de jeu afin de ne pas causer de problème.
+
+\par Nous avons donc observé que les arbres sont de manière générale très avantageux dans notre cas, et bien plus que les piles, pour lesquelles
+il aurait fallu faire un nombre indécent de copies et donc coûter cher. Même si les variations et game reviews sont hypothétiques, le groupe préfère
+ne pas prendre de risque quant à ce choix de structure de données et se servira des arbres pour stocker l'historique des coups d'une partie.
+Dans le pire des cas, c'est-à-dire si les game reviews et non-écrasements de l'historique ne sont pas implémentés, l'arbre sera "linéaire"
+(degenerate tree) et simulera la pile en conservant les n coups de la partie en mémoire. Donc en espace, nous sommes en O(n).
+Néanmoins, en temps, nous sommes toujours en O(1) puisque nous conservons les références vers les noeuds de l'arbre. C'est donc plus efficace que
+la pile dans les deux cas, rendant cette approche optimale.
+
+\subsection{Zobrist hashing}
 
 \section{Besoins visés}
 \subsection{Quels besoins?}
