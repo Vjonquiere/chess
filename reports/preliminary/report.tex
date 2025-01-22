@@ -155,11 +155,12 @@ ces coups pour pouvoir revenir au dernire coup joué avant d'avoir repris tous l
 de données, on garde n coups en mémoire, et revenir à une certaine position de la partie est linéaire en fonction de ce nombre de coups.
 Avec une interface graphique, on pourrait cliquer sur un certain coup pour savoir combien de coups dépiler, car un coup peut arriver
 plusieurs fois dans une partie donc sa représentation ne suffit pas.\\
-Cela se présenterait comme ceci:\\
+Cela se présenterait comme ceci:
+\newpage
 \begin{figure}[h]
     \caption{Exemple historique de coups}
     \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pile-historique-coups}
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{pile-historique-coups}
 \end{figure}
 
 S'il n'y a pas de fonctionnalité de game review ou de game analysis, et que l'on part du principe qu'il y a écrasement de l'historique
@@ -175,7 +176,7 @@ En prenant cela en compte, il faudrait cette fois utiliser les arbres. En effet,
 l'arbre est en fait la structure de données naturelle dont on va se servir.\\
 Regardons un exemple pour ensuite discuter les avantages et les inconvénients des arbres:\\
 \begin{center}
-    \includegraphics[height=8.0cm]{arbres-branchement-coups.png}
+    \includegraphics[height=6.0cm]{arbres-branchement-coups.png}
 \end{center}
 
 Dans notre exemple, les noeuds représentent les positions,
@@ -188,7 +189,7 @@ créant ainsi une nouvelle variation depuis ce noeud de branchement.
 En terme de performance, au niveau de la complexité en temps, cela serait imbattable, car on pourrait revenir à une position en O(1). En effet,
 en se servant d'une Java HashMap\textless Integer, Node\textgreater. On obtiendrait ainsi une référence à partir d'un entier en se servant de
 l'interface graphique:\\
-\includegraphics[height=8.0cm]{arbres-reprise-coups.png}
+\includegraphics[height=6.0cm]{arbres-reprise-coups.png}
 
 En ce qui concerne la complexité en espace, cela devient un petit peu plus délicat si l'on souhaite être précis. Avant tout, pour permettre de
 revenir dans l'orbre en O(1), il faut conserver toutes les références des noeuds de cet arbre. Cela signifie que l'on garde en mémoire n+1 positions 
@@ -210,8 +211,9 @@ la pile dans les deux cas, rendant cette approche optimale.
 \subsubsection{Heuristiques}
 Afin de coder une bonne heuristique, aux échecs, il faut prendre en compte beaucoup d'éléments et revenir aux bases du jeu.
 Notamment, il faut savoir ce qui importe dans une position, ce qui donne l'avantage ou ce qui assure une égalité. Essentiellement,
-on se contente de vérifier certains points clés qui vont nous permettre d'émettre une évaluation sur une position. Il y a de
-nombreux éléments à prendre en compte, et en voici certainement les plus impactants:
+on se contente de vérifier certains points clés qui vont nous permettre d'émettre une évaluation sur une position.
+Rappelons que le facteur de branchement aux échecs approche les 35.\\
+Il y a de nombreux éléments à prendre en compte, et en voici certainement les plus impactants:
 \begin{itemize}
     \item Le Matériel: chaque pièce (sauf peut-être le roi) possède une valeur. On va donc s'occuper de compter pour les 2 camps le "potentiel"
     dans une position. Plus on a de matériel (pièces donc), plus on a de chances d'avoir l'avantage, en particulier par un bon contrôle de l'échiquier.
@@ -234,6 +236,26 @@ Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tou
 c'est la marche à suivre. 
 
 \subsubsection{Algorithmes}
+Dans cette partie Intelligence Artificelle, on va essentiellement se servir des 3 algorithmes suivants (dont 2 vus au dernier semestre):
+\begin{itemize}
+    \item MiniMax: Visant à retourner l'option la plus adéquate dans une certaine position, on utilise des arbres pour savoir quelle branche va être la
+    plus intéressante, que ce soit pour l'ami, comme pour l'ennemi. On est en O($b^d$) en temps, où b est le facteur de branchement et d la profondeur.
+    En espace, c'est du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
+    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les noeuds de
+    l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des noeuds va être une évaluation. La complexité en espace ne change pas, mais
+    en temps nous sommes donc en O($b^p$) où p = d/2.
+    \item Monte Carlo Tree Search: Celui-ci peut se décomposer en quatres étapes: "Selection","Expansion","Simulation","BackPropagation". Pour faire simple,
+    on va choisir (Selection) des branches à explorer. Cela peut être les noeuds qui vont être impactants sur la recherche du meilleur coup,
+    ou encore des noeuds qui n'ont pas encore été explorés. Ensuite, après avoir choisi la branche, on se positionne à la feuille de cette branche,
+    puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau noeud, on simule une partie ou une pseudo-partie
+    aléatoirement pour estimer le résultat potentiel. Finalement, lorsque l'on obtient un résultat, on fait remonter l'évaluation (BackPropagation)
+    et/ou les informations importantes vers le haut de l'arbre pour plus tard agir en conséquence. En temps, on se rapproche de O(n*d), où n est le
+    nombre de simulations effectuées, et d la profondeur moyenne. En espace, on est en O(n*847) où n est le nombre de noeuds au total, et 847 le
+    nombre de bits (la taille) d'un noeud.
+\end{itemize}
+
+\par Notons que tous les algorithmes s'effectuent sur des arbres et se servent d'une heursitique pour évaluer chaque position. Pour optimiser ces algorithmes, 
+on utilisera surtout deux techniques: le Forward-prunig et la Reduction.
 
 \subsection{Zobrist hashing}
 
@@ -259,7 +281,7 @@ La première dépendance que nous avons concerne la gestion des options (Figure 
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_options}
     \label{fig:needs_options}
-\end{figure}
+\end{figure} 
 
 L'implémentation de la \textit{gestion des options }permettra de rajouter de nombreuses fonctionnalités.
 En effet, ceci nous permettra d'implémenter le Mode contest, la version du jeu ou l'aide en ligne de commande. Nous pourrons également gérer les messages affichés grâce au mode verbose ou au mode debug.
