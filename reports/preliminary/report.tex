@@ -127,11 +127,21 @@ une intelligence artificielle bâclée et une interface graphique peu fonctionne
 \subsection{Dépendances entre les besoins}
 \subsubsection{Gestion des options}
 La première dépendance que nous avons concerne la gestion des options.
+
 \begin{figure}[h]
     \caption{Besoins concernant la gestion d'options}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_options}
+    \label{fig:needs_options}
 \end{figure}
+
+L'implémentation de la gestion des options permettra de rajouter de nombreuses fonctionnalités.
+En effet, ceci nous permettra d'implémenter le Mode contest, la version du jeu, l'aide en ligne de commande. Nous pourrons également gérer les messages affichés grâce au mode verbose ou au mode debug.
+Lorsque cela sera implémenté, l'utilisateur aura également le choix entre afficher le jeu en ligne de commande ou avec une interface graphique.
+Le mode Blitz inclura le besoin Durée du blitz afin de paramétrer ce mode.
+Le mode IA, qui a besoin de la gestion des options, possède quant à lui de nombreuses extensions. En effet, nous pourrons paramétrer
+notre intelligence artificielle grâce à d'autres options, que nous verrons cela plus en détail à la section \ref{IA}.
+
 
 \subsubsection{Sauvegarde de l'historique}
 La gestion de l'historique est un besoin indispensable pour notre jeu.
@@ -140,9 +150,19 @@ Beaucoup de besoins dépendent de cette fonctionnalité.
     \caption{Besoins concernant la sauvegarde de l'historique}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_files}
+    \label{fig:needs_files}
 \end{figure}
 
+Avant de pouvoir implémenter la gestion de l'historique, il faudra d'abord choisir les formats de fichiers.
+Pour cela, il faudra remplir les besoins suivants : Format de fichier simplifié, Format de l'historique et Fichier de Configuration.
+Une fois ces besoins implémentés, la sauvegarde de l'historique sera donc possible.
+Des besoins utiles au bon déroulement du jeu en dépendent. Grâce à cela, l'utilisateur pourra sauvegarder
+sa partie, rejouer ou recommencer une partie. Il pourra également configurer sa partie en modifiant les données du fichier de configuration.
+Cela permettrait aussi d'afficher les coups précédemment joués, et même de remonter dans l'historique pour annuler un coup et revenir en arrière.
+Certains menus de l'interface graphique permettront également de gérer ces fichiers de sauvegarde, de configuration,..
+
 \subsubsection{Intelligence artificielle}
+\label{IA}
 L'implémentation d'une intelligence artificielle est un autre besoin central du jeu. En effet, cela pourra
 permettre à l'utilisateur de jouer contre une machine. Cela pourrait permettre également de donner des
 indications sur les meilleurs coups à jouer pour le joueur.
@@ -151,16 +171,18 @@ indications sur les meilleurs coups à jouer pour le joueur.
     \caption{Besoins concernant l'intelligence artificielle}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_ai}
+    \label{fig:needs_ai}
 \end{figure}
 
 
-Comme affiché Figure ???, nous pouvons voir que de nombreux besoins concernent l'intelligence artificielle.
+Comme affiché Figure \ref{fig:needs_ai}, nous pouvons voir que de nombreux besoins concernent l'intelligence artificielle.
 
 \subsubsection{Interface graphique}
 \begin{figure}[h]
     \caption{Besoins concernant l'interface graphique}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_gui}
+    \label{fig:needs_gui}
 \end{figure}
 
 \section{Agenda prévisionnel}
