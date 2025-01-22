@@ -4,6 +4,8 @@
 \usepackage[french]{babel}
 
 \usepackage{hyperref}
+\usepackage{graphicx}
+\graphicspath{ {./res/} }
 
 \author{
     Valentin Jonquière,
@@ -100,12 +102,43 @@ une intelligence artificielle bâclée et une interface graphique peu fonctionne
 
 \subsection{Dépendances entre les besoins}
 \subsubsection{Gestion des options}
-La première dépendance que nous avons concerne la gestion des options
+La première dépendance que nous avons concerne la gestion des options.
+\begin{figure}[h]
+    \caption{Besoins concernant la gestion d'options}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_options}
+\end{figure}
+
 \subsubsection{Sauvegarde de l'historique}
 La gestion de l'historique est un besoin indispensable pour notre jeu.
 Beaucoup de besoins dépendent de cette fonctionnalité.
+\begin{figure}[h]
+    \caption{Besoins concernant la sauvegarde de l'historique}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_files}
+\end{figure}
+
 \subsubsection{Intelligence artificielle}
+L'implémentation d'une intelligence artificielle est un autre besoin central du jeu. En effet, cela pourra
+permettre à l'utilisateur de jouer contre une machine. Cela pourrait permettre également de donner des
+indications sur les meilleurs coups à jouer pour le joueur.
+
+\begin{figure}[h]
+    \caption{Besoins concernant l'intelligence artificielle}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_ai}
+\end{figure}
+
+
+Comme affiché Figure ???, nous pouvons voir que de nombreux besoins concernent l'intelligence artificielle.
+
 \subsubsection{Interface graphique}
+\begin{figure}[h]
+    \caption{Besoins concernant l'interface graphique}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_gui}
+\end{figure}
+
 \section{Agenda prévisionnel}
 \label{agenda}
 
