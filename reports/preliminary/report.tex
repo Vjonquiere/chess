@@ -3,6 +3,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
 
+\usepackage{lmodern}
+\usepackage{graphicx}
 \usepackage{hyperref}
 
 \author{
@@ -83,7 +85,29 @@ le typage statique permet d'avoir une meilleure stabilité grâce à la détecti
 compilation et permet également d'avoir un code plus prévisible. Enfin, les plus projets réalisés en licence
 et en master étant souvent des projets java, tous les membres du groupe connaissent ce langage ainsi que ses
 outils et environnements de développement. Cela permettra de gagner du temps lors de la mise en place du projet. 
+
 \section{Explication du sujet}
+\subsection{Structures de données}
+\subsubsection{Historique des coups}
+Le groupe s'est posé la question de quelles structures de donneés utiliser pour stocker l'historique des coups d'une
+partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, la ou les difficultés d'implémentation,
+la compatibilité avec les bitboards pour représenter le plateau de jeu, ainsi que les ajouts potentiels de fonctionnalités.
+\\La première idée fut une pile. En effet, cette structure est très simple d'utilisation et parfaitement adaptée pour stocker
+des coups, tout en ayant la possibilité d'en enlever et d'en rajouter. La complexité en temps et en espace est en O(n) si n 
+correspond au nombre de coups de la partie. Pour revenir au tout début de la partie, c'est-à-dire avec les pièces positionnées
+sur leurs cases initiales, il suffit de dépiler les n coups stackés en les empiler dans une seconde pile qui s'occupera de sauvegarder
+ces coups pour pouvoir revenir au dernire coup joué avant d'avoir repris tous les coups. Ainsi, en utilisant la pile comme structure 
+de données, on garde n coups en mémoire, et revenir à une certaine position de la partie est linéaire en fonction de ce nombre de coups.
+Avec une interface graphique, on pourrait cliquer sur un certain coup pour savoir combien de coups dépiler, car un coup peut arriver
+plusieurs fois dans une partie donc sa représentation ne suffit pas.\\
+Cela se présenterait comme ceci:\\
+\begin{figure}[h]
+    \caption{Exemple historique de coups}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{pile-historique-coups.png}
+\end{figure}
+
+S'il n'y a pas de fonctionnalité de game review
 
 \section{Besoins visés}
 \subsection{Quels besoins?}
