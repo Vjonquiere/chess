@@ -206,6 +206,35 @@ Dans le pire des cas, c'est-à-dire si les game reviews et non-écrasements de l
 Néanmoins, en temps, nous sommes toujours en O(1) puisque nous conservons les références vers les noeuds de l'arbre. C'est donc plus efficace que
 la pile dans les deux cas, rendant cette approche optimale.
 
+\subsection{Intelligence Artificelle}
+\subsubsection{Heuristiques}
+Afin de coder une bonne heuristique, aux échecs, il faut prendre en compte beaucoup d'éléments et revenir aux bases du jeu.
+Notamment, il faut savoir ce qui importe dans une position, ce qui donne l'avantage ou ce qui assure une égalité. Essentiellement,
+on se contente de vérifier certains points clés qui vont nous permettre d'émettre une évaluation sur une position. Il y a de
+nombreux éléments à prendre en compte, et en voici certainement les plus impactants:
+\begin{itemize}
+    \item Le Matériel: chaque pièce (sauf peut-être le roi) possède une valeur. On va donc s'occuper de compter pour les 2 camps le "potentiel"
+    dans une position. Plus on a de matériel (pièces donc), plus on a de chances d'avoir l'avantage, en particulier par un bon contrôle de l'échiquier.
+    \item La sécurité du Roi: Le Roi est la pièce la plus importante aux échecs, et souvent, le joueur qui a un avantage est celui qui va
+    avoir un Roi qui n'est pas en danger. Pour estimer cela, on peut en paticulier vérifier le nombre de coups où l'on peut mettre le Roi en échec,
+    combien de coups permettent de l'en sortir, et la fréquence des échecs. Plus un Roi est vulnérable, plus il y aura des possibilités
+    de le mettre en échec.
+    \item Le contrôle du centre: Aux échecs, le centre est un emplacement clé, puisqu'il peut donner un accès efficace à toutes les parties de
+    l'échiquier. Généralement, obtenir un bon contrôle du centre est un facteur qui va jouer dans l'évaluation d'une position.
+    \item L'activité: Si l'on a peu de coups légaux que l'on peut jouer, c'est très souvent parce que l'on est en position de désavantage. Cela peut
+    signifier que l'on est forcé à jouer certains coups.
+    \item La structure de pions: Plus on aura une structure de pions solide, plus on aura de potentiel d'attaque et de défense pusique les pions sont
+    des pièces "faibles" lorsqu'ils sont seuls et/ou non défendus.
+    \item La promotion: Plus on a de pions avancés, plus on a de chance d'atteindre la dernière rangée et changer notre pion en une pièce plus importante,
+    comme la Dame par exemple, nous donnant plus d'options.
+\end{itemize}
+
+Seulement ceux-là sont cités ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
+Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. Puisque c'est un jeu à somme nulle,
+c'est la marche à suivre. 
+
+\subsubsection{Algorithmes}
+
 \subsection{Zobrist hashing}
 
 \section{Besoins visés}
