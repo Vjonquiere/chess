@@ -101,6 +101,206 @@ et en master étant souvent des projets java, tous les membres du groupe connais
 outils et environnements de développement. Cela permettra de gagner du temps lors de la mise en place du projet. 
 
 \section{Explication du sujet}
+\subsection{Règles du jeu}
+Le jeu d’échecs contient beaucoup de règles parfois techniques, mais dont l’objectif reste simple à comprendre :
+ il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est attaqué 
+ mais n’a aucun coup légal pour se défendre de cette attaque.
+
+\subsubsection{L'échiquier et les pièces}
+Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces :
+\begin{itemize}
+    \item 1 roi
+    \item 1 dame
+    \item 2 tours
+    \item 2 cavaliers
+    \item 2 fous
+    \item 8 pions
+\end{itemize}
+
+\begin{minipage}{\textwidth}
+    \centering
+    Voici l'échiquier au début de la partie. \\
+    \includegraphics[width=0.6\textwidth]{jeuDepart.png}
+    \vspace{0.5cm}
+\end{minipage}
+
+Le joueur avec les pièces blanches commence. Ensuite, chaque joueur joue à tour de rôle, un déplacement de pièce par tour.
+
+\subsubsection{Déplacements des Pièces}
+Les déplacements sont propres à chaque type de pièce :
+\vspace{0.5cm}
+
+\begin{itemize}
+    \item \begin{minipage}{0.45\textwidth}
+        \textbf{Déplacement du pion :} \\
+        Le pion avance uniquement en ligne droite, d'une case à la fois. Toutefois, lors de son premier déplacement, 
+        il a la possibilité d'avancer de deux cases. Contrairement à son déplacement habituel, le pion capture les pièces
+         adverses en diagonale, en se déplaçant d'une case.
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{pionMove.png}
+    \end{minipage}
+
+    \vspace{0.5cm}
+
+    \item \begin{minipage}{0.45\textwidth}
+        \textbf{Déplacement du cavalier :} \\
+        Le cavalier a un déplacement unique en forme de "L", ce qui signifie qu'il se déplace de deux cases dans une direction,
+        puis d'une case perpendiculairement (ou inversement). C'est la seule pièce capable de sauter par-dessus d'autres 
+        pièces sur l'échiquier.
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{cavalierMove.png}
+    \end{minipage}
+
+    \vspace{0.5cm}
+
+    \item \begin{minipage}{0.45\textwidth}
+        \textbf{Déplacement du fou :} \\
+        Le fou se déplace en diagonale sur un nombre illimité de cases, tant qu'il n'est pas bloqué par une autre pièce.
+         Chaque fou reste toujours sur des cases de la couleur d'où il a commencé (blanches ou noires).
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fouMove.png}
+    \end{minipage}
+
+    \vspace{0.5cm}
+
+    \item \begin{minipage}{0.45\textwidth}
+        \textbf{Déplacement de la tour :} \\
+        La tour peut se déplacer de manière illimitée en ligne droite, que ce soit horizontalement ou verticalement.
+        Sa puissance réside dans sa capacité à contrôler des colonnes et des rangées entières.
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{tourMove.png}
+    \end{minipage}
+
+    \vspace{0.5cm}
+
+    \item \begin{minipage}{0.45\textwidth}
+        \textbf{Déplacement de la dame :} \\
+        La dame est la pièce la plus puissante du jeu. Elle combine les capacités de déplacement du fou et de la tour:
+        elle peut se déplacer d'un nombre illimité de cases horizontalement, verticalement ou en diagonale.
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{dameMove.png}
+    \end{minipage}
+
+    \vspace{0.5cm}
+
+    \item \begin{minipage}{0.45\textwidth}
+        \textbf{Déplacement du roi :} \\
+        Le roi peut se déplacer d'une case dans n'importe quelle direction: horizontalement, verticalement ou en diagonale.
+        Bien qu'il soit la pièce la plus importante, son mouvement limité le rend vulnérable.
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{roiMove.png}
+    \end{minipage}
+
+\end{itemize}
+
+\vspace{0.5cm}
+
+Parfois, les déplacements peuvent être limités par des règles spécifiques comme le \textbf{clouage}. Voyons ces règles en détail.
+
+\subsubsection{Règles Spécifiques}
+\paragraph{-Clouage} Si une pièce défend une attaque au roi en se positionnant devant cette dernière, on dit qu’elle est \textbf{clouée}
+ et ne peut pas bouger. En effet, il est interdit de mettre son roi en échec volontairement par l’une de ses propres actions.
+
+ \noindent
+ \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=\textwidth, height=\textwidth]{clouage1.png}
+     \vspace{0.5cm}
+    \textbf{Exemple de clouage}
+ \end{minipage}
+ \hfill
+ \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=\textwidth, height=\textwidth]{clouage2.png}
+     \vspace{0.5cm}
+ \end{minipage}
+
+\paragraph{-Roc} Le \textbf{roc} est un mouvement spécial impliquant le roi et une des tours, sous certaines conditions :
+\begin{itemize}
+    \item Le roi et la tour concernés n’ont jamais bougé depuis le début de la partie.
+    \item Le roi ne doit pas être en échec, et aucune des cases qu’il traverse ou sur laquelle il atterrit ne doit être attaquée.
+    \item Il ne doit y avoir aucune pièce entre le roi et la tour.
+\end{itemize}
+
+\noindent
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, height=\textwidth]{roc1.png}
+    \vspace{0.5cm}
+   \textbf{Exemple de roc}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, height=\textwidth]{roc2.png}
+    \vspace{0.5cm}
+\end{minipage}
+
+\paragraph{-Prise en Passant} Si un pion adverse avance de deux cases depuis sa position initiale et finit à côté d’un de nos pions,
+ on peut le capturer \textbf{en passant}, mais uniquement au coup suivant.
+
+ \noindent
+ \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=\textwidth, height=\textwidth]{enpassant1.png}
+     \vspace{0.5cm}
+    \textbf{Exemple de en passant}
+ \end{minipage}
+ \hfill
+ \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=\textwidth, height=\textwidth]{enpassant2.png}
+     \vspace{0.5cm}
+ \end{minipage}
+
+\paragraph{-Promotion du Pion} Si un pion atteint la dernière rangée de l’échiquier, il peut être promu en dame,
+ tour, fou ou cavalier. La promotion du pion est souvent synonyme d’avantage conséquent et peut mener à une victoire.
+
+ \noindent
+ \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=\textwidth, height=\textwidth]{promotion1.png}
+     \vspace{0.5cm}
+    \textbf{Exemple de promotion}
+ \end{minipage}
+ \hfill
+ \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=\textwidth, height=\textwidth]{promotion2.png}
+     \vspace{0.5cm}
+ \end{minipage}
+
+\subsubsection{Fin de Partie}
+Une partie d'échecs peut se terminer de plusieurs façons :
+\begin{itemize}
+    \item \textbf{Échec et mat} : le roi est attaqué et aucun coup légal ne peut le sauver, ce qui donne la victoire à l'adversaire.
+    \item \textbf{Pat} : un joueur n’a aucun coup légal à jouer et son roi n’est pas en échec, entraînant une nulle.
+    \item \textbf{Manque de matériel} : si seuls les rois, ou un roi et un fou/cavalier, restent sur l'échiquier, un mat devient impossible, ce qui entraîne une nulle.
+    \item \textbf{Répétition de position} : une même position exacte apparaît trois fois, entraînant une nulle.
+    \item \textbf{Règle des 50 coups} : si aucun pion n’est déplacé ni pièce capturée pendant 50 coups consécutifs, la partie est déclarée nulle.
+    \item \textbf{Abandon} : un joueur peut décider d’abandonner si sa position devient trop défavorable.
+    \item \textbf{Accord mutuel} : les deux joueurs conviennent de déclarer une nulle lorsqu'aucun ne voit de progrès réaliste possible.
+    \item \textbf{Dépassement de temps} : un joueur perd si son chronomètre s’écoule avant qu’il ne joue, sauf si l’adversaire n’a pas assez de matériel pour mater.
+\end{itemize}
+
 \subsection{Plateau sous forme de bitmaps}
 Un échiquier est finalement une matrice 8x8 (64 cases donc) sur lesquelles il y a une pièce, ou non. On voit ici une
 notion de binaire. Pour une pièce: "Blanche ou Noire", "Présente ou Non" (pour les cases). Une méthode existe pour
