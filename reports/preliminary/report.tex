@@ -126,12 +126,21 @@ performant. En Java, chaque entier sera un long (type primitif).
 dans son entièreté. Effectivement, pour le moment, nous n'avons que l'emplacement des pièces sur l'échiquier. Mais une position
 est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendre en compte sont:\\
 \begin{itemize}
-    \item En passant: 
+    \item En passant: Il faut utiliser 1 bit comme flag, 1 si en passant possible et 0 sinon. Il y a au total 16 cases cibles où
+    un en passant peut se produire. On utilise donc 4 bits (16 valeurs) supplémentaires. Au total donc, 5 bits.
     \item Roques: on compte le grand roque et le petit roque des deux côtés (noirs et blancs). On a donc besoin de 4 bits.
-    \item Temps à la pendule:
-    \item Règle des 50 coups:
-    \item Nombre de "FullMoves":
+    \item Temps à la pendule: Pour les blancs et les noirs, on doit savoir combien de temps il reste à chaque état du jeu. Si
+    l'on se dit que chaque joueur dispose de 24h pour une partie en prenant large, il faut coder 86 400 000 (en ms). Pour cela,
+    on a besoin de 27 bits. Mais il s'agit de 27 bits de chaque côté car il y a les blancs et les noirs. Donc au total, 54 bits ici.
+    \item Règle des 50 coups: Pour le nombre de coups sans capture ou mouvement de pion, on se sert de 6 bits (entre 0 et 50).
+    \item Nombre de "FullMoves": Pour se souvenir du nombre de coups total de la partie, on va prendre large et utiliser 10 bits,
+    ce qui nous donne la possibilité d'avoir 1000 coups.
 \end{itemize}
+
+Si l'on effectue le total, une position est codée sur 12*64 + 5 + 4 + 54 + 6 + 10 = 847 bits.
+C'est un gain très conséquent qui va notamment nous permettre par exemple de chercher à une profondeur plus grande pur la partie
+Intelligence Artificelle. Il y a quelques détails en ce qui concerne les performances dans laes parties Structures de données et
+Intelligence Artificielle dans le rapport notamment.
 
 \subsection{Structures de données}
 \subsubsection{Historique des coups}
