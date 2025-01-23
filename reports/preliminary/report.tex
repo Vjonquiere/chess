@@ -706,6 +706,219 @@ Le diagramme de Gantt (figure \ref{fig:gantt}) schématise notre agenda prévisi
 pas encore fait les spécifications étendues.
 
 \section{Architecture visée pour le projet}
+Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que pour l'amélioration future du projet.
+
+Les différents modules de notre projet sont les suivants : \textbf{Model}, \textbf{Controller}, \textbf{Vue}, \textbf{Events} et \textbf{Utils}. 
+
+Voici l'architecture UML du projet : 
+
+\begin{verbatim}
+"@startuml
+top to bottom direction
+
+package "Model" #DDDDDD{
+    class Game {
+        - Timer timeWhite
+        - Timer timeBlack
+        - boolean isTimed
+        - Board board
+        - History history
+        - Solver solver
+        + boolean isOver()
+        + String getStringHistory()
+        + List<Move> getMovesHistory()
+    }
+
+    class History {
+        - Tree<HistoryNode> tree
+        - HistoryNode currentState
+        + Move getPrevious()
+        + List<Move> getNext()
+        + addMove()
+        + setCurrent(HistoryNode)
+    }
+
+    class HistoryNode {
+        - Board state
+        - Move previousMove
+        - HistoryNode parent 
+        - List<HistoryNode> children
+        + addChildren(HistoryNode)
+    }
+
+    class Board {
+        - Bitmap[12] board
+        - boolean player
+        - boolean enPassant
+        + List<Move> getAvailableMoves()
+        + boolean makeMove(Move move)
+        + Board getCopy()
+        + boolean isAttacked(int i, int j)
+        + boolean isCheck()
+        + boolean isCheckMate()
+        + String getPieceAt(int i, int j)
+    }
+
+    class Bitboard {
+        - long board
+    }
+
+    class Move {
+        - String move
+        + Piece getPiece()
+        + getOriginalCol()
+        + getOriginalRow()
+        + getTargetCol()
+        + getTargetRow()
+        + Move getReverse()
+        + String toString()
+    }
+
+    interface Piece {
+        + List<Move> getAvailableMoves(boolean isWhite, Board b, int col, int row)
+    } 
+
+    class Pawn {}
+    class King {}
+    class Queen {}
+    class Rook {}
+    class Bishop {}
+    class Knight {}
+    
+    class Timer {
+        - double timeRemaining
+        + addTime(double time)
+        + startTimer()
+        + stopTimer()
+    }
+}
+
+package "View" #DDDDDD{
+    interface Vue{
+    + movePlayed()
+    + pieceTaken()
+    + displayBoard()
+    + onGameEnd()
+    }
+    class CLIVue
+    class GameVue
+}
+
+package "Controller" #DDDDDD{
+    class GameController {
+        - Vue vue
+        - Game model
+        + void handleEvent(GameEvent event)
+    }
+}
+
+package "Events" #DDDDDD{
+    class EventSource {
+        - List<GameEventObserver> observers
+        + void addObserver(GameEventObserver observer)
+        + void removeObserver(GameEventObserver observer)
+        + void notifyObservers(GameEvent event)
+    }
+
+    class GameEvent {
+        - GameEventType eventType
+        - Object data
+        + GameEventType getEventType()
+        + Object getEventData()
+    }
+
+    interface GameEventObserver {
+        + void onGameEvent(GameEvent event)
+    }
+
+    enum GameEventType {
+        PIECE_MOVED
+        TIME_OUT
+        GAME_WON
+    }
+}
+
+package "Utils" #DDDDDD{
+    package AI {
+        class Solver {
+            - Tree<AINode> aiHistory
+            + Move getBestMove(Board board, String method, String heuristic, double time)
+            - double evaluate(Board board, String heuristic)
+            - Move ab_search(Board board, String heuristic, double time)
+            - Move mtcs_search(Board board, String heuristic, double time)
+        }
+
+        class AINode {
+            - HistoryNode hnode 
+            - double value
+        }
+    }
+
+    class TextGetter {
+        - Locale locale
+        - ResourceBundle messages
+        + void init(Locale)
+        + TextGetter getInstance()
+        + String getText(String tag)
+    }
+
+    class Tree<T> {
+        - T root
+    }
+}
+
+Main --> GameController
+Game --> Board
+Game --> Move
+Game --> EventSource
+Game --> Solver
+Game --> Timer
+Board --> Move
+Board --> Piece
+Board --> Bitboard
+GameController --> Vue
+GameController --> Game
+GameEventObserver --|> GameController
+EventSource --> GameEventObserver
+GameEvent --> GameEventType
+History --> Tree
+History --> HistoryNode
+Solver --> Tree
+Solver --> AINode
+Vue <|-- CLIVue
+Vue <|-- GameVue
+
+Piece <|-- Pawn
+Piece <|-- King
+Piece <|-- Queen
+Piece <|-- Rook
+Piece <|-- Bishop
+Piece <|-- Knight
+
+@enduml
+"
+\end{verbatim}
+
+\subsubsection{Description des Modules}
+
+\begin{itemize}
+    \item \textbf{Model} : Gère la logique métier du jeu, incluant l'état de la partie, les règles d'échecs et les fonctionnalités comme l'historique et le timer.
+    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les événements utilisateurs et orchestre les interactions entre les différentes couches.
+    \item \textbf{Vue} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
+    \item \textbf{Events} : Implémente un système d'observateurs pour gérer les notifications et la communication asynchrone entre les modules.
+    \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et les algorithmes d'intelligence artificielle pour le jeu.
+\end{itemize}
+
+\subsubsection{Design Patterns Utilisés}
+
+Les différents design patterns utilisés dans ce projet sont les suivants : 
+\begin{itemize}
+    \item \textbf{Singleton} : Utilisé pour le module \texttt{Utils/TextGetter} afin de centraliser l'accès aux ressources de texte.
+    \item \textbf{MVC} : L'architecture principale du projet, séparant clairement la logique métier, l'affichage et la gestion des événements.
+    \item \textbf{Observer} : Permet de notifier le Controller ou la Vue des modifications dans le Model.
+    \item \textbf{State} : Utilisé pour gérer l'état de la partie, comme le statut du jeu (en cours, échec et mat, pat, etc.).
+\end{itemize}
+
 
 \section{Spécifications étendues}
 
