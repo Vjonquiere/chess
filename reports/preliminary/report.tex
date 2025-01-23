@@ -315,14 +315,14 @@ case i est occupée. Un entier n'est cependant pas suffisant, car il faut pouvoi
 que la couleur des pièces (noire ou blanche). Il y a au total 6 types de pièces aux échecs: le Pion, le Cavalier, le Fou,
 la Tour, la Dame, le Roi. Donc finalement, on aura besoin de 12 entiers codés sur 64 bits, car 6 pour les types de pièces
 blanches et 6 pour les types de pièces noires.
-\\Il important de noter que cela n'est pas réalisable pour des ordinateurs qui possèdent une architecture en 32 bits.
-Aujourd'hui, la quasi-totalité des ordinateurs utilisent du 64 bits, donc il ne faut pas trop s'en soucier. C'est néanmoins
+\\Il est important de noter que cela n'est pas réalisable pour des ordinateurs qui possèdent une architecture en 32 bits.
+Aujourd'hui, la quasi-totalité des ordinateurs utilise du 64 bits, donc il ne faut pas trop s'en soucier. C'est néanmoins
 crucial de relever les inconvénients des méthodes que l'on va utiliser pour ce projet. Un autre désavantage de cette méthode
 est le fait qu'il faudra faire une gymnastique pour "décoder" pour l'humain une position. En effet, si l'on prend l'entier
 112, on ne visualise pas (du tout) la position, même si l'ordinateur si.
 Retenons aussi que l'on aura à faire à des représentations et opérations binaires, pour lesquelles un ordinateur est très
 performant. En Java, chaque entier sera un long (type primitif).
-\\Il faut aussi se pencher sur les règles spécifiques que l'on encodera avec les 12 bitmaps pour représneter une position
+\\Il faut aussi se pencher sur les règles spécifiques que l'on encodera avec les 12 bitmaps pour représenter une position
 dans son entièreté. Effectivement, pour le moment, nous n'avons que l'emplacement des pièces sur l'échiquier. Mais une position
 est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendre en compte sont:\\
 \begin{itemize}
@@ -338,14 +338,15 @@ est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendr
 \end{itemize}
 
 Si l'on effectue le total, une position est codée sur 12*64 + 5 + 4 + 54 + 6 + 10 = 847 bits.
-C'est un gain très conséquent qui va notamment nous permettre par exemple de chercher à une profondeur plus grande pur la partie
-Intelligence Artificelle. Il y a quelques détails en ce qui concerne les performances dans laes parties Structures de données et
-Intelligence Artificielle dans le rapport notamment.
+C'est un gain très conséquent qui va notamment nous permettre par exemple de chercher à une profondeur plus grande pour la partie
+Intelligence Artificielle. Il y a quelques détails en ce qui concerne les performances dans les parties \ref{DataStruct} Structures de données et
+\ref{AI} Intelligence Artificielle dans le rapport notamment.
 
 \subsection{Structures de données}
+\label{DataStruct}
 \subsubsection{Historique des coups}
-\par Le groupe s'est posé la question de quelles structures de donneés utiliser pour stocker l'historique des coups d'une
-partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, la ou les difficultés d'implémentation,
+\par Le groupe s'est posé la question de quelles structures de données utiliser pour stocker l'historique des coups d'une
+partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, là où les difficultés d'implémentation,
 la compatibilité avec les bitboards pour représenter le plateau de jeu, ainsi que les ajouts potentiels de fonctionnalités.
 \\La première idée fut une pile. En effet, cette structure est très simple d'utilisation et parfaitement adaptée pour stocker
 des coups, tout en ayant la possibilité d'en enlever et d'en rajouter. La complexité en temps et en espace est en O(n) si n 
@@ -356,7 +357,7 @@ de données, on garde n coups en mémoire, et revenir à une certaine position d
 Avec une interface graphique, on pourrait cliquer sur un certain coup pour savoir combien de coups dépiler, car un coup peut arriver
 plusieurs fois dans une partie donc sa représentation ne suffit pas.\\
 Cela se présenterait comme ceci:
-\newpage
+
 \begin{figure}[h]
     \caption{Exemple historique de coups}
     \centering
@@ -368,7 +369,7 @@ lorsque l'on joue des coups différents de ceux joués initialement, alors la pi
 
 \par En se projetant, le groupe a réfléchi aux inconvénients de la pile et à l'évolution du projet.
 Peut-être est-ce optimiste, mais nous avons prévu deux semaines (deux dernières) pour se pencher vers les améliorations
-(fonctionnalités bonus) pouvant être implémentées, ainsi que les apsects qui méritent d'être revus. En particulier, nous avons
+(fonctionnalités bonus) pouvant être implémentées, ainsi que les aspects qui méritent d'être revus. En particulier, nous avons
 pensé à la possibilité de réaliser une game review et/ou une game analysis. Aussi, une fonctionnalité selon laquelle on pourrait 
 revenir à une position déjà jouée après avoir joué par dessus des coups repris. En d'autres mots, il n'y aurait pas d'écrasement
 (overwritting) des coups.
@@ -379,12 +380,12 @@ Regardons un exemple pour ensuite discuter les avantages et les inconvénients d
     \includegraphics[height=6.0cm]{arbres-branchement-coups.png}
 \end{center}
 
-Dans notre exemple, les noeuds représentent les positions,
-et les arêtes représentent les coups. Si l'on est au noeud rouge, et que l'on souhaite revenir aux noeud vert pour aller vers le noeud bleu,
-alors la nouvelle branche "main" pour l'historique des coups va du noeud R (Root) jusqu'au noeud bleu. Avant, il allait du noeud R jusqu'au
-noeud rouge. \'A chaque noeuf de branchement (ici noeud vert), on aurait la possibilité de changer de branche. C'est-à-dire que si l'on revient
-au noeud vert, on pourrait retourner au noeud bleu, comme on pourrait retourner au noeud rouge, ou comme on pourrait explorer d'autres coups,
-créant ainsi une nouvelle variation depuis ce noeud de branchement.
+Dans notre exemple, les nœuds représentent les positions
+et les arêtes représentent les coups. Si l'on est au nœud rouge, et que l'on souhaite revenir au nœud vert pour aller vers le nœud bleu,
+alors la nouvelle branche "main" pour l'historique des coups va du nœud R (Root) jusqu'au nœud bleu. Avant, il allait du nœud R jusqu'au
+nœud rouge. \'A chaque nœud de branchement (ici nœud vert), on aurait la possibilité de changer de branche. C'est-à-dire que si l'on revient
+au nœud vert, on pourrait retourner au nœud bleu, comme on pourrait retourner au nœud rouge, ou comme on pourrait explorer d'autres coups,
+créant ainsi une nouvelle variation depuis ce nœud de branchement.
 
 En terme de performance, au niveau de la complexité en temps, cela serait imbattable, car on pourrait revenir à une position en O(1). En effet,
 en se servant d'une Java HashMap\textless Integer, Node\textgreater. On obtiendrait ainsi une référence à partir d'un entier en se servant de
@@ -392,7 +393,7 @@ l'interface graphique:\\
 \includegraphics[height=6.0cm]{arbres-reprise-coups.png}
 
 En ce qui concerne la complexité en espace, cela devient un petit peu plus délicat si l'on souhaite être précis. Avant tout, pour permettre de
-revenir dans l'orbre en O(1), il faut conserver toutes les références des noeuds de cet arbre. Cela signifie que l'on garde en mémoire n+1 positions 
+revenir dans l'ordre en O(1), il faut conserver toutes les références des nœuds de cet arbre. Cela signifie que l'on garde en mémoire n+1 positions 
 si n est le nombre de coups joués au total (branches comprises). Comme nous l'avons vu précédemment, une position est encodée par 847 bits.
 Finalement, on se retrouve avec une complexité de O(847*n) bits. Pour donner un ordre d'idée, si une partie a enregistré 300 coups, alors en mémoire,
 on aura un peu moins de 52KB. Ce n'est donc pas très coûteux en ce qui concerne une partie. En revanche, pour la partie Intelligence Artificielle,
@@ -404,10 +405,10 @@ il aurait fallu faire un nombre indécent de copies et donc coûter cher. Même 
 ne pas prendre de risque quant à ce choix de structure de données et se servira des arbres pour stocker l'historique des coups d'une partie.
 Dans le pire des cas, c'est-à-dire si les game reviews et non-écrasements de l'historique ne sont pas implémentés, l'arbre sera "linéaire"
 (degenerate tree) et simulera la pile en conservant les n coups de la partie en mémoire. Donc en espace, nous sommes en O(n).
-Néanmoins, en temps, nous sommes toujours en O(1) puisque nous conservons les références vers les noeuds de l'arbre. C'est donc plus efficace que
+Néanmoins, en temps, nous sommes toujours en O(1) puisque nous conservons les références vers les nœuds de l'arbre. C'est donc plus efficace que
 la pile dans les deux cas, rendant cette approche optimale.
 
-\subsection{Intelligence Artificelle}
+\subsection{Intelligence Artificielle} \label{AI}
 \subsubsection{Heuristiques}
 Afin de coder une bonne heuristique, aux échecs, il faut prendre en compte beaucoup d'éléments et revenir aux bases du jeu.
 Notamment, il faut savoir ce qui importe dans une position, ce qui donne l'avantage ou ce qui assure une égalité. Essentiellement,
@@ -418,14 +419,14 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
     \item Le Matériel: chaque pièce (sauf peut-être le roi) possède une valeur. On va donc s'occuper de compter pour les 2 camps le "potentiel"
     dans une position. Plus on a de matériel (pièces donc), plus on a de chances d'avoir l'avantage, en particulier par un bon contrôle de l'échiquier.
     \item La sécurité du Roi: Le Roi est la pièce la plus importante aux échecs, et souvent, le joueur qui a un avantage est celui qui va
-    avoir un Roi qui n'est pas en danger. Pour estimer cela, on peut en paticulier vérifier le nombre de coups où l'on peut mettre le Roi en échec,
+    avoir un Roi qui n'est pas en danger. Pour estimer cela, on peut en particulier vérifier le nombre de coups où l'on peut mettre le Roi en échec,
     combien de coups permettent de l'en sortir, et la fréquence des échecs. Plus un Roi est vulnérable, plus il y aura des possibilités
     de le mettre en échec.
     \item Le contrôle du centre: Aux échecs, le centre est un emplacement clé, puisqu'il peut donner un accès efficace à toutes les parties de
     l'échiquier. Généralement, obtenir un bon contrôle du centre est un facteur qui va jouer dans l'évaluation d'une position.
     \item L'activité: Si l'on a peu de coups légaux que l'on peut jouer, c'est très souvent parce que l'on est en position de désavantage. Cela peut
     signifier que l'on est forcé à jouer certains coups.
-    \item La structure de pions: Plus on aura une structure de pions solide, plus on aura de potentiel d'attaque et de défense pusique les pions sont
+    \item La structure de pions: Plus on aura une structure de pions solide, plus on aura de potentiel d'attaque et de défense puisque les pions sont
     des pièces "faibles" lorsqu'ils sont seuls et/ou non défendus.
     \item La promotion: Plus on a de pions avancés, plus on a de chance d'atteindre la dernière rangée et changer notre pion en une pièce plus importante,
     comme la Dame par exemple, nous donnant plus d'options.
@@ -436,25 +437,25 @@ Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tou
 c'est la marche à suivre. 
 
 \subsubsection{Algorithmes}
-Dans cette partie Intelligence Artificelle, on va essentiellement se servir des 3 algorithmes suivants (dont 2 vus au dernier semestre):
+Dans cette partie Intelligence Artificielle, on va essentiellement se servir des 3 algorithmes suivants (dont 2 vus au dernier semestre):
 \begin{itemize}
     \item MiniMax: Visant à retourner l'option la plus adéquate dans une certaine position, on utilise des arbres pour savoir quelle branche va être la
     plus intéressante, que ce soit pour l'ami, comme pour l'ennemi. On est en O($b^d$) en temps, où b est le facteur de branchement et d la profondeur.
     En espace, c'est du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
-    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les noeuds de
-    l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des noeuds va être une évaluation. La complexité en espace ne change pas, mais
+    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les nœuds de
+    l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des nœuds va être une évaluation. La complexité en espace ne change pas, mais
     en temps nous sommes donc en O($b^p$) où p = d/2.
     \item Monte Carlo Tree Search: Celui-ci peut se décomposer en quatres étapes: "Selection","Expansion","Simulation","BackPropagation". Pour faire simple,
-    on va choisir (Selection) des branches à explorer. Cela peut être les noeuds qui vont être impactants sur la recherche du meilleur coup,
-    ou encore des noeuds qui n'ont pas encore été explorés. Ensuite, après avoir choisi la branche, on se positionne à la feuille de cette branche,
-    puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau noeud, on simule une partie ou une pseudo-partie
+    on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup,
+    ou encore des nœuds qui n'ont pas encore été explorés. Ensuite, après avoir choisi la branche, on se positionne à la feuille de cette branche,
+    puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau nœud, on simule une partie ou une pseudo-partie
     aléatoirement pour estimer le résultat potentiel. Finalement, lorsque l'on obtient un résultat, on fait remonter l'évaluation (BackPropagation)
     et/ou les informations importantes vers le haut de l'arbre pour plus tard agir en conséquence. En temps, on se rapproche de O(n*d), où n est le
-    nombre de simulations effectuées, et d la profondeur moyenne. En espace, on est en O(n*847) où n est le nombre de noeuds au total, et 847 le
-    nombre de bits (la taille) d'un noeud.
+    nombre de simulations effectuées, et d la profondeur moyenne. En espace, on est en O(n*847) où n est le nombre de nœuds au total, et 847 le
+    nombre de bits (la taille) d'un nœud.
 \end{itemize}
 
-\par Notons que tous les algorithmes s'effectuent sur des arbres et se servent d'une heursitique pour évaluer chaque position. Pour optimiser ces algorithmes, 
+\par Notons que tous les algorithmes s'effectuent sur des arbres et se servent d'une heuristique pour évaluer chaque position. Pour optimiser ces algorithmes, 
 on utilisera surtout deux techniques: le Forward-prunig et la Reduction.
 
 \subsection{Zobrist hashing}
@@ -557,7 +558,7 @@ trop complexe pour simuler une partie entière, et nous devons nous limiter à u
 Borner le temps de "réflexion" de l'IA est aussi un moyen de limiter les calculs de ces algorithmes. Cela pourrait permettre à l'utilisateur de jouer une partie contre
 un joueur IA plus ou moins efficace ou d'attendre plus ou moins longtemps entre ses tours.
 \subsubsection{Interface graphique}
-Les derniers besoins que nous avons rassemblé sont ceux concernant l'interface graphique (Figure \ref{fig:needs_gui}).
+Les derniers besoins que nous avons rassemblés sont ceux concernant l'interface graphique (Figure \ref{fig:needs_gui}).
 \begin{figure}[h]
     \caption{Besoins concernant l'interface graphique}
     \centering
@@ -688,6 +689,16 @@ Création de l'interface graphique et finalisation des fonctionnalités utilisat
         \item F58. Choix des heuristiques
     \end{itemize}
 \end{itemize}
+
+\begin{figure}[h]
+    \caption{Diagramme de Gantt (draft)}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt}
+    \label{fig:gantt}
+\end{figure}
+
+Le diagramme de Gantt (figure \ref{fig:gantt}) schématise notre agenda prévisionnel. Il n'est pas dans sa version définitive, car nous n'avons
+pas encore fait les spécifications étendues.
 
 \section{Architecture visée pour le projet}
 
