@@ -48,7 +48,12 @@ choisi de nous baser sur l'article `Programming a computer for playing chess' \c
 puisqu'il possède une partie consacrée à la construction d'heuristiques efficace pour les échecs.
 Nous avons également basé nos recherches sur la thèse `Using Monte Carlo Tree Search to play chess' \cite{Kral2021}
 de Jakub Král sur l'utlisation de différents algorithmes au service des échecs, tels que AlphaBeta ou
-Monte Carlo Tree Seach  \cite{ZobristHashing}
+Monte Carlo Tree Seach. Pour la partie intelligence artificielle, nous avons choisi de nous baser sur le 
+`Zobrist hashing' \cite{ZobristHashing} afin de ne pas réévaluer des positions déjà évaluées lors de la 
+recherche du meilleur coup à jouer par le joueur artificiel \ref{Zobrist}. Nous avons également orienté
+nos recherches sur la représentation du jeu d'échecs par les bitmaps (plateau, représentation des coups) \cite{Bijl2021}.
+Pour finir, nous avons utilisé un papier plus général, mais contenant des informations sur le developpement
+d'un moteur d'échecs en java \cite{PaulDailly}.
 
 \subsection{Langage de programmation choisi}
 Avec ce sujet, nous avions 3 choix de langage possibles :
@@ -458,7 +463,7 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
 \par Notons que tous les algorithmes s'effectuent sur des arbres et se servent d'une heuristique pour évaluer chaque position. Pour optimiser ces algorithmes, 
 on utilisera surtout deux techniques: le Forward-prunig et la Reduction.
 
-\subsection{Zobrist hashing}
+\subsection{Zobrist hashing} \label{Zobrist}
 Le hachage Zobrist est une fonction utilisée en particulier dans les jeux comme les échecs ou le go, où le but est d'attribuer un codage "complexe" à
 une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on peut gagner en performance, notamment dans les algorithmes d'IA, où les
 états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des "tables de transposition", qui sont des tables de
