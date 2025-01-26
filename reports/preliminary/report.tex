@@ -982,6 +982,21 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     Le langage de programmation du projet devra être Java et utiliser la spécification Java SE 17+.
 \end{nonfunctionnalneedbox}
 
+\begin{nonfunctionnalneedbox}[F2: Style de codage]
+    Le coding style du programme doit respecter le coding style de Google.
+    \begin{subneedbox}[F2.1: Formattage automatique]
+        Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
+    \end{subneedbox}
+    \begin{subneedbox}[F2.2: Rejet des commits non formatés]
+        Ajouter une étape d'intégration continue vérifiant que le code est correctement formaté.
+        Si ce n'est pas le cas, faire échouer la pipeline.
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
+    La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
+\end{nonfunctionnalneedbox}
+
 \begin{nonfunctionnalneedbox}[F10. Frameworks de test]
     Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
     \begin{subneedbox}[F10.1 Utiliser JUnit]
@@ -995,6 +1010,21 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \begin{nonfunctionnalneedbox}[F11. Gestion des options]
     La gestion des options sera basée sur la bibliothèque \textit{commons-cli}.
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
+    La bibliothèque graphique utilisée sera basé sur JavaFx
+    \begin{subneedbox}[F12.1: Mise en place d'un environnement de test]
+        Mettre en place TestFx afin de pouvoir tester l'interface graphique
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F13: Internationalisation]
+    Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
+    \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
+        Le changement de langue doit pouvoir être effectué en seulement 3 cliques
+        sur l'interface graphique.
+    \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
 \begin{needbox}[F20. Mode Blitz]
@@ -1041,40 +1071,70 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-    \begin{needbox}[F30. Roque]
-        Le jeu devra gérer le petit et grand roque.
-    
-        \textbf{Prérequis:} F27 et F28 ??
-        \begin{subneedbox}[F30.1: Vérifier que le roi et la Tour n'ont pas bougé]
-            
+\begin{needbox}[F22: Mode \textit{contest}]
+    ?
+\end{needbox}
 
-            \textbf{Test:}
-        \end{subneedbox}
-        \begin{subneedbox}[F30.2:Le Roi ne doit pas être en échec]
-            Le roi ne doit pas être en échec, ni avant ni après le roque
+\begin{needbox}[F23: Mode IA]
+    Permet de lancer le programme en mode joueur artificiel.
+    \begin{subneedbox}[F23.1: Gérer les options (dépend de F11)]
+        \begin{enumerate}
+            \item -a[COLOR]
+            \item --ai[=COLOR]
+        \end{enumerate}
+        Le jeu se lance en mode joueur artificiel, celui-ci est de la couleur
+        définie par \textit{COLOR} (`W', `B', `A' (pour les deux)). L'option 
+        par défaut est W.
 
-            \textbf{Test:}
-        \end{subneedbox}
-        \begin{subneedbox}[F30.3: Espace libre entre le roi et la tour]
-            
+        \textbf{Test:} Vérifier que le bon nombre de joueurs artificiels est créé. 
+        S'il n'y a qu'un joueur artificiel, vérifier qu'on lui a bien attribué la bonne
+        couleur.
+    \end{subneedbox}
+    \begin{subneedbox}[F23.2: Équilibrer le nombre de joueurs]
+        Si l'on utilise un ou des joueurs artificiels il est nécessaire de retirer
+        des joueurs physiques. Il ne peut pas y avoir plus des deux joueurs au total.
+        Il faudra donc empêcher le joueur de toucher aux pions blanc si on possède Un
+        joueur artificiel jouant les pions blancs.
 
-            \textbf{Test:}
-        \end{subneedbox}
-        \begin{subneedbox}[F30.4:Le roi ne passe pas par une case attaquée par l'ennemi]
-            
+        \textbf{Test:} Lorsque l'on lance le jeu avec deux joueurs artificiels il ne 
+        devrait pas être possible de jouer de coup sur le plateau.
+    \end{subneedbox}
+\end{needbox}
 
-            \textbf{Test:}
-        \end{subneedbox}
-        \begin{subneedbox}[F30.5: Implémenter le petit roque]
-            
+\begin{needbox}[F30. Roque]
+    Le jeu devra gérer le petit et grand roque.
 
-            \textbf{Test:}
-        \end{subneedbox}
-        \begin{subneedbox}[F30.6: Implémenter le grand roque]
-            
+    \textbf{Prérequis:} F27 et F28 ??
+    \begin{subneedbox}[F30.1: Vérifier que le roi et la Tour n'ont pas bougé]
+        
 
-            \textbf{Test:}
-        \end{subneedbox}
+        \textbf{Test:}
+    \end{subneedbox}
+    \begin{subneedbox}[F30.2:Le Roi ne doit pas être en échec]
+        Le roi ne doit pas être en échec, ni avant ni après le roque
+
+        \textbf{Test:}
+    \end{subneedbox}
+    \begin{subneedbox}[F30.3: Espace libre entre le roi et la tour]
+        
+
+        \textbf{Test:}
+    \end{subneedbox}
+    \begin{subneedbox}[F30.4:Le roi ne passe pas par une case attaquée par l'ennemi]
+        
+
+        \textbf{Test:}
+    \end{subneedbox}
+    \begin{subneedbox}[F30.5: Implémenter le petit roque]
+        
+
+        \textbf{Test:}
+    \end{subneedbox}
+    \begin{subneedbox}[F30.6: Implémenter le grand roque]
+        
+
+        \textbf{Test:}
+    \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F31: Promotion du pion]
@@ -1093,6 +1153,22 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
         \textbf{Test:} Faire atteindre la dernière ligne à chaque type de pièces
          et vérifier qu'aucune ne peut être promue.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F32: Abandon]
+    Le programme devra permettre à un joueur d’abandonner la partie en cours de jeu.
+\end{needbox}
+
+\begin{needbox}[F33: Affichage des messages]
+    Le programme devra afficher des messages d’information
+    pendant la partie en fonction du mode dans lequel il est
+    (default, verbose, debug).
+    \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
+        À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
+    \end{subneedbox}
+    \begin{subneedbox}[F33.2: Format d'affichage des messages]
+        Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
     \end{subneedbox}
 \end{needbox}
 
@@ -1132,82 +1208,6 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         sous besoin
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F2: Style de codage]
-    Le coding style du programme doit respecter le coding style de Google.
-    \begin{subneedbox}[F2.1: Formattage automatique]
-        Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
-    \end{subneedbox}
-    \begin{subneedbox}[F2.2: Rejet des commits non formatés]
-        Ajouter une étape d'intégration continue vérifiant que le code est correctement formaté.
-        Si ce n'est pas le cas, faire échouer la pipeline.
-    \end{subneedbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
-    La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
-    La bibliothèque graphique utilisée sera basé sur JavaFx
-    \begin{subneedbox}[F12.1: Mise en place d'un environnement de test]
-        Mettre en place TestFx afin de pouvoir tester l'interface graphique
-    \end{subneedbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F13: Internationalisation]
-    Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
-    \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
-        Le changement de langue doit pouvoir être effectué en seulement 3 cliques
-        sur l'interface graphique.
-    \end{subneedbox}
-\end{nonfunctionnalneedbox}
-
-\begin{needbox}[F22: Mode \textit{contest}]
-    ?
-\end{needbox}
-
-\begin{needbox}[F23: Mode IA]
-    Permet de lancer le programme en mode joueur artificiel.
-    \begin{subneedbox}[F23.1: Gérer les options (dépend de F11)]
-        \begin{enumerate}
-            \item -a[COLOR]
-            \item --ai[=COLOR]
-        \end{enumerate}
-        Le jeu se lance en mode joueur artificiel, celui-ci est de la couleur
-        définie par \textit{COLOR} (`W', `B', `A' (pour les deux)). L'option 
-        par défaut est W.
-
-        \textbf{Test:} Vérifier que le bon nombre de joueurs artificiels est créé. 
-        S'il n'y a qu'un joueur artificiel, vérifier qu'on lui a bien attribué la bonne
-        couleur.
-    \end{subneedbox}
-    \begin{subneedbox}[F23.2: Équilibrer le nombre de joueurs]
-        Si l'on utilise un ou des joueurs artificiels il est nécessaire de retirer
-        des joueurs physiques. Il ne peut pas y avoir plus des deux joueurs au total.
-        Il faudra donc empêcher le joueur de toucher aux pions blanc si on possède Un
-        joueur artificiel jouant les pions blancs.
-
-        \textbf{Test:} Lorsque l'on lance le jeu avec deux joueurs artificiels il ne 
-        devrait pas être possible de jouer de coup sur le plateau.
-    \end{subneedbox}
-\end{needbox}
-
-\begin{needbox}[F32: Abandon]
-    Le programme devra permettre à un joueur d’abandonner la partie en cours de jeu.
-\end{needbox}
-
-\begin{needbox}[F33: Affichage des messages]
-    Le programme devra afficher des messages d’information
-    pendant la partie en fonction du mode dans lequel il est
-    (default, verbose, debug).
-    \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
-        À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
-    \end{subneedbox}
-    \begin{subneedbox}[F33.2: Format d'affichage des messages]
-        Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
-    \end{subneedbox}
-\end{needbox}
 
 \begin{nonfunctionnalneedbox}[F42: Fichier de configuration]
     \begin{subneedbox}[F42.1: Utiliser le format INI]
