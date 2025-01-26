@@ -1133,6 +1133,127 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
+\begin{nonfunctionnalneedbox}[F2: Style de codage]
+    Le coding style du programme doit respecter le coding style de Google.
+    \begin{subneedbox}[F2.1: Formattage automatique]
+        Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
+    \end{subneedbox}
+    \begin{subneedbox}[F2.2: Rejet des commits non formatés]
+        Ajouter une étape d'intégration continue vérifiant que le code est correctement formaté.
+        Si ce n'est pas le cas, faire échouer la pipeline.
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
+    La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
+    La bibliothèque graphique utilisée sera basé sur JavaFx
+    \begin{subneedbox}[F12.1: Mise en place d'un environnement de test]
+        Mettre en place TestFx afin de pouvoir tester l'interface graphique
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F13: Internationalisation]
+    Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
+    \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
+        Le changement de langue doit pouvoir être effectué en seulement 3 cliques
+        sur l'interface graphique.
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{needbox}[F22: Mode \textit{contest}]
+    ?
+\end{needbox}
+
+\begin{needbox}[F23: Mode IA]
+    Permet de lancer le programme en mode joueur artificiel.
+    \begin{subneedbox}[F23.1: Gérer les options (dépend de F11)]
+        \begin{enumerate}
+            \item -a[COLOR]
+            \item --ai[=COLOR]
+        \end{enumerate}
+        Le jeu se lance en mode joueur artificiel, celui-ci est de la couleur
+        définie par \textit{COLOR} (`W', `B', `A' (pour les deux)). L'option 
+        par défaut est W.
+
+        \textbf{Test:} Vérifier que le bon nombre de joueurs artificiels est créé. 
+        S'il n'y a qu'un joueur artificiel, vérifier qu'on lui a bien attribué la bonne
+        couleur.
+    \end{subneedbox}
+    \begin{subneedbox}[F23.2: Équilibrer le nombre de joueurs]
+        Si l'on utilise un ou des joueurs artificiels il est nécessaire de retirer
+        des joueurs physiques. Il ne peut pas y avoir plus des deux joueurs au total.
+        Il faudra donc empêcher le joueur de toucher aux pions blanc si on possède Un
+        joueur artificiel jouant les pions blancs.
+
+        \textbf{Test:} Lorsque l'on lance le jeu avec deux joueurs artificiels il ne 
+        devrait pas être possible de jouer de coup sur le plateau.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F32: Abandon]
+    Le programme devra permettre à un joueur d’abandonner la partie en cours de jeu.
+\end{needbox}
+
+\begin{needbox}[F33: Affichage des messages]
+    Le programme devra afficher des messages d’information
+    pendant la partie en fonction du mode dans lequel il est
+    (default, verbose, debug).
+    \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
+        À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
+    \end{subneedbox}
+    \begin{subneedbox}[F33.2: Format d'affichage des messages]
+        Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{nonfunctionnalneedbox}[F42: Fichier de configuration]
+    \begin{subneedbox}[F42.1: Utiliser le format INI]
+        Les options du jeu doivent être sauvegardées au format \textit{INI}.
+
+        \textbf{Test:} Tester avec plusieurs fichiers (certains mal formés) et vérifier 
+        que seuls les fichiers corrects permettent de lancer le jeu avec ces options.
+    \end{subneedbox}
+    \begin{subneedbox}[F42.2: extension de fichier \textit{.chessrc}]
+        Le fichier option doit obligatoirement contenir l'extension \textit{.chessrc}.
+    \end{subneedbox}
+    \begin{subneedbox}[F42.3: fichier d'option non valide]
+        Si un fichier ne correspond par au format \textit{INI} ou contient une 
+        option non reconnue, le programme se ferme en retournant \textit{EXIT\_FAILURE}
+    \end{subneedbox}
+    
+\end{nonfunctionnalneedbox}
+
+\begin{needbox}[F43: Plateau de jeu]
+    Les bitboards seront utilisées pour représenter l'état du plateau de jeu
+    \begin{subneedbox}[F43.1: Nombre de bitboards]
+        Il est nécessaire de posséder 12 bitboards de 64-bits pour représenter un
+        plateau d'échecs complet.
+
+        \textbf{Test:} Vérifier que les deux camps possède bien 6 bitboards (une pour chaque type de pièce) 
+    \end{subneedbox}
+    \begin{subneedbox}[F43.2: Opérations sur les bitboards]
+        Afin d'implémenter les opérations de base sur le plateau de jeu (case vide, mouvement de pièce)
+        il est nécessaire d'intégrer les opérateurs binaires de base (Union, Complément, Xor, Or, Intersection)
+
+        \textbf{Test:} Vérifier l'implémentation de chacune des opérations binaires indépendamment
+    \end{subneedbox}
+    
+\end{needbox}
+
+\begin{needbox}[F52: Configuration d'une nouvelle partie]
+    
+\end{needbox}
+
+\begin{needbox}[F53: Heuristique d'évaluation de position]
+    
+\end{needbox}
+
+
+
+
 \section{Bibliographie}
 \bibliographystyle{plain}
 \bibliography{references}
