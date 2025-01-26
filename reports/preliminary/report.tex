@@ -999,6 +999,21 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
 \end{nonfunctionnalneedbox}
 
+\begin{nonfunctionnalneedbox}[F6. Tests]
+    Tester et valider le programme avec une couverture suffisante.
+    \begin{subneedbox}[F6.1 Tests]
+        Implémenter des tests unitaires sur l'ensemble du projet.
+    \end{subneedbox}
+
+    \begin{subneedbox}[F6.2 Coverage]
+        Les test effectués devront couvrir au minimum 80\% du code.
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F7: Bugs]
+    Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées et les erreurs doivent générer des messages d’erreur.
+\end{nonfunctionnalneedbox}
+
 \subsection{Bibliothèques et outils}
 
 \begin{nonfunctionnalneedbox}[F10. Frameworks de test]
@@ -1032,6 +1047,33 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{nonfunctionnalneedbox}
 
 \subsection{Options en ligne de commande}
+
+\begin{needbox}[F16: Aide en ligne de commande]
+    L’option ’-h’, ’–-help’ affiche l’aide puis quitte.
+    \begin{subneedbox}[F16.1: Texte]
+        Rédaction du message d'aide destiné à l'utilisateur.
+    \end{subneedbox}
+    \begin{subneedbox}[F16.2: Affichage]
+        Affichage du message d'aide lorsque l'option \textit{-h} ou \textit{--help} est utilisée.
+    \end{subneedbox}
+    \begin{subneedbox}[F16.3: Quitter]
+        Quitter le programme après l'affichage effectué.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F17: Version]
+    L’option ’-V’, ’–-version’ affiche la version puis quitte.
+    \begin{subneedbox}[F17.1: Texte]
+        Rédaction du message de version actuelle.
+    \end{subneedbox}
+    \begin{subneedbox}[F17.2: Affichage]
+        Affichage du message de version lorsque l'option \textit{-V} ou \textit{--version} est utilisée.
+    \end{subneedbox}
+    \begin{subneedbox}[F17.3: Quitter]
+        Quitter le programme après l'affichage effectué.
+    \end{subneedbox}
+    
+\end{needbox}
 
 \begin{needbox}[F20. Mode Blitz]
     Permet de lancer le jeu en mode Blitz.
@@ -1108,6 +1150,26 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 \subsection{Interface utilisateur}
+
+\begin{needbox}[F26: Affichage de l’échiquier]
+    À chaque coup, le programme devra afficher l’échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
+    \begin{subneedbox}[F26.1: Echiquier]
+        Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des ’_’. Le Roi sera représenté par ’K/k’ (King), la Reine par ’Q/q’ (Queen), les Tours par ’R/r’ (Rook), les Fous par ’B/b’ (Bishop), les Cavaliers par ’N/n’ (kNights) et les Pions par ’P/p’ (Pawn).
+    \end{subneedbox}
+    \begin{subneedbox}[F26.2: Temps restant]
+        Affichage du temps restant (si le format Blitz est utilisé).
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F27: Notation des coups]
+    Utilisation d'une notation codifiée pour les coups.
+    \begin{subneedbox}[F27.1: Reconnaissance du coup]
+        Chaque case de l’échiquier est repérée par une colonne (de ’a’ à ’h’) et une ligne (de ’1’ à ’8’). Par exemple, la case en bas à gauche est ’a1’ et celle en haut à droite est ’h8’. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup ’e2-e4’ déplace le pion de la case ’e2’ à la case ’e4’. Et, lorsqu’une pièce est prise dans le mouvement, le coup sera noté ’e2xe4’.
+    \end{subneedbox}
+    \begin{subneedbox}[F27.2: Vérification du coup]
+        Vérification que le coup demandé par l'utilisateur est un coup légal.
+    \end{subneedbox}
+\end{needbox}
 
 \begin{needbox}[F30. Roque]
     Le jeu devra gérer le petit et grand roque.
@@ -1190,6 +1252,32 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
+\begin{needbox}[F36: Naviguer dans l’historique]
+    Il doit être possible de revenir en arrière ou d’aller en avant dans l’historique des coups joués si tous les joueurs humains sont d’accord.
+    \begin{subneedbox}[F36.1: Sauvegarde des coups joués]
+        Sauvegarder les mouvements effectués dans la partie en cours.
+    \end{subneedbox}
+    \begin{subneedbox}[F36.2: Sauvegarde des coups annulés]
+        Sauvegarder les mouvements annulés tant qu'un nouveau mouvement n'est pas joué.
+    \end{subneedbox}
+    \begin{subneedbox}[F36.3: Perte des coups annulés]
+        Effacer les coups annulés si une nouvelle ligne de jeu est joués.
+    \end{subneedbox}
+    \begin{subneedbox}[F?.4: Annulation/Rétablissement]
+        Donner la possibilité aux joueurs humain de proposer l'annulation ou le rétablissement d'un coup.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F37: Recommencer une partie]
+    À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
+    \begin{subneedbox}[F37.1: Suppression de la partie en cours]
+        Supprimer l'instance de la partie de la mémoire.
+    \end{subneedbox}
+    \begin{subneedbox}[F37.2: Création d'une nouvelle partie]
+        Créer une nouvelle instance de partie avec la position par défaut.
+    \end{subneedbox}
+\end{needbox}
+
 \subsection{Format d'entrée/sortie}
 
 \begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié]
@@ -1238,7 +1326,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         \textbf{Test:} Écrire une liste de coups à jouer. Lancer le jeu à partir de la sauvegarde et
         vérifier qu'ils ont bien été joués.
     \end{subneedbox}
-    \begin{subneedbox}[F41.3: Afficher les coups annulés]
+    \begin{subneedbox}[F41.6: Afficher les coups annulés]
         Garder dans les coups annulés dans l'historique d'une partie. Ajouter un flag pour notifier que
         le coup a été annulé.
 
@@ -1297,6 +1385,57 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 \subsection{Interface graphique}
+
+\begin{needbox}[F46: Fonctions de base]
+    Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
+    \begin{subneedbox}[F46.1: Prise en passant]
+        Implementation graphique du besoin F29. Prise en passant.
+    \end{subneedbox}
+    \begin{subneedbox}[F46.2: Roque]
+        Implementation graphique du besoin F30. Roque.
+    \end{subneedbox}
+    \begin{subneedbox}[F46.3: Promotion]
+        Implementation graphique du besoin F31. Promotion du pion.
+    \end{subneedbox}
+    \begin{subneedbox}[F46.4: Abandon]
+        Implementation graphique du besoin F32. Abandon.
+    \end{subneedbox}
+    \begin{subneedbox}[F46.5: Fin de partie]
+        Implementation graphique du besoin F38. Fin de partie.
+    \end{subneedbox}
+    \begin{subneedbox}[F46.6: Mode blitz]
+        Implementation graphique du besoin F20. Mode blitz.
+    \end{subneedbox}
+    \begin{subneedbox}[F46.7: Mode contest]
+        Implementation graphique du besoin F22 Mode contest.
+    \end{subneedbox}
+    \begin{subneedbox}[F46.8: Mode IA]
+        Implementation graphique du besoin F23. Mode IA.
+    \end{subneedbox}
+    
+\end{needbox}
+
+\begin{needbox}[F47: Menu ’File’]
+    Menu principal 'File' permettant de gérer les fonctions liées aux parties.
+    \begin{subneedbox}[F47.1: New Game]
+        Ajout d'un bouton 'New Game' pemettant de lancer une nouvelle partie.
+    \end{subneedbox}
+    \begin{subneedbox}[F47.2: Load Game]
+        Ajout d'un bouton 'Load Game' pemettant de charger une partie depuis un fichier.
+    \end{subneedbox}
+    \begin{subneedbox}[F47.3: Save Game]
+        Ajout d'un bouton 'Save Game' pemettant de sauvegarder la partie en cours dans un fichier.
+    \end{subneedbox}
+    \begin{subneedbox}[F47.4: Quit]
+        Ajout d'un bouton 'Quit' pemettant de quitter le programme.
+    \end{subneedbox}
+    \begin{subneedbox}[F47.5: Help]
+        Ajout d'un bouton 'Help' pemettant d'afficher le message d'aide.
+    \end{subneedbox}
+    \begin{subneedbox}[F47.6: Settings]
+        Ajout d'un bouton 'Settings' pemettant d'éditer la configuration par défaut.
+    \end{subneedbox}
+\end{needbox}
 
 \begin{needbox}[F50: Affichage d'une partie en cours]
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
@@ -1387,6 +1526,11 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
+\begin{needbox}[F56: Monte Carlo Tree Search]
+\end{needbox}
+
+\begin{needbox}[F57: Profondeur de recherche]
+\end{needbox}
 
 
 
