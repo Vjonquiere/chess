@@ -983,6 +983,10 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \begin{subneedbox}[F2.1: Formattage automatique]
         Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
     \end{subneedbox}
+    \begin{subneedbox}[F2.2: Rejet des commits non formatés]
+        Ajouter une étape d'intégration continue vérifiant que le code est correctement formaté.
+        Si ce n'est pas le cas, faire échouer la pipeline.
+    \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
@@ -998,6 +1002,10 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \begin{nonfunctionnalneedbox}[F13: Internationalisation]
     Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
+    \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
+        Le changement de langue doit pouvoir être effectué en seulement 3 cliques
+        sur l'interface graphique.
+    \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
 \begin{needbox}[F22: Mode \textit{contest}]
@@ -1014,6 +1022,19 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Le jeu se lance en mode joueur artificiel, celui-ci est de la couleur
         définie par \textit{COLOR} (`W', `B', `A' (pour les deux)). L'option 
         par défaut est W.
+
+        \textbf{Test:} Vérifier que le bon nombre de joueurs artificiels est créé. 
+        S'il n'y a qu'un joueur artificiel, vérifier qu'on lui a bien attribué la bonne
+        couleur.
+    \end{subneedbox}
+    \begin{subneedbox}[F23.2: Équilibrer le nombre de joueurs]
+        Si l'on utilise un ou des joueurs artificiels il est nécessaire de retirer
+        des joueurs physiques. Il ne peut pas y avoir plus des deux joueurs au total.
+        Il faudra donc empêcher le joueur de toucher aux pions blanc si on possède Un
+        joueur artificiel jouant les pions blancs.
+
+        \textbf{Test:} Lorsque l'on lance le jeu avec deux joueurs artificiels il ne 
+        devrait pas être possible de jouer de coup sur le plateau.
     \end{subneedbox}
 \end{needbox}
 
@@ -1033,25 +1054,33 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F42: Fichier de configuration]
+\begin{nonfunctionnalneedbox}[F42: Fichier de configuration]
     \begin{subneedbox}[F42.1: Utiliser le format INI]
         Les options du jeu doivent être sauvegardées au format \textit{INI}.
 
-        \textbf{Test:} Tester avec plusieurs fichiers (certains mal former) et vérifier 
-        que seuls les fichiers corrects permettent de lancer le jeu avec ces options
+        \textbf{Test:} Tester avec plusieurs fichiers (certains mal formés) et vérifier 
+        que seuls les fichiers corrects permettent de lancer le jeu avec ces options.
     \end{subneedbox}
     \begin{subneedbox}[F42.2: extension de fichier \textit{.chessrc}]
         Le fichier option doit obligatoirement contenir l'extension \textit{.chessrc}.
     \end{subneedbox}
     \begin{subneedbox}[F42.3: fichier d'option non valide]
-        Si un fichier ne correspond par au fichier \textit{INI} ou contient une 
+        Si un fichier ne correspond par au format \textit{INI} ou contient une 
         option non reconnue, le programme se ferme en retournant \textit{EXIT\_FAILURE}
     \end{subneedbox}
     
-\end{needbox}
+\end{nonfunctionnalneedbox}
 
 \begin{needbox}[F43: Plateau de jeu]
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
+    \begin{subneedbox}[F43.1: Nombre de bitboards]
+        Il est nécessaire de posséder 12 bitboards de 64-bits pour représenter un
+        plateau d'échecs complet.  
+    \end{subneedbox}
+    \begin{subneedbox}[F43.2: Opérations sur les bitboards]
+        Afin d'implémenter les opérations de base sur le plateau de jeu (case vide, mouvement de pièce)
+        il est nécessaire d'intégrer les opérateurs binaires de base (Union, Complément, Xor, Or, Intersection) 
+    \end{subneedbox}
     
 \end{needbox}
 
