@@ -437,7 +437,10 @@ créant ainsi une nouvelle variation depuis ce nœud de branchement.
 En terme de performance, au niveau de la complexité en temps, cela serait imbattable, car on pourrait revenir à une position en O(1). En effet,
 en se servant d'une Java HashMap\textless Integer, Node\textgreater. On obtiendrait ainsi une référence à partir d'un entier en se servant de
 l'interface graphique:\\
-\includegraphics[height=6.0cm]{arbres-reprise-coups.png}
+\begin{center}
+    \includegraphics[height=6.0cm]{arbres-reprise-coups.png}
+\end{center}
+
 
 En ce qui concerne la complexité en espace, cela devient un petit peu plus délicat si l'on souhaite être précis. Avant tout, pour permettre de
 revenir dans l'ordre en O(1), il faut conserver toutes les références des nœuds de cet arbre. Cela signifie que l'on garde en mémoire n+1 positions 
@@ -492,7 +495,8 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les nœuds de
     l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des nœuds va être une évaluation. La complexité en espace ne change pas, mais
     en temps nous sommes donc en O($b^p$) où p = d/2.
-    \item Monte Carlo Tree Search: Celui-ci peut se décomposer en quatres étapes: "Selection","Expansion","Simulation","BackPropagation". Pour faire simple,
+    \item Monte Carlo Tree Search: Celui-ci peut se décomposer en quatres étapes: "Selection",
+    "Expansion","Simulation","BackPropagation". Pour faire simple,
     on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup,
     ou encore des nœuds qui n'ont pas encore été explorés. Ensuite, après avoir choisi la branche, on se positionne à la feuille de cette branche,
     puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau nœud, on simule une partie ou une pseudo-partie
@@ -737,15 +741,14 @@ Création de l'interface graphique et finalisation des fonctionnalités utilisat
     \end{itemize}
 \end{itemize}
 
-\begin{figure}[h]
-    \caption{Diagramme de Gantt (draft)}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt}
-    \label{fig:gantt}
-\end{figure}
 
-Le diagramme de Gantt (figure \ref{fig:gantt}) schématise notre agenda prévisionnel. Il n'est pas dans sa version définitive, car nous n'avons
+
+Le diagramme de Gantt schématise notre agenda prévisionnel. Il n'est pas dans sa version définitive, car nous n'avons
 pas encore fait les spécifications étendues.
+
+\begin{center}
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt}
+\end{center}
 
 \section{Architecture visée pour le projet}
 Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que pour l'amélioration future du projet.
@@ -754,192 +757,12 @@ Les différents modules de notre projet sont les suivants : \textbf{Model}, \tex
 
 Voici l'architecture UML du projet : 
 
-\begin{verbatim}
-"@startuml
-top to bottom direction
+\begin{center}
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{UML}
+\end{center}
 
-package "Model" #DDDDDD{
-    class Game {
-        - Timer timeWhite
-        - Timer timeBlack
-        - boolean isTimed
-        - Board board
-        - History history
-        - Solver solver
-        + boolean isOver()
-        + String getStringHistory()
-        + List<Move> getMovesHistory()
-    }
 
-    class History {
-        - Tree<HistoryNode> tree
-        - HistoryNode currentState
-        + Move getPrevious()
-        + List<Move> getNext()
-        + addMove()
-        + setCurrent(HistoryNode)
-    }
 
-    class HistoryNode {
-        - Board state
-        - Move previousMove
-        - HistoryNode parent 
-        - List<HistoryNode> children
-        + addChildren(HistoryNode)
-    }
-
-    class Board {
-        - Bitmap[12] board
-        - boolean player
-        - boolean enPassant
-        + List<Move> getAvailableMoves()
-        + boolean makeMove(Move move)
-        + Board getCopy()
-        + boolean isAttacked(int i, int j)
-        + boolean isCheck()
-        + boolean isCheckMate()
-        + String getPieceAt(int i, int j)
-    }
-
-    class Bitboard {
-        - long board
-    }
-
-    class Move {
-        - String move
-        + Piece getPiece()
-        + getOriginalCol()
-        + getOriginalRow()
-        + getTargetCol()
-        + getTargetRow()
-        + Move getReverse()
-        + String toString()
-    }
-
-    interface Piece {
-        + List<Move> getAvailableMoves(boolean isWhite, Board b, int col, int row)
-    } 
-
-    class Pawn {}
-    class King {}
-    class Queen {}
-    class Rook {}
-    class Bishop {}
-    class Knight {}
-    
-    class Timer {
-        - double timeRemaining
-        + addTime(double time)
-        + startTimer()
-        + stopTimer()
-    }
-}
-
-package "View" #DDDDDD{
-    interface Vue{
-    + movePlayed()
-    + pieceTaken()
-    + displayBoard()
-    + onGameEnd()
-    }
-    class CLIVue
-    class GameVue
-}
-
-package "Controller" #DDDDDD{
-    class GameController {
-        - Vue vue
-        - Game model
-        + void handleEvent(GameEvent event)
-    }
-}
-
-package "Events" #DDDDDD{
-    class EventSource {
-        - List<GameEventObserver> observers
-        + void addObserver(GameEventObserver observer)
-        + void removeObserver(GameEventObserver observer)
-        + void notifyObservers(GameEvent event)
-    }
-
-    class GameEvent {
-        - GameEventType eventType
-        - Object data
-        + GameEventType getEventType()
-        + Object getEventData()
-    }
-
-    interface GameEventObserver {
-        + void onGameEvent(GameEvent event)
-    }
-
-    enum GameEventType {
-        PIECE_MOVED
-        TIME_OUT
-        GAME_WON
-    }
-}
-
-package "Utils" #DDDDDD{
-    package AI {
-        class Solver {
-            - Tree<AINode> aiHistory
-            + Move getBestMove(Board board, String method, String heuristic, double time)
-            - double evaluate(Board board, String heuristic)
-            - Move ab_search(Board board, String heuristic, double time)
-            - Move mtcs_search(Board board, String heuristic, double time)
-        }
-
-        class AINode {
-            - HistoryNode hnode 
-            - double value
-        }
-    }
-
-    class TextGetter {
-        - Locale locale
-        - ResourceBundle messages
-        + void init(Locale)
-        + TextGetter getInstance()
-        + String getText(String tag)
-    }
-
-    class Tree<T> {
-        - T root
-    }
-}
-
-Main --> GameController
-Game --> Board
-Game --> Move
-Game --> EventSource
-Game --> Solver
-Game --> Timer
-Board --> Move
-Board --> Piece
-Board --> Bitboard
-GameController --> Vue
-GameController --> Game
-GameEventObserver --|> GameController
-EventSource --> GameEventObserver
-GameEvent --> GameEventType
-History --> Tree
-History --> HistoryNode
-Solver --> Tree
-Solver --> AINode
-Vue <|-- CLIVue
-Vue <|-- GameVue
-
-Piece <|-- Pawn
-Piece <|-- King
-Piece <|-- Queen
-Piece <|-- Rook
-Piece <|-- Bishop
-Piece <|-- Knight
-
-@enduml
-"
-\end{verbatim}
 
 \subsubsection{Description des Modules}
 
@@ -1389,7 +1212,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 
 
-
+\pagebreak
 \section{Bibliographie}
 \bibliographystyle{plain}
 \bibliography{references}
