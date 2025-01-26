@@ -8,7 +8,49 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{natbib}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{geometry}
 \graphicspath{ {./res/} }
+
+\definecolor{needcolor}{HTML}{007ACC}
+\definecolor{nonfunctionnalneedcolor}{HTML}{9722ff}
+\definecolor{subneedcolor}{HTML}{28A745}
+
+\tcbuselibrary{skins, breakable}
+\newtcolorbox{needbox}[1][]{
+  colframe=needcolor,
+  colback=needcolor!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  breakable,
+  enhanced,
+  sharp corners=all
+}
+
+\newtcolorbox{nonfunctionnalneedbox}[1][]{
+  colframe=nonfunctionnalneedcolor,
+  colback=nonfunctionnalneedcolor!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  breakable,
+  enhanced,
+  sharp corners=all
+}
+
+\newtcolorbox{subneedbox}[1][]{
+  colframe=subneedcolor,
+  colback=subneedcolor!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  breakable,
+  enhanced,
+  sharp corners=all
+}
+
 
 \author{
     Valentin Jonquière,
@@ -921,6 +963,20 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 
 \section{Spécifications étendues}
+
+\begin{needbox}[F?: Titre]
+    Template pour les besoins fonctionnels
+    \begin{subneedbox}[F?.?: Titre]
+        sous besoin 
+    \end{subneedbox}
+\end{needbox}
+
+\begin{nonfunctionnalneedbox}[F?: Titre]
+    Template pour les besoins non fonctionnels
+    \begin{subneedbox}[F?.?: Titre]
+        sous besoin
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
 
 \section{Bibliographie}
 \bibliographystyle{plain}
