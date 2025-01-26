@@ -1047,7 +1047,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     pendant la partie en fonction du mode dans lequel il est
     (default, verbose, debug).
     \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
-        À l'aide de la gestion des options, quels messages doivent être affichés.
+        À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
     \end{subneedbox}
     \begin{subneedbox}[F33.2: Format d'affichage des messages]
         Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
@@ -1075,11 +1075,15 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
     \begin{subneedbox}[F43.1: Nombre de bitboards]
         Il est nécessaire de posséder 12 bitboards de 64-bits pour représenter un
-        plateau d'échecs complet.  
+        plateau d'échecs complet.
+
+        \textbf{Test:} Vérifier que les deux camps possède bien 6 bitboards (une pour chaque type de pièce) 
     \end{subneedbox}
     \begin{subneedbox}[F43.2: Opérations sur les bitboards]
         Afin d'implémenter les opérations de base sur le plateau de jeu (case vide, mouvement de pièce)
-        il est nécessaire d'intégrer les opérateurs binaires de base (Union, Complément, Xor, Or, Intersection) 
+        il est nécessaire d'intégrer les opérateurs binaires de base (Union, Complément, Xor, Or, Intersection)
+
+        \textbf{Test:} Vérifier l'implémentation de chacune des opérations binaires indépendamment
     \end{subneedbox}
     
 \end{needbox}
