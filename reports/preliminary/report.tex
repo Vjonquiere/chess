@@ -978,6 +978,8 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
+\subsection{Généralités}
+
 \begin{nonfunctionnalneedbox}[F1. Langage de programmation]
     Le langage de programmation du projet devra être Java et utiliser la spécification Java SE 17+.
 \end{nonfunctionnalneedbox}
@@ -996,6 +998,8 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
     La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
 \end{nonfunctionnalneedbox}
+
+\subsection{Bibliothèques et outils}
 
 \begin{nonfunctionnalneedbox}[F10. Frameworks de test]
     Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
@@ -1026,6 +1030,8 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         sur l'interface graphique.
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
+
+\subsection{Options en ligne de commande}
 
 \begin{needbox}[F20. Mode Blitz]
     Permet de lancer le jeu en mode Blitz.
@@ -1101,6 +1107,8 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
+\subsection{Interface utilisateur}
+
 \begin{needbox}[F30. Roque]
     Le jeu devra gérer le petit et grand roque.
 
@@ -1158,6 +1166,16 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \begin{needbox}[F32: Abandon]
     Le programme devra permettre à un joueur d’abandonner la partie en cours de jeu.
+    \begin{subneedbox}[F32.1: Gagnant]
+        Le joueur courant est désigné comme celui ayant abandonné.
+        Il est donc considéré comme le joueur perdant et son adversaire
+        est quant à lui considéré comme gagnant.
+    \end{subneedbox}
+    \begin{subneedbox}[F32.2: Effet sur la partie]
+        Le jeu se retrouve dans le même état que lorsqu'un des joueurs
+        gagne ou le jeu fini en nul. Il est donc possible de redémarrer
+        une nouvelle partie.
+    \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F33: Affichage des messages]
@@ -1171,6 +1189,8 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
     \end{subneedbox}
 \end{needbox}
+
+\subsection{Format d'entrée/sortie}
 
 \begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié]
     Permettre au joueur de sauvegarder et restaurer des fichires de jeu.
@@ -1218,6 +1238,10 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
     \begin{subneedbox}[F42.2: extension de fichier \textit{.chessrc}]
         Le fichier option doit obligatoirement contenir l'extension \textit{.chessrc}.
+        Dans le cas contraire, le programme se ferme en retournant \textit{EXIT\_FAILURE}.
+
+        \textbf{Test:} Essayer de charger un fichier bien formé, mais ne possédant
+        pas la bonne extension.
     \end{subneedbox}
     \begin{subneedbox}[F42.3: fichier d'option non valide]
         Si un fichier ne correspond par au format \textit{INI} ou contient une 
@@ -1225,6 +1249,8 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
     
 \end{nonfunctionnalneedbox}
+
+\subsection{Structures internes}
 
 \begin{needbox}[F43: Plateau de jeu]
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
@@ -1240,12 +1266,50 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
         \textbf{Test:} Vérifier l'implémentation de chacune des opérations binaires indépendamment
     \end{subneedbox}
+    \begin{subneedbox}[F43.3: Opérations des échecs à l'aide des bitboards]
+        Il est nécessaire que les fonctions de base du jeu d'échec soient disponibles.
+        \textit{getAvailableMoves()}, \textit{makeMove()}, \textit{getPieceAt()} et toutes 
+        les autres fonctions du plateau de jeu doivent être implémentées avec les 12 bitboards.
+
+        \textbf{Test:} Pour chacune des fonctions, un jeu de donné représentatif. On appelle la fonction
+        en connaissant à l'avance l'effet produit sur les bitboards, puis on regarde si les bitboards sont
+        bien dans l'état attendu.
+    \end{subneedbox}
     
 \end{needbox}
 
+\subsection{Interface graphique}
+
 \begin{needbox}[F52: Configuration d'une nouvelle partie]
-    
+    L’item ’New Game’ du menu ’File’ permettra de mener l’utilisateur à une fenêtre de configuration
+    de la partie qui sera déjà remplie avec les paramètres par défaut. Qu’ils soient modifiés ou
+    non, l’utilisateur pourra lancer la partie en cliquant sur ’Start’.
+    \begin{subneedbox}[F52.1: Configuration mode \textit{blitz}]
+        L'utilisateur doit pouvoir cocher une option \textit{blitz}.
+        Si celui-ci est coché, l'utilisateur peut alors modifier une entrée
+        de texte permettant de définir le temps du blitz. Par défaut, l'entrée de texte
+        contient la valeur par défaut du mode blitz (30 minutes).
+    \end{subneedbox}
+    \begin{subneedbox}[F52.2: Configuration du mode IA]
+        L'utilisateur doit pouvoir cocher une option IA permettant d'ajouter
+        un ou deux joueurs artificiels à la partie. Si l'option est sélectionnée,
+        il peut alors choisir le nombre de joueurs artificiels à inclure dans la partie,
+        ainsi que la couleur des pièces qu'il jouera (seulement s'il n'y a qu'un unique
+        joueur IA).
+        Il sera également possible de choisir pour chaque IA l'heuristique à utiliser pour
+        estimer la valeur d'un plateau, son algorithme de recherche (AlphaBeta ou MonteCarlo),
+        sa profondeur de recherche, mais également la possibilité de borner son temps de refléxion.
+    \end{subneedbox}
+    \begin{subneedbox}[F52.3: Mode debug et verbose]
+        Deux options cochables permettant d'activer ou non le mode debug et verbose
+        durant la partie.
+    \end{subneedbox}
+    \begin{subneedbox}[F52.4: Paramètres par défaut]
+        Les paramètres par défaut seront ceux du fichier \textit{.chessrc}.
+    \end{subneedbox}
 \end{needbox}
+
+\subsection{Joueur artificiel}
 
 \begin{needbox}[F53: Heuristique d'évaluation de position]
     
