@@ -978,6 +978,161 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
+\begin{nonfunctionnalneedbox}[F1. Langage de programmation]
+    Le langage de programmation du projet devra être Java et utiliser la spécification Java SE 17+.
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F10. Frameworks de test]
+    Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
+    \begin{subneedbox}[F10.1 Utiliser JUnit]
+        Implémenter des tests unitaires.
+    \end{subneedbox}
+
+    \begin{subneedbox}[F10.2 Utiliser Jacoco pour la couverture de code]
+        Vérifier la couverture de code régulièrement pour maintenir les 80\% de couverture
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F11. Gestion des options]
+    La gestion des options sera basée sur la bibliothèque \textit{commons-cli}.
+\end{nonfunctionnalneedbox}
+
+\begin{needbox}[F20. Mode Blitz]
+    Permet de lancer le jeu en mode Blitz.
+
+    \textbf{Prérequis:} F11
+    \begin{subneedbox}[F20.1: Activation du mode]
+        Ajouter \textit{-b} et \textit{--blitz} à la gestion des options.
+
+        \textbf{Test:} Lancer le programme avec \textit{-b} et \textit{--blitz} et vérifier que le mode blitz se lance.
+    \end{subneedbox}
+    \begin{subneedbox}[F20.2: Limiter le temps d'un tour]
+        Ajouter un timer de tour avec une durée par défaut.
+
+        \textbf{Test:} Lancer le mode et vérifier que le timer se remette à zéro à chaque tour.
+    \end{subneedbox}
+    \begin{subneedbox}[F20.3: Fin de partie si temps écoulé]
+        Ajouter un scénario de fin de partie si le joueur met trop de temps à jouer.
+
+        \textbf{Test:} Lancer le mode et dépasser le temps limite. Vérifier que le joueur perd la partie.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F21. Durée du Blitz]
+    Permet de définir la durée du Blitz.
+
+    \textbf{Prérequis:} F11 et F20
+    \begin{subneedbox}[F21.1: Activation du mode]
+        Ajouter \textit{-t TIME} et \textit{--time TIME} à la gestion des options.
+
+        \textbf{Test:} Lancer le programme avec \textit{-t TIME} et \textit{--time TIME} (en ayant activé le mode blitz)
+        et vérifier que le mode blitz se lance avec le timer correspondant à TIME.
+    \end{subneedbox}
+    \begin{subneedbox}[F21.2: Limiter le temps d'un tour]
+        Si l'option est activée, remplace le temps par défaut (30 minutes) du timer par le temps donné.
+
+        \textbf{Test:} Lancer le mode et vérifier que le timer ait bien la durée passée en option.
+    \end{subneedbox}
+    \begin{subneedbox}[F21.3: Avertissement si mauvais usage]
+        Ignorer l'option si le mode blitz n'est pas activé, mais affiche un message d'avertissement
+
+        \textbf{Test:} Donner l'option sans donner l'option Blitz (F20). Vérifier d'un avertissement s'affiche
+        et que le jeu se lance sans le mode blitz.
+    \end{subneedbox}
+\end{needbox}
+
+    \begin{needbox}[F30. Roque]
+        Le jeu devra gérer le petit et grand roque.
+    
+        \textbf{Prérequis:} F27 et F28 ??
+        \begin{subneedbox}[F30.1: Vérifier que le roi et la Tour n'ont pas bougé]
+            
+
+            \textbf{Test:}
+        \end{subneedbox}
+        \begin{subneedbox}[F30.2:Le Roi ne doit pas être en échec]
+            Le roi ne doit pas être en échec, ni avant ni après le roque
+
+            \textbf{Test:}
+        \end{subneedbox}
+        \begin{subneedbox}[F30.3: Espace libre entre le roi et la tour]
+            
+
+            \textbf{Test:}
+        \end{subneedbox}
+        \begin{subneedbox}[F30.4:Le roi ne passe pas par une case attaquée par l'ennemi]
+            
+
+            \textbf{Test:}
+        \end{subneedbox}
+        \begin{subneedbox}[F30.5: Implémenter le petit roque]
+            
+
+            \textbf{Test:}
+        \end{subneedbox}
+        \begin{subneedbox}[F30.6: Implémenter le grand roque]
+            
+
+            \textbf{Test:}
+        \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F31: Promotion du pion]
+    Gérer la promotion du pion.
+
+    \textbf{Prérequis:} F27 et F28 ??
+    \begin{subneedbox}[F31.1: Pouvoir remplacer le pion par une autre pièce.]
+        Si le pion a atteint la rangée la plus éloignée de sa position d'origine, pouvoir le remplacer par
+        une dame, un fou, un cavalier ou une tour.
+
+        \textbf{Test:} Arriver à la dernière case et vérifier que l'on peut bien remplacer le pion. 
+        Vérifier que les mouvements possibles sont ceux de la pièce choisie.
+    \end{subneedbox}
+    \begin{subneedbox}[F31.2: Seul le pion peut être promu]
+        Les autres types de pièces ne peuvent pas être promues
+
+        \textbf{Test:} Faire atteindre la dernière ligne à chaque type de pièces
+         et vérifier qu'aucune ne peut être promue.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié]
+    Permettre au joueur de sauvegarder et restaurer des fichires de jeu.
+    \begin{subneedbox}[F40.1: Représentation du plateau de jeu]
+        Le plateau de jeu et le joueur courant devra être représenté en format ASCII simplifié.
+    \end{subneedbox}
+    \begin{subneedbox}[F40.2: Sauvegarde du jeu]
+        On devra pouvoir sauvegarder le plateau de jeu dans le format définit, avec le joueur
+         courant et le plateau de jeu (et historique avec F41).
+
+        \textbf{Test:} Sauvegarder la partie à plusieurs moments du jeu. Vérifier que le fichier sauvegardé
+        correspond à l'état courant du jeu.
+    \end{subneedbox}
+    \begin{subneedbox}[F40.3: Chargement d'un fichier]
+        On devra pouvoir charger un fichier de jeu, contenant le plateau et le joueur courant,
+        afin de continuer une partie.
+
+        \textbf{Test:} Restaurer un fichier et vérifier que le plateau affiché corresponde à celui
+        enregistré dans le fichier.
+    \end{subneedbox}
+    \begin{subneedbox}[F40.4: Gestion des erreurs de lecture]
+        Une erreur de lecture dans le fichier devra être signalée à l'utilisateur en précisant l'erreur et
+        la ligne. Le programme devra s'arrêter avec un \textit{EXIT\_FAILURE}. On devra vérifer qu'il y a
+        le bon nombre de pièces dans chaque camp (16 au maximum) et un roi de chaque côté.
+
+        \textbf{Test:} Créer un fichier avec au moins une erreur et vérifier que le programme afficher l'erreur
+        avant de s'arrêter. Vérifier que le code de retour est bien \textit{EXIT\_FAILURE}.
+    \end{subneedbox}
+
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F41: Format de l'historique]
+    Lecture et écriture de l'historique de jeu.
+    \begin{subneedbox}[F?.?: Titre]
+        sous besoin
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
 \section{Bibliographie}
 \bibliographystyle{plain}
 \bibliography{references}
