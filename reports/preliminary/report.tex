@@ -1224,8 +1224,26 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \begin{nonfunctionnalneedbox}[F41: Format de l'historique]
     Lecture et écriture de l'historique de jeu.
-    \begin{subneedbox}[F?.?: Titre]
-        sous besoin
+
+    \textbf{Prérequis:} F28
+    \begin{subneedbox}[F41.1: Sauvegarder les coups joués]
+        Permet à l'utilisateur de sauvegarder l'historique des coups joués dans la partie.
+
+        \textbf{Test:} Jouer une partie. Sauvegarder les données dans un fichier. Vérifier
+        que les coups joués sont bien affichés.
+    \end{subneedbox}
+    \begin{subneedbox}[F41.2: Charger les coups joués]
+        Permet à l'utilisateur de charger une partie commencée, avec l'historique des coups joués.
+
+        \textbf{Test:} Écrire une liste de coups à jouer. Lancer le jeu à partir de la sauvegarde et
+        vérifier qu'ils ont bien été joués.
+    \end{subneedbox}
+    \begin{subneedbox}[F41.3: Afficher les coups annulés]
+        Garder dans les coups annulés dans l'historique d'une partie. Ajouter un flag pour notifier que
+        le coup a été annulé.
+
+        \textbf{Test:} Lancer le programme, jouer puis annuler des coups. Sauvegarder la partie et vérifier
+        que les coups annulés sont présents et annotés annulés dans le fichier de sauvegarde.
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
@@ -1280,6 +1298,43 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Interface graphique}
 
+\begin{needbox}[F50: Affichage d'une partie en cours]
+    Affiche le plateau courant et permet au joueur de bouger ses pièces.
+    \textbf{Prérequis:} F25, F26, F33, F46
+    \begin{subneedbox}[F50.1: Affichage du plateau]
+        Afficher le plateau et rendre les cases cliquables afin de sélectionner et 
+        bouger une pièce.
+
+        \textbf{Test:} TestFX ??
+    \end{subneedbox}
+    \begin{subneedbox}[F50.2: Affichage du temps du Blitz]
+        Afficher le temps restant au joueur pour jouer son coup si le mode Blitz est activé (et implémenté).
+
+        \textbf{Test:} Lancer le programme avec le mode Blitz et vérifier que le temps s'écoule correctement.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F51: Affichage des coups joués]
+    Affiche l'historique des coups joués sur l'interface graphique.
+
+    \textbf{Prérequis:} F25, F26, F28, F33, F46
+    \begin{subneedbox}[F50.1: Affichage les coups joués]
+        Afficher les coups joués en les numérotant. Les coups les plus récents se trouveront
+        en haut de la pile des coups. Il faut envisager d'avoir un espace scrollable, si la partie
+        contient de nombreux coups
+
+        \textbf{Test:} Jouer un coup et vérifier que le coup est bien affiché.
+    \end{subneedbox}
+    \begin{subneedbox}[F50.2: Afficher les coups supprimés]
+        S'il est possible d'annuler des coups, les noter d'une autre couleur et noter les 
+        coups joués au-dessus ou à coté.
+
+        \textbf{Test:} Lancer le programme, jouer des coups puis revenir en arrière et jouer à nouveau.
+        Vérifier que les coups annulés sont d'une autre couleur et que les nouveaux coups sont affichés.
+    \end{subneedbox}
+\end{needbox}
+
+
 \begin{needbox}[F52: Configuration d'une nouvelle partie]
     L’item ’New Game’ du menu ’File’ permettra de mener l’utilisateur à une fenêtre de configuration
     de la partie qui sera déjà remplie avec les paramètres par défaut. Qu’ils soient modifiés ou
@@ -1313,6 +1368,23 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \begin{needbox}[F53: Heuristique d'évaluation de position]
     
+\end{needbox}
+
+\begin{needbox}[F60: Temps de réflexion borné]
+    Permet de paramétrer la durée de "réflexion" de l'IA.
+
+    \textbf{Prérequis:} F11
+    \begin{subneedbox}[F60.1: Activation du mode]
+        Ajouter \textit{--ai-time TIME} à la gestion des options.
+
+        \textbf{Test:} Lancer le programme avec \textit{--ai-time TIME} et vérifier que
+        le temps de réflexion de l'algorithme de recherche du meilleur coup est bien de TIME.
+    \end{subneedbox}
+    \begin{subneedbox}[F60.2: Limiter le temps de réflexion d'IA]
+        Ajouter un timer au joueur artificiel avec une durée par défaut de 5 secondes.
+
+        \textbf{Test:} Lancer le mode et vérifier que le timer se remette à zéro à chaque tour et que le temps écoulé soit le bon.
+    \end{subneedbox}
 \end{needbox}
 
 
