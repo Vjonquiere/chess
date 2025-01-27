@@ -135,7 +135,7 @@ mémoire qui demandent, elle aussi, parfois beaucoup de travail pour être réso
 Nous pouvions également utiliser \textit{Python} pour réaliser ce projet. Cependant, le fait que ce langage
 soit non typé a vite écarté ce choix. En effet, les types étant vérifiés directement à l'exécution, il est
 beaucoup plus dangereux d'avoir une ligne non couverte par un test (il faut donc un coverage maximal). Il y
-a donc le danger de laisser des erreurs de typages qui ne sont découverte uniquement lorsqu’une partie du code
+a donc le danger de laisser des erreurs de typages qui ne sont découverte uniquement lorsqu'une partie du code
 est exécutée après la livraison du code.
 
 \subsubsection{Java}
@@ -149,9 +149,9 @@ outils et environnements de développement. Cela permettra de gagner du temps lo
 
 \section{Explication du sujet}
 \subsection{Règles du jeu}
-Le jeu d’échecs contient beaucoup de règles parfois techniques, mais dont l’objectif reste simple à comprendre :
+Le jeu d'échecs contient beaucoup de règles parfois techniques, mais dont l'objectif reste simple à comprendre :
  il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est attaqué 
- mais n’a aucun coup légal pour se défendre de cette attaque.
+ mais n'a aucun coup légal pour se défendre de cette attaque.
 
 \subsubsection{L'échiquier et les pièces}
 Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces :
@@ -263,8 +263,8 @@ Les déplacements sont propres à chaque type de pièce :
 Parfois, les déplacements peuvent être limités par des règles spécifiques comme le \textbf{clouage}. Voyons ces règles en détail.
 
 \subsubsection{Règles Spécifiques}
-\paragraph{-Clouage} Si une pièce défend une attaque au roi en se positionnant devant cette dernière, on dit qu’elle est \textbf{clouée}
- et ne peut pas bouger. En effet, il est interdit de mettre son roi en échec volontairement par l’une de ses propres actions.
+\paragraph{-Clouage} Si une pièce défend une attaque au roi en se positionnant devant cette dernière, on dit qu'elle est \textbf{clouée}
+ et ne peut pas bouger. En effet, il est interdit de mettre son roi en échec volontairement par l'une de ses propres actions.
 
  \noindent
  \begin{minipage}{0.48\textwidth}
@@ -282,8 +282,8 @@ Parfois, les déplacements peuvent être limités par des règles spécifiques c
 
 \paragraph{-Roc} Le \textbf{roc} est un mouvement spécial impliquant le roi et une des tours, sous certaines conditions :
 \begin{itemize}
-    \item Le roi et la tour concernés n’ont jamais bougé depuis le début de la partie.
-    \item Le roi ne doit pas être en échec, et aucune des cases qu’il traverse ou sur laquelle il atterrit ne doit être attaquée.
+    \item Le roi et la tour concernés n'ont jamais bougé depuis le début de la partie.
+    \item Le roi ne doit pas être en échec, et aucune des cases qu'il traverse ou sur laquelle il atterrit ne doit être attaquée.
     \item Il ne doit y avoir aucune pièce entre le roi et la tour.
 \end{itemize}
 
@@ -301,7 +301,7 @@ Parfois, les déplacements peuvent être limités par des règles spécifiques c
     \vspace{0.5cm}
 \end{minipage}
 
-\paragraph{-Prise en Passant} Si un pion adverse avance de deux cases depuis sa position initiale et finit à côté d’un de nos pions,
+\paragraph{-Prise en Passant} Si un pion adverse avance de deux cases depuis sa position initiale et finit à côté d'un de nos pions,
  on peut le capturer \textbf{en passant}, mais uniquement au coup suivant.
 
  \noindent
@@ -318,8 +318,8 @@ Parfois, les déplacements peuvent être limités par des règles spécifiques c
      \vspace{0.5cm}
  \end{minipage}
 
-\paragraph{-Promotion du Pion} Si un pion atteint la dernière rangée de l’échiquier, il peut être promu en dame,
- tour, fou ou cavalier. La promotion du pion est souvent synonyme d’avantage conséquent et peut mener à une victoire.
+\paragraph{-Promotion du Pion} Si un pion atteint la dernière rangée de l'échiquier, il peut être promu en dame,
+ tour, fou ou cavalier. La promotion du pion est souvent synonyme d'avantage conséquent et peut mener à une victoire.
 
  \noindent
  \begin{minipage}{0.48\textwidth}
@@ -339,13 +339,13 @@ Parfois, les déplacements peuvent être limités par des règles spécifiques c
 Une partie d'échecs peut se terminer de plusieurs façons :
 \begin{itemize}
     \item \textbf{Échec et mat} : le roi est attaqué et aucun coup légal ne peut le sauver, ce qui donne la victoire à l'adversaire.
-    \item \textbf{Pat} : un joueur n’a aucun coup légal à jouer et son roi n’est pas en échec, entraînant une nulle.
+    \item \textbf{Pat} : un joueur n'a aucun coup légal à jouer et son roi n'est pas en échec, entraînant une nulle.
     \item \textbf{Manque de matériel} : si seuls les rois, ou un roi et un fou/cavalier, restent sur l'échiquier, un mat devient impossible, ce qui entraîne une nulle.
     \item \textbf{Répétition de position} : une même position exacte apparaît trois fois, entraînant une nulle.
-    \item \textbf{Règle des 50 coups} : si aucun pion n’est déplacé ni pièce capturée pendant 50 coups consécutifs, la partie est déclarée nulle.
-    \item \textbf{Abandon} : un joueur peut décider d’abandonner si sa position devient trop défavorable.
+    \item \textbf{Règle des 50 coups} : si aucun pion n'est déplacé ni pièce capturée pendant 50 coups consécutifs, la partie est déclarée nulle.
+    \item \textbf{Abandon} : un joueur peut décider d'abandonner si sa position devient trop défavorable.
     \item \textbf{Accord mutuel} : les deux joueurs conviennent de déclarer une nulle lorsqu'aucun ne voit de progrès réaliste possible.
-    \item \textbf{Dépassement de temps} : un joueur perd si son chronomètre s’écoule avant qu’il ne joue, sauf si l’adversaire n’a pas assez de matériel pour mater.
+    \item \textbf{Dépassement de temps} : un joueur perd si son chronomètre s'écoule avant qu'il ne joue, sauf si l'adversaire n'a pas assez de matériel pour mater.
 \end{itemize}
 
 \subsection{Plateau sous forme de bitmaps}
@@ -644,7 +644,7 @@ Gestion des aspects fondamentaux et comme le style de codage, les tests, les per
     \item F7. Bugs
     \item F8. Performances
     \item F9. Build-system
-    \item F14. Nom de l’exécutable principal
+    \item F14. Nom de l'exécutable principal
     \item F15. Usage général
 \end{itemize}
 
@@ -678,9 +678,9 @@ Mise en place des fonctionnalités essentielles pour le jeu en ligne de commande
     \item \textbf{Jeu CLI :}
     \begin{itemize}
         \item F24. Interface en ligne de commande
-        \item F26. Affichage de l’échiquier
+        \item F26. Affichage de l'échiquier
         \item F27. Notation des coups
-        \item F28. Représentation de l’historique
+        \item F28. Représentation de l'historique
         \item F33. Affichage des messages
     \end{itemize}
 \end{itemize}
@@ -693,7 +693,7 @@ Développement de l'IA, avec des algorithmes comme Minimax et Monte Carlo, et aj
     \item \textbf{IA :}
     \begin{itemize}
         \item F23. Mode IA
-        \item F53. Heuristique d’évaluation de position
+        \item F53. Heuristique d'évaluation de position
         \item F54. Algorithme de recherche Minimax
         \item F55. $\alpha\beta$-pruning
         \item F56. Monte Carlo Tree Search
@@ -705,11 +705,11 @@ Développement de l'IA, avec des algorithmes comme Minimax et Monte Carlo, et aj
     \begin{itemize}
         \item F32. Abandon
         \item F34. Quitter et sauvegarde une partie
-        \item F35. Sauvegarde de l’historique
-        \item F36. Naviguer dans l’historique
+        \item F35. Sauvegarde de l'historique
+        \item F36. Naviguer dans l'historique
         \item F37. Recommencer une partie
         \item F40. Format de fichier simplifié
-        \item F41. Format de l’historique
+        \item F41. Format de l'historique
         \item F42. Fichier de configuration
     \end{itemize}
 \end{itemize}
@@ -724,12 +724,12 @@ Création de l'interface graphique et finalisation des fonctionnalités utilisat
         \item F12. Bibliothèque graphique
         \item F25. Interface graphique
         \item F46. Fonctions de base
-        \item F47. Menu ’File’
-        \item F48. Menu ’Game’
-        \item F49. Menu ’About’
-        \item F50. Affichage d’une partie en cours
+        \item F47. Menu 'File'
+        \item F48. Menu 'Game'
+        \item F49. Menu 'About'
+        \item F50. Affichage d'une partie en cours
         \item F51. Affichage des coups joués
-        \item F52. Configuration d’une nouvelle partie
+        \item F52. Configuration d'une nouvelle partie
     \end{itemize}
     \item \textbf{Fonctionnalités :}
     \begin{itemize}
@@ -834,7 +834,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F7: Bugs]
-    Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées et les erreurs doivent générer des messages d’erreur.
+    Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées et les erreurs doivent générer des messages d'erreur.
 \end{nonfunctionnalneedbox}
 
 \subsection{Bibliothèques et outils}
@@ -872,28 +872,32 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \subsection{Options en ligne de commande}
 
 \begin{needbox}[F16: Aide en ligne de commande]
-    L’option ’-h’, ’–-help’ affiche l’aide puis quitte.
+    L'option '-h', '--help' affiche l'aide puis quitte.
     \begin{subneedbox}[F16.1: Texte]
         Rédaction du message d'aide destiné à l'utilisateur.
     \end{subneedbox}
     \begin{subneedbox}[F16.2: Affichage]
         Affichage du message d'aide lorsque l'option \textit{-h} ou \textit{--help} est utilisée.
+        \textbf{Test:} Vérifier que le message d'aide s'affiche.
     \end{subneedbox}
     \begin{subneedbox}[F16.3: Quitter]
         Quitter le programme après l'affichage effectué.
+        \textbf{Test:} Le programme doit se fermer avec un code de sortie EXIT\_SUCCESS.
     \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F17: Version]
-    L’option ’-V’, ’–-version’ affiche la version puis quitte.
+    L'option '-V', '--version' affiche la version puis quitte.
     \begin{subneedbox}[F17.1: Texte]
         Rédaction du message de version actuelle.
     \end{subneedbox}
     \begin{subneedbox}[F17.2: Affichage]
         Affichage du message de version lorsque l'option \textit{-V} ou \textit{--version} est utilisée.
+        \textbf{Test:} Vérifier que le message de version s'affiche.
     \end{subneedbox}
     \begin{subneedbox}[F17.3: Quitter]
         Quitter le programme après l'affichage effectué.
+        \textbf{Test:} Le programme doit se fermer avec un code de sortie EXIT\_SUCCESS.
     \end{subneedbox}
     
 \end{needbox}
@@ -974,24 +978,27 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Interface utilisateur}
 
-\begin{needbox}[F26: Affichage de l’échiquier]
-    À chaque coup, le programme devra afficher l’échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
+\begin{needbox}[F26: Affichage de l'échiquier]
+    À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
     \begin{subneedbox}[F26.1: Echiquier]
-        Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des ’\_’. Le Roi sera représenté par ’K/k’ (King), la Reine par ’Q/q’ (Queen), les Tours par ’R/r’ (Rook), les Fous par ’B/b’ (Bishop), les Cavaliers par ’N/n’ (kNights) et les Pions par ’P/p’ (Pawn).
+        Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des '\_'. Le Roi sera représenté par 'K/k' (King), la Reine par 'Q/q' (Queen), les Tours par 'R/r' (Rook), les Fous par 'B/b' (Bishop), les Cavaliers par 'N/n' (kNights) et les Pions par 'P/p' (Pawn).
+        \textbf{Test:} Jouer un coup et vérifier que l'échiquier s'affiche.
     \end{subneedbox}
     \begin{subneedbox}[F26.2: Temps restant]
         Affichage du temps restant (si le format Blitz est utilisé).
+        \textbf{Test:} Jouer un coup en mode Blitz et vérifier que le temps s'affiche.
     \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F27: Notation des coups]
     Utilisation d'une notation codifiée pour les coups.
     \begin{subneedbox}[F27.1: Reconnaissance du coup]
-        Chaque case de l’échiquier est repérée par une colonne (de ’a’ à ’h’) et une ligne (de ’1’ à ’8’). Par exemple, la case en bas à gauche est ’a1’ et celle en haut à droite est ’h8’. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup ’e2-e4’ déplace le pion de la case ’e2’ à la case ’e4’. Et, lorsqu’une pièce est prise dans le mouvement, le coup sera noté ’e2xe4’.
+        Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.
     \end{subneedbox}
     \begin{subneedbox}[F27.2: Vérification du coup]
         Vérification que le coup demandé par l'utilisateur est un coup légal.
     \end{subneedbox}
+    \textbf{Test:} Jouer des coups légaux et des coups illégaux. Vérifier que seuls les coups légaux sont acceptés.
 \end{needbox}
 
 \begin{needbox}[F30. Roque]
@@ -1050,7 +1057,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 \begin{needbox}[F32: Abandon]
-    Le programme devra permettre à un joueur d’abandonner la partie en cours de jeu.
+    Le programme devra permettre à un joueur d'abandonner la partie en cours de jeu.
     \begin{subneedbox}[F32.1: Gagnant]
         Le joueur courant est désigné comme celui ayant abandonné.
         Il est donc considéré comme le joueur perdant et son adversaire
@@ -1064,7 +1071,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 \begin{needbox}[F33: Affichage des messages]
-    Le programme devra afficher des messages d’information
+    Le programme devra afficher des messages d'information
     pendant la partie en fonction du mode dans lequel il est
     (default, verbose, debug).
     \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
@@ -1075,16 +1082,19 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F36: Naviguer dans l’historique]
-    Il doit être possible de revenir en arrière ou d’aller en avant dans l’historique des coups joués si tous les joueurs humains sont d’accord.
+\begin{needbox}[F36: Naviguer dans l'historique]
+    Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
     \begin{subneedbox}[F36.1: Sauvegarde des coups joués]
         Sauvegarder les mouvements effectués dans la partie en cours.
+        \textbf{Test:} Jouer plusieurs coups et verifier que ceux-ci sont enregistrés.
     \end{subneedbox}
     \begin{subneedbox}[F36.2: Sauvegarde des coups annulés]
         Sauvegarder les mouvements annulés tant qu'un nouveau mouvement n'est pas joué.
+        \textbf{Test:} Annuler plusieurs coups et vérifier que ceux-ci sont enregistrés.
     \end{subneedbox}
     \begin{subneedbox}[F36.3: Perte des coups annulés]
         Effacer les coups annulés si une nouvelle ligne de jeu est joués.
+        \textbf{Test:} Jouer un nouveau coup après avoir annulé un coup précédent. Vérifier que le rétablissement est impossible.
     \end{subneedbox}
     \begin{subneedbox}[F?.4: Annulation/Rétablissement]
         Donner la possibilité aux joueurs humain de proposer l'annulation ou le rétablissement d'un coup.
@@ -1099,6 +1109,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \begin{subneedbox}[F37.2: Création d'une nouvelle partie]
         Créer une nouvelle instance de partie avec la position par défaut.
     \end{subneedbox}
+    \textbf{Test:} Recommencer une partie et vérifier que l'échiquier est réinitialisé à la position de départ.
 \end{needbox}
 
 \subsection{Format d'entrée/sortie}
@@ -1238,7 +1249,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     
 \end{needbox}
 
-\begin{needbox}[F47: Menu ’File’]
+\begin{needbox}[F47: Menu 'File']
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
     \begin{subneedbox}[F47.1: New Game]
         Ajout d'un bouton 'New Game' pemettant de lancer une nouvelle partie.
@@ -1298,9 +1309,9 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 
 \begin{needbox}[F52: Configuration d'une nouvelle partie]
-    L’item ’New Game’ du menu ’File’ permettra de mener l’utilisateur à une fenêtre de configuration
-    de la partie qui sera déjà remplie avec les paramètres par défaut. Qu’ils soient modifiés ou
-    non, l’utilisateur pourra lancer la partie en cliquant sur ’Start’.
+    L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
+    de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
+    non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'.
     \begin{subneedbox}[F52.1: Configuration mode \textit{blitz}]
         L'utilisateur doit pouvoir cocher une option \textit{blitz}.
         Si celui-ci est coché, l'utilisateur peut alors modifier une entrée
@@ -1331,6 +1342,32 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F53: Heuristique d'évaluation de position]
     
 \end{needbox}
+
+\begin{needbox}[F56: Monte Carlo Tree Search]
+    \begin{subneedbox}[F56.1: Activation du mode]
+        Ajouter \textit{--ai-mode mcts} à la gestion des options.
+    \end{subneedbox}
+
+    \begin{subneedbox}[F56.2: Implémentation de MCTS]
+        Développer un algorithme MCTS comprenant :
+        \begin{itemize}
+            \item Une fonction \textit{selection()} pour choisir un nœud.
+            \item Une fonction \textit{expansion()} pour ajouter un ou plusieurs nœuds enfants à un nœud sélectionné.
+            \item Une fonction \textit{simulation()} pour effectuer une simulation aléatoire à partir d'un état donné.
+            \item Une fonction \textit{backpropagation()} pour propager les résultats de la simulation le long du chemin parcouru.
+        \end{itemize}
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F57: Profondeur de recherche]
+    \begin{subneedbox}[F57.1: Activation du mode]
+        Ajouter \textit{--ai-depth DEPTH} à la gestion des options.
+    \end{subneedbox}
+    \begin{subneedbox}[F57.2: Limiation de la profondeur]
+        Ajouter un limitateur de profondeur de recherche au joueur artificiel.
+    \end{subneedbox}
+\end{needbox}
+
 
 \begin{needbox}[F60: Temps de réflexion borné]
     Permet de paramétrer la durée de "réflexion" de l'IA.
