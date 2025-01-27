@@ -822,6 +822,34 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
 \end{nonfunctionnalneedbox}
 
+\begin{nonfunctionnalneedbox}[F4. Système cible]
+    Le programme devra fonctionner sur des systèmes d’exploitation GNU/Linux. \\
+    \textbf{Test:} Vérifier la compatibilité sur Ubuntu 22.04 et Fedora 36
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F5. Documentation]
+    
+    \begin{subneedbox}[F5.1: Option -h]
+        Implémenter une option -h (besoin F16).
+
+        \textbf{Prérequis:} F16.
+
+        \textbf{Test:} Vérifier que l'option -h affiche bien l'aide en ligne.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F5.2: Rédiger un guide utilisateur]
+        Rédiger un guide utilisateur pour l'exécutable.
+
+        \textbf{Test:} Vérifier que le guide couvre toutes les fonctionnalités principales.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F5.3: Ajouter des commentaires au code source]
+        Ajouter des commentaires au code source (JavaDoc).
+
+        \textbf{Test:} Vérifier que chaque fonction et classe possède des commentaires explicites.
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
 \begin{nonfunctionnalneedbox}[F6. Tests]
     Tester et valider le programme avec une couverture suffisante.
     \begin{subneedbox}[F6.1 Tests]
@@ -870,6 +898,46 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{nonfunctionnalneedbox}
 
 \subsection{Options en ligne de commande}
+
+\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal]
+    L’exécutable principal doit s’appeler "chess" et permettre de lancer tout le programme.
+    \textbf{Test:} Vérifier que le programme se lance correctement avec le nom 'chess'.
+\end{nonfunctionnalneedbox}
+
+\begin{needbox}[F15. Usage général]
+    \begin{subneedbox}[F15.1: Forme et nom du programme]
+        Le programme devra s’appeler chess et devra s'exécuter de la manière suivante :  
+        \texttt{\#> chess [OPTIONS] [FILENAME]}
+
+        \textbf{Test:} Vérifier que le programme se lance correctement avec les options spécifiées.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F15.2: Gestion des options en ligne de commande]
+        Vérifier si les options sont correctes. En cas d'erreur, afficher un message d'erreur (stderr) et l’aide en ligne de commande -h.
+
+        \textbf{Prérequis:} F5.1.
+
+        \textbf{Test:} Tester différentes combinaisons d'options valides et invalides.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F15.3: Démarrage/Chargement d’une partie à partir d’un fichier]
+        Si un nom de fichier est donné, charger depuis le fichier. Sinon, démarrer une nouvelle partie avec les options par défaut.
+
+        \textbf{Test:} Vérifier le comportement avec et sans fichier en paramètre.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F15.4: Gestion des sorties standard et des erreurs]
+        Les messages d’erreurs doivent être affichés sur stderr et les messages utilisateur sur stdout.
+
+        \textbf{Test:} Simuler des erreurs et vérifier les messages sur les sorties appropriées.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F15.5: Codes de retour du programme]
+        Le code de retour devra être EXIT\_SUCCESS en cas de succès et EXIT\_FAILURE en cas d’erreur.
+
+        \textbf{Test:} Tester les retours en cas de paramètres valides et invalides.
+    \end{subneedbox}
+\end{needbox}
 
 \begin{needbox}[F16: Aide en ligne de commande]
     L'option '-h', '--help' affiche l'aide puis quitte.
@@ -978,6 +1046,54 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Interface utilisateur}
 
+\begin{needbox}[F24. Interface en ligne de commande]
+    \begin{subneedbox}[F24.1: Lancement de l'interface textuelle par défaut]
+        Le programme doit lancer l'interface textuelle en l'absence d'option -g ou --gui.
+
+        \textbf{Prérequis:} F15.2.
+
+        \textbf{Test:} Vérifier que l'interface textuelle est bien lancée.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F24.2: Saisie des commandes utilisateur]
+        Développer un système pour lire et valider les commandes saisies par l'utilisateur (ex: "--help", (move)"h4 h2").
+
+        \textbf{Test:} Vérifier que les commandes de base fonctionnent comme attendu.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F24.3: Gestion des erreurs de commande]
+        Afficher un message d'erreur pour une commande invalide et l’aide (-h).
+
+        \textbf{Test:} Entrer des commandes invalides et vérifier les messages d'erreur.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F25. Interface graphique]
+    \begin{subneedbox}[F25.1: Lancement de l'interface graphique en option]
+        Implémenter la détection des options -g ou --gui pour lancer l'interface graphique.
+
+        \textbf{Prérequis:} F15.2.
+
+        \textbf{Test:} Vérifier que l'interface graphique est bien lancée avec les options.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F25.2: Représentation de l’échiquier et des pièces]
+        Créer un échiquier graphique avec des cases alternant deux couleurs et des images pour les pièces.
+
+        \textbf{Prérequis:} F25.1.
+
+        \textbf{Test:} Vérifier l'affichage de l'échiquier et des pièces.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F25.3: Move avec un clic]
+        Permettre le déplacement des pièces via clic.
+
+        \textbf{Prérequis:} F25.2.
+
+        \textbf{Test:} Tester les déplacements avec un clic pour chaque type de pièce.
+    \end{subneedbox}
+\end{needbox}
+
 \begin{needbox}[F26: Affichage de l'échiquier]
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
     \begin{subneedbox}[F26.1: Echiquier]
@@ -1079,6 +1195,37 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
     \begin{subneedbox}[F33.2: Format d'affichage des messages]
         Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F34. Quitter et sauvegarder une partie]
+    \begin{subneedbox}[F34.1:Quitter une partie en cours]
+        Le joueur doit avoir la possibilité de quitter une partie en cours menant à son abandon.
+    \end{subneedbox}
+
+    \textbf{Prérequis:} F35 et F46.4
+
+    \textbf{Test:} Vérifier qu'une partie est sauvegardée correctement avant de quitter.
+\end{needbox}
+
+\begin{needbox}[F35. Sauvegarde de l’historique]
+    \begin{subneedbox}[F35.1: Multi-interfaces]
+        La sauvegarde doit fonctionner sur toutes les interfaces.
+
+        \textbf{Test:} Tester la sauvegarde en mode graphique et en ligne de commande.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F35.2: Gestion des erreurs]
+        En cas d’échec, afficher un message d’erreur. En cas de succès, un message de validation.
+
+        \textbf{Test:} Simuler une sauvegarde réussie et échouée.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F35.3: Tests]
+        - Tester sur une partie finie
+        - Tester sur une partie en cours.
+
+        \textbf{Test:} Vérifier la sauvegarde dans les conditions mentionnées.
     \end{subneedbox}
 \end{needbox}
 
@@ -1215,7 +1362,32 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         en connaissant à l'avance l'effet produit sur les bitboards, puis on regarde si les bitboards sont
         bien dans l'état attendu.
     \end{subneedbox}
-    
+\end{needbox}
+
+\begin{needbox}[F44. Module bitboard]
+    \begin{subneedbox}[F44.1: Initialisation des bitboards]
+        Implémenter des fonctions pour initialiser ou réinitialiser les bitboards.
+
+        \textbf{Test:} Tester l'initialisation et la réinitialisation des bitboards.
+    \end{subneedbox}
+
+    \begin{subneedbox}[F44.2: Manipulation des bits]
+        Créer des fonctions pour activer, désactiver, inverser, vérifier et compter les bits.
+
+        \textbf{Test:} Tester chaque fonction utilitaire avec des cas spécifiques.
+    \end{subneedbox}
+
+    \textbf{Prérequis:} F43.
+\end{needbox}
+
+\begin{needbox}[F45. État du jeu]
+    L’état du jeu doit être stocké dans uns structue de donnée et doit inclure au moins les informations suivantes : \\
+    - Joueur courant.  
+    - Temps restant pour chaque camp (si blitz).  
+    - L’état de l’échiquier.  
+    - L’historique.
+
+    \textbf{Test:} Vérifier que l’état du jeu est mis à jour après chaque mouvement.
 \end{needbox}
 
 \subsection{Interface graphique}
@@ -1341,6 +1513,48 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \begin{needbox}[F53: Heuristique d'évaluation de position]
     
+\end{needbox}
+
+\begin{needbox}[F54. Algorithme de recherche Minimax]
+    \begin{subneedbox}[F54.1: Activer Minimax par défaut si AlphaBeta-pruning n'est pas implémenté]
+        Utiliser l'option --ai-mode mm pour activer l'algorithme.
+
+        \textbf{Test:} Vérifier que l'option est bien active seulement si AlphaBeta-pruning n'est pas implémenté.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F54.2: Implémentation de base]
+        Implémenter la version de base de l’algorithme Minimax.
+
+        \textbf{Test:} Vérifier que Minimax calcule les meilleurs mouvements pour différents scénarios.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F54.3: Gestion des niveaux de profondeur]
+        Ajouter la gestion des niveaux de profondeur pour limiter les calculs.
+
+        \textbf{Test:} Vérifier les performances à différentes profondeur.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F55. AlphaBeta-pruning]
+    \begin{subneedbox}[F55.1: Option actif par défaut]
+        Si l'algorithme AlphaBeta-pruning est implémenté, il doit être activé par défaut pour les décisions de l'IA.
+        Utiliser l'option --ai-mode ab pour activer l’algorithme.
+
+        \textbf{Test:} Vérifier que l'option active l'algorithme correctement.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F55.2: Implémentation de base]
+        Implémenter la version de base de l’algorithme AlphaBeta-pruning.
+
+        \textbf{Test:} Vérifier les performances comparées à Minimax sans AlphaBeta-pruning.
+    \end{subneedbox}
+    
+    \begin{subneedbox}[F55.3: Gestion des niveaux de profondeur]
+        Ajouter la gestion des niveaux de profondeur pour limiter les calculs.
+
+        \textbf{Test:} Vérifier les performances à différentes profondeurs avec AlphaBeta-pruning.
+    \end{subneedbox}
+    \textbf{Prérequis:} F54.
 \end{needbox}
 
 \begin{needbox}[F56: Monte Carlo Tree Search]
