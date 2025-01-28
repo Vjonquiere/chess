@@ -399,30 +399,42 @@ la compatibilité avec les bitboards pour représenter le plateau de jeu, ainsi 
 \\La première idée fut une pile. En effet, cette structure est très simple d'utilisation et parfaitement adaptée pour stocker
 des coups, tout en ayant la possibilité d'en enlever et d'en rajouter. La complexité en temps et en espace est en O(n) si n 
 correspond au nombre de coups de la partie. Pour revenir au tout début de la partie, c'est-à-dire avec les pièces positionnées
-sur leurs cases initiales, il suffit de dépiler les n coups stackés en les empiler dans une seconde pile qui s'occupera de sauvegarder
-ces coups pour pouvoir revenir au dernire coup joué avant d'avoir repris tous les coups. Ainsi, en utilisant la pile comme structure 
+sur leurs cases initiales, il suffit de dépiler les n coups stackés et les empiler dans une seconde pile qui s'occupera de sauvegarder
+ces coups pour pouvoir revenir au dernier coup joué avant d'avoir repris tous les coups. Ainsi, en utilisant la pile comme structure 
 de données, on garde n coups en mémoire, et revenir à une certaine position de la partie est linéaire en fonction de ce nombre de coups.
 Avec une interface graphique, on pourrait cliquer sur un certain coup pour savoir combien de coups dépiler, car un coup peut arriver
-plusieurs fois dans une partie donc sa représentation ne suffit pas.\\
-Cela se présenterait comme ceci:
+plusieurs fois dans une partie donc sa représentation ne suffit pas. En ce qui concerne le jeu en CLI, il faudrait indiquer le numéro
+du coup, ainsi que sa notation pour, encore une fois, savoir combien de coups il faut reprendre.\\
+Avec la GUI, cela se présenterait comme ceci (remarquez les coups surlignés en bleu à droite sur les images):
 
+\newpage
 \begin{figure}[h]
     \caption{Exemple historique de coups}
     \centering
-    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{pile-historique-coups}
+    \includegraphics[width=\textwidth,height=7.0cm,keepaspectratio]{pile-historique-coups}
 \end{figure}
 
 S'il n'y a pas de fonctionnalité de game review ou de game analysis, et que l'on part du principe qu'il y a écrasement de l'historique
 lorsque l'on joue des coups différents de ceux joués initialement, alors la pile est un très bon choix.\\
 
-\par En se projetant, le groupe a réfléchi aux inconvénients de la pile et à l'évolution du projet.
-Peut-être est-ce optimiste, mais nous avons prévu deux semaines (deux dernières) pour se pencher vers les améliorations
-(fonctionnalités bonus) pouvant être implémentées, ainsi que les aspects qui méritent d'être revus. En particulier, nous avons
-pensé à la possibilité de réaliser une game review et/ou une game analysis. Aussi, une fonctionnalité selon laquelle on pourrait 
-revenir à une position déjà jouée après avoir joué par dessus des coups repris. En d'autres mots, il n'y aurait pas d'écrasement
-(overwritting) des coups.
-En prenant cela en compte, il faudrait cette fois utiliser les arbres. En effet, lorsque l'on déroule les branches ou variations de coups,
-l'arbre est en fait la structure de données naturelle dont on va se servir.\\
+\par Le groupe a ensuite réfléchi à d'autres structures de données. Rapidement, nous avons noté les listes chaînées, les tableaux,
+ainsi que les arbres.
+Les listes (doublement) chaînées peuvent être une solution dans certains cas. En effet, l'insertion et la suppression sont des opérations
+réalisables en O(1). L'historique est alors plus flexible et les modifications sont assez efficaces. Comme la pile, pour revenir à un
+certain coup de la partie, nous sommes en O(n). En revanche, il y a certains cas où cette approche n'est pas très optimale. Par exemple,
+pour les parties (très) longues. En effet, la surcharge en mémoire (due aux références) et le coût en temps pour parcourir la liste peuvent
+devenir problématiques. Aussi, s'il y a régulièrement un accès à différents coups (précédents comme futurs), cela est moins rapide que des
+structures indexées. Finalement, les listes chaînées sont très similaires aux piles sur beaucoup d'aspects (complexité notamment). Cependant,
+nous pensons qu'il s'agit d'une solution moins "élégante" et plus "coûteux" en dette technique et maintenabilité.\\
+Nous avons également porté notre attention sur les tableaux, spécialement efficaces pour l'accès à des éléments (O(1)). C'est aussi plutôt
+simple et rapide à mettre en oeuvre. Toutefois, on doit avoir une taille fixe pour cela. Ou alors, il faudrait effectuer des réallocations,
+qui peuvent devenir coûteuses sur le long terme. De même, pour réécrire l'historique, cela peut prendre O(n) en temps, sans compter que
+l'espace mémoire a pu être alloué "pour rien" au sens où l'on aurait au bout du compte pas eu besoin d'autant de mémoire.\\
+Finalement, les arbres auraient aussi pu être intéresants dans le cas où il y aurait des variations (branchement), car ils offrent une complexité
+assez valable en temps. En effet, lorsque l'on déroule les branches ou variations de coups,
+l'arbre est en fait la structure de données naturelle dont on va se servir. C'est d'ailleurs ce que l'IA utilisera dans le cadre de la recherche
+du meilleur coup.\\
+Remarquons que sans les branchements (dans notre cas donc), utiliser un arbre revient à utiliser une liste chaînée.
 Regardons un exemple pour ensuite discuter les avantages et les inconvénients des arbres:\\
 \begin{center}
     \includegraphics[height=6.0cm]{arbres-branchement-coups.png}
@@ -435,9 +447,9 @@ nœud rouge. \'A chaque nœud de branchement (ici nœud vert), on aurait la poss
 au nœud vert, on pourrait retourner au nœud bleu, comme on pourrait retourner au nœud rouge, ou comme on pourrait explorer d'autres coups,
 créant ainsi une nouvelle variation depuis ce nœud de branchement.
 
-En terme de performance, au niveau de la complexité en temps, cela serait imbattable, car on pourrait revenir à une position en O(1). En effet,
-en se servant d'une Java HashMap\textless Integer, Node\textgreater. On obtiendrait ainsi une référence à partir d'un entier en se servant de
-l'interface graphique:\\
+En terme de performance, au niveau de la complexité en temps, cela serait imbattable, car on pourrait revenir à une position en O(1) (noeuds de branchement).
+En effet, en se servant d'une Java HashMap\textless Integer, Node\textgreater. On obtiendrait ainsi une référence à partir d'un entier en se servant de
+l'interface graphique (valable seulement pour la GUI):\\
 \begin{center}
     \includegraphics[height=6.0cm]{arbres-reprise-coups.png}
 \end{center}
@@ -451,13 +463,11 @@ on aura un peu moins de 52KB. Ce n'est donc pas très coûteux en ce qui concern
 où l'on va tester des milliers de branchements, cela peut devenir assez lourd. Il faudra certainement faire des tests et limiter les opérations
 sur ces arbres de jeu afin de ne pas causer de problème.
 
-\par Nous avons donc observé que les arbres sont de manière générale très avantageux dans notre cas, et bien plus que les piles, pour lesquelles
-il aurait fallu faire un nombre indécent de copies et donc coûter cher. Même si les variations et game reviews sont hypothétiques, le groupe préfère
-ne pas prendre de risque quant à ce choix de structure de données et se servira des arbres pour stocker l'historique des coups d'une partie.
-Dans le pire des cas, c'est-à-dire si les game reviews et non-écrasements de l'historique ne sont pas implémentés, l'arbre sera "linéaire"
-(degenerate tree) et simulera la pile en conservant les n coups de la partie en mémoire. Donc en espace, nous sommes en O(n).
-Néanmoins, en temps, nous sommes toujours en O(1) puisque nous conservons les références vers les nœuds de l'arbre. C'est donc plus efficace que
-la pile dans les deux cas, rendant cette approche optimale.
+\par Nous avons donc observé que les arbres sont de manière générale très avantageux dans le cas de branchement, et bien plus que les piles, pour lesquelles
+il aurait fallu faire un nombre indécent de copies et donc coûter cher.
+Maintenant, les variations et game reviews sont hypothétiques, donc le groupe préfère ne pas prendre de risque et se servira des piles pour stocker
+l'historique des coups d'une partie. Cela est bien plus simple à maintenir et à mettre en oeuvre. Aussi, en ce qui concerne la notation de l'historique
+dans les fichiers, cela est plus adapté.
 
 \subsection{Intelligence Artificielle} \label{AI}
 \subsubsection{Heuristiques}
@@ -866,6 +876,32 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées et les erreurs doivent générer des messages d'erreur.
 \end{nonfunctionnalneedbox}
 
+\begin{nonfunctionnalneedbox}[F8: Performances]
+    Evaluer des performances du programme de manière générale et pour différentes options et différentes configurations de jeu
+    \begin{subneedbox}[F8.1: IA]
+        Estimer précisément les performances de la partie IA, notamment les complexités en temps en en espace en fonction des heuristiques.
+    \end{subneedbox}
+    \begin{subneedbox}[F8.1: GUI]
+        Estimer précisément les performances pour la partie GUI.
+    \end{subneedbox}
+    \begin{subneedbox}[F8.1: Structures de données]
+        Estimer précisément et rendre compte des performances pour la partie structures de données.
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
+\begin{nonfunctionnalneedbox}[F9: Build-system]
+    Etablir un système de build pour le programme avec l'outil Maven pour Java. 
+    \begin{subneedbox}[F9.1: Programme seulement]
+        Construire un build pour le programme, en écartant les tests et différents autre modes de compilation.
+    \end{subneedbox}
+    \begin{subneedbox}[F9.2: Tests]
+        Construire un build pour les tests (isolés).
+    \end{subneedbox}
+    \begin{subneedbox}[F9.3: Exécution]
+        Construire une commande afin d'exécuter le programme une fois compilé.
+    \end{subneedbox}
+\end{nonfunctionnalneedbox}
+
 \subsection{Bibliothèques et outils}
 
 \begin{nonfunctionnalneedbox}[F10. Frameworks de test]
@@ -968,7 +1004,39 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Quitter le programme après l'affichage effectué.
         \textbf{Test:} Le programme doit se fermer avec un code de sortie EXIT\_SUCCESS.
     \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F18: Mode verbose]
+    Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).
+    \begin{subneedbox}[F18.1: Temps par coup]
+        Indiquer à l'utilisateur le temps qui a été pris par un des côtés pour jouer le dernier coup.
+    \end{subneedbox}
+    \begin{subneedbox}[F18.2: Evaluation de la postion contre l'IA]
+        Indiquer à l'utilisateur qui des noirs ou des blancs a l'avantage (s'il y a avantage).
+    \end{subneedbox}
+    \begin{subneedbox}[F18.3: Moment de la partie]
+        Indiquer à l'utilisateur si l'on se trouve plutôt en début, milieu, ou fin de partie.
+    \end{subneedbox}
+    \begin{subneedbox}[F18.4: Règles spécifiques]
+        Indiquer à l'utilisateur les règles spécifiques encore possibles pour chaque état de la partie.
+    \end{subneedbox}
+\end{needbox}
     
+\begin{needbox}[F19: Mode debug]
+    Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.
+    \begin{subneedbox}[F19.1: Etat de la partie]
+        Indiquer aux développeurs la représentation de chaque position, avec les bitmaps et chaînes de bits pour les
+        règles spécifiques.
+    \end{subneedbox}
+    \begin{subneedbox}[F19.2: Structures de données]
+        Indiquer aux développeurs l'état des structures de données à tout moment, en particulier le contenu de la pile pour chaque position.
+    \end{subneedbox}
+    \begin{subneedbox}[F19.3: Zobrist hashing]
+        Indiquer aux développeurs s'il y a des collisions en ce qui concerne le hashing des positions.
+    \end{subneedbox}
+    \begin{subneedbox}[F19.4: IA]
+        Indiquer aux développeurs l'utilisation de la mémoire, la mise à jour du meilleur coup et le nombre de branches visitées pour l'IA.
+    \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F20. Mode Blitz]
@@ -1116,6 +1184,10 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Vérification que le coup demandé par l'utilisateur est un coup légal.
     \end{subneedbox}
     \textbf{Test:} Jouer des coups légaux et des coups illégaux. Vérifier que seuls les coups légaux sont acceptés.
+\end{needbox}
+
+\begin{needbox}[F28: Représentation de l'historique]
+    Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup.
 \end{needbox}
 
 \begin{needbox}[F30. Roque]
@@ -1609,4 +1681,5 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \section{Bibliographie}
 \bibliographystyle{plain}
 \bibliography{references}
+
 \end{document}
