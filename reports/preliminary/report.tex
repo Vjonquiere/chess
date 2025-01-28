@@ -1272,11 +1272,17 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Le joueur courant est désigné comme celui ayant abandonné.
         Il est donc considéré comme le joueur perdant et son adversaire
         est quant à lui considéré comme gagnant.
+
+        \textbf{Test:} Lancer une partie et abandonner, vérifier que le joueur ayant
+        abandonné n'est pas le gagnant de la partie.
     \end{subneedbox}
     \begin{subneedbox}[F32.2: Effet sur la partie]
         Le jeu se retrouve dans le même état que lorsqu'un des joueurs
         gagne ou le jeu fini en nul. Il est donc possible de redémarrer
         une nouvelle partie.
+
+        \textbf{Test:} Vérifier qu'il est possible de relancer une partie après
+        la partie abandonnée.
     \end{subneedbox}
 \end{needbox}
 
@@ -1286,6 +1292,9 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     (default, verbose, debug).
     \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
         À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
+
+        \textbf{Test:} Sur certaines fonctions, vérifier qu'uniquement les messages devant
+        être affichés le sont (uniquement les messages debug par exemple).
     \end{subneedbox}
     \begin{subneedbox}[F33.2: Format d'affichage des messages]
         Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
@@ -1626,12 +1635,14 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F52: Configuration d'une nouvelle partie]
     L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
     de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
-    non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'.
+    non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'. 
     \begin{subneedbox}[F52.1: Configuration mode \textit{blitz}]
         L'utilisateur doit pouvoir cocher une option \textit{blitz}.
         Si celui-ci est coché, l'utilisateur peut alors modifier une entrée
         de texte permettant de définir le temps du blitz. Par défaut, l'entrée de texte
         contient la valeur par défaut du mode blitz (30 minutes).
+
+        \textbf{Test:} Vérifier la présence de tout les éléments graphiques pour configurer le blitz
     \end{subneedbox}
     \begin{subneedbox}[F52.2: Configuration du mode IA]
         L'utilisateur doit pouvoir cocher une option IA permettant d'ajouter
@@ -1642,20 +1653,44 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Il sera également possible de choisir pour chaque IA l'heuristique à utiliser pour
         estimer la valeur d'un plateau, son algorithme de recherche (AlphaBeta ou MonteCarlo),
         sa profondeur de recherche, mais également la possibilité de borner son temps de refléxion.
+
+        \textbf{Test:} Vérifier la présence de tout les éléments graphiques pour configurer l'ia
     \end{subneedbox}
     \begin{subneedbox}[F52.3: Mode debug et verbose]
         Deux options cochables permettant d'activer ou non le mode debug et verbose
         durant la partie.
+
+        \textbf{Test:} Vérifier la présence de tout les éléments graphiques pour configurer le mode d'affichage
     \end{subneedbox}
     \begin{subneedbox}[F52.4: Paramètres par défaut]
         Les paramètres par défaut seront ceux du fichier \textit{.chessrc}.
+
+        \textbf{Test:} Vérifier que lorsqu'on lance une partie sans changer la configuration de base,
+        les paramètres sont bien ceux du fichier \textit{.chessrc}
     \end{subneedbox}
+
 \end{needbox}
 
 \subsection{Joueur artificiel}
 
 \begin{needbox}[F53: Heuristique d'évaluation de position]
-    
+    Le programme devra comporter au moins une fonction
+    capable de prendre un état du jeu et de lui donner un score en
+    fonction de différents critères qui vous sembleront pertinents.
+    \begin{subneedbox}[F53.1: Méthode de calcul global]
+        Trouver une heuristique permettant de représenter, avec un 
+        maximum de justesse, l'état du plateau pour chaque joueur.
+    \end{subneedbox}
+    \begin{subneedbox}[F53.2: Éléments à prendre en compte]
+        Il est necéssaire que l'heuristique repose sur: la position des pièces, 
+        le contrôle du plateau, les menaces directes, \ldots .
+        Il faudra également nuancer ces éléments (pondération)
+    \end{subneedbox}
+    \begin{subneedbox}[F53.3: Cas particuliers]
+        Ajouter de quoi gérer les cas particuliers, par exemple les coups
+        qui pourraient mettre fin à la partie. Il faut donc ajouter des cas
+        pour les plateaux gagnants, perdants et nuls.
+    \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F54. Algorithme de recherche Minimax]
@@ -1781,12 +1816,6 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
         \textbf{Test:} Lancer le mode et vérifier que le timer se remette à zéro à chaque tour et que le temps écoulé soit le bon.
     \end{subneedbox}
-\end{needbox}
-
-\begin{needbox}[F56: Monte Carlo Tree Search]
-\end{needbox}
-
-\begin{needbox}[F57: Profondeur de recherche]
 \end{needbox}
 
 
