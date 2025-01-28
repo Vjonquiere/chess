@@ -1121,43 +1121,47 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F30. Roque]
     Le jeu devra gérer le petit et grand roque.
 
-    \textbf{Prérequis:} F27 et F28 ??
+    \textbf{Prérequis:} F27 et F28
     \begin{subneedbox}[F30.1: Vérifier que le roi et la Tour n'ont pas bougé]
-        
+        Garder en mémoire un booléen pour le petit et le grand roque.
+        Si le roi ou une tour a bougé, la mettre à false pour rendre le roque impossible.
 
-        \textbf{Test:}
+        \textbf{Test:} Faire bouger puis revenir à sa position de départ
+         le roi ou une tour. Essayer de faire un roque : vérifier que ce n'est pas possible.
     \end{subneedbox}
-    \begin{subneedbox}[F30.2:Le Roi ne doit pas être en échec]
-        Le roi ne doit pas être en échec, ni avant ni après le roque
+    \begin{subneedbox}[F30.2: Espace libre entre le roi et la tour]
+        Pour pouvoir effectuer le grand roque, les cases b1, c1, d1 doivent être libres.
+        Pour le petit roque, il faut que les cases f1 et g1 soient libres.
 
-        \textbf{Test:}
+        \textbf{Test:} Essayer de faire un roque alors que des pièces sont entre
+        le roi et la tour. Vérifier que ce n'est pas possible.
     \end{subneedbox}
-    \begin{subneedbox}[F30.3: Espace libre entre le roi et la tour]
-        
+    \begin{subneedbox}[F30.3:Le roi ne passe pas par une case attaquée par l'ennemi]
+        Aucune pièce ennemi ne doit pouvoir attaquer le roi sur les cases b1, c1, d1 
+        et e1 pour le grand roque ou sur les cases e1,f1, g1 pour le petit roque.
 
-        \textbf{Test:}
+        \textbf{Test:} Mettre des pions adverses en position pour attaquer le roi sur une des cases
+        par lesquelles il doit passer. Le moouvement ne doit pas être possible.
     \end{subneedbox}
-    \begin{subneedbox}[F30.4:Le roi ne passe pas par une case attaquée par l'ennemi]
-        
+    \begin{subneedbox}[F30.4: Implémenter le petit roque]
+        Le roi se déplace vers la tour la plus éloignée. Le roi arrive en g1 et 
+        la tour en f1. Les deux pièces doivent se déplacer.
 
-        \textbf{Test:}
+        \textbf{Test:} Si toutes les ocnditions sont remplies, vérifier que l'on
+         peut effectuer le petit roque.
     \end{subneedbox}
-    \begin{subneedbox}[F30.5: Implémenter le petit roque]
-        
+    \begin{subneedbox}[F30.5: Implémenter le grand roque]
+        Le roi se déplace vers la tour la plus éloignée. Le roi arrive en b1 et la tour en c1.
 
-        \textbf{Test:}
-    \end{subneedbox}
-    \begin{subneedbox}[F30.6: Implémenter le grand roque]
-        
-
-        \textbf{Test:}
+        \textbf{Test:} Si toutes les conditions sont remplies, vérifier que l'on peut faire
+        un grand roque.
     \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F31: Promotion du pion]
     Gérer la promotion du pion.
 
-    \textbf{Prérequis:} F27 et F28 ??
+    \textbf{Prérequis:} F27 et F28
     \begin{subneedbox}[F31.1: Pouvoir remplacer le pion par une autre pièce.]
         Si le pion a atteint la rangée la plus éloignée de sa position d'origine, pouvoir le remplacer par
         une dame, un fou, un cavalier ou une tour.
@@ -1307,13 +1311,6 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
         \textbf{Test:} Écrire une liste de coups à jouer. Lancer le jeu à partir de la sauvegarde et
         vérifier qu'ils ont bien été joués.
-    \end{subneedbox}
-    \begin{subneedbox}[F41.6: Afficher les coups annulés]
-        Garder dans les coups annulés dans l'historique d'une partie. Ajouter un flag pour notifier que
-        le coup a été annulé.
-
-        \textbf{Test:} Lancer le programme, jouer puis annuler des coups. Sauvegarder la partie et vérifier
-        que les coups annulés sont présents et annotés annulés dans le fichier de sauvegarde.
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
@@ -1472,11 +1469,11 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         \textbf{Test:} Jouer un coup et vérifier que le coup est bien affiché.
     \end{subneedbox}
     \begin{subneedbox}[F50.2: Afficher les coups supprimés]
-        S'il est possible d'annuler des coups, les noter d'une autre couleur et noter les 
-        coups joués au-dessus ou à coté.
+        S'il est possible d'annuler des coups, les noter d'une autre couleur. Une fois d'un
+        nouveau coup à été joué, les coups annulés sont effacés.
 
-        \textbf{Test:} Lancer le programme, jouer des coups puis revenir en arrière et jouer à nouveau.
-        Vérifier que les coups annulés sont d'une autre couleur et que les nouveaux coups sont affichés.
+        \textbf{Test:} Lancer le programme, jouer des coups puis revenir en arrière.
+        Vérifier que les coups annulés sont d'une autre couleur. Jouer des nouveaux coups et vérifier que les anciens coups ne soient pas affichés et remplacés par les nouveaux coups.
     \end{subneedbox}
 \end{needbox}
 
