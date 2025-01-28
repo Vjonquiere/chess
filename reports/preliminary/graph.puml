@@ -15,26 +15,28 @@ package "Model" #DDDDDD{
     }
 
     class History {
-        - Tree<HistoryNode> tree
-        - HistoryNode currentState
-        + Move getPrevious()
-        + List<Move> getNext()
+        - Stack<HistoryState> histStack
+        - Stack<HistoryState> revertStack
+        + Optional<HistoryState> getPrevious()
+        + Optional<HistoryState> getNext()
         + addMove()
-        + setCurrent(HistoryNode)
     }
-
-    class HistoryNode {
-        - Board state
-        - Move previousMove
-        - HistoryNode parent 
-        - List<HistoryNode> children
-        + addChildren(HistoryNode)
+    
+    class HistoryState {
+      - Board state
+      - Move previousMove
+      + Board getState()
+      + Move getPreviousMove()
     }
 
     class Board {
-        - Bitmap[12] board
+        - Bitboard board
         - boolean player
         - boolean enPassant
+        - boolean whiteShortCastle
+        - boolean blackShortCastle
+        - boolean whiteLongCastle
+        - boolean blackLongCastle
         + List<Move> getAvailableMoves()
         + boolean makeMove(Move move)
         + Board getCopy()
@@ -45,7 +47,7 @@ package "Model" #DDDDDD{
     }
 
     class Bitboard {
-        - long board
+        - long[12] board
     }
 
     class Move {
@@ -60,7 +62,7 @@ package "Model" #DDDDDD{
     }
 
     interface Piece {
-        + List<Move> getAvailableMoves(boolean isWhite, Board b, int col, int row)
+        + {static} List<Move> getAvailableMoves(boolean isWhite, Board b, int col, int row)
     } 
 
     class Pawn {}
@@ -71,59 +73,12 @@ package "Model" #DDDDDD{
     class Knight {}
     
     class Timer {
-        - double timeRemaining
+        - double timeRemainingGameEvent --> GameEventType
         + addTime(double time)
         + startTimer()
         + stopTimer()
     }
-}
 
-package "View" #DDDDDD{
-    interface Vue{
-    + movePlayed()
-    + pieceTaken()
-    + displayBoard()
-    + onGameEnd()
-    }
-    class CLIVue
-    class GameVue
-}
-
-package "Controller" #DDDDDD{
-    class GameController {
-        - Vue vue
-        - Game model
-        + void handleEvent(GameEvent event)
-    }
-}
-
-package "Events" #DDDDDD{
-    class EventSource {
-        - List<GameEventObserver> observers
-        + void addObserver(GameEventObserver observer)
-        + void removeObserver(GameEventObserver observer)
-        + void notifyObservers(GameEvent event)
-    }
-
-    class GameEvent {
-        - GameEventType eventType
-        - Object data
-        + GameEventType getEventType()
-        + Object getEventData()
-    }
-
-    interface GameEventObserver {
-        + void onGameEvent(GameEvent event)
-    }
-
-    enum GameEventType {
-        PIECE_MOVED
-        TIME_OUT
-        GAME_WON
-    }
-}
-
-package "Utils" #DDDDDD{
     package AI {
         class Solver {
             - Tree<AINode> aiHistory
@@ -137,7 +92,88 @@ package "Utils" #DDDDDD{
             - HistoryNode hnode 
             - double value
         }
+
+        class HistoryNode {
+        - HistoryState state
+        - HistoryNode parent 
+        - List<HistoryNode> children
+        + addChildren(HistoryNode)
     }
+    }
+}
+
+package "View" #DDDDDD{
+    interface Vue{
+    + void updateBoard()
+    }
+    class CLIVue implements Vue
+    class GameVue implements Vue
+}
+
+package "Controller" #DDDDDD{
+    class GameController{
+        - model Model
+        - view View
+        - BagOfCommands bagOfCommands
+    }
+  
+    package Commands{
+      interface Command{
+          + execute(GameManager, Controller)
+      }
+        class PlayMoveCommand implements Command{
+            - Position source
+            - Position dest
+        }
+
+        class CancelMoveCommand implements Command{
+        }
+
+        class RestoreMoveCommand implements Command{
+        }
+
+        class RestartGameCommand implements Command{
+        }
+
+        class LoadGameCommand implements Command{
+            - String filepath
+        }
+
+        class SaveGameCommand implements Command{
+            - String filepath
+        }
+    }
+    
+
+    class BagOfCommands  <<(S,#FF7700)Singleton>>{
+        - BagOfCommands instance
+        - ConcurrentLinkedQueue<Command> commands
+        - GameManager model
+        - Controller controller
+        - boolean isRunning
+        - void processCommands()
+        + BagOfCommands getInstance()
+        + void executeFirst()
+        + void executeAll()
+        + void addCommand(Command)
+        + void setModel(GameManager)
+        + void setController(Controller)
+    }
+}
+
+package "Events" #DDDDDD{
+    abstract class EventSource {
+        + void addObserver(EventObserver observer)
+        + void removeObserver(EventObserver observer)
+        + void notifyObservers()
+    }
+
+    interface EventObserver {
+        + void onGameEvent()
+    }
+}
+
+package "Utils" #DDDDDD{
 
     class TextGetter {
         - Locale locale
@@ -150,28 +186,30 @@ package "Utils" #DDDDDD{
     class Tree<T> {
         - T root
     }
+
+    class Position{
+        - int x
+        - int y
+        + int getX()
+        + int getY()
+    }
 }
 
 Main --> GameController
+Game --> History
+Board --> Move
 Game --> Board
-Game --> Move
-Game --> EventSource
 Game --> Solver
 Game --> Timer
-Board --> Move
-Board --> Piece
+Game --|> EventSource
 Board --> Bitboard
 GameController --> Vue
 GameController --> Game
-GameEventObserver --|> GameController
-EventSource --> GameEventObserver
-GameEvent --> GameEventType
-History --> Tree
-History --> HistoryNode
+History --> HistoryState
 Solver --> Tree
 Solver --> AINode
-Vue <|-- CLIVue
-Vue <|-- GameVue
+Vue ..|> EventObserver
+AINode --> HistoryNode
 
 Piece <|-- Pawn
 Piece <|-- King
