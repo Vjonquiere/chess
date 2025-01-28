@@ -1187,7 +1187,24 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 \begin{needbox}[F28: Représentation de l'historique]
-    Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup.
+    Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.
+\end{needbox}
+
+\begin{needbox}[F29: En passant]
+    Gestion du coup en passant des deux côtés.\\
+    \textbf{Prérequis:} F27 et F28
+    \begin{subneedbox}[F29.1: Observer si la dernière pièce jouée était un pion]
+        Regarder si la dernière pièce jouée était un pion, et que ce dernier a avancé de deux cases.
+    \end{subneedbox}
+    \begin{subneedbox}[F29.2: S'assurer que la capture est légale]
+        Capturer le pion qui a bougé le cas échéant ne doit pas nous mettre en échec.
+        \textbf{Test:} Placer une pièce qui nous mettrait en échec si l'on capturait le pion.
+    \end{subneedbox}
+    \begin{subneedbox}[F29.3: Indiquer que la prise est réalisable]
+        Changer l'information dans les chaînes de bits pour les règles spécifiques et indiquer quel pion
+        est capturable et quelle est la case cible.
+        \textbf{Test:} S'assurer que les bits ne sont pas changés lorsqu'un pion ne bouge que d'une case.
+    \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F30. Roque]
@@ -1244,7 +1261,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \begin{subneedbox}[F31.2: Seul le pion peut être promu]
         Les autres types de pièces ne peuvent pas être promues
 
-        \textbf{Test:} Faire atteindre la dernière ligne à chaque type de pièces
+        \textbf{Test:} Faire atteindre la dernière ligne à chaque autre type de pièces
          et vérifier qu'aucune ne peut être promue.
     \end{subneedbox}
 \end{needbox}
@@ -1320,7 +1337,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Effacer les coups annulés si une nouvelle ligne de jeu est joués.
         \textbf{Test:} Jouer un nouveau coup après avoir annulé un coup précédent. Vérifier que le rétablissement est impossible.
     \end{subneedbox}
-    \begin{subneedbox}[F?.4: Annulation/Rétablissement]
+    \begin{subneedbox}[F36.4: Annulation/Rétablissement]
         Donner la possibilité aux joueurs humain de proposer l'annulation ou le rétablissement d'un coup.
     \end{subneedbox}
 \end{needbox}
@@ -1334,6 +1351,37 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Créer une nouvelle instance de partie avec la position par défaut.
     \end{subneedbox}
     \textbf{Test:} Recommencer une partie et vérifier que l'échiquier est réinitialisé à la position de départ.
+\end{needbox}
+
+\begin{needbox}[F38: Fin de partie]
+    Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
+    \begin{subneedbox}[F38.1: Règles de base]
+        Détecter si la partie se solde sur un Mat, Pat, Egalité par manque de matériel, Egalité par accord, ou encore Perte au temps.
+    \end{subneedbox}
+    \begin{subneedbox}[F38.2: Règles spécifiques]
+        Détecter si la partie se solde par une Egalité pour la règle des 50 coups, Egalité pour la règle des trois répétitions,
+        ou Egalité par perte au temps avec manque de matériel.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F39: Rejouer une partie]
+    Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
+    \begin{subneedbox}[F39.1: Vérification du fichier]
+        S'assurer que le fichier est au bon format et est correctement formé.
+    \end{subneedbox}
+    \begin{subneedbox}[F39.2: Se placer à la dernière position]
+        Rejouer la partie en chargeant le fichier pour se placer au dernier coup joué dans l'historique.
+        \textbf{Test:}Vérifier si les règles sont valides tout au cours du chargement de la partie et s'assurer
+        que la partie soit bien initialisée.
+    \end{subneedbox}
+    \begin{subneedbox}[F39.3: Navigation dans l'historique]
+        Il doit être possible de naviguer dans l'historique en reprenant un ou plusieurs coups et en rejouant
+        un ou plusieurs coups.
+    \end{subneedbox}
+    \begin{subneedbox}[F39.4: Ecrasement de l'historique]
+        Le fichier se voit être modifié lorsque l'on joue des coups différents de ceux chargés. On a donc un historique correspondant
+        à la dernière variation jouée.
+    \end{subneedbox}
 \end{needbox}
 
 \subsection{Format d'entrée/sortie}
@@ -1513,6 +1561,31 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
+\begin{needbox}[F48: Menu 'Game']
+    Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
+    \begin{subneedbox}[F48.1: Navigation dans l'historique de coups]
+        Ajout des options 'Aller en avant', 'Aller en arrière', 'Aller au début' et 'Aller à la fin' afin de naviguer dans
+        les coups de la partie.
+    \end{subneedbox}
+    \begin{subneedbox}[F48.2: Indice]
+        Ajout d'une option 'Indice' pemettant à l'utilisateur de connaître le meilleur coup à jouer lorsqu'il
+        affronte une IA.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F49: Menu 'About']
+    Menu 'About' permettant d'afficher quelques informations sur le Projet.
+    \begin{subneedbox}[F49.1: Auteurs]
+        Ajout d'une option 'Authors' afin d'afficher l'équipe de développeurs.
+    \end{subneedbox}
+    \begin{subneedbox}[F49.2: Version et dernière mise à jour]
+        Ajout d'une option 'Version' pemettant d'afficher la version du jeu (X.X.X) et la date de dernière mise à jour.
+    \end{subneedbox}
+    \begin{subneedbox}[F49.3: Dépôt du projet]
+        Ajout d'une option 'Project repository' pemettant de donner un lien vers le dépôt Git du projet.
+    \end{subneedbox}
+\end{needbox}
+
 \begin{needbox}[F50: Affichage d'une partie en cours]
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
     \textbf{Prérequis:} F25, F26, F33, F46
@@ -1652,6 +1725,46 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
+\begin{needbox}[F58: Choix des heuristiques]
+    \begin{subneedbox}[F58.1: Types d'heuristiques]
+        Trier les heuristiques en fonction de leur groupe d'appartenance.\\
+        Pour l'instant:
+        \begin{itemize}
+            \item Matérielles
+            \item Positionnelles
+            \item Avancées
+        \end{itemize}
+    \end{subneedbox}
+    \begin{subneedbox}[F58.2: Documentation des heuristiques]
+        Ajouter une documentation pour chaque heuristique pour préciser ce qu'elle calcule, sur quoi 
+        elle se base, etc.
+    \end{subneedbox}
+\end{needbox}
+
+\begin{needbox}[F59: Heuristiques de fin de partie]
+    \begin{subneedbox}[F59.1: Types d'heuristiques]
+        Détecter lorsque l'on se trouve en fin de partie.\\
+        On peut se baser notamment sur:
+        \begin{itemize}
+            \item Le nombre de pièce sur le plateau
+            \item Présence ou non des Dames 
+            \item Nombre de coups joués 
+            \item Nombre de coups possibles
+        \end{itemize}
+    \end{subneedbox}
+    \begin{subneedbox}[F59.2: Eléments pour les heuristiques]
+        Chercher des éléments afin d'optimiser les heursitiques et les adpater aux fins de partie.\\
+        Par exemple:
+        \begin{itemize}
+            \item Promotions de pions
+            \item Activité des pièces
+            \item Sécurité du Roi
+            \item Nombre de coups légaux
+            \item Matériel
+            \item Facteurs spécifiques aux fins de partie (fous de couleur différente,...)
+        \end{itemize}
+    \end{subneedbox}
+\end{needbox}
 
 \begin{needbox}[F60: Temps de réflexion borné]
     Permet de paramétrer la durée de "réflexion" de l'IA.
