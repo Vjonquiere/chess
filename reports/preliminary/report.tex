@@ -394,7 +394,7 @@ Intelligence Artificielle. Il y a quelques détails en ce qui concerne les perfo
 \label{DataStruct}
 \subsubsection{Historique des coups}
 \par Le groupe s'est posé la question de quelles structures de données utiliser pour stocker l'historique des coups d'une
-partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, là où les difficultés d'implémentation,
+partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, la ou les difficultés d'implémentation,
 la compatibilité avec les bitboards pour représenter le plateau de jeu, ainsi que les ajouts potentiels de fonctionnalités.
 \\La première idée fut une pile. En effet, cette structure est très simple d'utilisation et parfaitement adaptée pour stocker
 des coups, tout en ayant la possibilité d'en enlever et d'en rajouter. La complexité en temps et en espace est en O(n) si n 
@@ -425,12 +425,12 @@ certain coup de la partie, nous sommes en O(n). En revanche, il y a certains cas
 pour les parties (très) longues. En effet, la surcharge en mémoire (due aux références) et le coût en temps pour parcourir la liste peuvent
 devenir problématiques. Aussi, s'il y a régulièrement un accès à différents coups (précédents comme futurs), cela est moins rapide que des
 structures indexées. Finalement, les listes chaînées sont très similaires aux piles sur beaucoup d'aspects (complexité notamment). Cependant,
-nous pensons qu'il s'agit d'une solution moins "élégante" et plus "coûteux" en dette technique et maintenabilité.\\
+nous pensons qu'il s'agit d'une solution moins "élégante" et plus "coûteuse" en dette technique et maintenabilité.\\
 Nous avons également porté notre attention sur les tableaux, spécialement efficaces pour l'accès à des éléments (O(1)). C'est aussi plutôt
 simple et rapide à mettre en oeuvre. Toutefois, on doit avoir une taille fixe pour cela. Ou alors, il faudrait effectuer des réallocations,
 qui peuvent devenir coûteuses sur le long terme. De même, pour réécrire l'historique, cela peut prendre O(n) en temps, sans compter que
 l'espace mémoire a pu être alloué "pour rien" au sens où l'on aurait au bout du compte pas eu besoin d'autant de mémoire.\\
-Finalement, les arbres auraient aussi pu être intéresants dans le cas où il y aurait des variations (branchement), car ils offrent une complexité
+Finalement, les arbres auraient aussi pu être intéressants dans le cas où il y aurait des variations (branchement), car ils offrent une complexité
 assez valable en temps. En effet, lorsque l'on déroule les branches ou variations de coups,
 l'arbre est en fait la structure de données naturelle dont on va se servir. C'est d'ailleurs ce que l'IA utilisera dans le cadre de la recherche
 du meilleur coup.\\
@@ -1194,7 +1194,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F29: En passant Denis]
     Gestion du coup en passant des deux côtés.\\
     \textbf{Prérequis:} F27 et F28
-    \begin{subneedbox}[F29.1: Observer si la dernière pièce jouée était un pion]
+    \begin{subneedbox}[F29.1: Observer le dernier coup joué]
         Regarder si la dernière pièce jouée était un pion, et que ce dernier a avancé de deux cases.
     \end{subneedbox}
     \begin{subneedbox}[F29.2: S'assurer que la capture est légale]
@@ -1798,7 +1798,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Détecter lorsque l'on se trouve en fin de partie.\\
         On peut se baser notamment sur:
         \begin{itemize}
-            \item Le nombre de pièce sur le plateau
+            \item Le nombre de pièces sur le plateau
             \item Présence ou non des Dames 
             \item Nombre de coups joués 
             \item Nombre de coups possibles
