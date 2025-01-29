@@ -1380,32 +1380,66 @@ entre les membres du groupe).
 
 \begin{needbox}[F38: Fin de partie Jonathan]
     Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
-    \begin{subneedbox}[F38.1: Règles de base]
-        Détecter si la partie se solde sur un Mat, Pat, Egalité par manque de matériel, Egalité par accord, ou encore Perte au temps.
+    \begin{subneedbox}[F38.1: Mat]
+        Détecter si la partie se solde sur un Mat.\\
+        \textbf{Test:} S'assurer qu'aucun coup ne soit légal pour le joueur qui est maté.
     \end{subneedbox}
-    \begin{subneedbox}[F38.2: Règles spécifiques]
-        Détecter si la partie se solde par une Egalité pour la règle des 50 coups, Egalité pour la règle des trois répétitions,
-        ou Egalité par perte au temps avec manque de matériel.
+    \begin{subneedbox}[F38.2: Pat]
+        Détecter si la partie se solde sur un Pat.\\
+        \textbf{Test:} S'assurer qu'aucun coup ne soit légal pour le joueur qui est paté.
+    \end{subneedbox}
+    \begin{subneedbox}[F38.3: Egalité par manque de matériel]
+        Détecter si la partie se solde sur une égalité par manque de matériel.\\
+        \textbf{Test:} Vérifier que l'état du jeu correspond à un des cas d'égalité par manque de matériel. 
+    \end{subneedbox}
+    \begin{subneedbox}[F38.4: Perte au temps]
+        Détecter si la partie se solde sur une perte à la pendule si le temps est écoulé pour l'un des joueurs.\\
+        \textbf{Test:} Valider l'écoulement de la pendule (pour le bon joueur si les deux côtés ont très peu de temps).
+    \end{subneedbox}
+    \begin{subneedbox}[F38.5: Egalité par accord mutuel]
+        Détecter si la partie se solde sur une égalité parce que les deux côtés ont souhaité faire égalité et finir la partie.\\
+        \textbf{Test:} S'assurer qu'Event renvoie correctement l'évènement "égalité par accord mutuel".
+    \end{subneedbox}
+    \begin{subneedbox}[F38.6: Perte par abandon]
+        Détecter si la partie se solde sur une défaite parce que l'un des joueurs a abandonné.\\
+        \textbf{Test:} S'assurer qu'Event renvoie correctement l'évènement "perte par abandon".
+    \end{subneedbox}
+    \begin{subneedbox}[F38.7: Egalité par règle des 50 coups]
+        Détecter si la partie se solde par une égalité pour la règle des 50 coups.\\
+        \textbf{Test:} S'assurer qu'aucun coup de pion n'a été joué et que le nombre de coups sans capture est au nombre de 50
+        (ni plus ni moins).
+    \end{subneedbox}
+    \begin{subneedbox}[F38.8: Egalité par la règle des trois répétitions]
+        Détecter si la partie se solde sur une égalité parce que la même configuration a été constatée trois fois dans la même partie.\\
+        \textbf{Test:} Vérifier que la détection des trois répétitions gère le cas des règles spécifiques et des droits pour
+        les états du jeu (en passant, roques, etc.).
+    \end{subneedbox}
+    \begin{subneedbox}[F38.9: Egalité par perte au temps et manque de matériel]
+        Détecter si la partie se solde sur une égalité par perte au temps avec manque de matériel.\\
+        \textbf{Test:} Tester l'écoulement du temps et un cas de non-possibilité de Mat pour le joueur qui a perdu au temps.
     \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F39: Rejouer une partie Jonathan]
     Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
     \begin{subneedbox}[F39.1: Vérification du fichier]
-        S'assurer que le fichier est au bon format et est correctement formé.
+        S'assurer que le fichier est au bon format et est correctement formé.\\
+        \textbf{Test:} Contrôler la notation des coups ainsi que l'extension du fichier.
     \end{subneedbox}
     \begin{subneedbox}[F39.2: Se placer à la dernière position]
         Rejouer la partie en chargeant le fichier pour se placer au dernier coup joué dans l'historique.\\
-        \textbf{Test:}Vérifier si les règles sont valides tout au cours du chargement de la partie et s'assurer
-        que la partie soit bien initialisée.
+        \textbf{Test:} Vérifier si les règles sont valides tout au cours du chargement de la partie, s'assurer
+        que la partie soit bien initialisée et observer la pile de l'historique de coups.
     \end{subneedbox}
     \begin{subneedbox}[F39.3: Navigation dans l'historique]
         Il doit être possible de naviguer dans l'historique en reprenant un ou plusieurs coups et en rejouant
-        un ou plusieurs coups.
+        un ou plusieurs coups.\\
+        \textbf{Test:} Vérifier si les coups sont correctement repris et rejoués et que les règles spécifiques sont valides.
     \end{subneedbox}
     \begin{subneedbox}[F39.4: Ecrasement de l'historique]
         Le fichier se voit être modifié lorsque l'on joue des coups différents de ceux chargés. On a donc un historique correspondant
-        à la dernière variation jouée.
+        à la dernière variation jouée.\\
+        \textbf{Test:} S'assurer que le nouveau fichier est correctement formé et contient le nouvel historique.
     \end{subneedbox}
 \end{needbox}
 
