@@ -992,6 +992,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F16: Aide en ligne de commande Mathilde]
     L'option '-h', '--help' affiche l'aide puis quitte.
+
+    \textbf{Prériquis:} F11
     \begin{subneedbox}[F16.1: Texte]
         Rédaction du message d'aide destiné à l'utilisateur.
     \end{subneedbox}
@@ -1007,6 +1009,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F17: Version Mathilde]
     L'option '-V', '--version' affiche la version puis quitte.
+
+    \textbf{Prériquis:} F11
     \begin{subneedbox}[F17.1: Texte]
         Rédaction du message de version actuelle.
     \end{subneedbox}
@@ -1022,6 +1026,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F18: Mode verbose Mathilde]
     Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).
+
+    \textbf{Prériquis:} F11
     \begin{subneedbox}[F18.1: Temps par coup]
         Indiquer à l'utilisateur le temps qui a été pris par un des côtés pour jouer le dernier coup.
     \end{subneedbox}
@@ -1038,6 +1044,8 @@ entre les membres du groupe).
     
 \begin{needbox}[F19: Mode debug Mathilde]
     Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.
+
+    \textbf{Prériquis:} F11
     \begin{subneedbox}[F19.1: Etat de la partie]
         Indiquer aux développeurs la représentation de chaque position, avec les bitmaps et chaînes de bits pour les
         règles spécifiques.
@@ -1130,6 +1138,8 @@ entre les membres du groupe).
 \subsection{Interface utilisateur}
 
 \begin{needbox}[F24. Interface en ligne de commande Iwen]
+
+    \textbf{Prériquis:} F45
     \begin{subneedbox}[F24.1: Lancement de l'interface textuelle par défaut]
         Le programme doit lancer l'interface textuelle en l'absence d'option -g ou --gui.
 
@@ -1179,6 +1189,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F26: Affichage de l'échiquier Iwen]
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
+
+    \textbf{Prériquis:} F45
     \begin{subneedbox}[F26.1: Echiquier]
         Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des '\_'. Le Roi sera représenté par 'K/k' (King), la Reine par 'Q/q' (Queen), les Tours par 'R/r' (Rook), les Fous par 'B/b' (Bishop), les Cavaliers par 'N/n' (kNights) et les Pions par 'P/p' (Pawn).\\
         \textbf{Test:} Jouer un coup et vérifier que l'échiquier s'affiche.
@@ -1191,6 +1203,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F27: Notation des coups Denis]
     Utilisation d'une notation codifiée pour les coups.
+
+    \textbf{Prériquis:} F45
     \begin{subneedbox}[F27.1: Reconnaissance du coup Denis]
         Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.\\
         \textbf{Test:} Jouer un coup et vérifer que le bon coup a été effectué.
@@ -1203,11 +1217,13 @@ entre les membres du groupe).
 
 \begin{needbox}[F28: Représentation de l'historique Iwen]
     Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.
+
+    \textbf{Prériquis:} F27
 \end{needbox}
 
 \begin{needbox}[F29: En passant Denis]
     Gestion du coup en passant des deux côtés.\\
-    \textbf{Prérequis:} F27 et F28
+    \textbf{Prérequis:} F45, F27 et F28
     \begin{subneedbox}[F29.1: Observer le dernier coup joué]
         Regarder si la dernière pièce jouée était un pion, et que ce dernier a avancé de deux cases.
     \end{subneedbox}
@@ -1225,7 +1241,7 @@ entre les membres du groupe).
 \begin{needbox}[F30. Roque Jonathan]
     Le jeu devra gérer le petit et grand roque.
 
-    \textbf{Prérequis:} F27 et F28
+    \textbf{Prérequis:} F45, F27 et F28
     \begin{subneedbox}[F30.1: Vérifier que le roi et la Tour n'ont pas bougé]
         Garder en mémoire un booléen pour le petit et le grand roque.
         Si le roi ou une tour a bougé, la mettre à false pour rendre le roque impossible.
@@ -1265,7 +1281,7 @@ entre les membres du groupe).
 \begin{needbox}[F31: Promotion du pion Jonathan]
     Gérer la promotion du pion.
 
-    \textbf{Prérequis:} F27 et F28
+    \textbf{Prérequis:} F45, F27 et F28
     \begin{subneedbox}[F31.1: Pouvoir remplacer le pion par une autre pièce.]
         Si le pion a atteint la rangée la plus éloignée de sa position d'origine, pouvoir le remplacer par
         une dame, un fou, un cavalier ou une tour.
@@ -1305,6 +1321,8 @@ entre les membres du groupe).
     Le programme devra afficher des messages d'information
     pendant la partie en fonction du mode dans lequel il est
     (default, verbose, debug).
+
+    \textbf{Prériquis:} F45
     \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
         À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
 
@@ -1327,6 +1345,8 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F35. Sauvegarde de l’historique Iwen]
+
+    \textbf{Prériquis:} F42
     \begin{subneedbox}[F35.1: Multi-interfaces]
         La sauvegarde doit fonctionner sur toutes les interfaces.
 
@@ -1349,6 +1369,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F36: Naviguer dans l'historique Iwen/ Valentin]
     Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
+
+    \textbf{Prériquis:} F35
     \begin{subneedbox}[F36.1: Sauvegarde des coups joués]
         Sauvegarder les mouvements effectués dans la partie en cours.\\
         \textbf{Test:} Jouer plusieurs coups et verifier que ceux-ci sont enregistrés.
@@ -1380,6 +1402,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F38: Fin de partie Jonathan]
     Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
+
+    \textbf{Prériquis:} F45
     \begin{subneedbox}[F38.1: Règles de base]
         Détecter si la partie se solde sur un Mat, Pat, Egalité par manque de matériel, Egalité par accord, ou encore Perte au temps.
     \end{subneedbox}
@@ -1511,6 +1535,7 @@ entre les membres du groupe).
     \begin{subneedbox}[F44.1: Initialisation des bitboards]
         Implémenter des fonctions pour initialiser ou réinitialiser les bitboards.
 
+        \textbf{Prériquis:} F14
         \textbf{Test:} Tester l'initialisation et la réinitialisation des bitboards.
     \end{subneedbox}
 
@@ -1524,11 +1549,16 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F45. État du jeu Jonathan]
+    \textbf{Prériquis:} F43
+
+
     L’état du jeu doit être stocké dans uns structue de donnée et doit inclure au moins les informations suivantes : \\
-    - Joueur courant.  
-    - Temps restant pour chaque camp (si blitz).  
-    - L’état de l’échiquier.  
-    - L’historique.
+    \begin{itemize}
+        \item Joueur courant.
+        \item Temps restant pour chaque camp (si blitz).
+        \item L’état de l’échiquier.  
+        \item L’historique.
+    \end{itemize}
 
     \textbf{Test:} Vérifier que l’état du jeu est mis à jour après chaque mouvement.
 \end{needbox}
@@ -1537,6 +1567,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F46: Fonctions de base Mathilde]
     Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
+
+    \textbf{Prériquis:} F25
     \begin{subneedbox}[F46.1: Prise en passant]
         \textbf{Prérequis:} F29.\\
         Implementation graphique du besoin F29. Prise en passant.
@@ -1574,6 +1606,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F47: Menu 'File' Valentin]
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
+
+    \textbf{Prériquis:} F46
     \begin{subneedbox}[F47.1: New Game]
         \textbf{Prérequis:} F37.\\
         Ajout d'un bouton 'New Game' pemettant de lancer une nouvelle partie.
@@ -1601,6 +1635,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F48: Menu 'Game' Denis]
     Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
+
+    \textbf{Prériquis:} F46
     \begin{subneedbox}[F48.1: Navigation dans l'historique de coups]
         Ajout des options 'Aller en avant', 'Aller en arrière', 'Aller au début' et 'Aller à la fin' afin de naviguer dans
         les coups de la partie.
@@ -1613,6 +1649,8 @@ entre les membres du groupe).
 
 \begin{needbox}[F49: Menu 'About' Mathilde]
     Menu 'About' permettant d'afficher quelques informations sur le Projet.
+
+    \textbf{Prériquis:} F46
     \begin{subneedbox}[F49.1: Auteurs]
         Ajout d'une option 'Authors' afin d'afficher l'équipe de développeurs.
     \end{subneedbox}
@@ -1626,6 +1664,7 @@ entre les membres du groupe).
 
 \begin{needbox}[F50: Affichage d'une partie en cours Valentin]
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
+    
     \textbf{Prérequis:} F25, F26, F33, F46
     \begin{subneedbox}[F50.1: Affichage du plateau]
         Afficher le plateau et rendre les cases cliquables afin de sélectionner et 
@@ -1665,6 +1704,8 @@ entre les membres du groupe).
     L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
     de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
     non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'. 
+
+    \textbf{Prériquis:} F46
     \begin{subneedbox}[F52.1: Configuration mode \textit{blitz}]
         L'utilisateur doit pouvoir cocher une option \textit{blitz}.
         Si celui-ci est coché, l'utilisateur peut alors modifier une entrée
@@ -1706,14 +1747,25 @@ entre les membres du groupe).
     Le programme devra comporter au moins une fonction
     capable de prendre un état du jeu et de lui donner un score en
     fonction de différents critères qui vous sembleront pertinents.
+    
+    \textbf{Test:} Faire des tests de performance afin de voir combien
+    de noeuds l'on peut explorer en un temps imparti. Il faudra également
+    faire des tests pour voir si la méthode d'évaluation est la bonne. 
     \begin{subneedbox}[F53.1: Méthode de calcul global]
         Trouver une heuristique permettant de représenter, avec un 
         maximum de justesse, l'état du plateau pour chaque joueur.
+
+        \textbf{Test:} Vérifier que l'heuristique s'adapte bien au joueur
+        courant (les deux doivent pouvoir l'utiliser à tour de rôle)
     \end{subneedbox}
     \begin{subneedbox}[F53.2: Éléments à prendre en compte]
         Il est necéssaire que l'heuristique repose sur: la position des pièces, 
         le contrôle du plateau, les menaces directes, \ldots .
-        Il faudra également nuancer ces éléments (pondération)
+        Il faudra également nuancer ces éléments (pondération).
+
+        \textbf{Test:} Faire du benchmarking pour observer si les changements
+        dans l'heuristique menent à un meilleur winrate en donnant deux heuristiques
+        différentes à deux joueurs artificiels.
     \end{subneedbox}
     \begin{subneedbox}[F53.3: Cas particuliers]
         Ajouter de quoi gérer les cas particuliers, par exemple les coups
@@ -1723,6 +1775,8 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F54. Algorithme de recherche Minimax Mathilde]
+
+    \textbf{Prériquis:} F53
     \begin{subneedbox}[F54.1: Activer Minimax par défaut si AlphaBeta-pruning n'est pas implémenté]
         Utiliser l'option --ai-mode mm pour activer l'algorithme.
 
@@ -1743,6 +1797,8 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F55. AlphaBeta-pruning Mathilde]
+
+    \textbf{Prériquis:} F53
     \begin{subneedbox}[F55.1: Option actif par défaut]
         Si l'algorithme AlphaBeta-pruning est implémenté, il doit être activé par défaut pour les décisions de l'IA.
         Utiliser l'option --ai-mode ab pour activer l’algorithme.
@@ -1765,7 +1821,7 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F56: Monte Carlo Tree Search Jonathan]
-    \textbf{Prérequis:} F23.
+    \textbf{Prérequis:} F23 et F53.
     \begin{subneedbox}[F56.1: Activation du mode]
         Ajouter \textit{--ai-mode mcts} à la gestion des options.
     \end{subneedbox}
@@ -1808,6 +1864,8 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F59: Heuristiques de fin de partie Jonathan]
+
+    \textbf{Prériquis:} F23
     \begin{subneedbox}[F59.1: Types d'heuristiques]
         Détecter lorsque l'on se trouve en fin de partie.\\
         On peut se baser notamment sur:
@@ -1835,7 +1893,7 @@ entre les membres du groupe).
 \begin{needbox}[F60: Temps de réflexion borné Mathilde]
     Permet de paramétrer la durée de "réflexion" de l'IA.
 
-    \textbf{Prérequis:} F11
+    \textbf{Prérequis:} F11 et F56
     \begin{subneedbox}[F60.1: Activation du mode]
         Ajouter \textit{--ai-time TIME} à la gestion des options.
 
