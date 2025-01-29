@@ -261,21 +261,64 @@ thursdays are colored in BlanchedAlmond
 [F36.4 Replay or remove move] as [F36.4] requires 1 day and starts at [F35]'s end
 
 -- 3rd module (GUI and last features) --
-[F25 GUI] as [F25] requires 2 weeks and starts on 2025-02-28
-[F46 Basic functions] as [F46] requires 2 days and starts at [F25]'s start
-[F47 File menu] as [F47] requires 1 day and starts at [F46]'s end
-[F48 Game menu] as [F48] requires 1 day and starts at [F46]'s end
-[F49 About menu] as [F49] requires 1 day and starts at [F46]'s end
-[F50 Game Display] as [F50] requires 1 day and starts at [F46]'s end
-[F51 Display played moves] as [F51] requires 1 day and starts at [F46]'s end
-[F52 New game Configuration] as [F52] requires 1 day and starts at [F46]'s end
-
 [Last features] requires 2 weeks and starts on 2025-02-28
 [F20 Blitz mode] as [F20] requires 1 day and starts at [Last features]'s start
-[F20 Blitz duration] as [F21] requires 1 day and starts at [Last features]'s start
-[F20 Contest mode] as [F22] requires 1 day and starts at [Last features]'s start
+[F20.1 Mode activation] as [F20.1] requires 1 day and starts at [Last features]'s start
+[F20.2 Limit time of a round] as [F20.2] requires 1 day and starts at [Last features]'s start
+[F20.3 End if time is up] as [F20.3] requires 1 day and starts at [Last features]'s start
+[F21 Blitz duration] as [F21] requires 1 day and starts at [Last features]'s start
+[F21.1 Mode activation] as [F21.1] requires 1 day and starts at [Last features]'s start
+[F21.2  Limit time of a round] as [F3F219.2] requires 1 day and starts at [Last features]'s start
+[F21.3 Warning for wrong usage] as [F21.3] requires 1 day and starts at [Last features]'s start
+
+[F22 Contest mode] as [F22] requires 1 day and starts at [Last features]'s start
 [F39 Replay game] as [F39] requires 1 day and starts at [Last features]'s start
+[F39.1 File Verification] as [F39.1] requires 1 day and starts at [Last features]'s start
+[F39.2 Go at last position] as [F39.2] requires 1 day and starts at [Last features]'s start
+[F39.3 Naviguate through historic] as [F39.3] requires 1 day and starts at [Last features]'s start
+[F39.4 Rewrite historic] as [F39.4] requires 1 day and starts at [Last features]'s start
 [F58 Heuristic choice] as [F58] requires 1 day and starts at [Last features]'s start
+[F58.1 Heuristic types] as [F58.1] requires 1 day and starts at [Last features]'s start
+[F58.2 Heuristic documentation] as [F58.2] requires 1 day and starts at [Last features]'s start
+
+[F25 GUI] as [F25] requires 2 weeks and starts on 2025-02-28
+[F25.1 Launch GUI via command line] as [F25.1] requires 1 day and starts at [F25]'s start
+[F25.2 Representation of chessboard and pieces] as [F25.2] requires 1 day and starts at [F25]'s start
+[F25.3 Move by clicking] as [F25.3] requires 1 day and starts at [F25]'s start
+[F46 Basic functions] as [F46] requires 2 days and starts at [F25]'s start
+[F46.1 En passant] as [F46.1] requires 1 day and starts at [F25]'s start
+[F46.2 Castling] as [F46.2] requires 1 day and starts at [F25]'s start
+[F46.3 Promotion] as [F46.3] requires 1 day and starts at [F25]'s start
+[F46.4 Abandon] as [F46.4] requires 1 day and starts at [F25]'s start
+[F46.5 End of game] as [F46.5] requires 1 day and starts at [F25]'s start
+[F46.6 Blitz mode] as [F46.6] requires 1 day and starts at [F20]'s end
+[F46.7 Contest mode] as [F46.7] requires 1 day and starts at [F22]'s end
+[F46.8 AI mode] as [F46.8] requires 1 day and starts at [F25]'s start
+[F47 File menu] as [F47] requires 1 day and starts at [F46]'s end
+[F47.1 New Game] as [F47.1] requires 1 day and starts at [F46]'s end
+[F47.2 Load Game] as [F47.2] requires 1 day and starts at [F46]'s end
+[F47.3 Save Game] as [F47.3] requires 1 day and starts at [F46]'s end
+[F47.4 Quit] as [F47.4] requires 1 day and starts at [F46]'s end
+[F47.5 Help] as [F47.5] requires 1 day and starts at [F46]'s end
+[F47.6 Settings] as [F47.6] requires 1 day and starts at [F46]'s end
+[F48 Game menu] as [F48] requires 1 day and starts at [F46]'s end
+[F48.1 Navigation in game historic] as [F48.1] requires 1 day and starts at [F46]'s end
+[F48.2 Hint] as [F48.2] requires 1 day and starts at [F46]'s end
+[F49 About menu] as [F49] requires 1 day and starts at [F46]'s end
+[F49.1 Authors] as [F49.1] requires 1 day and starts at [F46]'s end
+[F49.2 Version] as [F49.2] requires 1 day and starts at [F46]'s end
+[F49.3 Project repository] as [F49.3] requires 1 day and starts at [F46]'s end
+[F50 Game Display] as [F50] requires 1 day and starts at [F46]'s end
+[F50.1 GameBorad display] as [F50.1] requires 1 day and starts at [F46]'s end
+[F50.2 Blitz time display] as [F50.2] requires 1 day and starts at [F46]'s end
+[F51 Display played moves] as [F51] requires 1 day and starts at [F46]'s end
+[F51.1 Display played moves] as [F51.1] requires 1 day and starts at [F46]'s end
+[F51.2 Display removed moves] as [F51.2] requires 1 day and starts at [F46]'s end
+[F52 New game Configuration] as [F52] requires 1 day and starts at [F46]'s end
+[F52.1 Blitz mode configuration] as [F52.1] requires 1 day and starts at [F46]'s end
+[F52.2 AI mode configuration] as [F52.2] requires 1 day and starts at [F46]'s end
+[F52.3 Debug and Verbose mode configuration] as [F52.3] requires 1 day and starts at [F46]'s end
+[F52.4 Default parameters] as [F52.4] requires 1 day and starts at [F46]'s end
 
 -- Final part (Code review and final report) --
 [Code Review] requires 2 weeks and starts on 2025-03-14
