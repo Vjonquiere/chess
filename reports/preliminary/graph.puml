@@ -30,7 +30,7 @@ package "Model" #DDDDDD{
     }
 
     class Board {
-        - Bitboard board
+        - Bitboard[12] board
         - boolean player
         - boolean enPassant
         - boolean whiteShortCastle
@@ -40,14 +40,18 @@ package "Model" #DDDDDD{
         + List<Move> getAvailableMoves()
         + boolean makeMove(Move move)
         + Board getCopy()
-        + boolean isAttacked(int i, int j)
-        + boolean isCheck()
-        + boolean isCheckMate()
-        + String getPieceAt(int i, int j)
+    }
+
+    class Rules {
+        + {static} List<Move> getAvailableMoves(int x, int y, Board board)
+        + {static} boolean isAttacked(int i, int j, Board board)
+        + {static} boolean isCheck(Board board)
+        + {static} boolean isCheckMate(Board board)
+        + {static} Piece getPieceAt(int i, int j)
     }
 
     class Bitboard {
-        - long[12] board
+        - long bitboard
     }
 
     class Move {
@@ -62,7 +66,7 @@ package "Model" #DDDDDD{
     }
 
     interface Piece {
-        + {static} List<Move> getAvailableMoves(boolean isWhite, Board b, int col, int row)
+        + {static} Bitboard getMoveMask(Bitboard pos, Board board)
     } 
 
     class Pawn {}
@@ -210,6 +214,7 @@ Solver --> Tree
 Solver --> AINode
 Vue ..|> EventObserver
 AINode --> HistoryNode
+Board --> Rules
 
 Piece <|-- Pawn
 Piece <|-- King
@@ -217,5 +222,8 @@ Piece <|-- Queen
 Piece <|-- Rook
 Piece <|-- Bishop
 Piece <|-- Knight
+
+Rules --> Piece
+Piece --> Rules
 
 @enduml
