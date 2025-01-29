@@ -982,11 +982,11 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Rédaction du message d'aide destiné à l'utilisateur.
     \end{subneedbox}
     \begin{subneedbox}[F16.2: Affichage]
-        Affichage du message d'aide lorsque l'option \textit{-h} ou \textit{--help} est utilisée.
+        Affichage du message d'aide lorsque l'option \textit{-h} ou \textit{--help} est utilisée.\\
         \textbf{Test:} Vérifier que le message d'aide s'affiche.
     \end{subneedbox}
     \begin{subneedbox}[F16.3: Quitter]
-        Quitter le programme après l'affichage effectué.
+        Quitter le programme après l'affichage effectué.\\
         \textbf{Test:} Le programme doit se fermer avec un code de sortie EXIT\_SUCCESS.
     \end{subneedbox}
 \end{needbox}
@@ -997,11 +997,11 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Rédaction du message de version actuelle.
     \end{subneedbox}
     \begin{subneedbox}[F17.2: Affichage]
-        Affichage du message de version lorsque l'option \textit{-V} ou \textit{--version} est utilisée.
+        Affichage du message de version lorsque l'option \textit{-V} ou \textit{--version} est utilisée.\\
         \textbf{Test:} Vérifier que le message de version s'affiche.
     \end{subneedbox}
     \begin{subneedbox}[F17.3: Quitter]
-        Quitter le programme après l'affichage effectué.
+        Quitter le programme après l'affichage effectué.\\
         \textbf{Test:} Le programme doit se fermer avec un code de sortie EXIT\_SUCCESS.
     \end{subneedbox}
 \end{needbox}
@@ -1166,11 +1166,11 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F26: Affichage de l'échiquier Iwen]
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
     \begin{subneedbox}[F26.1: Echiquier]
-        Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des '\_'. Le Roi sera représenté par 'K/k' (King), la Reine par 'Q/q' (Queen), les Tours par 'R/r' (Rook), les Fous par 'B/b' (Bishop), les Cavaliers par 'N/n' (kNights) et les Pions par 'P/p' (Pawn).
+        Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des '\_'. Le Roi sera représenté par 'K/k' (King), la Reine par 'Q/q' (Queen), les Tours par 'R/r' (Rook), les Fous par 'B/b' (Bishop), les Cavaliers par 'N/n' (kNights) et les Pions par 'P/p' (Pawn).\\
         \textbf{Test:} Jouer un coup et vérifier que l'échiquier s'affiche.
     \end{subneedbox}
     \begin{subneedbox}[F26.2: Temps restant]
-        Affichage du temps restant (si le format Blitz est utilisé).
+        Affichage du temps restant (si le format Blitz est utilisé).\\
         \textbf{Test:} Jouer un coup en mode Blitz et vérifier que le temps s'affiche.
     \end{subneedbox}
 \end{needbox}
@@ -1178,12 +1178,13 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F27: Notation des coups Denis]
     Utilisation d'une notation codifiée pour les coups.
     \begin{subneedbox}[F27.1: Reconnaissance du coup Denis]
-        Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.
+        Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.\\
+        \textbf{Test:} Jouer un coup et vérifer que le bon coup a été effectué.
     \end{subneedbox}
     \begin{subneedbox}[F27.2: Vérification du coup Denis]
-        Vérification que le coup demandé par l'utilisateur est un coup légal.
+        Vérification que le coup demandé par l'utilisateur est un coup légal.\\
+        \textbf{Test:} Jouer des coups légaux et des coups illégaux. Vérifier que seuls les coups légaux sont acceptés.
     \end{subneedbox}
-    \textbf{Test:} Jouer des coups légaux et des coups illégaux. Vérifier que seuls les coups légaux sont acceptés.
 \end{needbox}
 
 \begin{needbox}[F28: Représentation de l'historique Iwen]
@@ -1197,12 +1198,12 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         Regarder si la dernière pièce jouée était un pion, et que ce dernier a avancé de deux cases.
     \end{subneedbox}
     \begin{subneedbox}[F29.2: S'assurer que la capture est légale]
-        Capturer le pion qui a bougé le cas échéant ne doit pas nous mettre en échec.
+        Capturer le pion qui a bougé le cas échéant ne doit pas nous mettre en échec.\\
         \textbf{Test:} Placer une pièce qui nous mettrait en échec si l'on capturait le pion.
     \end{subneedbox}
     \begin{subneedbox}[F29.3: Indiquer que la prise est réalisable]
         Changer l'information dans les chaînes de bits pour les règles spécifiques et indiquer quel pion
-        est capturable et quelle est la case cible.
+        est capturable et quelle est la case cible.\\
         \textbf{Test:} S'assurer que les bits ne sont pas changés lorsqu'un pion ne bouge que d'une case.
     \end{subneedbox}
 \end{needbox}
@@ -1335,15 +1336,15 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F36: Naviguer dans l'historique Iwen/ Valentin]
     Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
     \begin{subneedbox}[F36.1: Sauvegarde des coups joués]
-        Sauvegarder les mouvements effectués dans la partie en cours.
+        Sauvegarder les mouvements effectués dans la partie en cours.\\
         \textbf{Test:} Jouer plusieurs coups et verifier que ceux-ci sont enregistrés.
     \end{subneedbox}
     \begin{subneedbox}[F36.2: Sauvegarde des coups annulés]
-        Sauvegarder les mouvements annulés tant qu'un nouveau mouvement n'est pas joué.
+        Sauvegarder les mouvements annulés tant qu'un nouveau mouvement n'est pas joué.\\
         \textbf{Test:} Annuler plusieurs coups et vérifier que ceux-ci sont enregistrés.
     \end{subneedbox}
     \begin{subneedbox}[F36.3: Perte des coups annulés]
-        Effacer les coups annulés si une nouvelle ligne de jeu est joués.
+        Effacer les coups annulés si une nouvelle ligne de jeu est joués.\\
         \textbf{Test:} Jouer un nouveau coup après avoir annulé un coup précédent. Vérifier que le rétablissement est impossible.
     \end{subneedbox}
     \begin{subneedbox}[F36.4: Annulation/Rétablissement]
@@ -1354,12 +1355,13 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F37: Recommencer une partie Denis]
     À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
     \begin{subneedbox}[F37.1: Suppression de la partie en cours]
-        Supprimer l'instance de la partie de la mémoire.
+        Supprimer l'instance de la partie de la mémoire.\\
+        \textbf{Test:} Vérifier que l'instance de base n'est plus accessible.
     \end{subneedbox}
     \begin{subneedbox}[F37.2: Création d'une nouvelle partie]
-        Créer une nouvelle instance de partie avec la position par défaut.
+        Créer une nouvelle instance de partie avec la position par défaut.\\
+        \textbf{Test:} vérifier que l'échiquier est réinitialisé à la position de départ.
     \end{subneedbox}
-    \textbf{Test:} Recommencer une partie et vérifier que l'échiquier est réinitialisé à la position de départ.
 \end{needbox}
 
 \begin{needbox}[F38: Fin de partie Jonathan]
@@ -1379,7 +1381,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
         S'assurer que le fichier est au bon format et est correctement formé.
     \end{subneedbox}
     \begin{subneedbox}[F39.2: Se placer à la dernière position]
-        Rejouer la partie en chargeant le fichier pour se placer au dernier coup joué dans l'historique.
+        Rejouer la partie en chargeant le fichier pour se placer au dernier coup joué dans l'historique.\\
         \textbf{Test:}Vérifier si les règles sont valides tout au cours du chargement de la partie et s'assurer
         que la partie soit bien initialisée.
     \end{subneedbox}
