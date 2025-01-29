@@ -1858,7 +1858,8 @@ entre les membres du groupe).
 \begin{needbox}[F56: Monte Carlo Tree Search Jonathan]
     \textbf{Prérequis:} F23 et F53.
     \begin{subneedbox}[F56.1: Activation du mode]
-        Ajouter \textit{--ai-mode mcts} à la gestion des options.
+        Ajouter \textit{--ai-mode mcts} à la gestion des options.\\
+        \textbf{Test:} Vérifier que l'option active l'algorithme correctement.
     \end{subneedbox}
 
     \begin{subneedbox}[F56.2: Implémentation de MCTS]
@@ -1869,16 +1870,19 @@ entre les membres du groupe).
             \item Une fonction \textit{simulation()} pour effectuer une simulation aléatoire à partir d'un état donné.
             \item Une fonction \textit{backpropagation()} pour propager les résultats de la simulation le long du chemin parcouru.
         \end{itemize}
+        \textbf{Test:} Vérifier que l'algorithme fonctionne correctement et renvoie un coup optimal.
     \end{subneedbox}
 \end{needbox}
 
 \begin{needbox}[F57: Profondeur de recherche Mathilde]
     \textbf{Prérequis:} F54, F55, F56.
     \begin{subneedbox}[F57.1: Activation du mode]
-        Ajouter \textit{--ai-depth DEPTH} à la gestion des options.
+        Ajouter \textit{--ai-depth DEPTH} à la gestion des options.\\
+        \textbf{Test:} Vérifier que l'option paramètre la profondeur correctement.
     \end{subneedbox}
-    \begin{subneedbox}[F57.2: Limiation de la profondeur]
-        Ajouter un limitateur de profondeur de recherche au joueur artificiel.
+    \begin{subneedbox}[F57.2: Limitation de la profondeur]
+        Ajouter un limitateur de profondeur de recherche au joueur artificiel.\\
+        \textbf{Test:} Générer un coup depuis le plateau initial et vérifier que la profondeur de recherche est respectée (coup optimal différent en fonction de la profondeur).
     \end{subneedbox}
 \end{needbox}
 
