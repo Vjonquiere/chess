@@ -200,65 +200,65 @@ thursdays are colored in BlanchedAlmond
 
 
 -- 2nd module (AI and Features) --
-[F23 AI Mode] as [F23] requires 2 weeks and starts on 2025-02-14
-[F23.1 Manage options] as [F23.1] requires 1 day and starts at [F23]'s start
-[F23.2 Equilibrate players number] as [F23.2] requires 1 day and starts at [F23]'s start
-[F53 Heuristic of position's evaluation] as [F53] requires 1 day and starts at [F23]'s start
-[F53.1 Global calculations methods] as [F53.1] requires 1 day and starts at [F23]'s start
-[F53.2 Elements to take into account] as [F53.2] requires 1 day and starts at [F23]'s start
-[F53.3 Particular cases] as [F53.3] requires 1 day and starts at [F23]'s start
-[F54 Minimax] as [F54] requires 1 day and starts at [F53]'s end
-[F54.1 Minmax by default if it is the only algo] as [F54.1] requires 1 day and starts at [F53]'s end
-[F54.2 Basic Implementation] as [F54.2] requires 1 day and starts at [F53]'s end
-[F54.3 Depth managment] as [F54.3] requires 1 day and starts at [F53]'s end
-[F55 AlphaBeta Pruning] as [F55] requires 1 day and starts at [F53]'s end
-[F55.1 AlphaBeta by default] as [F55.1] requires 1 day and starts at [F53]'s end
-[F55.2 Basic Implementation] as [F55.2] requires 1 day and starts at [F53]'s end
-[F55.3 Depth managment] as [F55.3] requires 1 day and starts at [F53]'s end
-[F56 Monte-Carlo Tree Search] as [F56] requires 1 day and starts at [F53]'s end
-[F56.1 Mode activation] as [F56.1] requires 1 day and starts at [F53]'s end
-[F56.2 Implementation] as [F56.2] requires 1 day and starts at [F53]'s end
-[F57 Search Depth] as [F57] requires 1 day and starts at [F56]'s end
-[F57.1 Mode activation] as [F57.1] requires 1 day and starts at [F56]'s end
-[F57.2 Depth Limitation] as [F57.2] requires 1 day and starts at [F56]'s end
-[F60 Bounded Search Time] as [F60] requires 1 day and starts at [F56]'s end
-[F60.1 Mode activation] as [F60.1] requires 1 day and starts at [F56]'s end
-[F60.2 Limit AI reflexion time] as [F60.2] requires 1 day and starts at [F56]'s end
-[F59 End of game Heuristic] as [F59] requires 1 day and starts at [F23]'s start
-[F59.1 Heuristic types] as [F59.1] requires 1 day and starts at [F23]'s start
-[F59.2 Elements for heuristics] as [F59.2] requires 1 day and starts at [F23]'s start
+[F23 AI Mode] as [F23] requires 2 weeks and starts on 2025-02-14 
+[F23.1 Manage options] as [F23.1] requires 1 day and starts at [F23]'s start and is colored in #B57EDC
+[F23.2 Equilibrate players number] as [F23.2] requires 1 day and starts at [F23]'s start and is colored in #B57EDC
+[F53 Heuristic of position's evaluation] as [F53] requires 2 days and starts at [F23]'s start and is colored in #B57EDC
+[F53.1 Global calculations methods] as [F53.1] requires 1 day and starts at [F23]'s start and is colored in #B57EDC
+[F53.2 Elements to take into account] as [F53.2] requires 1 day and starts at [F23]'s start and is colored in #B57EDC
+[F53.3 Particular cases] as [F53.3] requires 1 day and starts at [F23]'s start and is colored in #B57EDC
+[F54 Minimax] as [F54] requires 3 days and starts at [F53]'s end and is colored in #B57EDC
+[F54.1 Minmax by default if it is the only algo] as [F54.1] requires 1 day and starts at [F53]'s end and is colored in #B57EDC
+[F54.2 Basic Implementation] as [F54.2] requires 1 day and starts at [F53]'s end and is colored in #B57EDC
+[F54.3 Depth managment] as [F54.3] requires 1 day and starts at [F53]'s end and is colored in #B57EDC
+[F55 AlphaBeta Pruning] as [F55] requires 2 days and starts at [F53]'s end and is colored in #B57EDC
+[F55.1 AlphaBeta by default] as [F55.1] requires 1 day and starts at [F53]'s end and is colored in #B57EDC
+[F55.2 Basic Implementation] as [F55.2] requires 1 day and starts at [F53]'s end and is colored in #B57EDC
+[F55.3 Depth managment] as [F55.3] requires 1 day and starts at [F53]'s end and is colored in #B57EDC
+[F56 Monte-Carlo Tree Search] as [F56] requires 3 days and starts at [F53]'s end and is colored in #50C878
+[F56.1 Mode activation] as [F56.1] requires 1 day and starts at [F53]'s end and is colored in #50C878
+[F56.2 Implementation] as [F56.2] requires 1 day and starts at [F53]'s end and is colored in #50C878
+[F57 Search Depth] as [F57] requires 1 day and starts at [F56]'s end and is colored in #50C878
+[F57.1 Mode activation] as [F57.1] requires 1 day and starts at [F56]'s end and is colored in #50C878
+[F57.2 Depth Limitation] as [F57.2] requires 1 day and starts at [F56]'s end and is colored in #50C878
+[F60 Bounded Search Time] as [F60] requires 2 days and starts at [F56]'s end and is colored in #50C878
+[F60.1 Mode activation] as [F60.1] requires 1 day and starts at [F56]'s end and is colored in #50C878
+[F60.2 Limit AI reflexion time] as [F60.2] requires 1 day and starts at [F56]'s end and is colored in #50C878
+[F59 End of game Heuristic] as [F59] requires 1 day and starts at [F23]'s start and is colored in #50C878
+[F59.1 Heuristic types] as [F59.1] requires 1 day and starts at [F23]'s start and is colored in #50C878
+[F59.2 Elements for heuristics] as [F59.2] requires 1 day and starts at [F23]'s start and is colored in #50C878
 
 [Features] requires 2 weeks and starts on 2025-02-14
-[F32 Giving up] as [F32] requires 1 day and starts at [Features]'s start
-[F32.1 Winner] as [F32.1] requires 1 day and starts at [Features]'s start
-[F32.2 Effect on the game] as [F32.2] requires 1 day and starts at [Features]'s start
-[F37 Restart a game] as [F37] requires 1 day and starts at [Features]'s start
-[F37.1 Deletion of current game] as [F37.1] requires 1 day and starts at [Features]'s start
-[F37.2 Creation of a new game] as [F37.2] requires 1 day and starts at [Features]'s start
+[F32 Giving up] as [F32] requires 2 days and starts at [Features]'s start and is colored in #FFD700
+[F32.1 Winner] as [F32.1] requires 1 day and starts at [Features]'s start and is colored in #FFD700
+[F32.2 Effect on the game] as [F32.2] requires 1 day and starts at [Features]'s start and is colored in #FFD700
+[F37 Restart a game] as [F37] requires 2 days and starts at [Features]'s start and is colored in #FFD700
+[F37.1 Deletion of current game] as [F37.1] requires 1 day and starts at [Features]'s start and is colored in #FFD700
+[F37.2 Creation of a new game] as [F37.2] requires 1 day and starts at [Features]'s start and is colored in #FFD700
 
 [Load and Save] requires 2 weeks and starts on 2025-02-14
-[F40 Simplified File format] as [F40] requires 1 day and starts at [Load and Save]'s start
-[F40.1 Representation of game board] as [F40.1] requires 1 day and starts at [Features]'s start
-[F40.2 Save game] as [F40.2] requires 1 day and starts at [Features]'s start
-[F40.3 Load a game] as [F40.3] requires 1 day and starts at [Features]'s start
-[F40.4 Managment of reading errors] as [F40.4] requires 1 day and starts at [Features]'s start
-[F41 Historic's format] as [F41] requires 1 day and starts at [Load and Save]'s start
-[F41.1 Save played moves] as [F41.1] requires 1 day and starts at [Features]'s start
-[F41.2 Load previously played moves] as [F41.2] requires 1 day and starts at [Features]'s start
-[F42 Configuration file] as [F42] requires 1 day and starts at [Load and Save]'s start
-[F42.1 Use INI format] as [F42.1] requires 1 day and starts at [Features]'s start
-[F42.2 File extension .chessrc] as [F42.2] requires 1 day and starts at [Features]'s start
-[F42.3 Non valid file] as [F42.3] requires 1 day and starts at [Features]'s start
-[F34 Quitting and saving game] as [F34] requires 1 day and starts at [F42]'s end
-[F34.1 Quit a game] as [F34.1] requires 1 day and starts at [F42]'s end
-[F35 Save game history] as [F35] requires 1 day and starts at [F42]'s end
-[F35.1 Multi-interfaces] as [F35.1] requires 1 day and starts at [F42]'s end
-[F35.2 Error managment] as [F35.2] requires 1 day and starts at [F42]'s end
-[F36 Naviguate in game history] as [F36] requires 1 day and starts at [F35]'s end
-[F36.1 Save played move] as [F36.1] requires 1 day and starts at [F35]'s end
-[F36.2 Save removed moves] as [F36.2] requires 1 day and starts at [F35]'s end
-[F36.3 Erase removed moves] as [F36.3] requires 1 day and starts at [F35]'s end
-[F36.4 Replay or remove move] as [F36.4] requires 1 day and starts at [F35]'s end
+[F40 Simplified File format] as [F40] requires 2 days and starts at [Load and Save]'s start and is colored in #87CEEB
+[F40.1 Representation of game board] as [F40.1] requires 1 day and starts at [Features]'s start and is colored in #87CEEB
+[F40.2 Save game] as [F40.2] requires 1 day and starts at [Features]'s start and is colored in #87CEEB
+[F40.3 Load a game] as [F40.3] requires 1 day and starts at [Features]'s start and is colored in #87CEEB
+[F40.4 Managment of reading errors] as [F40.4] requires 1 day and starts at [Features]'s start and is colored in #87CEEB
+[F41 Historic's format] as [F41] requires 2 days and starts at [Load and Save]'s start and is colored in #FF6F61
+[F41.1 Save played moves] as [F41.1] requires 1 day and starts at [Features]'s start and is colored in #FF6F61
+[F41.2 Load previously played moves] as [F41.2] requires 1 day and starts at [Features]'s start and is colored in #FF6F61
+[F42 Configuration file] as [F42] requires 3 days and starts at [Load and Save]'s start and is colored in #FF6F61
+[F42.1 Use INI format] as [F42.1] requires 1 day and starts at [Features]'s start and is colored in #FF6F61
+[F42.2 File extension .chessrc] as [F42.2] requires 1 day and starts at [Features]'s start and is colored in #FF6F61 
+[F42.3 Non valid file] as [F42.3] requires 1 day and starts at [Features]'s start and is colored in #FF6F61
+[F34 Quitting and saving game] as [F34] requires 1 day and starts at [F42]'s end and is colored in #87CEEB
+[F34.1 Quit a game] as [F34.1] requires 1 day and starts at [F42]'s end and is colored in #87CEEB
+[F35 Save game history] as [F35] requires 1 day and starts at [F42]'s end and is colored in #FF6F61
+[F35.1 Multi-interfaces] as [F35.1] requires 1 day and starts at [F42]'s end and is colored in #FF6F61
+[F35.2 Error managment] as [F35.2] requires 1 day and starts at [F42]'s end and is colored in #FF6F61
+[F36 Naviguate in game history] as [F36] requires 1 day and starts at [F35]'s end and is colored in #FF6F61
+[F36.1 Save played move] as [F36.1] requires 1 day and starts at [F35]'s end and is colored in #87CEEB
+[F36.2 Save removed moves] as [F36.2] requires 1 day and starts at [F35]'s end and is colored in #87CEEB
+[F36.3 Erase removed moves] as [F36.3] requires 1 day and starts at [F35]'s end and is colored in #FFD700
+[F36.4 Replay or remove move] as [F36.4] requires 1 day and starts at [F35]'s end and is colored in #FFD700
 
 -- 3rd module (GUI and last features) --
 [Last features] requires 2 weeks and starts on 2025-02-28
