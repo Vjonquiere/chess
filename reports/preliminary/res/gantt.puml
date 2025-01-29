@@ -49,29 +49,29 @@ thursdays are colored in BlanchedAlmond
 [Preliminary report]->[F8.3]
 [F9 Build system] as [F9] requires 8 weeks
 [Preliminary report] -> [F9]
-[F9.1 General Build] as [F9.1] requires 1 day
+[F9.1 General Build] as [F9.1] requires 1 day and is colored in #FF6F61
 [Preliminary report]->[F9.1]
-[F9.2 Test only] as [F9.2] requires 1 day
+[F9.2 Test only] as [F9.2] requires 1 day and is colored in #FF6F61
 [Preliminary report]->[F9.2]
-[F9.3 Executable file] as [F9.3] requires 1 day
+[F9.3 Executable file] as [F9.3] requires 2 days and is colored in #FF6F61
 [Preliminary report]->[F9.3]
 [F10 Test framework] as [F10] requires 8 weeks
 [Preliminary report] -> [F10]
-[F10.1 JUnit setup] as [F10.1] requires 1 day
+[F10.1 JUnit setup] as [F10.1] requires 1 day and is colored in #FF6F61
 [Preliminary report]->[F10.1]
-[F10.2 Jacoco setup] as [F10.2] requires 1 day
+[F10.2 Jacoco setup] as [F10.2] requires 1 day and is colored in #FF6F61
 [Preliminary report]->[F10.2]
 [F13 Internationalisation] as [F13] requires 8 weeks
 [Preliminary report] -> [F13]
 [F13.1 Accessibility of the language switch] as [F13.1] requires 1 day
 [Preliminary report]->[F10.1]
-[F14 Binary name] as [F14] requires 8 weeks
+[F14 Binary name] as [F14] requires 8 weeks and is colored in #B57EDC
 [Preliminary report] -> [F14]
 [F15 General usage] as [F15] requires 8 weeks
 [Preliminary report] -> [F15]
-[F15.1 Shape and name of executable] as [F15.1] requires 1 day
+[F15.1 Shape and name of executable] as [F15.1] requires 1 day and is colored in #B57EDC
 [Preliminary report]->[F15.1]
-[F15.2 Command line options managment] as [F15.2] requires 1 day
+[F15.2 Command line options managment] as [F15.2] requires 1 day and is colored in #B57EDC
 [Preliminary report]->[F15.2]
 [F15.3 Load a game via a file] as [F15.3] requires 1 day
 [Preliminary report]->[F15.3]
@@ -81,121 +81,121 @@ thursdays are colored in BlanchedAlmond
 [Preliminary report]->[F15.5]
 
 -- 1st module (Game and CLI) --
-[F11 Options managment] as [F11] requires 1 day and starts at [Preliminary report]'s end
-[F16 CLI help] requires 1 day and starts at [F11]'s end
-[F16.1 Create help message] as [F16.1] requires 1 day
+[F11 Options managment] as [F11] requires 3 days and starts at [Preliminary report]'s end and is colored in #B57EDC
+[F16 CLI help] requires 1 day and starts at [F11]'s end and is colored in #B57EDC
+[F16.1 Create help message] as [F16.1] requires 1 day and is colored in #B57EDC
 [F11]->[F16.1]
-[F16.2 Display message] as [F16.2] requires 1 day
+[F16.2 Display message] as [F16.2] requires 1 day and is colored in #B57EDC
 [F11]->[F16.2]
-[F16.3 Quit] as [F16.3] requires 1 day
+[F16.3 Quit] as [F16.3] requires 1 day and is colored in #B57EDC
 [F11]->[F16.3]
-[F17 Version] requires 1 day and starts at [F11]'s end
-[F17.1 Create version message] as [F17.1] requires 1 day
+[F17 Version] requires 1 day and starts at [F11]'s end and is colored in #B57EDC
+[F17.1 Create version message] as [F17.1] requires 1 day and is colored in #B57EDC
 [F11]->[F17.1]
-[F17.2 Display message] as [F17.2] requires 1 day
+[F17.2 Display message] as [F17.2] requires 1 day and is colored in #B57EDC
 [F11]->[F17.2]
-[F17.3 Quit] as [F17.3] requires 1 day
+[F17.3 Quit] as [F17.3] requires 1 day and is colored in #B57EDC
 [F11]->[F17.3]
-[F18 Verbose Mode] requires 1 day and starts at [F11]'s end
-[F18.1 Time per game turn] as [F18.1] requires 1 day
+[F18 Verbose Mode] requires 1 day and starts at [F11]'s end and is colored in #B57EDC
+[F18.1 Time per game turn] as [F18.1] requires 1 day and is colored in #B57EDC
 [F11]->[F18.1]
-[F18.2 Evaluate position against AI] as [F18.2] requires 1 day
+[F18.2 Evaluate position against AI] as [F18.2] requires 1 day and is colored in #B57EDC
 [F11]->[F18.2]
-[F18.3 Estimate of the time of game (start, middle or end)] as [F18.3] requires 1 day
+[F18.3 Estimate of the time of game (start, middle or end)] as [F18.3] requires 1 day and is colored in #B57EDC
 [F11]->[F18.3]
-[F18.4 Specific rules] as [F18.4] requires 1 day
+[F18.4 Specific rules] as [F18.4] requires 1 day and is colored in #B57EDC
 [F11]->[F18.4]
-[F19 Debug mode] requires 1 day and starts at [F11]'s end
-[F19.1 Game state] as [F19.1] requires 1 day
+[F19 Debug mode] requires 1 day and starts at [F11]'s end and is colored in #B57EDC
+[F19.1 Game state] as [F19.1] requires 1 day and is colored in #B57EDC
 [F11]->[F19.1]
-[F19.2 Data structures] as [F19.2] requires 1 day
+[F19.2 Data structures] as [F19.2] requires 1 day and is colored in #B57EDC
 [F11]->[F19.2]
-[F19.3 Zobrist hashing] as [F19.3] requires 1 day
+[F19.3 Zobrist hashing] as [F19.3] requires 1 day and is colored in #B57EDC
 [F11]->[F19.3]
-[F19.4 AI] as [F19.4] requires 1 day
+[F19.4 AI] as [F19.4] requires 1 day and is colored in #B57EDC
 [F11]->[F19.4]
-[F13 Internationalisation setup] requires 1 day and starts at [Preliminary report]'s end
+[F13 Internationalisation setup] requires 2 days and starts at [Preliminary report]'s end and is colored in #B57EDC
 
-[F44 BitBoard module] as [F44] requires 2 days and starts at [Preliminary report]'s end
-[F44.1 Bitboard initialization] as [F44.1] requires 1 day
+[F44 BitBoard module] as [F44] requires 4 days and starts at [Preliminary report]'s end and is colored in #87CEEB
+[F44.1 Bitboard initialization] as [F44.1] requires 1 day and is colored in #87CEEB
 [Preliminary report]->[F44.1]
-[F44.2 Bits manipulation] as [F44.2] requires 1 day
+[F44.2 Bits manipulation] as [F44.2] requires 1 day and is colored in #87CEEB
 [F44.1]->[F44.2]
-[F43 Game Board] as [F43] requires 2 days and starts at [F44]'s end
-[F43.1 Number of Bitboards] as [F43.1] requires 1 day
+[F43 Game Board] as [F43] requires 2 days and starts at [F44]'s end and is colored in #87CEEB
+[F43.1 Number of Bitboards] as [F43.1] requires 1 day and is colored in #87CEEB
 [F44]->[F43.1]
-[F43.2 Operations on bitboards] as [F43.2] requires 1 day
+[F43.2 Operations on bitboards] as [F43.2] requires 1 day and is colored in #87CEEB
 [F44]->[F43.2]
-[F43.3 Bitboard initialization] as [F43.3] requires 1 day
+[F43.3 Bitboard initialization] as [F43.3] requires 1 day and is colored in #87CEEB
 [F44]->[F43.3]
-[F45 Game State] as [F45] requires 2 days and starts at [F43]'s end
+[F45 Game State] as [F45] requires 2 days and starts at [F43]'s end and is colored in #50C878
 [Rules] requires 1 week and starts at [F45]'s end
-[F29 En-passant] as [F29] requires 1 day and starts at [Rules]'s start
-[F29.1 Observe last played move] as [F29.1] requires 1 day
+[F29 En-passant] as [F29] requires 1 day and starts at [Rules]'s start and is colored in #FFD700
+[F29.1 Observe last played move] as [F29.1] requires 1 day and is colored in #FFD700
 [F45]->[F29.1]
-[F29.2 Make sure the catch is legal] as [F29.2] requires 1 day
+[F29.2 Make sure the catch is legal] as [F29.2] requires 1 day and is colored in #FFD700
 [F45]->[F29.2]
-[F29.3 Mark the cath as legal in game state] as [F29.3] requires 1 day
+[F29.3 Mark the cath as legal in game state] as [F29.3] requires 1 day and is colored in #FFD700
 [F45]->[F29.3]
-[F30 Castling] as [F30] requires 1 day and starts at [Rules]'s start
-[F30.1 Tower not moved] as [F30.1] requires 1 day
+[F30 Castling] as [F30] requires 3 days and starts at [Rules]'s start and is colored in #50C878
+[F30.1 Tower not moved] as [F30.1] requires 1 day and is colored in #50C878
 [F45]->[F30.1]
-[F30.2 Free space between King and tower] as [F30.2] requires 1 day
+[F30.2 Free space between King and tower] as [F30.2] requires 1 day and is colored in #50C878
 [F45]->[F30.2]
-[F30.3 No attack on the king's path] as [F30.3] requires 1 day
+[F30.3 No attack on the king's path] as [F30.3] requires 1 day and is colored in #50C878
 [F45]->[F30.3]
-[F30.4 Implement Little Castling] as [F30.4] requires 1 day
+[F30.4 Implement Little Castling] as [F30.4] requires 1 day and is colored in #50C878
 [F45]->[F30.4]
-[F30.5 Implement big Castling] as [F30.5] requires 1 day
+[F30.5 Implement big Castling] as [F30.5] requires 1 day and is colored in #50C878
 [F45]->[F30.5]
-[F31 Promotion] as [F31] requires 1 day and starts at [Rules]'s start
-[F31.1 Replace pawn by another piece] as [F31.1] requires 1 day
+[F31 Promotion] as [F31] requires 1 day and starts at [Rules]'s start and is colored in #50C878
+[F31.1 Replace pawn by another piece] as [F31.1] requires 1 day and is colored in #50C878
 [F45]->[F31.1]
-[F31.2 Only the pawn can be promoted] as [F30.2] requires 1 day
+[F31.2 Only the pawn can be promoted] as [F31.2] requires 1 day and is colored in #50C878
 [F45]->[F31.2]
-[F38 End of the game] as [F38] requires 3 days and starts at [Rules]'s start
-[F38.1 Mat] as [F38.1] requires 1 day
+[F38 End of the game] as [F38] requires 3 days and starts at [Rules]'s start and is colored in #50C878
+[F38.1 Mat] as [F38.1] requires 1 day and is colored in #50C878
 [F45]->[F38.1]
-[F38.2 Pat] as [F38.2] requires 1 day
+[F38.2 Pat] as [F38.2] requires 1 day and is colored in #50C878
 [F45]->[F38.2]
-[F38.3 Equality by lack of pieces] as [F38.3] requires 1 day
+[F38.3 Equality by lack of pieces] as [F38.3] requires 1 day and is colored in #50C878
 [F45]->[F38.3]
-[F38.4 Loss by time] as [F38.4] requires 1 day
+[F38.4 Loss by time] as [F38.4] requires 1 day and is colored in #50C878
 [F45]->[F38.4]
-[F38.5 Equality by mutual agreement] as [F38.5] requires 1 day
+[F38.5 Equality by mutual agreement] as [F38.5] requires 1 day and is colored in #50C878
 [F45]->[F38.5]
-[F38.6 Abandon] as [F38.6] requires 1 day
+[F38.6 Abandon] as [F38.6] requires 1 day and is colored in #50C878
 [F45]->[F38.6]
-[F38.7 Equality by rule of 50 moves] as [F38.7] requires 1 day
+[F38.7 Equality by rule of 50 moves] as [F38.7] requires 1 day and is colored in #50C878
 [F45]->[F38.7]
-[F38.8 Equality by 3 repetition rule] as [F38.8] requires 1 day
+[F38.8 Equality by 3 repetition rule] as [F38.8] requires 1 day and is colored in #50C878
 [F45]->[F38.8]
-[F38.9 Equality by lack of time and pieces] as [F38.9] requires 1 day
+[F38.9 Equality by lack of time and pieces] as [F38.9] requires 1 day and is colored in #50C878
 [F45]->[F38.9]
 
 
 [F24 CLI game] as [F24] requires 1 week and starts at [F45]'s end
-[F24.1 Lauch of CLI by default] as [F24.1] requires 1 day
+[F24.1 Lauch of CLI by default] as [F24.1] requires 1 day and is colored in #FF6F61
 [F45]->[F24.1]
-[F24.2 User input] as [F24.2] requires 1 day
+[F24.2 User input] as [F24.2] requires 2 days and is colored in #FF6F61
 [F45]->[F24.2]
-[F24.3 Command line errors managment] as [F24.3] requires 1 day
+[F24.3 Command line errors managment] as [F24.3] requires 1 day and is colored in #FF6F61
 [F45]->[F24.3]
-[F26 Board display] as [F26] requires 1 day and starts at [F24]'s start
-[F26.1 ChessBoard] as [F26.1] requires 1 day
+[F26 Board display] as [F26] requires 1 day and starts at [F24]'s start and is colored in #FF6F61
+[F26.1 ChessBoard] as [F26.1] requires 1 day and is colored in #FF6F61
 [F45]->[F26.1]
-[F26.2 Time] as [F26.2] requires 1 day
+[F26.2 Time] as [F26.2] requires 2 days and is colored in #FF6F61
 [F45]->[F26.2]
-[F27 Moves syntax] as [F27] requires 1 day and starts at [F24]'s start
-[F27.1 Identification of move] as [F27.1] requires 1 day
+[F27 Moves syntax] as [F27] requires 1 day and starts at [F24]'s start and is colored in #FFD700
+[F27.1 Identification of move] as [F27.1] requires 2 days and is colored in #FFD700
 [F45]->[F27.1]
-[F27.2 Verification of move] as [F27.2] requires 1 day
+[F27.2 Verification of move] as [F27.2] requires 1 day and is colored in #FFD700
 [F45]->[F27.2]
-[F28 Historic] as [F28] requires 1 day and starts at [F27]'s end
-[F33 Display messages] as [F33] requires 1 day and starts at [F24]'s start
-[F33.1 Detection of active mode (default,verbose,..)] as [F33.1] requires 1 day
+[F28 Historic] as [F28] requires 1 day and starts at [F27]'s end and is colored in #FFD700
+[F33 Display messages] as [F33] requires 1 day and starts at [F24]'s start and is colored in #FFD700
+[F33.1 Detection of active mode (default,verbose,..)] as [F33.1] requires 1 day and is colored in #FFD700
 [F45]->[F33.1]
-[F33.2 Message format] as [F33.2] requires 1 day
+[F33.2 Message format] as [F33.2] requires 1 day and is colored in #FFD700
 [F45]->[F33.2]
 -- 2nd module (AI and Features) --
 [F23 AI Mode] as [F23] requires 2 weeks and starts on 2025-02-14
