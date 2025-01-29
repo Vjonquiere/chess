@@ -1,0 +1,33 @@
+@startuml ArtificialIntelligence
+left to right direction
+skinparam actorStyle awesome
+"User" as User
+"Artificial Intelligence" as AI
+package Chess{
+usecase "F23. Mode IA" as F23
+usecase "F53. Heuristique d'évaluation de position" as F53
+usecase "F54. Algorithme de recherche Minimax" as F54
+usecase "F55. AlphaBeta pruning" as F55
+usecase "F56. MonteCarlo Tree Search" as F56
+usecase "F57. Profondeur de recherche" as F57
+usecase "F58. Choix des heuristiques" as F58
+usecase "F59. Heuristique de fin de partie" as F59
+usecase "F60. Temps de réflexion borné" as F60
+}
+
+User -->F23
+
+AI -->F23
+F23 <.. F53 : <<extend>>
+F23 <.. F54 : <<extend>>
+F23 <.. F58 : <<extend>>
+F23 <.. F60 : <<extend>>
+F23 <.. F55 : <<extend>>
+F23 <.. F56 : <<extend>>
+F23 <.. F59 : <<extend>>
+
+F55 --> F57 : <<include>>
+F54 --> F57 : <<include>>
+F56 --> F57 : <<include>>
+
+@enduml
