@@ -71,7 +71,11 @@
 \tableofcontents
 
 \pagebreak
-
+\begin{abstract}
+    Les images fournies dans le rapport sont parfois petites.
+    Elles sont disponibles dans le dossier \textit{reports/preliminary/res}
+    sur notre repository GitLab.
+ \end{abstract}
 \section{Contexte du sujet}
 \subsection{Sujet choisi}
 Nous avons choisi le sujet '\textit{les échecs}' car nous avons abordé ce jeu
@@ -754,13 +758,16 @@ Création de l'interface graphique et finalisation des fonctionnalités utilisat
 
 
 
-Le diagramme de Gantt ci-dessous schématise notre agenda prévisionnel, avec les sous-besoins détaillés. 
+Le premier diagramme de Gantt schématise notre agenda prévisionnel. Le deuxième contient les sous-besoins détaillés. 
 Pour plus d'informations voir la section \ref{Spec}. Nous avons réparti les besoins par personnes,
 chacun avec une couleur différente. Si une tâche est moins/plus longue que prévue, nous reverrons la distribution
 pour la rendre plus égale.
 
 \begin{center}
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt}
+\end{center}
+\begin{center}
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt2}
 \end{center}
 
 \section{Architecture visée pour le projet}
@@ -834,10 +841,10 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F2: Style de codage]
     Le coding style du programme doit respecter le coding style de Google.
-    \begin{subneedbox}[F2.1: Formattage automatique Iwen]
+    \begin{subneedbox}[F2.1: Formattage automatique]
         Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
     \end{subneedbox}
-    \begin{subneedbox}[F2.2: Rejet des commits non formatés Iwen]
+    \begin{subneedbox}[F2.2: Rejet des commits non formatés]
         Ajouter une étape d'intégration continue vérifiant que le code est correctement formaté.
         Si ce n'est pas le cas, faire échouer la pipeline.
     \end{subneedbox}
@@ -903,7 +910,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F9: Build-system Iwen]
+\begin{nonfunctionnalneedbox}[F9: Build-system]
     Établir un système de build pour le programme avec l'outil Maven pour Java. 
     \begin{subneedbox}[F9.1: Programme seulement]
         Construire un build pour le programme, en écartant les tests et différents autre modes de compilation.
@@ -918,7 +925,7 @@ entre les membres du groupe).
 
 \subsection{Bibliothèques et outils}
 
-\begin{nonfunctionnalneedbox}[F10. Frameworks de test Iwen]
+\begin{nonfunctionnalneedbox}[F10. Frameworks de test]
     Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
     \begin{subneedbox}[F10.1 Utiliser JUnit]
         Implémenter des tests unitaires.
@@ -929,18 +936,18 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F11. Gestion des options Mathilde]
+\begin{nonfunctionnalneedbox}[F11. Gestion des options]
     La gestion des options sera basée sur la bibliothèque \textit{commons-cli}.
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique Iwen]
+\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
     La bibliothèque graphique utilisée sera basé sur JavaFx
     \begin{subneedbox}[F12.1: Mise en place d'un environnement de test]
         Mettre en place TestFx afin de pouvoir tester l'interface graphique
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F13: Internationalisation Mathilde]
+\begin{nonfunctionnalneedbox}[F13: Internationalisation]
     Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
     \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
         Le changement de langue doit pouvoir être effectué en seulement 3 cliques
@@ -950,20 +957,20 @@ entre les membres du groupe).
 
 \subsection{Options en ligne de commande}
 
-\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal Mathilde]
+\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal ]
     L’exécutable principal doit s’appeler "chess" et permettre de lancer tout le programme.
     \textbf{Test:} Vérifier que le programme se lance correctement avec le nom 'chess'.
 \end{nonfunctionnalneedbox}
 
 \begin{needbox}[F15. Usage général]
-    \begin{subneedbox}[F15.1: Forme et nom du programme Mathilde]
+    \begin{subneedbox}[F15.1: Forme et nom du programme ]
         Le programme devra s’appeler chess et devra s'exécuter de la manière suivante :  
         \texttt{\#> chess [OPTIONS] [FILENAME]}
 
         \textbf{Test:} Vérifier que le programme se lance correctement avec les options spécifiées.
     \end{subneedbox}
     
-    \begin{subneedbox}[F15.2: Gestion des options en ligne de commande Mathilde]
+    \begin{subneedbox}[F15.2: Gestion des options en ligne de commande ]
         Vérifier si les options sont correctes. En cas d'erreur, afficher un message d'erreur (stderr) et l’aide en ligne de commande -h.
 
         \textbf{Prérequis:} F5.1.
@@ -990,7 +997,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F16: Aide en ligne de commande Mathilde]
+\begin{needbox}[F16: Aide en ligne de commande ]
     L'option '-h', '--help' affiche l'aide puis quitte.
 
     \textbf{Prériquis:} F11
@@ -1007,7 +1014,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F17: Version Mathilde]
+\begin{needbox}[F17: Version ]
     L'option '-V', '--version' affiche la version puis quitte.
 
     \textbf{Prériquis:} F11
@@ -1024,7 +1031,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F18: Mode verbose Mathilde]
+\begin{needbox}[F18: Mode verbose ]
     Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).\\
     \textbf{Test:} S'assurer que toutes les informations sont apportées aux joueurs lorsque l'option
     verbose est choisie.\\
@@ -1043,7 +1050,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
     
-\begin{needbox}[F19: Mode debug Mathilde]
+\begin{needbox}[F19: Mode debug ]
     Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.\\
     \textbf{Test:} S'assurer que toutes les informations sont apportées aux développeurs lorsque l'option
     debug est choisie.\\
@@ -1063,7 +1070,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F20. Mode Blitz Iwen]
+\begin{needbox}[F20. Mode Blitz ]
     Permet de lancer le jeu en mode Blitz.
 
     \textbf{Prérequis:} F11
@@ -1084,7 +1091,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F21. Durée du Blitz Iwen]
+\begin{needbox}[F21. Durée du Blitz ]
     Permet de définir la durée du Blitz.
 
     \textbf{Prérequis:} F11 et F20
@@ -1111,7 +1118,7 @@ entre les membres du groupe).
     ?
 \end{needbox}
 
-\begin{needbox}[F23: Mode IA Mathilde]
+\begin{needbox}[F23: Mode IA ]
     Permet de lancer le programme en mode joueur artificiel.
     \begin{subneedbox}[F23.1: Gérer les options (dépend de F11)]
         \begin{enumerate}
@@ -1139,7 +1146,7 @@ entre les membres du groupe).
 
 \subsection{Interface utilisateur}
 
-\begin{needbox}[F24. Interface en ligne de commande Iwen]
+\begin{needbox}[F24. Interface en ligne de commande ]
 
     \textbf{Prériquis:} F45
     \begin{subneedbox}[F24.1: Lancement de l'interface textuelle par défaut]
@@ -1189,7 +1196,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F26: Affichage de l'échiquier Iwen]
+\begin{needbox}[F26: Affichage de l'échiquier ]
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
 
     \textbf{Prériquis:} F45
@@ -1203,28 +1210,28 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F27: Notation des coups Denis]
+\begin{needbox}[F27: Notation des coups ]
     Utilisation d'une notation codifiée pour les coups.
 
     \textbf{Prériquis:} F45
-    \begin{subneedbox}[F27.1: Reconnaissance du coup Denis]
+    \begin{subneedbox}[F27.1: Reconnaissance du coup ]
         Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.\\
         \textbf{Test:} Jouer un coup et vérifer que le bon coup a été effectué.
     \end{subneedbox}
-    \begin{subneedbox}[F27.2: Vérification du coup Denis]
+    \begin{subneedbox}[F27.2: Vérification du coup ]
         Vérification que le coup demandé par l'utilisateur est un coup légal.\\
         \textbf{Test:} Jouer des coups légaux et des coups illégaux. Vérifier que seuls les coups légaux sont acceptés.
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F28: Représentation de l'historique Iwen]
+\begin{needbox}[F28: Représentation de l'historique ]
     Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.\\
     \textbf{Test:} Vérifier que la Vue affiche correctement l'historique contenu dans la pile de coups (numéro des coups,
     notation des coups, joueur qui a joué, en lignes, etc.).\\
     \textbf{Prériquis:} F27
 \end{needbox}
 
-\begin{needbox}[F29: En passant Denis]
+\begin{needbox}[F29: En passant ]
     Gestion du coup en passant des deux côtés.\\
     \textbf{Prérequis:} F45, F27 et F28
     \begin{subneedbox}[F29.1: Observer le dernier coup joué]
@@ -1241,7 +1248,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F30. Roque Jonathan]
+\begin{needbox}[F30. Roque ]
     Le jeu devra gérer le petit et grand roque.
 
     \textbf{Prérequis:} F45, F27 et F28
@@ -1281,7 +1288,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F31: Promotion du pion Jonathan]
+\begin{needbox}[F31: Promotion du pion ]
     Gérer la promotion du pion.
 
     \textbf{Prérequis:} F45, F27 et F28
@@ -1300,7 +1307,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F32: Abandon Denis]
+\begin{needbox}[F32: Abandon ]
     Le programme devra permettre à un joueur d'abandonner la partie en cours de jeu.
     \begin{subneedbox}[F32.1: Gagnant]
         Le joueur courant est désigné comme celui ayant abandonné.
@@ -1320,7 +1327,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F33: Affichage des messages Mathilde]
+\begin{needbox}[F33: Affichage des messages ]
     Le programme devra afficher des messages d'information
     pendant la partie en fonction du mode dans lequel il est
     (default, verbose, debug).
@@ -1337,9 +1344,10 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F34. Quitter et sauvegarder une partie Valentin]
+\begin{needbox}[F34. Quitter et sauvegarder une partie ]
     \begin{subneedbox}[F34.1:Quitter une partie en cours]
-        Le joueur doit avoir la possibilité de quitter une partie en cours menant à son abandon.
+        Le joueur doit avoir la possibilité de quitter une partie en cours 
+        et de sauvegarder sa progression.
     \end{subneedbox}
 
     \textbf{Prérequis:} F35
@@ -1347,7 +1355,7 @@ entre les membres du groupe).
     \textbf{Test:} Vérifier qu'une partie est sauvegardée correctement avant de quitter.
 \end{needbox}
 
-\begin{needbox}[F35. Sauvegarde de l’historique Iwen]
+\begin{needbox}[F35. Sauvegarde de l’historique ]
 
     \textbf{Prériquis:} F42
     \begin{subneedbox}[F35.1: Multi-interfaces]
@@ -1363,14 +1371,16 @@ entre les membres du groupe).
     \end{subneedbox}
     
     \begin{subneedbox}[F35.3: Tests]
-        - Tester sur une partie finie
-        - Tester sur une partie en cours.
+        \begin{itemize}
+            \item Tester sur une partie finie
+            \item Tester sur une partie en cours.
+        \end{itemize}
 
         \textbf{Test:} Vérifier la sauvegarde dans les conditions mentionnées.
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F36: Naviguer dans l'historique Iwen/ Valentin]
+\begin{needbox}[F36: Naviguer dans l'historique ]
     Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
 
     \textbf{Prériquis:} F35
@@ -1391,7 +1401,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F37: Recommencer une partie Denis]
+\begin{needbox}[F37: Recommencer une partie ]
     À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
     \begin{subneedbox}[F37.1: Suppression de la partie en cours]
         Supprimer l'instance de la partie de la mémoire.\\
@@ -1403,7 +1413,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F38: Fin de partie Jonathan]
+\begin{needbox}[F38: Fin de partie ]
     Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
     \begin{subneedbox}[F38.1: Mat]
         Détecter si la partie se solde sur un Mat.\\
@@ -1445,7 +1455,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F39: Rejouer une partie Jonathan]
+\begin{needbox}[F39: Rejouer une partie ]
     Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
     \begin{subneedbox}[F39.1: Vérification du fichier]
         S'assurer que le fichier est au bon format et est correctement formé.\\
@@ -1470,7 +1480,7 @@ entre les membres du groupe).
 
 \subsection{Format d'entrée/sortie}
 
-\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié Valentin]
+\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié ]
     Permettre au joueur de sauvegarder et restaurer des fichires de jeu.
     \begin{subneedbox}[F40.1: Représentation du plateau de jeu]
         Le plateau de jeu et le joueur courant devra être représenté en format ASCII simplifié.
@@ -1500,7 +1510,7 @@ entre les membres du groupe).
 
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F41: Format de l'historique Iwen]
+\begin{nonfunctionnalneedbox}[F41: Format de l'historique ]
     Lecture et écriture de l'historique de jeu.
 
     \textbf{Prérequis:} F28
@@ -1518,7 +1528,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F42: Fichier de configuration Iwen]
+\begin{nonfunctionnalneedbox}[F42: Fichier de configuration ]
     \begin{subneedbox}[F42.1: Utiliser le format INI]
         Les options du jeu doivent être sauvegardées au format \textit{INI}.
 
@@ -1541,7 +1551,7 @@ entre les membres du groupe).
 
 \subsection{Structures internes}
 
-\begin{needbox}[F43: Plateau de jeu Valentin]
+\begin{needbox}[F43: Plateau de jeu ]
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
     \begin{subneedbox}[F43.1: Nombre de bitboards]
         Il est nécessaire de posséder 12 bitboards de 64-bits pour représenter un
@@ -1566,7 +1576,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F44. Module bitboard Valentin]
+\begin{needbox}[F44. Module bitboard ]
     \begin{subneedbox}[F44.1: Initialisation des bitboards]
         Implémenter des fonctions pour initialiser ou réinitialiser les bitboards.
 
@@ -1583,7 +1593,7 @@ entre les membres du groupe).
     \textbf{Prérequis:} F43.
 \end{needbox}
 
-\begin{needbox}[F45. État du jeu Jonathan]
+\begin{needbox}[F45. État du jeu ]
     \textbf{Prériquis:} F43
 
 
@@ -1600,7 +1610,7 @@ entre les membres du groupe).
 
 \subsection{Interface graphique}
 
-\begin{needbox}[F46: Fonctions de base Mathilde]
+\begin{needbox}[F46: Fonctions de base ]
     Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
 
     \textbf{Prériquis:} F25
@@ -1639,7 +1649,7 @@ entre les membres du groupe).
     
 \end{needbox}
 
-\begin{needbox}[F47: Menu 'File' Valentin]
+\begin{needbox}[F47: Menu 'File' ]
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
 
     \textbf{Prériquis:} F46
@@ -1668,7 +1678,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F48: Menu 'Game' Denis]
+\begin{needbox}[F48: Menu 'Game' ]
     Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
 
     \textbf{Prériquis:} F46
@@ -1682,7 +1692,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F49: Menu 'About' Mathilde]
+\begin{needbox}[F49: Menu 'About' ]
     Menu 'About' permettant d'afficher quelques informations sur le Projet.
 
     \textbf{Prériquis:} F46
@@ -1697,7 +1707,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F50: Affichage d'une partie en cours Valentin]
+\begin{needbox}[F50: Affichage d'une partie en cours ]
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
     
     \textbf{Prérequis:} F25, F26, F33, F46
@@ -1714,7 +1724,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F51: Affichage des coups joués Denis]
+\begin{needbox}[F51: Affichage des coups joués ]
     Affiche l'historique des coups joués sur l'interface graphique.
 
     \textbf{Prérequis:} F25, F26, F28, F33, F46
@@ -1735,7 +1745,7 @@ entre les membres du groupe).
 \end{needbox}
 
 
-\begin{needbox}[F52: Configuration d'une nouvelle partie Mathilde]
+\begin{needbox}[F52: Configuration d'une nouvelle partie ]
     L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
     de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
     non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'. 
@@ -1778,7 +1788,7 @@ entre les membres du groupe).
 
 \subsection{Joueur artificiel}
 
-\begin{needbox}[F53: Heuristique d'évaluation de position Mathilde]
+\begin{needbox}[F53: Heuristique d'évaluation de position ]
     Le programme devra comporter au moins une fonction
     capable de prendre un état du jeu et de lui donner un score en
     fonction de différents critères qui vous sembleront pertinents.
@@ -1809,7 +1819,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F54. Algorithme de recherche Minimax Mathilde]
+\begin{needbox}[F54. Algorithme de recherche Minimax ]
 
     \textbf{Prériquis:} F53
     \begin{subneedbox}[F54.1: Activer Minimax par défaut si AlphaBeta-pruning n'est pas implémenté]
@@ -1831,7 +1841,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F55. AlphaBeta-pruning Mathilde]
+\begin{needbox}[F55. AlphaBeta-pruning ]
 
     \textbf{Prériquis:} F53
     \begin{subneedbox}[F55.1: Option actif par défaut]
@@ -1855,7 +1865,7 @@ entre les membres du groupe).
     \textbf{Prérequis:} F54.
 \end{needbox}
 
-\begin{needbox}[F56: Monte Carlo Tree Search Jonathan]
+\begin{needbox}[F56: Monte Carlo Tree Search ]
     \textbf{Prérequis:} F23 et F53.
     \begin{subneedbox}[F56.1: Activation du mode]
         Ajouter \textit{--ai-mode mcts} à la gestion des options.\\
@@ -1874,7 +1884,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F57: Profondeur de recherche Mathilde]
+\begin{needbox}[F57: Profondeur de recherche ]
     \textbf{Prérequis:} F54, F55, F56.
     \begin{subneedbox}[F57.1: Activation du mode]
         Ajouter \textit{--ai-depth DEPTH} à la gestion des options.\\
@@ -1904,7 +1914,7 @@ entre les membres du groupe).
 
 \end{needbox}
 
-\begin{needbox}[F59: Heuristiques de fin de partie Jonathan]
+\begin{needbox}[F59: Heuristiques de fin de partie ]
 
     \textbf{Prériquis:} F23
     \begin{subneedbox}[F59.1: Types d'heuristiques]
@@ -1933,7 +1943,7 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F60: Temps de réflexion borné Mathilde]
+\begin{needbox}[F60: Temps de réflexion borné ]
     Permet de paramétrer la durée de "réflexion" de l'IA.
 
     \textbf{Prérequis:} F11 et F56
