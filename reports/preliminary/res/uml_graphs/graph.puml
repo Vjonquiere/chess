@@ -2,7 +2,7 @@
 top to bottom direction
 
 package "Model" #DDDDDD{
-    class Game {
+    class Game <<(S,#FF7700)Singleton>>{
         - Timer timeWhite
         - Timer timeBlack
         - boolean isTimed
@@ -12,7 +12,12 @@ package "Model" #DDDDDD{
         + boolean isOver()
         + String getStringHistory()
         + List<Move> getMovesHistory()
+        + void resetGame()
     }
+    note left of Game
+        Design Pattern Singleton
+        Design Pattern Observer (Subject)
+    end note
 
     class History {
         - Stack<HistoryState> histStack
@@ -147,7 +152,9 @@ package "Controller" #DDDDDD{
             - String filepath
         }
     }
-    
+    note bottom of Commands
+        Design Pattern Commands
+    end note
 
     class BagOfCommands  <<(S,#FF7700)Singleton>>{
         - BagOfCommands instance
@@ -163,10 +170,16 @@ package "Controller" #DDDDDD{
         + void setModel(GameManager)
         + void setController(Controller)
     }
+    note left of BagOfCommands
+        Design Pattern Bag of Commands
+        Design Pattern Singleton
+    end note
+    
+
 }
 
 package "Events" #DDDDDD{
-    abstract class EventSource {
+    interface Subject {
         + void addObserver(EventObserver observer)
         + void removeObserver(EventObserver observer)
         + void notifyObservers()
@@ -176,10 +189,13 @@ package "Events" #DDDDDD{
         + void onGameEvent()
     }
 }
+note bottom of Events
+        Design Pattern Observer
+    end note
 
 package "Utils" #DDDDDD{
 
-    class TextGetter {
+    class TextGetter <<(S,#FF7700)Singleton>>{
         - Locale locale
         - ResourceBundle messages
         + void init(Locale)
@@ -205,7 +221,7 @@ Board --> Move
 Game --> Board
 Game --> Solver
 Game --> Timer
-Game --|> EventSource
+Game ..|> Subject
 Board --> Bitboard
 GameController --> Vue
 GameController --> Game

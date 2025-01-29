@@ -789,10 +789,15 @@ Voici l'architecture UML du projet :
 
 Les différents design patterns utilisés dans ce projet sont les suivants : 
 \begin{itemize}
-    \item \textbf{Singleton} : Utilisé pour le module \texttt{Utils/TextGetter} afin de centraliser l'accès aux ressources de texte.
-    \item \textbf{MVC} : L'architecture principale du projet, séparant clairement la logique métier, l'affichage et la gestion des événements.
-    \item \textbf{Observer} : Permet de notifier le Controller ou la Vue des modifications dans le Model.
+    \item \textbf{Singleton} : Utilisé pour le module \texttt{Utils/TextGetter} afin de centraliser l'accès aux ressources de texte. Il sera également utilisé pour
+la classe \texttt{Game} pour s'assurer qu'une seule instance de game est présente. La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes
+ne soit gérée que par un seul bag.
+    \item \textbf{MVC} : L'architecture principale du projet, séparant clairement la logique métier, l'affichage et la gestion des événements. C'est un MVC modifié,
+ grace au design pattern observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela rend le code plus simple et digeste.
+    \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
     \item \textbf{State} : Utilisé pour gérer l'état de la partie, comme le statut du jeu (en cours, échec et mat, pat, etc.).
+    \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
+    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourons gérer l'ajout de plusieurs commandes en parallèle.
 \end{itemize}
 
 
