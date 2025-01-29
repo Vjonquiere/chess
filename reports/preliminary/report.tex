@@ -1524,27 +1524,35 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F46: Fonctions de base Mathilde]
     Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
     \begin{subneedbox}[F46.1: Prise en passant]
+        \textbf{Prérequis:} F29.\\
         Implementation graphique du besoin F29. Prise en passant.
     \end{subneedbox}
     \begin{subneedbox}[F46.2: Roque]
+        \textbf{Prérequis:} F30.\\
         Implementation graphique du besoin F30. Roque.
     \end{subneedbox}
     \begin{subneedbox}[F46.3: Promotion]
+        \textbf{Prérequis:} F31.\\
         Implementation graphique du besoin F31. Promotion du pion.
     \end{subneedbox}
     \begin{subneedbox}[F46.4: Abandon]
+        \textbf{Prérequis:} F32.\\
         Implementation graphique du besoin F32. Abandon.
     \end{subneedbox}
     \begin{subneedbox}[F46.5: Fin de partie]
+        \textbf{Prérequis:} F38.\\
         Implementation graphique du besoin F38. Fin de partie.
     \end{subneedbox}
     \begin{subneedbox}[F46.6: Mode blitz]
+        \textbf{Prérequis:} F20.\\
         Implementation graphique du besoin F20. Mode blitz.
     \end{subneedbox}
     \begin{subneedbox}[F46.7: Mode contest]
+        \textbf{Prérequis:} F22.\\
         Implementation graphique du besoin F22 Mode contest.
     \end{subneedbox}
     \begin{subneedbox}[F46.8: Mode IA]
+        \textbf{Prérequis:} F23.\\
         Implementation graphique du besoin F23. Mode IA.
     \end{subneedbox}
     
@@ -1553,21 +1561,26 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{needbox}[F47: Menu 'File' Valentin]
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
     \begin{subneedbox}[F47.1: New Game]
+        \textbf{Prérequis:} F37.\\
         Ajout d'un bouton 'New Game' pemettant de lancer une nouvelle partie.
     \end{subneedbox}
     \begin{subneedbox}[F47.2: Load Game]
+        \textbf{Prérequis:} F35.\\
         Ajout d'un bouton 'Load Game' pemettant de charger une partie depuis un fichier.
     \end{subneedbox}
     \begin{subneedbox}[F47.3: Save Game]
+        \textbf{Prérequis:} F35.\\
         Ajout d'un bouton 'Save Game' pemettant de sauvegarder la partie en cours dans un fichier.
     \end{subneedbox}
     \begin{subneedbox}[F47.4: Quit]
+        \textbf{Prérequis:} F34.\\
         Ajout d'un bouton 'Quit' pemettant de quitter le programme.
     \end{subneedbox}
     \begin{subneedbox}[F47.5: Help]
         Ajout d'un bouton 'Help' pemettant d'afficher le message d'aide.
     \end{subneedbox}
     \begin{subneedbox}[F47.6: Settings]
+        \textbf{Prérequis:} F42.\\
         Ajout d'un bouton 'Settings' pemettant d'éditer la configuration par défaut.
     \end{subneedbox}
 \end{needbox}
@@ -1738,6 +1751,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 \begin{needbox}[F56: Monte Carlo Tree Search Jonathan]
+    \textbf{Prérequis:} F23.
     \begin{subneedbox}[F56.1: Activation du mode]
         Ajouter \textit{--ai-mode mcts} à la gestion des options.
     \end{subneedbox}
@@ -1754,6 +1768,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 \begin{needbox}[F57: Profondeur de recherche Mathilde]
+    \textbf{Prérequis:} F54, F55, F56.
     \begin{subneedbox}[F57.1: Activation du mode]
         Ajouter \textit{--ai-depth DEPTH} à la gestion des options.
     \end{subneedbox}
