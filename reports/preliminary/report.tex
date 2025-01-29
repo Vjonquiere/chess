@@ -820,10 +820,10 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \begin{nonfunctionnalneedbox}[F2: Style de codage]
     Le coding style du programme doit respecter le coding style de Google.
-    \begin{subneedbox}[F2.1: Formattage automatique]
+    \begin{subneedbox}[F2.1: Formattage automatique Iwen]
         Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
     \end{subneedbox}
-    \begin{subneedbox}[F2.2: Rejet des commits non formatés]
+    \begin{subneedbox}[F2.2: Rejet des commits non formatés Iwen]
         Ajouter une étape d'intégration continue vérifiant que le code est correctement formaté.
         Si ce n'est pas le cas, faire échouer la pipeline.
     \end{subneedbox}
@@ -889,8 +889,8 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F9: Build-system]
-    Etablir un système de build pour le programme avec l'outil Maven pour Java. 
+\begin{nonfunctionnalneedbox}[F9: Build-system Iwen]
+    Établir un système de build pour le programme avec l'outil Maven pour Java. 
     \begin{subneedbox}[F9.1: Programme seulement]
         Construire un build pour le programme, en écartant les tests et différents autre modes de compilation.
     \end{subneedbox}
@@ -904,7 +904,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Bibliothèques et outils}
 
-\begin{nonfunctionnalneedbox}[F10. Frameworks de test]
+\begin{nonfunctionnalneedbox}[F10. Frameworks de test Iwen]
     Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
     \begin{subneedbox}[F10.1 Utiliser JUnit]
         Implémenter des tests unitaires.
@@ -915,18 +915,18 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F11. Gestion des options]
+\begin{nonfunctionnalneedbox}[F11. Gestion des options Mathilde]
     La gestion des options sera basée sur la bibliothèque \textit{commons-cli}.
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
+\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique Iwen]
     La bibliothèque graphique utilisée sera basé sur JavaFx
     \begin{subneedbox}[F12.1: Mise en place d'un environnement de test]
         Mettre en place TestFx afin de pouvoir tester l'interface graphique
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F13: Internationalisation]
+\begin{nonfunctionnalneedbox}[F13: Internationalisation Mathilde]
     Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
     \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
         Le changement de langue doit pouvoir être effectué en seulement 3 cliques
@@ -936,20 +936,20 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Options en ligne de commande}
 
-\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal]
+\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal Mathilde]
     L’exécutable principal doit s’appeler "chess" et permettre de lancer tout le programme.
     \textbf{Test:} Vérifier que le programme se lance correctement avec le nom 'chess'.
 \end{nonfunctionnalneedbox}
 
 \begin{needbox}[F15. Usage général]
-    \begin{subneedbox}[F15.1: Forme et nom du programme]
+    \begin{subneedbox}[F15.1: Forme et nom du programme Mathilde]
         Le programme devra s’appeler chess et devra s'exécuter de la manière suivante :  
         \texttt{\#> chess [OPTIONS] [FILENAME]}
 
         \textbf{Test:} Vérifier que le programme se lance correctement avec les options spécifiées.
     \end{subneedbox}
     
-    \begin{subneedbox}[F15.2: Gestion des options en ligne de commande]
+    \begin{subneedbox}[F15.2: Gestion des options en ligne de commande Mathilde]
         Vérifier si les options sont correctes. En cas d'erreur, afficher un message d'erreur (stderr) et l’aide en ligne de commande -h.
 
         \textbf{Prérequis:} F5.1.
@@ -976,7 +976,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F16: Aide en ligne de commande]
+\begin{needbox}[F16: Aide en ligne de commande Mathilde]
     L'option '-h', '--help' affiche l'aide puis quitte.
     \begin{subneedbox}[F16.1: Texte]
         Rédaction du message d'aide destiné à l'utilisateur.
@@ -991,7 +991,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F17: Version]
+\begin{needbox}[F17: Version Mathilde]
     L'option '-V', '--version' affiche la version puis quitte.
     \begin{subneedbox}[F17.1: Texte]
         Rédaction du message de version actuelle.
@@ -1006,7 +1006,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F18: Mode verbose]
+\begin{needbox}[F18: Mode verbose Mathilde]
     Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).
     \begin{subneedbox}[F18.1: Temps par coup]
         Indiquer à l'utilisateur le temps qui a été pris par un des côtés pour jouer le dernier coup.
@@ -1022,7 +1022,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
     
-\begin{needbox}[F19: Mode debug]
+\begin{needbox}[F19: Mode debug Mathilde]
     Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.
     \begin{subneedbox}[F19.1: Etat de la partie]
         Indiquer aux développeurs la représentation de chaque position, avec les bitmaps et chaînes de bits pour les
@@ -1039,7 +1039,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F20. Mode Blitz]
+\begin{needbox}[F20. Mode Blitz Iwen]
     Permet de lancer le jeu en mode Blitz.
 
     \textbf{Prérequis:} F11
@@ -1060,7 +1060,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F21. Durée du Blitz]
+\begin{needbox}[F21. Durée du Blitz Iwen]
     Permet de définir la durée du Blitz.
 
     \textbf{Prérequis:} F11 et F20
@@ -1087,7 +1087,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     ?
 \end{needbox}
 
-\begin{needbox}[F23: Mode IA]
+\begin{needbox}[F23: Mode IA Mathilde]
     Permet de lancer le programme en mode joueur artificiel.
     \begin{subneedbox}[F23.1: Gérer les options (dépend de F11)]
         \begin{enumerate}
@@ -1115,7 +1115,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Interface utilisateur}
 
-\begin{needbox}[F24. Interface en ligne de commande]
+\begin{needbox}[F24. Interface en ligne de commande Iwen]
     \begin{subneedbox}[F24.1: Lancement de l'interface textuelle par défaut]
         Le programme doit lancer l'interface textuelle en l'absence d'option -g ou --gui.
 
@@ -1163,7 +1163,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F26: Affichage de l'échiquier]
+\begin{needbox}[F26: Affichage de l'échiquier Iwen]
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
     \begin{subneedbox}[F26.1: Echiquier]
         Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des '\_'. Le Roi sera représenté par 'K/k' (King), la Reine par 'Q/q' (Queen), les Tours par 'R/r' (Rook), les Fous par 'B/b' (Bishop), les Cavaliers par 'N/n' (kNights) et les Pions par 'P/p' (Pawn).
@@ -1175,22 +1175,22 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F27: Notation des coups]
+\begin{needbox}[F27: Notation des coups Denis]
     Utilisation d'une notation codifiée pour les coups.
-    \begin{subneedbox}[F27.1: Reconnaissance du coup]
+    \begin{subneedbox}[F27.1: Reconnaissance du coup Denis]
         Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.
     \end{subneedbox}
-    \begin{subneedbox}[F27.2: Vérification du coup]
+    \begin{subneedbox}[F27.2: Vérification du coup Denis]
         Vérification que le coup demandé par l'utilisateur est un coup légal.
     \end{subneedbox}
     \textbf{Test:} Jouer des coups légaux et des coups illégaux. Vérifier que seuls les coups légaux sont acceptés.
 \end{needbox}
 
-\begin{needbox}[F28: Représentation de l'historique]
+\begin{needbox}[F28: Représentation de l'historique Iwen]
     Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.
 \end{needbox}
 
-\begin{needbox}[F29: En passant]
+\begin{needbox}[F29: En passant Denis]
     Gestion du coup en passant des deux côtés.\\
     \textbf{Prérequis:} F27 et F28
     \begin{subneedbox}[F29.1: Observer si la dernière pièce jouée était un pion]
@@ -1207,7 +1207,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F30. Roque]
+\begin{needbox}[F30. Roque Jonathan]
     Le jeu devra gérer le petit et grand roque.
 
     \textbf{Prérequis:} F27 et F28
@@ -1247,7 +1247,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F31: Promotion du pion]
+\begin{needbox}[F31: Promotion du pion Jonathan]
     Gérer la promotion du pion.
 
     \textbf{Prérequis:} F27 et F28
@@ -1266,7 +1266,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F32: Abandon]
+\begin{needbox}[F32: Abandon Denis]
     Le programme devra permettre à un joueur d'abandonner la partie en cours de jeu.
     \begin{subneedbox}[F32.1: Gagnant]
         Le joueur courant est désigné comme celui ayant abandonné.
@@ -1286,7 +1286,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F33: Affichage des messages]
+\begin{needbox}[F33: Affichage des messages Mathilde]
     Le programme devra afficher des messages d'information
     pendant la partie en fonction du mode dans lequel il est
     (default, verbose, debug).
@@ -1301,17 +1301,17 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F34. Quitter et sauvegarder une partie]
+\begin{needbox}[F34. Quitter et sauvegarder une partie Valentin]
     \begin{subneedbox}[F34.1:Quitter une partie en cours]
         Le joueur doit avoir la possibilité de quitter une partie en cours menant à son abandon.
     \end{subneedbox}
 
-    \textbf{Prérequis:} F35 et F46.4
+    \textbf{Prérequis:} F35
 
     \textbf{Test:} Vérifier qu'une partie est sauvegardée correctement avant de quitter.
 \end{needbox}
 
-\begin{needbox}[F35. Sauvegarde de l’historique]
+\begin{needbox}[F35. Sauvegarde de l’historique Iwen]
     \begin{subneedbox}[F35.1: Multi-interfaces]
         La sauvegarde doit fonctionner sur toutes les interfaces.
 
@@ -1332,7 +1332,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F36: Naviguer dans l'historique]
+\begin{needbox}[F36: Naviguer dans l'historique Iwen/ Valentin]
     Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
     \begin{subneedbox}[F36.1: Sauvegarde des coups joués]
         Sauvegarder les mouvements effectués dans la partie en cours.
@@ -1351,7 +1351,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F37: Recommencer une partie]
+\begin{needbox}[F37: Recommencer une partie Denis]
     À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
     \begin{subneedbox}[F37.1: Suppression de la partie en cours]
         Supprimer l'instance de la partie de la mémoire.
@@ -1362,7 +1362,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \textbf{Test:} Recommencer une partie et vérifier que l'échiquier est réinitialisé à la position de départ.
 \end{needbox}
 
-\begin{needbox}[F38: Fin de partie]
+\begin{needbox}[F38: Fin de partie Jonathan]
     Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
     \begin{subneedbox}[F38.1: Règles de base]
         Détecter si la partie se solde sur un Mat, Pat, Egalité par manque de matériel, Egalité par accord, ou encore Perte au temps.
@@ -1373,7 +1373,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F39: Rejouer une partie]
+\begin{needbox}[F39: Rejouer une partie Jonathan]
     Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
     \begin{subneedbox}[F39.1: Vérification du fichier]
         S'assurer que le fichier est au bon format et est correctement formé.
@@ -1395,7 +1395,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Format d'entrée/sortie}
 
-\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié]
+\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié Valentin]
     Permettre au joueur de sauvegarder et restaurer des fichires de jeu.
     \begin{subneedbox}[F40.1: Représentation du plateau de jeu]
         Le plateau de jeu et le joueur courant devra être représenté en format ASCII simplifié.
@@ -1425,7 +1425,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F41: Format de l'historique]
+\begin{nonfunctionnalneedbox}[F41: Format de l'historique Iwen]
     Lecture et écriture de l'historique de jeu.
 
     \textbf{Prérequis:} F28
@@ -1443,7 +1443,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F42: Fichier de configuration]
+\begin{nonfunctionnalneedbox}[F42: Fichier de configuration Iwen]
     \begin{subneedbox}[F42.1: Utiliser le format INI]
         Les options du jeu doivent être sauvegardées au format \textit{INI}.
 
@@ -1466,7 +1466,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Structures internes}
 
-\begin{needbox}[F43: Plateau de jeu]
+\begin{needbox}[F43: Plateau de jeu Valentin]
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
     \begin{subneedbox}[F43.1: Nombre de bitboards]
         Il est nécessaire de posséder 12 bitboards de 64-bits pour représenter un
@@ -1491,7 +1491,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F44. Module bitboard]
+\begin{needbox}[F44. Module bitboard Valentin]
     \begin{subneedbox}[F44.1: Initialisation des bitboards]
         Implémenter des fonctions pour initialiser ou réinitialiser les bitboards.
 
@@ -1507,7 +1507,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \textbf{Prérequis:} F43.
 \end{needbox}
 
-\begin{needbox}[F45. État du jeu]
+\begin{needbox}[F45. État du jeu Jonathan]
     L’état du jeu doit être stocké dans uns structue de donnée et doit inclure au moins les informations suivantes : \\
     - Joueur courant.  
     - Temps restant pour chaque camp (si blitz).  
@@ -1519,7 +1519,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Interface graphique}
 
-\begin{needbox}[F46: Fonctions de base]
+\begin{needbox}[F46: Fonctions de base Mathilde]
     Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
     \begin{subneedbox}[F46.1: Prise en passant]
         Implementation graphique du besoin F29. Prise en passant.
@@ -1548,7 +1548,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     
 \end{needbox}
 
-\begin{needbox}[F47: Menu 'File']
+\begin{needbox}[F47: Menu 'File' Valentin]
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
     \begin{subneedbox}[F47.1: New Game]
         Ajout d'un bouton 'New Game' pemettant de lancer une nouvelle partie.
@@ -1570,7 +1570,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F48: Menu 'Game']
+\begin{needbox}[F48: Menu 'Game' Denis]
     Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
     \begin{subneedbox}[F48.1: Navigation dans l'historique de coups]
         Ajout des options 'Aller en avant', 'Aller en arrière', 'Aller au début' et 'Aller à la fin' afin de naviguer dans
@@ -1582,7 +1582,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F49: Menu 'About']
+\begin{needbox}[F49: Menu 'About' Mathilde]
     Menu 'About' permettant d'afficher quelques informations sur le Projet.
     \begin{subneedbox}[F49.1: Auteurs]
         Ajout d'une option 'Authors' afin d'afficher l'équipe de développeurs.
@@ -1595,7 +1595,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F50: Affichage d'une partie en cours]
+\begin{needbox}[F50: Affichage d'une partie en cours Valentin]
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
     \textbf{Prérequis:} F25, F26, F33, F46
     \begin{subneedbox}[F50.1: Affichage du plateau]
@@ -1611,7 +1611,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F51: Affichage des coups joués]
+\begin{needbox}[F51: Affichage des coups joués Denis]
     Affiche l'historique des coups joués sur l'interface graphique.
 
     \textbf{Prérequis:} F25, F26, F28, F33, F46
@@ -1632,7 +1632,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \end{needbox}
 
 
-\begin{needbox}[F52: Configuration d'une nouvelle partie]
+\begin{needbox}[F52: Configuration d'une nouvelle partie Mathilde]
     L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
     de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
     non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'. 
@@ -1673,7 +1673,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \subsection{Joueur artificiel}
 
-\begin{needbox}[F53: Heuristique d'évaluation de position]
+\begin{needbox}[F53: Heuristique d'évaluation de position Mathilde]
     Le programme devra comporter au moins une fonction
     capable de prendre un état du jeu et de lui donner un score en
     fonction de différents critères qui vous sembleront pertinents.
@@ -1693,7 +1693,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F54. Algorithme de recherche Minimax]
+\begin{needbox}[F54. Algorithme de recherche Minimax Mathilde]
     \begin{subneedbox}[F54.1: Activer Minimax par défaut si AlphaBeta-pruning n'est pas implémenté]
         Utiliser l'option --ai-mode mm pour activer l'algorithme.
 
@@ -1713,7 +1713,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F55. AlphaBeta-pruning]
+\begin{needbox}[F55. AlphaBeta-pruning Mathilde]
     \begin{subneedbox}[F55.1: Option actif par défaut]
         Si l'algorithme AlphaBeta-pruning est implémenté, il doit être activé par défaut pour les décisions de l'IA.
         Utiliser l'option --ai-mode ab pour activer l’algorithme.
@@ -1735,7 +1735,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \textbf{Prérequis:} F54.
 \end{needbox}
 
-\begin{needbox}[F56: Monte Carlo Tree Search]
+\begin{needbox}[F56: Monte Carlo Tree Search Jonathan]
     \begin{subneedbox}[F56.1: Activation du mode]
         Ajouter \textit{--ai-mode mcts} à la gestion des options.
     \end{subneedbox}
@@ -1751,7 +1751,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F57: Profondeur de recherche]
+\begin{needbox}[F57: Profondeur de recherche Mathilde]
     \begin{subneedbox}[F57.1: Activation du mode]
         Ajouter \textit{--ai-depth DEPTH} à la gestion des options.
     \end{subneedbox}
@@ -1760,7 +1760,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F58: Choix des heuristiques]
+\begin{needbox}[F58: Choix des heuristiques Jonatahn]
     \begin{subneedbox}[F58.1: Types d'heuristiques]
         Trier les heuristiques en fonction de leur groupe d'appartenance.\\
         Pour l'instant:
@@ -1776,7 +1776,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F59: Heuristiques de fin de partie]
+\begin{needbox}[F59: Heuristiques de fin de partie Jonathan]
     \begin{subneedbox}[F59.1: Types d'heuristiques]
         Détecter lorsque l'on se trouve en fin de partie.\\
         On peut se baser notamment sur:
@@ -1801,7 +1801,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \end{subneedbox}
 \end{needbox}
 
-\begin{needbox}[F60: Temps de réflexion borné]
+\begin{needbox}[F60: Temps de réflexion borné Mathilde]
     Permet de paramétrer la durée de "réflexion" de l'IA.
 
     \textbf{Prérequis:} F11
