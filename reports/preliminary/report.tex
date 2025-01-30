@@ -772,16 +772,16 @@ Création de l'interface graphique et finalisation des fonctionnalités utilisat
 
 Le premier diagramme de Gantt schématise notre agenda prévisionnel. Le deuxième contient les sous-besoins détaillés. 
 Pour plus d'informations voir la section \ref{Spec}. Nous avons réparti les besoins par personnes,
-chacun avec une couleur différente. Si une tâche est moins/plus longue que prévue, nous reverrons la distribution
-pour la rendre plus égale.
+chacun avec une couleur différente (voir légende en bas du graphique). Les dates de rendu de chaque besoin ainsi que 
+la/les personne(s) assignée(s) sont également disponibles dans les besoins étendus. Si une tâche est moins/plus longue
+que prévu, nous reverrons la distribution pour la rendre plus égale.
 
 \begin{center}
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt}
 \end{center}
 \begin{center}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt2}
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt3}
 \end{center}
-
 \section{Architecture visée pour le projet}
 Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que pour l'amélioration future du projet.
 
@@ -827,7 +827,8 @@ ne soit gérée que par un seul bag.
 
 Afin de visualiser au mieux les besoins et sous-besoins que nous avons identifiés, nous les avons présentés comme ci-dessous.
 Les encadrés bleus représentent les besoins fonctionnels et on retrouve pour chacun les sous-besoins dans des cadres verts.
-Nous utilisons le même principe pour les besoins non fonctionnels (à l'exception que l'encadré est violet). Pour visualiser
+Nous utilisons le même principe pour les besoins non fonctionnels (à l'exception que l'encadré est violet). Chaque besoin
+contient également la/les personne(s) assignée(s) ainsi que la date de rendu prévisionnelle dans un cadre orange. Pour visualiser
 au mieux les dépendances entre les besoins, le mieux et de regarder l'agenda prévisionnel (il contient également la répartition
 entre les membres du groupe).
 
