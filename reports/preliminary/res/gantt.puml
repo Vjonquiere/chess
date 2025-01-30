@@ -64,14 +64,14 @@ thursdays are colored in BlanchedAlmond
 [F13 Internationalisation] as [F13] requires 8 weeks
 [Preliminary report] -> [F13]
 [F13.1 Accessibility of the language switch] as [F13.1] requires 1 day
-[Preliminary report]->[F10.1]
+[Preliminary report]->[F13.1]
 [F14 Binary name] as [F14] requires 8 weeks and is colored in #B57EDC
 [Preliminary report] -> [F14]
 [F15 General usage] as [F15] requires 8 weeks
 [Preliminary report] -> [F15]
 [F15.1 Shape and name of executable] as [F15.1] requires 1 day and is colored in #B57EDC
 [Preliminary report]->[F15.1]
-[F15.2 Command line options managment] as [F15.2] requires 1 day and is colored in #B57EDC
+[F15.2 Command line options management] as [F15.2] requires 1 day and is colored in #B57EDC
 [Preliminary report]->[F15.2]
 [F15.3 Load a game via a file] as [F15.3] requires 1 day
 [Preliminary report]->[F15.3]
@@ -135,7 +135,7 @@ thursdays are colored in BlanchedAlmond
 [F45]->[F29.1]
 [F29.2 Make sure the catch is legal] as [F29.2] requires 1 day and is colored in #FFD700
 [F45]->[F29.2]
-[F29.3 Mark the cath as legal in game state] as [F29.3] requires 1 day and is colored in #FFD700
+[F29.3 Mark the catch as legal in game state] as [F29.3] requires 1 day and is colored in #FFD700
 [F45]->[F29.3]
 [F30 Castling] as [F30] requires 3 days and starts at [Rules]'s start and is colored in #50C878
 [F30.1 Tower not moved] as [F30.1] requires 1 day and is colored in #50C878
@@ -179,7 +179,7 @@ thursdays are colored in BlanchedAlmond
 [F45]->[F24.1]
 [F24.2 User input] as [F24.2] requires 2 days and is colored in #FF6F61
 [F45]->[F24.2]
-[F24.3 Command line errors managment] as [F24.3] requires 1 day and is colored in #FF6F61
+[F24.3 Command line errors management] as [F24.3] requires 1 day and is colored in #FF6F61
 [F45]->[F24.3]
 [F26 Board display] as [F26] requires 1 day and starts at [F24]'s start and is colored in #FF6F61
 [F26.1 ChessBoard] as [F26.1] requires 1 day and is colored in #FF6F61
@@ -329,5 +329,15 @@ thursdays are colored in BlanchedAlmond
 2025-02-14 to 2025-02-27 are colored in PeachPuff
 2025-02-28 to 2025-03-13 are colored in TECHNOLOGY
 2025-03-14 to 2025-03-27 are colored in LightSkyBlue
+
+legend
+Legend:
+|= Color |= Developer |
+|<#B57EDC> | Mathilde Chollon |
+|<#FF6F61>| Iwen Jomaa |
+|<#FFD700> | Denis Demirci |
+|<#87CEEB> | Valentin Jonquière |
+|<#50C878> | Jonathan Landry |
+end legend
 @endgantt
 
