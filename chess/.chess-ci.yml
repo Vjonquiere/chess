@@ -18,7 +18,7 @@ unit-test-job:   # Test stage: Runs unit tests
   stage: test
   script:
     - echo "Running unit tests..."
-    - mvn test
+    - mvn test jacoco:report
   artifacts:
     reports:
       junit: target/surefire-reports/*.xml  # Ensure JUnit test results are visible in GitLab
