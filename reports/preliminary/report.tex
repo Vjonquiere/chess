@@ -16,6 +16,7 @@
 \definecolor{needcolor}{HTML}{007ACC}
 \definecolor{nonfunctionnalneedcolor}{HTML}{9722ff}
 \definecolor{subneedcolor}{HTML}{28A745}
+\definecolor{duedateassigncolor}{HTML}{FF9800}
 
 \tcbuselibrary{skins, breakable}
 \newtcolorbox{needbox}[1][]{
@@ -49,6 +50,17 @@
   breakable,
   enhanced,
   sharp corners=all
+}
+
+\newtcolorbox{duedatebox}[1][]{
+  colframe=duedateassigncolor,
+  colback=duedateassigncolor!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  enhanced,
+  sharp corners=all,
+  left=2mm, right=2mm, top=2mm, bottom=2mm
 }
 
 
@@ -821,6 +833,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F?: Titre]
     Template pour les besoins fonctionnels
+    \begin{duedatebox}
+        Date de rendu:\\
+        Assigné:
+    \end{duedatebox}
     \begin{subneedbox}[F?.?: Titre]
         sous besoin 
     \end{subneedbox}
@@ -828,6 +844,10 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F?: Titre]
     Template pour les besoins non fonctionnels
+    \begin{duedatebox}
+        Date de rendu:\\
+        Assigné:
+    \end{duedatebox}
     \begin{subneedbox}[F?.?: Titre]
         sous besoin
     \end{subneedbox}
@@ -837,10 +857,18 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F1. Langage de programmation]
     Le langage de programmation du projet devra être Java et utiliser la spécification Java SE 17+.
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F2: Style de codage]
     Le coding style du programme doit respecter le coding style de Google.
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
     \begin{subneedbox}[F2.1: Formattage automatique]
         Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
     \end{subneedbox}
@@ -852,15 +880,26 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
     La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F4. Système cible]
     Le programme devra fonctionner sur des systèmes d’exploitation GNU/Linux. \\
     \textbf{Test:} Vérifier la compatibilité sur Ubuntu 22.04 et Fedora 36
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F5. Documentation]
-    
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
     \begin{subneedbox}[F5.1: Option -h]
         Implémenter une option -h (besoin F16).
 
@@ -884,6 +923,10 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F6. Tests]
     Tester et valider le programme avec une couverture suffisante.
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
     \begin{subneedbox}[F6.1 Tests]
         Implémenter des tests unitaires sur l'ensemble du projet.
     \end{subneedbox}
@@ -895,10 +938,18 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F7: Bugs]
     Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées et les erreurs doivent générer des messages d'erreur.
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F8: Performances]
     Evaluer des performances du programme de manière générale et pour différentes options et différentes configurations de jeu
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
     \begin{subneedbox}[F8.1: IA]
         Estimer précisément les performances de la partie IA, notamment les complexités en temps en en espace en fonction des heuristiques.
     \end{subneedbox}
@@ -912,6 +963,10 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F9: Build-system]
     Établir un système de build pour le programme avec l'outil Maven pour Java. 
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet (mise en place avant le 01/02)\\
+        Assigné: Toute l'équipe (mise en place par Iwen)
+    \end{duedatebox}
     \begin{subneedbox}[F9.1: Programme seulement]
         Construire un build pour le programme, en écartant les tests et différents autre modes de compilation.
     \end{subneedbox}
@@ -927,6 +982,10 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F10. Frameworks de test]
     Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet (mise en place avant le 03/02)\\
+        Assigné: Toute l'équipe (mise en place par Iwen)
+    \end{duedatebox}
     \begin{subneedbox}[F10.1 Utiliser JUnit]
         Implémenter des tests unitaires.
     \end{subneedbox}
@@ -938,10 +997,18 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F11. Gestion des options]
     La gestion des options sera basée sur la bibliothèque \textit{commons-cli}.
+    \begin{duedatebox}
+        Date de rendu: 06/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
     La bibliothèque graphique utilisée sera basé sur JavaFx
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet\\
+        Assigné: Toute l'équipe
+    \end{duedatebox}
     \begin{subneedbox}[F12.1: Mise en place d'un environnement de test]
         Mettre en place TestFx afin de pouvoir tester l'interface graphique
     \end{subneedbox}
@@ -949,6 +1016,10 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F13: Internationalisation]
     Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
+    \begin{duedatebox}
+        Date de rendu: Tout au long du projet (mise en place avant le 13/02)\\
+        Assigné: Toute l'équipe (mise en place par Mathilde)
+    \end{duedatebox}
     \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
         Le changement de langue doit pouvoir être effectué en seulement 3 cliques
         sur l'interface graphique.
@@ -960,9 +1031,17 @@ entre les membres du groupe).
 \begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal ]
     L’exécutable principal doit s’appeler "chess" et permettre de lancer tout le programme.
     \textbf{Test:} Vérifier que le programme se lance correctement avec le nom 'chess'.
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
 \end{nonfunctionnalneedbox}
 
 \begin{needbox}[F15. Usage général]
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F15.1: Forme et nom du programme ]
         Le programme devra s’appeler chess et devra s'exécuter de la manière suivante :  
         \texttt{\#> chess [OPTIONS] [FILENAME]}
@@ -1001,6 +1080,10 @@ entre les membres du groupe).
     L'option '-h', '--help' affiche l'aide puis quitte.
 
     \textbf{Prériquis:} F11
+    \begin{duedatebox}
+        Date de rendu: 06/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F16.1: Texte]
         Rédaction du message d'aide destiné à l'utilisateur.
     \end{subneedbox}
@@ -1018,6 +1101,10 @@ entre les membres du groupe).
     L'option '-V', '--version' affiche la version puis quitte.
 
     \textbf{Prériquis:} F11
+    \begin{duedatebox}
+        Date de rendu: 06/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F17.1: Texte]
         Rédaction du message de version actuelle.
     \end{subneedbox}
@@ -1036,6 +1123,10 @@ entre les membres du groupe).
     \textbf{Test:} S'assurer que toutes les informations sont apportées aux joueurs lorsque l'option
     verbose est choisie.\\
     \textbf{Prériquis:} F11
+    \begin{duedatebox}
+        Date de rendu: 06/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F18.1: Temps par coup]
         Indiquer à l'utilisateur le temps qui a été pris par un des côtés pour jouer le dernier coup.
     \end{subneedbox}
@@ -1055,6 +1146,10 @@ entre les membres du groupe).
     \textbf{Test:} S'assurer que toutes les informations sont apportées aux développeurs lorsque l'option
     debug est choisie.\\
     \textbf{Prériquis:} F11
+    \begin{duedatebox}
+        Date de rendu: 06/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F19.1: Etat de la partie]
         Indiquer aux développeurs la représentation de chaque position, avec les bitmaps et chaînes de bits pour les
         règles spécifiques.
@@ -1074,6 +1169,10 @@ entre les membres du groupe).
     Permet de lancer le jeu en mode Blitz.
 
     \textbf{Prérequis:} F11
+    \begin{duedatebox}
+        Date de rendu: 13/03\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F20.1: Activation du mode]
         Ajouter \textit{-b} et \textit{--blitz} à la gestion des options.
 
@@ -1095,6 +1194,10 @@ entre les membres du groupe).
     Permet de définir la durée du Blitz.
 
     \textbf{Prérequis:} F11 et F20
+    \begin{duedatebox}
+        Date de rendu: 13/03\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F21.1: Activation du mode]
         Ajouter \textit{-t TIME} et \textit{--time TIME} à la gestion des options.
 
@@ -1120,6 +1223,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F23: Mode IA ]
     Permet de lancer le programme en mode joueur artificiel.
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Mathilde + Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F23.1: Gérer les options (dépend de F11)]
         \begin{enumerate}
             \item -a[COLOR]
@@ -1149,6 +1256,10 @@ entre les membres du groupe).
 \begin{needbox}[F24. Interface en ligne de commande ]
 
     \textbf{Prériquis:} F45
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F24.1: Lancement de l'interface textuelle par défaut]
         Le programme doit lancer l'interface textuelle en l'absence d'option -g ou --gui.
 
@@ -1171,6 +1282,10 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F25. Interface graphique]
+    \begin{duedatebox}
+        Date de rendu: 20/03\\
+        Assigné: Iwen + Mathilde + Denis + Valentin (voir agenda pour la répartition)
+    \end{duedatebox}
     \begin{subneedbox}[F25.1: Lancement de l'interface graphique en option]
         Implémenter la détection des options -g ou --gui pour lancer l'interface graphique.
 
@@ -1200,6 +1315,10 @@ entre les membres du groupe).
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
 
     \textbf{Prériquis:} F45
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F26.1: Echiquier]
         Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des '\_'. Le Roi sera représenté par 'K/k' (King), la Reine par 'Q/q' (Queen), les Tours par 'R/r' (Rook), les Fous par 'B/b' (Bishop), les Cavaliers par 'N/n' (kNights) et les Pions par 'P/p' (Pawn).\\
         \textbf{Test:} Jouer un coup et vérifier que l'échiquier s'affiche.
@@ -1214,6 +1333,10 @@ entre les membres du groupe).
     Utilisation d'une notation codifiée pour les coups.
 
     \textbf{Prériquis:} F45
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F27.1: Reconnaissance du coup ]
         Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.\\
         \textbf{Test:} Jouer un coup et vérifer que le bon coup a été effectué.
@@ -1229,11 +1352,19 @@ entre les membres du groupe).
     \textbf{Test:} Vérifier que la Vue affiche correctement l'historique contenu dans la pile de coups (numéro des coups,
     notation des coups, joueur qui a joué, en lignes, etc.).\\
     \textbf{Prériquis:} F27
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Denis
+    \end{duedatebox}
 \end{needbox}
 
 \begin{needbox}[F29: En passant ]
     Gestion du coup en passant des deux côtés.\\
     \textbf{Prérequis:} F45, F27 et F28
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F29.1: Observer le dernier coup joué]
         Regarder si la dernière pièce jouée était un pion, et que ce dernier a avancé de deux cases.
     \end{subneedbox}
@@ -1252,6 +1383,10 @@ entre les membres du groupe).
     Le jeu devra gérer le petit et grand roque.
 
     \textbf{Prérequis:} F45, F27 et F28
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F30.1: Vérifier que le roi et la Tour n'ont pas bougé]
         Garder en mémoire un booléen pour le petit et le grand roque.
         Si le roi ou une tour a bougé, la mettre à false pour rendre le roque impossible.
@@ -1292,6 +1427,10 @@ entre les membres du groupe).
     Gérer la promotion du pion.
 
     \textbf{Prérequis:} F45, F27 et F28
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F31.1: Pouvoir remplacer le pion par une autre pièce.]
         Si le pion a atteint la rangée la plus éloignée de sa position d'origine, pouvoir le remplacer par
         une dame, un fou, un cavalier ou une tour.
@@ -1309,6 +1448,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F32: Abandon ]
     Le programme devra permettre à un joueur d'abandonner la partie en cours de jeu.
+    \begin{duedatebox}
+        Date de rendu: 20/02\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F32.1: Gagnant]
         Le joueur courant est désigné comme celui ayant abandonné.
         Il est donc considéré comme le joueur perdant et son adversaire
@@ -1333,6 +1476,10 @@ entre les membres du groupe).
     (default, verbose, debug).
 
     \textbf{Prériquis:} F45
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
         À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
 
@@ -1345,6 +1492,10 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F34. Quitter et sauvegarder une partie ]
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Valentin
+    \end{duedatebox}
     \begin{subneedbox}[F34.1:Quitter une partie en cours]
         Le joueur doit avoir la possibilité de quitter une partie en cours 
         et de sauvegarder sa progression.
@@ -1358,6 +1509,10 @@ entre les membres du groupe).
 \begin{needbox}[F35. Sauvegarde de l’historique ]
 
     \textbf{Prériquis:} F42
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F35.1: Multi-interfaces]
         La sauvegarde doit fonctionner sur toutes les interfaces.
 
@@ -1384,6 +1539,10 @@ entre les membres du groupe).
     Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
 
     \textbf{Prériquis:} F35
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Iwen + Valentin + Denis (voir agenda pour répartition)
+    \end{duedatebox}
     \begin{subneedbox}[F36.1: Sauvegarde des coups joués]
         Sauvegarder les mouvements effectués dans la partie en cours.\\
         \textbf{Test:} Jouer plusieurs coups et verifier que ceux-ci sont enregistrés.
@@ -1403,6 +1562,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F37: Recommencer une partie ]
     À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F37.1: Suppression de la partie en cours]
         Supprimer l'instance de la partie de la mémoire.\\
         \textbf{Test:} Vérifier que l'instance de base n'est plus accessible.
@@ -1415,6 +1578,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F38: Fin de partie ]
     Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
+    \begin{duedatebox}
+        Date de rendu: 13/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F38.1: Mat]
         Détecter si la partie se solde sur un Mat.\\
         \textbf{Test:} S'assurer qu'aucun coup ne soit légal pour le joueur qui est maté.
@@ -1457,6 +1624,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F39: Rejouer une partie ]
     Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
+    \begin{duedatebox}
+        Date de rendu: 13/03\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F39.1: Vérification du fichier]
         S'assurer que le fichier est au bon format et est correctement formé.\\
         \textbf{Test:} Contrôler la notation des coups ainsi que l'extension du fichier.
@@ -1482,6 +1653,10 @@ entre les membres du groupe).
 
 \begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié ]
     Permettre au joueur de sauvegarder et restaurer des fichires de jeu.
+    \begin{duedatebox}
+        Date de rendu: 20/02\\
+        Assigné: Valentin
+    \end{duedatebox}
     \begin{subneedbox}[F40.1: Représentation du plateau de jeu]
         Le plateau de jeu et le joueur courant devra être représenté en format ASCII simplifié.
     \end{subneedbox}
@@ -1514,6 +1689,10 @@ entre les membres du groupe).
     Lecture et écriture de l'historique de jeu.
 
     \textbf{Prérequis:} F28
+    \begin{duedatebox}
+        Date de rendu: 20/02\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F41.1: Sauvegarder les coups joués]
         Permet à l'utilisateur de sauvegarder l'historique des coups joués dans la partie.
 
@@ -1529,6 +1708,10 @@ entre les membres du groupe).
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F42: Fichier de configuration ]
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F42.1: Utiliser le format INI]
         Les options du jeu doivent être sauvegardées au format \textit{INI}.
 
@@ -1553,6 +1736,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F43: Plateau de jeu ]
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
+    \begin{duedatebox}
+        Date de rendu: 05/02\\
+        Assigné: Valentin
+    \end{duedatebox}
     \begin{subneedbox}[F43.1: Nombre de bitboards]
         Il est nécessaire de posséder 12 bitboards de 64-bits pour représenter un
         plateau d'échecs complet.
@@ -1577,6 +1764,10 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F44. Module bitboard ]
+    \begin{duedatebox}
+        Date de rendu: 03/02\\
+        Assigné: Valentin
+    \end{duedatebox}
     \begin{subneedbox}[F44.1: Initialisation des bitboards]
         Implémenter des fonctions pour initialiser ou réinitialiser les bitboards.
 
@@ -1595,6 +1786,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F45. État du jeu ]
     \textbf{Prériquis:} F43
+    \begin{duedatebox}
+        Date de rendu: 06/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
 
 
     L’état du jeu doit être stocké dans uns structue de donnée et doit inclure au moins les informations suivantes : \\
@@ -1614,6 +1809,10 @@ entre les membres du groupe).
     Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
 
     \textbf{Prériquis:} F25
+    \begin{duedatebox}
+        Date de rendu: 20/03\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F46.1: Prise en passant]
         \textbf{Prérequis:} F29.\\
         Implementation graphique du besoin F29. Prise en passant.
@@ -1653,6 +1852,10 @@ entre les membres du groupe).
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
 
     \textbf{Prériquis:} F46
+    \begin{duedatebox}
+        Date de rendu: 13/03\\
+        Assigné: Valentin
+    \end{duedatebox}
     \begin{subneedbox}[F47.1: New Game]
         \textbf{Prérequis:} F37.\\
         Ajout d'un bouton 'New Game' pemettant de lancer une nouvelle partie.
@@ -1682,6 +1885,10 @@ entre les membres du groupe).
     Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
 
     \textbf{Prériquis:} F46
+    \begin{duedatebox}
+        Date de rendu: 13/03\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F48.1: Navigation dans l'historique de coups]
         Ajout des options 'Aller en avant', 'Aller en arrière', 'Aller au début' et 'Aller à la fin' afin de naviguer dans
         les coups de la partie.
@@ -1696,6 +1903,10 @@ entre les membres du groupe).
     Menu 'About' permettant d'afficher quelques informations sur le Projet.
 
     \textbf{Prériquis:} F46
+    \begin{duedatebox}
+        Date de rendu: 20/03\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F49.1: Auteurs]
         Ajout d'une option 'Authors' afin d'afficher l'équipe de développeurs.
     \end{subneedbox}
@@ -1711,6 +1922,10 @@ entre les membres du groupe).
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
     
     \textbf{Prérequis:} F25, F26, F33, F46
+    \begin{duedatebox}
+        Date de rendu: 20/03\\
+        Assigné: Valentin
+    \end{duedatebox}
     \begin{subneedbox}[F50.1: Affichage du plateau]
         Afficher le plateau et rendre les cases cliquables afin de sélectionner et 
         bouger une pièce.
@@ -1728,6 +1943,10 @@ entre les membres du groupe).
     Affiche l'historique des coups joués sur l'interface graphique.
 
     \textbf{Prérequis:} F25, F26, F28, F33, F46
+    \begin{duedatebox}
+        Date de rendu: 20/03\\
+        Assigné: Denis
+    \end{duedatebox}
     \begin{subneedbox}[F50.1: Affichage les coups joués]
         Afficher les coups joués en les numérotant. Les coups les plus récents se trouveront
         en haut de la pile des coups. Il faut envisager d'avoir un espace scrollable, si la partie
@@ -1751,6 +1970,10 @@ entre les membres du groupe).
     non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'. 
 
     \textbf{Prériquis:} F46
+    \begin{duedatebox}
+        Date de rendu: 20/03\\
+        Assigné: Iwen
+    \end{duedatebox}
     \begin{subneedbox}[F52.1: Configuration mode \textit{blitz}]
         L'utilisateur doit pouvoir cocher une option \textit{blitz}.
         Si celui-ci est coché, l'utilisateur peut alors modifier une entrée
@@ -1796,6 +2019,10 @@ entre les membres du groupe).
     \textbf{Test:} Faire des tests de performance afin de voir combien
     de noeuds l'on peut explorer en un temps imparti. Il faudra également
     faire des tests pour voir si la méthode d'évaluation est la bonne. 
+    \begin{duedatebox}
+        Date de rendu: 20/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F53.1: Méthode de calcul global]
         Trouver une heuristique permettant de représenter, avec un 
         maximum de justesse, l'état du plateau pour chaque joueur.
@@ -1822,6 +2049,10 @@ entre les membres du groupe).
 \begin{needbox}[F54. Algorithme de recherche Minimax ]
 
     \textbf{Prériquis:} F53
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F54.1: Activer Minimax par défaut si AlphaBeta-pruning n'est pas implémenté]
         Utiliser l'option --ai-mode mm pour activer l'algorithme.
 
@@ -1843,7 +2074,11 @@ entre les membres du groupe).
 
 \begin{needbox}[F55. AlphaBeta-pruning ]
 
-    \textbf{Prériquis:} F53
+    \textbf{Prériquis:} F53 et F54.
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Mathilde
+    \end{duedatebox}
     \begin{subneedbox}[F55.1: Option actif par défaut]
         Si l'algorithme AlphaBeta-pruning est implémenté, il doit être activé par défaut pour les décisions de l'IA.
         Utiliser l'option --ai-mode ab pour activer l’algorithme.
@@ -1862,11 +2097,14 @@ entre les membres du groupe).
 
         \textbf{Test:} Vérifier les performances à différentes profondeurs avec AlphaBeta-pruning.
     \end{subneedbox}
-    \textbf{Prérequis:} F54.
 \end{needbox}
 
 \begin{needbox}[F56: Monte Carlo Tree Search ]
     \textbf{Prérequis:} F23 et F53.
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F56.1: Activation du mode]
         Ajouter \textit{--ai-mode mcts} à la gestion des options.\\
         \textbf{Test:} Vérifier que l'option active l'algorithme correctement.
@@ -1886,6 +2124,10 @@ entre les membres du groupe).
 
 \begin{needbox}[F57: Profondeur de recherche ]
     \textbf{Prérequis:} F54, F55, F56.
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F57.1: Activation du mode]
         Ajouter \textit{--ai-depth DEPTH} à la gestion des options.\\
         \textbf{Test:} Vérifier que l'option paramètre la profondeur correctement.
@@ -1897,6 +2139,10 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F58: Choix des heuristiques Jonatahn]
+    \begin{duedatebox}
+        Date de rendu: 20/03\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F58.1: Types d'heuristiques]
         Trier les heuristiques en fonction de leur groupe d'appartenance.\\
         Pour l'instant:
@@ -1915,8 +2161,12 @@ entre les membres du groupe).
 \end{needbox}
 
 \begin{needbox}[F59: Heuristiques de fin de partie ]
-
+    
     \textbf{Prériquis:} F23
+    \begin{duedatebox}
+        Date de rendu: 20/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F59.1: Types d'heuristiques]
         Détecter lorsque l'on se trouve en fin de partie.\\
         On peut se baser notamment sur:
@@ -1947,6 +2197,10 @@ entre les membres du groupe).
     Permet de paramétrer la durée de "réflexion" de l'IA.
 
     \textbf{Prérequis:} F11 et F56
+    \begin{duedatebox}
+        Date de rendu: 27/02\\
+        Assigné: Jonathan
+    \end{duedatebox}
     \begin{subneedbox}[F60.1: Activation du mode]
         Ajouter \textit{--ai-time TIME} à la gestion des options.
 
