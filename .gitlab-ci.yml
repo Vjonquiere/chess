@@ -13,7 +13,7 @@ build-job:       # Build stage: Compiles the code and packages it into a JAR
     - mvn clean package -DskipTests
   artifacts:
     paths:
-      - target/  # Save build artifacts (e.g., JAR files) for use in later stages
+      - chess/target/  # Save build artifacts (e.g., JAR files) for use in later stages
   tags:
       - shell
 
@@ -22,6 +22,7 @@ unit-test-job:   # Test stage: Runs unit tests
   script:
     - echo "Running unit tests..."
     - mvn test jacoco:report
+    - ls chess/target/site
   artifacts:
     reports:
       junit: chess/target/surefire-reports/*.xml  # Ensure JUnit test results are visible in GitLab
