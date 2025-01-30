@@ -11,6 +11,8 @@ build-job:       # Build stage: Compiles the code and packages it into a JAR
   artifacts:
     paths:
       - target/  # Save build artifacts (e.g., JAR files) for use in later stages
+  tags:
+      - shell
 
 unit-test-job:   # Test stage: Runs unit tests
   stage: test
@@ -23,14 +25,20 @@ unit-test-job:   # Test stage: Runs unit tests
       coverage_report:
         coverage_format: jacoco
         path: target/site/jacoco.xml
+  tags:
+      - shell
 
 lint-test-job:   # Test stage: Runs lint checks
   stage: test
   script:
     - echo "Checking code style..."
     - mvn spotless:check
+  tags:
+      - shell
 
 cleanup:
   stage: .post
   script:
     - mvn clean
+  tags:
+      - shells
