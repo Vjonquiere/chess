@@ -20,6 +20,7 @@ public class Game extends Subject {
 
   @Override
   public void notifyObservers() {
+    // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
