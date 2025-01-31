@@ -3,7 +3,7 @@ package pdp.model;
 import java.util.List;
 import pdp.utils.Position;
 
-public interface BoardRepresentation {
+public interface BoardRepresentation extends Rules {
   public List<Position> getPawns(boolean white);
 
   public List<Position> getRooks(boolean white);

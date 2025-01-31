@@ -3,7 +3,7 @@ package pdp.model;
 import java.util.List;
 import pdp.utils.Position;
 
-public class BitboardRepresentation implements BoardRepresentation, Rules {
+public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard[] board;
 
   public BitboardRepresentation() {
