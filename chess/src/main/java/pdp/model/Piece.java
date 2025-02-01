@@ -10,8 +10,7 @@ public enum Piece {
 
     @Override
     public char getCharRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+      return white ? 'P' : 'p';
     }
   },
   ROOK {
@@ -23,8 +22,7 @@ public enum Piece {
 
     @Override
     public char getCharRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+      return white ? 'R' : 'r';
     }
   },
   BISHOP {
@@ -36,8 +34,7 @@ public enum Piece {
 
     @Override
     public char getCharRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+      return white ? 'B' : 'b';
     }
   },
   KNIGHT {
@@ -49,8 +46,7 @@ public enum Piece {
 
     @Override
     public char getCharRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+      return white ? 'N' : 'n';
     }
   },
   QUEEN {
@@ -62,8 +58,7 @@ public enum Piece {
 
     @Override
     public char getCharRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+      return white ? 'Q' : 'q';
     }
   },
   KING {
@@ -75,8 +70,7 @@ public enum Piece {
 
     @Override
     public char getCharRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+      return white ? 'K' : 'k';
     }
   };
 

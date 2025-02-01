@@ -2,7 +2,6 @@ package pdp.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import pdp.utils.Position;
 
 public class Board {
@@ -74,12 +73,12 @@ public class Board {
 
     StringBuilder sb = new StringBuilder();
     for (ArrayList<Character> row : board) {
-        for (Character cell : row) {
-            sb.append(cell);
-        }
-        sb.append('\n');
+      for (Character cell : row) {
+        sb.append(cell);
+      }
+      sb.append('\n');
     }
-    
-    return(sb.toString());
+
+    return (sb.toString());
   }
 }
