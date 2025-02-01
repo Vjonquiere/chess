@@ -9,7 +9,7 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
+    public char getCharRepresentation(boolean white) {
       // TODO
       throw new UnsupportedOperationException();
     }
@@ -22,7 +22,7 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
+    public char getCharRepresentation(boolean white) {
       // TODO
       throw new UnsupportedOperationException();
     }
@@ -35,7 +35,7 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
+    public char getCharRepresentation(boolean white) {
       // TODO
       throw new UnsupportedOperationException();
     }
@@ -48,7 +48,7 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
+    public char getCharRepresentation(boolean white) {
       // TODO
       throw new UnsupportedOperationException();
     }
@@ -61,7 +61,7 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
+    public char getCharRepresentation(boolean white) {
       // TODO
       throw new UnsupportedOperationException();
     }
@@ -74,7 +74,7 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
+    public char getCharRepresentation(boolean white) {
       // TODO
       throw new UnsupportedOperationException();
     }
@@ -82,5 +82,5 @@ public enum Piece {
 
   public abstract Bitboard getMoveMask(Bitboard pos, Board board);
 
-  public abstract String getStringRepresentation(boolean white);
+  public abstract char getCharRepresentation(boolean white);
 }
