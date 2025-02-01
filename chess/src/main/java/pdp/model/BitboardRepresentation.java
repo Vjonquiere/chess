@@ -5,6 +5,8 @@ import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard[] board;
+  private int nbCols = 8;
+  private int nbRows = 8;
 
   public BitboardRepresentation() {
     // TODO
@@ -59,6 +61,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
+  }
+
+  public int getNbCols() {
+    return nbCols;
+  }
+
+  public int getNbRows() {
+    return nbRows;
   }
 
   @Override

@@ -36,43 +36,43 @@ public class Board {
 
   public String getAsciiRepresentation() {
 
-    ArrayList<ArrayList<Character>> board = new ArrayList<ArrayList<Character>>();
-    for (int i = 0; i < 8; i++) {
-      board.add(new ArrayList<Character>());
-      for (int j = 0; j < 8; j++) {
-        board.get(i).add('_');
+    ArrayList<ArrayList<Character>> charBoard = new ArrayList<ArrayList<Character>>();
+    for (int i = 0; i < this.board.getNbCols(); i++) {
+      charBoard.add(new ArrayList<Character>());
+      for (int j = 0; j < this.board.getNbRows(); j++) {
+        charBoard.get(i).add('_');
       }
     }
 
     for (int i = 0; i < 2; i++) {
       boolean color = i == 0;
       char rep = Piece.PAWN.getCharRepresentation(color);
-      for (Position pos : board.getPawns(color)) {
-        board.get(pos.getY()).set(pos.getX(), rep);
+      for (Position pos : this.board.getPawns(color)) {
+        charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
       rep = Piece.ROOK.getCharRepresentation(color);
-      for (Position pos : board.getRooks(color)) {
-        board.get(pos.getY()).set(pos.getX(), rep);
+      for (Position pos : this.board.getRooks(color)) {
+        charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
       rep = Piece.KNIGHT.getCharRepresentation(color);
-      for (Position pos : board.getKnights(color)) {
-        board.get(pos.getY()).set(pos.getX(), rep);
+      for (Position pos : this.board.getKnights(color)) {
+        charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
       rep = Piece.BISHOP.getCharRepresentation(color);
-      for (Position pos : board.getBishops(color)) {
-        board.get(pos.getY()).set(pos.getX(), rep);
+      for (Position pos : this.board.getBishops(color)) {
+        charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
       rep = Piece.QUEEN.getCharRepresentation(color);
-      for (Position pos : board.getQueens(color)) {
-        board.get(pos.getY()).set(pos.getX(), rep);
+      for (Position pos : this.board.getQueens(color)) {
+        charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
       rep = Piece.KING.getCharRepresentation(color);
-      Position pos = board.getKing(color);
-      board.get(pos.getY()).set(pos.getX(), rep);
+      Position pos = this.board.getKing(color);
+      charBoard.get(pos.getY()).set(pos.getX(), rep);
     }
 
     StringBuilder sb = new StringBuilder();
-    for (ArrayList<Character> row : board) {
+    for (ArrayList<Character> row : charBoard) {
       for (Character cell : row) {
         sb.append(cell);
       }
