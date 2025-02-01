@@ -17,4 +17,6 @@ public interface BoardRepresentation extends Rules {
   public Position getKing(boolean white);
 
   public Piece getPieceAt(int x, int y);
+
+  public String getAsciiRepresentation();
 }

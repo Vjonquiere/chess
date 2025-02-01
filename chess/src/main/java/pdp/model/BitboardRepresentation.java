@@ -62,6 +62,13 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
+  public String getAsciiRepresentation() {
+    // TODO
+    throw new UnsupportedOperationException(
+        "Method not implemented in " + this.getClass().getName());
+  }
+
+  @Override
   public List<Move> getAvailableMoves(int x, int y, Board board) {
     // TODO
     throw new UnsupportedOperationException(
