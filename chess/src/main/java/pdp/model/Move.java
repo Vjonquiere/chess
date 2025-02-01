@@ -16,6 +16,11 @@ public class Move {
         "Method not implemented in " + this.getClass().getName());
   }
 
+  public static Move fromString(String move) {
+    // TODO
+    throw new UnsupportedOperationException("Method not implemented");
+  }
+
   public Position getSource() {
     return source;
   }

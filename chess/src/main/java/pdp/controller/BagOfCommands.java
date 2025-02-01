@@ -48,9 +48,8 @@ public class BagOfCommands {
     this.controller = controller;
   }
 
-  public BagOfCommands getInstance() {
+  public static BagOfCommands getInstance() {
     // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    throw new UnsupportedOperationException("Method not implemented");
   }
 }
