@@ -49,9 +49,27 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName());
   }
 
-  public Game getInstance() {
+  public String getGameRepresentation() {
+    StringBuilder sb = new StringBuilder();
+
+    if (this.isTimed) {
+      sb.append("Played with time remaining: ");
+      sb.append(this.timer.timeRemainingString());
+      sb.append("\n\n");
+    }
+
+    sb.append(this.board.getAsciiRepresentation());
+
+    sb.append("\n\n");
+
+    sb.append("To play: ");
+    sb.append(this.board.isWhite ? "White" : "Black");
+
+    return sb.toString();
+  }
+
+  public static Game getInstance() {
     // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    throw new UnsupportedOperationException("Method not implemented");
   }
 }
