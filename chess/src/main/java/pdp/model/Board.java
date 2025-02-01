@@ -31,4 +31,10 @@ public class Board {
     // TODO
     throw new UnsupportedOperationException();
   }
+
+  public String getAsciiRepresentation() {
+    // TODO
+    throw new UnsupportedOperationException(
+        "Method not implemented in " + this.getClass().getName());
+  }
 }
