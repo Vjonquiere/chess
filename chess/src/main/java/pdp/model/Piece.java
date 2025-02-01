@@ -9,9 +9,8 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+    public char getCharRepresentation(boolean white) {
+      return white ? 'P' : 'p';
     }
   },
   ROOK {
@@ -22,9 +21,8 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+    public char getCharRepresentation(boolean white) {
+      return white ? 'R' : 'r';
     }
   },
   BISHOP {
@@ -35,9 +33,8 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+    public char getCharRepresentation(boolean white) {
+      return white ? 'B' : 'b';
     }
   },
   KNIGHT {
@@ -48,9 +45,8 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+    public char getCharRepresentation(boolean white) {
+      return white ? 'N' : 'n';
     }
   },
   QUEEN {
@@ -61,9 +57,8 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+    public char getCharRepresentation(boolean white) {
+      return white ? 'Q' : 'q';
     }
   },
   KING {
@@ -74,13 +69,12 @@ public enum Piece {
     }
 
     @Override
-    public String getStringRepresentation(boolean white) {
-      // TODO
-      throw new UnsupportedOperationException();
+    public char getCharRepresentation(boolean white) {
+      return white ? 'K' : 'k';
     }
   };
 
   public abstract Bitboard getMoveMask(Bitboard pos, Board board);
 
-  public abstract String getStringRepresentation(boolean white);
+  public abstract char getCharRepresentation(boolean white);
 }
