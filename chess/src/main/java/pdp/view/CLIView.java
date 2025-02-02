@@ -78,11 +78,20 @@ public class CLIView implements View {
     }
   }
 
-  /** Handles the "move" command. */
+  /**
+   * Handles the move command.
+   *
+   * @param args The move in standard text notation.
+   */
   private void moveCommand(String args) {
     BagOfCommands.getInstance().addCommand(new PlayMoveCommand(args));
   }
 
+  /**
+   * Handles the help command.
+   *
+   * @param args Unused argument
+   */
   private void helpCommand(String args) {
     System.out.println("Available commands:");
     for (String command : commands.keySet()) {
@@ -90,10 +99,20 @@ public class CLIView implements View {
     }
   }
 
+  /**
+   * Handles the save command.
+   *
+   * @param args The path to where the game should be saved.
+   */
   private void saveCommand(String args) {
     BagOfCommands.getInstance().addCommand(new SaveGameCommand(args));
   }
 
+  /**
+   * Handles the quit command.
+   *
+   * @param args Unused argument
+   */
   private void quitCommand(String args) {
     System.out.println("Quitting...");
     this.running = false;
