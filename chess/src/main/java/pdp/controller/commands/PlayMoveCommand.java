@@ -12,6 +12,12 @@ public class PlayMoveCommand implements Command {
     this.move = Move.fromString(move);
   }
 
+  /**
+   * Executes the move on the game model.
+   *
+   * @param model The game model on which the move is to be executed.
+   * @param controller The game controller managing game operations.
+   */
   @Override
   public void execute(Game model, GameController controller) {
     model.playMove(this.move);

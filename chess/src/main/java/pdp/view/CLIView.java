@@ -16,6 +16,11 @@ public class CLIView implements View {
     commands.put("move", this::moveCommand);
   }
 
+  /**
+   * Starts the CLI view, allowing the user to input commands.
+   *
+   * @return The thread that was started.
+   */
   @Override
   public Thread start() {
     running = true;
@@ -27,6 +32,11 @@ public class CLIView implements View {
     System.out.println(Game.getInstance().getGameRepresentation());
   }
 
+  /**
+   * Starts a new thread that listens for user input from the console.
+   *
+   * @return The thread that listens for user input.
+   */
   private Thread startUserInputListener() {
     Thread inputThread =
         new Thread(
@@ -46,6 +56,11 @@ public class CLIView implements View {
     return inputThread;
   }
 
+  /**
+   * Handles user input from the console.
+   *
+   * @param input The user's input.
+   */
   private void handleUserInput(String input) {
     input = input.trim().toLowerCase();
     String[] parts = input.split(" ", 2);
@@ -58,6 +73,7 @@ public class CLIView implements View {
     }
   }
 
+  /** Handles the "move" command. */
   private void moveCommand(String args) {
     BagOfCommands.getInstance().addCommand(new PlayMoveCommand(args));
   }

@@ -29,6 +29,17 @@ public class Game extends Subject {
     this.history = history;
   }
 
+  /**
+   * Creates a new instance of the Game class and stores it in the instance variable.
+   *
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to be used for AI moves.
+   * @param isTimed Whether there is a time limit for the game.
+   * @param timer The timer to be used if there is a time limit.
+   * @param history The history of moves made during the game.
+   * @return The newly created instance of Game.
+   */
   public static Game initialize(
       boolean isWhiteAI,
       boolean isBlackAI,
@@ -47,6 +58,12 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName());
   }
 
+  /**
+   * Attempts to play a move in the game.
+   *
+   * @param move The move to be played.
+   * @return true if the move was successfully played, false otherwise.
+   */
   public boolean playMove(Move move) {
     // TODO
     throw new UnsupportedOperationException(

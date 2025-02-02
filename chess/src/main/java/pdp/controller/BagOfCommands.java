@@ -17,6 +17,7 @@ public class BagOfCommands {
    */
   private BagOfCommands() {}
 
+  /** Starts a new thread to process all commands in the queue. */
   private void processCommands() {
     isRunning = true;
     Task<Void> task =
@@ -53,6 +54,7 @@ public class BagOfCommands {
     new Thread(task).start();
   }
 
+  /** Executes the first command in the queue. */
   public void executeFirst() {
     Command command = this.commands.poll();
     if (command == null) {
@@ -61,12 +63,18 @@ public class BagOfCommands {
     command.execute(this.model, this.controller);
   }
 
+  /** Executes all commands in the bag of commands. */
   public void executeAll() {
     for (Command command : this.commands) {
       command.execute(this.model, this.controller);
     }
   }
 
+  /**
+   * Adds a command to the bag of commands and starts the bag of commands if not already running.
+   *
+   * @param command The command to add.
+   */
   public void addCommand(Command command) {
     this.commands.add(command);
     if (!this.isRunning) {
