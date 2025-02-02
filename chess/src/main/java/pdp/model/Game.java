@@ -5,17 +5,50 @@ import pdp.events.Subject;
 import pdp.model.ai.Solver;
 
 public class Game extends Subject {
-  Game instance;
-  Timer timer;
-  boolean isTimed;
-  Board board;
-  History history;
-  Solver solver;
+  private static Game instance;
+  private Timer timer;
+  private boolean isTimed;
+  private Board board;
+  private History history;
+  private Solver solver;
+  private boolean isWhiteAI;
+  private boolean isBlackAI;
 
-  private Game() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  private Game(
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      boolean isTimed,
+      Timer timer,
+      History history) {
+    this.isWhiteAI = isWhiteAI;
+    this.isBlackAI = isBlackAI;
+    this.solver = solver;
+    this.isTimed = isTimed;
+    this.timer = timer;
+    this.history = history;
+  }
+
+  /**
+   * Creates a new instance of the Game class and stores it in the instance variable.
+   *
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to be used for AI moves.
+   * @param isTimed Whether there is a time limit for the game.
+   * @param timer The timer to be used if there is a time limit.
+   * @param history The history of moves made during the game.
+   * @return The newly created instance of Game.
+   */
+  public static Game initialize(
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      boolean isTimed,
+      Timer timer,
+      History history) {
+    instance = new Game(isWhiteAI, isBlackAI, solver, isTimed, timer, history);
+    return instance;
   }
 
   @Override
@@ -25,25 +58,37 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName());
   }
 
-  List<Move> getMovesHistory() {
+  /**
+   * Attempts to play a move in the game.
+   *
+   * @param move The move to be played.
+   * @return true if the move was successfully played, false otherwise.
+   */
+  public boolean playMove(Move move) {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
 
-  String getStringHistory() {
+  public List<Move> getMovesHistory() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
 
-  void resetGame() {
+  public String getStringHistory() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
 
-  boolean isOver() {
+  public void resetGame() {
+    // TODO
+    throw new UnsupportedOperationException(
+        "Method not implemented in " + this.getClass().getName());
+  }
+
+  public boolean isOver() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
