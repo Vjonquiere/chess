@@ -14,7 +14,13 @@ public class Game extends Subject {
   private boolean isWhiteAI;
   private boolean isBlackAI;
 
-  private Game(boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, Timer timer, History history) {
+  private Game(
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      boolean isTimed,
+      Timer timer,
+      History history) {
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;
@@ -23,7 +29,13 @@ public class Game extends Subject {
     this.history = history;
   }
 
-  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, Timer timer, History history) {
+  public static Game initialize(
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      boolean isTimed,
+      Timer timer,
+      History history) {
     instance = new Game(isWhiteAI, isBlackAI, solver, isTimed, timer, history);
     return instance;
   }

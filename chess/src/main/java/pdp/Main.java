@@ -2,11 +2,10 @@ package pdp;
 
 import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
-
-import pdp.view.View;
-import pdp.view.CLIView;
 import pdp.model.Game;
 import pdp.model.History;
+import pdp.view.CLIView;
+import pdp.view.View;
 
 public class Main {
 
