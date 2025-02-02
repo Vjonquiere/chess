@@ -5,17 +5,27 @@ import pdp.events.Subject;
 import pdp.model.ai.Solver;
 
 public class Game extends Subject {
-  Game instance;
-  Timer timer;
-  boolean isTimed;
-  Board board;
-  History history;
-  Solver solver;
+  private static Game instance;
+  private Timer timer;
+  private boolean isTimed;
+  private Board board;
+  private History history;
+  private Solver solver;
+  private boolean isWhiteAI;
+  private boolean isBlackAI;
 
-  private Game() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  private Game(boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, Timer timer, History history) {
+    this.isWhiteAI = isWhiteAI;
+    this.isBlackAI = isBlackAI;
+    this.solver = solver;
+    this.isTimed = isTimed;
+    this.timer = timer;
+    this.history = history;
+  }
+
+  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, Timer timer, History history) {
+    instance = new Game(isWhiteAI, isBlackAI, solver, isTimed, timer, history);
+    return instance;
   }
 
   @Override
