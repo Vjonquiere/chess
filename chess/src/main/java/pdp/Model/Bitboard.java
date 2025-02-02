@@ -4,6 +4,7 @@ public class Bitboard {
   long bitboard;
 
   public Bitboard() {}
+
   public Bitboard(long bitboard) {
     this.bitboard = bitboard;
   }
@@ -56,6 +57,7 @@ public class Bitboard {
 
   /**
    * Move up all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveUp() {
@@ -64,6 +66,7 @@ public class Bitboard {
 
   /**
    * Move down all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveDown() {
@@ -72,6 +75,7 @@ public class Bitboard {
 
   /**
    * Move right all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveRight() {
@@ -80,6 +84,7 @@ public class Bitboard {
 
   /**
    * Move left all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveLeft() {
@@ -88,6 +93,7 @@ public class Bitboard {
 
   /**
    * Move up-right all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveUpRight() {
@@ -96,6 +102,7 @@ public class Bitboard {
 
   /**
    * Move up-left all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveUpLeft() {
@@ -104,6 +111,7 @@ public class Bitboard {
 
   /**
    * Move down-right all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveDownRight() {
@@ -112,6 +120,7 @@ public class Bitboard {
 
   /**
    * Move down-left all the bits of the bitboard
+   *
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveDownLeft() {
@@ -126,9 +135,9 @@ public class Bitboard {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("Bitboard = 0x").append(Long.toHexString(bitboard)).append("\n");
-    for(int x = 7; x >= 0; x-- ) {
-      for (int y = 0; y < 8; y++ ) {
-        sb.append(getBit(x*8+y) ? '1' : '0');
+    for (int x = 7; x >= 0; x--) {
+      for (int y = 0; y < 8; y++) {
+        sb.append(getBit(x * 8 + y) ? '1' : '0');
         if (y != 7) sb.append("|");
       }
       sb.append("\n");
