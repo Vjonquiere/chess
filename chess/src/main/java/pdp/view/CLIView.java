@@ -36,6 +36,11 @@ public class CLIView implements View {
     System.out.println(Game.getInstance().getGameRepresentation());
   }
 
+  @Override
+  public void onErrorEvent(Exception e) {
+    System.out.println("Received " + e.getClass().getName() + ": " + e.getMessage());
+  }
+
   /**
    * Starts a new thread that listens for user input from the console.
    *

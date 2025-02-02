@@ -51,13 +51,6 @@ public class Game extends Subject {
     return instance;
   }
 
-  @Override
-  public void notifyObservers() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
-  }
-
   /**
    * Attempts to play a move in the game.
    *
