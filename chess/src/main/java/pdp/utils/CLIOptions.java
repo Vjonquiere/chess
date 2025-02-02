@@ -2,6 +2,9 @@ package pdp.utils;
 
 import org.apache.commons.cli.*;
 
+import java.io.IOException;
+import java.util.Properties;
+
 public class CLIOptions {
 
   public static void parseOptions(String[] args, Runtime runtime) {
@@ -75,7 +78,9 @@ public class CLIOptions {
       }
       if (cmd.hasOption("V")) {
         // TODO: write version somewhere and update it regularly
-        System.out.println("Version: 0.0.1");
+        final Properties properties = new Properties();
+        properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+        System.out.println("Version: "+ properties.getProperty("version"));
         runtime.exit(0);
       }
       if (cmd.hasOption("d")) {
@@ -126,6 +131,8 @@ public class CLIOptions {
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("chess", options);
       System.exit(1);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 }
