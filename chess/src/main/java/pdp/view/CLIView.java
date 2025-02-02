@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
+import pdp.controller.commands.SaveGameCommand;
 import pdp.model.Game;
 
 public class CLIView implements View {
@@ -14,6 +15,9 @@ public class CLIView implements View {
 
   public CLIView() {
     commands.put("move", this::moveCommand);
+    commands.put("help", this::helpCommand);
+    commands.put("save", this::saveCommand);
+    commands.put("quit", this::quitCommand);
   }
 
   /**
@@ -30,6 +34,11 @@ public class CLIView implements View {
   @Override
   public void onGameEvent() {
     System.out.println(Game.getInstance().getGameRepresentation());
+  }
+
+  @Override
+  public void onErrorEvent(Exception e) {
+    System.out.println("Received " + e.getClass().getName() + ": " + e.getMessage());
   }
 
   /**
@@ -70,11 +79,47 @@ public class CLIView implements View {
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
       System.out.println("Unknown command: " + input);
+      this.helpCommand("");
     }
   }
 
-  /** Handles the "move" command. */
+  /**
+   * Handles the move command.
+   *
+   * @param args The move in standard text notation.
+   */
   private void moveCommand(String args) {
     BagOfCommands.getInstance().addCommand(new PlayMoveCommand(args));
+  }
+
+  /**
+   * Handles the help command.
+   *
+   * @param args Unused argument
+   */
+  private void helpCommand(String args) {
+    System.out.println("Available commands:");
+    for (String command : commands.keySet()) {
+      System.out.println(command);
+    }
+  }
+
+  /**
+   * Handles the save command.
+   *
+   * @param args The path to where the game should be saved.
+   */
+  private void saveCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new SaveGameCommand(args));
+  }
+
+  /**
+   * Handles the quit command.
+   *
+   * @param args Unused argument
+   */
+  private void quitCommand(String args) {
+    System.out.println("Quitting...");
+    this.running = false;
   }
 }

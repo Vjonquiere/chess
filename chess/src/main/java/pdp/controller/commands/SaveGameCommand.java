@@ -7,6 +7,10 @@ import pdp.model.Game;
 public class SaveGameCommand implements Command {
   private String filepath;
 
+  public SaveGameCommand(String filepath) {
+    this.filepath = filepath;
+  }
+
   @Override
   public void execute(Game model, GameController controller) {
     throw new UnsupportedOperationException(
