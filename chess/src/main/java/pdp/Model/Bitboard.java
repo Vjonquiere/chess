@@ -127,6 +127,7 @@ public class Bitboard {
     return new Bitboard(bitboard).moveDown().moveLeft();
   }
 
+  /** Set all the bits to False */
   public void clearBits() {
     bitboard = 0L;
   }
