@@ -8,18 +8,12 @@ import pdp.Model.Bitboard;
 public class BitboardTest {
 
   @Test
-  /*
-   * Test if the bitboard is created with all bits set to 0
-   * */
   public void testInitialisation() {
     Bitboard bitboard = new Bitboard();
-    assertEquals(0L, bitboard.getBits());
+    assertEquals(0L, bitboard.getBits()); // Test if all bits are set to 0
   }
 
   @Test
-  /*
-   * Test a given bit have been rightly set to True
-   * */
   public void testSetBit() {
     Bitboard bitboard = new Bitboard();
     bitboard.setBit(3);
@@ -36,9 +30,6 @@ public class BitboardTest {
   }
 
   @Test
-  /*
-   *
-   * */
   public void testClearBit() {
     Bitboard bitboard = new Bitboard();
 
@@ -54,5 +45,45 @@ public class BitboardTest {
     assertTrue(bitboard.getBit(63));
     bitboard.clearBit(-1); // Cyclic clear test
     assertFalse(bitboard.getBit(63));
+  }
+
+  @Test
+  public void testToggleBit() {
+    Bitboard bitboard = new Bitboard();
+    bitboard.setBit(3);
+    assertTrue(bitboard.getBit(3));
+    bitboard.toggleBit(3);
+    assertFalse(bitboard.getBit(3));
+    bitboard.toggleBit(3);
+    assertTrue(bitboard.getBit(3));
+  }
+
+  @Test
+  public void testMoveUp() {
+    Bitboard bitboard = new Bitboard();
+    bitboard.setBit(3);
+    assertTrue(bitboard.getBit(3));
+    assertFalse(bitboard.moveUp().getBit(3));
+    assertTrue(bitboard.moveUp().getBit(11));
+    bitboard.clearBits();
+
+    // Test on overflow (bit is on the last row)
+    bitboard.setBit(63);
+    assertTrue(bitboard.getBit(63));
+    assertFalse(bitboard.moveUp().getBit(63));
+    assertFalse(bitboard.moveUp().getBit(7));
+    bitboard.clearBits();
+
+    // Test on multiple bits to be moved
+    bitboard.setBit(7);
+    assertTrue(bitboard.getBit(7));
+    bitboard.setBit(8);
+    assertTrue(bitboard.getBit(8));
+    Bitboard tmpBitboard = bitboard.moveUp();
+    assertFalse(tmpBitboard.getBit(7));
+    assertFalse(tmpBitboard.getBit(8));
+    assertTrue(tmpBitboard.getBit(16));
+    assertTrue(tmpBitboard.getBit(15));
+    bitboard.clearBits();
   }
 }
