@@ -47,25 +47,31 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName());
   }
 
-  List<Move> getMovesHistory() {
+  public boolean playMove(Move move) {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
 
-  String getStringHistory() {
+  public List<Move> getMovesHistory() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
 
-  void resetGame() {
+  public String getStringHistory() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
 
-  boolean isOver() {
+  public void resetGame() {
+    // TODO
+    throw new UnsupportedOperationException(
+        "Method not implemented in " + this.getClass().getName());
+  }
+
+  public boolean isOver() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());

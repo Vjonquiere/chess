@@ -15,5 +15,12 @@ public class Main {
     View view = new CLIView();
     BagOfCommands bagOfCommands = BagOfCommands.getInstance();
     GameController controller = new GameController(model, view, bagOfCommands);
+    Thread viewThread = view.start();
+
+    try {
+      viewThread.join();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
   }
 }

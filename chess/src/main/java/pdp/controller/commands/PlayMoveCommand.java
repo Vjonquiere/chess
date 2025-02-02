@@ -14,7 +14,6 @@ public class PlayMoveCommand implements Command {
 
   @Override
   public void execute(Game model, GameController controller) {
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    model.playMove(this.move);
   }
 }

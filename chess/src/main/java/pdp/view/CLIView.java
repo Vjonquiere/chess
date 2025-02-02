@@ -16,9 +16,10 @@ public class CLIView implements View {
     commands.put("move", this::moveCommand);
   }
 
-  public void start() {
+  @Override
+  public Thread start() {
     running = true;
-    startUserInputListener();
+    return startUserInputListener();
   }
 
   @Override
@@ -26,7 +27,7 @@ public class CLIView implements View {
     System.out.println(Game.getInstance().getGameRepresentation());
   }
 
-  private void startUserInputListener() {
+  private Thread startUserInputListener() {
     Thread inputThread =
         new Thread(
             () -> {
@@ -41,6 +42,8 @@ public class CLIView implements View {
 
     inputThread.setDaemon(true);
     inputThread.start();
+
+    return inputThread;
   }
 
   private void handleUserInput(String input) {
