@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
 import pdp.utils.CLIOptions;
 
@@ -58,7 +57,7 @@ public class CLIOptionsTest {
     System.setOut(new PrintStream(outputStream));
     final Properties properties = new Properties();
     properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
-    String expected = "Version: "+ properties.getProperty("version");
+    String expected = "Version: " + properties.getProperty("version");
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--version"}, mockRuntime);
     assertEquals(expected.trim(), outputStream.toString().trim());

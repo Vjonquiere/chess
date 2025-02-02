@@ -1,9 +1,8 @@
 package pdp.utils;
 
-import org.apache.commons.cli.*;
-
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.commons.cli.*;
 
 public class CLIOptions {
 
@@ -80,7 +79,7 @@ public class CLIOptions {
         // TODO: write version somewhere and update it regularly
         final Properties properties = new Properties();
         properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
-        System.out.println("Version: "+ properties.getProperty("version"));
+        System.out.println("Version: " + properties.getProperty("version"));
         runtime.exit(0);
       }
       if (cmd.hasOption("d")) {
@@ -132,7 +131,7 @@ public class CLIOptions {
       formatter.printHelp("chess", options);
       System.exit(1);
     } catch (IOException e) {
-        throw new RuntimeException(e);
+      throw new RuntimeException(e);
     }
   }
 }
