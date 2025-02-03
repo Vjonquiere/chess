@@ -1,7 +1,7 @@
 package pdp.controller;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import javafx.concurrent.Task;
 import pdp.model.Game;
 
 public class BagOfCommands {
@@ -20,54 +20,34 @@ public class BagOfCommands {
   /** Starts a new thread to process all commands in the queue. */
   private void processCommands() {
     isRunning = true;
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws Exception {
-            while (!commands.isEmpty()) {
-              Command command = commands.poll();
-              if (command != null) {
-                command.execute(model, controller);
+    Thread thread =
+        new Thread(
+            () -> {
+              try {
+                while (!commands.isEmpty()) {
+                  Command command = commands.poll();
+                  if (command != null) {
+                    Optional<Exception> exception = command.execute(model, controller);
+                    if (exception.isPresent() && controller != null) {
+                      controller.onErrorEvent(exception.get());
+                    }
+                  }
+                  Thread.sleep(1); // Prevent CPU overuse
+                }
+              } catch (Exception e) {
+                System.out.println("Error in processCommands: " + e.getMessage());
+                e.printStackTrace();
+              } finally {
+                isRunning = false;
+                // If more commands are added while processing, restart the thread
+                if (!commands.isEmpty()) {
+                  processCommands();
+                }
               }
-              Thread.sleep(1); // Delay between commands
-            }
-            return null;
-          }
+            });
 
-          @Override
-          protected void succeeded() {
-            isRunning = false;
-            // Check for more commands after finishing the current batch
-            if (!commands.isEmpty()) {
-              processCommands();
-            }
-            super.succeeded();
-          }
-
-          @Override
-          protected void failed() {
-            isRunning = false;
-            super.failed();
-          }
-        };
-
-    new Thread(task).start();
-  }
-
-  /** Executes the first command in the queue. */
-  public void executeFirst() {
-    Command command = this.commands.poll();
-    if (command == null) {
-      return;
-    }
-    command.execute(this.model, this.controller);
-  }
-
-  /** Executes all commands in the bag of commands. */
-  public void executeAll() {
-    for (Command command : this.commands) {
-      command.execute(this.model, this.controller);
-    }
+    thread.setDaemon(true);
+    thread.start();
   }
 
   /**

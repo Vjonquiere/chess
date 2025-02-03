@@ -1,15 +1,16 @@
 package pdp.controller.commands;
 
+import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.model.Move;
 
 public class PlayMoveCommand implements Command {
-  private Move move;
+  private String move;
 
   public PlayMoveCommand(String move) {
-    this.move = Move.fromString(move);
+    this.move = move;
   }
 
   /**
@@ -19,7 +20,12 @@ public class PlayMoveCommand implements Command {
    * @param controller The game controller managing game operations.
    */
   @Override
-  public void execute(Game model, GameController controller) {
-    model.playMove(this.move);
+  public Optional<Exception> execute(Game model, GameController controller) {
+    try {
+      model.playMove(Move.fromString(this.move));
+      return Optional.empty();
+    } catch (Exception e) {
+      return Optional.of(e);
+    }
   }
 }

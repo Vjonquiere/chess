@@ -16,5 +16,7 @@ public class GameController {
     this.bagOfCommands.setController(this);
   }
 
-  // TODO
+  public void onErrorEvent(Exception e) {
+    this.view.onErrorEvent(e);
+  }
 }
