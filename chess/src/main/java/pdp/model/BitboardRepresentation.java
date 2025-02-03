@@ -1,19 +1,18 @@
 package pdp.model;
 
+import static java.util.Map.entry;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import pdp.utils.Position;
-
-import static java.util.Map.entry;
 
 public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard[] board;
   private int nbCols = 8;
   private int nbRows = 8;
-  Map<Integer, Piece> pieces = Map.ofEntries(
+  Map<Integer, Piece> pieces =
+      Map.ofEntries(
           entry(0, Piece.KING),
           entry(1, Piece.QUEEN),
           entry(2, Piece.BISHOP),
@@ -25,8 +24,7 @@ public class BitboardRepresentation implements BoardRepresentation {
           entry(8, Piece.BISHOP),
           entry(9, Piece.ROOK),
           entry(10, Piece.KNIGHT),
-          entry(11, Piece.PAWN)
-  );
+          entry(11, Piece.PAWN));
 
   /*
   BitBoards order:
@@ -65,8 +63,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   private List<Position> squaresToPosition(List<Integer> squares) {
     List<Position> positions = new ArrayList<>();
     for (Integer i : squares) {
-      System.out.println("x = " + i%8 + " y = " + i/8);
-      positions.add(new Position( i/8, i%8));
+      System.out.println("x = " + i % 8 + " y = " + i / 8);
+      positions.add(new Position(i / 8, i % 8));
     }
     return positions;
   }

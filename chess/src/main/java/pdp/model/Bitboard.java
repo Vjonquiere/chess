@@ -148,7 +148,7 @@ public class Bitboard {
    *
    * @return Array list containing the square set to 1
    */
-  public ArrayList<Integer> getSetBits(){
+  public ArrayList<Integer> getSetBits() {
     ArrayList<Integer> setBits = new ArrayList<>();
     for (int square = 0; square < 64; square++) {
       if (getBit(square)) {
