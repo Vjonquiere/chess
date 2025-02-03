@@ -70,6 +70,20 @@ public class BitboardTest {
   }
 
   @Test
+  public void testBitCount() {
+    Bitboard bitboard = new Bitboard();
+    assertEquals(0, bitboard.bitCount());
+    bitboard.setBit(3);
+    assertEquals(1, bitboard.bitCount());
+    bitboard.setBit(0);
+    assertEquals(2, bitboard.bitCount());
+    bitboard.clearBit(3);
+    assertEquals(1, bitboard.bitCount());
+    bitboard.clearBits();
+    assertEquals(0, bitboard.bitCount());
+  }
+
+  @Test
   public void testMoveUp() {
     Bitboard bitboard = new Bitboard();
     bitboard.setBit(3);

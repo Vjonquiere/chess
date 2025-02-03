@@ -132,6 +132,15 @@ public class Bitboard {
     bitboard = 0L;
   }
 
+  /**
+   * Count the number of bits set to 1
+   *
+   * @return The number of bits set to true
+   */
+  public int bitCount() {
+    return Long.bitCount(bitboard);
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
