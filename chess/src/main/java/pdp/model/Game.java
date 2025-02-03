@@ -1,10 +1,13 @@
 package pdp.model;
 
 import java.util.List;
+import java.util.logging.Logger;
 import pdp.events.Subject;
 import pdp.model.ai.Solver;
+import pdp.utils.Logging;
 
 public class Game extends Subject {
+  private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   Game instance;
   Timer timer;
   boolean isTimed;
@@ -13,6 +16,7 @@ public class Game extends Subject {
   Solver solver;
 
   private Game() {
+    Logging.configureLogging(LOGGER);
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
