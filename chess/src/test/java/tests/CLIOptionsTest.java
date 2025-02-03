@@ -40,12 +40,14 @@ public class CLIOptionsTest {
             + " -V,--version                    Print the version information and exit\n"
             + " -v,--verbose                    Display more information\n";
 
+    /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--help"}, mockRuntime);
     assertEquals(expected.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
+    /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h"}, mockRuntime2);
     assertEquals(expected.trim(), outputStream.toString().trim());
@@ -59,12 +61,15 @@ public class CLIOptionsTest {
     final Properties properties = new Properties();
     properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
     String expected = "Version: " + properties.getProperty("version");
+
+    /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--version"}, mockRuntime);
     assertEquals(expected.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
+    /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-V"}, mockRuntime2);
     assertEquals(expected.trim(), outputStream.toString().trim());
@@ -99,6 +104,7 @@ public class CLIOptionsTest {
             + " -V,--version                    Print the version information and exit\n"
             + " -v,--verbose                    Display more information\n";
 
+    /* Test that only help is displayed, even with several parameters */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
     assertEquals(expected.trim(), outputStream.toString().trim());
