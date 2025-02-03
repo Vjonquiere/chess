@@ -2,6 +2,8 @@ package pdp.model;
 
 import java.util.List;
 import pdp.events.Subject;
+import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.MoveParsingException;
 import pdp.model.ai.Solver;
 
 public class Game extends Subject {
@@ -57,7 +59,7 @@ public class Game extends Subject {
    * @param move The move to be played.
    * @return true if the move was successfully played, false otherwise.
    */
-  public boolean playMove(Move move) {
+  public void playMove(Move move) throws IllegalMoveException, MoveParsingException {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());

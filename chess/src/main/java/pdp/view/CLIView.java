@@ -50,9 +50,10 @@ public class CLIView implements View {
     Thread inputThread =
         new Thread(
             () -> {
+              System.out.println("Welcome to the game!");
+              System.out.println("Type 'help' for a list of available commands.");
               Scanner scanner = new Scanner(System.in);
               while (running) {
-                System.out.print("Enter command: ");
                 String input = scanner.nextLine();
                 handleUserInput(input);
               }
