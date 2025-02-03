@@ -3,7 +3,6 @@ package pdp.model;
 import java.util.List;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
-import pdp.exceptions.MoveParsingException;
 import pdp.model.ai.Solver;
 
 public class Game extends Subject {
@@ -54,12 +53,12 @@ public class Game extends Subject {
   }
 
   /**
-   * Attempts to play a move in the game.
+   * Tries to play the given move on the game.
    *
-   * @param move The move to be played.
-   * @return true if the move was successfully played, false otherwise.
+   * @param move The move to be executed.
+   * @throws IllegalMoveException If the move is not legal.
    */
-  public void playMove(Move move) throws IllegalMoveException, MoveParsingException {
+  public void playMove(Move move) throws IllegalMoveException {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
