@@ -3,7 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import pdp.Model.Bitboard;
+import pdp.model.Bitboard;
 
 public class BitboardTest {
 
