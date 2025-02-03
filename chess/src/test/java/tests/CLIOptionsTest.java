@@ -16,7 +16,6 @@ public class CLIOptionsTest {
 
   @Test
   public void testHelp() {
-
     System.setOut(new PrintStream(outputStream));
     String expected =
         "usage: chess\n"
@@ -33,6 +32,8 @@ public class CLIOptionsTest {
             + " -b,--blitz                      Play in blitz mode\n"
             + " -c,--contest <FILENAME>         AI plays one move in the given file\n"
             + " -d,--debug                      Print debugging information\n"
+            + " -g,--gui                        Displays the game with a  graphical\n"
+            + "                                 interface.\n"
             + " -h,--help                       Print this message and exit\n"
             + " -t,--time <TIME>                Specify time per round for blitz mode\n"
             + "                                 (default 30min)\n"
@@ -70,5 +71,44 @@ public class CLIOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
     outputStream.reset();
+  }
+
+  @Test
+  public void testHelpFirst() throws Exception {
+    System.setOut(new PrintStream(outputStream));
+    String expected =
+        "usage: chess\n"
+            + " -a,--ai <COLOR>                 Launch the program in AI mode, with\n"
+            + "                                 artificial player with COLOR ’B’ or ’A’\n"
+            + "                                 (All),(W by default).\n"
+            + "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm\n"
+            + "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial\n"
+            + "                                 player\n"
+            + "    --ai-mode <ALGORITHM>        Choose the exploration algorithm for the\n"
+            + "                                 artificial player.\n"
+            + "    --ai-time <TIME>             Specify the time of reflexion for AI mode\n"
+            + "                                 (default 5 seconds)\n"
+            + " -b,--blitz                      Play in blitz mode\n"
+            + " -c,--contest <FILENAME>         AI plays one move in the given file\n"
+            + " -d,--debug                      Print debugging information\n"
+            + " -g,--gui                        Displays the game with a  graphical\n"
+            + "                                 interface.\n"
+            + " -h,--help                       Print this message and exit\n"
+            + " -t,--time <TIME>                Specify time per round for blitz mode\n"
+            + "                                 (default 30min)\n"
+            + " -V,--version                    Print the version information and exit\n"
+            + " -v,--verbose                    Display more information\n";
+
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
+    assertEquals(expected.trim(), outputStream.toString().trim());
+    outputStream.reset();
+    verify(mockRuntime).exit(0);
+
+    Runtime mockRuntime2 = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"-V", "-h"}, mockRuntime2);
+    assertEquals(expected.trim(), outputStream.toString().trim());
+    outputStream.reset();
+    verify(mockRuntime2).exit(0);
   }
 }

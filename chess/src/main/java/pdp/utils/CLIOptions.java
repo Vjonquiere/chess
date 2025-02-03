@@ -6,6 +6,13 @@ import org.apache.commons.cli.*;
 
 public class CLIOptions {
 
+  /**
+   * Parse the options given in parameters. The help will have the priority over any other option.
+   * If the usage is wrong, an error message will be displayed on the standard error output.
+   *
+   * @param args Array of strings received by main, arguments to parse
+   * @param runtime Runtime to exit cleanly
+   */
   public static void parseOptions(String[] args, Runtime runtime) {
     final Options options = new Options();
     options.addOption("h", "help", false, "Print this message and exit");
@@ -13,6 +20,7 @@ public class CLIOptions {
     options.addOption("v", "verbose", false, "Display more information");
     options.addOption("d", "debug", false, "Print debugging information");
     options.addOption("b", "blitz", false, "Play in blitz mode");
+    options.addOption("g", "gui", false, "Displays the game with a  graphical interface.");
     options.addOption(
         Option.builder("t")
             .longOpt("time")
@@ -74,55 +82,59 @@ public class CLIOptions {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("chess", options);
         runtime.exit(0);
+        return;
       }
       if (cmd.hasOption("V")) {
-        // TODO: write version somewhere and update it regularly
         final Properties properties = new Properties();
         properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
         System.out.println("Version: " + properties.getProperty("version"));
         runtime.exit(0);
+        return;
       }
       if (cmd.hasOption("d")) {
-        System.out.println("Debug not implemented yet");
+        System.err.println("Debug not implemented yet");
       }
       if (cmd.hasOption("v")) {
-        System.out.println("Verbose not implemented yet");
+        System.err.println("Verbose not implemented yet");
       }
       if (cmd.hasOption("b")) {
-        System.out.println("Blitz not implemented yet");
+        System.err.println("Blitz not implemented yet");
+      }
+      if (cmd.hasOption("g")) {
+        System.err.println("GUI not implemented yet");
       }
       if (cmd.hasOption("t")) {
-        System.out.println("Blitz time not implemented yet");
+        System.err.println("Blitz time not implemented yet");
       }
       if (cmd.hasOption("c")) {
-        System.out.println("Contest not implemented yet");
+        System.err.println("Contest not implemented yet");
       }
       if (cmd.hasOption("a")) {
-        System.out.println("AI not implemented yet");
+        System.err.println("AI not implemented yet");
       }
       if (cmd.hasOption("ai-mode")) {
         if (!cmd.hasOption("a")) {
           System.err.println("Modifying the AI algorithm requires 'a' argument");
         }
-        System.out.println("AI mode not implemented yet");
+        System.err.println("AI mode not implemented yet");
       }
       if (cmd.hasOption("ai-heuristic")) {
         if (!cmd.hasOption("a")) {
           System.err.println("Choosing the AI heuristic requires 'a' argument");
         }
-        System.out.println("AI mode not implemented yet");
+        System.err.println("AI mode not implemented yet");
       }
       if (cmd.hasOption("ai-depth")) {
         if (!cmd.hasOption("a")) {
           System.err.println("Modifying the AI depth requires 'a' argument");
         }
-        System.out.println("AI mode not implemented yet");
+        System.err.println("AI mode not implemented yet");
       }
       if (cmd.hasOption("ai-time")) {
         if (!cmd.hasOption("a")) {
           System.err.println("Modifying the AI time requires 'a' argument");
         }
-        System.out.println("AI mode not implemented yet");
+        System.err.println("AI mode not implemented yet");
       }
 
     } catch (ParseException exp) {
