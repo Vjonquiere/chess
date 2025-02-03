@@ -9,6 +9,7 @@ public class CLIOptions {
   /**
    * Parse the options given in parameters. The help will have the priority over any other option.
    * If the usage is wrong, an error message will be displayed on the standard error output.
+   * Careful, partial matching : -aifdghj will still enable -a, no errors are displayed.
    *
    * @param args Array of strings received by main, arguments to parse
    * @param runtime Runtime to exit cleanly
@@ -138,10 +139,10 @@ public class CLIOptions {
       }
 
     } catch (ParseException exp) {
-      System.err.println("Parsing failed.  Reason: " + exp.getMessage());
+      System.out.println("Parsing failed.  Reason: " + exp.getMessage());
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("chess", options);
-      System.exit(1);
+      runtime.exit(1);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
