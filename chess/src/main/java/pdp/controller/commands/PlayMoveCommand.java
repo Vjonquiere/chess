@@ -1,7 +1,9 @@
 package pdp.controller.commands;
 
+import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
+import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.Move;
 

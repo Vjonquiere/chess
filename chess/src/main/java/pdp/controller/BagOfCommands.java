@@ -1,5 +1,6 @@
 package pdp.controller;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.concurrent.Task;
 import pdp.model.Game;
@@ -29,7 +30,7 @@ public class BagOfCommands {
               if (command != null) {
                 Optional<Exception> exception = command.execute(model, controller);
                 if (exception.isPresent()) {
-                  this.controller.onErrorEvent(exception.get());
+                  controller.onErrorEvent(exception.get());
                 }
               }
               Thread.sleep(1); // Delay between commands
