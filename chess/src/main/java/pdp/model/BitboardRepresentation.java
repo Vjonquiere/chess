@@ -1,14 +1,18 @@
 package pdp.model;
 
 import java.util.List;
+import java.util.logging.Logger;
+import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
+  private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
   private int nbCols = 8;
   private int nbRows = 8;
 
   public BitboardRepresentation() {
+    Logging.configureLogging(LOGGER);
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
