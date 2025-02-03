@@ -19,7 +19,11 @@ public class PlayMoveCommand implements Command {
    * @param controller The game controller managing game operations.
    */
   @Override
-  public void execute(Game model, GameController controller) {
-    model.playMove(this.move);
+  public Optional<Exception> execute(Game model, GameController controller) {
+    boolean result = model.playMove(this.move);
+    if (result) {
+      return Optional.empty();
+    }
+    return Optional.of(new IllegalMoveException("Illegal move: " + this.move));
   }
 }

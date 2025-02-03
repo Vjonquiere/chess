@@ -27,7 +27,10 @@ public class BagOfCommands {
             while (!commands.isEmpty()) {
               Command command = commands.poll();
               if (command != null) {
-                command.execute(model, controller);
+                Optional<Exception> exception = command.execute(model, controller);
+                if (exception.isPresent()) {
+                  this.controller.onErrorEvent(exception.get());
+                }
               }
               Thread.sleep(1); // Delay between commands
             }
