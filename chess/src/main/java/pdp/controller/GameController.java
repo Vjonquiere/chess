@@ -14,6 +14,8 @@ public class GameController {
     this.bagOfCommands = bagOfCommands;
     this.bagOfCommands.setModel(model);
     this.bagOfCommands.setController(this);
+    this.model.addObserver(view);
+    this.model.addErrorObserver(view);
   }
 
   public void onErrorEvent(Exception e) {
