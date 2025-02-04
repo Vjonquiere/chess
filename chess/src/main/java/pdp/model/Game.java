@@ -46,6 +46,8 @@ public class Game extends Subject {
    */
   public void playMove(Move move) throws IllegalMoveException {
     // TODO
+    // Timer resets when a move is played
+    // Switch turn when move is played (through GameState)
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
@@ -77,12 +79,9 @@ public class Game extends Subject {
   public String getGameRepresentation() {
     StringBuilder sb = new StringBuilder();
 
-    if (gameState.getWhiteTimer() != null && gameState.getBlackTimer() != null) {
-      if (gameState.isWhiteTurn()) {
-        gameState.getWhiteTimer().timeRemaining();
-      } else {
-        gameState.getBlackTimer().timeRemaining();
-      }
+    Timer timer = gameState.getMoveTimer();
+    if (timer != null) {
+      timer.timeRemaining();
     }
 
     sb.append(gameState.getBoard().getAsciiRepresentation());

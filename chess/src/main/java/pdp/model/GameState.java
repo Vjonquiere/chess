@@ -4,8 +4,7 @@ import pdp.events.Subject;
 
 public class GameState extends Subject {
   private Board board;
-  private Timer whiteTimer;
-  private Timer blackTimer;
+  private Timer moveTimer;
   private History history;
   private boolean isWhiteTurn;
 
@@ -14,16 +13,14 @@ public class GameState extends Subject {
     this.isWhiteTurn = true;
     this.history = new History();
     this.board = new Board();
-    this.whiteTimer = null;
-    this.blackTimer = null;
+    this.moveTimer = null;
   }
 
   public GameState(boolean isBlitzModeOn) {
     this.isWhiteTurn = true;
     this.history = new History();
     this.board = new Board();
-    this.whiteTimer = new Timer();
-    this.blackTimer = new Timer();
+    this.moveTimer = new Timer();
   }
 
   public boolean isWhiteTurn() {
@@ -42,11 +39,7 @@ public class GameState extends Subject {
     return history;
   }
 
-  public Timer getWhiteTimer() {
-    return whiteTimer;
-  }
-
-  public Timer getBlackTimer() {
-    return blackTimer;
+  public Timer getMoveTimer() {
+    return this.moveTimer;
   }
 }
