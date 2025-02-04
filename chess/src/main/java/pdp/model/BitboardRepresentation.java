@@ -112,9 +112,9 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public Position getKing(boolean white) {
+  public List<Position> getKing(boolean white) {
     int bitmapIndex = white ? 0 : 6;
-    return getOccupiedSquares(bitmapIndex).getFirst();
+    return getOccupiedSquares(bitmapIndex);
   }
 
   @Override

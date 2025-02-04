@@ -67,8 +67,9 @@ public class Board {
         charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
       rep = Piece.KING.getCharRepresentation(color);
-      Position pos = this.board.getKing(color);
-      charBoard.get(pos.getY()).set(pos.getX(), rep);
+      for (Position pos : this.board.getKing(color)) {
+        charBoard.get(pos.getY()).set(pos.getX(), rep);
+      }
     }
 
     StringBuilder sb = new StringBuilder();
