@@ -19,12 +19,6 @@ public class Board{
         "Method not implemented in " + this.getClass().getName());
   }
 
-  public boolean isMoveLegal(Move move) {
-    /* return Rules.isValidMove(this, move); */
-
-    return true;
-}
-
   public List<Move> getAvailableMoves(Move move) {
     return board.getAvailableMoves(move.getSource().getX(), move.getSource().getY(), this);
   }
