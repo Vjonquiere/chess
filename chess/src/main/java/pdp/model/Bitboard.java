@@ -160,6 +160,7 @@ public class Bitboard {
 
   /**
    * Make a bitwise AND between the two bitboards
+   *
    * @param b the second bitboard
    * @return A new bitboard containing the AND operation
    */
@@ -169,6 +170,7 @@ public class Bitboard {
 
   /**
    * Make a bitwise OR between the two bitboards
+   *
    * @param b the second bitboard
    * @return A new bitboard containing the OR operation
    */
@@ -178,6 +180,7 @@ public class Bitboard {
 
   /**
    * Make a bitwise XOR between the two bitboards
+   *
    * @param b the second bitboard
    * @return A new bitboard containing the XOR operation
    */

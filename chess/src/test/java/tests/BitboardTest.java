@@ -2,11 +2,9 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.model.Bitboard;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class BitboardTest {
 
@@ -73,7 +71,7 @@ public class BitboardTest {
   }
 
   @Test
-  public void testGetSetBits(){
+  public void testGetSetBits() {
     Bitboard bitboard = new Bitboard();
     bitboard.setBit(3);
     assertTrue(bitboard.getBit(3));
@@ -84,7 +82,7 @@ public class BitboardTest {
   }
 
   @Test
-  public void testAnd(){
+  public void testAnd() {
     Bitboard bitboard = new Bitboard(1095216660480L);
     Bitboard bitboard2 = new Bitboard(1026497183744L);
     assertEquals(1026497183744L, bitboard.and(bitboard2).getBits()); // Classic AND
@@ -99,7 +97,7 @@ public class BitboardTest {
   }
 
   @Test
-  public void testOr(){
+  public void testOr() {
     Bitboard bitboard = new Bitboard(1095216660480L);
     Bitboard bitboard2 = new Bitboard(1026497183744L);
     assertEquals(1095216660480L, bitboard.or(bitboard2).getBits()); // Classic OR
@@ -114,7 +112,7 @@ public class BitboardTest {
   }
 
   @Test
-  public void testXor(){
+  public void testXor() {
     Bitboard bitboard = new Bitboard(1095216660480L);
     Bitboard bitboard2 = new Bitboard(1026497183744L);
     assertEquals(68719476736L, bitboard.xor(bitboard2).getBits()); // Classic XOR

@@ -2,13 +2,10 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Test;
-import pdp.model.Bitboard;
-import pdp.model.BitboardRepresentation;
-import pdp.model.Board;
-import pdp.utils.Position;
-
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import pdp.model.BitboardRepresentation;
+import pdp.utils.Position;
 
 public class BoardTest {
 
@@ -23,8 +20,8 @@ public class BoardTest {
       assertEquals(y, position.getY());
     }
 
-    assertEquals(List.of(), board.getAvailableMoves(4,0, null)); // King move
-    assertEquals(List.of(), board.getAvailableMoves(3,0, null)); // Queen move
-    assertEquals(List.of(), board.getAvailableMoves(6,0, null)); // Knight move
+    assertEquals(List.of(), board.getAvailableMoves(4, 0, null)); // King move
+    assertEquals(List.of(), board.getAvailableMoves(3, 0, null)); // Queen move
+    assertEquals(List.of(), board.getAvailableMoves(6, 0, null)); // Knight move
   }
 }
