@@ -59,7 +59,8 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
-    // TODO
+    move.isLegal(board);
+    board.makeMove(move);
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import pdp.utils.Position;
 
-public class Board {
+public class Board{
   BoardRepresentation board;
   boolean isWhite;
   byte enPassant;
@@ -19,9 +19,14 @@ public class Board {
         "Method not implemented in " + this.getClass().getName());
   }
 
-  public List<Move> getAvailableMoves() {
-    // TODO
-    throw new UnsupportedOperationException();
+  public boolean isMoveLegal(Move move) {
+    /* return Rules.isValidMove(this, move); */
+
+    return true;
+}
+
+  public List<Move> getAvailableMoves(Move move) {
+    return board.getAvailableMoves(move.getSource().getX(), move.getSource().getY(), this);
   }
 
   public boolean makeMove(Move move) {
