@@ -158,6 +158,33 @@ public class Bitboard {
     return setBits;
   }
 
+  /**
+   * Make a bitwise AND between the two bitboards
+   * @param b the second bitboard
+   * @return A new bitboard containing the AND operation
+   */
+  public Bitboard and(Bitboard b) {
+    return new Bitboard(bitboard & b.getBits());
+  }
+
+  /**
+   * Make a bitwise OR between the two bitboards
+   * @param b the second bitboard
+   * @return A new bitboard containing the OR operation
+   */
+  public Bitboard or(Bitboard b) {
+    return new Bitboard(bitboard | b.getBits());
+  }
+
+  /**
+   * Make a bitwise XOR between the two bitboards
+   * @param b the second bitboard
+   * @return A new bitboard containing the XOR operation
+   */
+  public Bitboard xor(Bitboard b) {
+    return new Bitboard(bitboard ^ b.getBits());
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

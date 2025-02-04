@@ -11,20 +11,20 @@ public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard[] board;
   private int nbCols = 8;
   private int nbRows = 8;
-  Map<Integer, Piece> pieces =
+  Map<Integer, ColoredPiece<Piece, Color>> pieces =
       Map.ofEntries(
-          entry(0, Piece.KING),
-          entry(1, Piece.QUEEN),
-          entry(2, Piece.BISHOP),
-          entry(3, Piece.ROOK),
-          entry(4, Piece.KNIGHT),
-          entry(5, Piece.PAWN),
-          entry(6, Piece.KING),
-          entry(7, Piece.QUEEN),
-          entry(8, Piece.BISHOP),
-          entry(9, Piece.ROOK),
-          entry(10, Piece.KNIGHT),
-          entry(11, Piece.PAWN));
+          entry(0, new ColoredPiece<Piece, Color>(Piece.KING, Color.WHITE)),
+          entry(1, new ColoredPiece<Piece, Color>(Piece.QUEEN, Color.WHITE)),
+          entry(2, new ColoredPiece<Piece, Color>(Piece.BISHOP, Color.WHITE)),
+          entry(3, new ColoredPiece<Piece, Color>(Piece.ROOK, Color.WHITE)),
+          entry(4, new ColoredPiece<Piece, Color>(Piece.KNIGHT, Color.WHITE)),
+          entry(5, new ColoredPiece<Piece, Color>(Piece.PAWN, Color.WHITE)),
+          entry(6, new ColoredPiece<Piece, Color>(Piece.KING, Color.BLACK)),
+          entry(7, new ColoredPiece<Piece, Color>(Piece.QUEEN, Color.BLACK)),
+          entry(8, new ColoredPiece<Piece, Color>(Piece.BISHOP, Color.BLACK)),
+          entry(9, new ColoredPiece<Piece, Color>(Piece.ROOK, Color.BLACK)),
+          entry(10, new ColoredPiece<Piece, Color>(Piece.KNIGHT, Color.BLACK)),
+          entry(11, new ColoredPiece<Piece, Color>(Piece.PAWN, Color.BLACK)));
 
   /*
   BitBoards order:
@@ -63,10 +63,18 @@ public class BitboardRepresentation implements BoardRepresentation {
   private List<Position> squaresToPosition(List<Integer> squares) {
     List<Position> positions = new ArrayList<>();
     for (Integer i : squares) {
-      System.out.println("x = " + i % 8 + " y = " + i / 8);
+      // System.out.println("x = " + i % 8 + " y = " + i / 8);
       positions.add(new Position(i / 8, i % 8));
     }
     return positions;
+  }
+
+  private Bitboard getWhiteBoard() {
+    return board[0].or(board[1]).or(board[2]).or(board[3]).or(board[4]).or(board[5]);
+  }
+
+  private Bitboard getBlackBoard() {
+    return board[6].or(board[7]).or(board[8]).or(board[9]).or(board[10]).or(board[11]);
   }
 
   private List<Position> getOccupiedSquares(int bitBoardIndex) {
@@ -110,12 +118,12 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public Piece getPieceAt(int x, int y) {
+  public ColoredPiece<Piece, Color> getPieceAt(int x, int y) {
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) return pieces.get(index);
     }
-    return Piece.EMPTY;
+    return new ColoredPiece<>(Piece.EMPTY, Color.EMPTY);
   }
 
   public int getNbCols() {
@@ -126,11 +134,73 @@ public class BitboardRepresentation implements BoardRepresentation {
     return nbRows;
   }
 
+  private List<Move> getKingMoves(Position square, Bitboard allies, Bitboard enemies) {
+    List<Move> moves = new ArrayList<>();
+    Bitboard position = new Bitboard();
+    int squareIndex = square.getX() % 8 + square.getY() * 8;
+    position.setBit(squareIndex);
+    Bitboard move =
+        position
+            .moveLeft()
+            .or(position.moveRight())
+            .or(position.moveUp())
+            .or(position.moveDown())
+            .or(position.moveUpLeft())
+            .or(position.moveUpRight())
+            .or(position.moveDownLeft())
+            .or(position.moveDownRight());
+    move = move.xor(move.and(allies));
+    for (Integer i : move.getSetBits()) {
+      // moves.add(new Move()); // enemies.getBit(i) ? true : false -> capture ?
+    }
+    return moves;
+  }
+
+  private List<Move> getKnightMoves(Position square, Bitboard allies, Bitboard enemies) {
+    List<Move> moves = new ArrayList<>();
+    Bitboard position = new Bitboard();
+    int squareIndex = square.getX() % 8 + square.getY() * 8;
+    position.setBit(squareIndex);
+    Bitboard move =
+        position
+            .moveUp()
+            .moveUpRight()
+            .or(position.moveUp().moveUpLeft())
+            .or(position.moveUp().moveUpRight())
+            .or(position.moveDown().moveDownLeft())
+            .or(position.moveDown().moveDownRight())
+            .or(position.moveLeft().moveUpLeft())
+            .or(position.moveLeft().moveDownLeft())
+            .or(position.moveRight().moveDownRight())
+            .or(position.moveRight().moveUpRight());
+    move = move.xor(move.and(allies));
+    System.out.println(move);
+    for (Integer i : move.getSetBits()) {
+      // moves.add(new Move()); // enemies.getBit(i) ? true : false -> capture ?
+    }
+    return moves;
+  }
+
   @Override
   public List<Move> getAvailableMoves(int x, int y, Board board) {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
+    Bitboard allies = piece.getColor() == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    Bitboard enemies = piece.getColor() == Color.WHITE ? getBlackBoard() : getWhiteBoard();
+    switch (piece.getPiece()) {
+      case KING:
+        return getKingMoves(new Position(y, x), allies, enemies);
+      case QUEEN:
+        break;
+      case BISHOP:
+        break;
+      case ROOK:
+        break;
+      case KNIGHT:
+        return getKnightMoves(new Position(y, x), allies, enemies);
+      case PAWN:
+        break;
+    }
+    return new ArrayList<>();
   }
 
   @Override
