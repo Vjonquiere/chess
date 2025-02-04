@@ -18,6 +18,10 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName());
   }
 
+  public Board getBoard() {
+    return this.board;
+  }
+
   @Override
   public void notifyObservers() {
     // TODO

@@ -2,6 +2,7 @@ package pdp.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 import pdp.utils.Position;
 
 public class Board {
@@ -71,14 +72,15 @@ public class Board {
       charBoard.get(pos.getY()).set(pos.getX(), rep);
     }
 
-    StringBuilder sb = new StringBuilder();
+    StringJoiner sj = new StringJoiner("\n");
     for (ArrayList<Character> row : charBoard) {
+      StringBuilder rowSb = new StringBuilder();
       for (Character cell : row) {
-        sb.append(cell);
+        rowSb.append(cell);
       }
-      sb.append('\n');
+      sj.add(rowSb.toString());
     }
 
-    return (sb.toString());
+    return (sj.toString());
   }
 }
