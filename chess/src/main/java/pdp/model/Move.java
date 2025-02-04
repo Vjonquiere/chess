@@ -11,17 +11,16 @@ public class Move {
   boolean isCheck;
   boolean isCheckMate;
 
+
+  // The constructor takes a string of a movement played, example: "h2 h4"
   public Move(String move){
     String[] parts = move.split(" ");
     this.source = fromString(parts[0]);
     this.dest = fromString(parts[1]);
-    this.piece = getPieceAt(dest.getX(),dest.getY());
+    /* this.piece = getPieceAt(source.getX(),source.getY()); */
     this.isTake = false;
     this.isCheck = false ;
     this.isCheckMate = false;
-
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
   }
 
 
