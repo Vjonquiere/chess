@@ -14,7 +14,16 @@ public class Move {
   boolean isCheckMate = false;
 
 
-  public Move(){
+  public Move(Position source, Position dest){
+    this.source = source;
+    this.dest = dest;
+  }
+
+  public Move(Position source, Position dest, Piece piece, boolean isTake){
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
   }
 
   // fromString("h2 h4") -> Move move (source(7,1), dest= (7,3))
