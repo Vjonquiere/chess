@@ -1,8 +1,6 @@
 package pdp.model;
 
 import java.util.List;
-
-import javafx.geometry.Pos;
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
