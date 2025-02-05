@@ -1,11 +1,14 @@
 package pdp.model;
 
 import java.util.List;
+import java.util.logging.Logger;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
+import pdp.utils.Logging;
 
 public class Game extends Subject {
+  private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;
   private GameState gameState;
   private boolean isTimed;
@@ -15,6 +18,7 @@ public class Game extends Subject {
 
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, GameState gameState) {
+    Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;

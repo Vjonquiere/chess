@@ -72,6 +72,18 @@ public enum Piece {
     public char getCharRepresentation(boolean white) {
       return white ? 'K' : 'k';
     }
+  },
+  EMPTY {
+    @Override
+    public Bitboard getMoveMask(Bitboard pos, Board board) {
+      // TODO
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public char getCharRepresentation(boolean white) {
+      throw new UnsupportedOperationException();
+    }
   };
 
   public abstract Bitboard getMoveMask(Bitboard pos, Board board);
