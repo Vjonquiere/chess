@@ -18,7 +18,7 @@ public class Game extends Subject {
 
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, GameState gameState) {
-        Logging.configureLogging(LOGGER);
+    Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;
@@ -57,7 +57,6 @@ public class Game extends Subject {
   }
 
   public List<Move> getMovesHistory() {
->>>>>>> chess/src/main/java/pdp/model/Game.java
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
