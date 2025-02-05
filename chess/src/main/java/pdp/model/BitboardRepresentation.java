@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
@@ -135,7 +134,11 @@ public class BitboardRepresentation implements BoardRepresentation {
     return nbRows;
   }
 
-  private Bitboard getMultipleMovesFromDirection(Bitboard piece, Bitboard allies, Bitboard enemies, Function<Bitboard, Bitboard> moveFunction) {
+  private Bitboard getMultipleMovesFromDirection(
+      Bitboard piece,
+      Bitboard allies,
+      Bitboard enemies,
+      Function<Bitboard, Bitboard> moveFunction) {
     Bitboard allowedMoves = new Bitboard(piece.bitboard);
     int bitCount = enemies.bitCount();
     do {
@@ -146,41 +149,47 @@ public class BitboardRepresentation implements BoardRepresentation {
     return allowedMoves;
   }
 
-  private Bitboard getInlineMoves(Position square, Bitboard allies, Bitboard enemies){
+  private Bitboard getInlineMoves(Position square, Bitboard allies, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
     // move left
-    Bitboard leftMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveLeft);
+    Bitboard leftMoves =
+        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveLeft);
     // move right
-    Bitboard rightMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveRight);
+    Bitboard rightMoves =
+        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveRight);
     // move up
     Bitboard upMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUp);
     // move down
-    Bitboard downMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDown);
+    Bitboard downMoves =
+        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDown);
 
     Bitboard res = new Bitboard().or(leftMoves).or(rightMoves).or(upMoves).or(downMoves);
     res.clearBit(squareIndex);
     return res;
-
   }
 
-  private Bitboard getDiagonalMoves(Position square, Bitboard allies, Bitboard enemies){
+  private Bitboard getDiagonalMoves(Position square, Bitboard allies, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
 
-    Bitboard upLeftMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpLeft);
-    Bitboard upRightMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpRight);
-    Bitboard downLeftMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownLeft);
-    Bitboard downRightMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownRight);
-    Bitboard res = new Bitboard().or(upLeftMoves).or(upRightMoves).or(downRightMoves).or(downLeftMoves);
+    Bitboard upLeftMoves =
+        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpLeft);
+    Bitboard upRightMoves =
+        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpRight);
+    Bitboard downLeftMoves =
+        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownLeft);
+    Bitboard downRightMoves =
+        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownRight);
+    Bitboard res =
+        new Bitboard().or(upLeftMoves).or(upRightMoves).or(downRightMoves).or(downLeftMoves);
     res.clearBit(squareIndex);
     return res;
-
   }
 
-  private List<Move> bitboardToMoves(Bitboard moveBitboard, Bitboard enemies){
+  private List<Move> bitboardToMoves(Bitboard moveBitboard, Bitboard enemies) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
       // moves.add(new Move()); // enemies.getBit(i) ? true : false -> capture ?
@@ -226,7 +235,8 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardToMoves(move, enemies);
   }
 
-  private List<Move> getPawnMoves(Position square, Bitboard allies, Bitboard enemies, boolean white){
+  private List<Move> getPawnMoves(
+      Position square, Bitboard allies, Bitboard enemies, boolean white) {
     Bitboard position = new Bitboard();
     Bitboard attackRight, attackLeft;
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -246,15 +256,17 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies);
   }
 
-  private List<Move> getQueenMoves(Position square, Bitboard allies, Bitboard enemies){
-    return bitboardToMoves(getInlineMoves(square, allies, enemies).or(getDiagonalMoves(square, allies, enemies)), enemies);
+  private List<Move> getQueenMoves(Position square, Bitboard allies, Bitboard enemies) {
+    return bitboardToMoves(
+        getInlineMoves(square, allies, enemies).or(getDiagonalMoves(square, allies, enemies)),
+        enemies);
   }
 
-  private List<Move> getBishopMoves(Position square, Bitboard allies, Bitboard enemies){
+  private List<Move> getBishopMoves(Position square, Bitboard allies, Bitboard enemies) {
     return bitboardToMoves(getDiagonalMoves(square, allies, enemies), enemies);
   }
 
-  private List<Move> getRookMoves(Position square, Bitboard allies, Bitboard enemies){
+  private List<Move> getRookMoves(Position square, Bitboard allies, Bitboard enemies) {
     return bitboardToMoves(getInlineMoves(square, allies, enemies), enemies);
   }
 
@@ -263,15 +275,18 @@ public class BitboardRepresentation implements BoardRepresentation {
     ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
     Bitboard allies = piece.getColor() == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     Bitboard enemies = piece.getColor() == Color.WHITE ? getBlackBoard() : getWhiteBoard();
-      return switch (piece.getPiece()) {
-          case KING -> getKingMoves(new Position(y, x), allies, enemies);
-          case QUEEN -> getQueenMoves(new Position(y, x), allies, enemies);
-          case BISHOP -> getBishopMoves(new Position(y, x), allies, enemies);
-          case ROOK -> getRookMoves(new Position(y, x), allies, enemies);
-          case KNIGHT -> getKnightMoves(new Position(y, x), allies, enemies);
-          case PAWN -> piece.getColor() == Color.WHITE ? getPawnMoves(new Position(y, x), allies, enemies, true) : getPawnMoves(new Position(y, x), allies, enemies, false);
-          default -> new ArrayList<>();
-      };
+    return switch (piece.getPiece()) {
+      case KING -> getKingMoves(new Position(y, x), allies, enemies);
+      case QUEEN -> getQueenMoves(new Position(y, x), allies, enemies);
+      case BISHOP -> getBishopMoves(new Position(y, x), allies, enemies);
+      case ROOK -> getRookMoves(new Position(y, x), allies, enemies);
+      case KNIGHT -> getKnightMoves(new Position(y, x), allies, enemies);
+      case PAWN ->
+          piece.getColor() == Color.WHITE
+              ? getPawnMoves(new Position(y, x), allies, enemies, true)
+              : getPawnMoves(new Position(y, x), allies, enemies, false);
+      default -> new ArrayList<>();
+    };
   }
 
   @Override
