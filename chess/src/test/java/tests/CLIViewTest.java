@@ -7,17 +7,18 @@ import pdp.model.Game;
 
 public class CLIViewTest {
   @Test
-  public void testBoardToASCII(){
+  public void testBoardToASCII() {
     Game game = Game.getInstance();
 
-    String expected = "rnbqkbnr"+
-    "\npppppppp"+
-    "\n________"+
-    "\n________"+
-    "\n________"+
-    "\n________"+
-    "\nPPPPPPPP"+
-    "\nRNBQKBNR";
+    String expected =
+        "rnbqkbnr"
+            + "\npppppppp"
+            + "\n________"
+            + "\n________"
+            + "\n________"
+            + "\n________"
+            + "\nPPPPPPPP"
+            + "\nRNBQKBNR";
 
     assertEquals(expected, game.getBoard().getAsciiRepresentation());
   }
