@@ -29,7 +29,7 @@ public class Move {
   // fromString("h2 h4") -> Move move (source(7,1), dest= (7,3))
   public static Move fromString(String stringMove) {
 
-    String[] parts = stringMove.split(" ");
+    String[] parts = stringMove.split("-");
     if (parts.length != 2) {
       throw new IllegalMoveException("Invalid Move : " + stringMove);
   }
@@ -56,6 +56,14 @@ public class Move {
 
     return new Position(y,x);
   }
+
+  public String positionToString(Position position) {
+    char col = (char) ('a' + position.getX());
+    int row = position.getY() + 1;
+
+    return "" + col + row;
+}
+
 
   public Position getSource() {
     return source;
@@ -91,11 +99,15 @@ public class Move {
   }
 
   @Override
-  public String toString() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
-  }
+public String toString() {
+    String sourceStr = positionToString(this.source);
+    String destinationStr = positionToString(this.destination);
+
+    // Vérifie s'il s'agit d'une prise
+    String separator = this.isTake ? "x" : "-";
+
+    return sourceStr + separator + destinationStr;
+}
 
   @Override
     public boolean equals(Object obj) {
