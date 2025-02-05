@@ -12,7 +12,7 @@ import pdp.utils.Position;
 public class BoardTest {
 
   @Test
-  public void testGetPawns() throws NoSuchMethodException {
+  public void testGetPawns() {
     // Test with default positions
     BitboardRepresentation board = new BitboardRepresentation();
 

@@ -5,6 +5,8 @@ import static java.util.Map.entry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
@@ -275,19 +277,32 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardToMoves(move, enemies);
   }
 
-  private List<Move> getPawnMoves(Position square, Bitboard allies, Bitboard enemies){
+  private List<Move> getPawnMoves(Position square, Bitboard allies, Bitboard enemies, boolean white){
     Bitboard position = new Bitboard();
     Bitboard attackRight, attackLeft;
     int squareIndex = square.getX() % 8 + square.getY() * 8;
-
     position.setBit(squareIndex);
-    attackRight = position.moveUpRight().and(enemies);
-    attackLeft = position.moveUpLeft().and(enemies);
 
-    position = position.moveUp();
+    if (white) {
+      attackRight = position.moveUpRight().and(enemies);
+      attackLeft = position.moveUpLeft().and(enemies);
+      position = position.moveUp();
+    } else {
+      attackRight = position.moveDownRight().and(enemies);
+      attackLeft = position.moveDownLeft().and(enemies);
+      position = position.moveDown();
+    }
     position = position.xor(position.and(allies));
 
     return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies);
+  }
+
+  private List<Move> getWhitePawnMoves(Position square, Bitboard allies, Bitboard enemies){
+    return getPawnMoves(square, allies, enemies, true);
+  }
+
+  private List<Move> getBlackPawnMoves(Position square, Bitboard allies, Bitboard enemies){
+    return getPawnMoves(square, allies, enemies, false);
   }
 
   private List<Move> getQueenMoves(Position square, Bitboard allies, Bitboard enemies){
@@ -308,21 +323,15 @@ public class BitboardRepresentation implements BoardRepresentation {
     ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
     Bitboard allies = piece.getColor() == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     Bitboard enemies = piece.getColor() == Color.WHITE ? getBlackBoard() : getWhiteBoard();
-    switch (piece.getPiece()) {
-      case KING:
-        return getKingMoves(new Position(y, x), allies, enemies);
-      case QUEEN:
-        return getQueenMoves(new Position(y, x), allies, enemies);
-      case BISHOP:
-        return getBishopMoves(new Position(y, x), allies, enemies);
-      case ROOK:
-        return getRookMoves(new Position(y, x), allies, enemies);
-      case KNIGHT:
-        return getKnightMoves(new Position(y, x), allies, enemies);
-      case PAWN:
-        return getPawnMoves(new Position(y, x), allies, enemies);
-    }
-    return new ArrayList<>();
+      return switch (piece.getPiece()) {
+          case KING -> getKingMoves(new Position(y, x), allies, enemies);
+          case QUEEN -> getQueenMoves(new Position(y, x), allies, enemies);
+          case BISHOP -> getBishopMoves(new Position(y, x), allies, enemies);
+          case ROOK -> getRookMoves(new Position(y, x), allies, enemies);
+          case KNIGHT -> getKnightMoves(new Position(y, x), allies, enemies);
+          case PAWN -> piece.getColor() == Color.WHITE ? getPawnMoves(new Position(y, x), allies, enemies, true) : getPawnMoves(new Position(y, x), allies, enemies, false);
+          default -> new ArrayList<>();
+      };
   }
 
   @Override
