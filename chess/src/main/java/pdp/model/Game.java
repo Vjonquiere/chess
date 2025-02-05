@@ -111,7 +111,7 @@ public class Game extends Subject {
 
   public static Game getInstance() {
     if (instance == null) {
-      instance = new Game(false, false, null, false, null, null);
+      instance = new Game(false, false, null, false, new GameState());
     }
     return instance;
   }
