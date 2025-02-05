@@ -65,13 +65,13 @@ public class Move {
     return dest;
   }
 
-  public Move isLegal(List<Move> availableMoves) {
-
-    if (!availableMoves.contains(this)) {
-        throw new IllegalMoveException("The move is not possible");
+  public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
+    for (Move move : availableMoves) {
+        if (move.equals(this)) {
+            return move;
+        }
     }
-    
-    return move de la liste ; // visitez la liste et recueprer le move en question 
+    throw new IllegalMoveException("The move is not possible");
   }
 
   public Piece getPiece() {
