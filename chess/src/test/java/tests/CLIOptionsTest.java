@@ -1,6 +1,5 @@
 package tests;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -98,44 +97,41 @@ public class CLIOptionsTest {
   }
 
   @Test
-  public void testError() throws Exception {
+  public void testUnrecognized() throws Exception {
     System.setOut(new PrintStream(outputStream));
-    String expected =
-        "Parsing failed.  Reason: Unrecognized option: -zgv\n"
-            + "usage: chess\n"
-            + " -a,--ai <COLOR>                 Launch the program in AI mode, with\n"
-            + "                                 artificial player with COLOR ’B’ or ’A’\n"
-            + "                                 (All),(W by default).\n"
-            + "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm\n"
-            + "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial\n"
-            + "                                 player\n"
-            + "    --ai-mode <ALGORITHM>        Choose the exploration algorithm for the\n"
-            + "                                 artificial player.\n"
-            + "    --ai-time <TIME>             Specify the time of reflexion for AI mode\n"
-            + "                                 (default 5 seconds)\n"
-            + " -b,--blitz                      Play in blitz mode\n"
-            + " -c,--contest <FILENAME>         AI plays one move in the given file\n"
-            + " -d,--debug                      Print debugging information\n"
-            + " -g,--gui                        Displays the game with a  graphical\n"
-            + "                                 interface.\n"
-            + " -h,--help                       Print this message and exit\n"
-            + " -t,--time <TIME>                Specify time per round for blitz mode\n"
-            + "                                 (default 30min)\n"
-            + " -V,--version                    Print the version information and exit\n"
-            + " -v,--verbose                    Display more information\n";
+    String expected = "Parsing failed.  Reason: Unrecognized option: -zgv\n";
 
-    // Test with an unrecognized option
+    // Test with an unrecognized option (error)
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-zgv"}, mockRuntime);
-    assertEquals(expected.trim(), outputStream.toString().trim());
+    assertEquals(expected + expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(1);
+  }
 
-    // Test partial matching
-    Runtime mockRuntime2 = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-hel"}, mockRuntime2);
+  @Test
+  public void testPartialMatching() throws Exception {
+    System.setOut(new PrintStream(outputStream));
+
+    // Test partial matching (no error)
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"-hel"}, mockRuntime);
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
-    verify(mockRuntime2).exit(0);
+    verify(mockRuntime).exit(0);
+  }
+
+  @Test
+  public void testAmbiguous() throws Exception {
+    System.setOut(new PrintStream(outputStream));
+    String expectedAmbiguous =
+        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-depth', 'ai-heuristic', 'ai-time')\n";
+
+    // Test ambiguous option (several options starting the same) (error)
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"--ai-"}, mockRuntime);
+    assertEquals(expectedAmbiguous + expectedHelp.trim(), outputStream.toString().trim());
+    outputStream.reset();
+    verify(mockRuntime).exit(1);
   }
 }

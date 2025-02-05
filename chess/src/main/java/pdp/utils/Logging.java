@@ -2,7 +2,13 @@ package pdp.utils;
 
 import java.util.logging.*;
 
-/** Logging class abstracting java.util.logging */
+/**
+ * Logging class abstracting java.util.logging Usage : in each class, create a logger from
+ * java.utils.logging, then configure the logger in the constructor or main function. Then you can
+ * call the DEBUG/VERBOSE function. example for Main: private static final Logger LOGGER =
+ * Logger.getLogger(Main.class.getName()); in constructor or main :
+ * Logging.configureLogging(LOGGER); Logging.DEBUG(LOGGER, message);
+ */
 public class Logging {
   private static boolean debug = false;
   private static boolean verbose = false;
@@ -22,7 +28,7 @@ public class Logging {
    * @param message String to log
    */
   public static void DEBUG(Logger logger, String message) {
-    logger.fine(logger.getName() + " [DEBUG] \n" + message);
+    logger.fine(logger.getName() + " [DEBUG]\n" + message);
   }
 
   /**
@@ -32,7 +38,7 @@ public class Logging {
    * @param message String to log
    */
   public static void VERBOSE(Logger logger, String message) {
-    logger.finer(logger.getName() + " [VERBOSE] \n" + message);
+    logger.finer(logger.getName() + " [VERBOSE]\n" + message);
   }
 
   /**
@@ -59,5 +65,6 @@ public class Logging {
       logger.removeHandler(handler);
     }
     logger.addHandler(consoleHandler);
+    logger.setUseParentHandlers(false);
   }
 }

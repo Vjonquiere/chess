@@ -97,6 +97,16 @@ public class CLIOptions {
     try {
       cmd = parser.parse(options, args);
 
+      if (cmd.hasOption(debug)) {
+        DEBUG(LOGGER, "Debug mode activated");
+        Logging.setDebug(true);
+        Logging.configureLogging(LOGGER);
+      }
+      if (cmd.hasOption(verbose)) {
+        DEBUG(LOGGER, "Verbose mode activated");
+        Logging.setVerbose(true);
+        Logging.configureLogging(LOGGER);
+      }
       if (cmd.hasOption(help)) {
         DEBUG(LOGGER, "Help option activated");
         HelpFormatter formatter = new HelpFormatter();
@@ -111,16 +121,6 @@ public class CLIOptions {
         System.out.println("Version: " + properties.getProperty("version"));
         runtime.exit(0);
         return;
-      }
-      if (cmd.hasOption(debug)) {
-        DEBUG(LOGGER, "Debug mode activated");
-        Logging.setDebug(true);
-        Logging.configureLogging(LOGGER);
-      }
-      if (cmd.hasOption(verbose)) {
-        DEBUG(LOGGER, "Verbose mode activated");
-        Logging.setVerbose(true);
-        Logging.configureLogging(LOGGER);
       }
       if (cmd.hasOption(blitz)) {
         DEBUG(LOGGER, "Blitz mode activated");
