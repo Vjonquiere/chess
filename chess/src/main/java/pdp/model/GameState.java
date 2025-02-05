@@ -11,14 +11,16 @@ public class GameState extends Subject {
   // By default, blitz mode is not on
   public GameState() {
     this.isWhiteTurn = true;
-    this.history = new History();
+    // this.history = new History();  When history is implemented
+    this.history = null;
     this.board = new Board();
     this.moveTimer = null;
   }
 
   public GameState(boolean isBlitzModeOn) {
     this.isWhiteTurn = true;
-    this.history = new History();
+    // this.history = new History();  When history is implemented
+    this.history = null;
     this.board = new Board();
     this.moveTimer = new Timer();
   }

@@ -2,6 +2,8 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import pdp.model.*;
+
 public class GameStateTest {
   /*
   private GameState gameBlitzOff;
@@ -19,7 +21,7 @@ public class GameStateTest {
       assertNotNull(gameBlitzOff.getHistory(), "The history of the game should be correctly instantiated inside the constructor !");
       assertTrue(gameBlitzOff.isWhiteTurn(), "The first player to move should be white for every new game !");
 
-      assertNull(gameBlitzOff.getWhiteTimer(), "If blitz mode is off, timer should be null !");
+      assertNull(gameBlitzOff.getMoveTimer(), "If blitz mode is off, timer should be null !");
   }
 
   @Test
@@ -33,7 +35,7 @@ public class GameStateTest {
 
   @Test
   void testBlitzModeInitialization() {
-      assertNotNull(gameBlitzOn.getWhiteTimer(), "Timer should be correctly instantiated for blitz games !");
+      assertNotNull(gameBlitzOn.getMoveTimer(), "Timer should be correctly instantiated for blitz games !");
   }
   */
 }
