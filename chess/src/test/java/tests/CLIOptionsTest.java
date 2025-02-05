@@ -1,17 +1,22 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 import pdp.utils.CLIOptions;
+import pdp.utils.Logging;
 
 public class CLIOptionsTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private Logger logger;
+  private PrintStream originalOut;
 
   String expectedHelp =
       "usage: chess\n"
@@ -133,5 +138,80 @@ public class CLIOptionsTest {
     assertEquals(expectedAmbiguous + expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(1);
+  }
+
+  public void setUpLogging() {
+    logger = Logger.getLogger("TestLogger");
+
+    outputStream.reset();
+    originalOut = System.out;
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+
+    Logging.setDebug(false);
+    Logging.setVerbose(false);
+    Logging.configureLogging(logger);
+  }
+
+  @Test
+  public void testDebug() throws Exception {
+    setUpLogging();
+    Logging.setDebug(true);
+
+    final Properties properties = new Properties();
+    properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+    String expected = "Version: " + properties.getProperty("version");
+
+    /* Test that the option displays the right output & exit code with the long option name */
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"--debug", "-V"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("[DEBUG]"));
+    assertTrue(outputStream.toString().contains("Debug mode activated"));
+    assertTrue(outputStream.toString().contains(expected));
+    outputStream.reset();
+    verify(mockRuntime).exit(0);
+
+    /* Test that the option displays the right output & exit code with the short option name */
+    Runtime mockRuntime2 = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"-V", "-d"}, mockRuntime2);
+    assertTrue(outputStream.toString().contains("[DEBUG]"));
+    assertTrue(outputStream.toString().contains("Debug mode activated"));
+    assertTrue(outputStream.toString().contains(expected));
+    outputStream.reset();
+    verify(mockRuntime2).exit(0);
+    outputStream.reset();
+  }
+
+  @Test
+  public void testVerbose() throws Exception {
+    /*
+    The tests display debug because verbose mode also displays debug, and
+    we have decided to display a debug message in CLIOptions
+     */
+    setUpLogging();
+    Logging.setVerbose(true);
+
+    final Properties properties = new Properties();
+    properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+    String expected = "Version: " + properties.getProperty("version");
+
+    /* Test that the option displays the right output & exit code with the long option name */
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"--verbose", "-V"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("[DEBUG]"));
+    assertTrue(outputStream.toString().contains("Verbose mode activated"));
+    assertTrue(outputStream.toString().contains(expected));
+    outputStream.reset();
+    verify(mockRuntime).exit(0);
+
+    /* Test that the option displays the right output & exit code with the short option name */
+    Runtime mockRuntime2 = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"-V", "-v"}, mockRuntime2);
+    assertTrue(outputStream.toString().contains("[DEBUG]"));
+    assertTrue(outputStream.toString().contains("Verbose mode activated"));
+    assertTrue(outputStream.toString().contains(expected));
+    outputStream.reset();
+    verify(mockRuntime2).exit(0);
+    outputStream.reset();
   }
 }

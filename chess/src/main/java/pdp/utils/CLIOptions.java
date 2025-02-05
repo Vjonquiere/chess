@@ -98,14 +98,14 @@ public class CLIOptions {
       cmd = parser.parse(options, args);
 
       if (cmd.hasOption(debug)) {
-        DEBUG(LOGGER, "Debug mode activated");
         Logging.setDebug(true);
         Logging.configureLogging(LOGGER);
+        DEBUG(LOGGER, "Debug mode activated");
       }
       if (cmd.hasOption(verbose)) {
-        DEBUG(LOGGER, "Verbose mode activated");
         Logging.setVerbose(true);
         Logging.configureLogging(LOGGER);
+        DEBUG(LOGGER, "Verbose mode activated");
       }
       if (cmd.hasOption(help)) {
         DEBUG(LOGGER, "Help option activated");
