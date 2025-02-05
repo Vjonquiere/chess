@@ -16,7 +16,11 @@ public class GameController {
     this.model = model;
     this.view = view;
     this.bagOfCommands = bagOfCommands;
+    this.bagOfCommands.setModel(model);
+    this.bagOfCommands.setController(this);
   }
 
-  // TODO
+  public void onErrorEvent(Exception e) {
+    this.view.onErrorEvent(e);
+  }
 }
