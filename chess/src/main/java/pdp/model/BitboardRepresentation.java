@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
+import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
+  private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
   private int nbCols = 8;
   private int nbRows = 8;
@@ -44,6 +47,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
 
   public BitboardRepresentation() {
+    Logging.configureLogging(LOGGER);
     board = new Bitboard[12];
     board[0] = new Bitboard(16L); // WKi
     board[1] = new Bitboard(8L); // WQ
@@ -79,6 +83,9 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   private List<Position> getOccupiedSquares(int bitBoardIndex) {
     return squaresToPosition(board[bitBoardIndex].getSetBits());
+    // TODO
+    throw new UnsupportedOperationException(
+        "Method not implemented in " + this.getClass().getName());
   }
 
   @Override

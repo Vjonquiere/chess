@@ -2,9 +2,12 @@ package pdp.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class Board {
+  private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
   BoardRepresentation board;
   boolean isWhite;
   byte enPassant;
@@ -14,6 +17,7 @@ public class Board {
   boolean blackLongCastle;
 
   public Board() {
+    Logging.configureLogging(LOGGER);
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
