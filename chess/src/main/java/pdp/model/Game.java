@@ -32,6 +32,10 @@ public class Game extends Subject {
     this.board = new Board();
   }
 
+  public Board getBoard() {
+    return this.board;
+  }
+
   @Override
   public void addObserver(EventObserver observer) {
     super.addObserver(observer);
