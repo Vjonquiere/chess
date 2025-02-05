@@ -63,15 +63,16 @@ public class Game extends Subject {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     try {
     List<Move> availableMoves = board.getAvailableMoves(sourcePosition);
-    move.isLegal(availableMoves);
-      // veriufier clouage , echec puis si tout est bon alors jouer le move dans la board ..
+    move.isLegal(availableMoves);  //throws exception if the initial move is not a "classical" move ( and we verify in the catch section if the move is a special move : castling, en-passant, )
+      //here, the move is a "classical" move, but we must verify if the played piece is nailed or not, if the king will be in check after this move, if a pawn have to be promoted.. 
+      //veriufier clouage , echec, puis si pion promotion, puis si tout est bon alors jouer le move dans la board ..
 
     board.makeMove(move);
     //ajouter a l'historique le move
 
     } catch (Exception e) {
       board.isCheck()
-      // roque 
+      // roque, en passant etc
       // TODO: handle exception
     }
 
