@@ -1,5 +1,7 @@
 package pdp.utils;
 
+import java.util.Objects;
+
 public class Position {
   int x;
   int y;
@@ -15,5 +17,16 @@ public class Position {
 
   public int getY() {
     return y;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    Position position = (Position)o;
+    return (position.getX() == this.x) && (position.getY() == this.y);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(this);
   }
 }
