@@ -83,9 +83,6 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   private List<Position> getOccupiedSquares(int bitBoardIndex) {
     return squaresToPosition(board[bitBoardIndex].getSetBits());
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
   }
 
   @Override
