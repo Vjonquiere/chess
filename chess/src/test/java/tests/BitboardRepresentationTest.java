@@ -2,14 +2,13 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.model.Bitboard;
 import pdp.model.BitboardRepresentation;
 import pdp.utils.Position;
 
-public class BoardTest {
+public class BitboardRepresentationTest {
 
   @Test
   public void testGetPawns() {

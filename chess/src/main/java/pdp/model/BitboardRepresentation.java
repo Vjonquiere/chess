@@ -135,88 +135,45 @@ public class BitboardRepresentation implements BoardRepresentation {
     return nbRows;
   }
 
-  public Bitboard getInlineMoves(Position square, Bitboard allies, Bitboard enemies){
+  private Bitboard getMultipleMovesFromDirection(Bitboard piece, Bitboard allies, Bitboard enemies, Function<Bitboard, Bitboard> moveFunction) {
+    Bitboard allowedMoves = new Bitboard(piece.bitboard);
+    int bitCount = enemies.bitCount();
+    do {
+      allowedMoves = allowedMoves.or(moveFunction.apply(allowedMoves));
+      allowedMoves = allowedMoves.xor(allowedMoves.and(allies));
+      bitCount++;
+    } while (allowedMoves.or(enemies).bitCount() > bitCount);
+    return allowedMoves;
+  }
+
+  private Bitboard getInlineMoves(Position square, Bitboard allies, Bitboard enemies){
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
     // move left
-    Bitboard leftMoves = new Bitboard(position.bitboard);
-    int bitCount = enemies.bitCount();
-    do {
-      leftMoves = leftMoves.or(leftMoves.moveLeft());
-      leftMoves = leftMoves.xor(leftMoves.and(allies));
-      bitCount++;
-    } while (leftMoves.or(enemies).bitCount() > bitCount);
+    Bitboard leftMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveLeft);
     // move right
-    Bitboard rightMoves = new Bitboard(position.bitboard);
-    bitCount = enemies.bitCount();
-    do {
-      rightMoves = rightMoves.or(rightMoves.moveRight());
-      rightMoves = rightMoves.xor(rightMoves.and(allies));
-      bitCount++;
-    } while (rightMoves.or(enemies).bitCount() > bitCount);
-
+    Bitboard rightMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveRight);
     // move up
-    Bitboard upMoves = new Bitboard(position.bitboard);
-    bitCount = enemies.bitCount();
-    do {
-      upMoves = upMoves.or(upMoves.moveUp());
-      upMoves = upMoves.xor(upMoves.and(allies));
-      bitCount++;
-    } while (upMoves.or(enemies).bitCount() > bitCount);
-
+    Bitboard upMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUp);
     // move down
-    Bitboard downMoves = new Bitboard(position.bitboard);
-    bitCount = enemies.bitCount();
-    do {
-      downMoves = downMoves.or(downMoves.moveDown());
-      downMoves = downMoves.xor(downMoves.and(allies));
-      bitCount++;
-    } while (downMoves.or(enemies).bitCount() > bitCount);
+    Bitboard downMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDown);
+
     Bitboard res = new Bitboard().or(leftMoves).or(rightMoves).or(upMoves).or(downMoves);
     res.clearBit(squareIndex);
     return res;
 
   }
 
-  public Bitboard getDiagonalMoves(Position square, Bitboard allies, Bitboard enemies){
+  private Bitboard getDiagonalMoves(Position square, Bitboard allies, Bitboard enemies){
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
-    // move left
-    Bitboard upLeftMoves = new Bitboard(position.bitboard);
-    int bitCount = enemies.bitCount();
-    do {
-      upLeftMoves = upLeftMoves.or(upLeftMoves.moveUpLeft());
-      upLeftMoves = upLeftMoves.xor(upLeftMoves.and(allies));
-      bitCount++;
-    } while (upLeftMoves.or(enemies).bitCount() > bitCount);
-    // move right
-    Bitboard upRightMoves = new Bitboard(position.bitboard);
-    bitCount = enemies.bitCount();
-    do {
-      upRightMoves = upRightMoves.or(upRightMoves.moveUpRight());
-      upRightMoves = upRightMoves.xor(upRightMoves.and(allies));
-      bitCount++;
-    } while (upRightMoves.or(enemies).bitCount() > bitCount);
 
-    // move up
-    Bitboard downLeftMoves = new Bitboard(position.bitboard);
-    bitCount = enemies.bitCount();
-    do {
-      downLeftMoves = downLeftMoves.or(downLeftMoves.moveDownLeft());
-      downLeftMoves = downLeftMoves.xor(downLeftMoves.and(allies));
-      bitCount++;
-    } while (downLeftMoves.or(enemies).bitCount() > bitCount);
-
-    // move down
-    Bitboard downRightMoves = new Bitboard(position.bitboard);
-    bitCount = enemies.bitCount();
-    do {
-      downRightMoves = downRightMoves.or(downRightMoves.moveDownRight());
-      downRightMoves = downRightMoves.xor(downRightMoves.and(allies));
-      bitCount++;
-    } while (downRightMoves.or(enemies).bitCount() > bitCount);
+    Bitboard upLeftMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpLeft);
+    Bitboard upRightMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpRight);
+    Bitboard downLeftMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownLeft);
+    Bitboard downRightMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownRight);
     Bitboard res = new Bitboard().or(upLeftMoves).or(upRightMoves).or(downRightMoves).or(downLeftMoves);
     res.clearBit(squareIndex);
     return res;
@@ -232,7 +189,6 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   private List<Move> getKingMoves(Position square, Bitboard allies, Bitboard enemies) {
-    List<Move> moves = new ArrayList<>();
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -247,14 +203,10 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveDownLeft())
             .or(position.moveDownRight());
     move = move.xor(move.and(allies));
-    for (Integer i : move.getSetBits()) {
-      // moves.add(new Move()); // enemies.getBit(i) ? true : false -> capture ?
-    }
     return bitboardToMoves(move, enemies);
   }
 
   private List<Move> getKnightMoves(Position square, Bitboard allies, Bitboard enemies) {
-    List<Move> moves = new ArrayList<>();
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -271,9 +223,6 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveRight().moveDownRight())
             .or(position.moveRight().moveUpRight());
     move = move.xor(move.and(allies));
-    for (Integer i : move.getSetBits()) {
-      // moves.add(new Move()); // enemies.getBit(i) ? true : false -> capture ?
-    }
     return bitboardToMoves(move, enemies);
   }
 
@@ -297,16 +246,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies);
   }
 
-  private List<Move> getWhitePawnMoves(Position square, Bitboard allies, Bitboard enemies){
-    return getPawnMoves(square, allies, enemies, true);
-  }
-
-  private List<Move> getBlackPawnMoves(Position square, Bitboard allies, Bitboard enemies){
-    return getPawnMoves(square, allies, enemies, false);
-  }
-
   private List<Move> getQueenMoves(Position square, Bitboard allies, Bitboard enemies){
-    System.out.println(getInlineMoves(square, allies, enemies).or(getDiagonalMoves(square, allies, enemies)));
     return bitboardToMoves(getInlineMoves(square, allies, enemies).or(getDiagonalMoves(square, allies, enemies)), enemies);
   }
 
