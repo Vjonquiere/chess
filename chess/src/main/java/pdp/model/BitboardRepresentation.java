@@ -315,43 +315,63 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Checks if the given pawn in argument is promoting (has reached the last row)
+   * Checks if a pawn at Position(x,y) checks for promotion
    *
-   * @param x The x postion of the pawn that is potentially promoting (checking for this pawn)
-   * @param y The y postion of the pawn that is potentially promoting (checking for this pawn)
-   * @param white boolean value to know if the pawn is white
-   * @param board The board of the game
-   * @return true if the pawn given as an argument is promoting, false otherwise.
+   * @param x The x-coordinate (file) of the pawn
+   * @param y The y-coordinate (rank) of the pawn
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @return true if the pawn is being promoted, otherwise false
    */
   @Override
-  public boolean isPawnPromoting(int x, int y, boolean white, Board board) {
-    // Retrieve bitboard B1 of the pawn that was just moved
-    // Check if bit at Position(x,y) is at 1. If yes --> return true, else false
+  public boolean isPawnPromoting(int x, int y, boolean white) {
+    if (white && y != 7) {
+      return false;
+    } else if (!white && y != 0) {
+      return false;
+    } else {
+      // White pawns --> 5 and Black pawns --> 11
+      Bitboard pawnBitBoard = white ? this.board[5] : this.board[11];
+      int bitIndex = 8 * y + x;
 
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+      // If bit is 1 then pawn is located at Position(x,y)
+      return pawnBitBoard.getBit(bitIndex);
+    }
   }
 
   /**
-   * Replaces pawnToPromote with newPiece. Bitboards get changed
+   * Replaces pawnToPromote with newPiece. Bitboards get changed. Assumes pawn can be promoted.
    *
-   * @param x The x position of the pawn that has reached the last row and gets promoted
-   * @param x The y position of the pawn that has reached the last row and gets promoted
-   * @param white boolean value to know if the pawn is white
+   * @param x The x-coordinate (file) of the pawn
+   * @param y The y-coordinate (rank) of the pawn
+   * @param white {true} if pawn is white, {false} if pawn is black
    * @param newPiece The piece asked by the player that is replacing the promoting pawn
-   * @param board The board of the game
    */
   @Override
-  public void promotePawn(int x, int y, boolean white, Piece newPiece, Board board) {
-    // Retrieve the bitboard B1 corresponding to the pawns of color {white}
-    // Retrieve the bitboard B2 corresponding to the pieces of type {newPiece} and of color {white}
+  public void promotePawn(int x, int y, boolean white, Piece newPiece) {
+    int boardIndex = white ? 0 : 6;
+    Bitboard newPieceBitBoard = null;
+    Bitboard pawnBitboard = this.board[5 + boardIndex];
+    switch (newPiece) {
+      case KNIGHT:
+        newPieceBitBoard = this.board[4 + boardIndex];
+        break;
+      case BISHOP:
+        newPieceBitBoard = this.board[2 + boardIndex];
+        break;
+      case ROOK:
+        newPieceBitBoard = this.board[3 + boardIndex];
+        break;
+      case QUEEN:
+        newPieceBitBoard = this.board[1 + boardIndex];
+        break;
+      default:
+        System.out.println("Error: A pawn can only be promoted to Queen, Rook, Knight or Bishop !");
+        return;
+    }
 
-    // Change 1 to 0 in B1 at Position(x,y)
-    // Change 0 to 1 in B2 at Position(x,y)
-
-    // TO DO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    int bitIndex = 8 * y + x;
+    // Change bits
+    pawnBitboard.clearBit(bitIndex);
+    newPieceBitBoard.setBit(bitIndex);
   }
 }

@@ -1,8 +1,7 @@
 package pdp.utils;
 
-import java.util.logging.Logger;
-
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class Position {
   private static final Logger LOGGER = Logger.getLogger(Position.class.getName());
