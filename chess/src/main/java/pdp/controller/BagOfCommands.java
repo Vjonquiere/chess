@@ -2,9 +2,12 @@ package pdp.controller;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 import pdp.model.Game;
+import pdp.utils.Logging;
 
 public class BagOfCommands {
+  private static final Logger LOGGER = Logger.getLogger(BagOfCommands.class.getName());
   private static BagOfCommands instance;
   private ConcurrentLinkedQueue<Command> commands = new ConcurrentLinkedQueue<>();
   private Game model;
@@ -15,7 +18,9 @@ public class BagOfCommands {
    * private constructor needed for design pattern singleton Nothing done inside because every field
    * is initialized outside
    */
-  private BagOfCommands() {}
+  private BagOfCommands() {
+    Logging.configureLogging(LOGGER);
+  }
 
   /** Starts a new thread to process all commands in the queue. */
   private void processCommands() {
