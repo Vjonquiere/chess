@@ -1,13 +1,18 @@
 package pdp.events;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Subject {
-  List<EventObserver> observers;
-  List<EventObserver> errorObservers;
+  List<EventObserver> observers = new ArrayList<>();
+  List<EventObserver> errorObservers = new ArrayList<>();
 
   public void addObserver(EventObserver observer) {
     observers.add(observer);
+  }
+
+  public void notifyObserver(EventObserver observer) {
+    observer.onGameEvent();
   }
 
   public void removeObserver(EventObserver observer) {
@@ -24,7 +29,7 @@ public abstract class Subject {
 
   public void notifyObservers() {
     for (EventObserver observer : observers) {
-      observer.onGameEvent();
+      notifyObserver(observer);
     }
   }
 
