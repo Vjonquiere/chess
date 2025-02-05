@@ -1,8 +1,8 @@
 package pdp.model;
 
 import java.util.List;
-import pdp.events.EventObserver;
 import java.util.logging.Logger;
+import pdp.events.EventObserver;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
@@ -24,7 +24,7 @@ public class Game extends Subject {
     this.isBlackAI = isBlackAI;
     this.solver = solver;
     this.isTimed = isTimed;
-    this.gameState = gameState;  
+    this.gameState = gameState;
   }
 
   public Board getBoard() {
