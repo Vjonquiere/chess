@@ -4,6 +4,7 @@ import java.util.List;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
+import pdp.utils.Position;
 
 public class Game extends Subject {
   private static Game instance;
@@ -59,8 +60,21 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
-    move.isLegal(board);
+    Position sourcePosition = new Position(move.source.getY(), move.source.getX());
+    try {
+    List<Move> availableMoves = board.getAvailableMoves(sourcePosition);
+    move.isLegal(availableMoves);
+      // veriufier clouage , echec puis si tout est bon alors jouer le move dans la board ..
+
     board.makeMove(move);
+    //ajouter a l'historique le move
+
+    } catch (Exception e) {
+      board.isCheck()
+      // roque 
+      // TODO: handle exception
+    }
+
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }

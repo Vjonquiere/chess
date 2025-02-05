@@ -56,14 +56,13 @@ public class Move {
     return dest;
   }
 
-  public boolean isLegal(Board board) {
-    List<Move> availableMoves = board.getAvailableMoves(this);
+  public Move isLegal(List<Move> availableMoves) {
 
     if (!availableMoves.contains(this)) {
         throw new IllegalMoveException("The move is not possible");
     }
-
-    return true;
+    
+    return move de la liste ; // visitez la liste et recueprer le move en question 
   }
 
   public Piece getPiece() {

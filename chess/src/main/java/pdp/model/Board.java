@@ -19,11 +19,15 @@ public class Board{
         "Method not implemented in " + this.getClass().getName());
   }
 
-  public List<Move> getAvailableMoves(Move move) {
-    return board.getAvailableMoves(move.getSource().getX(), move.getSource().getY(), this);
+  public List<Move> getAvailableMoves(Position pos) {
+    return board.getAvailableMoves(pos.getX(), pos.getY(), this);
   }
 
   public boolean makeMove(Move move) {
+    board.makeMove(move);
+    
+    // mettre a jour les flags enpassant , si un roi ou une tour a bougé (= modifier le booleen des castles)
+      move.toString();
     // TODO
     throw new UnsupportedOperationException();
   }
