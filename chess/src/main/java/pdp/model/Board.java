@@ -2,9 +2,13 @@ package pdp.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.logging.Logger;
+import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class Board {
+  private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
   BoardRepresentation board;
   boolean isWhite;
   byte enPassant;
@@ -14,6 +18,7 @@ public class Board {
   boolean blackLongCastle;
 
   public Board() {
+    Logging.configureLogging(LOGGER);
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
@@ -67,18 +72,20 @@ public class Board {
         charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
       rep = Piece.KING.getCharRepresentation(color);
-      Position pos = this.board.getKing(color);
-      charBoard.get(pos.getY()).set(pos.getX(), rep);
-    }
-
-    StringBuilder sb = new StringBuilder();
-    for (ArrayList<Character> row : charBoard) {
-      for (Character cell : row) {
-        sb.append(cell);
+      for (Position pos : this.board.getKing(color)) {
+        charBoard.get(pos.getY()).set(pos.getX(), rep);
       }
-      sb.append('\n');
     }
 
-    return (sb.toString());
+    StringJoiner sj = new StringJoiner("\n");
+    for (ArrayList<Character> row : charBoard) {
+      StringBuilder rowSb = new StringBuilder();
+      for (Character cell : row) {
+        rowSb.append(cell);
+      }
+      sj.add(rowSb.toString());
+    }
+
+    return (sj.toString());
   }
 }
