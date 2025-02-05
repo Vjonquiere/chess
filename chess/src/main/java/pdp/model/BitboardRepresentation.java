@@ -46,6 +46,7 @@ public class BitboardRepresentation implements BoardRepresentation {
      11. Black pawns
    */
 
+  /** Initialize all the bitboards to the default values for a board when the game begin */
   public BitboardRepresentation() {
     Logging.configureLogging(LOGGER);
     board = new Bitboard[12];
@@ -65,6 +66,12 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[11] = new Bitboard(71776119061217280L);
   }
 
+  /**
+   * Translate a list of squares (0..63) to a list of position (x,y)
+   *
+   * @param squares The list of squares to change to position
+   * @return A new list containing the translations
+   */
   private List<Position> squaresToPosition(List<Integer> squares) {
     List<Position> positions = new ArrayList<>();
     for (Integer i : squares) {
@@ -73,54 +80,113 @@ public class BitboardRepresentation implements BoardRepresentation {
     return positions;
   }
 
+  /**
+   * Get the bitboard that contains all the white pieces, by or on all white pieces bitboards
+   *
+   * @return the bitboard containing all white pieces
+   */
   private Bitboard getWhiteBoard() {
     return board[0].or(board[1]).or(board[2]).or(board[3]).or(board[4]).or(board[5]);
   }
 
+  /**
+   * Get the bitboard that contains all the black pieces, by or on all black pieces bitboards
+   *
+   * @return the bitboard containing all black pieces
+   */
   private Bitboard getBlackBoard() {
     return board[6].or(board[7]).or(board[8]).or(board[9]).or(board[10]).or(board[11]);
   }
 
+  /**
+   * Get the positions of all bits set to 1 in the given bitboard
+   *
+   * @param bitBoardIndex The bitboard to lookUp
+   * @return A list of positions
+   */
   private List<Position> getOccupiedSquares(int bitBoardIndex) {
     return squaresToPosition(board[bitBoardIndex].getSetBits());
   }
 
+  /**
+   * Get the positions of the pawns
+   *
+   * @param white if true -> white pawns, if false -> black pawns
+   * @return A list of the pawns positions for the given color
+   */
   @Override
   public List<Position> getPawns(boolean white) {
     int bitmapIndex = white ? 5 : 11;
     return getOccupiedSquares(bitmapIndex);
   }
 
+  /**
+   * Get the positions of the rooks
+   *
+   * @param white if true -> white rooks, if false -> black rooks
+   * @return A list of the rooks positions for the given color
+   */
   @Override
   public List<Position> getRooks(boolean white) {
     int bitmapIndex = white ? 3 : 9;
     return getOccupiedSquares(bitmapIndex);
   }
 
+  /**
+   * Get the positions of the bishops
+   *
+   * @param white if true -> white bishops, if false -> black bishops
+   * @return A list of the bishops positions for the given color
+   */
   @Override
   public List<Position> getBishops(boolean white) {
     int bitmapIndex = white ? 2 : 8;
     return getOccupiedSquares(bitmapIndex);
   }
 
+  /**
+   * Get the positions of the knights
+   *
+   * @param white if true -> white knights, if false -> black knights
+   * @return A list of the knights positions for the given color
+   */
   @Override
   public List<Position> getKnights(boolean white) {
     int bitmapIndex = white ? 4 : 10;
     return getOccupiedSquares(bitmapIndex);
   }
 
+  /**
+   * Get the positions of the queens
+   *
+   * @param white if true -> white queens, if false -> black queens
+   * @return A list of the queens positions for the given color
+   */
   @Override
   public List<Position> getQueens(boolean white) {
     int bitmapIndex = white ? 1 : 7;
     return getOccupiedSquares(bitmapIndex);
   }
 
+  /**
+   * Get the positions of the king
+   *
+   * @param white if true -> white king, if false -> black king
+   * @return A list containing the king position for the given color
+   */
   @Override
   public List<Position> getKing(boolean white) {
     int bitmapIndex = white ? 0 : 6;
     return getOccupiedSquares(bitmapIndex);
   }
 
+  /**
+   * Get the piece and its color for the given square
+   *
+   * @param x column
+   * @param y row
+   * @return Piece and its Color
+   */
   @Override
   public ColoredPiece<Piece, Color> getPieceAt(int x, int y) {
     int square = x + 8 * y;
@@ -130,14 +196,30 @@ public class BitboardRepresentation implements BoardRepresentation {
     return new ColoredPiece<>(Piece.EMPTY, Color.EMPTY);
   }
 
+  /**
+   * @return The horizontal size of the board
+   */
   public int getNbCols() {
     return nbCols;
   }
 
+  /**
+   * @return The vertical size of the board
+   */
   public int getNbRows() {
     return nbRows;
   }
 
+  /**
+   * Iterate on the given direction to generate the possible movement from a given position
+   * depending on allies and enemies
+   *
+   * @param piece Bitboard where only the position of the piece you want to move is set to 1
+   * @param allies A bitboard containing all the allies pieces
+   * @param enemies A bitboard containing all the enemies pieces
+   * @param moveFunction The function that make the direction to follow (ex: right)
+   * @return A bitboard containing all the squares reachable for a given direction
+   */
   private Bitboard getMultipleMovesFromDirection(
       Bitboard piece,
       Bitboard allies,
@@ -153,6 +235,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     return allowedMoves;
   }
 
+  /**
+   * Generate the bitboard containing the reachable positions for up, down, left, right directions
+   *
+   * @param square The position of the piece that want to move
+   * @param allies A bitboard containing all the allies pieces
+   * @param enemies A bitboard containing all the enemies pieces
+   * @return A bitboard containing the possible inline moves
+   */
   private Bitboard getInlineMoves(Position square, Bitboard allies, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -174,6 +264,15 @@ public class BitboardRepresentation implements BoardRepresentation {
     return res;
   }
 
+  /**
+   * Generate the bitboard containing the reachable positions for up left, down left, up right, down
+   * right directions
+   *
+   * @param square The position of the piece that want to move
+   * @param allies A bitboard containing all the allies pieces
+   * @param enemies A bitboard containing all the enemies pieces
+   * @return A bitboard containing the possible diagonal moves
+   */
   private Bitboard getDiagonalMoves(Position square, Bitboard allies, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -193,6 +292,13 @@ public class BitboardRepresentation implements BoardRepresentation {
     return res;
   }
 
+  /**
+   * Convert a move bitboard to a list of possible moves. It also set if a move is a capture or not
+   *
+   * @param moveBitboard The bitboard to transform
+   * @param enemies A bitboard containing the enemies
+   * @return A list of possible moves from a move bitboard
+   */
   private List<Move> bitboardToMoves(Bitboard moveBitboard, Bitboard enemies) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
@@ -201,6 +307,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     return moves;
   }
 
+  /**
+   * Generate the list of possible moves from a given position for a king piece
+   *
+   * @param square Position of the piece
+   * @param allies Allies occupation bitboard
+   * @param enemies Enemies occupation bitboard
+   * @return The list of possible moves
+   */
   private List<Move> getKingMoves(Position square, Bitboard allies, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -219,6 +333,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardToMoves(move, enemies);
   }
 
+  /**
+   * Generate the list of possible moves from a given position for a knight piece
+   *
+   * @param square Position of the piece
+   * @param allies Allies occupation bitboard
+   * @param enemies Enemies occupation bitboard
+   * @return The list of possible moves
+   */
   private List<Move> getKnightMoves(Position square, Bitboard allies, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -239,6 +361,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardToMoves(move, enemies);
   }
 
+  /**
+   * Generate the list of possible moves from a given position for a pawn piece
+   *
+   * @param square Position of the piece
+   * @param allies Allies occupation bitboard
+   * @param enemies Enemies occupation bitboard
+   * @return The list of possible moves
+   */
   private List<Move> getPawnMoves(
       Position square, Bitboard allies, Bitboard enemies, boolean white) {
     Bitboard position = new Bitboard();
@@ -260,20 +390,53 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies);
   }
 
+  /**
+   * Generate the list of possible moves from a given position for a queen piece
+   *
+   * @param square Position of the piece
+   * @param allies Allies occupation bitboard
+   * @param enemies Enemies occupation bitboard
+   * @return The list of possible moves
+   */
   private List<Move> getQueenMoves(Position square, Bitboard allies, Bitboard enemies) {
     return bitboardToMoves(
         getInlineMoves(square, allies, enemies).or(getDiagonalMoves(square, allies, enemies)),
         enemies);
   }
 
+  /**
+   * Generate the list of possible moves from a given position for a bishop piece
+   *
+   * @param square Position of the piece
+   * @param allies Allies occupation bitboard
+   * @param enemies Enemies occupation bitboard
+   * @return The list of possible moves
+   */
   private List<Move> getBishopMoves(Position square, Bitboard allies, Bitboard enemies) {
     return bitboardToMoves(getDiagonalMoves(square, allies, enemies), enemies);
   }
 
+  /**
+   * Generate the list of possible moves from a given position for a rook piece
+   *
+   * @param square Position of the piece
+   * @param allies Allies occupation bitboard
+   * @param enemies Enemies occupation bitboard
+   * @return The list of possible moves
+   */
   private List<Move> getRookMoves(Position square, Bitboard allies, Bitboard enemies) {
     return bitboardToMoves(getInlineMoves(square, allies, enemies), enemies);
   }
 
+  /**
+   * Generate the possible moves from a position depending on the piece type. This function do not
+   * apply special rules (castling, pinned, ...)
+   *
+   * @param x The board column
+   * @param y The board row
+   * @param board unused (remove)
+   * @return The list of possible moves (without special cases)
+   */
   @Override
   public List<Move> getAvailableMoves(int x, int y, Board board) {
     ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
