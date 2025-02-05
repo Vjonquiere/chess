@@ -2,6 +2,7 @@ package pdp.model;
 
 import java.util.List;
 import java.util.logging.Logger;
+import pdp.events.EventObserver;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
@@ -24,6 +25,16 @@ public class Game extends Subject {
     this.solver = solver;
     this.isTimed = isTimed;
     this.gameState = gameState;
+  }
+
+  public Board getBoard() {
+    return this.gameState.getBoard();
+  }
+
+  @Override
+  public void addObserver(EventObserver observer) {
+    super.addObserver(observer);
+    this.notifyObserver(observer);
   }
 
   /**
@@ -99,7 +110,9 @@ public class Game extends Subject {
   }
 
   public static Game getInstance() {
-    // TODO
-    throw new UnsupportedOperationException("Method not implemented");
+    if (instance == null) {
+      instance = new Game(false, false, null, false, new GameState());
+    }
+    return instance;
   }
 }

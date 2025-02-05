@@ -16,7 +16,8 @@ import pdp.utils.Logging;
 public class CLIOptionsTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Logger logger;
-  private PrintStream originalOut;
+  private PrintStream originalOut = System.out;
+  private PrintStream originalErr = System.err;
 
   String expectedHelp =
       "usage: chess\n"
@@ -58,6 +59,7 @@ public class CLIOptionsTest {
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
+    System.setOut(originalOut);
   }
 
   @Test
@@ -81,6 +83,7 @@ public class CLIOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
     outputStream.reset();
+    System.setOut(originalOut);
   }
 
   @Test
@@ -99,6 +102,7 @@ public class CLIOptionsTest {
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
+    System.setOut(originalOut);
   }
 
   @Test
@@ -112,6 +116,7 @@ public class CLIOptionsTest {
     assertEquals(expected + expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(1);
+    System.setOut(originalOut);
   }
 
   @Test
@@ -124,6 +129,7 @@ public class CLIOptionsTest {
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
+    System.setOut(originalOut);
   }
 
   @Test
@@ -138,6 +144,7 @@ public class CLIOptionsTest {
     assertEquals(expectedAmbiguous + expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(1);
+    System.setOut(originalOut);
   }
 
   public void setUpLogging() {
@@ -180,6 +187,8 @@ public class CLIOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
     outputStream.reset();
+    System.setErr(originalErr);
+    System.setOut(originalOut);
   }
 
   @Test
@@ -213,5 +222,7 @@ public class CLIOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
     outputStream.reset();
+    System.setErr(originalErr);
+    System.setOut(originalOut);
   }
 }
