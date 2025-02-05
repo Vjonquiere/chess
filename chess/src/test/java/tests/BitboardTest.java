@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.model.Bitboard;
 
@@ -67,6 +68,62 @@ public class BitboardTest {
     assertFalse(bitboard.getBit(3));
     bitboard.toggleBit(3);
     assertTrue(bitboard.getBit(3));
+  }
+
+  @Test
+  public void testGetSetBits() {
+    Bitboard bitboard = new Bitboard();
+    bitboard.setBit(3);
+    assertTrue(bitboard.getBit(3));
+    assertEquals(List.of(3), bitboard.getSetBits());
+    bitboard.setBit(10);
+    assertTrue(bitboard.getBit(10));
+    assertEquals(List.of(3, 10), bitboard.getSetBits());
+  }
+
+  @Test
+  public void testAnd() {
+    Bitboard bitboard = new Bitboard(1095216660480L);
+    Bitboard bitboard2 = new Bitboard(1026497183744L);
+    assertEquals(1026497183744L, bitboard.and(bitboard2).getBits()); // Classic AND
+
+    Bitboard bitboard3 = new Bitboard(255L);
+    Bitboard bitboard4 = new Bitboard(65280L);
+    assertEquals(0L, bitboard3.and(bitboard4).getBits()); // Empty AND
+
+    Bitboard bitboard5 = new Bitboard(4278190080L);
+    Bitboard bitboard6 = new Bitboard(4278190080L);
+    assertEquals(4278190080L, bitboard5.and(bitboard6).getBits()); // Same bitboards
+  }
+
+  @Test
+  public void testOr() {
+    Bitboard bitboard = new Bitboard(1095216660480L);
+    Bitboard bitboard2 = new Bitboard(1026497183744L);
+    assertEquals(1095216660480L, bitboard.or(bitboard2).getBits()); // Classic OR
+
+    Bitboard bitboard3 = new Bitboard(255L);
+    Bitboard bitboard4 = new Bitboard(65280L);
+    assertEquals(65535L, bitboard3.or(bitboard4).getBits());
+
+    Bitboard bitboard5 = new Bitboard(4278190080L);
+    Bitboard bitboard6 = new Bitboard(4278190080L);
+    assertEquals(4278190080L, bitboard5.or(bitboard6).getBits()); // Same bitboards
+  }
+
+  @Test
+  public void testXor() {
+    Bitboard bitboard = new Bitboard(1095216660480L);
+    Bitboard bitboard2 = new Bitboard(1026497183744L);
+    assertEquals(68719476736L, bitboard.xor(bitboard2).getBits()); // Classic XOR
+
+    Bitboard bitboard3 = new Bitboard(255L);
+    Bitboard bitboard4 = new Bitboard(65280L);
+    assertEquals(65535L, bitboard3.xor(bitboard4).getBits()); // Same as OR
+
+    Bitboard bitboard5 = new Bitboard(4278190080L);
+    Bitboard bitboard6 = new Bitboard(4278190080L);
+    assertEquals(0L, bitboard5.xor(bitboard6).getBits()); // Same bitboards
   }
 
   @Test
