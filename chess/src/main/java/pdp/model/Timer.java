@@ -1,9 +1,16 @@
 package pdp.model;
 
+import java.util.logging.Logger;
+import pdp.utils.Logging;
+
 public class Timer {
+  private static final Logger LOGGER = Logger.getLogger(Timer.class.getName());
+
   // TODO
 
-  public Timer() {}
+  public Timer() {
+    Logging.configureLogging(LOGGER);
+  }
 
   public int timeRemaining() {
     // TODO

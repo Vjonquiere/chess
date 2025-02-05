@@ -14,9 +14,9 @@ public interface BoardRepresentation extends Rules {
 
   public List<Position> getQueens(boolean white);
 
-  public Position getKing(boolean white);
+  public List<Position> getKing(boolean white);
 
-  public Piece getPieceAt(int x, int y);
+  public ColoredPiece<Piece, Color> getPieceAt(int x, int y);
 
   public int getNbCols();
 
