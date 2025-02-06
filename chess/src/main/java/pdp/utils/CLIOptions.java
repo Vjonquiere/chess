@@ -3,6 +3,7 @@ package pdp.utils;
 import static pdp.utils.Logging.DEBUG;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Logger;
 import org.apache.commons.cli.*;
@@ -18,7 +19,7 @@ public class CLIOptions {
    * @param args Array of strings received by main, arguments to parse
    * @param runtime Runtime to exit cleanly
    */
-  public static void parseOptions(String[] args, Runtime runtime) {
+  public static HashMap<OptionType, String> parseOptions(String[] args, Runtime runtime) {
     final Options options = new Options();
     Option help = new Option("h", "help", false, "Print this message and exit");
     Option version = new Option("V", "version", false, "Print the version information and exit");
@@ -102,6 +103,7 @@ public class CLIOptions {
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = null;
+    HashMap<OptionType, String> activatedOptions = new HashMap<>();
     try {
       cmd = parser.parse(options, args);
 
@@ -120,7 +122,7 @@ public class CLIOptions {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("chess", options);
         runtime.exit(0);
-        return;
+        return null;
       }
       if (cmd.hasOption(version)) {
         DEBUG(LOGGER, "Version option activated");
@@ -128,7 +130,7 @@ public class CLIOptions {
         properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
         System.out.println("Version: " + properties.getProperty("version"));
         runtime.exit(0);
-        return;
+        return null;
       }
       if (cmd.hasOption(lang)) {
         DEBUG(LOGGER, "Language option activated");
@@ -136,22 +138,27 @@ public class CLIOptions {
       }
       if (cmd.hasOption(blitz)) {
         DEBUG(LOGGER, "Blitz mode activated");
+        activatedOptions.put(OptionType.BLITZ, "");
         System.err.println("Blitz not implemented yet");
       }
       if (cmd.hasOption(gui)) {
         DEBUG(LOGGER, "GUI mode activated");
+        activatedOptions.put(OptionType.GUI, "");
         System.err.println("GUI not implemented yet");
       }
       if (cmd.hasOption(time)) {
         DEBUG(LOGGER, "Blitz time option activated");
+        activatedOptions.put(OptionType.TIME, cmd.getOptionValue(time));
         System.err.println("Blitz time not implemented yet");
       }
       if (cmd.hasOption(contest)) {
         DEBUG(LOGGER, "Contest mode activated");
+        activatedOptions.put(OptionType.CONTEST, cmd.getOptionValue(contest));
         System.err.println("Contest not implemented yet");
       }
       if (cmd.hasOption(ai)) {
         DEBUG(LOGGER, "AI activated");
+        activatedOptions.put(OptionType.AI, cmd.getOptionValue(ai));
         System.err.println("AI not implemented yet");
       }
       if (cmd.hasOption(ai_mode)) {
@@ -159,6 +166,7 @@ public class CLIOptions {
           System.err.println("Modifying the AI algorithm requires 'a' argument");
         } else {
           DEBUG(LOGGER, "AI-mode activated");
+          activatedOptions.put(OptionType.AI_MODE, cmd.getOptionValue(ai_mode));
           System.err.println("AI mode not implemented yet");
         }
       }
@@ -167,6 +175,7 @@ public class CLIOptions {
           System.err.println("Choosing the AI heuristic requires 'a' argument");
         } else {
           DEBUG(LOGGER, "AI-heuristic activated");
+          activatedOptions.put(OptionType.AI_HEURISTIC, cmd.getOptionValue(ai_heuristic));
           System.err.println("AI mode not implemented yet");
         }
       }
@@ -175,6 +184,7 @@ public class CLIOptions {
           System.err.println("Modifying the AI depth requires 'a' argument");
         } else {
           DEBUG(LOGGER, "AI-depth activated");
+          activatedOptions.put(OptionType.AI_DEPTH, cmd.getOptionValue(ai_depth));
           System.err.println("AI mode not implemented yet");
         }
       }
@@ -183,6 +193,7 @@ public class CLIOptions {
           System.err.println("Modifying the AI time requires 'a' argument");
         } else {
           DEBUG(LOGGER, "AI-time activated");
+          activatedOptions.put(OptionType.AI_TIME, cmd.getOptionValue(ai_time));
           System.err.println("AI mode not implemented yet");
         }
       }
@@ -195,5 +206,6 @@ public class CLIOptions {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    return activatedOptions;
   }
 }
