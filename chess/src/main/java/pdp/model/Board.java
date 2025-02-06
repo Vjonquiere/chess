@@ -33,12 +33,12 @@ public class Board {
   }
 
   public boolean makeMove(Move move) {
-    board.makeMove(move);
+    //board.makeMove(move);  // jouer le coup dans la bitboard
     
     // mettre a jour les flags enpassant , si un roi ou une tour a bougé (= modifier le booleen des castles)
       move.toString();
     // TODO
-    throw new UnsupportedOperationException();
+    return true;
   }
 
   public Board getCopy() {

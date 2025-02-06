@@ -38,10 +38,7 @@ public class Move {
     if (parts.length != 2) {
       throw new IllegalMoveException("Invalid Move : " + stringMove);
   }
-    Move move = new Move();
-    move.source = stringToPosition(parts[0]);
-    move.dest = stringToPosition(parts[1]);
-
+    Move move = new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
     return move;
   }
 
@@ -77,22 +74,7 @@ public class Move {
         }
     }
     throw new IllegalMoveException("The move is not possible");
-  boolean isTake;
-  boolean isCheck;
-  boolean isCheckMate;
-
-  public Move() {
-    Logging.configureLogging(LOGGER);
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
   }
-
-  public static Move fromString(String move) {
-    // TODO
-    throw new UnsupportedOperationException("Method not implemented");
-  }
-
 
   public Position getSource() {
     return source;
@@ -101,8 +83,6 @@ public class Move {
   public Position getDest() {
     return dest;
   }
-
-  
 
   public Piece getPiece() {
     return piece;
@@ -121,25 +101,25 @@ public class Move {
   }
 
   @Override
-public String toString() {
+  public String toString() {
     String sourceStr = positionToString(this.source);
-    String destinationStr = positionToString(this.destination);
+    String destinationStr = positionToString(this.dest);
     String separator = this.isTake ? "x" : "-";
 
     return sourceStr + separator + destinationStr;
 }
 
   @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Move move = (Move) obj;
-        return source.equals(move.source) && dest.equals(move.dest);
-    }
+  public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Move move = (Move) obj;
+      return source.equals(move.source) && dest.equals(move.dest);
+  }
 
-    @Override
-    public int hashCode() {
-        return 31 * source.hashCode() + dest.hashCode();
-    }
-}
+  @Override
+  public int hashCode() {
+      return 31 * source.hashCode() + dest.hashCode();
+  }
+
 }
