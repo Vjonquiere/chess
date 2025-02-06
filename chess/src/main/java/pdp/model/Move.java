@@ -1,9 +1,8 @@
 package pdp.model;
 
 import java.util.List;
-
-import pdp.exceptions.IllegalMoveException;
 import java.util.logging.Logger;
+import pdp.exceptions.IllegalMoveException;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
@@ -13,17 +12,16 @@ public class Move {
   Position dest;
   Piece piece;
   boolean isTake = false;
-  boolean isCheck = false ;
+  boolean isCheck = false;
   boolean isCheckMate = false;
 
-
-  public Move(Position source, Position dest){
+  public Move(Position source, Position dest) {
     Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
   }
 
-  public Move(Position source, Position dest, Piece piece, boolean isTake){
+  public Move(Position source, Position dest, Piece piece, boolean isTake) {
     Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
@@ -37,26 +35,25 @@ public class Move {
     String[] parts = stringMove.split("-");
     if (parts.length != 2) {
       throw new IllegalMoveException("Invalid Move : " + stringMove);
-  }
+    }
     Move move = new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
     return move;
   }
 
-
   // stringToPosition("e4") -> Position (4,3)
   public static Position stringToPosition(String move) {
-    
+
     char colLetter = Character.toLowerCase(move.charAt(0));
     int rowNumber = Character.getNumericValue(move.charAt(1));
 
     if (colLetter < 'a' || colLetter > 'h' || rowNumber < 1 || rowNumber > 8) {
       throw new IllegalMoveException("Invalid move: " + move);
     }
-    
+
     int x = colLetter - 'a';
     int y = rowNumber - 1;
 
-    return new Position(y,x);
+    return new Position(y, x);
   }
 
   // positionToString((4,3)) -> "e4"
@@ -65,13 +62,13 @@ public class Move {
     int row = position.getY() + 1;
 
     return "" + col + row;
-}
+  }
 
   public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
     for (Move move : availableMoves) {
-        if (move.equals(this)) {
-            return move;
-        }
+      if (move.equals(this)) {
+        return move;
+      }
     }
     throw new IllegalMoveException("The move is not possible");
   }
@@ -107,19 +104,18 @@ public class Move {
     String separator = this.isTake ? "x" : "-";
 
     return sourceStr + separator + destinationStr;
-}
+  }
 
   @Override
   public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-      Move move = (Move) obj;
-      return source.equals(move.source) && dest.equals(move.dest);
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Move move = (Move) obj;
+    return source.equals(move.source) && dest.equals(move.dest);
   }
 
   @Override
   public int hashCode() {
-      return 31 * source.hashCode() + dest.hashCode();
+    return 31 * source.hashCode() + dest.hashCode();
   }
-
 }
