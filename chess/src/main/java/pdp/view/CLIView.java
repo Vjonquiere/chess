@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
+import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 
 public class CLIView implements View {
@@ -38,7 +40,11 @@ public class CLIView implements View {
 
   @Override
   public void onErrorEvent(Exception e) {
-    System.out.println("Received " + e.getClass().getName() + ": " + e.getMessage());
+    if (e instanceof IllegalMoveException || e instanceof MoveParsingException) {
+      System.err.println(e.getMessage());
+    } else {
+      System.err.println("Uncaught Error received: " + e.getMessage());
+    }
   }
 
   /**
