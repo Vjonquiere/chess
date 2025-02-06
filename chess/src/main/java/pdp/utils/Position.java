@@ -22,14 +22,15 @@ public class Position {
     return y;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    Position position = (Position) o;
-    return (position.getX() == this.x) && (position.getY() == this.y);
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Position position = (Position) obj;
+    return x == position.x && y == position.y;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(this);
+    return Objects.hash(x, y); // hashCode est souvent nécessaire en parallèle avec equals
   }
 }

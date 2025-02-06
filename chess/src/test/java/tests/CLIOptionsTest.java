@@ -9,6 +9,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 import java.util.logging.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
@@ -16,7 +18,8 @@ import pdp.utils.Logging;
 public class CLIOptionsTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Logger logger;
-  private PrintStream originalOut;
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
 
   String expectedHelp =
       "usage: chess\n"
@@ -36,15 +39,28 @@ public class CLIOptionsTest {
           + " -g,--gui                        Displays the game with a  graphical\n"
           + "                                 interface.\n"
           + " -h,--help                       Print this message and exit\n"
+          + "    --lang <LANGUAGE>            Choose the language for the app (en\n"
+          + "                                 supported)\n"
           + " -t,--time <TIME>                Specify time per round for blitz mode\n"
           + "                                 (default 30min)\n"
           + " -V,--version                    Print the version information and exit\n"
           + " -v,--verbose                    Display more information\n";
 
+  @BeforeEach
+  public void setUp() {
+    outputStream.reset();
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  public void tearDown() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+  }
+
   @Test
   public void testHelp() {
-    System.setOut(new PrintStream(outputStream));
-
     /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--help"}, mockRuntime);
@@ -62,7 +78,6 @@ public class CLIOptionsTest {
 
   @Test
   public void testVersion() throws Exception {
-    System.setOut(new PrintStream(outputStream));
     final Properties properties = new Properties();
     properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
     String expected = "Version: " + properties.getProperty("version");
@@ -85,8 +100,6 @@ public class CLIOptionsTest {
 
   @Test
   public void testHelpFirst() {
-    System.setOut(new PrintStream(outputStream));
-
     /* Test that only help is displayed, even with several parameters */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
@@ -102,8 +115,7 @@ public class CLIOptionsTest {
   }
 
   @Test
-  public void testUnrecognized() throws Exception {
-    System.setOut(new PrintStream(outputStream));
+  public void testUnrecognized() {
     String expected = "Parsing failed.  Reason: Unrecognized option: -zgv\n";
 
     // Test with an unrecognized option (error)
@@ -115,8 +127,7 @@ public class CLIOptionsTest {
   }
 
   @Test
-  public void testPartialMatching() throws Exception {
-    System.setOut(new PrintStream(outputStream));
+  public void testPartialMatching() {
 
     // Test partial matching (no error)
     Runtime mockRuntime = mock(Runtime.class);
@@ -128,7 +139,6 @@ public class CLIOptionsTest {
 
   @Test
   public void testAmbiguous() throws Exception {
-    System.setOut(new PrintStream(outputStream));
     String expectedAmbiguous =
         "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-depth', 'ai-heuristic', 'ai-time')\n";
 
@@ -142,11 +152,6 @@ public class CLIOptionsTest {
 
   public void setUpLogging() {
     logger = Logger.getLogger("TestLogger");
-
-    outputStream.reset();
-    originalOut = System.out;
-    System.setOut(new PrintStream(outputStream));
-    System.setErr(new PrintStream(outputStream));
 
     Logging.setDebug(false);
     Logging.setVerbose(false);

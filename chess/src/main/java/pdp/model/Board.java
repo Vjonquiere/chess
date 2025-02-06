@@ -1,6 +1,6 @@
 package pdp.model;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
@@ -18,19 +18,27 @@ public class Board {
 
   public Board() {
     Logging.configureLogging(LOGGER);
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    this.board = new BitboardRepresentation();
+    this.isWhite = true;
+    this.enPassant = 0;
+    this.whiteShortCastle = true;
+    this.blackShortCastle = true;
+    this.whiteLongCastle = true;
+    this.blackLongCastle = true;
   }
 
-  public List<Move> getAvailableMoves() {
-    // TODO
-    throw new UnsupportedOperationException();
+  public List<Move> getAvailableMoves(Position pos) {
+    return board.getAvailableMoves(pos.getX(), pos.getY(), this);
   }
 
   public boolean makeMove(Move move) {
+    // board.makeMove(move);  // jouer le coup dans la bitboard
+
+    // mettre a jour les flags enpassant , si un roi ou une tour a bougé (= modifier le booleen des
+    // castles)
+    move.toString();
     // TODO
-    throw new UnsupportedOperationException();
+    return true;
   }
 
   public Board getCopy() {
@@ -38,52 +46,38 @@ public class Board {
     throw new UnsupportedOperationException();
   }
 
-  public String getAsciiRepresentation() {
+  public char[][] getAsciiRepresentation() {
+    int rows = this.board.getNbRows();
+    int cols = this.board.getNbCols();
+    char[][] charBoard = new char[rows][cols];
 
-    ArrayList<ArrayList<Character>> charBoard = new ArrayList<ArrayList<Character>>();
-    for (int i = 0; i < this.board.getNbCols(); i++) {
-      charBoard.add(new ArrayList<Character>());
-      for (int j = 0; j < this.board.getNbRows(); j++) {
-        charBoard.get(i).add('_');
-      }
+    for (int i = 0; i < rows; i++) {
+      Arrays.fill(charBoard[i], '_');
     }
 
     for (int i = 0; i < 2; i++) {
-      boolean color = i == 0;
-      char rep = Piece.PAWN.getCharRepresentation(color);
-      for (Position pos : this.board.getPawns(color)) {
-        charBoard.get(pos.getY()).set(pos.getX(), rep);
-      }
-      rep = Piece.ROOK.getCharRepresentation(color);
-      for (Position pos : this.board.getRooks(color)) {
-        charBoard.get(pos.getY()).set(pos.getX(), rep);
-      }
-      rep = Piece.KNIGHT.getCharRepresentation(color);
-      for (Position pos : this.board.getKnights(color)) {
-        charBoard.get(pos.getY()).set(pos.getX(), rep);
-      }
-      rep = Piece.BISHOP.getCharRepresentation(color);
-      for (Position pos : this.board.getBishops(color)) {
-        charBoard.get(pos.getY()).set(pos.getX(), rep);
-      }
-      rep = Piece.QUEEN.getCharRepresentation(color);
-      for (Position pos : this.board.getQueens(color)) {
-        charBoard.get(pos.getY()).set(pos.getX(), rep);
-      }
-      rep = Piece.KING.getCharRepresentation(color);
-      for (Position pos : this.board.getKing(color)) {
-        charBoard.get(pos.getY()).set(pos.getX(), rep);
-      }
+      boolean color = (i == 0);
+
+      placePiecesOnBoard(
+          charBoard, this.board.getPawns(color), Piece.PAWN.getCharRepresentation(color));
+      placePiecesOnBoard(
+          charBoard, this.board.getRooks(color), Piece.ROOK.getCharRepresentation(color));
+      placePiecesOnBoard(
+          charBoard, this.board.getKnights(color), Piece.KNIGHT.getCharRepresentation(color));
+      placePiecesOnBoard(
+          charBoard, this.board.getBishops(color), Piece.BISHOP.getCharRepresentation(color));
+      placePiecesOnBoard(
+          charBoard, this.board.getQueens(color), Piece.QUEEN.getCharRepresentation(color));
+      placePiecesOnBoard(
+          charBoard, this.board.getKing(color), Piece.KING.getCharRepresentation(color));
     }
 
-    StringBuilder sb = new StringBuilder();
-    for (ArrayList<Character> row : charBoard) {
-      for (Character cell : row) {
-        sb.append(cell);
-      }
-      sb.append('\n');
-    }
+    return charBoard;
+  }
 
-    return (sb.toString());
+  private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {
+    for (Position pos : positions) {
+      board[this.board.getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
+    }
   }
 }

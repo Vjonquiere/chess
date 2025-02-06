@@ -77,6 +77,13 @@ public class CLIOptions {
             .hasArg(true)
             .desc("Specify the time of reflexion for AI mode (default 5 seconds)")
             .build();
+    Option lang =
+        Option.builder()
+            .longOpt("lang")
+            .argName("LANGUAGE")
+            .hasArg(true)
+            .desc("Choose the language for the app (en supported)")
+            .build();
 
     options.addOption(help);
     options.addOption(version);
@@ -91,6 +98,7 @@ public class CLIOptions {
     options.addOption(ai_depth);
     options.addOption(ai_heuristic);
     options.addOption(ai_time);
+    options.addOption(lang);
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = null;
@@ -121,6 +129,10 @@ public class CLIOptions {
         System.out.println("Version: " + properties.getProperty("version"));
         runtime.exit(0);
         return;
+      }
+      if (cmd.hasOption(lang)) {
+        DEBUG(LOGGER, "Language option activated");
+        System.err.println("Multiple languages not implemented yet");
       }
       if (cmd.hasOption(blitz)) {
         DEBUG(LOGGER, "Blitz mode activated");
