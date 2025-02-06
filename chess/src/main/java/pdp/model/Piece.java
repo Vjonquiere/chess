@@ -82,7 +82,7 @@ public enum Piece {
 
     @Override
     public char getCharRepresentation(boolean white) {
-      throw new UnsupportedOperationException();
+      return '_';
     }
   };
 
