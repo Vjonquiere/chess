@@ -10,4 +10,8 @@ public interface Rules {
   public boolean isCheck(Board board);
 
   public boolean isCheckMate(Board board);
+
+  public boolean isPawnPromoting(int x, int y, boolean white);
+
+  public void promotePawn(int x, int y, boolean white, Piece newPiece);
 }
