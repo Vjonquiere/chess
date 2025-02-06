@@ -210,6 +210,25 @@ public class BitboardRepresentation implements BoardRepresentation {
     return nbRows;
   }
 
+  @Override
+  public void movePiece(Position from, Position to) {
+    ColoredPiece<Piece, Color> piece = getPieceAt(from.getX(), from.getY());
+    int fromIndex = from.getX() % 8 + from.getY() * 8;
+    int toIndex = to.getX() % 8 + to.getY() * 8;
+    int bitboardIndex =
+        switch (piece.getPiece()) {
+          case KING -> piece.getColor() == Color.WHITE ? 0 : 6;
+          case QUEEN -> piece.getColor() == Color.WHITE ? 1 : 7;
+          case BISHOP -> piece.getColor() == Color.WHITE ? 2 : 8;
+          case ROOK -> piece.getColor() == Color.WHITE ? 3 : 9;
+          case KNIGHT -> piece.getColor() == Color.WHITE ? 4 : 10;
+          case PAWN -> piece.getColor() == Color.WHITE ? 5 : 11;
+          default -> throw new IllegalArgumentException("Invalid piece: " + piece.getPiece());
+        };
+    board[bitboardIndex].clearBit(fromIndex);
+    board[bitboardIndex].setBit(toIndex);
+  }
+
   /**
    * Iterate on the given direction to generate the possible movement from a given position
    * depending on allies and enemies
