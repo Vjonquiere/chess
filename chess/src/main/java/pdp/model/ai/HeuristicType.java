@@ -1,5 +1,3 @@
 package pdp.model.ai;
 
-public enum HeuristicType {
-    
-}
+public enum HeuristicType {}

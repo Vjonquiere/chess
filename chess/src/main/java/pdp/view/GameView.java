@@ -2,7 +2,6 @@ package pdp.view;
 
 public class GameView implements View {
 
-
   public GameView() {
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());

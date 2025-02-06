@@ -23,15 +23,13 @@ public class Main {
     System.out.println(options.toString());
 
     if (options.containsKey(OptionType.CONTEST)) {
-      throw new UnsupportedOperationException(
-        "Contest mode not implemented");
+      throw new UnsupportedOperationException("Contest mode not implemented");
     }
 
     View view;
     if (options.containsKey(OptionType.GUI)) {
       view = new GameView();
-    }
-    else {
+    } else {
       view = new CLIView();
     }
 
@@ -39,9 +37,8 @@ public class Main {
     if (options.containsKey(OptionType.BLITZ)) {
       if (options.containsKey(OptionType.TIME)) {
         timer = new Timer(Integer.parseInt(options.get(OptionType.TIME)));
-      }
-      else {
-        timer = new Timer(30*60);
+      } else {
+        timer = new Timer(30 * 60);
       }
       System.err.println("Option time not implemented, defaulting to a game without time limit");
     }
@@ -72,33 +69,31 @@ public class Main {
 
       solver = new Solver();
       if (options.containsKey(OptionType.AI_MODE)) {
-        //switch to set solver mode
+        // switch to set solver mode
       } else {
         // Set to default (ALPHABETA)
       }
 
       if (options.containsKey(OptionType.AI_HEURISTIC)) {
-        //switch to set heuristic
+        // switch to set heuristic
       } else {
         // Set to default
       }
 
       if (options.containsKey(OptionType.AI_DEPTH)) {
-        //set depth
+        // set depth
       } else {
         // Set to default
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
-        //set time
+        // set time
       } else {
         // Set to default
       }
 
-      throw new UnsupportedOperationException(
-        "AI mode not implemented");
+      throw new UnsupportedOperationException("AI mode not implemented");
     }
-
 
     Game model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
     BagOfCommands bagOfCommands = BagOfCommands.getInstance();
