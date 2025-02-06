@@ -8,7 +8,7 @@ public class Timer {
 
   // TODO
 
-  public Timer() {
+  public Timer(int time) {
     Logging.configureLogging(LOGGER);
   }
 
