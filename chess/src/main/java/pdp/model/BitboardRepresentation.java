@@ -530,6 +530,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void promotePawn(int x, int y, boolean white, Piece newPiece) {
+    ColoredPiece<Piece, Color> pieceAtPosition = getPieceAt(x, y);
+    if (pieceAtPosition.getPiece() != Piece.PAWN
+        || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
+      return;
+    }
+
     int boardIndex = white ? 0 : 6;
     Bitboard newPieceBitBoard = null;
     Bitboard pawnBitboard = this.board[5 + boardIndex];

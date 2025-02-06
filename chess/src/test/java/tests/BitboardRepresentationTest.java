@@ -139,29 +139,91 @@ public class BitboardRepresentationTest {
 
   @Test
   public void testPromotePawnShouldBeFailure() {
-    /*
     BitboardRepresentation board = new BitboardRepresentation();
+    boolean white = true;
 
-    // Should not be possible to promote a pawn to a pawn or to a king
-    assertThrows(IllegalArgumentException.class, () -> board.promotePawn(0, 0, true, Piece.KING));
-    assertThrows(IllegalArgumentException.class, () -> board.promotePawn(0, 0, true, Piece.PAWN));
-    */
+    // Move piece blocking the last rank position before moving the white pawn
+    Position whiteBlockerCurrPos = new Position(7, 0);
+    Position whiteBlockerNextPos = new Position(4, 0);
+    board.movePiece(whiteBlockerCurrPos, whiteBlockerNextPos);
+
+    // Move pawn now
+    Position whitePawnSrcPos = new Position(1, 0);
+    Position whitePawnDstPos = new Position(7, 0);
+    board.movePiece(whitePawnSrcPos, whitePawnDstPos);
+
+    // Ensure pawn is remaining at the promotion position before trying invalid promotion
+    assertEquals(
+        Piece.PAWN,
+        board.getPieceAt(0, 7).getPiece(),
+        "White pawn should still be at promotion square before invalid promotion !");
+
+    // Attempt invalid promotions
+    board.promotePawn(0, 7, white, Piece.KING);
+    board.promotePawn(0, 7, white, Piece.PAWN);
+
+    assertEquals(
+        Piece.PAWN,
+        board.getPieceAt(0, 7).getPiece(),
+        "White pawn should remain unchanged after invalid promotion !");
+
+    // Same process for black
+    Position blackBlockerCurrPos = new Position(0, 7);
+    Position blackBlockerNextPos = new Position(3, 7);
+    board.movePiece(blackBlockerCurrPos, blackBlockerNextPos);
+
+    Position blackPawnSrcPos = new Position(6, 7);
+    Position blackPawnDstPos = new Position(0, 7);
+    board.movePiece(blackPawnSrcPos, blackPawnDstPos);
+
+    assertEquals(
+        Piece.PAWN,
+        board.getPieceAt(7, 0).getPiece(),
+        "Black pawn should still be at promotion square before invalid promotion!");
+
+    board.promotePawn(7, 0, !white, Piece.KING);
+    board.promotePawn(7, 0, !white, Piece.PAWN);
+
+    assertEquals(
+        Piece.PAWN,
+        board.getPieceAt(7, 0).getPiece(),
+        "Black pawn should remain unchanged after invalid promotion!");
   }
 
   @Test
   public void testPromotePawnShouldNotWorkForOtherPieces() {
-    /*
     BitboardRepresentation board = new BitboardRepresentation();
+    boolean white = true;
 
-    // Should not change bitboards
-    board.promotePawn(0,0,true,Piece.QUEEN);
+    Position whiteBlockerCurrPos = new Position(7, 0);
+    Position whiteBlockerNextPos = new Position(4, 0);
+    board.movePiece(whiteBlockerCurrPos, whiteBlockerNextPos);
 
-    // Check bitboards didn't change and available moves correspond to the correct ones
+    // Move a white knight to the last rank
+    Position whiteKnightSrcPos = new Position(0, 1);
+    Position whiteKnightDstPos = new Position(7, 0);
+    board.movePiece(whiteKnightSrcPos, whiteKnightDstPos);
 
-    board.promotePawn(0,7,false,Piece.QUEEN);
+    // Try to promote the knight
+    board.promotePawn(0, 7, white, Piece.QUEEN);
 
-    // Check bitboards didn't change and available moves correspond to the correct ones
+    assertEquals(
+        Piece.KNIGHT, board.getPieceAt(0, 7).getPiece(), "White knight should not be promotable !");
 
-    */
+    // Same for black but with a bishop for instance
+    Position blackBlockerCurrPos = new Position(0, 7);
+    Position blackBlockerNextPos = new Position(3, 7);
+    board.movePiece(blackBlockerCurrPos, blackBlockerNextPos);
+
+    // Move a black bishop to the first rank
+    Position blackBishopSrcPos = new Position(7, 2);
+    Position blackBishopDstPos = new Position(0, 7);
+    board.movePiece(blackBishopSrcPos, blackBishopDstPos);
+
+    // Try to promote the bishop
+    board.promotePawn(7, 0, !white, Piece.QUEEN);
+
+    assertEquals(
+        Piece.BISHOP, board.getPieceAt(7, 0).getPiece(), "Black bishop should not be promotable !");
   }
 }
