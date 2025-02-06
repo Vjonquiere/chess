@@ -43,7 +43,7 @@ public class CLIView implements View {
     if (e instanceof IllegalMoveException || e instanceof MoveParsingException) {
       System.err.println(e.getMessage());
     } else {
-        System.err.println("Uncaught Error received: " + e.getMessage());
+      System.err.println("Uncaught Error received: " + e.getMessage());
     }
   }
 
