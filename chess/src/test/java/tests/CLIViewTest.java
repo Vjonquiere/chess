@@ -4,6 +4,8 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class CLIViewTest {
   @Test
   public void testBoardToASCII() {
