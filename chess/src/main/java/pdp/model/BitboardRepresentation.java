@@ -81,6 +81,16 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Translate a squares (0..63) to a position (x,y)
+   *
+   * @param square The square to change to position
+   * @return A Position containing the translations
+   */
+  private Position squareToPosition(int square) {
+    return new Position(square / 8, square % 8);
+  }
+
+  /**
    * Get the bitboard that contains all the white pieces, by or on all white pieces bitboards
    *
    * @return the bitboard containing all white pieces
@@ -210,6 +220,13 @@ public class BitboardRepresentation implements BoardRepresentation {
     return nbRows;
   }
 
+  /**
+   * Move a piece from a source position to a destination position Can throw an exception if there
+   * isn't a piece at source position
+   *
+   * @param from The initial position of the piece
+   * @param to The position to reach
+   */
   @Override
   public void movePiece(Position from, Position to) {
     ColoredPiece<Piece, Color> piece = getPieceAt(from.getX(), from.getY());
@@ -316,12 +333,19 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @param moveBitboard The bitboard to transform
    * @param enemies A bitboard containing the enemies
+   * @param source The initial position of the piece
    * @return A list of possible moves from a move bitboard
    */
-  private List<Move> bitboardToMoves(Bitboard moveBitboard, Bitboard enemies) {
+  private List<Move> bitboardToMoves(
+      Bitboard moveBitboard, Bitboard enemies, Position source, Piece piece) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
-      // moves.add(new Move()); // enemies.getBit(i) ? true : false -> capture ?
+      moves.add(
+          new Move(
+              source,
+              squareToPosition(i),
+              piece,
+              enemies.getBit(i))); // enemies.getBit(i) ? true : false -> capture ?
     }
     return moves;
   }
@@ -349,7 +373,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveDownLeft())
             .or(position.moveDownRight());
     move = move.xor(move.and(allies));
-    return bitboardToMoves(move, enemies);
+    return bitboardToMoves(move, enemies, square, Piece.KING);
   }
 
   /**
@@ -377,7 +401,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveRight().moveDownRight())
             .or(position.moveRight().moveUpRight());
     move = move.xor(move.and(allies));
-    return bitboardToMoves(move, enemies);
+    return bitboardToMoves(move, enemies, square, Piece.KNIGHT);
   }
 
   /**
@@ -406,7 +430,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
     position = position.xor(position.and(allies));
 
-    return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies);
+    return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies, square, Piece.PAWN);
   }
 
   /**
@@ -420,7 +444,9 @@ public class BitboardRepresentation implements BoardRepresentation {
   private List<Move> getQueenMoves(Position square, Bitboard allies, Bitboard enemies) {
     return bitboardToMoves(
         getInlineMoves(square, allies, enemies).or(getDiagonalMoves(square, allies, enemies)),
-        enemies);
+        enemies,
+        square,
+        Piece.QUEEN);
   }
 
   /**
@@ -432,7 +458,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   private List<Move> getBishopMoves(Position square, Bitboard allies, Bitboard enemies) {
-    return bitboardToMoves(getDiagonalMoves(square, allies, enemies), enemies);
+    return bitboardToMoves(
+        getDiagonalMoves(square, allies, enemies), enemies, square, Piece.BISHOP);
   }
 
   /**
@@ -444,7 +471,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   private List<Move> getRookMoves(Position square, Bitboard allies, Bitboard enemies) {
-    return bitboardToMoves(getInlineMoves(square, allies, enemies), enemies);
+    return bitboardToMoves(getInlineMoves(square, allies, enemies), enemies, square, Piece.ROOK);
   }
 
   /**

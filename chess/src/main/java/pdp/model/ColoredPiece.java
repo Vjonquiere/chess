@@ -16,4 +16,13 @@ public class ColoredPiece<Piece, Color> {
   public Color getColor() {
     return color;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof ColoredPiece) {
+      return this.piece.equals(((ColoredPiece<?, ?>) o).piece)
+          && this.color.equals(((ColoredPiece<?, ?>) o).color);
+    }
+    return false;
+  }
 }
