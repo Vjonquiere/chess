@@ -20,10 +20,21 @@ public class BitboardRepresentationTest {
 
     int x = 0;
     int y = 6;
+    // Black pawns initial positions
     for (Position position : board.getPawns(false)) {
       assertEquals(x++, position.getX());
       assertEquals(y, position.getY());
     }
+
+    x = 0;
+    y = 1;
+    // White pawns initial positions
+    for (Position position : board.getPawns(true)) {
+      assertEquals(x++, position.getX());
+      assertEquals(y, position.getY());
+    }
+
+    board.movePiece(new Position(1, 0), new Position(2, 0));
 
     assertEquals(List.of(), board.getAvailableMoves(4, 0, null)); // King move
     assertEquals(List.of(), board.getAvailableMoves(3, 0, null)); // Queen move
