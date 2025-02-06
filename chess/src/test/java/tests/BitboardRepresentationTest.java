@@ -63,9 +63,9 @@ public class BitboardRepresentationTest {
   public void testIsPawnPromotingShouldReturnTrue() {
     /*
     BitboardRepresentation board = new BitboardRepresentation();
+    boolean white = true;
 
     int xWhite = 0, yWhite = 7;
-    boolean white = true;
 
     // TO DO
     // Make pawn move so that it reaches its last rank
@@ -81,7 +81,58 @@ public class BitboardRepresentationTest {
     boolean resultBlack = board.isPawnPromoting(xBlack, yBlack, !white);
     assertTrue(resultBlack, "Black pawn should be able to promote!");
     */
+  }
 
-    assertFalse(false);
+  @Test
+  public void testPromotePawnShouldBeSuccess() {
+    /*
+    BitboardRepresentation board = new BitboardRepresentation();
+    boolean white = true;
+
+    int xWhite = 0, yWhite = 7;
+
+    board.promotePawn(xWhite, yWhite, white, Piece.QUEEN);
+
+    // Assert on corresponding bitboards
+    // Check if new available moves are correct
+
+    int xBlack = 0, yBlack = 0;
+
+    board.promotePawn(xBlack, yBlack, !white, Piece.QUEEN);
+
+    // Assert on corresponding bitboards ?
+    // Check if new available moves are correct
+
+    */
+  }
+
+  @Test
+  public void testPromotePawnShouldBeFailure() {
+    /*
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    // Should not change bitboards
+    board.promotePawn(0,0,true,Piece.KING);
+    board.promotePawn(0,0,true,Piece.PAWN);
+
+    // Assert on bitboards ?
+    */
+  }
+
+  @Test
+  public void testPromotePawnShouldNotWorkForOtherPieces() {
+    /*
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    // Should not change bitboards
+    board.promotePawn(0,0,true,Piece.QUEEN);
+
+    // Check bitboards didn't change and available moves correspond to the correct ones
+
+    board.promotePawn(0,7,false,Piece.QUEEN);
+
+    // Check bitboards didn't change and available moves correspond to the correct ones
+
+    */
   }
 }

@@ -365,7 +365,7 @@ public class BitboardRepresentation implements BoardRepresentation {
         newPieceBitBoard = this.board[1 + boardIndex];
         break;
       default:
-        System.out.println("Error: A pawn can only be promoted to Queen, Rook, Knight or Bishop !");
+        System.err.println("Error: A pawn can only be promoted to Queen, Rook, Knight or Bishop !");
         return;
     }
 
