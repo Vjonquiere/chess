@@ -45,7 +45,7 @@ public class Game extends Subject {
    * @param gameState Contains the board, history, current player, timers if blitz mode is on
    * @return The newly created instance of Game.
    */
-  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver) {
+  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState());
     return instance;
   }
