@@ -6,6 +6,7 @@ import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
+import pdp.utils.TextGetter;
 import pdp.view.CLIView;
 import pdp.view.View;
 
@@ -15,7 +16,7 @@ public class Main {
   public static void main(String[] args) {
     CLIOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
-
+    System.out.println(TextGetter.getText("title"));
     Game model = Game.initialize(false, false, null);
     View view = new CLIView();
     BagOfCommands bagOfCommands = BagOfCommands.getInstance();

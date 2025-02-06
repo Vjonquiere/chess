@@ -10,6 +10,10 @@ import org.apache.commons.cli.*;
 public class CLIOptions {
   private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
 
+  /*Private constructor to avoid instantiation*/
+  private CLIOptions() {}
+  ;
+
   /**
    * Parse the options given in parameters. The help will have the priority over any other option.
    * If the usage is wrong, an error message will be displayed on the standard error output.
@@ -132,7 +136,12 @@ public class CLIOptions {
       }
       if (cmd.hasOption(lang)) {
         DEBUG(LOGGER, "Language option activated");
-        System.err.println("Multiple languages not implemented yet");
+        if (cmd.getParsedOptionValue("lang").equals("en")) {
+          DEBUG(LOGGER, "Language = english (already set by default)");
+        } else {
+          System.err.println("Multiple languages not implemented yet");
+          TextGetter.setLocale(cmd.getParsedOptionValue("lang"));
+        }
       }
       if (cmd.hasOption(blitz)) {
         DEBUG(LOGGER, "Blitz mode activated");
