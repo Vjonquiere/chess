@@ -12,6 +12,7 @@ public class LoggingTest {
   private Logger logger;
   private ByteArrayOutputStream outContent;
   private PrintStream originalOut;
+  private PrintStream originalErr;
 
   @BeforeEach
   public void setUp() {
@@ -19,6 +20,7 @@ public class LoggingTest {
 
     outContent = new ByteArrayOutputStream();
     originalOut = System.out;
+    originalErr = System.err;
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(outContent));
 
@@ -30,43 +32,36 @@ public class LoggingTest {
   @AfterEach
   public void reset() {
     System.setOut(originalOut);
+    System.setErr(originalErr);
   }
 
   @Test
   public void testDebugDefault() {
-    setUp();
     Logging.DEBUG(logger, "This is a debug message.");
     assertFalse(outContent.toString().contains("This is a debug message."));
-    reset();
   }
 
   @Test
   public void testVerboseDefault() {
-    setUp();
     Logging.VERBOSE(logger, "This is a verbose message.");
     assertFalse(outContent.toString().contains("This is a verbose message."));
-    reset();
   }
 
   @Test
   public void testDebugLoggingEnabled() {
-    setUp();
     Logging.setDebug(true);
     Logging.configureLogging(logger);
 
     Logging.DEBUG(logger, "Debug is enabled");
     assertTrue(outContent.toString().contains("Debug is enabled"));
-    reset();
   }
 
   @Test
   public void testVerboseLoggingEnabled() {
-    setUp();
     Logging.setVerbose(true);
     Logging.configureLogging(logger);
 
     Logging.VERBOSE(logger, "Verbose is enabled");
     assertTrue(outContent.toString().contains("Verbose is enabled"));
-    reset();
   }
 }
