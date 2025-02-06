@@ -14,10 +14,6 @@ public class BitboardRepresentationTest {
     // Test with default positions
     BitboardRepresentation board = new BitboardRepresentation();
 
-    /*Method method = BitboardRepresentation.class.getDeclaredMethod("getQueenMoves", Position.class, Bitboard.class, Bitboard.class);
-    method.setAccessible(true);
-    method.invoke(board, new)*/
-
     int x = 0;
     int y = 6;
     // Black pawns initial positions
@@ -34,23 +30,10 @@ public class BitboardRepresentationTest {
       assertEquals(y, position.getY());
     }
 
-    board.movePiece(new Position(1, 0), new Position(2, 0));
-
-    assertEquals(List.of(), board.getAvailableMoves(4, 0, null)); // King move
-    assertEquals(List.of(), board.getAvailableMoves(3, 0, null)); // Queen move
-
-    // assertEquals(new Move(new Position(0,5), new Position(0, 3)), new Move(new Position(0,5), new
-    // Position(0, 3)));
-    // assertIterableEquals(List.of(new Move(new Position(0,6), new Position(2,5)), new Move(new
-    // Position(0,6), new Position(2,7))), board.getAvailableMoves(6, 0, null)); // Knight move
-
-    // board.getInlineMoves(new Position(3,3), new Bitboard(289360691367707652L), new
-    // Bitboard(1157443791906410512L));
-    // board.getDiagonalMoves(new Position(3,3), new Bitboard(0L), new
-    // Bitboard(1157443791906410512L));
-    // board.getPawnMoves(new Position(1,0), new Bitboard(0L), new Bitboard(1157443791906541584L));
-    // board.getQueenMoves(new Position(4,4), new Bitboard(34628173824L), new
-    // Bitboard(17609500131328L));
+    board.movePiece(new Position(1, 0), new Position(2, 0)); // move pawn
+    List<Position> pawns = board.getPawns(true);
+    assertFalse(pawns.contains(new Position(1, 0)));
+    assertTrue(pawns.contains(new Position(2, 0)));
   }
 
   @Test
@@ -137,5 +120,26 @@ public class BitboardRepresentationTest {
     board.movePiece(new Position(7, 1), new Position(5, 0));
     assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(1, 7));
     assertEquals(new ColoredPiece<>(Piece.KNIGHT, Color.BLACK), board.getPieceAt(0, 5));
+  }
+
+  @Test
+  public void testGetAvailableMoves() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    assertEquals(List.of(), board.getAvailableMoves(4, 0, null)); // King is blocked
+    assertEquals(List.of(), board.getAvailableMoves(3, 0, null)); // Queen is blocked
+    assertEquals(List.of(), board.getAvailableMoves(0, 0, null)); // Rook is blocked
+    assertEquals(
+        List.of(
+            new Move(new Position(0, 6), new Position(2, 5)),
+            new Move(new Position(0, 6), new Position(2, 7))),
+        board.getAvailableMoves(6, 0, null)); // Knight move
+
+    board.movePiece(new Position(1, 0), new Position(2, 0)); // move pawn
+    assertEquals(
+        List.of(new Move(new Position(2, 0), new Position(3, 0))),
+        board.getAvailableMoves(0, 2, null)); // pawn move
+    assertEquals(
+        List.of(new Move(new Position(0, 0), new Position(1, 0))),
+        board.getAvailableMoves(0, 0, null)); // Rook no more blocked
   }
 }
