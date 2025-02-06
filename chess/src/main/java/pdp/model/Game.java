@@ -74,7 +74,7 @@ public class Game extends Subject {
 
 
 
-    board.makeMove(move);
+    board.makeMove(classicalMove);
     //ajouter a l'historique le move
 
     } catch (Exception e) {

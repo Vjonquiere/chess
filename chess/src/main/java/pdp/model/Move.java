@@ -57,12 +57,22 @@ public class Move {
     return new Position(y,x);
   }
 
+  // positionToString((4,3)) -> "e4"
   public String positionToString(Position position) {
     char col = (char) ('a' + position.getX());
     int row = position.getY() + 1;
 
     return "" + col + row;
 }
+
+  public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
+    for (Move move : availableMoves) {
+        if (move.equals(this)) {
+            return move;
+        }
+    }
+    throw new IllegalMoveException("The move is not possible");
+  }
 
 
   public Position getSource() {
@@ -73,14 +83,7 @@ public class Move {
     return dest;
   }
 
-  public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
-    for (Move move : availableMoves) {
-        if (move.equals(this)) {
-            return move;
-        }
-    }
-    throw new IllegalMoveException("The move is not possible");
-  }
+  
 
   public Piece getPiece() {
     return piece;
@@ -102,8 +105,6 @@ public class Move {
 public String toString() {
     String sourceStr = positionToString(this.source);
     String destinationStr = positionToString(this.destination);
-
-    // Vérifie s'il s'agit d'une prise
     String separator = this.isTake ? "x" : "-";
 
     return sourceStr + separator + destinationStr;
