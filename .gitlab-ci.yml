@@ -16,7 +16,6 @@ lint-test-job:   # Test stage: Runs lint checks
     - mvn spotless:check
   tags:
       - shell
-      - Debian
 
 build-job:       # Build stage: Compiles the code and packages it into a JAR
   stage: build
@@ -29,7 +28,6 @@ build-job:       # Build stage: Compiles the code and packages it into a JAR
       - chess/target/  # Save build artifacts (e.g., JAR files) for use in later stages
   tags:
       - shell
-      - Debian
 
 unit-test-job:   # Test stage: Runs unit tests
   stage: test
@@ -46,7 +44,6 @@ unit-test-job:   # Test stage: Runs unit tests
         path: chess/target/site/jacoco/jacoco.xml
   tags:
       - shell
-      - Debian
 
 cleanup:
   stage: .post
@@ -54,4 +51,3 @@ cleanup:
     - mvn clean
   tags:
       - shell
-      - Debian
