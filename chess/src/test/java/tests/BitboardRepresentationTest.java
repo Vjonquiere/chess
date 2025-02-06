@@ -76,21 +76,21 @@ public class BitboardRepresentationTest {
     BitboardRepresentation board = new BitboardRepresentation();
     boolean white = true;
 
-    int xWhite = 0, yWhite = 7;
+    Position whitePawnSrcPos = new Position(6, 0);
+    Position whitePawnDstPos = new Position(7, 0);
+    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
+    board.movePiece(whitePawnSrcPos, whitePawnDstPos);
 
-    // TO DO
-    // Make pawn move so that it reaches its last rank
+    boolean resultWhite = board.isPawnPromoting(0, 7, white);
+    assertTrue(resultWhite, "White pawn should be able to promote !");
 
-    boolean resultWhite = board.isPawnPromoting(xWhite, yWhite, white);
-    assertTrue(resultWhite, "White pawn should be able to promote!");
+    Position blackPawnSrcPos = new Position(1, 0);
+    Position blackPawnDstPos = new Position(0, 0);
+    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
+    board.movePiece(blackPawnSrcPos, blackPawnDstPos);
 
-    int xBlack = 0, yBlack = 0;
-
-    // TO DO
-    // Make pawn move so that it reaches its last rank
-
-    boolean resultBlack = board.isPawnPromoting(xBlack, yBlack, !white);
-    assertTrue(resultBlack, "Black pawn should be able to promote!");
+    boolean resultBlack = board.isPawnPromoting(0, 0, !white);
+    assertTrue(resultBlack, "Black pawn should be able to promote !");
     */
   }
 
@@ -100,20 +100,23 @@ public class BitboardRepresentationTest {
     BitboardRepresentation board = new BitboardRepresentation();
     boolean white = true;
 
-    int xWhite = 0, yWhite = 7;
+    Position whitePawnSrcPos = new Position(0, 6);
+    Position whitePawnDstPos = new Position(0, 7);
+    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
+    board.movePiece(whitePawnSrcPos, whitePawnDstPos);
+    board.promotePawn(0, 7, white, Piece.QUEEN);
 
-    board.promotePawn(xWhite, yWhite, white, Piece.QUEEN);
+    assertNotNull(board.getPieceAt(0, 7));
+    assertEquals(Piece.QUEEN, board.getPieceAt(0, 7).getPiece());
 
-    // Assert on corresponding bitboards
-    // Check if new available moves are correct
+    Position blackPawnSrcPos = new Position(0, 1);
+    Position blackPawnDstPos = new Position(0, 0);
+    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
+    board.movePiece(blackPawnSrcPos, blackPawnDstPos);
+    board.promotePawn(0, 0, !white, Piece.QUEEN);
 
-    int xBlack = 0, yBlack = 0;
-
-    board.promotePawn(xBlack, yBlack, !white, Piece.QUEEN);
-
-    // Assert on corresponding bitboards ?
-    // Check if new available moves are correct
-
+    assertNotNull(board.getPieceAt(0, 0));
+    assertEquals(Piece.QUEEN, board.getPieceAt(0, 0).getPiece());
     */
   }
 
@@ -122,11 +125,9 @@ public class BitboardRepresentationTest {
     /*
     BitboardRepresentation board = new BitboardRepresentation();
 
-    // Should not change bitboards
-    board.promotePawn(0,0,true,Piece.KING);
-    board.promotePawn(0,0,true,Piece.PAWN);
-
-    // Assert on bitboards ?
+    // Should not be possible to promote a pawn to a pawn or to a king
+    assertThrows(IllegalArgumentException.class, () -> board.promotePawn(0, 0, true, Piece.KING));
+    assertThrows(IllegalArgumentException.class, () -> board.promotePawn(0, 0, true, Piece.PAWN));
     */
   }
 
