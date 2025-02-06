@@ -1,7 +1,6 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 
@@ -10,16 +9,17 @@ public class CLIViewTest {
   public void testBoardToASCII() {
     Game game = Game.getInstance();
 
-    String expected =
-        "rnbqkbnr"
-            + "\npppppppp"
-            + "\n________"
-            + "\n________"
-            + "\n________"
-            + "\n________"
-            + "\nPPPPPPPP"
-            + "\nRNBQKBNR";
+    char[][] expectedBoard = {
+      {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+      {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+      {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+    };
 
-    assertEquals(expected, game.getBoard().getAsciiRepresentation());
+    assertTrue(Arrays.deepEquals(expectedBoard, game.getBoard().getAsciiRepresentation()));
   }
 }
