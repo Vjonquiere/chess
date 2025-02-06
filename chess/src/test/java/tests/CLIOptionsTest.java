@@ -21,19 +21,6 @@ public class CLIOptionsTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
-  @BeforeEach
-  public void setUp() {
-    outputStream.reset();
-    System.setOut(new PrintStream(outputStream));
-    System.setErr(new PrintStream(outputStream));
-  }
-
-  @AfterEach
-  public void tearDown() {
-    System.setOut(originalOut);
-    System.setErr(originalErr);
-  }
-
   String expectedHelp =
       "usage: chess\n"
           + " -a,--ai <COLOR>                 Launch the program in AI mode, with\n"
@@ -52,10 +39,25 @@ public class CLIOptionsTest {
           + " -g,--gui                        Displays the game with a  graphical\n"
           + "                                 interface.\n"
           + " -h,--help                       Print this message and exit\n"
+          + "    --lang <LANGUAGE>            Choose the language for the app (en\n"
+          + "                                 supported)\n"
           + " -t,--time <TIME>                Specify time per round for blitz mode\n"
           + "                                 (default 30min)\n"
           + " -V,--version                    Print the version information and exit\n"
           + " -v,--verbose                    Display more information\n";
+
+  @BeforeEach
+  public void setUp() {
+    outputStream.reset();
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  public void tearDown() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+  }
 
   @Test
   public void testHelp() {
