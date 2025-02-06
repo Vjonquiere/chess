@@ -28,12 +28,15 @@ public class Board {
     this.blackLongCastle = true;
   }
 
-  public List<Move> getAvailableMoves() {
-    // TODO
-    throw new UnsupportedOperationException();
+  public List<Move> getAvailableMoves(Position pos) {
+    return board.getAvailableMoves(pos.getX(), pos.getY(), this);
   }
 
   public boolean makeMove(Move move) {
+    board.makeMove(move);
+    
+    // mettre a jour les flags enpassant , si un roi ou une tour a bougé (= modifier le booleen des castles)
+      move.toString();
     // TODO
     throw new UnsupportedOperationException();
   }
