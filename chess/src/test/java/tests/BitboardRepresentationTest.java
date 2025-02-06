@@ -2,10 +2,13 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.model.BitboardRepresentation;
+import pdp.model.Piece;
 import pdp.utils.Position;
 
 public class BitboardRepresentationTest {
@@ -72,52 +75,66 @@ public class BitboardRepresentationTest {
 
   @Test
   public void testIsPawnPromotingShouldReturnTrue() {
-    /*
     BitboardRepresentation board = new BitboardRepresentation();
     boolean white = true;
 
-    Position whitePawnSrcPos = new Position(6, 0);
+    // Move piece blocking the last rank position before moving the white pawn
+    Position whiteBlockerCurrPos = new Position(7, 0);
+    Position whiteBlockerNextPos = new Position(4, 0);
+    board.movePiece(whiteBlockerCurrPos, whiteBlockerNextPos);
+
+    // Move pawn now
+    Position whitePawnSrcPos = new Position(1, 0);
     Position whitePawnDstPos = new Position(7, 0);
-    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
     board.movePiece(whitePawnSrcPos, whitePawnDstPos);
 
     boolean resultWhite = board.isPawnPromoting(0, 7, white);
     assertTrue(resultWhite, "White pawn should be able to promote !");
 
-    Position blackPawnSrcPos = new Position(1, 0);
-    Position blackPawnDstPos = new Position(0, 0);
-    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
+    // Same thing for black
+    Position blackBlockerCurrPos = new Position(0, 7);
+    Position blackBlockerNextPos = new Position(3, 7);
+    board.movePiece(blackBlockerCurrPos, blackBlockerNextPos);
+
+    Position blackPawnSrcPos = new Position(6, 7);
+    Position blackPawnDstPos = new Position(0, 7);
     board.movePiece(blackPawnSrcPos, blackPawnDstPos);
 
-    boolean resultBlack = board.isPawnPromoting(0, 0, !white);
+    boolean resultBlack = board.isPawnPromoting(7, 0, !white);
     assertTrue(resultBlack, "Black pawn should be able to promote !");
-    */
   }
 
   @Test
   public void testPromotePawnShouldBeSuccess() {
-    /*
     BitboardRepresentation board = new BitboardRepresentation();
     boolean white = true;
 
-    Position whitePawnSrcPos = new Position(0, 6);
-    Position whitePawnDstPos = new Position(0, 7);
-    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
+    // Move piece blocking the last rank position before moving the white pawn
+    Position whiteBlockerCurrPos = new Position(7, 0);
+    Position whiteBlockerNextPos = new Position(4, 0);
+    board.movePiece(whiteBlockerCurrPos, whiteBlockerNextPos);
+
+    // Move pawn now
+    Position whitePawnSrcPos = new Position(1, 0);
+    Position whitePawnDstPos = new Position(7, 0);
     board.movePiece(whitePawnSrcPos, whitePawnDstPos);
     board.promotePawn(0, 7, white, Piece.QUEEN);
 
     assertNotNull(board.getPieceAt(0, 7));
     assertEquals(Piece.QUEEN, board.getPieceAt(0, 7).getPiece());
 
-    Position blackPawnSrcPos = new Position(0, 1);
-    Position blackPawnDstPos = new Position(0, 0);
-    // MOVE PIECE BLOCKING DST POSITION BEFORE MOVING THE PAWN
-    board.movePiece(blackPawnSrcPos, blackPawnDstPos);
-    board.promotePawn(0, 0, !white, Piece.QUEEN);
+    // Same thing for black
+    Position blackBlockerCurrPos = new Position(0, 7);
+    Position blackBlockerNextPos = new Position(3, 7);
+    board.movePiece(blackBlockerCurrPos, blackBlockerNextPos);
 
-    assertNotNull(board.getPieceAt(0, 0));
-    assertEquals(Piece.QUEEN, board.getPieceAt(0, 0).getPiece());
-    */
+    Position blackPawnSrcPos = new Position(6, 7);
+    Position blackPawnDstPos = new Position(0, 7);
+    board.movePiece(blackPawnSrcPos, blackPawnDstPos);
+    board.promotePawn(7, 0, !white, Piece.QUEEN);
+
+    assertNotNull(board.getPieceAt(7, 0));
+    assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).getPiece());
   }
 
   @Test
