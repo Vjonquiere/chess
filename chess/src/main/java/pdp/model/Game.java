@@ -7,18 +7,22 @@ import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
 import pdp.utils.Position;
+import pdp.utils.Logging;
 
 public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;
   private GameState gameState;
+  private Timer timer;
   private boolean isTimed;
+  private Board board;
+  private History history;
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
 
-  private Game(
-      boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, GameState gameState) {
+
+  private Game(boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, GameState gameState) {
     Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
@@ -71,7 +75,6 @@ public class Game extends Subject {
       // -d'une attaque a leur roi ) donc appeler la fonction autre que isPinned ( par exemple isCheckAfterMove) qui doit throws un illegalMoveException si le roi est echec apres le move
       //if classicalMove.piece == Pawn -> isPromoted()  verifie si un pion est arrivé en derniere rangé 
       //board.board.isCheck  pas besoin car la fonction isCheckAfterMove verifie deja cela
-
 
 
     board.makeMove(classicalMove);
