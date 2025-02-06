@@ -13,21 +13,15 @@ public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;
   private GameState gameState;
-  private Timer timer;
-  private boolean isTimed;
-  private Board board;
-  private History history;
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
 
-  private Game(
-      boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, GameState gameState) {
+  private Game(boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState) {
     Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;
-    this.isTimed = isTimed;
     this.gameState = gameState;
   }
 
@@ -51,9 +45,8 @@ public class Game extends Subject {
    * @param gameState Contains the board, history, current player, timers if blitz mode is on
    * @return The newly created instance of Game.
    */
-  public static Game initialize(
-      boolean isWhiteAI, boolean isBlackAI, Solver solver, boolean isTimed, GameState gameState) {
-    instance = new Game(isWhiteAI, isBlackAI, solver, isTimed, gameState);
+  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver) {
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState());
     return instance;
   }
 
@@ -66,7 +59,7 @@ public class Game extends Subject {
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     try {
-      List<Move> availableMoves = board.getAvailableMoves(sourcePosition);
+      List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
       Move classicalMove =
           move.isMoveClassical(
               availableMoves); // throws exception if the initial move is not a "classical" move (
@@ -85,7 +78,7 @@ public class Game extends Subject {
       // rangé
       // board.board.isCheck  pas besoin car la fonction isCheckAfterMove verifie deja cela
 
-      board.makeMove(classicalMove);
+      this.gameState.getBoard().makeMove(classicalMove);
       // ajouter a l'historique le move
 
     } catch (Exception e) {
@@ -137,26 +130,46 @@ public class Game extends Subject {
   }
 
   public String getGameRepresentation() {
+    char[][] board = this.gameState.getBoard().getAsciiRepresentation();
     StringBuilder sb = new StringBuilder();
 
     Timer timer = gameState.getMoveTimer();
     if (timer != null) {
-      timer.timeRemaining();
+      sb.append("Played with time remaining: ").append(timer.timeRemainingString());
     }
 
-    sb.append(gameState.getBoard().getAsciiRepresentation());
+    sb.append("\n");
 
+    int size = board.length;
+
+    for (int row = 0; row < size; row++) {
+      sb.append(size - row).append(" | ");
+      for (int col = 0; col < size; col++) {
+        sb.append(board[row][col]).append(" ");
+      }
+      sb.append("\n");
+    }
+
+    sb.append("    "); // Offset for row numbers
+    for (int i = 0; i < size; i++) {
+      sb.append("-").append(" ");
+    }
+    sb.append("\n    ");
+    for (char c = 'A'; c < 'A' + size; c++) {
+      sb.append(c).append(" ");
+    }
     sb.append("\n\n");
 
     sb.append("To play: ");
     sb.append(gameState.isWhiteTurn() ? "White" : "Black");
+    sb.append("\n");
 
     return sb.toString();
   }
 
   public static Game getInstance() {
     if (instance == null) {
-      instance = new Game(false, false, null, false, new GameState());
+      instance = new Game(false, false, null, new GameState());
     }
     return instance;
   }
