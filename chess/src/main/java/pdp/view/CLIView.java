@@ -13,13 +13,17 @@ import pdp.model.Game;
 
 public class CLIView implements View {
   private boolean running = false;
-  private final Map<String, Consumer<String>> commands = new HashMap<>();
+  private final Map<String, CommandEntry> commands = new HashMap<>();
 
   public CLIView() {
-    commands.put("move", this::moveCommand);
-    commands.put("help", this::helpCommand);
-    commands.put("save", this::saveCommand);
-    commands.put("quit", this::quitCommand);
+    commands.put(
+        "move",
+        new CommandEntry(this::moveCommand, "Make a move in the game (e.g., 'move e2-e4')"));
+    commands.put(
+        "save",
+        new CommandEntry(this::saveCommand, "Save the game to a file (e.g., 'save game.txt')"));
+    commands.put("help", new CommandEntry(this::helpCommand, "Show available commands"));
+    commands.put("quit", new CommandEntry(this::quitCommand, "Exit the game"));
   }
 
   /**
@@ -81,8 +85,9 @@ public class CLIView implements View {
     input = input.trim().toLowerCase();
     String[] parts = input.split(" ", 2);
 
-    Consumer<String> command = commands.get(parts[0]);
-    if (command != null) {
+    CommandEntry ce = commands.get(parts[0]);
+    if (ce != null) {
+      Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
       System.out.println("Unknown command: " + input);
@@ -106,8 +111,8 @@ public class CLIView implements View {
    */
   private void helpCommand(String args) {
     System.out.println("Available commands:");
-    for (String command : commands.keySet()) {
-      System.out.println(command);
+    for (Map.Entry<String, CommandEntry> entry : commands.entrySet()) {
+      System.out.printf("  %-10s - %s%n", entry.getKey(), entry.getValue().description());
     }
   }
 
@@ -129,4 +134,6 @@ public class CLIView implements View {
     System.out.println("Quitting...");
     this.running = false;
   }
+
+  private record CommandEntry(Consumer<String> action, String description) {}
 }
