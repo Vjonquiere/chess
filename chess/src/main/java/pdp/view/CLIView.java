@@ -8,8 +8,10 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.utils.TextGetter;
 
 public class CLIView implements View {
   private boolean running = false;
@@ -17,13 +19,13 @@ public class CLIView implements View {
 
   public CLIView() {
     commands.put(
-        "move",
-        new CommandEntry(this::moveCommand, "Make a move in the game (e.g., 'move e2-e4')"));
+        "move", new CommandEntry(this::moveCommand, TextGetter.getText("moveHelpDescription")));
     commands.put(
-        "save",
-        new CommandEntry(this::saveCommand, "Save the game to a file (e.g., 'save game.txt')"));
-    commands.put("help", new CommandEntry(this::helpCommand, "Show available commands"));
-    commands.put("quit", new CommandEntry(this::quitCommand, "Exit the game"));
+        "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
+    commands.put(
+        "help", new CommandEntry(this::helpCommand, TextGetter.getText("helpHelpDescription")));
+    commands.put(
+        "quit", new CommandEntry(this::quitCommand, TextGetter.getText("quitHelpDescription")));
   }
 
   /**
@@ -44,8 +46,10 @@ public class CLIView implements View {
 
   @Override
   public void onErrorEvent(Exception e) {
-    if (e instanceof IllegalMoveException || e instanceof MoveParsingException) {
-      System.err.println(e.getMessage());
+    if (e instanceof IllegalMoveException
+        || e instanceof MoveParsingException
+        || e instanceof InvalidPositionException) {
+      System.out.println(e.getMessage());
     } else {
       System.err.println("Uncaught Error received: " + e.getMessage());
     }
@@ -60,8 +64,8 @@ public class CLIView implements View {
     Thread inputThread =
         new Thread(
             () -> {
-              System.out.println("Welcome to the game!");
-              System.out.println("Type 'help' for a list of available commands.");
+              System.out.println(TextGetter.getText("welcomeCLI"));
+              System.out.println(TextGetter.getText("welcomeInstructions"));
               Scanner scanner = new Scanner(System.in);
               while (running) {
                 String input = scanner.nextLine();
@@ -90,7 +94,7 @@ public class CLIView implements View {
       Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
-      System.out.println("Unknown command: " + input);
+      System.out.println(TextGetter.getText("unknownCommand", input));
       this.helpCommand("");
     }
   }
@@ -110,7 +114,7 @@ public class CLIView implements View {
    * @param args Unused argument
    */
   private void helpCommand(String args) {
-    System.out.println("Available commands:");
+    System.out.println(TextGetter.getText("availableCommandsTitle"));
     for (Map.Entry<String, CommandEntry> entry : commands.entrySet()) {
       System.out.printf("  %-10s - %s%n", entry.getKey(), entry.getValue().description());
     }
@@ -131,7 +135,7 @@ public class CLIView implements View {
    * @param args Unused argument
    */
   private void quitCommand(String args) {
-    System.out.println("Quitting...");
+    System.out.println(TextGetter.getText("quitting"));
     this.running = false;
   }
 
