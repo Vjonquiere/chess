@@ -1,0 +1,10 @@
+#!/bin/sh
+echo "Running pre-commit hook..."
+
+echo "Entering chess directory..."
+cd chess || { echo "Failed to enter chess directory"; exit 1; }
+echo "Running Spotless check..."
+mvn spotless:check || { echo "Spotless check failed"; exit 1; }
+
+echo "Pre-commit checks passed!"
+exit 0
