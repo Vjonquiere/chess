@@ -85,8 +85,9 @@ public class CLIView implements View {
     input = input.trim().toLowerCase();
     String[] parts = input.split(" ", 2);
 
-    Consumer<String> command = commands.get(parts[0]).action();
-    if (command != null) {
+    CommandEntry ce = commands.get(parts[0]);
+    if (ce != null) {
+      Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
       System.out.println("Unknown command: " + input);
