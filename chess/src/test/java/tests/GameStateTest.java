@@ -13,7 +13,7 @@ public class GameStateTest {
   @BeforeEach
   void setUp() {
     gameBlitzOff = new GameState();
-    gameBlitzOn = new GameState(true);
+    gameBlitzOn = new GameState(new Timer(30 * 60));
   }
 
   @Test

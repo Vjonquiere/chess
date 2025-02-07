@@ -605,11 +605,70 @@ public class BitboardRepresentation implements BoardRepresentation {
     return true;
   }
 
+  /**
+   * Checks if a pawn at Position(x,y) checks for promotion
+   *
+   * @param x The x-coordinate (file) of the pawn
+   * @param y The y-coordinate (rank) of the pawn
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @return true if the pawn is being promoted, otherwise false
+   */
   @Override
   public boolean isPawnPromoting(int x, int y, boolean white) {
-    return false;
+    if (white && y != 7) {
+      return false;
+    } else if (!white && y != 0) {
+      return false;
+    } else {
+      // White pawns --> 5 and Black pawns --> 11
+      Bitboard pawnBitBoard = white ? this.board[5] : this.board[11];
+      int bitIndex = 8 * y + x;
+
+      // If bit is 1 then pawn is located at Position(x,y)
+      return pawnBitBoard.getBit(bitIndex);
+    }
   }
 
+  /**
+   * Replaces pawnToPromote with newPiece. Bitboards get changed. Assumes pawn can be promoted.
+   *
+   * @param x The x-coordinate (file) of the pawn
+   * @param y The y-coordinate (rank) of the pawn
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @param newPiece The piece asked by the player that is replacing the promoting pawn
+   */
   @Override
-  public void promotePawn(int x, int y, boolean white, Piece newPiece) {}
+  public void promotePawn(int x, int y, boolean white, Piece newPiece) {
+    ColoredPiece<Piece, Color> pieceAtPosition = getPieceAt(x, y);
+    if (pieceAtPosition.getPiece() != Piece.PAWN
+        || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
+      return;
+    }
+
+    int boardIndex = white ? 0 : 6;
+    Bitboard newPieceBitBoard = null;
+    Bitboard pawnBitboard = this.board[5 + boardIndex];
+    switch (newPiece) {
+      case KNIGHT:
+        newPieceBitBoard = this.board[4 + boardIndex];
+        break;
+      case BISHOP:
+        newPieceBitBoard = this.board[2 + boardIndex];
+        break;
+      case ROOK:
+        newPieceBitBoard = this.board[3 + boardIndex];
+        break;
+      case QUEEN:
+        newPieceBitBoard = this.board[1 + boardIndex];
+        break;
+      default:
+        System.err.println("Error: A pawn can only be promoted to Queen, Rook, Knight or Bishop !");
+        return;
+    }
+
+    int bitIndex = 8 * y + x;
+    // Change bits
+    pawnBitboard.clearBit(bitIndex);
+    newPieceBitBoard.setBit(bitIndex);
+  }
 }

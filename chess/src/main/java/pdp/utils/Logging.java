@@ -13,6 +13,10 @@ public class Logging {
   private static boolean debug = false;
   private static boolean verbose = false;
 
+  /*Private constructor to avoid instantiation*/
+  private Logging() {}
+  ;
+
   public static void setDebug(boolean debug) {
     Logging.debug = debug;
   }
