@@ -16,8 +16,12 @@ public class CLIView implements View {
   private final Map<String, CommandEntry> commands = new HashMap<>();
 
   public CLIView() {
-    commands.put("move", new CommandEntry(this::moveCommand, "Make a move in the game (e.g., 'move e2-e4')"));
-    commands.put("save", new CommandEntry(this::saveCommand, "Save the game to a file (e.g., 'save game.txt')"));
+    commands.put(
+        "move",
+        new CommandEntry(this::moveCommand, "Make a move in the game (e.g., 'move e2-e4')"));
+    commands.put(
+        "save",
+        new CommandEntry(this::saveCommand, "Save the game to a file (e.g., 'save game.txt')"));
     commands.put("help", new CommandEntry(this::helpCommand, "Show available commands"));
     commands.put("quit", new CommandEntry(this::quitCommand, "Exit the game"));
   }
