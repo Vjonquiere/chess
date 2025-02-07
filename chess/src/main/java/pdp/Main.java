@@ -10,6 +10,7 @@ import pdp.model.ai.Solver;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
+import pdp.utils.TextGetter;
 import pdp.view.CLIView;
 import pdp.view.GameView;
 import pdp.view.View;
@@ -61,8 +62,8 @@ public class Main {
           isBlackAI = true;
           break;
         default:
-          System.err.println("Unknown AI option: " + options.get(OptionType.AI));
-          System.err.println("Using default AI mode: W");
+          System.err.println(TextGetter.getText("unknownAIOption", options.get(OptionType.AI)));
+          System.err.println(TextGetter.getText("defaultAIOption"));
           isWhiteAI = true;
           break;
       }

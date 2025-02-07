@@ -8,6 +8,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
 import pdp.utils.Logging;
 import pdp.utils.Position;
+import pdp.utils.TextGetter;
 
 public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
@@ -135,7 +136,7 @@ public class Game extends Subject {
 
     Timer timer = gameState.getMoveTimer();
     if (timer != null) {
-      sb.append("Played with time remaining: ").append(timer.timeRemainingString());
+      sb.append(TextGetter.getText("timeRemaining", timer.timeRemainingString()));
     }
 
     sb.append("\n");
@@ -160,8 +161,10 @@ public class Game extends Subject {
     }
     sb.append("\n\n");
 
-    sb.append("To play: ");
-    sb.append(gameState.isWhiteTurn() ? "White" : "Black");
+    sb.append(
+        TextGetter.getText(
+            "toPlay",
+            gameState.isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
     sb.append("\n");
 
     return sb.toString();
