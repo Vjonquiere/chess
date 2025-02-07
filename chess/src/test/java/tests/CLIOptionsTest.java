@@ -1,7 +1,6 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
+import pdp.utils.TextGetter;
 
 public class CLIOptionsTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -220,6 +220,35 @@ public class CLIOptionsTest {
     assertTrue(outputStream.toString().contains(expected));
     outputStream.reset();
     verify(mockRuntime2).exit(0);
+    outputStream.reset();
+  }
+
+  @Test
+  public void testLanguageCorrect() {
+    setUpLogging();
+    Logging.setDebug(true);
+
+    /* Test that asking for the app in english is the default and will display the debug message.*/
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"--debug", "--lang=en"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("Language = English (already set by default)"));
+    assertEquals("Chess game", TextGetter.getText("title"));
+    outputStream.reset();
+  }
+
+  @Test
+  public void testLanguageWrong() {
+    setUpLogging();
+    Logging.setDebug(true);
+
+    /* Test that a language not supported will display the information message and
+     * that the default language of the app is english*/
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"--debug", "--lang=ru"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("Language ru not supported, language = english"));
+    assertEquals("Chess game", TextGetter.getText("title"));
     outputStream.reset();
   }
 
