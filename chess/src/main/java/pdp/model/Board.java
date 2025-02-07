@@ -28,7 +28,7 @@ public class Board {
   }
 
   public List<Move> getAvailableMoves(Position pos) {
-    return board.getAvailableMoves(pos.getX(), pos.getY(), this);
+    return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
   public boolean makeMove(Move move) {

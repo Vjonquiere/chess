@@ -66,6 +66,35 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[11] = new Bitboard(71776119061217280L);
   }
 
+  @Deprecated
+  public BitboardRepresentation(
+      Bitboard whiteKing,
+      Bitboard whiteQueen,
+      Bitboard whiteBishops,
+      Bitboard whiteRooks,
+      Bitboard whiteKnights,
+      Bitboard whitePawns,
+      Bitboard blackKing,
+      Bitboard blackQueen,
+      Bitboard blackBishops,
+      Bitboard blackRooks,
+      Bitboard blackKnights,
+      Bitboard blackPawns) {
+    board = new Bitboard[12];
+    board[0] = whiteKing;
+    board[1] = whiteQueen;
+    board[2] = whiteBishops;
+    board[3] = whiteRooks;
+    board[4] = whiteKnights;
+    board[5] = whitePawns;
+    board[6] = blackKing;
+    board[7] = blackQueen;
+    board[8] = blackBishops;
+    board[9] = blackRooks;
+    board[10] = blackKnights;
+    board[11] = blackPawns;
+  }
+
   /**
    * Translate a list of squares (0..63) to a list of position (x,y)
    *
@@ -251,21 +280,21 @@ public class BitboardRepresentation implements BoardRepresentation {
    * depending on allies and enemies
    *
    * @param piece Bitboard where only the position of the piece you want to move is set to 1
-   * @param allies A bitboard containing all the allies pieces
+   * @param unreachableSquares A bitboard containing all the unreachable squares
    * @param enemies A bitboard containing all the enemies pieces
    * @param moveFunction The function that make the direction to follow (ex: right)
    * @return A bitboard containing all the squares reachable for a given direction
    */
   private Bitboard getMultipleMovesFromDirection(
       Bitboard piece,
-      Bitboard allies,
+      Bitboard unreachableSquares,
       Bitboard enemies,
       Function<Bitboard, Bitboard> moveFunction) {
     Bitboard allowedMoves = new Bitboard(piece.bitboard);
     int bitCount = enemies.bitCount();
     do {
       allowedMoves = allowedMoves.or(moveFunction.apply(allowedMoves));
-      allowedMoves = allowedMoves.xor(allowedMoves.and(allies));
+      allowedMoves = allowedMoves.xor(allowedMoves.and(unreachableSquares));
       bitCount++;
     } while (allowedMoves.or(enemies).bitCount() > bitCount);
     return allowedMoves;
@@ -275,25 +304,26 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Generate the bitboard containing the reachable positions for up, down, left, right directions
    *
    * @param square The position of the piece that want to move
-   * @param allies A bitboard containing all the allies pieces
+   * @param unreachableSquares A bitboard containing all the unreachable squares
    * @param enemies A bitboard containing all the enemies pieces
    * @return A bitboard containing the possible inline moves
    */
-  private Bitboard getInlineMoves(Position square, Bitboard allies, Bitboard enemies) {
+  private Bitboard getInlineMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
     // move left
     Bitboard leftMoves =
-        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveLeft);
+        getMultipleMovesFromDirection(position, unreachableSquares, enemies, Bitboard::moveLeft);
     // move right
     Bitboard rightMoves =
-        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveRight);
+        getMultipleMovesFromDirection(position, unreachableSquares, enemies, Bitboard::moveRight);
     // move up
-    Bitboard upMoves = getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUp);
+    Bitboard upMoves =
+        getMultipleMovesFromDirection(position, unreachableSquares, enemies, Bitboard::moveUp);
     // move down
     Bitboard downMoves =
-        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDown);
+        getMultipleMovesFromDirection(position, unreachableSquares, enemies, Bitboard::moveDown);
 
     Bitboard res = new Bitboard().or(leftMoves).or(rightMoves).or(upMoves).or(downMoves);
     res.clearBit(squareIndex);
@@ -305,23 +335,26 @@ public class BitboardRepresentation implements BoardRepresentation {
    * right directions
    *
    * @param square The position of the piece that want to move
-   * @param allies A bitboard containing all the allies pieces
+   * @param unreachableSquares A bitboard containing all the unreachable squares
    * @param enemies A bitboard containing all the enemies pieces
    * @return A bitboard containing the possible diagonal moves
    */
-  private Bitboard getDiagonalMoves(Position square, Bitboard allies, Bitboard enemies) {
+  private Bitboard getDiagonalMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
 
     Bitboard upLeftMoves =
-        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpLeft);
+        getMultipleMovesFromDirection(position, unreachableSquares, enemies, Bitboard::moveUpLeft);
     Bitboard upRightMoves =
-        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveUpRight);
+        getMultipleMovesFromDirection(position, unreachableSquares, enemies, Bitboard::moveUpRight);
     Bitboard downLeftMoves =
-        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownLeft);
+        getMultipleMovesFromDirection(
+            position, unreachableSquares, enemies, Bitboard::moveDownLeft);
     Bitboard downRightMoves =
-        getMultipleMovesFromDirection(position, allies, enemies, Bitboard::moveDownRight);
+        getMultipleMovesFromDirection(
+            position, unreachableSquares, enemies, Bitboard::moveDownRight);
     Bitboard res =
         new Bitboard().or(upLeftMoves).or(upRightMoves).or(downRightMoves).or(downLeftMoves);
     res.clearBit(squareIndex);
@@ -354,11 +387,11 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Generate the list of possible moves from a given position for a king piece
    *
    * @param square Position of the piece
-   * @param allies Allies occupation bitboard
+   * @param unreachableSquares unreachable squares bitboard
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getKingMoves(Position square, Bitboard allies, Bitboard enemies) {
+  private List<Move> getKingMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -372,7 +405,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveUpRight())
             .or(position.moveDownLeft())
             .or(position.moveDownRight());
-    move = move.xor(move.and(allies));
+    move = move.xor(move.and(unreachableSquares));
     return bitboardToMoves(move, enemies, square, Piece.KING);
   }
 
@@ -380,11 +413,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Generate the list of possible moves from a given position for a knight piece
    *
    * @param square Position of the piece
-   * @param allies Allies occupation bitboard
+   * @param unreachableSquares unreachable squares bitboard
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getKnightMoves(Position square, Bitboard allies, Bitboard enemies) {
+  private List<Move> getKnightMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -400,7 +434,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveLeft().moveDownLeft())
             .or(position.moveRight().moveDownRight())
             .or(position.moveRight().moveUpRight());
-    move = move.xor(move.and(allies));
+    move = move.xor(move.and(unreachableSquares));
     return bitboardToMoves(move, enemies, square, Piece.KNIGHT);
   }
 
@@ -408,12 +442,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Generate the list of possible moves from a given position for a pawn piece
    *
    * @param square Position of the piece
-   * @param allies Allies occupation bitboard
+   * @param unreachableSquares unreachable squares bitboard
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
   private List<Move> getPawnMoves(
-      Position square, Bitboard allies, Bitboard enemies, boolean white) {
+      Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
     Bitboard position = new Bitboard();
     Bitboard attackRight, attackLeft;
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -428,7 +462,7 @@ public class BitboardRepresentation implements BoardRepresentation {
       attackLeft = position.moveDownLeft().and(enemies);
       position = position.moveDown();
     }
-    position = position.xor(position.and(allies));
+    position = position.xor(position.and(unreachableSquares));
 
     return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies, square, Piece.PAWN);
   }
@@ -437,13 +471,14 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Generate the list of possible moves from a given position for a queen piece
    *
    * @param square Position of the piece
-   * @param allies Allies occupation bitboard
+   * @param unreachableSquares unreachable squares bitboard
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getQueenMoves(Position square, Bitboard allies, Bitboard enemies) {
+  private List<Move> getQueenMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
     return bitboardToMoves(
-        getInlineMoves(square, allies, enemies).or(getDiagonalMoves(square, allies, enemies)),
+        getInlineMoves(square, unreachableSquares, enemies)
+            .or(getDiagonalMoves(square, unreachableSquares, enemies)),
         enemies,
         square,
         Piece.QUEEN);
@@ -453,25 +488,27 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Generate the list of possible moves from a given position for a bishop piece
    *
    * @param square Position of the piece
-   * @param allies Allies occupation bitboard
+   * @param unreachableSquares unreachable squares bitboard
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getBishopMoves(Position square, Bitboard allies, Bitboard enemies) {
+  private List<Move> getBishopMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies) {
     return bitboardToMoves(
-        getDiagonalMoves(square, allies, enemies), enemies, square, Piece.BISHOP);
+        getDiagonalMoves(square, unreachableSquares, enemies), enemies, square, Piece.BISHOP);
   }
 
   /**
    * Generate the list of possible moves from a given position for a rook piece
    *
    * @param square Position of the piece
-   * @param allies Allies occupation bitboard
+   * @param unreachableSquares unreachable squares bitboard
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getRookMoves(Position square, Bitboard allies, Bitboard enemies) {
-    return bitboardToMoves(getInlineMoves(square, allies, enemies), enemies, square, Piece.ROOK);
+  private List<Move> getRookMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
+    return bitboardToMoves(
+        getInlineMoves(square, unreachableSquares, enemies), enemies, square, Piece.ROOK);
   }
 
   /**
@@ -480,47 +517,92 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @param x The board column
    * @param y The board row
-   * @param board unused (remove)
+   * @param kingReachable Can the piece reach opponent king (keep false if not checking
+   *     check/checkmate)
    * @return The list of possible moves (without special cases)
    */
   @Override
-  public List<Move> getAvailableMoves(int x, int y, Board board) {
+  public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
     ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
-    Bitboard allies = piece.getColor() == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    Position enemyKing = getKing(piece.getColor() != Color.WHITE).get(0);
+    Bitboard unreachableSquares =
+        piece.getColor() == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    unreachableSquares.clearBit(x % 8 + y * 8); // remove piece position from reachable positions
+    if (!kingReachable)
+      unreachableSquares.setBit(
+          enemyKing.getX() % 8 + enemyKing.getY() * 8); // Put enemyKing to unreachable positions
     Bitboard enemies = piece.getColor() == Color.WHITE ? getBlackBoard() : getWhiteBoard();
     return switch (piece.getPiece()) {
-      case KING -> getKingMoves(new Position(y, x), allies, enemies);
-      case QUEEN -> getQueenMoves(new Position(y, x), allies, enemies);
-      case BISHOP -> getBishopMoves(new Position(y, x), allies, enemies);
-      case ROOK -> getRookMoves(new Position(y, x), allies, enemies);
-      case KNIGHT -> getKnightMoves(new Position(y, x), allies, enemies);
+      case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies);
+      case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies);
+      case BISHOP -> getBishopMoves(new Position(y, x), unreachableSquares, enemies);
+      case ROOK -> getRookMoves(new Position(y, x), unreachableSquares, enemies);
+      case KNIGHT -> getKnightMoves(new Position(y, x), unreachableSquares, enemies);
       case PAWN ->
           piece.getColor() == Color.WHITE
-              ? getPawnMoves(new Position(y, x), allies, enemies, true)
-              : getPawnMoves(new Position(y, x), allies, enemies, false);
+              ? getPawnMoves(new Position(y, x), unreachableSquares, enemies, true)
+              : getPawnMoves(new Position(y, x), unreachableSquares, enemies, false);
       default -> new ArrayList<>();
     };
   }
 
+  /**
+   * Get if the given square (x,y format) can be attacked by a piece of the given color
+   *
+   * @param x X coordinate of the Position
+   * @param y Y coordinate of the Position
+   * @param by The color of the attacker
+   * @return True if the given square is attacked, False else
+   */
   @Override
-  public boolean isAttacked(int x, int y, Board board) {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  public boolean isAttacked(int x, int y, Color by) {
+    Bitboard pieces = by == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    Position destination = new Position(y, x);
+    for (Integer i : pieces.getSetBits()) {
+      Position piecePosition = squareToPosition(i);
+      List<Move> moves = getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
+      boolean oneAttack = moves.stream().anyMatch(move -> move.getDest().equals(destination));
+      if (oneAttack) return true;
+    }
+    return false;
   }
 
+  /**
+   * Get the check state for the given color
+   *
+   * @param color The piece color you want to know check status
+   * @return True if the given color is in check, False else
+   */
   @Override
-  public boolean isCheck(Board board) {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  public boolean isCheck(Color color) {
+    Position kingPosition = getKing(color == Color.WHITE).get(0);
+    return isAttacked(
+        kingPosition.getX(), kingPosition.getY(), color == Color.WHITE ? Color.BLACK : Color.WHITE);
   }
 
+  /**
+   * Get the checkMate state for the given color (⚠️ can be resources/time-consuming if there are
+   * many pieces remaining on the board)
+   *
+   * @param color The piece color you want to know checkMate status
+   * @return True if the given color is in checkMate, False else
+   */
   @Override
-  public boolean isCheckMate(Board board) {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  public boolean isCheckMate(Color color) {
+    if (!isCheck(color)) return false;
+    Bitboard pieces = color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    for (Integer i : pieces.getSetBits()) {
+      Position piecePosition = squareToPosition(i);
+      List<Move> availableMoves =
+          getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
+      for (Move move : availableMoves) {
+        movePiece(move.source, move.dest); // Play move
+        boolean isStillCheck = isCheck(color);
+        movePiece(move.dest, move.source); // Undo move
+        if (!isStillCheck) return false;
+      }
+    }
+    return true;
   }
 
   /**
