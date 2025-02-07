@@ -1,17 +1,27 @@
 # Projet de Programmation M1 - Java Chess
 
-## Installation
-## 1. Docker
-
-### Prerequisites
-The following are required to run the project using docker:
-- Docker
+# Setup
 
 ### Clone the repository
 ```bash
 git clone git@gitlab.emi.u-bordeaux.fr:pdp-2025/chess-2.git
 cd chess-2/
 ```
+
+### For contributors
+Contributors should setup the pre-commit hook by running
+```bash
+chmod +x setup-hooks.sh
+./setup-hooks.sh
+```
+
+# Installation
+## 1. Docker
+
+### Prerequisites
+The following are required to run the project using docker:
+- Docker
+
 ### Build the project
 - `cd chess/` to enter the project folder
 - `sudo docker build -t chess .` to package the project inside a container named "chess"
@@ -20,7 +30,7 @@ cd chess-2/
 From the `chess` folder :
 - `sudo docker run --rm -it chess bash` to enter the project container
 
-You can now use the commands as specified in Usage.
+You can now use the commands as specified in **Usage**.
 
 ## 2. Local
 ### Prerequisites
@@ -42,7 +52,7 @@ cd chess-2/
 - `cd chess/` to enter the project folder
 - `mvn clean install` to install dependence and run tests
 
-## 3. Usage
+## Usage
 
 ### Run the tests
 From the local `chess` or Docker `app` folder :
@@ -52,10 +62,3 @@ From the local `chess` or Docker `app` folder :
 From the local `chess` or Docker `app` folder :
 - `mvn javafx:run -Djavafx.args="args"` to run the app with given args
 - To print all available arguments you can run `mvn javafx:run -Djavafx.args="-h"`
-
-Ce dépôt contient trois répertoires importants:
-
-- `<project_name>/`: Code source du projet.
-
-- `reports/preliminary`: Code LaTeX du rapport préliminaire.
-- `reports/final`: Code LaTeX du rapport final.
