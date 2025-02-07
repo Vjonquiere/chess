@@ -7,10 +7,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
+import org.junit.jupiter.api.Test;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
@@ -26,7 +25,7 @@ public class CLIViewTest {
   private final PrintStream originalErr = System.err;
   private BagOfCommands mockBagOfCommands;
   private Method handleUserInputMethod;
-  
+
   @Test
   public void testBoardToASCII() {
     Game game = Game.getInstance();
@@ -56,7 +55,7 @@ public class CLIViewTest {
     view = new CLIView();
 
     handleUserInputMethod = CLIView.class.getDeclaredMethod("handleUserInput", String.class);
-    handleUserInputMethod.setAccessible(true);  // Allows access to private method
+    handleUserInputMethod.setAccessible(true); // Allows access to private method
   }
 
   @AfterEach
@@ -71,7 +70,7 @@ public class CLIViewTest {
     handleUserInputMethod.invoke(view, "move e2-e4");
 
     verify(mockBagOfCommands).addCommand(any(PlayMoveCommand.class));
-}
+  }
 
   @Test
   void testSaveCommand() throws Exception {
