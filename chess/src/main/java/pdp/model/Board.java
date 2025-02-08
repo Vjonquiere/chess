@@ -58,8 +58,12 @@ public class Board {
             || move.source.equals(new Position(8, 1)))) { // rook on a8 and king on e8
       this.blackLongCastle = false;
     }
+    if (board.isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
+      // Piece newPiece = new Piece(ask to what the user want to promote his pawn)
+      board.promotePawn(move.dest.getX(), move.dest.getY(), this.isWhite, Piece.QUEEN);
+    }
     // verifier si enPassant
-
+    move.toString();
   }
 
   public Board getCopy() {

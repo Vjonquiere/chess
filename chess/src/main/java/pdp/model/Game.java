@@ -82,12 +82,30 @@ public class Game extends Subject {
       // if(isCheckAfterMove(classicalMove){
       //  throw new IllegalMoveException(classicalMove.toString());
       // }
-
       this.gameState.getBoard().makeMove(classicalMove);
       // addToHystory(move);
       this.notifyObservers();
 
     } catch (Exception e) {
+
+      /* if(roque){
+        if(isCheckAfterMove(Move){
+          throw new IllegalMoveException(Move.toString());
+        }
+        play.roque
+        addToHystory(move);
+        this.notifyObservers();
+      }
+
+      if(enpassant){
+        if(isCheckAfterMove(Move){
+          throw new IllegalMoveException(Move.toString());
+        }
+        play.enpassant
+        addToHystory(move);
+        this.notifyObservers();
+
+      } */
 
       throw new IllegalMoveException(move.toString());
       // dans cette section la variable classicalMove n'est pas définie
