@@ -60,6 +60,24 @@ public class Game extends Subject {
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     try {
+      if ((this.gameState
+                      .getBoard()
+                      .board
+                      .getPieceAt(move.source.getX(), move.source.getY())
+                      .getColor()
+                  == Color.WHITE
+              && !this.gameState.getBoard().isWhite)
+          || this.gameState
+                      .getBoard()
+                      .board
+                      .getPieceAt(move.source.getX(), move.source.getY())
+                      .getColor()
+                  == Color.BLACK
+              && this.gameState.getBoard().isWhite) {
+        throw new IllegalMoveException(
+            move.toString()); // mauvaise couleur de pièce deplacé donc exception
+      }
+
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
       Move classicalMove = move.isMoveClassical(availableMoves);
 
@@ -82,7 +100,9 @@ public class Game extends Subject {
       // if(isCheckAfterMove(classicalMove){
       //  throw new IllegalMoveException(classicalMove.toString());
       // }
+
       this.gameState.getBoard().makeMove(classicalMove);
+      this.gameState.switchPlayerTurn();
       // addToHystory(move);
       this.notifyObservers();
 
@@ -93,6 +113,7 @@ public class Game extends Subject {
           throw new IllegalMoveException(Move.toString());
         }
         play.roque
+        this.gameState.switchPlayerTurn();
         addToHystory(move);
         this.notifyObservers();
       }
@@ -102,6 +123,7 @@ public class Game extends Subject {
           throw new IllegalMoveException(Move.toString());
         }
         play.enpassant
+        this.gameState.switchPlayerTurn();
         addToHystory(move);
         this.notifyObservers();
 

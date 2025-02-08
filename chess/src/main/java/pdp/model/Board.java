@@ -37,6 +37,13 @@ public class Board {
     }
 
     board.movePiece(move.source, move.dest);
+
+    if (this.isWhite) {
+      this.isWhite = false;
+    } else {
+      this.isWhite = true;
+    }
+
     if (this.whiteShortCastle == true
         && (move.source.equals(new Position(1, 5))
             || move.source.equals(new Position(1, 1)))) { // rook on a1 and king on e1
