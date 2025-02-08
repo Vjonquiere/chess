@@ -374,4 +374,13 @@ public class BitboardTest {
     assertTrue(tmpBitboard.getBit(8));
     bitboard.clearBits();
   }
+
+  @Test
+  public void testToString() {
+    Bitboard bitboard = new Bitboard();
+    String notInit =
+        "Bitboard = 0x0\n0|0|0|0|0|0|0|0\n0|0|0|0|0|0|0|0\n0|0|0|0|0|0|0|0\n0|0|0|0|0|0|0|0\n0|0|0|0|0|0|0|0\n0|0|0|0|0|0|0|0\n0|0|0|0|0|0|0|0\n0|0|0|0|0|0|0|0\n";
+    assertEquals(notInit, bitboard.toString());
+    bitboard.setBit(1);
+  }
 }

@@ -546,6 +546,15 @@ public class BitboardRepresentation implements BoardRepresentation {
     };
   }
 
+  public void deletePieceAt(int x, int y) {
+    ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
+    for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
+      if (entry.getValue().equals(piece)) {
+        board[entry.getKey()].clearBit(x % 8 + y * 8);
+      }
+    }
+  }
+
   /**
    * Get if the given square (x,y format) can be attacked by a piece of the given color
    *

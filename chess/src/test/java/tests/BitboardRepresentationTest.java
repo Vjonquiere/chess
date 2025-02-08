@@ -190,7 +190,7 @@ public class BitboardRepresentationTest {
     board.movePiece(new Position(0, 6), new Position(3, 0));
     board.movePiece(new Position(2, 6), new Position(0, 6));
     board.movePiece(new Position(2, 0), new Position(7, 0));
-    System.out.println(board.getPieceAt(4, 2).getPiece());
+    // System.out.println(board.getPieceAt(4, 2).getPiece());
     assertTrue(board.isCheckMate(Color.WHITE));
   }
 
@@ -372,5 +372,11 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.BISHOP, board.getPieceAt(7, 0).getPiece(), "Black bishop should not be promotable !");
+  }
+
+  @Test
+  public void testDeletePieceAt() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.deletePieceAt(0, 0);
   }
 }
