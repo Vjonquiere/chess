@@ -3,6 +3,7 @@ package pdp.model;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
 import pdp.utils.Logging;
 import pdp.utils.Position;
@@ -35,7 +36,7 @@ public class Move {
 
     String[] parts = stringMove.split("-");
     if (parts.length != 2) {
-      throw new MoveParsingException("Invalid format : " + stringMove);
+      throw new MoveParsingException(stringMove);
     }
     Move move = new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
     return move;
@@ -45,14 +46,14 @@ public class Move {
   public static Position stringToPosition(String move) {
 
     if (move.length() != 2) {
-      throw new MoveParsingException("Invalid position : " + move);
+      throw new InvalidPositionException(move);
     }
 
     char colLetter = Character.toLowerCase(move.charAt(0));
     int rowNumber = Character.getNumericValue(move.charAt(1));
 
     if (colLetter < 'a' || colLetter > 'h' || rowNumber < 1 || rowNumber > 8) {
-      throw new IllegalMoveException("Invalid position: " + move);
+      throw new InvalidPositionException(move);
     }
 
     int x = colLetter - 'a';
@@ -75,7 +76,7 @@ public class Move {
         return move;
       }
     }
-    throw new IllegalMoveException("Illegal move: " + this.toString());
+    throw new IllegalMoveException(this.toString());
   }
 
   public Position getSource() {
