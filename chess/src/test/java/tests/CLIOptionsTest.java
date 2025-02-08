@@ -1,23 +1,28 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
+import pdp.utils.OptionType;
+import pdp.utils.TextGetter;
 
 public class CLIOptionsTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Logger logger;
-  private PrintStream originalOut = System.out;
-  private PrintStream originalErr = System.err;
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
 
   String expectedHelp =
       "usage: chess\n"
@@ -37,15 +42,28 @@ public class CLIOptionsTest {
           + " -g,--gui                        Displays the game with a  graphical\n"
           + "                                 interface.\n"
           + " -h,--help                       Print this message and exit\n"
+          + "    --lang <LANGUAGE>            Choose the language for the app (en\n"
+          + "                                 supported)\n"
           + " -t,--time <TIME>                Specify time per round for blitz mode\n"
           + "                                 (default 30min)\n"
           + " -V,--version                    Print the version information and exit\n"
           + " -v,--verbose                    Display more information\n";
 
+  @BeforeEach
+  public void setUp() {
+    outputStream.reset();
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  public void tearDown() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+  }
+
   @Test
   public void testHelp() {
-    System.setOut(new PrintStream(outputStream));
-
     /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--help"}, mockRuntime);
@@ -59,12 +77,10 @@ public class CLIOptionsTest {
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
-    System.setOut(originalOut);
   }
 
   @Test
   public void testVersion() throws Exception {
-    System.setOut(new PrintStream(outputStream));
     final Properties properties = new Properties();
     properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
     String expected = "Version: " + properties.getProperty("version");
@@ -83,13 +99,10 @@ public class CLIOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
     outputStream.reset();
-    System.setOut(originalOut);
   }
 
   @Test
   public void testHelpFirst() {
-    System.setOut(new PrintStream(outputStream));
-
     /* Test that only help is displayed, even with several parameters */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
@@ -102,12 +115,10 @@ public class CLIOptionsTest {
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
-    System.setOut(originalOut);
   }
 
   @Test
-  public void testUnrecognized() throws Exception {
-    System.setOut(new PrintStream(outputStream));
+  public void testUnrecognized() {
     String expected = "Parsing failed.  Reason: Unrecognized option: -zgv\n";
 
     // Test with an unrecognized option (error)
@@ -116,12 +127,10 @@ public class CLIOptionsTest {
     assertEquals(expected + expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(1);
-    System.setOut(originalOut);
   }
 
   @Test
-  public void testPartialMatching() throws Exception {
-    System.setOut(new PrintStream(outputStream));
+  public void testPartialMatching() {
 
     // Test partial matching (no error)
     Runtime mockRuntime = mock(Runtime.class);
@@ -129,12 +138,10 @@ public class CLIOptionsTest {
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
-    System.setOut(originalOut);
   }
 
   @Test
   public void testAmbiguous() throws Exception {
-    System.setOut(new PrintStream(outputStream));
     String expectedAmbiguous =
         "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-depth', 'ai-heuristic', 'ai-time')\n";
 
@@ -144,16 +151,10 @@ public class CLIOptionsTest {
     assertEquals(expectedAmbiguous + expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(1);
-    System.setOut(originalOut);
   }
 
   public void setUpLogging() {
     logger = Logger.getLogger("TestLogger");
-
-    outputStream.reset();
-    originalOut = System.out;
-    System.setOut(new PrintStream(outputStream));
-    System.setErr(new PrintStream(outputStream));
 
     Logging.setDebug(false);
     Logging.setVerbose(false);
@@ -187,8 +188,6 @@ public class CLIOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
     outputStream.reset();
-    System.setErr(originalErr);
-    System.setOut(originalOut);
   }
 
   @Test
@@ -222,7 +221,66 @@ public class CLIOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
     outputStream.reset();
-    System.setErr(originalErr);
-    System.setOut(originalOut);
+  }
+
+  @Test
+  public void testLanguageCorrect() {
+    setUpLogging();
+    Logging.setDebug(true);
+
+    /* Test that asking for the app in english is the default and will display the debug message.*/
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"--debug", "--lang=en"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("Language = English (already set by default)"));
+    assertEquals("Chess game", TextGetter.getText("title"));
+    outputStream.reset();
+  }
+
+  @Test
+  public void testLanguageWrong() {
+    setUpLogging();
+    Logging.setDebug(true);
+
+    /* Test that a language not supported will display the information message and
+     * that the default language of the app is english*/
+    Runtime mockRuntime = mock(Runtime.class);
+    CLIOptions.parseOptions(new String[] {"--debug", "--lang=ru"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("Language ru not supported, language = english"));
+    assertEquals("Chess game", TextGetter.getText("title"));
+    outputStream.reset();
+  }
+
+  @Test
+  public void returnedMap() {
+    Map<OptionType, String> expectedMap = new HashMap<>();
+    expectedMap.put(OptionType.BLITZ, "");
+    expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
+    expectedMap.put(OptionType.AI, "W");
+    expectedMap.put(OptionType.AI_TIME, "5");
+    expectedMap.put(OptionType.AI_DEPTH, "3");
+    expectedMap.put(OptionType.AI_MODE, "test");
+    expectedMap.put(OptionType.TIME, "12");
+    expectedMap.put(OptionType.GUI, "");
+    expectedMap.put(OptionType.AI_HEURISTIC, "test");
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> output =
+        CLIOptions.parseOptions(
+            new String[] {
+              "-a=W",
+              "-b",
+              "-g",
+              "-t=12",
+              "--ai-mode=test",
+              "--ai-heuristic=test",
+              "--ai-depth=3",
+              "--ai-time=5",
+              "--contest=myfile.chessrc"
+            },
+            mockRuntime);
+
+    assertEquals(expectedMap, output);
   }
 }

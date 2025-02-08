@@ -2,7 +2,6 @@ package pdp.model;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
 import pdp.utils.Position;
@@ -28,14 +27,18 @@ public class Board {
     this.blackLongCastle = true;
   }
 
-  public List<Move> getAvailableMoves() {
-    // TODO
-    throw new UnsupportedOperationException();
+  public List<Move> getAvailableMoves(Position pos) {
+    return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
   public boolean makeMove(Move move) {
+    // board.makeMove(move);  // jouer le coup dans la bitboard
+
+    // mettre a jour les flags enpassant , si un roi ou une tour a bougé (= modifier le booleen des
+    // castles)
+    move.toString();
     // TODO
-    throw new UnsupportedOperationException();
+    return true;
   }
 
   public Board getCopy() {
@@ -43,7 +46,7 @@ public class Board {
     throw new UnsupportedOperationException();
   }
 
-  public String getAsciiRepresentation() {
+  public char[][] getAsciiRepresentation() {
     int rows = this.board.getNbRows();
     int cols = this.board.getNbCols();
     char[][] charBoard = new char[rows][cols];
@@ -69,12 +72,7 @@ public class Board {
           charBoard, this.board.getKing(color), Piece.KING.getCharRepresentation(color));
     }
 
-    StringJoiner sj = new StringJoiner("\n");
-    for (char[] row : charBoard) {
-      sj.add(new String(row));
-    }
-
-    return sj.toString();
+    return charBoard;
   }
 
   private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {

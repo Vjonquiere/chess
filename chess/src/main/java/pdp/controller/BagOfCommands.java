@@ -81,4 +81,8 @@ public class BagOfCommands {
     }
     return instance;
   }
+
+  public static void setInstance(BagOfCommands instance) {
+    BagOfCommands.instance = instance;
+  }
 }
