@@ -33,7 +33,7 @@ public class Board {
 
   public void makeMove(Move move) {
     if (move.isTake == true) {
-      // deletePieceAt(move.dest);
+      board.deletePieceAt(move.dest.getX(), move.dest.getY());
     }
 
     board.movePiece(move.source, move.dest);
@@ -60,7 +60,11 @@ public class Board {
     }
     if (board.isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
       // Piece newPiece = new Piece(ask to what the user want to promote his pawn)
-      board.promotePawn(move.dest.getX(), move.dest.getY(), this.isWhite, Piece.QUEEN);
+      board.promotePawn(
+          move.dest.getX(),
+          move.dest.getY(),
+          this.isWhite,
+          Piece.QUEEN); // remplacez Piece.QUEEN par newPiece une fois que ca sera implementé
     }
     // verifier si enPassant
     move.toString();
