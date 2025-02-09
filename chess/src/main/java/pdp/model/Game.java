@@ -30,6 +30,10 @@ public class Game extends Subject {
     return this.gameState.getBoard();
   }
 
+  public GameState getGameState() {
+    return this.gameState;
+  }
+
   @Override
   public void addObserver(EventObserver observer) {
     super.addObserver(observer);
@@ -136,7 +140,7 @@ public class Game extends Subject {
 
     Timer timer = gameState.getMoveTimer();
     if (timer != null) {
-      sb.append(TextGetter.getText("timeRemaining", timer.timeRemainingString()));
+      sb.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
     }
 
     sb.append("\n");

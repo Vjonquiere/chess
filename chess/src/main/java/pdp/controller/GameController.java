@@ -22,6 +22,14 @@ public class GameController {
     this.model.addErrorObserver(view);
   }
 
+  public View getView() {
+    return this.view;
+  }
+
+  public Game getModel() {
+    return this.model;
+  }
+
   public void onErrorEvent(Exception e) {
     this.view.onErrorEvent(e);
   }
