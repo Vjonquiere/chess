@@ -18,6 +18,8 @@ public class Board {
   boolean isLastMoveDoublePush;
   boolean isEnPassantTake;
   int nbMovesWithNoCaptureOrPawn;
+  int doubleMovePawnBlack;
+  int doubleMovePawnWhite;
 
   public Board() {
     Logging.configureLogging(LOGGER);
