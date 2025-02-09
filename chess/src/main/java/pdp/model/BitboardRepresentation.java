@@ -555,6 +555,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
   }
 
+  public void addPieceAt(int x, int y, ColoredPiece<Piece, Color> piece) {
+    for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
+      if (entry.getValue().equals(piece)) {
+        board[entry.getKey()].setBit(x % 8 + y * 8);
+      }
+    }
+  }
+
   /**
    * Get if the given square (x,y format) can be attacked by a piece of the given color
    *
@@ -603,11 +611,20 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = squareToPosition(i);
       List<Move> availableMoves =
-          getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
+          getAvailableMoves(
+              piecePosition.getX(), piecePosition.getY(), false); // TODO: Check this line
       for (Move move : availableMoves) {
+        ColoredPiece<Piece, Color> removedPiece = null;
+        if (move.isTake) {
+          removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
+          deletePieceAt(move.getDest().getX(), move.getDest().getY());
+        }
         movePiece(move.source, move.dest); // Play move
         boolean isStillCheck = isCheck(color);
         movePiece(move.dest, move.source); // Undo move
+        if (move.isTake) {
+          addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+        }
         if (!isStillCheck) return false;
       }
     }
@@ -679,5 +696,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     // Change bits
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
+  }
+
+  @Override
+  public String toString() {
+    return getWhiteBoard().or(getBlackBoard()).toString();
   }
 }

@@ -136,6 +136,42 @@ public class BitboardRepresentationTest {
     board.movePiece(new Position(7, 1), new Position(5, 0));
     assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(1, 7));
     assertEquals(new ColoredPiece<>(Piece.KNIGHT, Color.BLACK), board.getPieceAt(0, 5));
+
+    // Test move rook
+    assertEquals(new ColoredPiece<>(Piece.ROOK, Color.WHITE), board.getPieceAt(0, 0));
+    board.movePiece(new Position(0, 0), new Position(2, 0));
+    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(0, 0));
+    assertEquals(new ColoredPiece<>(Piece.ROOK, Color.WHITE), board.getPieceAt(0, 2));
+
+    // Test move bishop
+    assertEquals(new ColoredPiece<>(Piece.BISHOP, Color.BLACK), board.getPieceAt(2, 7));
+    board.movePiece(new Position(7, 2), new Position(2, 7));
+    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(2, 7));
+    assertEquals(new ColoredPiece<>(Piece.BISHOP, Color.BLACK), board.getPieceAt(7, 2));
+
+    // Test move king
+    assertEquals(new ColoredPiece<>(Piece.KING, Color.WHITE), board.getPieceAt(4, 0));
+    board.movePiece(new Position(0, 4), new Position(2, 4));
+    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(4, 0));
+    assertEquals(new ColoredPiece<>(Piece.KING, Color.WHITE), board.getPieceAt(4, 2));
+
+    // Test move queen
+    assertEquals(new ColoredPiece<>(Piece.QUEEN, Color.BLACK), board.getPieceAt(3, 7));
+    board.movePiece(new Position(7, 3), new Position(4, 3));
+    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(3, 7));
+    assertEquals(new ColoredPiece<>(Piece.QUEEN, Color.BLACK), board.getPieceAt(3, 4));
+
+    // Test move king
+    assertEquals(new ColoredPiece<>(Piece.KING, Color.BLACK), board.getPieceAt(4, 7));
+    board.movePiece(new Position(7, 4), new Position(7, 3));
+    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(4, 7));
+    assertEquals(new ColoredPiece<>(Piece.KING, Color.BLACK), board.getPieceAt(3, 7));
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          board.movePiece(new Position(5, 5), new Position(0, 0));
+        }); // Try to move an empty square
   }
 
   @Test
@@ -157,6 +193,7 @@ public class BitboardRepresentationTest {
     assertEquals(
         List.of(new Move(new Position(0, 0), new Position(1, 0))),
         board.getAvailableMoves(0, 0, false)); // Rook no more blocked
+    assertEquals(List.of(), board.getAvailableMoves(5, 5, false)); // Empty square has no moves
   }
 
   @Test
@@ -199,6 +236,26 @@ public class BitboardRepresentationTest {
     BitboardRepresentation board = new BitboardRepresentation();
     assertFalse(board.isCheckMate(Color.BLACK));
     assertFalse(board.isCheckMate(Color.WHITE));
+
+    // scholar's mate
+    board.movePiece(new Position(1, 6), new Position(3, 6));
+    board.movePiece(new Position(6, 4), new Position(4, 4));
+    board.movePiece(new Position(1, 5), new Position(2, 5));
+    board.movePiece(new Position(7, 3), new Position(3, 7));
+    assertTrue(board.isCheckMate(Color.WHITE));
+
+    board = new BitboardRepresentation();
+    assertFalse(board.isCheckMate(Color.BLACK));
+    assertFalse(board.isCheckMate(Color.WHITE));
+    board.movePiece(new Position(1, 4), new Position(3, 4));
+    board.movePiece(new Position(6, 4), new Position(4, 4));
+    board.movePiece(new Position(0, 5), new Position(3, 2));
+    board.movePiece(new Position(7, 5), new Position(4, 2));
+    board.movePiece(new Position(0, 3), new Position(2, 5));
+    board.movePiece(new Position(7, 1), new Position(5, 2));
+    board.deletePieceAt(5, 6);
+    board.movePiece(new Position(2, 5), new Position(6, 5));
+    assertTrue(board.isCheckMate(Color.BLACK));
   }
 
   public void testIsPawnPromotingShouldReturnFalse() {
