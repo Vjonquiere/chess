@@ -614,6 +614,11 @@ public class BitboardRepresentation implements BoardRepresentation {
     return true;
   }
 
+  @Override
+  public boolean isStaleMate(Color color) {
+    return false;
+  }
+
   /**
    * Checks if a pawn at Position(x,y) checks for promotion
    *

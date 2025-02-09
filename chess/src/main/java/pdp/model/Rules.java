@@ -11,6 +11,8 @@ public interface Rules {
 
   public boolean isCheckMate(Color color);
 
+  public boolean isStaleMate(Color color);
+
   public boolean isPawnPromoting(int x, int y, boolean white);
 
   public void promotePawn(int x, int y, boolean white, Piece newPiece);
