@@ -480,7 +480,7 @@ public class BitboardRepresentationTest {
   }
 
   @Test
-  public void testPromotePawnShouldBeSuccess() {
+  public void testPromotePawnShouldBeSuccessForKnightAndQueen() {
     BitboardRepresentation board = new BitboardRepresentation();
     boolean white = true;
 
@@ -493,10 +493,10 @@ public class BitboardRepresentationTest {
     Position whitePawnSrcPos = new Position(1, 0);
     Position whitePawnDstPos = new Position(7, 0);
     board.movePiece(whitePawnSrcPos, whitePawnDstPos);
-    board.promotePawn(0, 7, white, Piece.QUEEN);
+    board.promotePawn(0, 7, white, Piece.KNIGHT);
 
     assertNotNull(board.getPieceAt(0, 7));
-    assertEquals(Piece.QUEEN, board.getPieceAt(0, 7).getPiece());
+    assertEquals(Piece.KNIGHT, board.getPieceAt(0, 7).getPiece());
 
     // Same thing for black
     Position blackBlockerCurrPos = new Position(0, 7);
@@ -510,6 +510,39 @@ public class BitboardRepresentationTest {
 
     assertNotNull(board.getPieceAt(7, 0));
     assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).getPiece());
+  }
+
+  @Test
+  public void testPromotePawnShouldBeSuccessForBishopAndRook() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    boolean white = true;
+
+    // Move piece blocking the last rank position before moving the white pawn
+    Position whiteBlockerCurrPos = new Position(7, 0);
+    Position whiteBlockerNextPos = new Position(4, 0);
+    board.movePiece(whiteBlockerCurrPos, whiteBlockerNextPos);
+
+    // Move pawn now
+    Position whitePawnSrcPos = new Position(1, 0);
+    Position whitePawnDstPos = new Position(7, 0);
+    board.movePiece(whitePawnSrcPos, whitePawnDstPos);
+    board.promotePawn(0, 7, white, Piece.ROOK);
+
+    assertNotNull(board.getPieceAt(0, 7));
+    assertEquals(Piece.ROOK, board.getPieceAt(0, 7).getPiece());
+
+    // Same thing for black
+    Position blackBlockerCurrPos = new Position(0, 7);
+    Position blackBlockerNextPos = new Position(3, 7);
+    board.movePiece(blackBlockerCurrPos, blackBlockerNextPos);
+
+    Position blackPawnSrcPos = new Position(6, 7);
+    Position blackPawnDstPos = new Position(0, 7);
+    board.movePiece(blackPawnSrcPos, blackPawnDstPos);
+    board.promotePawn(7, 0, !white, Piece.BISHOP);
+
+    assertNotNull(board.getPieceAt(7, 0));
+    assertEquals(Piece.BISHOP, board.getPieceAt(7, 0).getPiece());
   }
 
   @Test
