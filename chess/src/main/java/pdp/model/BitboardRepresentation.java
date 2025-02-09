@@ -646,6 +646,89 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Checks if draw by insufficient material is observed (both colors each case) Cases: King vs King
+   * King and Bishop vs King King and Knight vs King King and Bishop vs King and Bishop (same
+   * colored Bishops)
+   *
+   * @return true if a draw by insufficient material is observed
+   */
+  @Override
+  public boolean isDrawByInsufficientMaterial() {
+    List<Position> posWhiteKing = getKing(true);
+    List<Position> posBlackKing = getKing(false);
+    if (posWhiteKing.isEmpty() || posBlackKing.isEmpty()) {
+      return false;
+    }
+
+    // If at least a queen or a rook or a pawn is found on the board then no draw by insufficient
+    // material
+    List<List<Position>> posListFalseInAllCases = new ArrayList<>();
+    posListFalseInAllCases.add(getQueens(true));
+    posListFalseInAllCases.add(getRooks(true));
+    posListFalseInAllCases.add(getPawns(true));
+    posListFalseInAllCases.add(getQueens(false));
+    posListFalseInAllCases.add(getRooks(false));
+    posListFalseInAllCases.add(getPawns(false));
+
+    for (List<Position> pieceList : posListFalseInAllCases) {
+      if (!pieceList.isEmpty()) {
+        return false;
+      }
+    }
+
+    // Get all remaining pieces
+    List<Position> posWhiteBishops = getBishops(true);
+    List<Position> posBlackBishops = getBishops(false);
+    List<Position> posWhiteKnights = getKnights(true);
+    List<Position> posBlackKnights = getKnights(false);
+
+    // King vs King
+    if (posWhiteBishops.isEmpty()
+        && posBlackBishops.isEmpty()
+        && posWhiteKnights.isEmpty()
+        && posBlackKnights.isEmpty()) {
+      return true;
+    }
+
+    // King and Bishop vs King
+    if ((posWhiteBishops.size() == 1
+            && posBlackBishops.isEmpty()
+            && posWhiteKnights.isEmpty()
+            && posBlackKnights.isEmpty())
+        || (posBlackBishops.size() == 1
+            && posWhiteBishops.isEmpty()
+            && posWhiteKnights.isEmpty()
+            && posBlackKnights.isEmpty())) {
+      return true;
+    }
+
+    // King and Knight vs King
+    if ((posWhiteKnights.size() == 1
+            && posBlackBishops.isEmpty()
+            && posWhiteBishops.isEmpty()
+            && posBlackKnights.isEmpty())
+        || (posBlackKnights.size() == 1
+            && posBlackBishops.isEmpty()
+            && posWhiteBishops.isEmpty()
+            && posWhiteKnights.isEmpty())) {
+      return true;
+    }
+
+    // King and Bishop vs King and Bishop (same-colored bishops)
+    if (posWhiteBishops.size() == 1 && posBlackBishops.size() == 1) {
+      Position whiteBishop = posWhiteBishops.get(0);
+      Position blackBishop = posBlackBishops.get(0);
+      // Check if bishops are on the same color square to know if same color
+      if ((whiteBishop.getX() + whiteBishop.getY()) % 2
+          == (blackBishop.getX() + blackBishop.getY()) % 2) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Checks if a pawn at Position(x,y) checks for promotion
    *
    * @param x The x-coordinate (file) of the pawn
