@@ -17,6 +17,7 @@ public class Board {
   byte doubleMovePawnWhite;
   byte doubleMovePawnBlack;
   Position enPassantPos;
+  int nbMovesWithNoCaptureOrPawn;
 
   public Board() {
     Logging.configureLogging(LOGGER);
@@ -29,6 +30,7 @@ public class Board {
     this.blackLongCastle = true;
     this.doubleMovePawnBlack = 0;
     this.doubleMovePawnWhite = 0;
+    this.nbMovesWithNoCaptureOrPawn = 0;
   }
 
   public List<Move> getAvailableMoves(Position pos) {
@@ -38,9 +40,17 @@ public class Board {
   public void makeMove(Move move) {
     if (move.isTake == true) {
       board.deletePieceAt(move.dest.getX(), move.dest.getY());
+      // Reset the number of moves with no capture
+      this.nbMovesWithNoCaptureOrPawn = 0;
+    }
+    if (board.getPieceAt(move.source.getX(), move.source.getY()).getPiece() == Piece.PAWN) {
+      // Reset the number of moves with no pawn move
+      this.nbMovesWithNoCaptureOrPawn = 0;
     }
 
     board.movePiece(move.source, move.dest);
+
+    this.nbMovesWithNoCaptureOrPawn++;
 
     if (this.isWhite) {
       this.isWhite = false;
@@ -135,5 +145,10 @@ public class Board {
     for (Position pos : positions) {
       board[this.board.getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
     }
+  }
+
+  public int getNbMovesWithNoCaptureOrPawn() {
+    // Divide by 2 because fifty move rule is for full moves
+    return this.nbMovesWithNoCaptureOrPawn / 2;
   }
 }

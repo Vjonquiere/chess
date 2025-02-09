@@ -11,13 +11,13 @@ public class GameStateTest {
   private GameState gameBlitzOn;
 
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     gameBlitzOff = new GameState();
     gameBlitzOn = new GameState(new Timer(30 * 60));
   }
 
   @Test
-  void testInitialisation() {
+  public void testInitialisation() {
     assertNotNull(gameBlitzOff.getBoard(), "The board should be initialized !");
     assertNull(gameBlitzOff.getHistory(), "History should be null until implemented !");
     assertTrue(gameBlitzOff.isWhiteTurn(), "The first player should be white !");
@@ -26,6 +26,10 @@ public class GameStateTest {
     assertFalse(gameBlitzOff.hasWhiteResigned(), "White should not have resigned initially !");
     assertFalse(gameBlitzOff.hasBlackResigned(), "Black should not have resigned initially !");
     assertFalse(
+        gameBlitzOn.hasWhiteLostOnTime(), "White should not lose on time when game starts !");
+    assertFalse(
+        gameBlitzOn.hasBlackLostOnTime(), "Black should not lose on time when game starts !");
+    assertFalse(
         gameBlitzOff.hasWhiteRequestedDraw(), "White should not have requested a draw initially !");
     assertFalse(
         gameBlitzOff.hasBlackRequestedDraw(), "Black should not have requested a draw initially !");
@@ -33,7 +37,7 @@ public class GameStateTest {
   }
 
   @Test
-  void testSwitchPlayerTurn() {
+  public void testSwitchPlayerTurn() {
     assertTrue(gameBlitzOff.isWhiteTurn(), "Game should start with White's turn !");
     gameBlitzOff.switchPlayerTurn();
     assertFalse(gameBlitzOff.isWhiteTurn(), "After White moves, it should be Black's turn !");
@@ -42,12 +46,12 @@ public class GameStateTest {
   }
 
   @Test
-  void testBlitzModeInitialization() {
+  public void testBlitzModeInitialization() {
     assertNotNull(gameBlitzOn.getMoveTimer(), "Blitz mode should have a timer initialized !");
   }
 
   @Test
-  void testWhiteRequestsDraw() {
+  public void testWhiteRequestsDraw() {
     gameBlitzOff.whiteWantsToDraw();
     assertTrue(gameBlitzOff.hasWhiteRequestedDraw(), "White should have requested a draw !");
     assertFalse(
@@ -55,7 +59,7 @@ public class GameStateTest {
   }
 
   @Test
-  void testBlackRequestsDraw() {
+  public void testBlackRequestsDraw() {
     gameBlitzOff.blackWantsToDraw();
     assertTrue(gameBlitzOff.hasBlackRequestedDraw(), "Black should have requested a draw !");
     assertFalse(
@@ -63,7 +67,7 @@ public class GameStateTest {
   }
 
   @Test
-  void testWhiteCancelsDrawRequest() {
+  public void testWhiteCancelsDrawRequest() {
     gameBlitzOff.whiteWantsToDraw();
     gameBlitzOff.whiteCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasWhiteRequestedDraw(), "White's draw request should be canceled !");
@@ -71,7 +75,7 @@ public class GameStateTest {
   }
 
   @Test
-  void testBlackCancelsDrawRequest() {
+  public void testBlackCancelsDrawRequest() {
     gameBlitzOff.blackWantsToDraw();
     gameBlitzOff.blackCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasBlackRequestedDraw(), "Black's draw request should be canceled !");
@@ -79,23 +83,37 @@ public class GameStateTest {
   }
 
   @Test
-  void testMutualDrawAgreementShouldEndGame() {
+  public void testMutualDrawAgreementShouldEndGame() {
     gameBlitzOff.whiteWantsToDraw();
     gameBlitzOff.blackWantsToDraw();
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over if both players agree to a draw !");
   }
 
   @Test
-  void testWhiteResigns() {
+  public void testWhiteResigns() {
     gameBlitzOff.whiteResigns();
     assertTrue(gameBlitzOff.hasWhiteResigned(), "White should be marked as resigned !");
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over after White resigns !");
   }
 
   @Test
-  void testBlackResigns() {
+  public void testBlackResigns() {
     gameBlitzOff.blackResigns();
     assertTrue(gameBlitzOff.hasBlackResigned(), "Black should be marked as resigned !");
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over after Black resigns !");
+  }
+
+  @Test
+  public void testApplyFiftyMoveRule() {
+    gameBlitzOff.applyFiftyMoveRule();
+    assertTrue(
+        gameBlitzOff.isGameOver(),
+        "Game should end in a draw if the fifty move rule is triggered !");
+  }
+
+  @Test
+  public void testPlayerLosesOnTime() {
+    // TO DO when Time class is implemented
+    // gameBlitzOn.playerLosesOnTime();
   }
 }
