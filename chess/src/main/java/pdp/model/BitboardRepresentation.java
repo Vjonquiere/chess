@@ -618,6 +618,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @Override Checks the StaleMate state for the given color
    *
    * @param color The color you want to check StaleMate for
+   * @param colorTurnToPlay Player's turn to know if player who potentially moves in check has to
+   *     move
    * @return true if color {color} is stalemated. false otherwise.
    */
   @Override
