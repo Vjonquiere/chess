@@ -731,7 +731,22 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
-  public boolean isEnPassant(int x, int y, boolean white) {
+  public boolean isEnPassant(int x, int y, Move move, boolean white) {
+    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    if (white
+        && piece.getPiece() == Piece.PAWN
+        && (move.dest.getX() == (x) && move.dest.getY() == (y))
+        && ((move.source.getX() == (x - 1) && move.source.getY() == (y - 1))
+            || (move.source.getX() == (x + 1) && move.source.getY() == (y - 1)))) {
+      return true;
+    }
+    if (!white
+        && piece.getPiece() == Piece.PAWN
+        && (move.dest.getX() == (x) && move.dest.getY() == (y))
+        && ((move.source.getX() == (x + 1) && move.source.getY() == (y + 1))
+            || (move.source.getX() == (x - 1) && move.source.getY() == (y + 1)))) {
+      return true;
+    }
     return false;
   }
 }

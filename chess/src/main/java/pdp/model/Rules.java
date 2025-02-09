@@ -19,5 +19,5 @@ public interface Rules {
 
   public boolean isDoublePushPossible(Move move, boolean white);
 
-  public boolean isEnPassant(int x, int y, boolean white);
+  public boolean isEnPassant(int x, int y, Move move, boolean white);
 }
