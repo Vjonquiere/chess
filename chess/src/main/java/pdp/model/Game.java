@@ -100,11 +100,16 @@ public class Game extends Subject {
       // rangé
       // board.board.isCheck  pas besoin car la fonction isCheckAfterMove verifie deja cela
 
-      // if(isCheckAfterMove(classicalMove){
-      //  throw new IllegalMoveException(classicalMove.toString());
-      // }
+      if (this.gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(
+              this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, classicalMove)) {
+        throw new IllegalMoveException(classicalMove.toString());
+      }
 
       this.gameState.getBoard().makeMove(classicalMove);
+      // addToHystory(move);
       this.gameState.switchPlayerTurn();
       // addToHystory(move);
       this.notifyObservers(EventType.MOVE_PLAYED);
@@ -112,22 +117,22 @@ public class Game extends Subject {
     } catch (Exception e) {
 
       /* if(roque){
-        if(isCheckAfterMove(Move){
+        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
           throw new IllegalMoveException(Move.toString());
         }
         play.roque
-        this.gameState.switchPlayerTurn();
         addToHystory(move);
+        this.gameState.switchPlayerTurn();
         this.notifyObservers();
       }
 
       if(enpassant){
-        if(isCheckAfterMove(Move){
+        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
           throw new IllegalMoveException(Move.toString());
         }
         play.enpassant
-        this.gameState.switchPlayerTurn();
         addToHystory(move);
+        this.gameState.switchPlayerTurn();
         this.notifyObservers();
 
       } */

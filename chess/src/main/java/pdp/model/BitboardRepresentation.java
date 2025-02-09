@@ -590,6 +590,25 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Get the check state after move for the given color
+   *
+   * @param color The piece color you want to know check status
+   * @param move The move you want to know if its make the king in check status
+   * @return True if the given color is in check after the move, False else
+   */
+  @Override
+  public boolean isCheckAfterMove(Color color, Move move) {
+    this.movePiece(move.source, move.dest);
+    if (isCheck(color)) {
+      this.movePiece(move.dest, move.source);
+      return true;
+    } else {
+      this.movePiece(move.dest, move.source);
+      return false;
+    }
+  }
+
+  /**
    * Get the checkMate state for the given color (⚠️ can be resources/time-consuming if there are
    * many pieces remaining on the board)
    *
