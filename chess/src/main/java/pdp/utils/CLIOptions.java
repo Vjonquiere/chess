@@ -137,19 +137,15 @@ public class CLIOptions {
       if (cmd.hasOption(lang)) {
         DEBUG(LOGGER, "Language option activated");
         if (cmd.getParsedOptionValue(lang).equals("en")) {
-          TextGetter.setLocale("en");
           DEBUG(LOGGER, "Language = English (already set by default)");
           // TODO: de-comment when french file finished
         } /*else if (cmd.getParsedOptionValue(lang).equals("fr")) {
             DEBUG(LOGGER, "Language = French");
             TextGetter.setLocale(cmd.getParsedOptionValue("lang"));
           } */ else {
-          TextGetter.setLocale("en");
           System.err.println(
               "Language " + cmd.getParsedOptionValue(lang) + " not supported, language = english");
         }
-      } else {
-        TextGetter.setLocale("en");
       }
       if (cmd.hasOption(blitz)) {
         DEBUG(LOGGER, "Blitz mode activated");
