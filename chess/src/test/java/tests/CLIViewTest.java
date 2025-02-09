@@ -1,8 +1,10 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -62,6 +64,23 @@ public class CLIViewTest {
   void tearDown() {
     System.setOut(originalOut);
     System.setErr(originalErr);
+  }
+
+  @Test
+  void testInputListener() throws InterruptedException {
+    String simulatedInput = "move e2-e4\nsave game.txt\nhelp\n";
+    System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+    Thread inputThread = view.start();
+
+    Thread.sleep(100);
+
+    verify(mockBagOfCommands).addCommand(any(PlayMoveCommand.class));
+
+    verify(mockBagOfCommands).addCommand(any(SaveGameCommand.class));
+
+    assertTrue(outputStream.toString().contains("Available commands:"));
+
+    inputThread.interrupt();
   }
 
   @Test
