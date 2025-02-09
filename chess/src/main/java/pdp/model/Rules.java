@@ -9,6 +9,8 @@ public interface Rules {
 
   public boolean isCheck(Color color);
 
+  public boolean isCheckAfterMove(Color color, Move move);
+
   public boolean isCheckMate(Color color);
 
   public boolean isPawnPromoting(int x, int y, boolean white);
