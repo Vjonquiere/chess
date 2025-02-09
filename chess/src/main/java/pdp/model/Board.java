@@ -14,9 +14,9 @@ public class Board {
   boolean blackShortCastle;
   boolean whiteLongCastle;
   boolean blackLongCastle;
-  byte doubleMovePawnWhite;
-  byte doubleMovePawnBlack;
   Position enPassantPos;
+  boolean isLastMoveDoublePush;
+  boolean isEnPassantTake;
   int nbMovesWithNoCaptureOrPawn;
 
   public Board() {
@@ -28,6 +28,8 @@ public class Board {
     this.blackShortCastle = true;
     this.whiteLongCastle = true;
     this.blackLongCastle = true;
+    this.isLastMoveDoublePush = false;
+    this.isEnPassantTake = false;
     this.doubleMovePawnBlack = 0;
     this.doubleMovePawnWhite = 0;
     this.nbMovesWithNoCaptureOrPawn = 0;
@@ -46,6 +48,15 @@ public class Board {
     if (board.getPieceAt(move.source.getX(), move.source.getY()).getPiece() == Piece.PAWN) {
       // Reset the number of moves with no pawn move
       this.nbMovesWithNoCaptureOrPawn = 0;
+    }
+    if (this.isEnPassantTake) {
+      this.isLastMoveDoublePush = false;
+      this.isEnPassantTake = false;
+      if (this.isWhite) {
+        board.deletePieceAt(move.dest.getX(), move.dest.getY() - 1);
+      } else {
+        board.deletePieceAt(move.dest.getX(), move.dest.getY() + 1);
+      }
     }
 
     board.movePiece(move.source, move.dest);
@@ -86,6 +97,14 @@ public class Board {
           move.dest.getY(),
           this.isWhite,
           Piece.QUEEN); // remplacez Piece.QUEEN par newPiece une fois que ca sera implementé
+    }
+
+    if (isLastMoveDoublePush) {
+      this.isLastMoveDoublePush = false;
+    }
+
+    if (this.isEnPassantTake) {
+      this.isLastMoveDoublePush = false;
     }
     // verifier si enPassant
     move.toString();

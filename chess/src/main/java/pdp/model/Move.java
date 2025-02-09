@@ -76,7 +76,7 @@ public class Move {
         return move;
       }
     }
-    throw new IllegalMoveException(this.toString());
+    throw new IllegalMoveException("It's not a classicalMove " + this.toString());
   }
 
   public Position getSource() {
