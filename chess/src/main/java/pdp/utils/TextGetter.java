@@ -17,14 +17,13 @@ public class TextGetter {
    * @param languageCode wished language for the app
    */
   public static void setLocale(String languageCode) {
-      // If the language code is "fr", set to French, otherwise default to English
-      if ("fr".equalsIgnoreCase(languageCode)) {
-        locale = Locale.FRENCH;
-      } else {
-        locale = Locale.ENGLISH;
-      }
-      messages = ResourceBundle.getBundle("chessResources", locale);
-
+    // If the language code is "fr", set to French, otherwise default to English
+    if ("fr".equalsIgnoreCase(languageCode)) {
+      locale = Locale.FRENCH;
+    } else {
+      locale = Locale.ENGLISH;
+    }
+    messages = ResourceBundle.getBundle("chessResources", locale);
   }
 
   /**
