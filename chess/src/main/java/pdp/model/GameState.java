@@ -1,5 +1,6 @@
 package pdp.model;
 
+import pdp.events.EventType;
 import pdp.events.Subject;
 
 public class GameState extends Subject {
@@ -76,7 +77,7 @@ public class GameState extends Subject {
     if (whiteWantsToDraw && blackWantsToDraw) {
       // TO DO
       System.out.println("Game drawn by mutual agreement!");
-      notifyObservers();
+      notifyObservers(EventType.GAME_OVER);
       this.isGameOver = true;
     }
   }
