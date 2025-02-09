@@ -1,7 +1,7 @@
 package pdp.events;
 
 public interface EventObserver {
-  void onGameEvent();
+  void onGameEvent(EventType event);
 
   void onErrorEvent(Exception e);
 }

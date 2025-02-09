@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
+import pdp.events.EventType;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
@@ -40,8 +41,20 @@ public class CLIView implements View {
   }
 
   @Override
-  public void onGameEvent() {
-    System.out.println(Game.getInstance().getGameRepresentation());
+  public void onGameEvent(EventType event) {
+    switch (event) {
+      case GAME_STARTED:
+        System.out.println(TextGetter.getText("welcomeCLI"));
+        System.out.println(TextGetter.getText("welcomeInstructions"));
+        System.out.println(Game.getInstance().getGameRepresentation());
+        break;
+      case MOVE_PLAYED:
+        System.out.println(Game.getInstance().getGameRepresentation());
+        break;
+      case GAME_OVER:
+        System.out.println("The game is over"); // TODO change behavior when end will be implemented
+        break;
+    }
   }
 
   @Override
@@ -64,8 +77,6 @@ public class CLIView implements View {
     Thread inputThread =
         new Thread(
             () -> {
-              System.out.println(TextGetter.getText("welcomeCLI"));
-              System.out.println(TextGetter.getText("welcomeInstructions"));
               Scanner scanner = new Scanner(System.in);
               while (running) {
                 String input = scanner.nextLine();
