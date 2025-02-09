@@ -12,6 +12,13 @@ import pdp.view.GameView;
 import pdp.view.View;
 
 public abstract class GameInitializer {
+
+  /**
+   * Initialize the game with the given options.
+   *
+   * @param options The options to use to initialize the game.
+   * @return A new GameController instance.
+   */
   public static GameController initialize(HashMap<OptionType, String> options) {
 
     View view;

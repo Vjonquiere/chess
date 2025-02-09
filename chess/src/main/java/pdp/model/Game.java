@@ -35,6 +35,11 @@ public class Game extends Subject {
     return this.gameState;
   }
 
+  /**
+   * Adds an observer to the game and immediately notifies a GAME_STARTED event.
+   *
+   * @param observer The observer to be added.
+   */
   @Override
   public void addObserver(EventObserver observer) {
     super.addObserver(observer);
@@ -185,6 +190,12 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName());
   }
 
+  /**
+   * Returns a string representation of the game. Includes the ASCII representation of the board,
+   * the time remaining (if timer is not null), and the color of the player to play.
+   *
+   * @return A string representation of the game.
+   */
   public String getGameRepresentation() {
     char[][] board = this.gameState.getBoard().getAsciiRepresentation();
     StringBuilder sb = new StringBuilder();

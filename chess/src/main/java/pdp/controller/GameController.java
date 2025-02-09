@@ -30,6 +30,11 @@ public class GameController {
     return this.model;
   }
 
+  /**
+   * Handles an exception by passing it to the view for display.
+   *
+   * @param e The exception to handle.
+   */
   public void onErrorEvent(Exception e) {
     this.view.onErrorEvent(e);
   }

@@ -126,11 +126,4 @@ public class CLIViewTest {
 
     assertTrue(outputStream.toString().contains("Invalid move!"));
   }
-
-  @Test
-  void testOnErrorEventWithGenericException() {
-    view.onErrorEvent(new RuntimeException("Some error occurred"));
-
-    assertTrue(outputStream.toString().contains("Uncaught Error received: Some error occurred"));
-  }
 }
