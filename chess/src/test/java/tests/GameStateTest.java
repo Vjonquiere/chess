@@ -104,6 +104,14 @@ public class GameStateTest {
   }
 
   @Test
+  public void testApplyFiftyMoveRule() {
+    gameBlitzOff.applyFiftyMoveRule();
+    assertTrue(
+        gameBlitzOff.isGameOver(),
+        "Game should end in a draw if the fifty move rule is triggered !");
+  }
+
+  @Test
   public void testPlayerLosesOnTime() {
     // TO DO when Time class is implemented
     // gameBlitzOn.playerLosesOnTime();

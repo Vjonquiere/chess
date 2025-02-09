@@ -147,4 +147,13 @@ public class GameState extends Subject {
   public boolean isGameOver() {
     return this.isGameOver;
   }
+
+  public boolean isFiftyMoveRule() {
+    return this.board.getNbMovesWithNoCaptureOrPawn() >= 50;
+  }
+
+  public void applyFiftyMoveRule() {
+    this.isGameOver = true;
+    notifyObservers(EventType.GAME_OVER);
+  }
 }
