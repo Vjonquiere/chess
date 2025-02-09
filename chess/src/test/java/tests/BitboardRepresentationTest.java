@@ -1,14 +1,11 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
-import pdp.model.Piece;
 import pdp.utils.Position;
 
 public class BitboardRepresentationTest {
@@ -201,6 +198,27 @@ public class BitboardRepresentationTest {
     assertFalse(board.isCheckMate(Color.WHITE));
   }
 
+  public void deleteAllPiecesExceptThosePositions(
+      BitboardRepresentation board, List<Position> posListWhite, List<Position> posListBlack) {
+    for (int yWhite = 0; yWhite <= 1; yWhite++) {
+      for (int xWhite = 0; xWhite <= 7; xWhite++) {
+        Position pos = new Position(yWhite, xWhite);
+        if (!posListWhite.contains(pos)) {
+          board.deletePieceAt(xWhite, yWhite);
+        }
+      }
+    }
+
+    for (int yBlack = 6; yBlack <= 7; yBlack++) {
+      for (int xBlack = 0; xBlack <= 7; xBlack++) {
+        Position pos = new Position(yBlack, xBlack);
+        if (!posListBlack.contains(pos)) {
+          board.deletePieceAt(xBlack, yBlack);
+        }
+      }
+    }
+  }
+
   @Test
   public void testIsStaleMateShouldBeFalse() {
     BitboardRepresentation board = new BitboardRepresentation();
@@ -220,29 +238,19 @@ public class BitboardRepresentationTest {
     Position initBlackKingPos = new Position(7, 4);
     Position initBlackQueenPos = new Position(7, 3);
 
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListBlack.add(initBlackKingPos);
+    posListBlack.add(initBlackQueenPos);
+
     Position finalWhiteKingPos = new Position(0, 7);
     Position finalBlackKingPos = new Position(1, 5);
     Position finalBlackQueenPos = new Position(2, 6);
 
-    // Delete white pieces except white king
-    for (int yWhite = 0; yWhite <= 1; yWhite++) {
-      for (int xWhite = 0; xWhite <= 7; xWhite++) {
-        Position pos = new Position(yWhite, xWhite);
-        if (!pos.equals(initWhiteKingPos)) {
-          board.deletePieceAt(xWhite, yWhite);
-        }
-      }
-    }
-
-    // Delete black pieces except black king and black queen
-    for (int yBlack = 6; yBlack <= 7; yBlack++) {
-      for (int xBlack = 0; xBlack <= 7; xBlack++) {
-        Position pos = new Position(yBlack, xBlack);
-        if (!pos.equals(initBlackKingPos) && !pos.equals(initBlackQueenPos)) {
-          board.deletePieceAt(xBlack, yBlack);
-        }
-      }
-    }
+    // Delete pieces except white king, black king and black queen
+    deleteAllPiecesExceptThosePositions(board, posListWhite, posListBlack);
 
     // Moves pieces to wanted positions
     board.movePiece(initWhiteKingPos, finalWhiteKingPos);
@@ -251,6 +259,106 @@ public class BitboardRepresentationTest {
 
     // White to move
     assertTrue(board.isStaleMate(Color.WHITE, Color.WHITE));
+  }
+
+  @Test
+  public void testDrawByInsufficientMaterialKingVsKing() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    Position initWhiteKingPos = new Position(0, 4);
+    Position initBlackKingPos = new Position(7, 4);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListBlack.add(initBlackKingPos);
+
+    deleteAllPiecesExceptThosePositions(board, posListWhite, posListBlack);
+
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawByInsufficientMaterialKingAndBishopVsKing() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    Position initWhiteKingPos = new Position(0, 4);
+    Position posWhiteBishop = new Position(0, 2);
+    Position initBlackKingPos = new Position(7, 4);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(posWhiteBishop);
+    posListBlack.add(initBlackKingPos);
+
+    deleteAllPiecesExceptThosePositions(board, posListWhite, posListBlack);
+
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawByInsufficientMaterialKingAndKnightVsKing() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    Position initWhiteKingPos = new Position(0, 4);
+    Position posWhiteKnight = new Position(0, 1);
+    Position initBlackKingPos = new Position(7, 4);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(posWhiteKnight);
+    posListBlack.add(initBlackKingPos);
+
+    deleteAllPiecesExceptThosePositions(board, posListWhite, posListBlack);
+
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawByInsufficientMaterialKingAndBishopVsKingAndSameColorBishop() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    Position initWhiteKingPos = new Position(0, 4);
+    Position posWhiteBishop = new Position(0, 2);
+    Position initBlackKingPos = new Position(7, 4);
+    Position posBlackBishop = new Position(7, 5);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(posWhiteBishop);
+    posListBlack.add(initBlackKingPos);
+    posListBlack.add(posBlackBishop);
+
+    deleteAllPiecesExceptThosePositions(board, posListWhite, posListBlack);
+
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawByInsufficientMaterialNotDrawDueToPawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    Position initWhiteKingPos = new Position(0, 4);
+    Position posWhitePawn = new Position(1, 0);
+    Position initBlackKingPos = new Position(7, 4);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(posWhitePawn);
+    posListBlack.add(initBlackKingPos);
+
+    deleteAllPiecesExceptThosePositions(board, posListWhite, posListBlack);
+
+    assertFalse(board.isDrawByInsufficientMaterial());
   }
 
   @Test
