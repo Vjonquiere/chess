@@ -8,17 +8,17 @@ public class Timer {
 
   // TODO
 
-  public Timer() {
+  public Timer(int time) {
     Logging.configureLogging(LOGGER);
   }
 
-  public int timeRemaining() {
+  public int getTimeRemaining() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
 
-  public String timeRemainingString() {
+  public String getTimeRemainingString() {
     // TODO
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());

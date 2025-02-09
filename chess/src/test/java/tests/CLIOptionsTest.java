@@ -6,6 +6,8 @@ import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
+import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 
 public class CLIOptionsTest {
@@ -247,5 +250,37 @@ public class CLIOptionsTest {
     assertTrue(outputStream.toString().contains("Language ru not supported, language = english"));
     assertEquals("Chess game", TextGetter.getText("title"));
     outputStream.reset();
+  }
+
+  @Test
+  public void returnedMap() {
+    Map<OptionType, String> expectedMap = new HashMap<>();
+    expectedMap.put(OptionType.BLITZ, "");
+    expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
+    expectedMap.put(OptionType.AI, "W");
+    expectedMap.put(OptionType.AI_TIME, "5");
+    expectedMap.put(OptionType.AI_DEPTH, "3");
+    expectedMap.put(OptionType.AI_MODE, "test");
+    expectedMap.put(OptionType.TIME, "12");
+    expectedMap.put(OptionType.GUI, "");
+    expectedMap.put(OptionType.AI_HEURISTIC, "test");
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> output =
+        CLIOptions.parseOptions(
+            new String[] {
+              "-a=W",
+              "-b",
+              "-g",
+              "-t=12",
+              "--ai-mode=test",
+              "--ai-heuristic=test",
+              "--ai-depth=3",
+              "--ai-time=5",
+              "--contest=myfile.chessrc"
+            },
+            mockRuntime);
+
+    assertEquals(expectedMap, output);
   }
 }

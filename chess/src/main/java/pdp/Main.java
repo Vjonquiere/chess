@@ -2,14 +2,9 @@ package pdp;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
-import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
-import pdp.model.Game;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
-import pdp.utils.TextGetter;
-import pdp.view.CLIView;
-import pdp.view.View;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 

@@ -11,8 +11,8 @@ public abstract class Subject {
     observers.add(observer);
   }
 
-  public void notifyObserver(EventObserver observer) {
-    observer.onGameEvent();
+  public void notifyObserver(EventObserver observer, EventType event) {
+    observer.onGameEvent(event);
   }
 
   public void removeObserver(EventObserver observer) {
@@ -27,9 +27,9 @@ public abstract class Subject {
     errorObservers.remove(observer);
   }
 
-  public void notifyObservers() {
+  public void notifyObservers(EventType event) {
     for (EventObserver observer : observers) {
-      notifyObserver(observer);
+      notifyObserver(observer, event);
     }
   }
 

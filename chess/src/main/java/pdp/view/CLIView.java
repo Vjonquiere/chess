@@ -7,17 +7,26 @@ import java.util.function.Consumer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
+import pdp.events.EventType;
+import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPositionException;
+import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.utils.TextGetter;
 
 public class CLIView implements View {
   private boolean running = false;
-  private final Map<String, Consumer<String>> commands = new HashMap<>();
+  private final Map<String, CommandEntry> commands = new HashMap<>();
 
   public CLIView() {
-    commands.put("move", this::moveCommand);
-    commands.put("help", this::helpCommand);
-    commands.put("save", this::saveCommand);
-    commands.put("quit", this::quitCommand);
+    commands.put(
+        "move", new CommandEntry(this::moveCommand, TextGetter.getText("moveHelpDescription")));
+    commands.put(
+        "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
+    commands.put(
+        "help", new CommandEntry(this::helpCommand, TextGetter.getText("helpHelpDescription")));
+    commands.put(
+        "quit", new CommandEntry(this::quitCommand, TextGetter.getText("quitHelpDescription")));
   }
 
   /**
@@ -32,13 +41,31 @@ public class CLIView implements View {
   }
 
   @Override
-  public void onGameEvent() {
-    System.out.println(Game.getInstance().getGameRepresentation());
+  public void onGameEvent(EventType event) {
+    switch (event) {
+      case GAME_STARTED:
+        System.out.println(TextGetter.getText("welcomeCLI"));
+        System.out.println(TextGetter.getText("welcomeInstructions"));
+        System.out.println(Game.getInstance().getGameRepresentation());
+        break;
+      case MOVE_PLAYED:
+        System.out.println(Game.getInstance().getGameRepresentation());
+        break;
+      case GAME_OVER:
+        System.out.println("The game is over"); // TODO change behavior when end will be implemented
+        break;
+    }
   }
 
   @Override
   public void onErrorEvent(Exception e) {
-    System.out.println("Received " + e.getClass().getName() + ": " + e.getMessage());
+    if (e instanceof IllegalMoveException
+        || e instanceof MoveParsingException
+        || e instanceof InvalidPositionException) {
+      System.out.println(e.getMessage());
+    } else {
+      System.err.println("Uncaught Error received: " + e.getMessage());
+    }
   }
 
   /**
@@ -50,8 +77,6 @@ public class CLIView implements View {
     Thread inputThread =
         new Thread(
             () -> {
-              System.out.println("Welcome to the game!");
-              System.out.println("Type 'help' for a list of available commands.");
               Scanner scanner = new Scanner(System.in);
               while (running) {
                 String input = scanner.nextLine();
@@ -75,11 +100,12 @@ public class CLIView implements View {
     input = input.trim().toLowerCase();
     String[] parts = input.split(" ", 2);
 
-    Consumer<String> command = commands.get(parts[0]);
-    if (command != null) {
+    CommandEntry ce = commands.get(parts[0]);
+    if (ce != null) {
+      Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
-      System.out.println("Unknown command: " + input);
+      System.out.println(TextGetter.getText("unknownCommand", input));
       this.helpCommand("");
     }
   }
@@ -99,9 +125,9 @@ public class CLIView implements View {
    * @param args Unused argument
    */
   private void helpCommand(String args) {
-    System.out.println("Available commands:");
-    for (String command : commands.keySet()) {
-      System.out.println(command);
+    System.out.println(TextGetter.getText("availableCommandsTitle"));
+    for (Map.Entry<String, CommandEntry> entry : commands.entrySet()) {
+      System.out.printf("  %-10s - %s%n", entry.getKey(), entry.getValue().description());
     }
   }
 
@@ -120,7 +146,9 @@ public class CLIView implements View {
    * @param args Unused argument
    */
   private void quitCommand(String args) {
-    System.out.println("Quitting...");
+    System.out.println(TextGetter.getText("quitting"));
     this.running = false;
   }
+
+  private record CommandEntry(Consumer<String> action, String description) {}
 }

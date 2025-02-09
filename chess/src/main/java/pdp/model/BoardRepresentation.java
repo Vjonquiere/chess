@@ -23,4 +23,6 @@ public interface BoardRepresentation extends Rules {
   public int getNbRows();
 
   public void movePiece(Position from, Position to);
+
+  public void deletePieceAt(int x, int y);
 }

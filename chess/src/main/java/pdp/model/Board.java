@@ -10,35 +10,75 @@ public class Board {
   private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
   BoardRepresentation board;
   boolean isWhite;
-  byte enPassant;
   boolean whiteShortCastle;
   boolean blackShortCastle;
   boolean whiteLongCastle;
   boolean blackLongCastle;
+  byte doubleMovePawnWhite;
+  byte doubleMovePawnBlack;
+  Position enPassantPos;
 
   public Board() {
     Logging.configureLogging(LOGGER);
     this.board = new BitboardRepresentation();
     this.isWhite = true;
-    this.enPassant = 0;
+    this.enPassantPos = null;
     this.whiteShortCastle = true;
     this.blackShortCastle = true;
     this.whiteLongCastle = true;
     this.blackLongCastle = true;
+    this.doubleMovePawnBlack = 0;
+    this.doubleMovePawnWhite = 0;
   }
 
   public List<Move> getAvailableMoves(Position pos) {
-    return board.getAvailableMoves(pos.getX(), pos.getY(), this);
+    return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
-  public boolean makeMove(Move move) {
-    // board.makeMove(move);  // jouer le coup dans la bitboard
+  public void makeMove(Move move) {
+    if (move.isTake == true) {
+      board.deletePieceAt(move.dest.getX(), move.dest.getY());
+    }
 
-    // mettre a jour les flags enpassant , si un roi ou une tour a bougé (= modifier le booleen des
-    // castles)
+    board.movePiece(move.source, move.dest);
+
+    if (this.isWhite) {
+      this.isWhite = false;
+    } else {
+      this.isWhite = true;
+    }
+
+    if (this.whiteShortCastle == true
+        && (move.source.equals(new Position(0, 4))
+            || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
+      this.whiteShortCastle = false;
+    }
+    if (this.whiteLongCastle == true
+        && (move.source.equals(new Position(0, 4))
+            || move.source.equals(new Position(0, 7)))) { // rook on h1 and king on e1
+      this.whiteLongCastle = false;
+    }
+
+    if (this.blackShortCastle == true
+        && (move.source.equals(new Position(7, 4))
+            || move.source.equals(new Position(7, 7)))) { // rook on h8 and king on e8
+      this.blackShortCastle = false;
+    }
+    if (this.blackLongCastle == true
+        && (move.source.equals(new Position(7, 4))
+            || move.source.equals(new Position(7, 0)))) { // rook on a8 and king on e8
+      this.blackLongCastle = false;
+    }
+    if (board.isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
+      // Piece newPiece = new Piece(ask to what the user want to promote his pawn)
+      board.promotePawn(
+          move.dest.getX(),
+          move.dest.getY(),
+          this.isWhite,
+          Piece.QUEEN); // remplacez Piece.QUEEN par newPiece une fois que ca sera implementé
+    }
+    // verifier si enPassant
     move.toString();
-    // TODO
-    return true;
   }
 
   public Board getCopy() {

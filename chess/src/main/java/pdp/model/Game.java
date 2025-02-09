@@ -3,11 +3,13 @@ package pdp.model;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
+import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
 import pdp.utils.Logging;
 import pdp.utils.Position;
+import pdp.utils.TextGetter;
 
 public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
@@ -29,10 +31,14 @@ public class Game extends Subject {
     return this.gameState.getBoard();
   }
 
+  public GameState getGameState() {
+    return this.gameState;
+  }
+
   @Override
   public void addObserver(EventObserver observer) {
     super.addObserver(observer);
-    this.notifyObserver(observer);
+    this.notifyObserver(observer, EventType.GAME_STARTED);
   }
 
   /**
@@ -41,11 +47,9 @@ public class Game extends Subject {
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
    * @param solver The solver to be used for AI moves.
-   * @param isTimed Whether there is a time limit for the game.
-   * @param gameState Contains the board, history, current player, timers if blitz mode is on
    * @return The newly created instance of Game.
    */
-  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver) {
+  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState());
     return instance;
   }
@@ -59,10 +63,28 @@ public class Game extends Subject {
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     try {
+      if ((this.gameState
+                      .getBoard()
+                      .board
+                      .getPieceAt(move.source.getX(), move.source.getY())
+                      .getColor()
+                  == Color.WHITE
+              && !this.gameState.getBoard().isWhite)
+          || this.gameState
+                      .getBoard()
+                      .board
+                      .getPieceAt(move.source.getX(), move.source.getY())
+                      .getColor()
+                  == Color.BLACK
+              && this.gameState.getBoard().isWhite) {
+        throw new IllegalMoveException(
+            move.toString()); // mauvaise couleur de pièce deplacé donc exception
+      }
+
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
-      Move classicalMove =
-          move.isMoveClassical(
-              availableMoves); // throws exception if the initial move is not a "classical" move (
+      Move classicalMove = move.isMoveClassical(availableMoves);
+
+      // throws exception if the initial move is not a "classical" move (
       // and we verify in the catch section if the move is a special move :
       // castling, en-passant)
       // here, the move is a "classical" move, but we must verify if the played piece is nailed or
@@ -78,10 +100,44 @@ public class Game extends Subject {
       // rangé
       // board.board.isCheck  pas besoin car la fonction isCheckAfterMove verifie deja cela
 
+      if (this.gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(
+              this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, classicalMove)) {
+        throw new IllegalMoveException(classicalMove.toString());
+      }
+
       this.gameState.getBoard().makeMove(classicalMove);
-      // ajouter a l'historique le move
+      // addToHystory(move);
+      this.gameState.switchPlayerTurn();
+      // addToHystory(move);
+      this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
+
+      /* if(roque){
+        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
+          throw new IllegalMoveException(Move.toString());
+        }
+        play.roque
+        addToHystory(move);
+        this.gameState.switchPlayerTurn();
+        this.notifyObservers();
+      }
+
+      if(enpassant){
+        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
+          throw new IllegalMoveException(Move.toString());
+        }
+        play.enpassant
+        addToHystory(move);
+        this.gameState.switchPlayerTurn();
+        this.notifyObservers();
+
+      } */
+
+      throw new IllegalMoveException(move.toString());
       // dans cette section la variable classicalMove n'est pas définie
       // verifie si echec et mat ou pat et plus generalement si la partie est finie, si oui terminer
       // partie en consequence
@@ -100,9 +156,9 @@ public class Game extends Subject {
 
       // TODO: handle exception
     }
-
+    /*
     throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+        "Method not implemented in " + this.getClass().getName()); */
   }
 
   public List<Move> getMovesHistory() {
@@ -135,7 +191,7 @@ public class Game extends Subject {
 
     Timer timer = gameState.getMoveTimer();
     if (timer != null) {
-      sb.append("Played with time remaining: ").append(timer.timeRemainingString());
+      sb.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
     }
 
     sb.append("\n");
@@ -160,8 +216,10 @@ public class Game extends Subject {
     }
     sb.append("\n\n");
 
-    sb.append("To play: ");
-    sb.append(gameState.isWhiteTurn() ? "White" : "Black");
+    sb.append(
+        TextGetter.getText(
+            "toPlay",
+            gameState.isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
     sb.append("\n");
 
     return sb.toString();

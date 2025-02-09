@@ -17,12 +17,12 @@ public class GameState extends Subject {
     this.moveTimer = null;
   }
 
-  public GameState(boolean isBlitzModeOn) {
+  public GameState(Timer timer) {
     this.isWhiteTurn = true;
     // this.history = new History();  When history is implemented
     this.history = null;
     this.board = new Board();
-    this.moveTimer = new Timer();
+    this.moveTimer = timer;
   }
 
   public boolean isWhiteTurn() {
