@@ -40,6 +40,11 @@ public class CLIView implements View {
     return startUserInputListener();
   }
 
+  /**
+   * Called when a game event occurs.
+   *
+   * @param event The type of event that occurred.
+   */
   @Override
   public void onGameEvent(EventType event) {
     switch (event) {
@@ -57,6 +62,13 @@ public class CLIView implements View {
     }
   }
 
+  /**
+   * Prints the error message for an exception related to user input.
+   *
+   * <p>Stops the game if the exception is not related to handled.
+   *
+   * @param e The exception that was thrown.
+   */
   @Override
   public void onErrorEvent(Exception e) {
     if (e instanceof IllegalMoveException
@@ -64,7 +76,9 @@ public class CLIView implements View {
         || e instanceof InvalidPositionException) {
       System.out.println(e.getMessage());
     } else {
-      System.err.println("Uncaught Error received: " + e.getMessage());
+      System.err.println(e);
+      e.printStackTrace();
+      running = false;
     }
   }
 

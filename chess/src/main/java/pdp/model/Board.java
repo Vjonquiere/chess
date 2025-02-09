@@ -46,6 +46,14 @@ public class Board {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * Generates an ASCII representation of the chess board.
+   *
+   * <p>White pieces are represented by uppercase characters and black pieces by lowercase
+   * characters. A1 is the bottom-left corner of the board ([7][0]).
+   *
+   * @return a 2D array of characters representing the chess board.
+   */
   public char[][] getAsciiRepresentation() {
     int rows = this.board.getNbRows();
     int cols = this.board.getNbCols();
@@ -75,6 +83,14 @@ public class Board {
     return charBoard;
   }
 
+  /**
+   * Places the pieces on the given board at the given positions. The y-coordinate of the position
+   * is inverted to match the 0-indexed array representation of the board (bottom to top).
+   *
+   * @param board the current ASCII representation of the board
+   * @param positions the positions where the pieces should be placed
+   * @param rep the character to use to represent the pieces
+   */
   private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {
     for (Position pos : positions) {
       board[this.board.getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
