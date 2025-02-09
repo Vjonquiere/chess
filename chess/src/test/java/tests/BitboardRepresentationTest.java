@@ -201,6 +201,59 @@ public class BitboardRepresentationTest {
     assertFalse(board.isCheckMate(Color.WHITE));
   }
 
+  @Test
+  public void testIsStaleMateShouldBeFalse() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    assertFalse(board.isStaleMate(Color.BLACK, Color.WHITE));
+    assertFalse(board.isStaleMate(Color.WHITE, Color.WHITE));
+  }
+
+  @Test
+  public void testIsStaleMateShouldBeTrue() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    // Simulated position:
+    // white king on h1 --- black king on f2 and black queen on g3
+    // white to move
+
+    Position initWhiteKingPos = new Position(0, 4);
+    Position initBlackKingPos = new Position(7, 4);
+    Position initBlackQueenPos = new Position(7, 3);
+
+    Position finalWhiteKingPos = new Position(0, 7);
+    Position finalBlackKingPos = new Position(1, 5);
+    Position finalBlackQueenPos = new Position(2, 6);
+
+    // Delete white pieces except white king
+    for (int yWhite = 0; yWhite <= 1; yWhite++) {
+      for (int xWhite = 0; xWhite <= 7; xWhite++) {
+        Position pos = new Position(yWhite, xWhite);
+        if (!pos.equals(initWhiteKingPos)) {
+          board.deletePieceAt(xWhite, yWhite);
+        }
+      }
+    }
+
+    // Delete black pieces except black king and black queen
+    for (int yBlack = 6; yBlack <= 7; yBlack++) {
+      for (int xBlack = 0; xBlack <= 7; xBlack++) {
+        Position pos = new Position(yBlack, xBlack);
+        if (!pos.equals(initBlackKingPos) && !pos.equals(initBlackQueenPos)) {
+          board.deletePieceAt(xBlack, yBlack);
+        }
+      }
+    }
+
+    // Moves pieces to wanted positions
+    board.movePiece(initWhiteKingPos, finalWhiteKingPos);
+    board.movePiece(initBlackKingPos, finalBlackKingPos);
+    board.movePiece(initBlackQueenPos, finalBlackQueenPos);
+
+    // White to move
+    assertTrue(board.isStaleMate(Color.WHITE, Color.WHITE));
+  }
+
+  @Test
   public void testIsPawnPromotingShouldReturnFalse() {
     BitboardRepresentation board = new BitboardRepresentation();
     boolean resultWhite;

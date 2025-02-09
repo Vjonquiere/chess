@@ -26,7 +26,7 @@ public class Position {
     if (this == obj) return true;
     if (obj == null || getClass() != obj.getClass()) return false;
     Position position = (Position) obj;
-    return x == position.x && y == position.y;
+    return x == position.getX() && y == position.getY();
   }
 
   @Override

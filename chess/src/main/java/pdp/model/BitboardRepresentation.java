@@ -614,9 +614,33 @@ public class BitboardRepresentation implements BoardRepresentation {
     return true;
   }
 
+  /**
+   * @Override Checks the StaleMate state for the given color
+   *
+   * @param color The color you want to check StaleMate for
+   * @return true if color {color} is stalemated. false otherwise.
+   */
   @Override
-  public boolean isStaleMate(Color color) {
-    return false;
+  public boolean isStaleMate(Color color, Color colorTurnToPlay) {
+    if (isCheck(color)) {
+      return false;
+    }
+    Bitboard pieces = color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    for (Integer i : pieces.getSetBits()) {
+      Position piecePosition = squareToPosition(i);
+      List<Move> availableMoves =
+          getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
+      for (Move move : availableMoves) {
+        movePiece(move.source, move.dest); // Play move
+        boolean isStillCheck = isCheck(color);
+        movePiece(move.dest, move.source); // Undo move
+        if (!isStillCheck) return false;
+      }
+    }
+    // Stalemate only if it is someone's turn to play and that someone has no move
+    // If "stalemate" but it is other player's turn to play, then can play a move to prevent
+    // stalemate
+    return color == colorTurnToPlay;
   }
 
   /**
