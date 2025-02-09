@@ -10,12 +10,16 @@ public class GameState extends Subject {
   private boolean isWhiteTurn;
   private boolean whiteWantsToDraw;
   private boolean blackWantsToDraw;
+  private boolean whiteResigns;
+  private boolean blackResigns;
   private boolean isGameOver;
 
   // By default, blitz mode is not on
   public GameState() {
     this.isGameOver = false;
     this.isWhiteTurn = true;
+    this.whiteResigns = false;
+    this.blackResigns = false;
     this.whiteWantsToDraw = false;
     this.blackWantsToDraw = false;
     // this.history = new History();  When history is implemented
@@ -27,6 +31,8 @@ public class GameState extends Subject {
   public GameState(Timer timer) {
     this.isGameOver = false;
     this.isWhiteTurn = true;
+    this.whiteResigns = false;
+    this.blackResigns = false;
     this.whiteWantsToDraw = false;
     this.blackWantsToDraw = false;
     // this.history = new History();  When history is implemented
@@ -77,9 +83,29 @@ public class GameState extends Subject {
     if (whiteWantsToDraw && blackWantsToDraw) {
       // TO DO
       System.out.println("Game drawn by mutual agreement!");
-      notifyObservers(EventType.GAME_OVER);
       this.isGameOver = true;
+      notifyObservers(EventType.GAME_OVER);
     }
+  }
+
+  public void whiteResigns() {
+    this.whiteResigns = true;
+    this.isGameOver = true;
+    notifyObservers(EventType.GAME_OVER);
+  }
+
+  public void blackResigns() {
+    this.blackResigns = true;
+    this.isGameOver = true;
+    notifyObservers(EventType.GAME_OVER);
+  }
+
+  public boolean hasWhiteResigned() {
+    return this.whiteResigns;
+  }
+
+  public boolean hasBlackResigned() {
+    return this.blackResigns;
   }
 
   public boolean hasBlackRequestedDraw() {
