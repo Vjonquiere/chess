@@ -699,4 +699,39 @@ public class BitboardRepresentation implements BoardRepresentation {
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
   }
+
+  /**
+   * Replaces pawnToPromote with newPiece. Bitboards get changed. Assumes pawn can be promoted.
+   *
+   * @param x The x-coordinate (file) of the pawn
+   * @param y The y-coordinate (rank) of the pawn
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @param newPiece The piece asked by the player that is replacing the promoting pawn
+   */
+  @Override
+  public boolean isDoublePushPossible(Move move, boolean white) {
+    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    if (white
+        && piece.getPiece() == Piece.PAWN
+        && move.source.getY() == 1
+        && move.dest.getY() == 3
+        && move.source.getX() == move.dest.getX()) {
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX() - 1, move.dest.getY()).getPiece() == Piece.EMPTY));
+    }
+
+    if (!white
+        && piece.getPiece() == Piece.PAWN
+        && move.source.getY() == 6
+        && move.dest.getY() == 4
+        && move.source.getX() == move.dest.getX()) {
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX() + 1, move.dest.getY()).getPiece() == Piece.EMPTY));
+    }
+    return false;
+  }
+
+  public boolean isEnPassant(int x, int y, boolean white) {
+    return false;
+  }
 }

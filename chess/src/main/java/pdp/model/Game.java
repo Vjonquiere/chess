@@ -115,15 +115,17 @@ public class Game extends Subject {
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
-
+      boolean isSpecialMove = false;
       /* if(roque){
         if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
           throw new IllegalMoveException(Move.toString());
         }
         play.roque
+        isSpecialMove = true;
+        this.gameState.getBoard().makeMove(move);
         addToHystory(move);
         this.gameState.switchPlayerTurn();
-        this.notifyObservers();
+        this.notifyObservers(EventType.MOVE_PLAYED);
       }
 
       if(enpassant){
@@ -131,13 +133,39 @@ public class Game extends Subject {
           throw new IllegalMoveException(Move.toString());
         }
         play.enpassant
+        isSpecialMove = true;
+        this.gameState.getBoard().makeMove(move);
         addToHystory(move);
         this.gameState.switchPlayerTurn();
-        this.notifyObservers();
+        this.notifyObservers(EventType.MOVE_PLAYED);
 
       } */
 
-      throw new IllegalMoveException(move.toString());
+      if (this.gameState
+          .getBoard()
+          .board
+          .isDoublePushPossible(move, this.gameState.getBoard().isWhite)) {
+        if (this.gameState
+            .getBoard()
+            .board
+            .isCheckAfterMove(
+                this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+          throw new IllegalMoveException(move.toString());
+        }
+
+        isSpecialMove = true;
+        this.gameState.getBoard().makeMove(move);
+        // this.gameState.getBoard().enPassantpos = this.gameState.getBoard().isWhite ? new
+        // Position(move.dest.getY(), move.dest.getX()-1) : new Position(move.dest.getY(),
+        // move.dest.getX()+1);
+        // addToHystory(move);
+        this.gameState.switchPlayerTurn();
+        this.notifyObservers(EventType.MOVE_PLAYED);
+      }
+      if (!isSpecialMove) {
+        throw new IllegalMoveException(move.toString());
+      }
+
       // dans cette section la variable classicalMove n'est pas définie
       // verifie si echec et mat ou pat et plus generalement si la partie est finie, si oui terminer
       // partie en consequence

@@ -16,4 +16,8 @@ public interface Rules {
   public boolean isPawnPromoting(int x, int y, boolean white);
 
   public void promotePawn(int x, int y, boolean white, Piece newPiece);
+
+  public boolean isDoublePushPossible(Move move, boolean white);
+
+  public boolean isEnPassant(int x, int y, boolean white);
 }
