@@ -2,22 +2,15 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
 
 public class GameStateTest {
-  private GameState gameBlitzOff;
-  private GameState gameBlitzOn;
-
-  @BeforeEach
-  public void setUp() {
-    gameBlitzOff = new GameState();
-    gameBlitzOn = new GameState(new Timer(30 * 60));
-  }
 
   @Test
   public void testInitialisation() {
+    GameState gameBlitzOff = new GameState();
+    GameState gameBlitzOn = new GameState(new Timer(30 * 60));
     assertNotNull(gameBlitzOff.getBoard(), "The board should be initialized !");
     assertNull(gameBlitzOff.getHistory(), "History should be null until implemented !");
     assertTrue(gameBlitzOff.isWhiteTurn(), "The first player should be white !");
@@ -38,6 +31,7 @@ public class GameStateTest {
 
   @Test
   public void testSwitchPlayerTurn() {
+    GameState gameBlitzOff = new GameState();
     assertTrue(gameBlitzOff.isWhiteTurn(), "Game should start with White's turn !");
     gameBlitzOff.switchPlayerTurn();
     assertFalse(gameBlitzOff.isWhiteTurn(), "After White moves, it should be Black's turn !");
@@ -47,11 +41,13 @@ public class GameStateTest {
 
   @Test
   public void testBlitzModeInitialization() {
+    GameState gameBlitzOn = new GameState(new Timer(30 * 60));
     assertNotNull(gameBlitzOn.getMoveTimer(), "Blitz mode should have a timer initialized !");
   }
 
   @Test
   public void testWhiteRequestsDraw() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.whiteWantsToDraw();
     assertTrue(gameBlitzOff.hasWhiteRequestedDraw(), "White should have requested a draw !");
     assertFalse(
@@ -60,6 +56,7 @@ public class GameStateTest {
 
   @Test
   public void testBlackRequestsDraw() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.blackWantsToDraw();
     assertTrue(gameBlitzOff.hasBlackRequestedDraw(), "Black should have requested a draw !");
     assertFalse(
@@ -68,6 +65,7 @@ public class GameStateTest {
 
   @Test
   public void testWhiteCancelsDrawRequest() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.whiteWantsToDraw();
     gameBlitzOff.whiteCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasWhiteRequestedDraw(), "White's draw request should be canceled !");
@@ -76,6 +74,7 @@ public class GameStateTest {
 
   @Test
   public void testBlackCancelsDrawRequest() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.blackWantsToDraw();
     gameBlitzOff.blackCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasBlackRequestedDraw(), "Black's draw request should be canceled !");
@@ -84,6 +83,7 @@ public class GameStateTest {
 
   @Test
   public void testMutualDrawAgreementShouldEndGame() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.whiteWantsToDraw();
     gameBlitzOff.blackWantsToDraw();
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over if both players agree to a draw !");
@@ -91,6 +91,7 @@ public class GameStateTest {
 
   @Test
   public void testWhiteResigns() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.whiteResigns();
     assertTrue(gameBlitzOff.hasWhiteResigned(), "White should be marked as resigned !");
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over after White resigns !");
@@ -98,6 +99,7 @@ public class GameStateTest {
 
   @Test
   public void testBlackResigns() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.blackResigns();
     assertTrue(gameBlitzOff.hasBlackResigned(), "Black should be marked as resigned !");
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over after Black resigns !");
@@ -105,6 +107,7 @@ public class GameStateTest {
 
   @Test
   public void testApplyFiftyMoveRule() {
+    GameState gameBlitzOff = new GameState();
     gameBlitzOff.applyFiftyMoveRule();
     assertTrue(
         gameBlitzOff.isGameOver(),
