@@ -1,5 +1,7 @@
 package pdp.view;
 
+import pdp.events.EventType;
+
 public class GameView implements View {
 
   public GameView() {
@@ -14,7 +16,7 @@ public class GameView implements View {
   }
 
   @Override
-  public void onGameEvent() {
+  public void onGameEvent(EventType event) {
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }

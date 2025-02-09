@@ -546,11 +546,33 @@ public class BitboardRepresentation implements BoardRepresentation {
     };
   }
 
+  /**
+   * Delete the piece contained at the given position
+   *
+   * @param x The board column
+   * @param y The board row
+   */
   public void deletePieceAt(int x, int y) {
     ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
     for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].clearBit(x % 8 + y * 8);
+      }
+    }
+  }
+
+  /**
+   * Add a new piece in the bitboard corresponding to the given piece at the coordinates x,y. ⚠️
+   * This method should be only used for undo/redo moves
+   *
+   * @param x The board column
+   * @param y The board row
+   * @param piece The type of piece to add
+   */
+  private void addPieceAt(int x, int y, ColoredPiece<Piece, Color> piece) {
+    for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
+      if (entry.getValue().equals(piece)) {
+        board[entry.getKey()].setBit(x % 8 + y * 8);
       }
     }
   }
@@ -590,6 +612,25 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Get the check state after move for the given color
+   *
+   * @param color The piece color you want to know check status
+   * @param move The move you want to know if its make the king in check status
+   * @return True if the given color is in check after the move, False else
+   */
+  @Override
+  public boolean isCheckAfterMove(Color color, Move move) {
+    this.movePiece(move.source, move.dest);
+    if (isCheck(color)) {
+      this.movePiece(move.dest, move.source);
+      return true;
+    } else {
+      this.movePiece(move.dest, move.source);
+      return false;
+    }
+  }
+
+  /**
    * Get the checkMate state for the given color (⚠️ can be resources/time-consuming if there are
    * many pieces remaining on the board)
    *
@@ -603,11 +644,20 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = squareToPosition(i);
       List<Move> availableMoves =
-          getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
+          getAvailableMoves(
+              piecePosition.getX(), piecePosition.getY(), false); // TODO: Check this line
       for (Move move : availableMoves) {
+        ColoredPiece<Piece, Color> removedPiece = null;
+        if (move.isTake) {
+          removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
+          deletePieceAt(move.getDest().getX(), move.getDest().getY());
+        }
         movePiece(move.source, move.dest); // Play move
         boolean isStillCheck = isCheck(color);
         movePiece(move.dest, move.source); // Undo move
+        if (move.isTake) {
+          addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+        }
         if (!isStillCheck) return false;
       }
     }
@@ -793,5 +843,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     // Change bits
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
+  }
+
+  @Override
+  public String toString() {
+    return getWhiteBoard().or(getBlackBoard()).toString();
   }
 }
