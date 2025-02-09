@@ -66,9 +66,6 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
-    if (isOver()) {
-      throw new IllegalMoveException("The game is over!");
-    }
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
