@@ -13,6 +13,10 @@ public interface Rules {
 
   public boolean isCheckMate(Color color);
 
+  public boolean isStaleMate(Color color, Color colorTurnToPlay);
+
+  public boolean isDrawByInsufficientMaterial();
+
   public boolean isPawnPromoting(int x, int y, boolean white);
 
   public void promotePawn(int x, int y, boolean white, Piece newPiece);

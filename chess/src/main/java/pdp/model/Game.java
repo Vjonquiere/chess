@@ -66,6 +66,9 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
+    if (isOver()) {
+      throw new IllegalMoveException("The game is over!");
+    }
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     try {
       if ((this.gameState
@@ -185,7 +188,10 @@ public class Game extends Subject {
   }
 
   public boolean isOver() {
-    // TODO
+    // TO DO
+    if (gameState.isGameOver()) {
+      return true;
+    }
     throw new UnsupportedOperationException(
         "Method not implemented in " + this.getClass().getName());
   }
