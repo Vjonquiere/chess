@@ -12,6 +12,8 @@ public class GameState extends Subject {
   private boolean blackWantsToDraw;
   private boolean whiteResigns;
   private boolean blackResigns;
+  private boolean whiteLosesOnTime;
+  private boolean blackLosesOnTime;
   private boolean isGameOver;
 
   // By default, blitz mode is not on
@@ -22,6 +24,8 @@ public class GameState extends Subject {
     this.blackResigns = false;
     this.whiteWantsToDraw = false;
     this.blackWantsToDraw = false;
+    this.whiteLosesOnTime = false;
+    this.blackLosesOnTime = false;
     // this.history = new History();  When history is implemented
     this.history = null;
     this.board = new Board();
@@ -35,6 +39,8 @@ public class GameState extends Subject {
     this.blackResigns = false;
     this.whiteWantsToDraw = false;
     this.blackWantsToDraw = false;
+    this.whiteLosesOnTime = false;
+    this.blackLosesOnTime = false;
     // this.history = new History();  When history is implemented
     this.history = null;
     this.board = new Board();
@@ -114,6 +120,28 @@ public class GameState extends Subject {
 
   public boolean hasWhiteRequestedDraw() {
     return this.whiteWantsToDraw;
+  }
+
+  public void playerLosesOnTime() {
+    if (this.moveTimer != null && this.moveTimer.getTimeRemaining() == 0) {
+      if (this.isWhiteTurn) {
+        this.whiteLosesOnTime = true;
+        this.isGameOver = true;
+        notifyObservers(EventType.GAME_OVER);
+      } else {
+        this.blackLosesOnTime = true;
+        this.isGameOver = true;
+        notifyObservers(EventType.GAME_OVER);
+      }
+    }
+  }
+
+  public boolean hasWhiteLostOnTime() {
+    return this.whiteLosesOnTime;
+  }
+
+  public boolean hasBlackLostOnTime() {
+    return this.blackLosesOnTime;
   }
 
   public boolean isGameOver() {
