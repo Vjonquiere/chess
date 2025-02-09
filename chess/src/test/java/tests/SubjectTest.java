@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.events.EventObserver;
+import pdp.events.EventType;
 import pdp.events.Subject;
 
 class SubjectTest {
@@ -22,16 +23,16 @@ class SubjectTest {
   @Test
   public void testAddAndNotifyObserver() {
     subject.addObserver(observer);
-    subject.notifyObservers();
-    verify(observer, times(1)).onGameEvent();
+    subject.notifyObservers(EventType.GAME_STARTED);
+    verify(observer, times(1)).onGameEvent(EventType.GAME_STARTED);
   }
 
   @Test
   public void testRemoveObserver() {
     subject.addObserver(observer);
     subject.removeObserver(observer);
-    subject.notifyObservers();
-    verify(observer, never()).onGameEvent();
+    subject.notifyObservers(EventType.MOVE_PLAYED);
+    verify(observer, never()).onGameEvent(EventType.MOVE_PLAYED);
   }
 
   @Test

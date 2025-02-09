@@ -3,6 +3,7 @@ package pdp.model;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
+import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
@@ -37,7 +38,7 @@ public class Game extends Subject {
   @Override
   public void addObserver(EventObserver observer) {
     super.addObserver(observer);
-    this.notifyObserver(observer);
+    this.notifyObserver(observer, EventType.GAME_STARTED);
   }
 
   /**
@@ -46,8 +47,6 @@ public class Game extends Subject {
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
    * @param solver The solver to be used for AI moves.
-   * @param isTimed Whether there is a time limit for the game.
-   * @param gameState Contains the board, history, current player, timers if blitz mode is on
    * @return The newly created instance of Game.
    */
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
