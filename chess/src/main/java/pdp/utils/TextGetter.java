@@ -8,6 +8,10 @@ public class TextGetter {
   private static Locale locale = Locale.ENGLISH; // Default language
   private static ResourceBundle messages = ResourceBundle.getBundle("chessResources", locale);
 
+  static {
+    Locale.setDefault(locale);
+  }
+
   /*Private constructor to avoid instantiation*/
   private TextGetter() {}
 
