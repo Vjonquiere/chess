@@ -107,7 +107,7 @@ public class Game extends Subject {
       this.gameState.getBoard().makeMove(classicalMove);
       this.gameState.switchPlayerTurn();
       // addToHystory(move);
-      this.notifyObservers();
+      this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
 
