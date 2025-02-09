@@ -237,22 +237,32 @@ public class BitboardRepresentationTest {
     assertFalse(board.isCheckMate(Color.BLACK));
     assertFalse(board.isCheckMate(Color.WHITE));
 
-    // scholar's mate
+    // scholar's mate -> white checkmate
     board.movePiece(new Position(1, 6), new Position(3, 6));
+    assertFalse(board.isCheckMate(Color.WHITE));
     board.movePiece(new Position(6, 4), new Position(4, 4));
+    assertFalse(board.isCheckMate(Color.WHITE));
     board.movePiece(new Position(1, 5), new Position(2, 5));
+    assertFalse(board.isCheckMate(Color.WHITE));
     board.movePiece(new Position(7, 3), new Position(3, 7));
     assertTrue(board.isCheckMate(Color.WHITE));
 
+    // scholar's mate -> black checkmate
     board = new BitboardRepresentation();
     assertFalse(board.isCheckMate(Color.BLACK));
     assertFalse(board.isCheckMate(Color.WHITE));
     board.movePiece(new Position(1, 4), new Position(3, 4));
+    assertFalse(board.isCheckMate(Color.BLACK));
     board.movePiece(new Position(6, 4), new Position(4, 4));
+    assertFalse(board.isCheckMate(Color.BLACK));
     board.movePiece(new Position(0, 5), new Position(3, 2));
+    assertFalse(board.isCheckMate(Color.BLACK));
     board.movePiece(new Position(7, 5), new Position(4, 2));
+    assertFalse(board.isCheckMate(Color.BLACK));
     board.movePiece(new Position(0, 3), new Position(2, 5));
+    assertFalse(board.isCheckMate(Color.BLACK));
     board.movePiece(new Position(7, 1), new Position(5, 2));
+    assertFalse(board.isCheckMate(Color.BLACK));
     board.deletePieceAt(5, 6);
     board.movePiece(new Position(2, 5), new Position(6, 5));
     assertTrue(board.isCheckMate(Color.BLACK));

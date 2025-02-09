@@ -546,6 +546,12 @@ public class BitboardRepresentation implements BoardRepresentation {
     };
   }
 
+  /**
+   * Delete the piece contained at the given position
+   *
+   * @param x The board column
+   * @param y The board row
+   */
   public void deletePieceAt(int x, int y) {
     ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
     for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
@@ -555,7 +561,15 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
   }
 
-  public void addPieceAt(int x, int y, ColoredPiece<Piece, Color> piece) {
+  /**
+   * Add a new piece in the bitboard corresponding to the given piece at the coordinates x,y. ⚠️
+   * This method should be only used for undo/redo moves
+   *
+   * @param x The board column
+   * @param y The board row
+   * @param piece The type of piece to add
+   */
+  private void addPieceAt(int x, int y, ColoredPiece<Piece, Color> piece) {
     for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].setBit(x % 8 + y * 8);
