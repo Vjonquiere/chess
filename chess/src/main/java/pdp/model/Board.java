@@ -60,7 +60,7 @@ public class Board {
     char[][] charBoard = new char[rows][cols];
 
     for (int i = 0; i < rows; i++) {
-      Arrays.fill(charBoard[i], '_');
+      Arrays.fill(charBoard[i], Piece.EMPTY.getCharRepresentation(true));
     }
 
     for (int i = 0; i < 2; i++) {
