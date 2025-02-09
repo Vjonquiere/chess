@@ -717,7 +717,7 @@ public class BitboardRepresentation implements BoardRepresentation {
         && move.dest.getY() == 3
         && move.source.getX() == move.dest.getX()) {
       return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
-          && (getPieceAt(move.dest.getX() - 1, move.dest.getY()).getPiece() == Piece.EMPTY));
+          && (getPieceAt(move.dest.getX(), move.dest.getY() - 1).getPiece() == Piece.EMPTY));
     }
 
     if (!white
@@ -726,7 +726,7 @@ public class BitboardRepresentation implements BoardRepresentation {
         && move.dest.getY() == 4
         && move.source.getX() == move.dest.getX()) {
       return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
-          && (getPieceAt(move.dest.getX() + 1, move.dest.getY()).getPiece() == Piece.EMPTY));
+          && (getPieceAt(move.dest.getX(), move.dest.getY() + 1).getPiece() == Piece.EMPTY));
     }
     return false;
   }
