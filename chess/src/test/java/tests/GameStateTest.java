@@ -51,4 +51,38 @@ public class GameStateTest {
     assertNotNull(
         gameBlitzOn.getMoveTimer(), "Timer should be correctly instantiated for blitz games !");
   }
+
+  @Test
+  void testWhiteRequestsDraw() {
+    gameBlitzOff.whiteWantsToDraw();
+    assertTrue(gameBlitzOff.hasWhiteRequestedDraw(), "White should still have the turn !");
+  }
+
+  @Test
+  void testBlackRequestsDraw() {
+    gameBlitzOff.blackWantsToDraw();
+    assertTrue(gameBlitzOff.hasBlackRequestedDraw(), "Black should have requested a draw !");
+  }
+
+  @Test
+  void testWhiteCancelsDrawRequest() {
+    gameBlitzOff.whiteWantsToDraw();
+    gameBlitzOff.whiteCancelsDrawRequest();
+    assertFalse(gameBlitzOff.isGameOver(), "Canceling draw should not end the game !");
+  }
+
+  @Test
+  void testBlackCancelsDrawRequest() {
+    gameBlitzOff.blackWantsToDraw();
+    gameBlitzOff.blackCancelsDrawRequest();
+    assertFalse(gameBlitzOff.isGameOver(), "Canceling draw should not end the game !");
+  }
+
+  @Test
+  void testMutualDrawAgreementShoudlEndGame() {
+    gameBlitzOff.whiteWantsToDraw();
+    gameBlitzOff.blackWantsToDraw();
+    assertTrue(
+        gameBlitzOff.isGameOver(), "The game should be over if both players agree to a draw !");
+  }
 }
