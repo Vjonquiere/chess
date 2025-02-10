@@ -182,5 +182,36 @@ public class Board {
     return this.nbMovesWithNoCaptureOrPawn / 2;
   }
 
+  /**
+   * Checks if castle (long or short in parameter) for one side is possible or not.
+   *
+   * @param color the color of the player we want to
+   * @param shortCastle boolean value to indicate if we're looking for the short castle right or
+   *     long castle right
+   * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
+   */
+  public boolean canCastle(Color color, boolean shortCastle) {
+    boolean white = color == Color.WHITE ? true : false;
+
+    if (shortCastle) {
+      // Check if short castling right is still On for white
+      if (white && !this.whiteShortCastle) {
+        return false;
+        // Check if short castling right is still On for black
+      } else if (!white && !this.blackShortCastle) {
+        return false;
+      }
+    } else {
+      // Check if long castling right is still On for white
+      if (white && !this.whiteLongCastle) {
+        return false;
+        // Check if long castling right is still On for black
+      } else if (!white && !this.blackLongCastle) {
+        return false;
+      }
+    }
+    return false;
+  }
+
   public void applyShortCastle(Color color) {}
 }
