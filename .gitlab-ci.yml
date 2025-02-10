@@ -25,6 +25,7 @@ build-job:       # Build stage: Compiles the code and packages it into a JAR
   artifacts:
     paths:
       - chess/target/  # Save build artifacts (e.g., JAR files) for use in later stages
+    expire_in: 1 day
   tags:
       - shell
       - Debian
