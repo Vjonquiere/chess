@@ -32,7 +32,7 @@ public class Logging {
    * @param message String to log
    */
   public static void DEBUG(Logger logger, String message) {
-    logger.fine(logger.getName() + " [DEBUG]\n" + message);
+    logger.fine(logger.getName() + " [DEBUG] " + message);
   }
 
   /**
@@ -42,7 +42,7 @@ public class Logging {
    * @param message String to log
    */
   public static void VERBOSE(Logger logger, String message) {
-    logger.finer(logger.getName() + " [VERBOSE]\n" + message);
+    logger.finer(logger.getName() + " [VERBOSE] " + message);
   }
 
   /**

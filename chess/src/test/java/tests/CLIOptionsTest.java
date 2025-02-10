@@ -60,6 +60,8 @@ public class CLIOptionsTest {
   public void tearDown() {
     System.setOut(originalOut);
     System.setErr(originalErr);
+    Logging.setDebug(false);
+    Logging.setVerbose(false);
   }
 
   @Test

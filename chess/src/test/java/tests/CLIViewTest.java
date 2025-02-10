@@ -30,7 +30,7 @@ public class CLIViewTest {
 
   @Test
   public void testBoardToASCII() {
-    Game game = Game.getInstance();
+    Game game = Game.initialize(false, false, null, null);
 
     char[][] expectedBoard = {
       {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
