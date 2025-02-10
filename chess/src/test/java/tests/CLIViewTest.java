@@ -26,10 +26,9 @@ public class CLIViewTest {
   private BagOfCommands mockBagOfCommands;
   private Method handleUserInputMethod;
 
-  /*
   @Test
   public void testBoardToASCII() {
-    Game game = Game.getInstance();
+    Game game = Game.initialize(false, false, null, null);
 
     char[][] expectedBoard = {
       {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
@@ -44,7 +43,6 @@ public class CLIViewTest {
 
     assertTrue(Arrays.deepEquals(expectedBoard, game.getBoard().getAsciiRepresentation()));
   }
-    */
 
   @BeforeEach
   void setUp() throws Exception {
