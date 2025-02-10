@@ -79,7 +79,8 @@ public class Game extends Subject {
                   == Color.BLACK
               && this.gameState.getBoard().isWhite) {
         throw new IllegalMoveException(
-            move.toString()); // mauvaise couleur de pièce deplacé donc exception
+            "Not your piece "
+                + move.toString()); // mauvaise couleur de pièce deplacé donc exception
       }
 
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
@@ -106,7 +107,8 @@ public class Game extends Subject {
           .board
           .isCheckAfterMove(
               this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, classicalMove)) {
-        throw new IllegalMoveException(classicalMove.toString());
+        throw new IllegalMoveException(
+            "This classical move puts the king in check " + classicalMove.toString());
       }
 
       this.gameState.getBoard().makeMove(classicalMove);
@@ -116,29 +118,79 @@ public class Game extends Subject {
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
-
+      boolean isSpecialMove = false;
+      // roque move
       /* if(roque){
-        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
-          throw new IllegalMoveException(Move.toString());
+        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,move){
+          throw new IllegalMoveException(move.toString());
         }
         play.roque
+        isSpecialMove = true;
+        this.gameState.getBoard().makeMove(move);
         addToHystory(move);
         this.gameState.switchPlayerTurn();
-        this.notifyObservers();
-      }
-
-      if(enpassant){
-        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
-          throw new IllegalMoveException(Move.toString());
-        }
-        play.enpassant
-        addToHystory(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers();
-
+        this.notifyObservers(EventType.MOVE_PLAYED);
       } */
 
-      throw new IllegalMoveException(move.toString());
+      // enPassant move
+      if (this.gameState.getBoard().isLastMoveDoublePush
+          && this.gameState
+              .getBoard()
+              .board
+              .isEnPassant(
+                  this.gameState.getBoard().enPassantPos.getX(),
+                  this.gameState.getBoard().enPassantPos.getY(),
+                  move,
+                  this.gameState.getBoard().isWhite)) {
+        if (this.gameState
+            .getBoard()
+            .board
+            .isCheckAfterMove(
+                this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+          throw new IllegalMoveException(
+              "enPassant move puts the king in check " + move.toString());
+        }
+
+        isSpecialMove = true;
+        this.gameState.getBoard().enPassantPos = null;
+        this.gameState.getBoard().isEnPassantTake = true;
+        this.gameState.getBoard().makeMove(move);
+        // addToHystory(move);
+        this.gameState.switchPlayerTurn();
+        this.notifyObservers(EventType.MOVE_PLAYED);
+      }
+
+      // DoublePawnPush move
+      if (this.gameState
+          .getBoard()
+          .board
+          .isDoublePushPossible(move, this.gameState.getBoard().isWhite)) {
+        if (this.gameState
+            .getBoard()
+            .board
+            .isCheckAfterMove(
+                this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+          throw new IllegalMoveException(
+              "This doublePawnPush puts the king in check " + move.toString());
+        }
+
+        isSpecialMove = true;
+        this.gameState.getBoard().enPassantPos =
+            this.gameState.getBoard().isWhite
+                ? new Position(move.dest.getY() - 1, move.dest.getX())
+                : new Position(move.dest.getY() + 1, move.dest.getX());
+        this.gameState.getBoard().makeMove(move);
+
+        this.gameState.getBoard().isLastMoveDoublePush = true;
+        // addToHystory(move);
+        this.gameState.switchPlayerTurn();
+        this.notifyObservers(EventType.MOVE_PLAYED);
+      }
+      if (!isSpecialMove) {
+        throw new IllegalMoveException(e.getMessage() + " and not a special move");
+        // throw new IllegalMoveException(e.getMessage(), e );
+      }
+
       // dans cette section la variable classicalMove n'est pas définie
       // verifie si echec et mat ou pat et plus generalement si la partie est finie, si oui terminer
       // partie en consequence

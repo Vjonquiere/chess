@@ -616,8 +616,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Get the check state after move for the given color
    *
    * @param color The piece color you want to know check status
-   * @param move The move you want to know if its make the king in check status
-   * @return True if the given color is in check after the move, False else
+   * @param move The move you want to check if it puts the king in check
+   * @return True if the given color is in check after the given move, False else
    */
   @Override
   public boolean isCheckAfterMove(Color color, Move move) {
@@ -848,6 +848,65 @@ public class BitboardRepresentation implements BoardRepresentation {
     // Change bits
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
+  }
+
+  /**
+   * Checks if a given move is a double pawn push A double push occurs when a pawn moves forward by
+   * two squares from its starting position
+   *
+   * @param move The move to check
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @return True if the move is a valid double pawn push, false else
+   */
+  @Override
+  public boolean isDoublePushPossible(Move move, boolean white) {
+    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    if (white
+        && piece.getPiece() == Piece.PAWN
+        && move.source.getY() == 1
+        && move.dest.getY() == 3
+        && move.source.getX() == move.dest.getX()) {
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX(), move.dest.getY() - 1).getPiece() == Piece.EMPTY));
+    }
+
+    if (!white
+        && piece.getPiece() == Piece.PAWN
+        && move.source.getY() == 6
+        && move.dest.getY() == 4
+        && move.source.getX() == move.dest.getX()) {
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX(), move.dest.getY() + 1).getPiece() == Piece.EMPTY));
+    }
+    return false;
+  }
+
+  /**
+   * Checks if a given move is an en passant
+   *
+   * @param x The x-coordinate of the square where an en passant capture can occur
+   * @param y The y-coordinate of the square where an en passant capture can occur
+   * @param move The move being checked
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @return True if the move is a valid en passant capture, false else
+   */
+  public boolean isEnPassant(int x, int y, Move move, boolean white) {
+    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    if (white
+        && piece.getPiece() == Piece.PAWN
+        && (move.dest.getX() == (x) && move.dest.getY() == (y))
+        && ((move.source.getX() == (x - 1) && move.source.getY() == (y - 1))
+            || (move.source.getX() == (x + 1) && move.source.getY() == (y - 1)))) {
+      return true;
+    }
+    if (!white
+        && piece.getPiece() == Piece.PAWN
+        && (move.dest.getX() == (x) && move.dest.getY() == (y))
+        && ((move.source.getX() == (x + 1) && move.source.getY() == (y + 1))
+            || (move.source.getX() == (x - 1) && move.source.getY() == (y + 1)))) {
+      return true;
+    }
+    return false;
   }
 
   @Override

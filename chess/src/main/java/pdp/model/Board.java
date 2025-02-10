@@ -14,9 +14,12 @@ public class Board {
   boolean blackShortCastle;
   boolean whiteLongCastle;
   boolean blackLongCastle;
-  byte doubleMovePawnWhite;
-  byte doubleMovePawnBlack;
   Position enPassantPos;
+  boolean isLastMoveDoublePush;
+  boolean isEnPassantTake;
+  int nbMovesWithNoCaptureOrPawn;
+  int doubleMovePawnBlack;
+  int doubleMovePawnWhite;
 
   public Board() {
     Logging.configureLogging(LOGGER);
@@ -27,20 +30,46 @@ public class Board {
     this.blackShortCastle = true;
     this.whiteLongCastle = true;
     this.blackLongCastle = true;
+    this.isLastMoveDoublePush = false;
+    this.isEnPassantTake = false;
     this.doubleMovePawnBlack = 0;
     this.doubleMovePawnWhite = 0;
+    this.nbMovesWithNoCaptureOrPawn = 0;
   }
 
   public List<Move> getAvailableMoves(Position pos) {
     return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
+  /**
+   * Executes a given move on the board, handling captures, en passant, castling, pawn promotion,
+   * and turn switching
+   *
+   * @param move The move to be executed
+   */
   public void makeMove(Move move) {
     if (move.isTake == true) {
       board.deletePieceAt(move.dest.getX(), move.dest.getY());
+      // Reset the number of moves with no capture
+      this.nbMovesWithNoCaptureOrPawn = 0;
+    }
+    if (board.getPieceAt(move.source.getX(), move.source.getY()).getPiece() == Piece.PAWN) {
+      // Reset the number of moves with no pawn move
+      this.nbMovesWithNoCaptureOrPawn = 0;
+    }
+    if (this.isEnPassantTake) {
+      this.isLastMoveDoublePush = false;
+      this.isEnPassantTake = false;
+      if (this.isWhite) {
+        board.deletePieceAt(move.dest.getX(), move.dest.getY() - 1);
+      } else {
+        board.deletePieceAt(move.dest.getX(), move.dest.getY() + 1);
+      }
     }
 
     board.movePiece(move.source, move.dest);
+
+    this.nbMovesWithNoCaptureOrPawn++;
 
     if (this.isWhite) {
       this.isWhite = false;
@@ -77,13 +106,24 @@ public class Board {
           this.isWhite,
           Piece.QUEEN); // remplacez Piece.QUEEN par newPiece une fois que ca sera implementé
     }
-    // verifier si enPassant
+
+    if (isLastMoveDoublePush) {
+      this.isLastMoveDoublePush = false;
+    }
+
+    if (this.isEnPassantTake) {
+      this.isLastMoveDoublePush = false;
+    }
     move.toString();
   }
 
   public Board getCopy() {
     // TODO
     throw new UnsupportedOperationException();
+  }
+
+  public BoardRepresentation getBoard() {
+    return board;
   }
 
   /**
@@ -135,5 +175,10 @@ public class Board {
     for (Position pos : positions) {
       board[this.board.getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
     }
+  }
+
+  public int getNbMovesWithNoCaptureOrPawn() {
+    // Divide by 2 because fifty move rule is for full moves
+    return this.nbMovesWithNoCaptureOrPawn / 2;
   }
 }
