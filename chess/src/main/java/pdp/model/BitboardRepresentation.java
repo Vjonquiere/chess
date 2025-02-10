@@ -620,26 +620,19 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in check after the move, False else
    */
   @Override
-  public boolean isCheckAfterMove(Color color, Move move) { // TODO: need to refactor
+  public boolean isCheckAfterMove(Color color, Move move) {
     ColoredPiece removedPiece = null;
     if (move.isTake) {
       removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
       deletePieceAt(move.getDest().getX(), move.getDest().getY());
     }
-    this.movePiece(move.source, move.dest);
-    if (isCheck(color)) {
-      this.movePiece(move.dest, move.source);
-      if (move.isTake) {
-        addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
-      }
-      return true;
-    } else {
-      this.movePiece(move.dest, move.source);
-      if (move.isTake) {
-        addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
-      }
-      return false;
+    this.movePiece(move.source, move.dest); // Play move
+    boolean isCheckAfterMove = isCheck(color);
+    this.movePiece(move.dest, move.source); // undo move
+    if (move.isTake) {
+      addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
     }
+    return isCheckAfterMove;
   }
 
   /**
