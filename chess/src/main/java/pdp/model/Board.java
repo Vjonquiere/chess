@@ -183,7 +183,8 @@ public class Board {
   }
 
   /**
-   * Checks if castle (long or short in parameter) for one side is possible or not.
+   * Checks if castle (long or short in parameter) for one side is possible or not. No need to fetch
+   * king position because if king has moved, then boolean attributes for castling rights are false
    *
    * @param color the color of the player we want to
    * @param shortCastle boolean value to indicate if we're looking for the short castle right or
@@ -191,26 +192,81 @@ public class Board {
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
   public boolean canCastle(Color color, boolean shortCastle) {
-    boolean white = color == Color.WHITE ? true : false;
+    if (color == Color.WHITE) {
+      if (shortCastle && !this.whiteShortCastle) return false;
+      if (!shortCastle && !this.whiteLongCastle) return false;
 
-    if (shortCastle) {
-      // Check if short castling right is still On for white
-      if (white && !this.whiteShortCastle) {
-        return false;
-        // Check if short castling right is still On for black
-      } else if (!white && !this.blackShortCastle) {
-        return false;
+      Position f8Square = new Position(0, 5);
+      Position g8Square = new Position(0, 6);
+
+      Position d8Square = new Position(0, 3);
+      Position c8Square = new Position(0, 2);
+      Position b8Square = new Position(0, 1);
+
+      if (shortCastle) {
+        if ((board.getPieceAt(f8Square.getX(), f8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(g8Square.getX(), g8Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.WHITE)
+            || board.isAttacked(5, 0, Color.BLACK)
+            || board.isAttacked(6, 0, Color.BLACK)) {
+          return false;
+        }
+      } else {
+        if ((board.getPieceAt(d8Square.getX(), d8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(c8Square.getX(), c8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(b8Square.getX(), b8Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.WHITE)
+            || board.isAttacked(3, 0, Color.BLACK)
+            || board.isAttacked(2, 0, Color.BLACK)
+            || board.isAttacked(1, 0, Color.BLACK)) {
+          return false;
+        }
       }
+      return true;
     } else {
-      // Check if long castling right is still On for white
-      if (white && !this.whiteLongCastle) {
-        return false;
-        // Check if long castling right is still On for black
-      } else if (!white && !this.blackLongCastle) {
-        return false;
+      if (shortCastle && !this.blackShortCastle) return false;
+      if (!shortCastle && !this.blackLongCastle) return false;
+
+      Position f8Square = new Position(7, 5);
+      Position g8Square = new Position(7, 6);
+
+      Position d8Square = new Position(7, 3);
+      Position c8Square = new Position(7, 2);
+      Position b8Square = new Position(7, 1);
+
+      if (shortCastle) {
+        if ((board.getPieceAt(f8Square.getX(), f8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(g8Square.getX(), g8Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.WHITE)
+            || board.isAttacked(5, 7, Color.BLACK)
+            || board.isAttacked(6, 7, Color.BLACK)) {
+          return false;
+        }
+      } else {
+        if ((board.getPieceAt(d8Square.getX(), d8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(c8Square.getX(), c8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(b8Square.getX(), b8Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.WHITE)
+            || board.isAttacked(3, 7, Color.BLACK)
+            || board.isAttacked(2, 7, Color.BLACK)
+            || board.isAttacked(1, 7, Color.BLACK)) {
+          return false;
+        }
       }
+      return true;
     }
-    return false;
   }
 
   public void applyShortCastle(Color color) {}
