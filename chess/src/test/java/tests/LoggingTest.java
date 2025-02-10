@@ -31,6 +31,8 @@ public class LoggingTest {
 
   @AfterEach
   public void reset() {
+    Logging.setDebug(false);
+    Logging.setVerbose(false);
     System.setOut(originalOut);
     System.setErr(originalErr);
   }
