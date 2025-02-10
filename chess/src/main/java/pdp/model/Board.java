@@ -122,6 +122,10 @@ public class Board {
     throw new UnsupportedOperationException();
   }
 
+  public BoardRepresentation getBoard() {
+    return board;
+  }
+
   /**
    * Generates an ASCII representation of the chess board.
    *
