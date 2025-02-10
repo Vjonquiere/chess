@@ -181,4 +181,6 @@ public class Board {
     // Divide by 2 because fifty move rule is for full moves
     return this.nbMovesWithNoCaptureOrPawn / 2;
   }
+
+  public void applyShortCastle(Color color) {}
 }
