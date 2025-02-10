@@ -223,8 +223,7 @@ public class Board {
         // Squares are empty so now ensure king is not in check and does not move through check
         if (board.isCheck(Color.WHITE)
             || board.isAttacked(3, 0, Color.BLACK)
-            || board.isAttacked(2, 0, Color.BLACK)
-            || board.isAttacked(1, 0, Color.BLACK)) {
+            || board.isAttacked(2, 0, Color.BLACK)) {
           return false;
         }
       }
@@ -260,8 +259,7 @@ public class Board {
         // Squares are empty so now ensure king is not in check and does not move through check
         if (board.isCheck(Color.WHITE)
             || board.isAttacked(3, 7, Color.BLACK)
-            || board.isAttacked(2, 7, Color.BLACK)
-            || board.isAttacked(1, 7, Color.BLACK)) {
+            || board.isAttacked(2, 7, Color.BLACK)) {
           return false;
         }
       }
