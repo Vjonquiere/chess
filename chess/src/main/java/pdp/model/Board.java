@@ -48,6 +48,7 @@ public class Board {
    * @param move The move to be executed
    */
   public void makeMove(Move move) {
+    this.nbMovesWithNoCaptureOrPawn++;
     if (move.isTake == true) {
       board.deletePieceAt(move.dest.getX(), move.dest.getY());
       // Reset the number of moves with no capture
@@ -68,8 +69,6 @@ public class Board {
     }
 
     board.movePiece(move.source, move.dest);
-
-    this.nbMovesWithNoCaptureOrPawn++;
 
     if (this.isWhite) {
       this.isWhite = false;
@@ -186,7 +185,7 @@ public class Board {
    * Checks if castle (long or short in parameter) for one side is possible or not. No need to fetch
    * king position because if king has moved, then boolean attributes for castling rights are false
    *
-   * @param color the color of the player we want to
+   * @param color the color of the player we want to test castle for
    * @param shortCastle boolean value to indicate if we're looking for the short castle right or
    *     long castle right
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
