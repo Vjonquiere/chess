@@ -245,9 +245,9 @@ public class Board {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (board.isCheck(Color.WHITE)
-            || board.isAttacked(5, 7, Color.BLACK)
-            || board.isAttacked(6, 7, Color.BLACK)) {
+        if (board.isCheck(Color.BLACK)
+            || board.isAttacked(5, 7, Color.WHITE)
+            || board.isAttacked(6, 7, Color.WHITE)) {
           return false;
         }
       } else {
@@ -257,9 +257,9 @@ public class Board {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (board.isCheck(Color.WHITE)
-            || board.isAttacked(3, 7, Color.BLACK)
-            || board.isAttacked(2, 7, Color.BLACK)) {
+        if (board.isCheck(Color.BLACK)
+            || board.isAttacked(3, 7, Color.WHITE)
+            || board.isAttacked(2, 7, Color.WHITE)) {
           return false;
         }
       }
