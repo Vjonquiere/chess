@@ -635,7 +635,9 @@ public class BitboardRepresentation implements BoardRepresentation {
     if (move.isTake) {
       addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
     }
-    if (isCheckAfterMove) {DEBUG(LOGGER, color.toString() + "will be checked after move");}
+    if (isCheckAfterMove) {
+      DEBUG(LOGGER, color.toString() + "will be checked after move");
+    }
     return isCheckAfterMove;
   }
 
