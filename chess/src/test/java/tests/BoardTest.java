@@ -13,9 +13,9 @@ public class BoardTest {
     game = Game.initialize(false, false, null, null);
     Move move = new Move(new Position(1, 4), new Position(2, 4)); // Pion avance d'une case
     game.getGameState().getBoard().makeMove(move);
-    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(4, 2).getPiece());
+    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(4, 2).piece);
     assertEquals(
-        game.getGameState().getBoard().getBoard().getPieceAt(1, 4).getPiece(),
+        game.getGameState().getBoard().getBoard().getPieceAt(1, 4).piece,
         Piece.EMPTY); // L'ancienne position doit être vide
   }
 
@@ -24,9 +24,9 @@ public class BoardTest {
     game = Game.initialize(false, false, null, null);
     Move move = new Move(new Position(1, 4), new Position(3, 4)); // Pion avance de deux cases
     game.getGameState().getBoard().makeMove(move);
-    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(4, 3).getPiece());
+    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(4, 3).piece);
     assertEquals(
-        game.getGameState().getBoard().getBoard().getPieceAt(1, 4).getPiece(),
+        game.getGameState().getBoard().getBoard().getPieceAt(1, 4).piece,
         Piece.EMPTY); // L'ancienne position doit être vide
   }
 
@@ -50,7 +50,7 @@ public class BoardTest {
             .getBoard()
             .getBoard()
             .getPieceAt(3, 4)
-            .getPiece()); // Le pion blanc est maintenant ici
+            .piece); // Le pion blanc est maintenant ici
   }
 
   /*@Test

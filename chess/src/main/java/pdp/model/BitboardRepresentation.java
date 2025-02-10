@@ -860,23 +860,23 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isDoublePushPossible(Move move, boolean white) {
-    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    ColoredPiece piece = getPieceAt(move.source.getX(), move.source.getY());
     if (white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && move.source.getY() == 1
         && move.dest.getY() == 3
         && move.source.getX() == move.dest.getX()) {
-      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
-          && (getPieceAt(move.dest.getX(), move.dest.getY() - 1).getPiece() == Piece.EMPTY));
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).piece == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX(), move.dest.getY() - 1).piece == Piece.EMPTY));
     }
 
     if (!white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && move.source.getY() == 6
         && move.dest.getY() == 4
         && move.source.getX() == move.dest.getX()) {
-      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
-          && (getPieceAt(move.dest.getX(), move.dest.getY() + 1).getPiece() == Piece.EMPTY));
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).piece == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX(), move.dest.getY() + 1).piece == Piece.EMPTY));
     }
     return false;
   }
@@ -891,16 +891,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the move is a valid en passant capture, false else
    */
   public boolean isEnPassant(int x, int y, Move move, boolean white) {
-    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    ColoredPiece piece = getPieceAt(move.source.getX(), move.source.getY());
     if (white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && (move.dest.getX() == (x) && move.dest.getY() == (y))
         && ((move.source.getX() == (x - 1) && move.source.getY() == (y - 1))
             || (move.source.getX() == (x + 1) && move.source.getY() == (y - 1)))) {
       return true;
     }
     if (!white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && (move.dest.getX() == (x) && move.dest.getY() == (y))
         && ((move.source.getX() == (x + 1) && move.source.getY() == (y + 1))
             || (move.source.getX() == (x - 1) && move.source.getY() == (y + 1)))) {
