@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.exceptions.IllegalMoveException;
+import pdp.model.Game;
 import pdp.view.CLIView;
 
 public class CLIViewTest {
