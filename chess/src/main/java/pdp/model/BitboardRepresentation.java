@@ -1,6 +1,7 @@
 package pdp.model;
 
 import static java.util.Map.entry;
+import static pdp.utils.Logging.DEBUG;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -556,6 +557,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].clearBit(x % 8 + y * 8);
+        DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
         return;
       }
     }
@@ -573,6 +575,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].setBit(x % 8 + y * 8);
+        DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
         return;
       }
     }
@@ -632,6 +635,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     if (move.isTake) {
       addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
     }
+    if (isCheckAfterMove) {DEBUG(LOGGER, color.toString() + "will be checked after move");}
     return isCheckAfterMove;
   }
 
@@ -663,9 +667,13 @@ public class BitboardRepresentation implements BoardRepresentation {
         if (move.isTake) {
           addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
         }
-        if (!isStillCheck) return false;
+        if (!isStillCheck) {
+          DEBUG(LOGGER, color.toString() + " is not check mate");
+          return false;
+        }
       }
     }
+    DEBUG(LOGGER, color.toString() + " is check mate ");
     return true;
   }
 
