@@ -556,6 +556,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].clearBit(x % 8 + y * 8);
+        return;
       }
     }
   }
@@ -572,6 +573,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].setBit(x % 8 + y * 8);
+        return;
       }
     }
   }
