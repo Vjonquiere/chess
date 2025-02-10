@@ -475,11 +475,6 @@ public class BoardTest {
   void testEnPassant() {
 
   }
-
-  @Test
-  void testPawnPromotion() {
-
-  }
   */
 
 }
