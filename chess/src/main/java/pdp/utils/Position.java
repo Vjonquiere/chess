@@ -33,4 +33,9 @@ public class Position {
   public int hashCode() {
     return Objects.hash(x, y); // hashCode est souvent nécessaire en parallèle avec equals
   }
+
+  @Override
+  public String toString() {
+    return "Position [x=" + x + ", y=" + y + "]";
+  }
 }

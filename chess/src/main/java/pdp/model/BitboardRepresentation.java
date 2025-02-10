@@ -555,7 +555,6 @@ public class BitboardRepresentation implements BoardRepresentation {
     ColoredPiece piece = getPieceAt(x, y);
     for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
-        System.out.println("delete in bitboard: " + entry.getKey());
         board[entry.getKey()].clearBit(x % 8 + y * 8);
       }
     }
@@ -619,13 +618,24 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in check after the move, False else
    */
   @Override
-  public boolean isCheckAfterMove(Color color, Move move) {
+  public boolean isCheckAfterMove(Color color, Move move) { // TODO: need to refactor
+    ColoredPiece removedPiece = null;
+    if (move.isTake) {
+      removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
+      deletePieceAt(move.getDest().getX(), move.getDest().getY());
+    }
     this.movePiece(move.source, move.dest);
     if (isCheck(color)) {
       this.movePiece(move.dest, move.source);
+      if (move.isTake) {
+        addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+      }
       return true;
     } else {
       this.movePiece(move.dest, move.source);
+      if (move.isTake) {
+        addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+      }
       return false;
     }
   }
