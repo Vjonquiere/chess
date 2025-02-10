@@ -15,20 +15,20 @@ public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard[] board;
   private int nbCols = 8;
   private int nbRows = 8;
-  Map<Integer, ColoredPiece<Piece, Color>> pieces =
+  Map<Integer, ColoredPiece> pieces =
       Map.ofEntries(
-          entry(0, new ColoredPiece<Piece, Color>(Piece.KING, Color.WHITE)),
-          entry(1, new ColoredPiece<Piece, Color>(Piece.QUEEN, Color.WHITE)),
-          entry(2, new ColoredPiece<Piece, Color>(Piece.BISHOP, Color.WHITE)),
-          entry(3, new ColoredPiece<Piece, Color>(Piece.ROOK, Color.WHITE)),
-          entry(4, new ColoredPiece<Piece, Color>(Piece.KNIGHT, Color.WHITE)),
-          entry(5, new ColoredPiece<Piece, Color>(Piece.PAWN, Color.WHITE)),
-          entry(6, new ColoredPiece<Piece, Color>(Piece.KING, Color.BLACK)),
-          entry(7, new ColoredPiece<Piece, Color>(Piece.QUEEN, Color.BLACK)),
-          entry(8, new ColoredPiece<Piece, Color>(Piece.BISHOP, Color.BLACK)),
-          entry(9, new ColoredPiece<Piece, Color>(Piece.ROOK, Color.BLACK)),
-          entry(10, new ColoredPiece<Piece, Color>(Piece.KNIGHT, Color.BLACK)),
-          entry(11, new ColoredPiece<Piece, Color>(Piece.PAWN, Color.BLACK)));
+          entry(0, new ColoredPiece(Piece.KING, Color.WHITE)),
+          entry(1, new ColoredPiece(Piece.QUEEN, Color.WHITE)),
+          entry(2, new ColoredPiece(Piece.BISHOP, Color.WHITE)),
+          entry(3, new ColoredPiece(Piece.ROOK, Color.WHITE)),
+          entry(4, new ColoredPiece(Piece.KNIGHT, Color.WHITE)),
+          entry(5, new ColoredPiece(Piece.PAWN, Color.WHITE)),
+          entry(6, new ColoredPiece(Piece.KING, Color.BLACK)),
+          entry(7, new ColoredPiece(Piece.QUEEN, Color.BLACK)),
+          entry(8, new ColoredPiece(Piece.BISHOP, Color.BLACK)),
+          entry(9, new ColoredPiece(Piece.ROOK, Color.BLACK)),
+          entry(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK)),
+          entry(11, new ColoredPiece(Piece.PAWN, Color.BLACK)));
 
   /*
   BitBoards order:
@@ -227,12 +227,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return Piece and its Color
    */
   @Override
-  public ColoredPiece<Piece, Color> getPieceAt(int x, int y) {
+  public ColoredPiece getPieceAt(int x, int y) {
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) return pieces.get(index);
     }
-    return new ColoredPiece<>(Piece.EMPTY, Color.EMPTY);
+    return new ColoredPiece(Piece.EMPTY, Color.EMPTY);
   }
 
   /**
@@ -258,18 +258,18 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void movePiece(Position from, Position to) {
-    ColoredPiece<Piece, Color> piece = getPieceAt(from.getX(), from.getY());
+    ColoredPiece piece = getPieceAt(from.getX(), from.getY());
     int fromIndex = from.getX() % 8 + from.getY() * 8;
     int toIndex = to.getX() % 8 + to.getY() * 8;
     int bitboardIndex =
-        switch (piece.getPiece()) {
-          case KING -> piece.getColor() == Color.WHITE ? 0 : 6;
-          case QUEEN -> piece.getColor() == Color.WHITE ? 1 : 7;
-          case BISHOP -> piece.getColor() == Color.WHITE ? 2 : 8;
-          case ROOK -> piece.getColor() == Color.WHITE ? 3 : 9;
-          case KNIGHT -> piece.getColor() == Color.WHITE ? 4 : 10;
-          case PAWN -> piece.getColor() == Color.WHITE ? 5 : 11;
-          default -> throw new IllegalArgumentException("Invalid piece: " + piece.getPiece());
+        switch (piece.piece) {
+          case KING -> piece.color == Color.WHITE ? 0 : 6;
+          case QUEEN -> piece.color == Color.WHITE ? 1 : 7;
+          case BISHOP -> piece.color == Color.WHITE ? 2 : 8;
+          case ROOK -> piece.color == Color.WHITE ? 3 : 9;
+          case KNIGHT -> piece.color == Color.WHITE ? 4 : 10;
+          case PAWN -> piece.color == Color.WHITE ? 5 : 11;
+          default -> throw new IllegalArgumentException("Invalid piece: " + piece.piece);
         };
     board[bitboardIndex].clearBit(fromIndex);
     board[bitboardIndex].setBit(toIndex);
@@ -523,23 +523,22 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
-    ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
-    Position enemyKing = getKing(piece.getColor() != Color.WHITE).get(0);
-    Bitboard unreachableSquares =
-        piece.getColor() == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    ColoredPiece piece = getPieceAt(x, y);
+    Position enemyKing = getKing(piece.color != Color.WHITE).get(0);
+    Bitboard unreachableSquares = piece.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     unreachableSquares.clearBit(x % 8 + y * 8); // remove piece position from reachable positions
     if (!kingReachable)
       unreachableSquares.setBit(
           enemyKing.getX() % 8 + enemyKing.getY() * 8); // Put enemyKing to unreachable positions
-    Bitboard enemies = piece.getColor() == Color.WHITE ? getBlackBoard() : getWhiteBoard();
-    return switch (piece.getPiece()) {
+    Bitboard enemies = piece.color == Color.WHITE ? getBlackBoard() : getWhiteBoard();
+    return switch (piece.piece) {
       case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies);
       case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies);
       case BISHOP -> getBishopMoves(new Position(y, x), unreachableSquares, enemies);
       case ROOK -> getRookMoves(new Position(y, x), unreachableSquares, enemies);
       case KNIGHT -> getKnightMoves(new Position(y, x), unreachableSquares, enemies);
       case PAWN ->
-          piece.getColor() == Color.WHITE
+          piece.color == Color.WHITE
               ? getPawnMoves(new Position(y, x), unreachableSquares, enemies, true)
               : getPawnMoves(new Position(y, x), unreachableSquares, enemies, false);
       default -> new ArrayList<>();
@@ -553,10 +552,11 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param y The board row
    */
   public void deletePieceAt(int x, int y) {
-    ColoredPiece<Piece, Color> piece = getPieceAt(x, y);
-    for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
+    ColoredPiece piece = getPieceAt(x, y);
+    for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].clearBit(x % 8 + y * 8);
+        return;
       }
     }
   }
@@ -569,10 +569,11 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param y The board row
    * @param piece The type of piece to add
    */
-  private void addPieceAt(int x, int y, ColoredPiece<Piece, Color> piece) {
-    for (Map.Entry<Integer, ColoredPiece<Piece, Color>> entry : pieces.entrySet()) {
+  private void addPieceAt(int x, int y, ColoredPiece piece) {
+    for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
       if (entry.getValue().equals(piece)) {
         board[entry.getKey()].setBit(x % 8 + y * 8);
+        return;
       }
     }
   }
@@ -620,14 +621,18 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckAfterMove(Color color, Move move) {
-    this.movePiece(move.source, move.dest);
-    if (isCheck(color)) {
-      this.movePiece(move.dest, move.source);
-      return true;
-    } else {
-      this.movePiece(move.dest, move.source);
-      return false;
+    ColoredPiece removedPiece = null;
+    if (move.isTake) {
+      removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
+      deletePieceAt(move.getDest().getX(), move.getDest().getY());
     }
+    this.movePiece(move.source, move.dest); // Play move
+    boolean isCheckAfterMove = isCheck(color);
+    this.movePiece(move.dest, move.source); // undo move
+    if (move.isTake) {
+      addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+    }
+    return isCheckAfterMove;
   }
 
   /**
@@ -647,7 +652,7 @@ public class BitboardRepresentation implements BoardRepresentation {
           getAvailableMoves(
               piecePosition.getX(), piecePosition.getY(), false); // TODO: Check this line
       for (Move move : availableMoves) {
-        ColoredPiece<Piece, Color> removedPiece = null;
+        ColoredPiece removedPiece = null;
         if (move.isTake) {
           removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
           deletePieceAt(move.getDest().getX(), move.getDest().getY());
@@ -812,9 +817,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void promotePawn(int x, int y, boolean white, Piece newPiece) {
-    ColoredPiece<Piece, Color> pieceAtPosition = getPieceAt(x, y);
-    if (pieceAtPosition.getPiece() != Piece.PAWN
-        || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
+    ColoredPiece pieceAtPosition = getPieceAt(x, y);
+    if (pieceAtPosition.piece != Piece.PAWN
+        || pieceAtPosition.color != (white ? Color.WHITE : Color.BLACK)) {
       return;
     }
 
@@ -855,23 +860,23 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isDoublePushPossible(Move move, boolean white) {
-    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    ColoredPiece piece = getPieceAt(move.source.getX(), move.source.getY());
     if (white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && move.source.getY() == 1
         && move.dest.getY() == 3
         && move.source.getX() == move.dest.getX()) {
-      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
-          && (getPieceAt(move.dest.getX(), move.dest.getY() - 1).getPiece() == Piece.EMPTY));
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).piece == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX(), move.dest.getY() - 1).piece == Piece.EMPTY));
     }
 
     if (!white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && move.source.getY() == 6
         && move.dest.getY() == 4
         && move.source.getX() == move.dest.getX()) {
-      return ((getPieceAt(move.dest.getX(), move.dest.getY()).getPiece() == Piece.EMPTY)
-          && (getPieceAt(move.dest.getX(), move.dest.getY() + 1).getPiece() == Piece.EMPTY));
+      return ((getPieceAt(move.dest.getX(), move.dest.getY()).piece == Piece.EMPTY)
+          && (getPieceAt(move.dest.getX(), move.dest.getY() + 1).piece == Piece.EMPTY));
     }
     return false;
   }
@@ -886,16 +891,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the move is a valid en passant capture, false else
    */
   public boolean isEnPassant(int x, int y, Move move, boolean white) {
-    ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
+    ColoredPiece piece = getPieceAt(move.source.getX(), move.source.getY());
     if (white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && (move.dest.getX() == (x) && move.dest.getY() == (y))
         && ((move.source.getX() == (x - 1) && move.source.getY() == (y - 1))
             || (move.source.getX() == (x + 1) && move.source.getY() == (y - 1)))) {
       return true;
     }
     if (!white
-        && piece.getPiece() == Piece.PAWN
+        && piece.piece == Piece.PAWN
         && (move.dest.getX() == (x) && move.dest.getY() == (y))
         && ((move.source.getX() == (x + 1) && move.source.getY() == (y + 1))
             || (move.source.getX() == (x - 1) && move.source.getY() == (y + 1)))) {

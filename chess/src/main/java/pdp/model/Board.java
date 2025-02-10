@@ -53,7 +53,7 @@ public class Board {
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
-    if (board.getPieceAt(move.source.getX(), move.source.getY()).getPiece() == Piece.PAWN) {
+    if (board.getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
       // Reset the number of moves with no pawn move
       this.nbMovesWithNoCaptureOrPawn = 0;
     }

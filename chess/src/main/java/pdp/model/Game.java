@@ -68,18 +68,14 @@ public class Game extends Subject {
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     try {
-      if ((this.gameState
-                      .getBoard()
-                      .board
-                      .getPieceAt(move.source.getX(), move.source.getY())
-                      .getColor()
+      if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
                   == Color.WHITE
               && !this.gameState.getBoard().isWhite)
           || this.gameState
                       .getBoard()
                       .board
                       .getPieceAt(move.source.getX(), move.source.getY())
-                      .getColor()
+                      .color
                   == Color.BLACK
               && this.gameState.getBoard().isWhite) {
         throw new IllegalMoveException(
