@@ -265,6 +265,144 @@ public class BoardTest {
   TEST FAILS FOR WHITE LONG CASTLE ---> MAYBE DOES NOT RECOGNIZE C1 OR D1 IS ATTACKED ???
   */
 
+  @Test
+  public void testApplyShortCastleShouldBeSuccess() {
+    game = Game.initialize(false, false, null, null);
+
+    // e2-e4  white
+    Move move1 = new Move(new Position(1, 4), new Position(3, 4));
+    game.getGameState().getBoard().makeMove(move1);
+    // e7-e5  black
+    Move move2 = new Move(new Position(6, 4), new Position(4, 4));
+    game.getGameState().getBoard().makeMove(move2);
+    // Bf1-Bb5  white
+    Move move3 = new Move(new Position(0, 5), new Position(4, 1));
+    game.getGameState().getBoard().makeMove(move3);
+    // Bf8-Bb4  black
+    Move move4 = new Move(new Position(7, 5), new Position(3, 1));
+    game.getGameState().getBoard().makeMove(move4);
+    // Ng1-Nf3 white
+    Move move5 = new Move(new Position(0, 6), new Position(2, 5));
+    game.getGameState().getBoard().makeMove(move5);
+    // Ng8-Nf6 black
+    Move move6 = new Move(new Position(7, 6), new Position(5, 5));
+    game.getGameState().getBoard().makeMove(move6);
+    // apply short castle white
+    game.getBoard().applyCastle(Color.WHITE, true);
+    // apply short castle black
+    game.getBoard().applyCastle(Color.BLACK, true);
+
+    // ensure white king ended up on g1
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(6, 0).piece == Piece.KING,
+        "White king should end up on g1 square after short castle !");
+    // ensure black king ended up on g8
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(6, 7).piece == Piece.KING,
+        "Black king should end up on g8 square after short castle !");
+    // ensure white rook ended up on f1
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(5, 0).piece == Piece.ROOK,
+        "White rook should end up on f1 square after short castle !");
+    // ensure black rook ended up on f8
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(5, 7).piece == Piece.ROOK,
+        "Black rook should end up on f8 square after short castle !");
+
+    // ensure h1 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(7, 0).piece == Piece.EMPTY,
+        "H1 square should be empty after short castle for white !");
+    // ensure e1 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(4, 0).piece == Piece.EMPTY,
+        "E1 square should be empty after short castle for white !");
+    // ensure h8 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(7, 7).piece == Piece.EMPTY,
+        "H8 square should be empty after short castle for black !");
+    // ensure e8 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(4, 7).piece == Piece.EMPTY,
+        "E8 square should be empty after short castle for black !");
+  }
+
+  @Test
+  public void testApplyLongCastleShouldBeSuccess() {
+    game = Game.initialize(false, false, null, null);
+
+    // d2-d4  white
+    Move move1 = new Move(new Position(1, 3), new Position(3, 3));
+    game.getGameState().getBoard().makeMove(move1);
+    // d7-d5  black
+    Move move2 = new Move(new Position(6, 3), new Position(4, 3));
+    game.getGameState().getBoard().makeMove(move2);
+    // Bc1-Bf4  white
+    Move move3 = new Move(new Position(0, 2), new Position(3, 5));
+    game.getGameState().getBoard().makeMove(move3);
+    // Bc8-Bf5  black
+    Move move4 = new Move(new Position(7, 5), new Position(4, 5));
+    game.getGameState().getBoard().makeMove(move4);
+    // Nb1-Nc3 white
+    Move move5 = new Move(new Position(0, 1), new Position(2, 2));
+    game.getGameState().getBoard().makeMove(move5);
+    // Nb8-Nc6 black
+    Move move6 = new Move(new Position(7, 1), new Position(5, 2));
+    game.getGameState().getBoard().makeMove(move6);
+    // Qd1-Qd2 white
+    Move move7 = new Move(new Position(0, 3), new Position(1, 3));
+    game.getGameState().getBoard().makeMove(move7);
+    // Qd8-Qd7 black
+    Move move8 = new Move(new Position(7, 3), new Position(6, 3));
+    game.getGameState().getBoard().makeMove(move8);
+    // apply long castle white
+    game.getBoard().applyCastle(Color.WHITE, false);
+    // apply long castle black
+    game.getBoard().applyCastle(Color.BLACK, false);
+
+    // ensure white king ended up on c1
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(2, 0).piece == Piece.KING,
+        "White king should end up on c1 square after long castle !");
+    // ensure black king ended up on c8
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(2, 7).piece == Piece.KING,
+        "Black king should end up on c8 square after long castle !");
+    // ensure white rook ended up on d1
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(3, 0).piece == Piece.ROOK,
+        "White rook should end up on d1 square after long castle !");
+    // ensure black rook ended up on d8
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(3, 7).piece == Piece.ROOK,
+        "White rook should end up on d1 square after long castle !");
+
+    // ensure a1 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(0, 0).piece == Piece.EMPTY,
+        "A1 square should be empty after long castle for white !");
+    // ensure e1 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(4, 0).piece == Piece.EMPTY,
+        "E1 square should be empty after long castle for white !");
+    // ensure b1 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(1, 0).piece == Piece.EMPTY,
+        "B1 square should be empty after long castle for white !");
+    // ensure a8 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(0, 7).piece == Piece.EMPTY,
+        "A8 square should be empty after long castle for black !");
+    // ensure e8 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(4, 7).piece == Piece.EMPTY,
+        "E8 square should be empty after long castle for black !");
+    // ensure b8 square is empty
+    assertTrue(
+        game.getBoard().getBoard().getPieceAt(1, 7).piece == Piece.EMPTY,
+        "B8 square should be empty after long castle for black !");
+  }
+
   /*@Test
   void testEnPassant() {
 
