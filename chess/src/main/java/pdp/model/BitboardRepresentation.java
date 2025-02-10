@@ -615,8 +615,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Get the check state after move for the given color
    *
    * @param color The piece color you want to know check status
-   * @param move The move you want to know if its make the king in check status
-   * @return True if the given color is in check after the move, False else
+   * @param move The move you want to check if it puts the king in check
+   * @return True if the given color is in check after the given move, False else
    */
   @Override
   public boolean isCheckAfterMove(Color color, Move move) {
@@ -846,12 +846,12 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Replaces pawnToPromote with newPiece. Bitboards get changed. Assumes pawn can be promoted.
+   * Checks if a given move is a double pawn push A double push occurs when a pawn moves forward by
+   * two squares from its starting position
    *
-   * @param x The x-coordinate (file) of the pawn
-   * @param y The y-coordinate (rank) of the pawn
+   * @param move The move to check
    * @param white {true} if pawn is white, {false} if pawn is black
-   * @param newPiece The piece asked by the player that is replacing the promoting pawn
+   * @return True if the move is a valid double pawn push, false else
    */
   @Override
   public boolean isDoublePushPossible(Move move, boolean white) {
@@ -876,6 +876,15 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  /**
+   * Checks if a given move is an en passant
+   *
+   * @param x The x-coordinate of the square where an en passant capture can occur
+   * @param y The y-coordinate of the square where an en passant capture can occur
+   * @param move The move being checked
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @return True if the move is a valid en passant capture, false else
+   */
   public boolean isEnPassant(int x, int y, Move move, boolean white) {
     ColoredPiece<Piece, Color> piece = getPieceAt(move.source.getX(), move.source.getY());
     if (white

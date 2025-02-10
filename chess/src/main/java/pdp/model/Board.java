@@ -41,6 +41,12 @@ public class Board {
     return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
+  /**
+   * Executes a given move on the board, handling captures, en passant, castling, pawn promotion,
+   * and turn switching
+   *
+   * @param move The move to be executed
+   */
   public void makeMove(Move move) {
     if (move.isTake == true) {
       board.deletePieceAt(move.dest.getX(), move.dest.getY());
@@ -108,7 +114,6 @@ public class Board {
     if (this.isEnPassantTake) {
       this.isLastMoveDoublePush = false;
     }
-    // verifier si enPassant
     move.toString();
   }
 
