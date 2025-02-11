@@ -111,7 +111,7 @@ public class CLIView implements View {
   /**
    * Prints the error message for an exception related to user input.
    *
-   * Stops the game if the exception is not related to handled.
+   * <p>Stops the game if the exception is not related to handled.
    *
    * @param e The exception that was thrown.
    */
