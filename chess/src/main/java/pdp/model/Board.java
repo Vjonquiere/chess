@@ -49,6 +49,7 @@ public class Board {
    */
   public void makeMove(Move move) {
     if (move.isTake == true) {
+      // SAVE DELETED PIECE FOR HASHING
       board.deletePieceAt(move.dest.getX(), move.dest.getY());
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;

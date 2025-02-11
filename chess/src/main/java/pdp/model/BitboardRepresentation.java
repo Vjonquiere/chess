@@ -371,7 +371,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of possible moves from a move bitboard
    */
   private List<Move> bitboardToMoves(
-      Bitboard moveBitboard, Bitboard enemies, Position source, Piece piece) {
+      Bitboard moveBitboard, Bitboard enemies, Position source, ColoredPiece piece) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
       moves.add(
@@ -392,7 +392,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getKingMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
+  private List<Move> getKingMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -407,7 +408,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveDownLeft())
             .or(position.moveDownRight());
     move = move.xor(move.and(unreachableSquares));
-    return bitboardToMoves(move, enemies, square, Piece.KING);
+    return bitboardToMoves(move, enemies, square, piece);
   }
 
   /**
@@ -419,7 +420,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   private List<Move> getKnightMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies) {
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -436,7 +437,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveRight().moveDownRight())
             .or(position.moveRight().moveUpRight());
     move = move.xor(move.and(unreachableSquares));
-    return bitboardToMoves(move, enemies, square, Piece.KNIGHT);
+    return bitboardToMoves(move, enemies, square, piece);
   }
 
   /**
@@ -465,7 +466,11 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
     position = position.xor(position.and(unreachableSquares));
 
-    return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies, square, Piece.PAWN);
+    return bitboardToMoves(
+        position.or(attackRight).or(attackLeft),
+        enemies,
+        square,
+        new ColoredPiece(Piece.PAWN, white ? Color.WHITE : Color.BLACK));
   }
 
   /**
@@ -476,13 +481,14 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getQueenMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
+  private List<Move> getQueenMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     return bitboardToMoves(
         getInlineMoves(square, unreachableSquares, enemies)
             .or(getDiagonalMoves(square, unreachableSquares, enemies)),
         enemies,
         square,
-        Piece.QUEEN);
+        piece);
   }
 
   /**
@@ -494,9 +500,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   private List<Move> getBishopMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies) {
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     return bitboardToMoves(
-        getDiagonalMoves(square, unreachableSquares, enemies), enemies, square, Piece.BISHOP);
+        getDiagonalMoves(square, unreachableSquares, enemies), enemies, square, piece);
   }
 
   /**
@@ -507,9 +513,10 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getRookMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
+  private List<Move> getRookMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     return bitboardToMoves(
-        getInlineMoves(square, unreachableSquares, enemies), enemies, square, Piece.ROOK);
+        getInlineMoves(square, unreachableSquares, enemies), enemies, square, piece);
   }
 
   /**
@@ -533,11 +540,11 @@ public class BitboardRepresentation implements BoardRepresentation {
           enemyKing.getX() % 8 + enemyKing.getY() * 8); // Put enemyKing to unreachable positions
     Bitboard enemies = piece.color == Color.WHITE ? getBlackBoard() : getWhiteBoard();
     return switch (piece.piece) {
-      case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies);
-      case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies);
-      case BISHOP -> getBishopMoves(new Position(y, x), unreachableSquares, enemies);
-      case ROOK -> getRookMoves(new Position(y, x), unreachableSquares, enemies);
-      case KNIGHT -> getKnightMoves(new Position(y, x), unreachableSquares, enemies);
+      case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case BISHOP -> getBishopMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case ROOK -> getRookMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case KNIGHT -> getKnightMoves(new Position(y, x), unreachableSquares, enemies, piece);
       case PAWN ->
           piece.color == Color.WHITE
               ? getPawnMoves(new Position(y, x), unreachableSquares, enemies, true)
@@ -917,6 +924,10 @@ public class BitboardRepresentation implements BoardRepresentation {
       return true;
     }
     return false;
+  }
+
+  protected Bitboard[] getBitboards() {
+    return this.board;
   }
 
   @Override
