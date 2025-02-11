@@ -186,7 +186,8 @@ public class CLIView implements View {
    * @param args Unused argument
    */
   private void historyCommand(String args) {
-    // TODO
+    System.out.println(TextGetter.getText("historyTitle"));
+    System.out.println(Game.getInstance().getHistory());
   }
 
   /**

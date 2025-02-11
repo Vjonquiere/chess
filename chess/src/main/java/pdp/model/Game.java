@@ -284,9 +284,7 @@ public class Game extends Subject {
   }
 
   public String getStringHistory() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    return this.history.toString();
   }
 
   public void resetGame() {
