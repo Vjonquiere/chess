@@ -35,10 +35,31 @@ public class Game extends Subject {
     return this.gameState;
   }
 
+  /**
+   * Adds an observer to the game and game state and immediately notifies a GAME_STARTED event.
+   *
+   * @param observer The observer to be added.
+   */
   @Override
   public void addObserver(EventObserver observer) {
     super.addObserver(observer);
+    if (gameState != null) {
+      this.gameState.addObserver(observer);
+    }
     this.notifyObserver(observer, EventType.GAME_STARTED);
+  }
+
+  /**
+   * Adds an observer to the game and game state that listens for error events.
+   *
+   * @param observer The observer to be added.
+   */
+  @Override
+  public void addErrorObserver(EventObserver observer) {
+    super.addErrorObserver(observer);
+    if (gameState != null) {
+      this.gameState.addErrorObserver(observer);
+    }
   }
 
   /**
@@ -61,27 +82,22 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
-    if (isOver()) {
-      throw new IllegalMoveException("The game is over!");
-    }
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
+    Position destPosition = new Position(move.dest.getY(), move.dest.getX());
     try {
-      if ((this.gameState
-                      .getBoard()
-                      .board
-                      .getPieceAt(move.source.getX(), move.source.getY())
-                      .getColor()
+      if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
                   == Color.WHITE
               && !this.gameState.getBoard().isWhite)
           || this.gameState
                       .getBoard()
                       .board
                       .getPieceAt(move.source.getX(), move.source.getY())
-                      .getColor()
+                      .color
                   == Color.BLACK
               && this.gameState.getBoard().isWhite) {
         throw new IllegalMoveException(
-            move.toString()); // mauvaise couleur de pièce deplacé donc exception
+            "Not your piece "
+                + move.toString()); // mauvaise couleur de pièce deplacé donc exception
       }
 
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
@@ -108,7 +124,7 @@ public class Game extends Subject {
           .board
           .isCheckAfterMove(
               this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, classicalMove)) {
-        throw new IllegalMoveException(classicalMove.toString());
+        throw new IllegalMoveException("Move puts the king in check " + classicalMove.toString());
       }
 
       this.gameState.getBoard().makeMove(classicalMove);
@@ -118,29 +134,94 @@ public class Game extends Subject {
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
+      boolean isSpecialMove = false;
 
-      /* if(roque){
-        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
-          throw new IllegalMoveException(Move.toString());
+      // Castle move
+      Piece isPieceKing =
+          this.gameState
+              .getBoard()
+              .board
+              .getPieceAt(sourcePosition.getX(), sourcePosition.getY())
+              .piece;
+      if (isPieceKing == Piece.KING) {
+        if (Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
+            && sourcePosition.getY() == 0
+            && destPosition.getY() == 0) {
+          boolean shortCastleIsAsked = destPosition.getX() > sourcePosition.getX();
+          Color color = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+          // Check if castle is possible
+          if (this.gameState.getBoard().canCastle(color, shortCastleIsAsked)) {
+            // If castle is possible then apply changes
+            this.gameState.getBoard().applyCastle(color, shortCastleIsAsked);
+            isSpecialMove = true;
+
+            // ADD MOVE TO HISTORY
+
+            this.gameState.switchPlayerTurn();
+            this.notifyObservers(EventType.MOVE_PLAYED);
+          }
         }
-        play.roque
-        addToHystory(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers();
       }
 
-      if(enpassant){
-        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,Move){
-          throw new IllegalMoveException(Move.toString());
+      // enPassant move
+      if (this.gameState.getBoard().isLastMoveDoublePush
+          && this.gameState
+              .getBoard()
+              .board
+              .isEnPassant(
+                  this.gameState.getBoard().enPassantPos.getX(),
+                  this.gameState.getBoard().enPassantPos.getY(),
+                  move,
+                  this.gameState.getBoard().isWhite)) {
+        if (this.gameState
+            .getBoard()
+            .board
+            .isCheckAfterMove(
+                this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+          throw new IllegalMoveException(
+              "enPassant move puts the king in check " + move.toString());
         }
-        play.enpassant
-        addToHystory(move);
+
+        isSpecialMove = true;
+        this.gameState.getBoard().enPassantPos = null;
+        this.gameState.getBoard().isEnPassantTake = true;
+        this.gameState.getBoard().makeMove(move);
+        // addToHystory(move);
         this.gameState.switchPlayerTurn();
-        this.notifyObservers();
+        this.notifyObservers(EventType.MOVE_PLAYED);
+      }
 
-      } */
+      // DoublePawnPush move
+      if (this.gameState
+          .getBoard()
+          .board
+          .isDoublePushPossible(move, this.gameState.getBoard().isWhite)) {
+        if (this.gameState
+            .getBoard()
+            .board
+            .isCheckAfterMove(
+                this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+          throw new IllegalMoveException(
+              "This doublePawnPush puts the king in check " + move.toString());
+        }
 
-      throw new IllegalMoveException(move.toString());
+        isSpecialMove = true;
+        this.gameState.getBoard().enPassantPos =
+            this.gameState.getBoard().isWhite
+                ? new Position(move.dest.getY() - 1, move.dest.getX())
+                : new Position(move.dest.getY() + 1, move.dest.getX());
+        this.gameState.getBoard().makeMove(move);
+
+        this.gameState.getBoard().isLastMoveDoublePush = true;
+        // addToHystory(move);
+        this.gameState.switchPlayerTurn();
+        this.notifyObservers(EventType.MOVE_PLAYED);
+      }
+      if (!isSpecialMove) {
+        throw new IllegalMoveException(e.getMessage() + " and not a special move");
+        // throw new IllegalMoveException(e.getMessage(), e );
+      }
+
       // dans cette section la variable classicalMove n'est pas définie
       // verifie si echec et mat ou pat et plus generalement si la partie est finie, si oui terminer
       // partie en consequence
@@ -191,6 +272,12 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName());
   }
 
+  /**
+   * Returns a string representation of the game. Includes the ASCII representation of the board,
+   * the time remaining (if timer is not null), and the color of the player to play.
+   *
+   * @return A string representation of the game.
+   */
   public String getGameRepresentation() {
     char[][] board = this.gameState.getBoard().getAsciiRepresentation();
     StringBuilder sb = new StringBuilder();
@@ -222,10 +309,15 @@ public class Game extends Subject {
     }
     sb.append("\n\n");
 
-    sb.append(
-        TextGetter.getText(
-            "toPlay",
-            gameState.isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
+    if (!this.gameState.isGameOver()) {
+      sb.append(
+          TextGetter.getText(
+              "toPlay",
+              gameState.isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
+    } else {
+      sb.append(TextGetter.getText("gameOver"));
+    }
+
     sb.append("\n");
 
     return sb.toString();

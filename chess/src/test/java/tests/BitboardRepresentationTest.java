@@ -98,24 +98,24 @@ public class BitboardRepresentationTest {
     for (Position position :
         board.getPawns(true)) { // Test getPieceAt on white pawns at the beginning of the game
       assertEquals(
-          new ColoredPiece<Piece, Color>(Piece.PAWN, Color.WHITE),
+          new ColoredPiece(Piece.PAWN, Color.WHITE),
           board.getPieceAt(position.getX(), position.getY()));
     }
     for (Position position :
         board.getPawns(false)) { // Test getPieceAt on white pawns at the beginning of the game
       assertEquals(
-          new ColoredPiece<Piece, Color>(Piece.PAWN, Color.BLACK),
+          new ColoredPiece(Piece.PAWN, Color.BLACK),
           board.getPieceAt(position.getX(), position.getY()));
     }
     assertNotEquals(
-        new ColoredPiece<Piece, Color>(Piece.ROOK, Color.WHITE),
+        new ColoredPiece(Piece.ROOK, Color.WHITE),
         board.getPieceAt(0, 1)); // Not a rook a pawn place
 
     assertEquals(
-        new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(0, 3)); // Empty square
+        new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(0, 3)); // Empty square
     board.movePiece(new Position(1, 0), new Position(3, 0)); // moveUp pawn
     assertEquals(
-        new ColoredPiece<>(Piece.PAWN, Color.WHITE), board.getPieceAt(0, 3)); // Check if pawn moved
+        new ColoredPiece(Piece.PAWN, Color.WHITE), board.getPieceAt(0, 3)); // Check if pawn moved
   }
 
   @Test
@@ -123,46 +123,46 @@ public class BitboardRepresentationTest {
     BitboardRepresentation board = new BitboardRepresentation();
 
     // Test move on white pawn
-    assertEquals(new ColoredPiece<>(Piece.PAWN, Color.WHITE), board.getPieceAt(0, 1));
+    assertEquals(new ColoredPiece(Piece.PAWN, Color.WHITE), board.getPieceAt(0, 1));
     board.movePiece(new Position(1, 0), new Position(3, 0));
-    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(0, 1));
-    assertEquals(new ColoredPiece<>(Piece.PAWN, Color.WHITE), board.getPieceAt(0, 3));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(0, 1));
+    assertEquals(new ColoredPiece(Piece.PAWN, Color.WHITE), board.getPieceAt(0, 3));
 
     // Test move on black knight
-    assertEquals(new ColoredPiece<>(Piece.KNIGHT, Color.BLACK), board.getPieceAt(1, 7));
+    assertEquals(new ColoredPiece(Piece.KNIGHT, Color.BLACK), board.getPieceAt(1, 7));
     board.movePiece(new Position(7, 1), new Position(5, 0));
-    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(1, 7));
-    assertEquals(new ColoredPiece<>(Piece.KNIGHT, Color.BLACK), board.getPieceAt(0, 5));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(1, 7));
+    assertEquals(new ColoredPiece(Piece.KNIGHT, Color.BLACK), board.getPieceAt(0, 5));
 
     // Test move rook
-    assertEquals(new ColoredPiece<>(Piece.ROOK, Color.WHITE), board.getPieceAt(0, 0));
+    assertEquals(new ColoredPiece(Piece.ROOK, Color.WHITE), board.getPieceAt(0, 0));
     board.movePiece(new Position(0, 0), new Position(2, 0));
-    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(0, 0));
-    assertEquals(new ColoredPiece<>(Piece.ROOK, Color.WHITE), board.getPieceAt(0, 2));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(0, 0));
+    assertEquals(new ColoredPiece(Piece.ROOK, Color.WHITE), board.getPieceAt(0, 2));
 
     // Test move bishop
-    assertEquals(new ColoredPiece<>(Piece.BISHOP, Color.BLACK), board.getPieceAt(2, 7));
+    assertEquals(new ColoredPiece(Piece.BISHOP, Color.BLACK), board.getPieceAt(2, 7));
     board.movePiece(new Position(7, 2), new Position(2, 7));
-    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(2, 7));
-    assertEquals(new ColoredPiece<>(Piece.BISHOP, Color.BLACK), board.getPieceAt(7, 2));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(2, 7));
+    assertEquals(new ColoredPiece(Piece.BISHOP, Color.BLACK), board.getPieceAt(7, 2));
 
     // Test move king
-    assertEquals(new ColoredPiece<>(Piece.KING, Color.WHITE), board.getPieceAt(4, 0));
+    assertEquals(new ColoredPiece(Piece.KING, Color.WHITE), board.getPieceAt(4, 0));
     board.movePiece(new Position(0, 4), new Position(2, 4));
-    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(4, 0));
-    assertEquals(new ColoredPiece<>(Piece.KING, Color.WHITE), board.getPieceAt(4, 2));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(4, 0));
+    assertEquals(new ColoredPiece(Piece.KING, Color.WHITE), board.getPieceAt(4, 2));
 
     // Test move queen
-    assertEquals(new ColoredPiece<>(Piece.QUEEN, Color.BLACK), board.getPieceAt(3, 7));
+    assertEquals(new ColoredPiece(Piece.QUEEN, Color.BLACK), board.getPieceAt(3, 7));
     board.movePiece(new Position(7, 3), new Position(4, 3));
-    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(3, 7));
-    assertEquals(new ColoredPiece<>(Piece.QUEEN, Color.BLACK), board.getPieceAt(3, 4));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(3, 7));
+    assertEquals(new ColoredPiece(Piece.QUEEN, Color.BLACK), board.getPieceAt(3, 4));
 
     // Test move king
-    assertEquals(new ColoredPiece<>(Piece.KING, Color.BLACK), board.getPieceAt(4, 7));
+    assertEquals(new ColoredPiece(Piece.KING, Color.BLACK), board.getPieceAt(4, 7));
     board.movePiece(new Position(7, 4), new Position(7, 3));
-    assertEquals(new ColoredPiece<>(Piece.EMPTY, Color.EMPTY), board.getPieceAt(4, 7));
-    assertEquals(new ColoredPiece<>(Piece.KING, Color.BLACK), board.getPieceAt(3, 7));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(4, 7));
+    assertEquals(new ColoredPiece(Piece.KING, Color.BLACK), board.getPieceAt(3, 7));
 
     assertThrows(
         IllegalArgumentException.class,
@@ -496,7 +496,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.KNIGHT);
 
     assertNotNull(board.getPieceAt(0, 7));
-    assertEquals(Piece.KNIGHT, board.getPieceAt(0, 7).getPiece());
+    assertEquals(Piece.KNIGHT, board.getPieceAt(0, 7).piece);
 
     // Same thing for black
     Position blackBlockerCurrPos = new Position(0, 7);
@@ -509,7 +509,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.QUEEN);
 
     assertNotNull(board.getPieceAt(7, 0));
-    assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).getPiece());
+    assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).piece);
   }
 
   @Test
@@ -529,7 +529,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.ROOK);
 
     assertNotNull(board.getPieceAt(0, 7));
-    assertEquals(Piece.ROOK, board.getPieceAt(0, 7).getPiece());
+    assertEquals(Piece.ROOK, board.getPieceAt(0, 7).piece);
 
     // Same thing for black
     Position blackBlockerCurrPos = new Position(0, 7);
@@ -542,7 +542,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.BISHOP);
 
     assertNotNull(board.getPieceAt(7, 0));
-    assertEquals(Piece.BISHOP, board.getPieceAt(7, 0).getPiece());
+    assertEquals(Piece.BISHOP, board.getPieceAt(7, 0).piece);
   }
 
   @Test
@@ -563,7 +563,7 @@ public class BitboardRepresentationTest {
     // Ensure pawn is remaining at the promotion position before trying invalid promotion
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(0, 7).getPiece(),
+        board.getPieceAt(0, 7).piece,
         "White pawn should still be at promotion square before invalid promotion !");
 
     // Attempt invalid promotions
@@ -572,7 +572,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(0, 7).getPiece(),
+        board.getPieceAt(0, 7).piece,
         "White pawn should remain unchanged after invalid promotion !");
 
     // Same process for black
@@ -586,7 +586,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(7, 0).getPiece(),
+        board.getPieceAt(7, 0).piece,
         "Black pawn should still be at promotion square before invalid promotion!");
 
     board.promotePawn(7, 0, !white, Piece.KING);
@@ -594,7 +594,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(7, 0).getPiece(),
+        board.getPieceAt(7, 0).piece,
         "Black pawn should remain unchanged after invalid promotion!");
   }
 
@@ -616,7 +616,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.QUEEN);
 
     assertEquals(
-        Piece.KNIGHT, board.getPieceAt(0, 7).getPiece(), "White knight should not be promotable !");
+        Piece.KNIGHT, board.getPieceAt(0, 7).piece, "White knight should not be promotable !");
 
     // Same for black but with a bishop for instance
     Position blackBlockerCurrPos = new Position(0, 7);
@@ -632,7 +632,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.QUEEN);
 
     assertEquals(
-        Piece.BISHOP, board.getPieceAt(7, 0).getPiece(), "Black bishop should not be promotable !");
+        Piece.BISHOP, board.getPieceAt(7, 0).piece, "Black bishop should not be promotable !");
   }
 
   @Test

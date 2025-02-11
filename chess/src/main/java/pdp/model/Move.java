@@ -31,7 +31,13 @@ public class Move {
     this.isTake = isTake;
   }
 
-  // fromString("h2 h4") -> Move move (source(7,1), dest= (7,3))
+  /**
+   * Parses a string representation of a move and converts it into a {@code Move} object
+   *
+   * @param stringMove The move in string format ("e2-e4")
+   * @return A {@code Move} object representing the parsed move
+   * @throws MoveParsingException If the string format is invalid
+   */
   public static Move fromString(String stringMove) {
 
     String[] parts = stringMove.split("-");
@@ -42,7 +48,13 @@ public class Move {
     return move;
   }
 
-  // stringToPosition("e4") -> Position (4,3)
+  /**
+   * Converts a string representation of a chess position into a {@code Position} object
+   *
+   * @param move The position in string format ("e4")
+   * @return A {@code Position} object representing the parsed position
+   * @throws InvalidPositionException If the input string is not a valid chess position
+   */
   public static Position stringToPosition(String move) {
 
     if (move.length() != 2) {
@@ -62,7 +74,12 @@ public class Move {
     return new Position(y, x);
   }
 
-  // positionToString((4,3)) -> "e4"
+  /**
+   * Converts a {@code Position} object into its string representation in chess notation
+   *
+   * @param position The {@code Position} object to convert
+   * @return A string representing the position ("e4")
+   */
   public String positionToString(Position position) {
     char col = (char) ('a' + position.getX());
     int row = position.getY() + 1;
@@ -70,13 +87,20 @@ public class Move {
     return "" + col + row;
   }
 
+  /**
+   * Checks if the current move is a classical move by comparing it with a list of available moves
+   *
+   * @param availableMoves The list of legal moves to check
+   * @return The matching move if found
+   * @throws IllegalMoveException If the move is not found in the list of available moves
+   */
   public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
     for (Move move : availableMoves) {
       if (move.equals(this)) {
         return move;
       }
     }
-    throw new IllegalMoveException(this.toString());
+    throw new IllegalMoveException("It's not a classicalMove " + this.toString());
   }
 
   public Position getSource() {

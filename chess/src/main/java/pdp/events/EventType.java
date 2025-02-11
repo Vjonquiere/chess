@@ -2,6 +2,13 @@ package pdp.events;
 
 public enum EventType {
   GAME_STARTED,
-  GAME_OVER,
+  WIN_WHITE,
+  WIN_BLACK,
+  DRAW,
+  DRAW_ACCEPTED,
+  WHITE_DRAW_PROPOSAL,
+  BLACK_DRAW_PROPOSAL,
+  WHITE_UNDRAW,
+  BLACK_UNDRAW,
   MOVE_PLAYED
 }

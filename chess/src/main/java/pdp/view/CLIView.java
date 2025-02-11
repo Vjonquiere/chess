@@ -1,11 +1,16 @@
 package pdp.view;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
+import pdp.controller.commands.CancelDrawCommand;
 import pdp.controller.commands.PlayMoveCommand;
+import pdp.controller.commands.ProposeDrawCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.events.EventType;
 import pdp.exceptions.IllegalMoveException;
@@ -17,16 +22,30 @@ import pdp.utils.TextGetter;
 public class CLIView implements View {
   private boolean running = false;
   private final Map<String, CommandEntry> commands = new HashMap<>();
+  private static final Logger LOGGER = Logger.getLogger(CLIView.class.getName());
 
   public CLIView() {
     commands.put(
         "move", new CommandEntry(this::moveCommand, TextGetter.getText("moveHelpDescription")));
     commands.put(
-        "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
+        "draw", new CommandEntry(this::drawCommand, TextGetter.getText("drawHelpDescription")));
+    commands.put(
+        "undraw",
+        new CommandEntry(this::undrawCommand, TextGetter.getText("undrawHelpDescription")));
     commands.put(
         "help", new CommandEntry(this::helpCommand, TextGetter.getText("helpHelpDescription")));
     commands.put(
         "quit", new CommandEntry(this::quitCommand, TextGetter.getText("quitHelpDescription")));
+    commands.put(
+        "history",
+        new CommandEntry(this::historyCommand, TextGetter.getText("historyHelpDescription")));
+    commands.put(
+        "board",
+        new CommandEntry(this::displayBoardCommand, TextGetter.getText("boardHelpDescription")));
+    /*
+    commands.put(
+        "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
+        */
   }
 
   /**
@@ -40,6 +59,11 @@ public class CLIView implements View {
     return startUserInputListener();
   }
 
+  /**
+   * Called when a game event occurs.
+   *
+   * @param event The type of event that occurred.
+   */
   @Override
   public void onGameEvent(EventType event) {
     switch (event) {
@@ -51,12 +75,46 @@ public class CLIView implements View {
       case MOVE_PLAYED:
         System.out.println(Game.getInstance().getGameRepresentation());
         break;
-      case GAME_OVER:
-        System.out.println("The game is over"); // TODO change behavior when end will be implemented
+      case WIN_WHITE:
+        System.out.println(Game.getInstance().getGameRepresentation());
+        System.out.println(TextGetter.getText("whiteWin"));
+        break;
+      case WIN_BLACK:
+        System.out.println(Game.getInstance().getGameRepresentation());
+        System.out.println(TextGetter.getText("blackWin"));
+        break;
+      case DRAW:
+        System.out.println(Game.getInstance().getGameRepresentation());
+        System.out.println(TextGetter.getText("onDraw"));
+        break;
+      case WHITE_DRAW_PROPOSAL:
+        System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("white")));
+        break;
+      case BLACK_DRAW_PROPOSAL:
+        System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("black")));
+        break;
+      case WHITE_UNDRAW:
+        System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")));
+        break;
+      case BLACK_UNDRAW:
+        System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
+        break;
+      case DRAW_ACCEPTED:
+        System.out.println(TextGetter.getText("drawAccepted"));
+        break;
+      default:
+        DEBUG(LOGGER, "Received unknown game event: " + event);
         break;
     }
   }
 
+  /**
+   * Prints the error message for an exception related to user input.
+   *
+   * <p>Stops the game if the exception is not related to handled.
+   *
+   * @param e The exception that was thrown.
+   */
   @Override
   public void onErrorEvent(Exception e) {
     if (e instanceof IllegalMoveException
@@ -64,7 +122,9 @@ public class CLIView implements View {
         || e instanceof InvalidPositionException) {
       System.out.println(e.getMessage());
     } else {
-      System.err.println("Uncaught Error received: " + e.getMessage());
+      System.err.println(e);
+      e.printStackTrace();
+      running = false;
     }
   }
 
@@ -101,6 +161,7 @@ public class CLIView implements View {
     String[] parts = input.split(" ", 2);
 
     CommandEntry ce = commands.get(parts[0]);
+
     if (ce != null) {
       Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
@@ -108,6 +169,24 @@ public class CLIView implements View {
       System.out.println(TextGetter.getText("unknownCommand", input));
       this.helpCommand("");
     }
+  }
+
+  /**
+   * Displays the current state of the board and the next player.
+   *
+   * @param args Unused argument
+   */
+  private void displayBoardCommand(String args) {
+    System.out.println(Game.getInstance().getGameRepresentation());
+  }
+
+  /**
+   * Handles the history command by displaying the history of moves made in the game.
+   *
+   * @param args Unused argument
+   */
+  private void historyCommand(String args) {
+    // TODO
   }
 
   /**
@@ -138,6 +217,16 @@ public class CLIView implements View {
    */
   private void saveCommand(String args) {
     BagOfCommands.getInstance().addCommand(new SaveGameCommand(args));
+  }
+
+  private void drawCommand(String args) {
+    BagOfCommands.getInstance()
+        .addCommand(new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
+  }
+
+  private void undrawCommand(String args) {
+    BagOfCommands.getInstance()
+        .addCommand(new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
 
   /**
