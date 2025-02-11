@@ -34,11 +34,14 @@ public class GameTest {
   public void playEnPassantTest() {
     Game game = Game.initialize(false, false, null, null);
     game.playMove(new Move(new Position(1, 0), new Position(3, 0)));
+    game.playMove(new Move(new Position(6, 0), new Position(5, 0)));
+    game.playMove(new Move(new Position(3, 0), new Position(4, 0)));
     game.playMove(new Move(new Position(6, 1), new Position(4, 1)));
-    game.playMove(new Move(new Position(3, 0), new Position(4, 1)));
+    game.playMove(new Move(new Position(4, 0), new Position(5, 1)));
     BitboardRepresentation bitboards = new BitboardRepresentation();
-    bitboards.movePiece(new Position(1, 0), new Position(4, 1));
     bitboards.deletePieceAt(1, 6);
+    bitboards.movePiece(new Position(1, 0), new Position(5, 1));
+    bitboards.movePiece(new Position(6, 0), new Position(5, 0));
     assertEquals(bitboards, game.getBoard().getBoard());
   }
 
@@ -79,12 +82,12 @@ public class GameTest {
     game.playMove(new Move(new Position(7, 3), new Position(6, 3)));
     game.playMove(new Move(new Position(3, 0), new Position(4, 0)));
     game.playMove(new Move(new Position(6, 3), new Position(5, 3)));
-    game.playMove(new Move(new Position(1, 5), new Position(3, 5)));
-
+    game.playMove(new Move(new Position(1, 1), new Position(2, 1)));
+    game.playMove(new Move(new Position(5, 3), new Position(3, 1)));
     assertThrows(
         IllegalMoveException.class,
         () -> {
-          game.playMove(new Move(new Position(1, 4), new Position(3, 4)));
+          game.playMove(new Move(new Position(1, 3), new Position(3, 3)));
         });
   }
 
