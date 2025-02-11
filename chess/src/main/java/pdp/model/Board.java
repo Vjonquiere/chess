@@ -49,15 +49,16 @@ public class Board {
    */
   public void makeMove(Move move) {
     this.nbMovesWithNoCaptureOrPawn++;
+    if (board.getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
+      // Reset the number of moves with no pawn move
+      this.nbMovesWithNoCaptureOrPawn = 0;
+    }
     if (move.isTake == true) {
       board.deletePieceAt(move.dest.getX(), move.dest.getY());
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
-    if (board.getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
-      // Reset the number of moves with no pawn move
-      this.nbMovesWithNoCaptureOrPawn = 0;
-    }
+
     if (this.isEnPassantTake) {
       this.isLastMoveDoublePush = false;
       this.isEnPassantTake = false;
