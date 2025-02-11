@@ -54,3 +54,143 @@ cleanup:
   tags:
       - shell
       - Debian
+
+#====================
+#     MultiOS
+#====================
+
+build-job-ubuntu:
+  stage: build
+  image: ubuntu:latest
+  before_script:
+    - apt update && apt install -y openjdk-17-jdk maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Building on Ubuntu with JDK 17..."
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - chess/target/
+    expire_in: 1h
+  tags:
+    - Docker
+
+unit-test-job-ubuntu:
+  stage: test
+  image: ubuntu:latest
+  before_script:
+    - apt update && apt install -y openjdk-17-jdk maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Testing on Ubuntu with JDK 17..."
+    - mvn clean test
+  tags:
+    - Docker
+
+build-job-alpine:
+  stage: build
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openjdk17 maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Building on Alpine with JDK 17..."
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - chess/target/
+    expire_in: 1h
+  tags:
+    - Docker
+
+unit-test-job-alpine:
+  stage: test
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openjdk17 maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Testing on Alpine with JDK 17..."
+    - mvn clean test
+  tags:
+    - Docker
+
+build-job-debian:
+  stage: build
+  image: debian:latest
+  before_script:
+    - apt update && apt install -y openjdk-17-jdk maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Building on Debian with JDK 17..."
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - chess/target/
+    expire_in: 1h
+  tags:
+    - Docker
+
+unit-test-job-debian:
+  stage: test
+  image: debian:latest
+  before_script:
+    - apt update && apt install -y openjdk-17-jdk maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Testing on Debian with JDK 17..."
+    - mvn clean test
+  tags:
+    - Docker
+
+build-job-fedora:
+  stage: build
+  image: fedora:latest
+  before_script:
+    - dnf install -y java-17-openjdk maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Building on Debian with JDK 17..."
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - chess/target/
+    expire_in: 1h
+  tags:
+    - Docker
+
+unit-test-job-fedora:
+  stage: test
+  image: fedora:latest
+  before_script:
+    - dnf install -y java-17-openjdk maven
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
+    - mvn -version
+  script:
+    - echo "Testing on Debian with JDK 17..."
+    - mvn clean test
+  tags:
+    - Docker
