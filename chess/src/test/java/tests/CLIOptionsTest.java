@@ -97,6 +97,13 @@ public class CLIOptionsTest {
     /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-V"}, mockRuntime2);
+    System.out.println(
+        "Expected: [" + expected.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
+    System.out.println(
+        "Actual:   ["
+            + outputStream.toString().trim().replace("\n", "\\n").replace("\r", "\\r")
+            + "]");
+
     assertEquals(expected.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
