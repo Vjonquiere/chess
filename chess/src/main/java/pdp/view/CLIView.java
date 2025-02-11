@@ -36,6 +36,12 @@ public class CLIView implements View {
         "help", new CommandEntry(this::helpCommand, TextGetter.getText("helpHelpDescription")));
     commands.put(
         "quit", new CommandEntry(this::quitCommand, TextGetter.getText("quitHelpDescription")));
+    commands.put(
+        "history",
+        new CommandEntry(this::historyCommand, TextGetter.getText("historyHelpDescription")));
+    commands.put(
+        "board",
+        new CommandEntry(this::displayBoardCommand, TextGetter.getText("boardHelpDescription")));
     /*
     commands.put(
         "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
@@ -163,6 +169,24 @@ public class CLIView implements View {
       System.out.println(TextGetter.getText("unknownCommand", input));
       this.helpCommand("");
     }
+  }
+
+  /**
+   * Displays the current state of the board and the next player.
+   *
+   * @param args Unused argument
+   */
+  private void displayBoardCommand(String args) {
+    System.out.println(Game.getInstance().getGameRepresentation());
+  }
+
+  /**
+   * Handles the history command by displaying the history of moves made in the game.
+   *
+   * @param args Unused argument
+   */
+  private void historyCommand(String args) {
+    // TODO
   }
 
   /**
