@@ -27,7 +27,7 @@ public class CLIOptionsTest {
   String expectedHelp =
       "usage: chess\n"
           + " -a,--ai <COLOR>                 Launch the program in AI mode, with\n"
-          + "                                 artificial player with COLOR ’B’ or ’A’\n"
+          + "                                 artificial player with COLOR 'B' or 'A'\n"
           + "                                 (All),(W by default).\n"
           + "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm\n"
           + "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial\n"
@@ -108,12 +108,21 @@ public class CLIOptionsTest {
     /* Test that only help is displayed, even with several parameters */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+
+    String output = outputStream.toString();
+
+    System.out.println(
+        "Expected: [" + expectedHelp.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
+    System.out.println(
+        "Actual:   [" + output.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
+
+    assertEquals(expectedHelp.trim(), output.trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-V", "-h"}, mockRuntime2);
+
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
