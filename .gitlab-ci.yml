@@ -63,7 +63,7 @@ cleanup:
 #====================
 
 ubuntu:
-  stage: multi-os-build
+  stage: multi-os
   image: ubuntu:latest
   before_script:
     - apt update && apt install -y openjdk-17-jdk maven
@@ -105,7 +105,7 @@ alpine:
     - Docker
 
 fedora:
-  stage: multi-os-build
+  stage: multi-os
   image: fedora:latest
   before_script:
     - dnf install -y java-17-openjdk maven
