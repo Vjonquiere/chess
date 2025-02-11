@@ -36,14 +36,30 @@ public class Game extends Subject {
   }
 
   /**
-   * Adds an observer to the game and immediately notifies a GAME_STARTED event.
+   * Adds an observer to the game and game state and immediately notifies a GAME_STARTED event.
    *
    * @param observer The observer to be added.
    */
   @Override
   public void addObserver(EventObserver observer) {
     super.addObserver(observer);
+    if (gameState != null) {
+      this.gameState.addObserver(observer);
+    }
     this.notifyObserver(observer, EventType.GAME_STARTED);
+  }
+
+  /**
+   * Adds an observer to the game and game state that listens for error events.
+   *
+   * @param observer The observer to be added.
+   */
+  @Override
+  public void addErrorObserver(EventObserver observer) {
+    super.addErrorObserver(observer);
+    if (gameState != null) {
+      this.gameState.addErrorObserver(observer);
+    }
   }
 
   /**
@@ -107,8 +123,7 @@ public class Game extends Subject {
           .board
           .isCheckAfterMove(
               this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, classicalMove)) {
-        throw new IllegalMoveException(
-            "This classical move puts the king in check " + classicalMove.toString());
+        throw new IllegalMoveException("Move puts the king in check " + classicalMove.toString());
       }
 
       this.gameState.getBoard().makeMove(classicalMove);
@@ -278,10 +293,15 @@ public class Game extends Subject {
     }
     sb.append("\n\n");
 
-    sb.append(
-        TextGetter.getText(
-            "toPlay",
-            gameState.isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
+    if (!this.gameState.isGameOver()) {
+      sb.append(
+          TextGetter.getText(
+              "toPlay",
+              gameState.isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
+    } else {
+      sb.append(TextGetter.getText("gameOver"));
+    }
+
     sb.append("\n");
 
     return sb.toString();

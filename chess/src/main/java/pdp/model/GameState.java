@@ -69,41 +69,48 @@ public class GameState extends Subject {
 
   public void whiteWantsToDraw() {
     this.whiteWantsToDraw = true;
-    checkDrawAgreement();
+    if (!checkDrawAgreement()) {
+      notifyObservers(EventType.WHITE_DRAW_PROPOSAL);
+    }
   }
 
   public void blackWantsToDraw() {
     this.blackWantsToDraw = true;
-    checkDrawAgreement();
+    if (!checkDrawAgreement()) {
+      notifyObservers(EventType.BLACK_DRAW_PROPOSAL);
+    }
   }
 
   public void whiteCancelsDrawRequest() {
     this.whiteWantsToDraw = false;
+    notifyObservers(EventType.WHITE_UNDRAW);
   }
 
   public void blackCancelsDrawRequest() {
     this.blackWantsToDraw = false;
+    notifyObservers(EventType.BLACK_UNDRAW);
   }
 
-  private void checkDrawAgreement() {
+  private boolean checkDrawAgreement() {
     if (whiteWantsToDraw && blackWantsToDraw) {
-      // TO DO
-      System.out.println("Game drawn by mutual agreement!");
       this.isGameOver = true;
-      notifyObservers(EventType.GAME_OVER);
+      notifyObservers(EventType.DRAW_ACCEPTED);
+      notifyObservers(EventType.DRAW);
+      return true;
     }
+    return false;
   }
 
   public void whiteResigns() {
     this.whiteResigns = true;
     this.isGameOver = true;
-    notifyObservers(EventType.GAME_OVER);
+    notifyObservers(EventType.WIN_BLACK);
   }
 
   public void blackResigns() {
     this.blackResigns = true;
     this.isGameOver = true;
-    notifyObservers(EventType.GAME_OVER);
+    notifyObservers(EventType.WIN_WHITE);
   }
 
   public boolean hasWhiteResigned() {
@@ -127,11 +134,11 @@ public class GameState extends Subject {
       if (this.isWhiteTurn) {
         this.whiteLosesOnTime = true;
         this.isGameOver = true;
-        notifyObservers(EventType.GAME_OVER);
+        notifyObservers(EventType.WIN_BLACK);
       } else {
         this.blackLosesOnTime = true;
         this.isGameOver = true;
-        notifyObservers(EventType.GAME_OVER);
+        notifyObservers(EventType.WIN_WHITE);
       }
     }
   }
@@ -154,6 +161,6 @@ public class GameState extends Subject {
 
   public void applyFiftyMoveRule() {
     this.isGameOver = true;
-    notifyObservers(EventType.GAME_OVER);
+    notifyObservers(EventType.DRAW);
   }
 }

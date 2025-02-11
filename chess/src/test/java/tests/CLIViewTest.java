@@ -13,8 +13,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.controller.BagOfCommands;
+import pdp.controller.commands.CancelDrawCommand;
 import pdp.controller.commands.PlayMoveCommand;
-import pdp.controller.commands.SaveGameCommand;
+import pdp.controller.commands.ProposeDrawCommand;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.view.CLIView;
@@ -68,15 +69,15 @@ public class CLIViewTest {
 
   @Test
   void testInputListener() throws InterruptedException {
-    String simulatedInput = "move e2-e4\nsave game.txt\nhelp\n";
+    String simulatedInput = "move e2-e4\ndraw\nhelp\n";
     System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
     Thread inputThread = view.start();
 
-    Thread.sleep(100);
+    Thread.sleep(300);
 
     verify(mockBagOfCommands).addCommand(any(PlayMoveCommand.class));
 
-    verify(mockBagOfCommands).addCommand(any(SaveGameCommand.class));
+    verify(mockBagOfCommands).addCommand(any(ProposeDrawCommand.class));
 
     assertTrue(outputStream.toString().contains("Available commands:"));
 
@@ -92,11 +93,19 @@ public class CLIViewTest {
   }
 
   @Test
-  void testSaveCommand() throws Exception {
+  void testDrawCommand() throws Exception {
 
-    handleUserInputMethod.invoke(view, "save game.txt");
+    handleUserInputMethod.invoke(view, "draw");
 
-    verify(mockBagOfCommands).addCommand(any(SaveGameCommand.class));
+    verify(mockBagOfCommands).addCommand(any(ProposeDrawCommand.class));
+  }
+
+  @Test
+  void testUndrawCommand() throws Exception {
+
+    handleUserInputMethod.invoke(view, "undraw");
+
+    verify(mockBagOfCommands).addCommand(any(CancelDrawCommand.class));
   }
 
   @Test
@@ -115,7 +124,8 @@ public class CLIViewTest {
     String output = outputStream.toString();
     assertTrue(output.contains("Available commands:"));
     assertTrue(output.contains("move"));
-    assertTrue(output.contains("save"));
+    assertTrue(output.contains("draw"));
+    assertTrue(output.contains("undraw"));
     assertTrue(output.contains("help"));
     assertTrue(output.contains("quit"));
   }
