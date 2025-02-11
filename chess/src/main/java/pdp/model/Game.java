@@ -67,6 +67,7 @@ public class Game extends Subject {
    */
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
+    Position destPosition = new Position(move.dest.getY(), move.dest.getX());
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
                   == Color.WHITE
@@ -119,18 +120,33 @@ public class Game extends Subject {
 
     } catch (Exception e) {
       boolean isSpecialMove = false;
-      // roque move
-      /* if(roque){
-        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,move){
-          throw new IllegalMoveException(move.toString());
+
+      // Castle move
+      Piece isPieceKing =
+          this.gameState
+              .getBoard()
+              .board
+              .getPieceAt(sourcePosition.getX(), sourcePosition.getY())
+              .piece;
+      if (isPieceKing == Piece.KING) {
+        if (Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
+            && sourcePosition.getY() == 0
+            && destPosition.getY() == 0) {
+          boolean shortCastleIsAsked = destPosition.getX() > sourcePosition.getX();
+          Color color = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+          // Check if castle is possible
+          if (this.gameState.getBoard().canCastle(color, shortCastleIsAsked)) {
+            // If castle is possible then apply changes
+            this.gameState.getBoard().applyCastle(color, shortCastleIsAsked);
+            isSpecialMove = true;
+
+            // ADD MOVE TO HISTORY
+
+            this.gameState.switchPlayerTurn();
+            this.notifyObservers(EventType.MOVE_PLAYED);
+          }
         }
-        play.roque
-        isSpecialMove = true;
-        this.gameState.getBoard().makeMove(move);
-        addToHystory(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
-      } */
+      }
 
       // enPassant move
       if (this.gameState.getBoard().isLastMoveDoublePush
