@@ -109,14 +109,7 @@ public class CLIOptionsTest {
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
 
-    String output = outputStream.toString();
-
-    System.out.println(
-        "Expected: [" + expectedHelp.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
-    System.out.println(
-        "Actual:   [" + output.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
-
-    assertEquals(expectedHelp.trim(), output.trim());
+    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
