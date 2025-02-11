@@ -5,20 +5,18 @@ import pdp.utils.Logging;
 
 public class HistoryState {
   private static final Logger LOGGER = Logger.getLogger(HistoryState.class.getName());
-  Board state;
-  Move previousMove;
+  private final String stringMove;
+  private final int turnNumber;
+  private final boolean isWhite;
 
-  public HistoryState(Board state, Move previousMove) {
+  public HistoryState(String stringMove, int turnNumber, boolean isWhite) {
     Logging.configureLogging(LOGGER);
-    this.state = state;
-    this.previousMove = previousMove;
+    this.stringMove = stringMove;
+    this.turnNumber = turnNumber;
+    this.isWhite = isWhite;
   }
 
-  public Board getState() {
-    return state;
-  }
-
-  public Move getPreviousMove() {
-    return previousMove;
-  }
+  /* public String getMove() {
+    return move;
+  } */
 }

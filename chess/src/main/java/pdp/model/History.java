@@ -1,36 +1,27 @@
 package pdp.model;
 
 import java.util.Optional;
-import java.util.Stack;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
 
 public class History {
   private static final Logger LOGGER = Logger.getLogger(History.class.getName());
-  Stack<HistoryState> histStack;
-  Stack<HistoryState> revertStack;
+  private HistoryNode currentMove;
 
   public History() {
     Logging.configureLogging(LOGGER);
-    histStack = new Stack<>();
-    revertStack = new Stack<>();
+    this.currentMove = null;
   }
 
-  public Optional<HistoryState> getPrevious() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  public Optional<HistoryNode> getPrevious() {
+    if (currentMove == null || currentMove.previous == null) {
+      return Optional.empty();
+    }
+    currentMove = currentMove.previous;
+    return Optional.of(currentMove.previous);
   }
 
-  public Optional<HistoryState> getNext() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
-  }
-
-  public boolean addMove(HistoryState state) {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  public void addMove(HistoryState state) {
+    currentMove = new HistoryNode(state, currentMove);
   }
 }
