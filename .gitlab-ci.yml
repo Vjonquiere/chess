@@ -70,6 +70,7 @@ build-job-ubuntu:
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
+    - cd chess
   script:
     - echo "Building on Ubuntu with JDK 17..."
     - mvn clean package -DskipTests
@@ -89,6 +90,7 @@ unit-test-job-ubuntu:
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
+    - cd chess
   script:
     - echo "Testing on Ubuntu with JDK 17..."
     - mvn clean test
@@ -104,6 +106,7 @@ build-job-alpine:
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
+    - cd chess
   script:
     - echo "Building on Alpine with JDK 17..."
     - mvn clean package -DskipTests
@@ -123,6 +126,7 @@ unit-test-job-alpine:
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
+    - cd chess
   script:
     - echo "Testing on Alpine with JDK 17..."
     - mvn clean test
@@ -138,6 +142,7 @@ build-job-debian:
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
+    - cd chess
   script:
     - echo "Building on Debian with JDK 17..."
     - mvn clean package -DskipTests
@@ -157,6 +162,7 @@ unit-test-job-debian:
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
+    - cd chess
   script:
     - echo "Testing on Debian with JDK 17..."
     - mvn clean test
@@ -191,6 +197,7 @@ unit-test-job-fedora:
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
+    - cd chess
   script:
     - echo "Testing on Debian with JDK 17..."
     - mvn clean test
