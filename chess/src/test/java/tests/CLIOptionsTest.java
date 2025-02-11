@@ -27,7 +27,7 @@ public class CLIOptionsTest {
   String expectedHelp =
       "usage: chess\n"
           + " -a,--ai <COLOR>                 Launch the program in AI mode, with\n"
-          + "                                 artificial player with COLOR ’B’ or ’A’\n"
+          + "                                 artificial player with COLOR 'B' or 'A'\n"
           + "                                 (All),(W by default).\n"
           + "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm\n"
           + "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial\n"

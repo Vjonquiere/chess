@@ -66,16 +66,14 @@ ubuntu:
   stage: multi-os
   image: ubuntu:24.04
   before_script:
-    - apt update && apt install -y openjdk-17-jdk maven locales
-    - locale-gen en_US.UTF-8
-    - update-locale LANG=en_US.UTF-8
+    - apt update && apt install -y openjdk-17-jdk maven
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
     - cd chess
   script:
-    - echo "Building on Ubuntu with JDK 17..."
+    - echo "Building and testing on Ubuntu with JDK 17..."
     - mvn clean package -DskipTests
     - mvn clean test
   artifacts:
