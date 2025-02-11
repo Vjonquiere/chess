@@ -310,6 +310,98 @@ public class BoardTest {
   */
 
   @Test
+  public void testCanCastleWhenKingHasMovedShouldBeFalse() {
+    game = Game.initialize(false, false, null, null);
+
+    // e2-e4  white
+    Move move1 = new Move(new Position(1, 4), new Position(3, 4));
+    game.getGameState().getBoard().makeMove(move1);
+    // e7-e5  black
+    Move move2 = new Move(new Position(6, 4), new Position(4, 4));
+    game.getGameState().getBoard().makeMove(move2);
+    // Bf1-Bb5  white
+    Move move3 = new Move(new Position(0, 5), new Position(4, 1));
+    game.getGameState().getBoard().makeMove(move3);
+    // Bf8-Bb4  black
+    Move move4 = new Move(new Position(7, 5), new Position(3, 1));
+    game.getGameState().getBoard().makeMove(move4);
+    // Ng1-Nf3 white
+    Move move5 = new Move(new Position(0, 6), new Position(2, 5));
+    game.getGameState().getBoard().makeMove(move5);
+    // Ng8-Nf6 black
+    Move move6 = new Move(new Position(7, 6), new Position(5, 5));
+    game.getGameState().getBoard().makeMove(move6);
+    // Ke1-Ke2 white
+    Move move7 = new Move(new Position(0, 4), new Position(1, 4));
+    game.getGameState().getBoard().makeMove(move7);
+    // Ke8-Ke7 black
+    Move move8 = new Move(new Position(7, 4), new Position(6, 4));
+    game.getGameState().getBoard().makeMove(move8);
+    // Ke2-Ke1 white
+    Move move9 = new Move(new Position(1, 4), new Position(0, 4));
+    game.getGameState().getBoard().makeMove(move9);
+    // Ke7-Ke8 black
+    Move move10 = new Move(new Position(6, 4), new Position(7, 4));
+    game.getGameState().getBoard().makeMove(move10);
+
+    assertFalse(
+        game.getBoard().canCastle(Color.WHITE, true),
+        "Castling should not be possible for white if the king has moved !");
+    assertFalse(
+        game.getBoard().canCastle(Color.BLACK, true),
+        "Castling should not be possible for black if the king has moved !");
+  }
+
+  @Test
+  public void testCanCastleWhenRookHasMovedShouldBeFalse() {
+    game = Game.initialize(false, false, null, null);
+
+    // d2-d4  white
+    Move move1 = new Move(new Position(1, 3), new Position(3, 3));
+    game.getGameState().getBoard().makeMove(move1);
+    // d7-d5  black
+    Move move2 = new Move(new Position(6, 3), new Position(4, 3));
+    game.getGameState().getBoard().makeMove(move2);
+    // Bc1-Bf4  white
+    Move move3 = new Move(new Position(0, 2), new Position(3, 5));
+    game.getGameState().getBoard().makeMove(move3);
+    // Bc8-Bf5  black
+    Move move4 = new Move(new Position(7, 2), new Position(4, 5));
+    game.getGameState().getBoard().makeMove(move4);
+    // Nb1-Nc3 white
+    Move move5 = new Move(new Position(0, 1), new Position(2, 2));
+    game.getGameState().getBoard().makeMove(move5);
+    // Nb8-Nc6 black
+    Move move6 = new Move(new Position(7, 1), new Position(5, 2));
+    game.getGameState().getBoard().makeMove(move6);
+    // Qd1-Qd2 white
+    Move move7 = new Move(new Position(0, 3), new Position(1, 3));
+    game.getGameState().getBoard().makeMove(move7);
+    // Qd8-Qd7 black
+    Move move8 = new Move(new Position(7, 3), new Position(6, 3));
+    game.getGameState().getBoard().makeMove(move8);
+    // Ra1-Rb1 white
+    Move move9 = new Move(new Position(0, 0), new Position(0, 1));
+    game.getGameState().getBoard().makeMove(move9);
+    // Ra8-Bb8 black
+    Move move10 = new Move(new Position(7, 0), new Position(7, 1));
+    game.getGameState().getBoard().makeMove(move10);
+    // Rb1-Ra1 white
+    Move move11 = new Move(new Position(0, 1), new Position(0, 0));
+    game.getGameState().getBoard().makeMove(move11);
+    // Rb8-Ra8 black
+    Move move12 = new Move(new Position(7, 1), new Position(7, 0));
+    game.getGameState().getBoard().makeMove(move12);
+
+    assertFalse(
+        game.getBoard().canCastle(Color.WHITE, true),
+        "Castling should not be possible for white if the rook has moved !");
+    assertFalse(
+        game.getBoard().canCastle(Color.BLACK, true),
+        "Castling should not be possible for black if the rook has moved !");
+  }
+
+  @Test
   public void testCanCastleShortShouldBeTrue() {
     game = Game.initialize(false, false, null, null);
 
