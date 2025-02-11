@@ -48,15 +48,17 @@ public class Board {
    * @param move The move to be executed
    */
   public void makeMove(Move move) {
+    this.nbMovesWithNoCaptureOrPawn++;
+    if (board.getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
+      // Reset the number of moves with no pawn move
+      this.nbMovesWithNoCaptureOrPawn = 0;
+    }
     if (move.isTake == true) {
       board.deletePieceAt(move.dest.getX(), move.dest.getY());
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
-    if (board.getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
-      // Reset the number of moves with no pawn move
-      this.nbMovesWithNoCaptureOrPawn = 0;
-    }
+
     if (this.isEnPassantTake) {
       this.isLastMoveDoublePush = false;
       this.isEnPassantTake = false;
@@ -68,8 +70,6 @@ public class Board {
     }
 
     board.movePiece(move.source, move.dest);
-
-    this.nbMovesWithNoCaptureOrPawn++;
 
     if (this.isWhite) {
       this.isWhite = false;
@@ -180,5 +180,158 @@ public class Board {
   public int getNbMovesWithNoCaptureOrPawn() {
     // Divide by 2 because fifty move rule is for full moves
     return this.nbMovesWithNoCaptureOrPawn / 2;
+  }
+
+  /**
+   * Checks if castle (long or short in parameter) for one side is possible or not. No need to fetch
+   * king position because if king has moved, then boolean attributes for castling rights are false
+   *
+   * @param color the color of the player we want to test castle for
+   * @param shortCastle boolean value to indicate if we're looking for the short castle right or
+   *     long castle right
+   * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
+   */
+  public boolean canCastle(Color color, boolean shortCastle) {
+    if (color == Color.WHITE) {
+      if (shortCastle && !this.whiteShortCastle) return false;
+      if (!shortCastle && !this.whiteLongCastle) return false;
+
+      Position f1Square = new Position(0, 5);
+      Position g1Square = new Position(0, 6);
+
+      Position d1Square = new Position(0, 3);
+      Position c1Square = new Position(0, 2);
+      Position b1Square = new Position(0, 1);
+
+      if (shortCastle) {
+        if ((board.getPieceAt(f1Square.getX(), f1Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(g1Square.getX(), g1Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.WHITE)
+            || board.isAttacked(5, 0, Color.BLACK)
+            || board.isAttacked(6, 0, Color.BLACK)) {
+          return false;
+        }
+      } else {
+        if ((board.getPieceAt(d1Square.getX(), d1Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(c1Square.getX(), c1Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(b1Square.getX(), b1Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.WHITE)
+            || board.isAttacked(3, 0, Color.BLACK)
+            || board.isAttacked(2, 0, Color.BLACK)) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      if (shortCastle && !this.blackShortCastle) return false;
+      if (!shortCastle && !this.blackLongCastle) return false;
+
+      Position f8Square = new Position(7, 5);
+      Position g8Square = new Position(7, 6);
+
+      Position d8Square = new Position(7, 3);
+      Position c8Square = new Position(7, 2);
+      Position b8Square = new Position(7, 1);
+
+      if (shortCastle) {
+        if ((board.getPieceAt(f8Square.getX(), f8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(g8Square.getX(), g8Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.BLACK)
+            || board.isAttacked(5, 7, Color.WHITE)
+            || board.isAttacked(6, 7, Color.WHITE)) {
+          return false;
+        }
+      } else {
+        if ((board.getPieceAt(d8Square.getX(), d8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(c8Square.getX(), c8Square.getY()).piece != Piece.EMPTY)
+            || (board.getPieceAt(b8Square.getX(), b8Square.getY()).piece != Piece.EMPTY)) {
+          return false;
+        }
+        // Squares are empty so now ensure king is not in check and does not move through check
+        if (board.isCheck(Color.BLACK)
+            || board.isAttacked(3, 7, Color.WHITE)
+            || board.isAttacked(2, 7, Color.WHITE)) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  /**
+   * Applies short castle for color {color}. Changes bitboards. Assumes castle is possible
+   *
+   * @param color color for which castling move is applied
+   */
+  public void applyShortCastle(Color color) {
+    if (color == Color.WHITE) {
+      Position e1Square = new Position(0, 4);
+      Position f1Square = new Position(0, 5);
+      Position g1Square = new Position(0, 6);
+      Position h1Square = new Position(0, 7);
+      // Move king
+      this.board.movePiece(e1Square, g1Square);
+      // Move rook
+      this.board.movePiece(h1Square, f1Square);
+    } else {
+      Position e8Square = new Position(7, 4);
+      Position f8Square = new Position(7, 5);
+      Position g8Square = new Position(7, 6);
+      Position h8Square = new Position(7, 7);
+      // Move king
+      this.board.movePiece(e8Square, g8Square);
+      // Move rook
+      this.board.movePiece(h8Square, f8Square);
+    }
+  }
+
+  /**
+   * Applies long castle for color {color}. Changes bitboards. Assumes castle is possible
+   *
+   * @param color color for which castling move is applied
+   */
+  public void applyLongCastle(Color color) {
+    if (color == Color.WHITE) {
+      Position e1Square = new Position(0, 4);
+      Position d1Square = new Position(0, 3);
+      Position c1Square = new Position(0, 2);
+      Position a1Square = new Position(0, 0);
+      // Move king
+      this.board.movePiece(e1Square, c1Square);
+      // Move rook
+      this.board.movePiece(a1Square, d1Square);
+    } else {
+      Position e8Square = new Position(7, 4);
+      Position d8Square = new Position(7, 3);
+      Position c8Square = new Position(7, 2);
+      Position a8Square = new Position(7, 0);
+      // Move king
+      this.board.movePiece(e8Square, c8Square);
+      // Move rook
+      this.board.movePiece(a8Square, d8Square);
+    }
+  }
+
+  /**
+   * Applies long or short castle to {color} according to the boolean value given in parameter.
+   * Assumes castle is possible
+   *
+   * @param color color for which castling move is applied
+   */
+  public void applyCastle(Color color, boolean shortCastle) {
+    if (shortCastle) {
+      applyShortCastle(color);
+    } else {
+      applyLongCastle(color);
+    }
   }
 }
