@@ -97,13 +97,6 @@ public class CLIOptionsTest {
     /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-V"}, mockRuntime2);
-    System.out.println(
-        "Expected: [" + expected.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
-    System.out.println(
-        "Actual:   ["
-            + outputStream.toString().trim().replace("\n", "\\n").replace("\r", "\\r")
-            + "]");
-
     assertEquals(expected.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
@@ -115,12 +108,21 @@ public class CLIOptionsTest {
     /* Test that only help is displayed, even with several parameters */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+
+    String output = outputStream.toString();
+
+    System.out.println(
+        "Expected: [" + expectedHelp.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
+    System.out.println(
+        "Actual:   [" + output.trim().replace("\n", "\\n").replace("\r", "\\r") + "]");
+
+    assertEquals(expectedHelp.trim(), output.trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-V", "-h"}, mockRuntime2);
+
     assertEquals(expectedHelp.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
