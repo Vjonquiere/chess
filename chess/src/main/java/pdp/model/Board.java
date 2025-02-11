@@ -282,6 +282,8 @@ public class Board {
       this.board.movePiece(e1Square, g1Square);
       // Move rook
       this.board.movePiece(h1Square, f1Square);
+      this.isWhite = false;
+
     } else {
       Position e8Square = new Position(7, 4);
       Position f8Square = new Position(7, 5);
@@ -291,6 +293,7 @@ public class Board {
       this.board.movePiece(e8Square, g8Square);
       // Move rook
       this.board.movePiece(h8Square, f8Square);
+      this.isWhite = true;
     }
   }
 
@@ -309,6 +312,8 @@ public class Board {
       this.board.movePiece(e1Square, c1Square);
       // Move rook
       this.board.movePiece(a1Square, d1Square);
+      this.isWhite = false;
+
     } else {
       Position e8Square = new Position(7, 4);
       Position d8Square = new Position(7, 3);
@@ -318,6 +323,7 @@ public class Board {
       this.board.movePiece(e8Square, c8Square);
       // Move rook
       this.board.movePiece(a8Square, d8Square);
+      this.isWhite = true;
     }
   }
 

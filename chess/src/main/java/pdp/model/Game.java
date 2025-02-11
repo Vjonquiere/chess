@@ -102,9 +102,7 @@ public class Game extends Subject {
                       .color
                   == Color.BLACK
               && this.gameState.getBoard().isWhite) {
-        throw new IllegalMoveException(
-            "Not your piece "
-                + move.toString()); // mauvaise couleur de pièce deplacé donc exception
+        throw new IllegalMoveException("Not your piece " + move.toString());
       }
 
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
@@ -112,19 +110,9 @@ public class Game extends Subject {
 
       // throws exception if the initial move is not a "classical" move (
       // and we verify in the catch section if the move is a special move :
-      // castling, en-passant)
-      // here, the move is a "classical" move, but we must verify if the played piece is nailed or
-      // not, if the king will be in check after this move, if a pawn have to be promoted..
-      // veriufier clouage , echec, puis si pion promotion, puis si tout est bon alors jouer le move
-      // dans la board ..
-
-      // classicalMove.piece.isPinned()  verifie le clouage en jouant le move et verifiant si c'est
-      // tjr check (permets egalement de refuser les mouvements qui ne defendent pas
-      // -d'une attaque a leur roi ) donc appeler la fonction autre que isPinned ( par exemple
-      // isCheckAfterMove) qui doit throws un illegalMoveException si le roi est echec apres le move
-      // if classicalMove.piece == Pawn -> isPromoted()  verifie si un pion est arrivé en derniere
-      // rangé
-      // board.board.isCheck  pas besoin car la fonction isCheckAfterMove verifie deja cela
+      // castling, en-passant, doublePushPawn)
+      // here, the move is a "classical" move, but we must verify if the king will
+      // be in check after the move
 
       if (this.gameState
           .getBoard()
@@ -253,28 +241,14 @@ public class Game extends Subject {
         throw new IllegalMoveException(e.getMessage() + " and not a special move");
         // throw new IllegalMoveException(e.getMessage(), e );
       }
+      // In this section, the variable 'classicalMove' is not defined.
+      // Checks if it is checkmate or stalemate, and more generally if the game is over. If so, end
+      // the game accordingly.
 
-      // dans cette section la variable classicalMove n'est pas définie
-      // verifie si echec et mat ou pat et plus generalement si la partie est finie, si oui terminer
-      // partie en consequence
+      // Reasons for being here: the move played could be castling, en passant,doublePawnPush or an
+      // illegal move.
 
-      // raisons pôur laquelle on se trouve ici, move joué : roque, en passant ou coup illégal
-      // si getPieceAt(move.source.getX, move.source.getY) == king -> verifier si le coup joué etait
-      // un roque en comaparant les positions de source et destination avec ceux connus des roques
-      // et faire le roque si ca correspond en appelant la methode correspondante
-      // si getPieceAt(move.source.getX, move.source.getY) == pawn -> verifier si un en passant est
-      // possible en verifiant si le coup precedent etait un coup d'un pion avancant de deux cases
-      // si c'est la cas alors comparé le move.dest( et surtout pas classicalMove.dest) avec (la
-      // position du pion qui a avancé de deux cases)-1 en abcisses ou +1 ca depend du sens
-      // (donc la case juste derriere ce pion par rapport a ce sens de marche) ci cette comparaison
-      // est equals alors faire le en passant en appelant la methode correspondante
-      // else throws message d'erreur
-
-      // TODO: handle exception
     }
-    /*
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName()); */
   }
 
   public List<Move> getMovesHistory() {
