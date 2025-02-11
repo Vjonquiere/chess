@@ -63,6 +63,8 @@ cleanup:
 
 build-job-ubuntu:
   stage: build
+  needs:
+    - unit-test-job
   image: ubuntu:latest
   before_script:
     - apt update && apt install -y openjdk-17-jdk maven
@@ -83,6 +85,8 @@ build-job-ubuntu:
 
 unit-test-job-ubuntu:
   stage: test
+  needs:
+    - build-job-ubuntu
   image: ubuntu:latest
   before_script:
     - apt update && apt install -y openjdk-17-jdk maven
@@ -99,6 +103,8 @@ unit-test-job-ubuntu:
 
 build-job-alpine:
   stage: build
+  needs:
+    - unit-test-job
   image: alpine:latest
   before_script:
     - apk add --no-cache openjdk17 maven
@@ -119,6 +125,8 @@ build-job-alpine:
 
 unit-test-job-alpine:
   stage: test
+  needs:
+    - build-job-alpine
   image: alpine:latest
   before_script:
     - apk add --no-cache openjdk17 maven
@@ -135,6 +143,8 @@ unit-test-job-alpine:
 
 build-job-debian:
   stage: build
+  needs:
+    - unit-test-job
   image: debian:latest
   before_script:
     - apt update && apt install -y openjdk-17-jdk maven
@@ -155,6 +165,8 @@ build-job-debian:
 
 unit-test-job-debian:
   stage: test
+  needs:
+    - build-job-debian
   image: debian:latest
   before_script:
     - apt update && apt install -y openjdk-17-jdk maven
@@ -171,6 +183,8 @@ unit-test-job-debian:
 
 build-job-fedora:
   stage: build
+  needs:
+    - unit-test-job
   image: fedora:latest
   before_script:
     - dnf install -y java-17-openjdk maven
@@ -190,6 +204,8 @@ build-job-fedora:
 
 unit-test-job-fedora:
   stage: test
+  needs:
+    - build-job-fedora
   image: fedora:latest
   before_script:
     - dnf install -y java-17-openjdk maven
