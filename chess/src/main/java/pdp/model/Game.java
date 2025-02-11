@@ -18,13 +18,16 @@ public class Game extends Subject {
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
+  private History history;
 
-  private Game(boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState) {
+  private Game(
+      boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
     Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;
     this.gameState = gameState;
+    this.history = history;
   }
 
   public Board getBoard() {
@@ -33,6 +36,10 @@ public class Game extends Subject {
 
   public GameState getGameState() {
     return this.gameState;
+  }
+
+  public History getHistory() {
+    return this.history;
   }
 
   /**
@@ -71,7 +78,7 @@ public class Game extends Subject {
    * @return The newly created instance of Game.
    */
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
     return instance;
   }
 
@@ -127,10 +134,17 @@ public class Game extends Subject {
         throw new IllegalMoveException("Move puts the king in check " + classicalMove.toString());
       }
 
+      if (this.gameState.getBoard().isWhite) {
+        this.gameState.incrementsFullTurn();
+      }
+
+      this.history.addMove(
+          new HistoryState(
+              classicalMove.toString(),
+              this.gameState.getFullTurn(),
+              this.gameState.getBoard().isWhite));
       this.gameState.getBoard().makeMove(classicalMove);
-      // addToHystory(move);
       this.gameState.switchPlayerTurn();
-      // addToHystory(move);
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
@@ -152,10 +166,17 @@ public class Game extends Subject {
           // Check if castle is possible
           if (this.gameState.getBoard().canCastle(color, shortCastleIsAsked)) {
             // If castle is possible then apply changes
+            if (this.gameState.getBoard().isWhite) {
+              this.gameState.incrementsFullTurn();
+            }
             this.gameState.getBoard().applyCastle(color, shortCastleIsAsked);
             isSpecialMove = true;
 
-            // ADD MOVE TO HISTORY
+            this.history.addMove(
+                new HistoryState(
+                    move.toString(),
+                    this.gameState.getFullTurn(),
+                    this.gameState.getBoard().isWhite));
 
             this.gameState.switchPlayerTurn();
             this.notifyObservers(EventType.MOVE_PLAYED);
@@ -185,8 +206,14 @@ public class Game extends Subject {
         isSpecialMove = true;
         this.gameState.getBoard().enPassantPos = null;
         this.gameState.getBoard().isEnPassantTake = true;
+
+        if (this.gameState.getBoard().isWhite) {
+          this.gameState.incrementsFullTurn();
+        }
+        this.history.addMove(
+            new HistoryState(
+                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
-        // addToHystory(move);
         this.gameState.switchPlayerTurn();
         this.notifyObservers(EventType.MOVE_PLAYED);
       }
@@ -210,10 +237,15 @@ public class Game extends Subject {
             this.gameState.getBoard().isWhite
                 ? new Position(move.dest.getY() - 1, move.dest.getX())
                 : new Position(move.dest.getY() + 1, move.dest.getX());
+        if (this.gameState.getBoard().isWhite) {
+          this.gameState.incrementsFullTurn();
+        }
+        history.addMove(
+            new HistoryState(
+                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
-        // addToHystory(move);
         this.gameState.switchPlayerTurn();
         this.notifyObservers(EventType.MOVE_PLAYED);
       }
@@ -325,7 +357,7 @@ public class Game extends Subject {
 
   public static Game getInstance() {
     if (instance == null) {
-      instance = new Game(false, false, null, new GameState());
+      instance = new Game(false, false, null, new GameState(), new History());
     }
     return instance;
   }

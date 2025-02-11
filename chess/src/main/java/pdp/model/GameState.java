@@ -15,6 +15,7 @@ public class GameState extends Subject {
   private boolean whiteLosesOnTime;
   private boolean blackLosesOnTime;
   private boolean isGameOver;
+  private int fullTurnNumber;
 
   // By default, blitz mode is not on
   public GameState() {
@@ -30,6 +31,7 @@ public class GameState extends Subject {
     this.history = null;
     this.board = new Board();
     this.moveTimer = null;
+    this.fullTurnNumber = 0;
   }
 
   public GameState(Timer timer) {
@@ -45,6 +47,7 @@ public class GameState extends Subject {
     this.history = null;
     this.board = new Board();
     this.moveTimer = timer;
+    this.fullTurnNumber = 0;
   }
 
   public boolean isWhiteTurn() {
@@ -65,6 +68,14 @@ public class GameState extends Subject {
 
   public Timer getMoveTimer() {
     return this.moveTimer;
+  }
+
+  public int getFullTurn() {
+    return this.fullTurnNumber;
+  }
+
+  public void incrementsFullTurn() {
+    this.fullTurnNumber += 1;
   }
 
   public void whiteWantsToDraw() {
