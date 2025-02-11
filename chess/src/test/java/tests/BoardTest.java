@@ -218,97 +218,6 @@ public class BoardTest {
         "Short castle should not be possible for white when a square is attacked !");
   }
 
-  /*
-  @Test
-  public void testCanCastleLongWhenSquareAttackedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null);
-
-    // e2-e4  white
-    Move move1 = new Move(new Position(1, 4), new Position(3, 4));
-    game.getGameState().getBoard().makeMove(move1);
-    // e7-e5  black
-    Move move2 = new Move(new Position(6, 4), new Position(4, 4));
-    game.getGameState().getBoard().makeMove(move2);
-    // d2-d4  white
-    Move move3 = new Move(new Position(1, 3), new Position(3, 3));
-    game.getGameState().getBoard().makeMove(move3);
-    // d7-d5  black
-    Move move4 = new Move(new Position(6, 3), new Position(4, 3));
-    game.getGameState().getBoard().makeMove(move4);
-    // Bc1-Bg5  white
-    Move move5 = new Move(new Position(0, 2), new Position(4, 6));
-    game.getGameState().getBoard().makeMove(move5);
-    // Bc8-Bg4  black
-    Move move6 = new Move(new Position(7, 2), new Position(3, 6));
-    game.getGameState().getBoard().makeMove(move6);
-    // Qd1-Qg4  white
-    Move move7 = new Move(new Position(0, 3), new Position(3, 6));
-    game.getGameState().getBoard().makeMove(move7);
-    // Qd8-Qg5  black
-    Move move8 = new Move(new Position(7, 3), new Position(4, 6));
-    game.getGameState().getBoard().makeMove(move8);
-    // Nb1-Nc3  white
-    Move move9 = new Move(new Position(0, 1), new Position(2, 2));
-    game.getGameState().getBoard().makeMove(move9);
-    // Nb8-Nc6  black
-    Move move10 = new Move(new Position(7, 1), new Position(5, 2));
-    game.getGameState().getBoard().makeMove(move10);
-
-    // DOES NOT WORK WHEN CAPTURE
-
-    // d2-d4  white
-    Move move1 = new Move(new Position(1, 3), new Position(3, 3));
-    game.getGameState().getBoard().makeMove(move1);
-    // d7-d5  black
-    Move move2 = new Move(new Position(6, 3), new Position(4, 3));
-    game.getGameState().getBoard().makeMove(move2);
-    // Qd1-Qd3  white
-    Move move3 = new Move(new Position(0, 3), new Position(2, 3));
-    game.getGameState().getBoard().makeMove(move3);
-    // Qd8-Qd6  black
-    Move move4 = new Move(new Position(7, 3), new Position(5, 3));
-    game.getGameState().getBoard().makeMove(move4);
-    // Bc1-Bf4  white
-    Move move5 = new Move(new Position(0, 2), new Position(3, 5));
-    game.getGameState().getBoard().makeMove(move5);
-    // Bc8-Bf5  black
-    Move move6 = new Move(new Position(7, 2), new Position(4, 5));
-    game.getGameState().getBoard().makeMove(move6);
-    // Qd3-Qh3  white
-    Move move7 = new Move(new Position(2, 3), new Position(2, 7));
-    game.getGameState().getBoard().makeMove(move7);
-    // Qd6-Qh6  black
-    Move move8 = new Move(new Position(5, 3), new Position(5, 7));
-    game.getGameState().getBoard().makeMove(move8);
-    // Bf4-Bg3  white
-    Move move9 = new Move(new Position(3, 5), new Position(2, 6));
-    game.getGameState().getBoard().makeMove(move9);
-    // Bf5-Bg6  black
-    Move move10 = new Move(new Position(4, 5), new Position(5, 6));
-    game.getGameState().getBoard().makeMove(move10);
-    // Nb1-Nc3 white
-    Move move11 = new Move(new Position(0, 1), new Position(2, 2));
-    game.getGameState().getBoard().makeMove(move11);
-    // Nb8-Nc6 black
-    Move move12 = new Move(new Position(7, 1), new Position(5, 2));
-    game.getGameState().getBoard().makeMove(move12);
-
-    // WORKS WHEN NO CAPTURE
-
-    // c8 is attacked
-    assertTrue(game.getBoard().getBoard().isAttacked(2, 7, Color.WHITE));
-    // c1 is attacked
-    assertTrue(game.getBoard().getBoard().isAttacked(2, 0, Color.BLACK));
-
-    assertFalse(
-        game.getBoard().canCastle(Color.BLACK, false),
-        "Long castle should not be possible for black when a square is attacked!");
-    assertFalse(
-        game.getBoard().canCastle(Color.WHITE, false),
-        "Long castle should not be possible for white when a square is attacked !");
-  }
-  */
-
   @Test
   public void testCanCastleWhenKingHasMovedShouldBeFalse() {
     game = Game.initialize(false, false, null, null);
@@ -606,6 +515,123 @@ public class BoardTest {
         game.getBoard().getBoard().getPieceAt(1, 7).piece == Piece.EMPTY,
         "B8 square should be empty after long castle for black !");
   }
+
+  /*
+  @Test
+  public void testCanCastleLongWhenSquareAttackedShouldBeFalse() {
+    System.out.println("LAST TEST - LAST TEST -LAST TEST -LAST TEST -LAST TEST - LAST TEST");
+    System.out.println("LAST TEST - LAST TEST -LAST TEST -LAST TEST -LAST TEST - LAST TEST");
+    System.out.println("LAST TEST - LAST TEST -LAST TEST -LAST TEST -LAST TEST - LAST TEST");
+
+    game = Game.initialize(false, false, null, null);
+    BoardRepresentation bitboard = game.getBoard().getBoard();
+
+    // e2-e4  white
+    Move move1 = new Move(new Position(1, 4), new Position(3, 4));
+    game.getGameState().getBoard().makeMove(move1);
+    // e7-e5  black
+    Move move2 = new Move(new Position(6, 4), new Position(4, 4));
+    game.getGameState().getBoard().makeMove(move2);
+    // d2-d4  white
+    Move move3 = new Move(new Position(1, 3), new Position(3, 3));
+    game.getGameState().getBoard().makeMove(move3);
+    // d7-d5  black
+    Move move4 = new Move(new Position(6, 3), new Position(4, 3));
+    game.getGameState().getBoard().makeMove(move4);
+    // Bc1-Bg5  white
+    Move move5 = new Move(new Position(0, 2), new Position(4, 6));
+    game.getGameState().getBoard().makeMove(move5);
+    List<Position> whiteBishops = bitboard.getBishops(true);
+    for(Position pos : whiteBishops) {
+        System.out.println("BISHOP POSITIONS BEFORE CAPTURE WHITE");
+        System.out.println("Position : " + pos.getX() + "," + pos.getY());
+    }
+    // Bc8-Bg4  black
+    Move move6 = new Move(new Position(7, 2), new Position(3, 6));
+    game.getGameState().getBoard().makeMove(move6);
+    List<Position> blackBishops = bitboard.getBishops(false);
+    for(Position pos : blackBishops) {
+        System.out.println("BISHOP POSITIONS BEFORE CAPTURE BLACK");
+        System.out.println("Position : " + pos.getX() + "," + pos.getY());
+    }
+    // Qd1-Qg4  white
+    Move move7 = new Move(new Position(0, 3), new Position(3, 6));
+    game.getGameState().getBoard().makeMove(move7);
+    List<Position> newBlackBishops = bitboard.getBishops(false);
+    for(Position pos : newBlackBishops) {
+        System.out.println("BISHOP POSITIONS AFTER CAPTURE BLACK");
+        System.out.println("Position : " + pos.getX() + "," + pos.getY());
+    }
+    // Qd8-Qg5  black
+    Move move8 = new Move(new Position(7, 3), new Position(4, 6));
+    game.getGameState().getBoard().makeMove(move8);
+    List<Position> newWhiteBishops = bitboard.getBishops(true);
+    for(Position pos : newWhiteBishops) {
+        System.out.println("BISHOP POSITIONS AFTER CAPTURE WHITE");
+        System.out.println("Position : " + pos.getX() + "," + pos.getY());
+    }
+    // Nb1-Nc3  white
+    Move move9 = new Move(new Position(0, 1), new Position(2, 2));
+    game.getGameState().getBoard().makeMove(move9);
+    // Nb8-Nc6  black
+    Move move10 = new Move(new Position(7, 1), new Position(5, 2));
+    game.getGameState().getBoard().makeMove(move10);
+
+    // DOES NOT WORK WHEN CAPTURE
+
+
+    // d2-d4  white
+    Move move1 = new Move(new Position(1, 3), new Position(3, 3));
+    game.getGameState().getBoard().makeMove(move1);
+    // d7-d5  black
+    Move move2 = new Move(new Position(6, 3), new Position(4, 3));
+    game.getGameState().getBoard().makeMove(move2);
+    // Qd1-Qd3  white
+    Move move3 = new Move(new Position(0, 3), new Position(2, 3));
+    game.getGameState().getBoard().makeMove(move3);
+    // Qd8-Qd6  black
+    Move move4 = new Move(new Position(7, 3), new Position(5, 3));
+    game.getGameState().getBoard().makeMove(move4);
+    // Bc1-Bf4  white
+    Move move5 = new Move(new Position(0, 2), new Position(3, 5));
+    game.getGameState().getBoard().makeMove(move5);
+    // Bc8-Bf5  black
+    Move move6 = new Move(new Position(7, 2), new Position(4, 5));
+    game.getGameState().getBoard().makeMove(move6);
+    // Qd3-Qh3  white
+    Move move7 = new Move(new Position(2, 3), new Position(2, 7));
+    game.getGameState().getBoard().makeMove(move7);
+    // Qd6-Qh6  black
+    Move move8 = new Move(new Position(5, 3), new Position(5, 7));
+    game.getGameState().getBoard().makeMove(move8);
+    // Bf4-Bg3  white
+    Move move9 = new Move(new Position(3, 5), new Position(2, 6));
+    game.getGameState().getBoard().makeMove(move9);
+    // Bf5-Bg6  black
+    Move move10 = new Move(new Position(4, 5), new Position(5, 6));
+    game.getGameState().getBoard().makeMove(move10);
+    // Nb1-Nc3 white
+    Move move11 = new Move(new Position(0, 1), new Position(2, 2));
+    game.getGameState().getBoard().makeMove(move11);
+    // Nb8-Nc6 black
+    Move move12 = new Move(new Position(7, 1), new Position(5, 2));
+    game.getGameState().getBoard().makeMove(move12);
+
+    // WORKS WHEN NO CAPTURE
+
+    // c8 is attacked
+    assertTrue(game.getBoard().getBoard().isAttacked(2, 7, Color.WHITE));
+    // c1 is attacked
+    assertTrue(game.getBoard().getBoard().isAttacked(2, 0, Color.BLACK));
+
+    assertFalse(
+        game.getBoard().canCastle(Color.BLACK, false),
+        "Long castle should not be possible for black when a square is attacked!");
+    assertFalse(
+        game.getBoard().canCastle(Color.WHITE, false),
+        "Long castle should not be possible for white when a square is attacked !");
+  }
+  */
 
   /*@Test
   void testEnPassant() {
