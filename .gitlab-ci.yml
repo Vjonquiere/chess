@@ -66,7 +66,8 @@ ubuntu:
   stage: multi-os
   image: ubuntu:24.04
   before_script:
-    - apt update && apt install -y openjdk-17-jdk maven
+    - apt update && apt install -y openjdk-17-jdk maven locales
+    - locale-gen en_US.UTF-8
     - update-locale LANG=en_US.UTF-8
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
     - export PATH=$JAVA_HOME/bin:$PATH
