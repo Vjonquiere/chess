@@ -67,6 +67,7 @@ ubuntu:
   image: ubuntu:24.04
   before_script:
     - apt update && apt install -y openjdk-17-jdk maven
+    - update-locale LANG=en_US.UTF-8
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
@@ -95,29 +96,6 @@ alpine:
     - cd chess
   script:
     - echo "Building and testing on Alpine with JDK 17..."
-    - mvn clean package -DskipTests
-    - mvn clean test
-  artifacts:
-    paths:
-      - chess/target/
-    expire_in: 1h
-  tags:
-    - Docker
-
-fedora:
-  stage: multi-os
-  image: fedora:41
-  before_script:
-    - dnf install -y java-17-openjdk maven
-    - echo $JAVA_HOME
-    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-    - ls /usr/lib/jvm
-    - echo $JAVA_HOME
-    - export PATH=$JAVA_HOME/bin:$PATH
-    - java -version
-    - mvn -version
-  script:
-    - echo "Building and testing on Fedora with JDK 17..."
     - mvn clean package -DskipTests
     - mvn clean test
   artifacts:
