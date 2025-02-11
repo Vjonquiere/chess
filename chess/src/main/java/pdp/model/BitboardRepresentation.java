@@ -81,6 +81,7 @@ public class BitboardRepresentation implements BoardRepresentation {
       Bitboard blackRooks,
       Bitboard blackKnights,
       Bitboard blackPawns) {
+    Logging.configureLogging(LOGGER);
     board = new Bitboard[12];
     board[0] = whiteKing;
     board[1] = whiteQueen;
@@ -922,5 +923,17 @@ public class BitboardRepresentation implements BoardRepresentation {
   @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof BitboardRepresentation obj) {
+      if (board.length != obj.board.length) return false;
+      for (int i = 0; i < board.length; i++) {
+        if (!board[i].equals(obj.board[i])) return false;
+      }
+      return true;
+    }
+    return false;
   }
 }

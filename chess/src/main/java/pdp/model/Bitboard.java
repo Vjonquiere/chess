@@ -201,4 +201,12 @@ public class Bitboard {
     }
     return sb.toString();
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Bitboard) {
+      return this.bitboard == ((Bitboard) obj).bitboard;
+    }
+    return false;
+  }
 }
