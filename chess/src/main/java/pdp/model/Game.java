@@ -277,16 +277,13 @@ public class Game extends Subject {
         "Method not implemented in " + this.getClass().getName()); */
   }
 
-  public List<Move> getMovesHistory() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
-  }
-
+  /**
+   * Retrieves the history of moves in the current game as a formatted string.
+   *
+   * @return A string representation of the game's move history.
+   */
   public String getStringHistory() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    return this.history.toString();
   }
 
   public void resetGame() {
@@ -296,12 +293,7 @@ public class Game extends Subject {
   }
 
   public boolean isOver() {
-    // TO DO
-    if (gameState.isGameOver()) {
-      return true;
-    }
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    return this.gameState.isGameOver();
   }
 
   /**
