@@ -64,7 +64,7 @@ cleanup:
 
 ubuntu:
   stage: multi-os
-  image: ubuntu:latest
+  image: ubuntu:24.04
   before_script:
     - apt update && apt install -y openjdk-17-jdk maven
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
@@ -85,7 +85,7 @@ ubuntu:
 
 alpine:
   stage: multi-os
-  image: alpine:latest
+  image: alpine:3.21.2
   before_script:
     - apk add --no-cache openjdk17 maven
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
@@ -106,7 +106,7 @@ alpine:
 
 fedora:
   stage: multi-os
-  image: fedora:latest
+  image: fedora:41
   before_script:
     - dnf install -y java-17-openjdk maven
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
