@@ -109,7 +109,10 @@ fedora:
   image: fedora:41
   before_script:
     - dnf install -y java-17-openjdk maven
+    - echo $JAVA_HOME
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - ls /usr/lib/jvm
+    - echo $JAVA_HOME
     - export PATH=$JAVA_HOME/bin:$PATH
     - java -version
     - mvn -version
