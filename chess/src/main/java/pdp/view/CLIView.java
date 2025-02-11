@@ -111,7 +111,7 @@ public class CLIView implements View {
   /**
    * Prints the error message for an exception related to user input.
    *
-   * <p>Stops the game if the exception is not related to handled.
+   * Stops the game if the exception is not related to handled.
    *
    * @param e The exception that was thrown.
    */
@@ -219,11 +219,21 @@ public class CLIView implements View {
     BagOfCommands.getInstance().addCommand(new SaveGameCommand(args));
   }
 
+  /**
+   * Handles the draw command.
+   *
+   * @param args Unused argument
+   */
   private void drawCommand(String args) {
     BagOfCommands.getInstance()
         .addCommand(new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
 
+  /**
+   * Handles the undraw command.
+   *
+   * @param args Unused argument
+   */
   private void undrawCommand(String args) {
     BagOfCommands.getInstance()
         .addCommand(new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
