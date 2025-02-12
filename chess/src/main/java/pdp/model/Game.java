@@ -280,11 +280,6 @@ public class Game extends Subject {
         this.gameState.activateThreefold();
       }
 
-      // Check game status after the special move was played
-      this.gameState.switchPlayerTurn();
-      this.gameState.checkGameStatus();
-      this.notifyObservers(EventType.MOVE_PLAYED);
-
       if (!isSpecialMove) {
         throw new IllegalMoveException(e.getMessage() + " and not a special move");
         // throw new IllegalMoveException(e.getMessage(), e );
@@ -296,6 +291,10 @@ public class Game extends Subject {
       // Reasons for being here: the move played could be castling, en passant,doublePawnPush or an
       // illegal move.
 
+      // Check game status after the special move was played
+      this.gameState.switchPlayerTurn();
+      this.gameState.checkGameStatus();
+      this.notifyObservers(EventType.MOVE_PLAYED);
     }
   }
 
