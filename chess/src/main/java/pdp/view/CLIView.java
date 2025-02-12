@@ -186,7 +186,8 @@ public class CLIView implements View {
    * @param args Unused argument
    */
   private void historyCommand(String args) {
-    // TODO
+    System.out.println(TextGetter.getText("historyTitle"));
+    System.out.println(Game.getInstance().getHistory());
   }
 
   /**
@@ -219,11 +220,21 @@ public class CLIView implements View {
     BagOfCommands.getInstance().addCommand(new SaveGameCommand(args));
   }
 
+  /**
+   * Handles the draw command.
+   *
+   * @param args Unused argument
+   */
   private void drawCommand(String args) {
     BagOfCommands.getInstance()
         .addCommand(new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
 
+  /**
+   * Handles the undraw command.
+   *
+   * @param args Unused argument
+   */
   private void undrawCommand(String args) {
     BagOfCommands.getInstance()
         .addCommand(new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));

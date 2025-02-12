@@ -9,7 +9,7 @@ cd chess-2/
 ```
 
 ### For contributors
-Contributors should setup the pre-commit hook by running
+Contributors should set up the pre-commit hook by running
 ```bash
 chmod +x setup-hooks.sh
 ./setup-hooks.sh
@@ -19,7 +19,7 @@ chmod +x setup-hooks.sh
 ## 1. Docker
 
 ### Prerequisites
-The following are required to run the project using docker:
+The following are required to run the project using Docker:
 - Docker
 
 ### Build the project
@@ -39,15 +39,15 @@ The following are required to run the project:
 - Maven
 
 #### How to switch to Java 17 ?
-- run `update-java-alternatives --list` to see all available java versions:
-  - Java 17 is available: run `sudo update-java-alternatives --set /path/to/java/version` to set your current java version
-  - Java 17 is not available: run `sudo apt install openjdk-17-jdk` and re-run previous commands to set the correct java version
+- Run `update-java-alternatives --list` to see all available Java versions:
+  - Java 17 is available: Run `sudo update-java-alternatives --set /path/to/java/version` to set your current Java version.
+  - Java 17 is not available: Run `sudo apt install openjdk-17-jdk` and re-run previous commands to set the correct Java version.
 
 ### Build the project
 - `cd chess/` to enter the project folder
-- `mvn clean install` to install dependence and run tests
+- `mvn clean install` to install dependencies and run tests
 
-## Usage
+# Usage
 
 ### Run the tests
 From the local `chess` or Docker `app` folder :
@@ -56,4 +56,32 @@ From the local `chess` or Docker `app` folder :
 ### Run the Application
 From the local `chess` or Docker `app` folder :
 - `mvn javafx:run -Djavafx.args="args"` to run the app with given args
-- To print all available arguments you can run `mvn javafx:run -Djavafx.args="-h"`
+- To print all available arguments, you can run `mvn javafx:run -Djavafx.args="-h"`
+
+### Generate a coverage report
+From the local `chess` or Docker `app` folder :
+- `mvn clean test` to install dependencies and run tests
+- `mvn jacoco:report` to generate the report
+The reports will be available under `target/site/jacoco`
+
+# About
+
+### Developers
+- Mathilde Chollon
+- Iwen Jomaa
+- Denis Demirci
+- Valentin Jonquière
+- Jonathan Landry
+
+### Languages
+Currently available in:
+- English
+
+Targeted languages:
+- French
+
+### Compatibility
+The project has been tested successfully under:
+- Ubuntu 24.04 (Noble Numbat)
+- Debian 10 (Buster)
+- Alpine 3.21.2

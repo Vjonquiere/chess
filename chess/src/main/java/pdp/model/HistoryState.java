@@ -5,20 +5,45 @@ import pdp.utils.Logging;
 
 public class HistoryState {
   private static final Logger LOGGER = Logger.getLogger(HistoryState.class.getName());
-  Board state;
-  Move previousMove;
+  private final String stringMove;
+  private final int fullTurn;
+  private final boolean isWhite;
 
-  public HistoryState(Board state, Move previousMove) {
+  /**
+   * Constructs a history state with the given move notation.
+   *
+   * @param stringMove The notation of the move played.
+   * @param fullTurn The number of the current full turn.
+   * @param isWhite {true} if the move is white, {false} if it is black.
+   */
+  public HistoryState(String stringMove, int fullTurn, boolean isWhite) {
     Logging.configureLogging(LOGGER);
-    this.state = state;
-    this.previousMove = previousMove;
+    this.stringMove = stringMove;
+    this.fullTurn = fullTurn;
+    this.isWhite = isWhite;
   }
 
-  public Board getState() {
-    return state;
+  public String getStringMove() {
+    return stringMove;
   }
 
-  public Move getPreviousMove() {
-    return previousMove;
+  public int getFullTurn() {
+    return fullTurn;
+  }
+
+  public boolean isWhite() {
+    return isWhite;
+  }
+
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+
+    if (this.isWhite()) {
+      sb.append(this.fullTurn).append(". W ").append(this.stringMove).append(" ");
+    } else {
+      sb.append("B ").append(this.stringMove);
+    }
+
+    return sb.toString(); // On retourne la chaîne sans espaces superflus
   }
 }
