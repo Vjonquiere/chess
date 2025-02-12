@@ -51,6 +51,20 @@ public class Move {
    */
   public static Move fromString(String stringMove) {
 
+    if (stringMove.toLowerCase() == "o-o-o") {
+      if (Game.getInstance().getGameState().isWhiteTurn()) {
+        stringMove = "e1-c1";
+      } else {
+        stringMove = "e8-c8";
+      }
+    } else if (stringMove.toLowerCase() == "o-o") {
+      if (Game.getInstance().getGameState().isWhiteTurn()) {
+        stringMove = "e1-g1";
+      } else {
+        stringMove = "e8-g8";
+      }
+    }
+
     String[] parts = stringMove.split("-");
     if (parts.length != 2) {
       throw new MoveParsingException(stringMove);
