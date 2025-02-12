@@ -374,6 +374,7 @@ public class BitboardRepresentation implements BoardRepresentation {
       Bitboard moveBitboard, Bitboard enemies, Position source, ColoredPiece piece) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
+      // TODO: save the captured piece
       moves.add(
           new Move(
               source,
