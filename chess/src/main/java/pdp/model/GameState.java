@@ -15,7 +15,10 @@ public class GameState extends Subject {
   private boolean whiteLosesOnTime;
   private boolean blackLosesOnTime;
   private boolean isGameOver;
+  private boolean threefoldRepetition;
   private int fullTurnNumber;
+  private long zobristHashing;
+  private long simplifiedZobristHashing;
 
   // By default, blitz mode is not on
   public GameState() {
@@ -27,6 +30,7 @@ public class GameState extends Subject {
     this.blackWantsToDraw = false;
     this.whiteLosesOnTime = false;
     this.blackLosesOnTime = false;
+    this.threefoldRepetition = false;
     // this.history = new History();  When history is implemented
     this.history = null;
     this.board = new Board();
@@ -70,12 +74,36 @@ public class GameState extends Subject {
     return this.moveTimer;
   }
 
+  /*
+  public long getZobristHashing() {
+    return this.zobristHashing;
+  }
+    */
+
+  public long getSimplifiedZobristHashing() {
+    return this.simplifiedZobristHashing;
+  }
+
   public int getFullTurn() {
     return this.fullTurnNumber;
   }
 
   public void incrementsFullTurn() {
     this.fullTurnNumber += 1;
+  }
+
+  /*
+  public void setZobristHashing(long zobristHashing) {
+    this.zobristHashing = zobristHashing;
+  }
+    */
+
+  public void setSimplifiedZobristHashing(long simplifiedZobristHashing) {
+    this.simplifiedZobristHashing = simplifiedZobristHashing;
+  }
+
+  public void activateThreefold() {
+    this.threefoldRepetition = true;
   }
 
   public void whiteWantsToDraw() {
@@ -178,6 +206,10 @@ public class GameState extends Subject {
     notifyObservers(EventType.DRAW);
   }
 
+  public boolean isThreefoldRepetition() {
+    return this.threefoldRepetition;
+  }
+
   /**
    * This method checks the ongoing or over status of the game. In summary, it will: Verify
    * checkMate, staleMate, draw by insufficient material, 50 move rule, draw by threefold
@@ -246,5 +278,9 @@ public class GameState extends Subject {
       notifyObservers(EventType.DRAW);
     }
     // Threefold repetition
+    if (this.threefoldRepetition) {
+      this.isGameOver = true;
+      notifyObservers(EventType.DRAW);
+    }
   }
 }

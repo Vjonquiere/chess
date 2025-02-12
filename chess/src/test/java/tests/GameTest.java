@@ -127,4 +127,23 @@ public class GameTest {
           game.playMove(new Move(new Position(1, 3), new Position(2, 3)));
         });
   }
+
+  @Test
+  public void threefoldRepetitionTest() {
+    Game game = Game.initialize(false, false, null, null);
+    game.playMove(Move.fromString("b1-c3"));
+    game.playMove(Move.fromString("g8-f6"));
+    game.playMove(Move.fromString("c3-b1"));
+    game.playMove(Move.fromString("f6-g8"));
+    game.playMove(Move.fromString("b1-c3"));
+    game.playMove(Move.fromString("g8-f6"));
+    game.playMove(Move.fromString("c3-b1"));
+    game.playMove(Move.fromString("f6-g8"));
+    game.playMove(Move.fromString("b1-c3"));
+    game.playMove(Move.fromString("g8-f6"));
+    game.playMove(Move.fromString("c3-b1"));
+    game.playMove(Move.fromString("f6-g8"));
+    assertEquals(true, game.getGameState().isThreefoldRepetition());
+    assertEquals(true, game.isOver());
+  }
 }
