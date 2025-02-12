@@ -1,11 +1,9 @@
 package pdp.model;
 
-import static java.util.Map.entry;
 import static pdp.utils.Logging.DEBUG;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
@@ -16,20 +14,22 @@ public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard[] board;
   private int nbCols = 8;
   private int nbRows = 8;
-  Map<Integer, ColoredPiece> pieces =
-      Map.ofEntries(
-          entry(0, new ColoredPiece(Piece.KING, Color.WHITE)),
-          entry(1, new ColoredPiece(Piece.QUEEN, Color.WHITE)),
-          entry(2, new ColoredPiece(Piece.BISHOP, Color.WHITE)),
-          entry(3, new ColoredPiece(Piece.ROOK, Color.WHITE)),
-          entry(4, new ColoredPiece(Piece.KNIGHT, Color.WHITE)),
-          entry(5, new ColoredPiece(Piece.PAWN, Color.WHITE)),
-          entry(6, new ColoredPiece(Piece.KING, Color.BLACK)),
-          entry(7, new ColoredPiece(Piece.QUEEN, Color.BLACK)),
-          entry(8, new ColoredPiece(Piece.BISHOP, Color.BLACK)),
-          entry(9, new ColoredPiece(Piece.ROOK, Color.BLACK)),
-          entry(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK)),
-          entry(11, new ColoredPiece(Piece.PAWN, Color.BLACK)));
+  public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
+
+  static {
+    pieces.put(0, new ColoredPiece(Piece.KING, Color.WHITE));
+    pieces.put(1, new ColoredPiece(Piece.QUEEN, Color.WHITE));
+    pieces.put(2, new ColoredPiece(Piece.BISHOP, Color.WHITE));
+    pieces.put(3, new ColoredPiece(Piece.ROOK, Color.WHITE));
+    pieces.put(4, new ColoredPiece(Piece.KNIGHT, Color.WHITE));
+    pieces.put(5, new ColoredPiece(Piece.PAWN, Color.WHITE));
+    pieces.put(6, new ColoredPiece(Piece.KING, Color.BLACK));
+    pieces.put(7, new ColoredPiece(Piece.QUEEN, Color.BLACK));
+    pieces.put(8, new ColoredPiece(Piece.BISHOP, Color.BLACK));
+    pieces.put(9, new ColoredPiece(Piece.ROOK, Color.BLACK));
+    pieces.put(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK));
+    pieces.put(11, new ColoredPiece(Piece.PAWN, Color.BLACK));
+  }
 
   /*
   BitBoards order:
@@ -232,7 +232,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public ColoredPiece getPieceAt(int x, int y) {
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
-      if (board[index].getBit(square)) return pieces.get(index);
+      if (board[index].getBit(square)) return pieces.getFromKey(index);
     }
     return new ColoredPiece(Piece.EMPTY, Color.EMPTY);
   }
@@ -372,15 +372,22 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of possible moves from a move bitboard
    */
   private List<Move> bitboardToMoves(
-      Bitboard moveBitboard, Bitboard enemies, Position source, Piece piece) {
+      Bitboard moveBitboard, Bitboard enemies, Position source, ColoredPiece piece) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
-      moves.add(
-          new Move(
-              source,
-              squareToPosition(i),
-              piece,
-              enemies.getBit(i))); // enemies.getBit(i) ? true : false -> capture ?
+      if (enemies.getBit(i)) { // move is capture
+        for (int j = 0; j < board.length; j++) {
+          if (enemies.getBit(i)) {
+            moves.add(new Move(source, squareToPosition(i), piece, true, pieces.getFromKey(j)));
+            break;
+          }
+        }
+
+      } else {
+        moves.add(new Move(source, squareToPosition(i), piece, false));
+      }
+      // TODO: save the captured piece
+      // enemies.getBit(i) ? true : false -> capture ?
     }
     return moves;
   }
@@ -393,7 +400,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getKingMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
+  private List<Move> getKingMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -408,7 +416,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveDownLeft())
             .or(position.moveDownRight());
     move = move.xor(move.and(unreachableSquares));
-    return bitboardToMoves(move, enemies, square, Piece.KING);
+    return bitboardToMoves(move, enemies, square, piece);
   }
 
   /**
@@ -420,7 +428,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   private List<Move> getKnightMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies) {
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -437,7 +445,7 @@ public class BitboardRepresentation implements BoardRepresentation {
             .or(position.moveRight().moveDownRight())
             .or(position.moveRight().moveUpRight());
     move = move.xor(move.and(unreachableSquares));
-    return bitboardToMoves(move, enemies, square, Piece.KNIGHT);
+    return bitboardToMoves(move, enemies, square, piece);
   }
 
   /**
@@ -466,7 +474,11 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
     position = position.xor(position.and(unreachableSquares));
 
-    return bitboardToMoves(position.or(attackRight).or(attackLeft), enemies, square, Piece.PAWN);
+    return bitboardToMoves(
+        position.or(attackRight).or(attackLeft),
+        enemies,
+        square,
+        new ColoredPiece(Piece.PAWN, white ? Color.WHITE : Color.BLACK));
   }
 
   /**
@@ -477,13 +489,14 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getQueenMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
+  private List<Move> getQueenMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     return bitboardToMoves(
         getInlineMoves(square, unreachableSquares, enemies)
             .or(getDiagonalMoves(square, unreachableSquares, enemies)),
         enemies,
         square,
-        Piece.QUEEN);
+        piece);
   }
 
   /**
@@ -495,9 +508,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   private List<Move> getBishopMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies) {
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     return bitboardToMoves(
-        getDiagonalMoves(square, unreachableSquares, enemies), enemies, square, Piece.BISHOP);
+        getDiagonalMoves(square, unreachableSquares, enemies), enemies, square, piece);
   }
 
   /**
@@ -508,9 +521,10 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  private List<Move> getRookMoves(Position square, Bitboard unreachableSquares, Bitboard enemies) {
+  private List<Move> getRookMoves(
+      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     return bitboardToMoves(
-        getInlineMoves(square, unreachableSquares, enemies), enemies, square, Piece.ROOK);
+        getInlineMoves(square, unreachableSquares, enemies), enemies, square, piece);
   }
 
   /**
@@ -534,11 +548,11 @@ public class BitboardRepresentation implements BoardRepresentation {
           enemyKing.getX() % 8 + enemyKing.getY() * 8); // Put enemyKing to unreachable positions
     Bitboard enemies = piece.color == Color.WHITE ? getBlackBoard() : getWhiteBoard();
     return switch (piece.piece) {
-      case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies);
-      case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies);
-      case BISHOP -> getBishopMoves(new Position(y, x), unreachableSquares, enemies);
-      case ROOK -> getRookMoves(new Position(y, x), unreachableSquares, enemies);
-      case KNIGHT -> getKnightMoves(new Position(y, x), unreachableSquares, enemies);
+      case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case BISHOP -> getBishopMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case ROOK -> getRookMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case KNIGHT -> getKnightMoves(new Position(y, x), unreachableSquares, enemies, piece);
       case PAWN ->
           piece.color == Color.WHITE
               ? getPawnMoves(new Position(y, x), unreachableSquares, enemies, true)
@@ -555,13 +569,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   public void deletePieceAt(int x, int y) {
     ColoredPiece piece = getPieceAt(x, y);
-    for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
-      if (entry.getValue().equals(piece)) {
-        board[entry.getKey()].clearBit(x % 8 + y * 8);
-        DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
-        return;
-      }
-    }
+    board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
+    DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
   /**
@@ -573,13 +582,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param piece The type of piece to add
    */
   private void addPieceAt(int x, int y, ColoredPiece piece) {
-    for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
-      if (entry.getValue().equals(piece)) {
-        board[entry.getKey()].setBit(x % 8 + y * 8);
-        DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
-        return;
-      }
-    }
+    board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
+    DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
   }
 
   /**
@@ -929,6 +933,10 @@ public class BitboardRepresentation implements BoardRepresentation {
       return true;
     }
     return false;
+  }
+
+  protected Bitboard[] getBitboards() {
+    return this.board;
   }
 
   /**

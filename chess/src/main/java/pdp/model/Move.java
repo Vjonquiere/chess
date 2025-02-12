@@ -12,7 +12,8 @@ public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
   Position source;
   Position dest;
-  Piece piece;
+  ColoredPiece piece;
+  ColoredPiece takenPiece;
   boolean isTake = false;
   boolean isCheck = false;
   boolean isCheckMate = false;
@@ -23,12 +24,22 @@ public class Move {
     this.dest = dest;
   }
 
-  public Move(Position source, Position dest, Piece piece, boolean isTake) {
+  public Move(Position source, Position dest, ColoredPiece piece, boolean isTake) {
     Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
     this.piece = piece;
     this.isTake = isTake;
+  }
+
+  public Move(
+      Position source, Position dest, ColoredPiece piece, boolean isTake, ColoredPiece takenPiece) {
+    Logging.configureLogging(LOGGER);
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
+    this.takenPiece = takenPiece;
   }
 
   /**
@@ -111,7 +122,7 @@ public class Move {
     return dest;
   }
 
-  public Piece getPiece() {
+  public ColoredPiece getPiece() {
     return piece;
   }
 
