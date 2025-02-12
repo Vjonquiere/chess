@@ -149,7 +149,7 @@ public class Game extends Subject {
               .getPieceAt(sourcePosition.getX(), sourcePosition.getY())
               .piece;
       if (isPieceKing == Piece.KING) {
-        if (Math.abs(destPosition.getX() - sourcePosition.getX()) >= 2
+        if (Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
             && sourcePosition.getY() == 0
             && destPosition.getY() == 0) {
           boolean shortCastleIsAsked = destPosition.getX() > sourcePosition.getX();
