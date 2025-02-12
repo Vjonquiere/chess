@@ -115,6 +115,14 @@ public class GameStateTest {
   }
 
   @Test
+  public void testCheckGameStatus() {
+    GameState gameBlitzOff = new GameState();
+    // Simulate cases
+    gameBlitzOff.checkGameStatus();
+    // Assert
+  }
+
+  @Test
   public void testPlayerLosesOnTime() {
     // TO DO when Time class is implemented
     // gameBlitzOn.playerLosesOnTime();

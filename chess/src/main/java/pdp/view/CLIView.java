@@ -36,6 +36,12 @@ public class CLIView implements View {
         "help", new CommandEntry(this::helpCommand, TextGetter.getText("helpHelpDescription")));
     commands.put(
         "quit", new CommandEntry(this::quitCommand, TextGetter.getText("quitHelpDescription")));
+    commands.put(
+        "history",
+        new CommandEntry(this::historyCommand, TextGetter.getText("historyHelpDescription")));
+    commands.put(
+        "board",
+        new CommandEntry(this::displayBoardCommand, TextGetter.getText("boardHelpDescription")));
     /*
     commands.put(
         "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
@@ -166,6 +172,25 @@ public class CLIView implements View {
   }
 
   /**
+   * Displays the current state of the board and the next player.
+   *
+   * @param args Unused argument
+   */
+  private void displayBoardCommand(String args) {
+    System.out.println(Game.getInstance().getGameRepresentation());
+  }
+
+  /**
+   * Handles the history command by displaying the history of moves made in the game.
+   *
+   * @param args Unused argument
+   */
+  private void historyCommand(String args) {
+    System.out.println(TextGetter.getText("historyTitle"));
+    System.out.println(Game.getInstance().getHistory());
+  }
+
+  /**
    * Handles the move command.
    *
    * @param args The move in standard text notation.
@@ -195,11 +220,21 @@ public class CLIView implements View {
     BagOfCommands.getInstance().addCommand(new SaveGameCommand(args));
   }
 
+  /**
+   * Handles the draw command.
+   *
+   * @param args Unused argument
+   */
   private void drawCommand(String args) {
     BagOfCommands.getInstance()
         .addCommand(new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
 
+  /**
+   * Handles the undraw command.
+   *
+   * @param args Unused argument
+   */
   private void undrawCommand(String args) {
     BagOfCommands.getInstance()
         .addCommand(new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));

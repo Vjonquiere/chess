@@ -636,6 +636,134 @@ public class BitboardRepresentationTest {
   }
 
   @Test
+  public void testHasEnoughMaterialToMateWhiteQueen() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    // Should be true when game starts
+    assertTrue(board.hasEnoughMaterialToMate(true));
+
+    List<Position> whitePos = new ArrayList<>();
+    List<Position> blackPos = new ArrayList<>();
+
+    Position posWhiteKing = new Position(0, 4);
+    whitePos.add(posWhiteKing);
+    Position posWhiteQueen = new Position(0, 3);
+    whitePos.add(posWhiteQueen);
+
+    deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
+
+    assertTrue(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
+  public void testHasEnoughMaterialToMateWhiteRook() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    List<Position> whitePos = new ArrayList<>();
+    List<Position> blackPos = new ArrayList<>();
+
+    Position posWhiteKing = new Position(0, 4);
+    whitePos.add(posWhiteKing);
+    Position posWhiteRook = new Position(0, 0);
+    whitePos.add(posWhiteRook);
+
+    deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
+
+    assertTrue(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
+  public void testHasEnoughMaterialToMateWhitePawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    List<Position> whitePos = new ArrayList<>();
+    List<Position> blackPos = new ArrayList<>();
+
+    Position posWhiteKing = new Position(0, 4);
+    whitePos.add(posWhiteKing);
+    Position posWhitePawn = new Position(1, 0);
+    whitePos.add(posWhitePawn);
+
+    deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
+
+    assertTrue(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
+  public void testHasEnoughMaterialToMateWhiteKnightAndBishop() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    List<Position> whitePos = new ArrayList<>();
+    List<Position> blackPos = new ArrayList<>();
+
+    Position posWhiteKing = new Position(0, 4);
+    whitePos.add(posWhiteKing);
+    Position posWhiteBishop = new Position(0, 2);
+    whitePos.add(posWhiteBishop);
+    Position posWhiteKnight = new Position(0, 1);
+    whitePos.add(posWhiteKnight);
+
+    deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
+
+    assertTrue(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
+  public void testHasEnoughMaterialToMateWhiteTwoKnights() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    List<Position> whitePos = new ArrayList<>();
+    List<Position> blackPos = new ArrayList<>();
+
+    Position posWhiteKing = new Position(0, 4);
+    whitePos.add(posWhiteKing);
+    Position posWhiteKnight1 = new Position(0, 6);
+    whitePos.add(posWhiteKnight1);
+    Position posWhiteKnight2 = new Position(0, 1);
+    whitePos.add(posWhiteKnight2);
+
+    deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
+
+    assertTrue(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
+  public void testHasEnoughMaterialToMateWhiteTwoBishops() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    List<Position> whitePos = new ArrayList<>();
+    List<Position> blackPos = new ArrayList<>();
+
+    Position posWhiteKing = new Position(0, 4);
+    whitePos.add(posWhiteKing);
+    Position posWhiteBishop1 = new Position(0, 5);
+    whitePos.add(posWhiteBishop1);
+    Position posWhiteBishop2 = new Position(0, 2);
+    whitePos.add(posWhiteBishop2);
+
+    deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
+
+    assertTrue(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
+  public void testHasEnoughMaterialToMateWhiteShouldBeFalse() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    List<Position> whitePos = new ArrayList<>();
+    List<Position> blackPos = new ArrayList<>();
+
+    Position posWhiteKing = new Position(0, 4);
+    whitePos.add(posWhiteKing);
+    Position posWhiteBishop = new Position(0, 2);
+    whitePos.add(posWhiteBishop);
+
+    deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
+
+    assertFalse(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
   public void testDeletePieceAt() {
     BitboardRepresentation board = new BitboardRepresentation();
     board.deletePieceAt(0, 0);

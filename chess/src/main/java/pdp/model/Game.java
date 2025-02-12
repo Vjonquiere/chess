@@ -18,13 +18,16 @@ public class Game extends Subject {
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
+  private History history;
 
-  private Game(boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState) {
+  private Game(
+      boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
     Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;
     this.gameState = gameState;
+    this.history = history;
   }
 
   public Board getBoard() {
@@ -33,6 +36,10 @@ public class Game extends Subject {
 
   public GameState getGameState() {
     return this.gameState;
+  }
+
+  public History getHistory() {
+    return this.history;
   }
 
   /**
@@ -71,7 +78,7 @@ public class Game extends Subject {
    * @return The newly created instance of Game.
    */
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
     return instance;
   }
 
@@ -83,6 +90,7 @@ public class Game extends Subject {
    */
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
+    Position destPosition = new Position(move.dest.getY(), move.dest.getX());
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
                   == Color.WHITE
@@ -94,9 +102,7 @@ public class Game extends Subject {
                       .color
                   == Color.BLACK
               && this.gameState.getBoard().isWhite) {
-        throw new IllegalMoveException(
-            "Not your piece "
-                + move.toString()); // mauvaise couleur de pièce deplacé donc exception
+        throw new IllegalMoveException("Not your piece " + move.toString());
       }
 
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
@@ -104,19 +110,9 @@ public class Game extends Subject {
 
       // throws exception if the initial move is not a "classical" move (
       // and we verify in the catch section if the move is a special move :
-      // castling, en-passant)
-      // here, the move is a "classical" move, but we must verify if the played piece is nailed or
-      // not, if the king will be in check after this move, if a pawn have to be promoted..
-      // veriufier clouage , echec, puis si pion promotion, puis si tout est bon alors jouer le move
-      // dans la board ..
-
-      // classicalMove.piece.isPinned()  verifie le clouage en jouant le move et verifiant si c'est
-      // tjr check (permets egalement de refuser les mouvements qui ne defendent pas
-      // -d'une attaque a leur roi ) donc appeler la fonction autre que isPinned ( par exemple
-      // isCheckAfterMove) qui doit throws un illegalMoveException si le roi est echec apres le move
-      // if classicalMove.piece == Pawn -> isPromoted()  verifie si un pion est arrivé en derniere
-      // rangé
-      // board.board.isCheck  pas besoin car la fonction isCheckAfterMove verifie deja cela
+      // castling, en-passant, doublePushPawn)
+      // here, the move is a "classical" move, but we must verify if the king will
+      // be in check after the move
 
       if (this.gameState
           .getBoard()
@@ -126,26 +122,58 @@ public class Game extends Subject {
         throw new IllegalMoveException("Move puts the king in check " + classicalMove.toString());
       }
 
+      if (this.gameState.getBoard().isWhite) {
+        this.gameState.incrementsFullTurn();
+      }
+
+      this.history.addMove(
+          new HistoryState(
+              classicalMove.toString(),
+              this.gameState.getFullTurn(),
+              this.gameState.getBoard().isWhite));
       this.gameState.getBoard().makeMove(classicalMove);
-      // addToHystory(move);
+
+      // Check game status after the classical move was played
       this.gameState.switchPlayerTurn();
-      // addToHystory(move);
+      this.gameState.checkGameStatus();
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
       boolean isSpecialMove = false;
-      // roque move
-      /* if(roque){
-        if(this.gameState.getBoard().board.isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK,move){
-          throw new IllegalMoveException(move.toString());
+
+      // Castle move
+      Piece isPieceKing =
+          this.gameState
+              .getBoard()
+              .board
+              .getPieceAt(sourcePosition.getX(), sourcePosition.getY())
+              .piece;
+      if (isPieceKing == Piece.KING) {
+        if ((Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
+                && sourcePosition.getY() == 0
+                && destPosition.getY() == 0)
+            || (Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
+                && sourcePosition.getY() == 7
+                && destPosition.getY() == 7)) {
+          boolean shortCastleIsAsked = destPosition.getX() > sourcePosition.getX();
+          Color color = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+          // Check if castle is possible
+          if (this.gameState.getBoard().canCastle(color, shortCastleIsAsked)) {
+            // If castle is possible then apply changes
+            if (this.gameState.getBoard().isWhite) {
+              this.gameState.incrementsFullTurn();
+            }
+            this.gameState.getBoard().applyCastle(color, shortCastleIsAsked);
+            isSpecialMove = true;
+
+            this.history.addMove(
+                new HistoryState(
+                    move.toString(),
+                    this.gameState.getFullTurn(),
+                    this.gameState.getBoard().isWhite));
+          }
         }
-        play.roque
-        isSpecialMove = true;
-        this.gameState.getBoard().makeMove(move);
-        addToHystory(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
-      } */
+      }
 
       // enPassant move
       if (this.gameState.getBoard().isLastMoveDoublePush
@@ -169,10 +197,14 @@ public class Game extends Subject {
         isSpecialMove = true;
         this.gameState.getBoard().enPassantPos = null;
         this.gameState.getBoard().isEnPassantTake = true;
+
+        if (this.gameState.getBoard().isWhite) {
+          this.gameState.incrementsFullTurn();
+        }
+        this.history.addMove(
+            new HistoryState(
+                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
-        // addToHystory(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
       }
 
       // DoublePawnPush move
@@ -194,51 +226,42 @@ public class Game extends Subject {
             this.gameState.getBoard().isWhite
                 ? new Position(move.dest.getY() - 1, move.dest.getX())
                 : new Position(move.dest.getY() + 1, move.dest.getX());
+        if (this.gameState.getBoard().isWhite) {
+          this.gameState.incrementsFullTurn();
+        }
+        history.addMove(
+            new HistoryState(
+                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
-        // addToHystory(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
       }
+      // Check game status after the special move was played
+      this.gameState.switchPlayerTurn();
+      this.gameState.checkGameStatus();
+      this.notifyObservers(EventType.MOVE_PLAYED);
+
       if (!isSpecialMove) {
         throw new IllegalMoveException(e.getMessage() + " and not a special move");
         // throw new IllegalMoveException(e.getMessage(), e );
       }
+      // In this section, the variable 'classicalMove' is not defined.
+      // Checks if it is checkmate or stalemate, and more generally if the game is over. If so, end
+      // the game accordingly.
 
-      // dans cette section la variable classicalMove n'est pas définie
-      // verifie si echec et mat ou pat et plus generalement si la partie est finie, si oui terminer
-      // partie en consequence
+      // Reasons for being here: the move played could be castling, en passant,doublePawnPush or an
+      // illegal move.
 
-      // raisons pôur laquelle on se trouve ici, move joué : roque, en passant ou coup illégal
-      // si getPieceAt(move.source.getX, move.source.getY) == king -> verifier si le coup joué etait
-      // un roque en comaparant les positions de source et destination avec ceux connus des roques
-      // et faire le roque si ca correspond en appelant la methode correspondante
-      // si getPieceAt(move.source.getX, move.source.getY) == pawn -> verifier si un en passant est
-      // possible en verifiant si le coup precedent etait un coup d'un pion avancant de deux cases
-      // si c'est la cas alors comparé le move.dest( et surtout pas classicalMove.dest) avec (la
-      // position du pion qui a avancé de deux cases)-1 en abcisses ou +1 ca depend du sens
-      // (donc la case juste derriere ce pion par rapport a ce sens de marche) ci cette comparaison
-      // est equals alors faire le en passant en appelant la methode correspondante
-      // else throws message d'erreur
-
-      // TODO: handle exception
     }
-    /*
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName()); */
   }
 
-  public List<Move> getMovesHistory() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
-  }
-
+  /**
+   * Retrieves the history of moves in the current game as a formatted string.
+   *
+   * @return A string representation of the game's move history.
+   */
   public String getStringHistory() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    return this.history.toString();
   }
 
   public void resetGame() {
@@ -248,12 +271,7 @@ public class Game extends Subject {
   }
 
   public boolean isOver() {
-    // TO DO
-    if (gameState.isGameOver()) {
-      return true;
-    }
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    return this.gameState.isGameOver();
   }
 
   /**
@@ -309,7 +327,7 @@ public class Game extends Subject {
 
   public static Game getInstance() {
     if (instance == null) {
-      instance = new Game(false, false, null, new GameState());
+      instance = new Game(false, false, null, new GameState(), new History());
     }
     return instance;
   }
