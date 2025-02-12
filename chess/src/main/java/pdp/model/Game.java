@@ -135,6 +135,12 @@ public class Game extends Subject {
       this.gameState.switchPlayerTurn();
       this.notifyObservers(EventType.MOVE_PLAYED);
 
+      // Check game status after the classical move was played
+      this.gameState.checkGameStatus();
+      if (!this.isOver()) {
+        this.gameState.switchPlayerTurn();
+      }
+
     } catch (Exception e) {
       boolean isSpecialMove = false;
 
@@ -236,6 +242,12 @@ public class Game extends Subject {
         this.gameState.getBoard().isLastMoveDoublePush = true;
         this.gameState.switchPlayerTurn();
         this.notifyObservers(EventType.MOVE_PLAYED);
+
+        // Check game status after the special move was played
+        this.gameState.checkGameStatus();
+        if (!this.isOver()) {
+          this.gameState.switchPlayerTurn();
+        }
       }
       if (!isSpecialMove) {
         throw new IllegalMoveException(e.getMessage() + " and not a special move");

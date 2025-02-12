@@ -699,10 +699,21 @@ public class BitboardRepresentation implements BoardRepresentation {
       List<Move> availableMoves =
           getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
       for (Move move : availableMoves) {
+        ColoredPiece removedPiece = null;
+        if (move.isTake) {
+          removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
+          deletePieceAt(move.getDest().getX(), move.getDest().getY());
+        }
         movePiece(move.source, move.dest); // Play move
         boolean isStillCheck = isCheck(color);
         movePiece(move.dest, move.source); // Undo move
-        if (!isStillCheck) return false;
+        if (move.isTake) {
+          addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+        }
+        if (!isStillCheck) {
+          DEBUG(LOGGER, color.toString() + " is not stalemate");
+          return false;
+        }
       }
     }
     // Stalemate only if it is someone's turn to play and that someone has no move
