@@ -1,5 +1,8 @@
 package pdp.model;
 
+import static pdp.utils.Logging.DEBUG;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
@@ -14,11 +17,13 @@ import pdp.utils.TextGetter;
 public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;
+  private static ZobristHashing zobristHashing = new ZobristHashing();
   private GameState gameState;
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
   private History history;
+  private HashMap<Long, Integer> stateCount;
 
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
@@ -28,6 +33,26 @@ public class Game extends Subject {
     this.solver = solver;
     this.gameState = gameState;
     this.history = history;
+    this.stateCount = new HashMap<>();
+    // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
+    this.gameState.setSimplifiedZobristHashing(
+        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+  }
+
+  private boolean addStateToCount(long simplifiedZobristHashing) {
+    if (this.stateCount.containsKey(simplifiedZobristHashing)) {
+      this.stateCount.put(
+          simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
+      if (this.stateCount.get(simplifiedZobristHashing) == 3) {
+        DEBUG(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
+        return true;
+      }
+      return false;
+    } else {
+      this.stateCount.put(simplifiedZobristHashing, 1);
+      return false;
+    }
   }
 
   public Board getBoard() {
@@ -133,6 +158,15 @@ public class Game extends Subject {
               this.gameState.getBoard().isWhite));
       this.gameState.getBoard().makeMove(classicalMove);
 
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.updateSimplifiedHashFromBitboards(
+              this.gameState.getSimplifiedZobristHashing(), getBoard(), classicalMove));
+
+      boolean threefoldRepetition =
+          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        this.gameState.activateThreefold();
+      }
       // Check game status after the classical move was played
       this.gameState.switchPlayerTurn();
       this.gameState.checkGameStatus();
@@ -236,6 +270,16 @@ public class Game extends Subject {
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
       }
+
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+
+      boolean threefoldRepetition =
+          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        this.gameState.activateThreefold();
+      }
+
       // Check game status after the special move was played
       this.gameState.switchPlayerTurn();
       this.gameState.checkGameStatus();
