@@ -1,6 +1,5 @@
 package pdp.model;
 
-import java.util.Map;
 import java.util.Random;
 
 public class ZobristHashing {
@@ -127,23 +126,16 @@ public class ZobristHashing {
     int to = move.dest.getX() + move.dest.getY() * board.getBoard().getNbCols();
     ColoredPiece capturedPiece = null;
 
-    if (!(board.getBoard() instanceof BitboardRepresentation bitboardsRepresentation))
+    if (!(board.getBoard() instanceof BitboardRepresentation))
       throw new RuntimeException("Only available for bitboards");
 
     // Remove piece from its source and add it to the destination
-    for (Map.Entry<Integer, ColoredPiece> entry : bitboardsRepresentation.pieces.entrySet()) {
-      if (entry.getValue().equals(move.piece)) {
-        currHash ^= pieces[entry.getKey()][to];
-        currHash ^= pieces[entry.getKey()][from];
-      }
-    }
+    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
+    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
+
     // delete the captured piece
     if (capturedPiece != null) {
-      for (Map.Entry<Integer, ColoredPiece> entry : bitboardsRepresentation.pieces.entrySet()) {
-        if (entry.getValue().equals(capturedPiece)) {
-          currHash ^= pieces[entry.getKey()][to];
-        }
-      }
+      currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
     }
     // if en passant is not possible in the column saved before
     if (prevEnPassantFile != -1) {
@@ -206,23 +198,16 @@ public class ZobristHashing {
     int to = move.dest.getX() + move.dest.getY() * board.getBoard().getNbCols();
     ColoredPiece capturedPiece = null;
 
-    if (!(board.getBoard() instanceof BitboardRepresentation bitboardsRepresentation))
+    if (!(board.getBoard() instanceof BitboardRepresentation))
       throw new RuntimeException("Only available for bitboards");
 
     // Remove piece from its source and add it to the destination
-    for (Map.Entry<Integer, ColoredPiece> entry : bitboardsRepresentation.pieces.entrySet()) {
-      if (entry.getValue().equals(move.piece)) {
-        currHash ^= pieces[entry.getKey()][to];
-        currHash ^= pieces[entry.getKey()][from];
-      }
-    }
+    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
+    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
+
     // delete the captured piece
     if (capturedPiece != null) {
-      for (Map.Entry<Integer, ColoredPiece> entry : bitboardsRepresentation.pieces.entrySet()) {
-        if (entry.getValue().equals(capturedPiece)) {
-          currHash ^= pieces[entry.getKey()][to];
-        }
-      }
+      currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
     }
     return currHash;
   }

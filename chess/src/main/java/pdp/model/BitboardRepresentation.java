@@ -1,11 +1,9 @@
 package pdp.model;
 
-import static java.util.Map.entry;
 import static pdp.utils.Logging.DEBUG;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
@@ -16,20 +14,22 @@ public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard[] board;
   private int nbCols = 8;
   private int nbRows = 8;
-  Map<Integer, ColoredPiece> pieces =
-      Map.ofEntries(
-          entry(0, new ColoredPiece(Piece.KING, Color.WHITE)),
-          entry(1, new ColoredPiece(Piece.QUEEN, Color.WHITE)),
-          entry(2, new ColoredPiece(Piece.BISHOP, Color.WHITE)),
-          entry(3, new ColoredPiece(Piece.ROOK, Color.WHITE)),
-          entry(4, new ColoredPiece(Piece.KNIGHT, Color.WHITE)),
-          entry(5, new ColoredPiece(Piece.PAWN, Color.WHITE)),
-          entry(6, new ColoredPiece(Piece.KING, Color.BLACK)),
-          entry(7, new ColoredPiece(Piece.QUEEN, Color.BLACK)),
-          entry(8, new ColoredPiece(Piece.BISHOP, Color.BLACK)),
-          entry(9, new ColoredPiece(Piece.ROOK, Color.BLACK)),
-          entry(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK)),
-          entry(11, new ColoredPiece(Piece.PAWN, Color.BLACK)));
+  public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
+
+  static {
+    pieces.put(0, new ColoredPiece(Piece.KING, Color.WHITE));
+    pieces.put(1, new ColoredPiece(Piece.QUEEN, Color.WHITE));
+    pieces.put(2, new ColoredPiece(Piece.BISHOP, Color.WHITE));
+    pieces.put(3, new ColoredPiece(Piece.ROOK, Color.WHITE));
+    pieces.put(4, new ColoredPiece(Piece.KNIGHT, Color.WHITE));
+    pieces.put(5, new ColoredPiece(Piece.PAWN, Color.WHITE));
+    pieces.put(6, new ColoredPiece(Piece.KING, Color.BLACK));
+    pieces.put(7, new ColoredPiece(Piece.QUEEN, Color.BLACK));
+    pieces.put(8, new ColoredPiece(Piece.BISHOP, Color.BLACK));
+    pieces.put(9, new ColoredPiece(Piece.ROOK, Color.BLACK));
+    pieces.put(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK));
+    pieces.put(11, new ColoredPiece(Piece.PAWN, Color.BLACK));
+  }
 
   /*
   BitBoards order:
@@ -231,7 +231,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public ColoredPiece getPieceAt(int x, int y) {
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
-      if (board[index].getBit(square)) return pieces.get(index);
+      if (board[index].getBit(square)) return pieces.getFromKey(index);
     }
     return new ColoredPiece(Piece.EMPTY, Color.EMPTY);
   }
@@ -374,13 +374,19 @@ public class BitboardRepresentation implements BoardRepresentation {
       Bitboard moveBitboard, Bitboard enemies, Position source, ColoredPiece piece) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
+      if (enemies.getBit(i)) { // move is capture
+        for (int j = 0; j < board.length; j++) {
+          if (enemies.getBit(i)) {
+            moves.add(new Move(source, squareToPosition(i), piece, true, pieces.getFromKey(j)));
+            break;
+          }
+        }
+
+      } else {
+        moves.add(new Move(source, squareToPosition(i), piece, false));
+      }
       // TODO: save the captured piece
-      moves.add(
-          new Move(
-              source,
-              squareToPosition(i),
-              piece,
-              enemies.getBit(i))); // enemies.getBit(i) ? true : false -> capture ?
+      // enemies.getBit(i) ? true : false -> capture ?
     }
     return moves;
   }
@@ -562,13 +568,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   public void deletePieceAt(int x, int y) {
     ColoredPiece piece = getPieceAt(x, y);
-    for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
-      if (entry.getValue().equals(piece)) {
-        board[entry.getKey()].clearBit(x % 8 + y * 8);
-        DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
-        return;
-      }
-    }
+    board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
+    DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
   /**
@@ -580,13 +581,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param piece The type of piece to add
    */
   private void addPieceAt(int x, int y, ColoredPiece piece) {
-    for (Map.Entry<Integer, ColoredPiece> entry : pieces.entrySet()) {
-      if (entry.getValue().equals(piece)) {
-        board[entry.getKey()].setBit(x % 8 + y * 8);
-        DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
-        return;
-      }
-    }
+    board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
+    DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
   }
 
   /**

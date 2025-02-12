@@ -32,6 +32,16 @@ public class Move {
     this.isTake = isTake;
   }
 
+  public Move(
+      Position source, Position dest, ColoredPiece piece, boolean isTake, ColoredPiece takenPiece) {
+    Logging.configureLogging(LOGGER);
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
+    this.takenPiece = takenPiece;
+  }
+
   /**
    * Parses a string representation of a move and converts it into a {@code Move} object
    *
