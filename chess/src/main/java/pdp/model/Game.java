@@ -132,14 +132,11 @@ public class Game extends Subject {
               this.gameState.getFullTurn(),
               this.gameState.getBoard().isWhite));
       this.gameState.getBoard().makeMove(classicalMove);
-      this.gameState.switchPlayerTurn();
-      this.notifyObservers(EventType.MOVE_PLAYED);
 
       // Check game status after the classical move was played
+      this.gameState.switchPlayerTurn();
       this.gameState.checkGameStatus();
-      if (!this.isOver()) {
-        this.gameState.switchPlayerTurn();
-      }
+      this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
       boolean isSpecialMove = false;
@@ -171,9 +168,6 @@ public class Game extends Subject {
                     move.toString(),
                     this.gameState.getFullTurn(),
                     this.gameState.getBoard().isWhite));
-
-            this.gameState.switchPlayerTurn();
-            this.notifyObservers(EventType.MOVE_PLAYED);
           }
         }
       }
@@ -208,8 +202,6 @@ public class Game extends Subject {
             new HistoryState(
                 move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
       }
 
       // DoublePawnPush move
@@ -240,15 +232,12 @@ public class Game extends Subject {
         this.gameState.getBoard().makeMove(move);
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
-
-        // Check game status after the special move was played
-        this.gameState.checkGameStatus();
-        if (!this.isOver()) {
-          this.gameState.switchPlayerTurn();
-        }
       }
+      // Check game status after the special move was played
+      this.gameState.switchPlayerTurn();
+      this.gameState.checkGameStatus();
+      this.notifyObservers(EventType.MOVE_PLAYED);
+
       if (!isSpecialMove) {
         throw new IllegalMoveException(e.getMessage() + " and not a special move");
         // throw new IllegalMoveException(e.getMessage(), e );
