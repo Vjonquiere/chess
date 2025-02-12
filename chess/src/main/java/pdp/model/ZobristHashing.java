@@ -80,12 +80,12 @@ public class ZobristHashing {
   }
 
   /**
-   * Generate the hash corresponding to the current board state.
+   * Generate the hash corresponding to the pieces of the current board.
    *
    * @param board Current board
    * @return hash corresponding to the board given in parameters
    */
-  public long generateHashFromBitboards(Board board) {
+  private long generatePieceHash(Board board) {
     long hash = 0;
     if (!(board.getBoard() instanceof BitboardRepresentation bitboardsRepresentation))
       throw new RuntimeException("Only available for bitboards");
@@ -98,6 +98,45 @@ public class ZobristHashing {
         bitboardValue &= bitboardValue - 1;
       }
     }
+    return hash;
+  }
+
+  /**
+   * Compute the simplified hash from a board -> update the change of position of piece and captured
+   * piece.
+   *
+   * @param currHash previously computer hash
+   * @param board current board
+   * @param move last played move
+   * @return updated hash
+   */
+  private long updatePieceHash(long currHash, Board board, Move move) {
+    int from = move.source.getX() + move.source.getY() * board.getBoard().getNbRows();
+    int to = move.dest.getX() + move.dest.getY() * board.getBoard().getNbCols();
+    ColoredPiece capturedPiece = move.takenPiece;
+
+    if (!(board.getBoard() instanceof BitboardRepresentation))
+      throw new RuntimeException("Only available for bitboards");
+
+    // Remove piece from its source and add it to the destination
+    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
+    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
+
+    // delete the captured piece
+    if (capturedPiece != null) {
+      currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
+    }
+    return currHash;
+  }
+
+  /**
+   * Generate the hash corresponding to the current board state.
+   *
+   * @param board Current board
+   * @return hash corresponding to the board given in parameters
+   */
+  public long generateHashFromBitboards(Board board) {
+    long hash = generatePieceHash(board);
     prevCastlingIndex = translateCastling(board);
     hash ^= castling[prevCastlingIndex];
 
@@ -122,21 +161,7 @@ public class ZobristHashing {
    * @return updated hash
    */
   public long updateHashFromBitboards(long currHash, Board board, Move move) {
-    int from = move.source.getX() + move.source.getY() * board.getBoard().getNbRows();
-    int to = move.dest.getX() + move.dest.getY() * board.getBoard().getNbCols();
-    ColoredPiece capturedPiece = null;
-
-    if (!(board.getBoard() instanceof BitboardRepresentation))
-      throw new RuntimeException("Only available for bitboards");
-
-    // Remove piece from its source and add it to the destination
-    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
-    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
-
-    // delete the captured piece
-    if (capturedPiece != null) {
-      currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
-    }
+    currHash = updatePieceHash(currHash, board, move);
     // if en passant is not possible in the column saved before
     if (prevEnPassantFile != -1) {
       currHash ^= enPassant[prevEnPassantFile];
@@ -168,19 +193,7 @@ public class ZobristHashing {
    * @return hash corresponding to the board given in parameters
    */
   public long generateSimplifiedHashFromBitboards(Board board) {
-    long hash = 0;
-    if (!(board.getBoard() instanceof BitboardRepresentation bitboardsRepresentation))
-      throw new RuntimeException("Only available for bitboards");
-    Bitboard[] bitboards = bitboardsRepresentation.getBitboards();
-    for (int i = 0; i < PIECES_TYPES; i++) {
-      long bitboardValue = bitboards[i].bitboard;
-      while (bitboardValue != 0) {
-        int square = Long.numberOfTrailingZeros(bitboardValue);
-        hash ^= pieces[i][square];
-        bitboardValue &= bitboardValue - 1;
-      }
-    }
-    return hash;
+    return generatePieceHash(board);
   }
 
   /**
@@ -193,22 +206,6 @@ public class ZobristHashing {
    * @return updated hash
    */
   public long updateSimplifiedHashFromBitboards(long currHash, Board board, Move move) {
-    // TODO: do it like updateHashFromBitboards when piece captured is known
-    int from = move.source.getX() + move.source.getY() * board.getBoard().getNbRows();
-    int to = move.dest.getX() + move.dest.getY() * board.getBoard().getNbCols();
-    ColoredPiece capturedPiece = null;
-
-    if (!(board.getBoard() instanceof BitboardRepresentation))
-      throw new RuntimeException("Only available for bitboards");
-
-    // Remove piece from its source and add it to the destination
-    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
-    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
-
-    // delete the captured piece
-    if (capturedPiece != null) {
-      currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
-    }
-    return currHash;
+    return updatePieceHash(currHash, board, move);
   }
 }

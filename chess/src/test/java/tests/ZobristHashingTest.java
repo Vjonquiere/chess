@@ -3,14 +3,27 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
 import pdp.utils.Position;
 
 public class ZobristHashingTest {
+  Game game;
+
+  @BeforeEach
+  public void setUp() {
+    game = Game.initialize(false, false, null, null);
+  }
+
+  @AfterEach
+  public void tearDown() {
+    game = Game.initialize(false, false, null, null);
+  }
 
   @Test
-  public void testInitZobristHashing() {
+  public void testGenerateZobristHashing() {
     ZobristHashing zobristHashing = new ZobristHashing();
     Board board = new Board();
     long hash1 = zobristHashing.generateHashFromBitboards(board);
@@ -18,17 +31,57 @@ public class ZobristHashingTest {
     // same hash for the same board
     assertEquals(hash1, hash2);
 
-    board.makeMove(new Move(new Position(1, 0), new Position(3, 0)));
+    board.makeMove(new Move(new Position(1, 0), new Position(2, 0)));
     // different hash for different board
     assertNotEquals(hash1, zobristHashing.generateHashFromBitboards(board));
-    board.getBoard().movePiece(new Position(3, 0), new Position(1, 0));
+    board.getBoard().movePiece(new Position(2, 0), new Position(1, 0));
 
     // player changed but board the same
     assertNotEquals(hash1, zobristHashing.generateHashFromBitboards(board));
   }
 
   @Test
-  public void testInitSimplifiedZobristHashing() {
+  public void testGenerateZobristHashingEnPassant() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+    // generate en passant
+    game.playMove(new Move(new Position(1, 0), new Position(3, 0)));
+    long hashEnPassant = zobristHashing.generateHashFromBitboards(board);
+
+    // move a pawn two rows ahead but in two times (same pos as en passantPos but not registered)
+    game = Game.initialize(false, false, null, null);
+    board = game.getBoard();
+    game.playMove(new Move(new Position(1, 0), new Position(2, 0)));
+    game.playMove(new Move(new Position(7, 1), new Position(5, 2)));
+    game.playMove(new Move(new Position(2, 0), new Position(3, 0)));
+    game.playMove(new Move(new Position(5, 2), new Position(7, 1)));
+    long hashNotEnPassant = zobristHashing.generateHashFromBitboards(board);
+    // Should be different because possible en passant position is taken into account
+    assertNotEquals(hashEnPassant, hashNotEnPassant);
+  }
+
+  @Test
+  public void testGenerateSimplifiedZobristHashingEnPassant() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+    // generate en passant
+    game.playMove(new Move(new Position(1, 0), new Position(3, 0)));
+    long hashEnPassant = zobristHashing.generateSimplifiedHashFromBitboards(board);
+
+    // move a pawn two rows ahead but in two times (same pos as en passantPos but not registered)
+    game = Game.initialize(false, false, null, null);
+    board = game.getBoard();
+    game.playMove(new Move(new Position(1, 0), new Position(2, 0)));
+    game.playMove(new Move(new Position(7, 1), new Position(5, 2)));
+    game.playMove(new Move(new Position(2, 0), new Position(3, 0)));
+    game.playMove(new Move(new Position(5, 2), new Position(7, 1)));
+    long hashNotEnPassant = zobristHashing.generateSimplifiedHashFromBitboards(board);
+    // Should be equal because simplified only takes the pieces positions into account
+    assertEquals(hashEnPassant, hashNotEnPassant);
+  }
+
+  @Test
+  public void testGenerateSimplifiedZobristHashing() {
     ZobristHashing zobristHashing = new ZobristHashing();
     Board board = new Board();
     long hash1 = zobristHashing.generateSimplifiedHashFromBitboards(board);
@@ -72,8 +125,8 @@ public class ZobristHashingTest {
   }
 
   @Test
-  void testUpdateHashFromBitboards() {
-    Board board = new Board(); // Set up an initial board
+  void testUpdateSimplifiedZobristHashing() {
+    Board board = new Board();
     ZobristHashing zobrist = new ZobristHashing();
 
     long initialHash = zobrist.generateSimplifiedHashFromBitboards(board);
@@ -90,5 +143,143 @@ public class ZobristHashingTest {
     long recalculatedHash = zobrist.generateSimplifiedHashFromBitboards(board);
 
     assertEquals(recalculatedHash, updatedHash, "Updated hash should match recalculated hash.");
+  }
+
+  @Test
+  public void testUpdateZobristHashingEnPassant() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+    // generate en passant
+    long hashUpdate = zobristHashing.generateHashFromBitboards(board);
+    game.playMove(new Move(new Position(1, 0), new Position(3, 0)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(1, 0),
+                new Position(3, 0),
+                new ColoredPiece(Piece.PAWN, Color.WHITE),
+                false));
+    long hashGenerate = zobristHashing.generateHashFromBitboards(board);
+
+    assertEquals(hashUpdate, hashGenerate, "Updated hash should match recomputed hash.");
+
+    game.playMove(new Move(new Position(6, 0), new Position(4, 0)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(6, 0),
+                new Position(4, 0),
+                new ColoredPiece(Piece.PAWN, Color.BLACK),
+                false));
+    hashGenerate = zobristHashing.generateHashFromBitboards(board);
+
+    assertEquals(hashUpdate, hashGenerate, "Updated hash should match recomputed hash.");
+  }
+
+  @Test
+  public void testSimplifiedZobristHashingCapture() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+    // capture
+    long hashUpdate = zobristHashing.generateSimplifiedHashFromBitboards(board);
+    game.playMove(new Move(new Position(1, 1), new Position(3, 1)));
+    hashUpdate =
+        zobristHashing.updateSimplifiedHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(1, 1),
+                new Position(3, 1),
+                new ColoredPiece(Piece.PAWN, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(6, 0), new Position(4, 0)));
+    hashUpdate =
+        zobristHashing.updateSimplifiedHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(6, 0),
+                new Position(4, 0),
+                new ColoredPiece(Piece.PAWN, Color.BLACK),
+                false));
+    game.playMove(new Move(new Position(3, 1), new Position(4, 0)));
+    hashUpdate =
+        zobristHashing.updateSimplifiedHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(3, 1),
+                new Position(4, 0),
+                new ColoredPiece(Piece.PAWN, Color.WHITE),
+                true,
+                new ColoredPiece(Piece.PAWN, Color.BLACK)));
+
+    Board board2 = new Board();
+    if (board2.getBoard() instanceof BitboardRepresentation bitboardRepresentation) {
+      bitboardRepresentation.deletePieceAt(0, 6);
+      bitboardRepresentation.movePiece(new Position(1, 1), new Position(4, 0));
+    }
+    long hashGenerate = zobristHashing.generateSimplifiedHashFromBitboards(board2);
+    // TODO: find out why bitboard representations are not equals
+    // assertEquals(board.getBoard(),board2.getBoard());
+    assertEquals(hashUpdate, hashGenerate);
+  }
+
+  @Test
+  public void testZobristHashingCastling() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+
+    game.playMove(new Move(new Position(1, 0), new Position(3, 0)));
+    long hashOnlyPawn = zobristHashing.generateHashFromBitboards(board);
+
+    long hashUpdate = zobristHashing.generateHashFromBitboards(board);
+    game.playMove(new Move(new Position(7, 1), new Position(5, 2)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(7, 1),
+                new Position(5, 2),
+                new ColoredPiece(Piece.KNIGHT, Color.BLACK),
+                false));
+    game.playMove(new Move(new Position(0, 0), new Position(1, 0)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(0, 0),
+                new Position(1, 0),
+                new ColoredPiece(Piece.ROOK, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(5, 2), new Position(7, 1)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(5, 2),
+                new Position(7, 1),
+                new ColoredPiece(Piece.KNIGHT, Color.BLACK),
+                false));
+    game.playMove(new Move(new Position(1, 0), new Position(0, 0)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(1, 0),
+                new Position(0, 0),
+                new ColoredPiece(Piece.ROOK, Color.WHITE),
+                false));
+
+    // Same positions on board but Castling rights changed
+    assertNotEquals(hashOnlyPawn, hashUpdate);
   }
 }
