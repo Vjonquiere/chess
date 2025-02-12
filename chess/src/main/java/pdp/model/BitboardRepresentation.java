@@ -920,6 +920,129 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  /**
+   * Method that verifies of a player has enough material to mate. Used for rule loss on time but
+   * enemy does not have enough material to mate
+   *
+   * @param white color of the player we check the material for
+   * @return true if {white} has enouhg material to mate. false otherwise
+   */
+  public boolean hasEnoughMaterialToMate(boolean white) {
+    if (white) {
+      return whiteHasEnoughMaterialToMate();
+    } else {
+      return blackHasEnoughMaterialToMate();
+    }
+  }
+
+  /**
+   * Checks if white has enough material to mate
+   *
+   * @return true if white has enough material to mate
+   */
+  private boolean whiteHasEnoughMaterialToMate() {
+    boolean white = true;
+    // Pawn can promote
+    List<Position> posPawns = getPawns(white);
+    if (posPawns.size() > 0) {
+      return true;
+    }
+    // Mate with queen(s)
+    List<Position> queenPos = getQueens(white);
+    if (queenPos.size() > 0) {
+      return true;
+    }
+    // Mate with rook(s)
+    List<Position> rooksPos = getRooks(white);
+    if (rooksPos.size() > 0) {
+      return true;
+    }
+    // Mate with bishops
+    List<Position> bishopsPos = getBishops(white);
+    // Check if at least two bishops are of opposite colors
+    if (bishopsPos.size() >= 2) {
+      int nbBishopsLightSquares = 0;
+      int nbBishopsDarkSquares = 0;
+      for (Position posBishop : bishopsPos) {
+        if ((posBishop.getX() + posBishop.getY()) % 2 == 0) {
+          // Dark squared bishop
+          nbBishopsDarkSquares++;
+        } else {
+          // Light squared bishop
+          nbBishopsLightSquares++;
+        }
+      }
+      // Can mate with bishops
+      if (nbBishopsDarkSquares >= 1 && nbBishopsLightSquares >= 1) {
+        return true;
+      }
+    }
+    // Mate with knights
+    List<Position> knightsPos = getKnights(white);
+    if (knightsPos.size() >= 2) {
+      return true;
+    }
+    // Mate with bishop and knight
+    if (bishopsPos.size() == 1 && knightsPos.size() == 1) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Checks if black has enough material to mate
+   *
+   * @return true if black has enough material to mate
+   */
+  private boolean blackHasEnoughMaterialToMate() {
+    boolean white = false;
+    // Pawn can promote
+    List<Position> posPawns = getPawns(white);
+    if (posPawns.size() > 0) {
+      return true;
+    }
+    // Mate with queen(s)
+    List<Position> queenPos = getQueens(white);
+    if (queenPos.size() > 0) {
+      return true;
+    }
+    // Mate with rook(s)
+    List<Position> rooksPos = getRooks(white);
+    if (rooksPos.size() > 0) {
+      return true;
+    }
+    // Mate with bishops
+    List<Position> bishopsPos = getBishops(white);
+    // Check if at least two bishops are of opposite colors
+    if (bishopsPos.size() >= 2) {
+      int nbBishopsLightSquares = 0;
+      int nbBishopsDarkSquares = 0;
+      for (Position posBishop : bishopsPos) {
+        if ((posBishop.getX() + posBishop.getY()) % 2 == 0) {
+          // Dark squared bishop
+          nbBishopsDarkSquares++;
+        } else {
+          // Light squared bishop
+          nbBishopsLightSquares++;
+        }
+      }
+      // Can mate with bishops
+      if (nbBishopsDarkSquares >= 1 && nbBishopsLightSquares >= 1) {
+        return true;
+      }
+    }
+    // Mate with knights
+    List<Position> knightsPos = getKnights(white);
+    if (knightsPos.size() >= 2) {
+      return true;
+    }
+    // Mate with bishop and knight
+    if (bishopsPos.size() == 1 && knightsPos.size() == 1) {
+      return true;
+    }
+    return false;
+  }
+
   @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
