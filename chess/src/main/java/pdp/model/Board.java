@@ -104,7 +104,7 @@ public class Board {
           move.dest.getX(),
           move.dest.getY(),
           this.isWhite,
-          Piece.QUEEN); // remplacez Piece.QUEEN par newPiece une fois que ca sera implementé
+          Piece.QUEEN); // replace Piece.QUEEN by newPiece
     }
 
     if (isLastMoveDoublePush) {

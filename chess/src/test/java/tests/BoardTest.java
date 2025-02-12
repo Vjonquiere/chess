@@ -2,7 +2,6 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
 import pdp.utils.Position;
@@ -11,48 +10,35 @@ public class BoardTest {
   public Game game;
 
   @Test
-  void testClassicMove() {
+  public void testClassicMove() {
     game = Game.initialize(false, false, null, null);
-    Move move = new Move(new Position(1, 4), new Position(2, 4)); // Pion avance d'une case
-    game.getGameState().getBoard().makeMove(move);
+    Move move = new Move(new Position(1, 4), new Position(2, 4));
+    game.playMove(move);
     assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(4, 2).piece);
-    assertEquals(
-        game.getGameState().getBoard().getBoard().getPieceAt(1, 4).piece,
-        Piece.EMPTY); // L'ancienne position doit être vide
+    assertEquals(game.getGameState().getBoard().getBoard().getPieceAt(1, 4).piece, Piece.EMPTY);
   }
 
   @Test
-  void testDoublePushMove() {
-    game = Game.initialize(false, false, null, null);
-    Move move = new Move(new Position(1, 4), new Position(3, 4)); // Pion avance de deux cases
-    game.getGameState().getBoard().makeMove(move);
-    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(4, 3).piece);
-    assertEquals(
-        game.getGameState().getBoard().getBoard().getPieceAt(1, 4).piece,
-        Piece.EMPTY); // L'ancienne position doit être vide
-  }
-
-  @Test
-  void testCaptureMove() {
+  public void testDoublePushMove() {
     game = Game.initialize(false, false, null, null);
     Move move = new Move(new Position(1, 4), new Position(3, 4));
-    game.getGameState().getBoard().makeMove(move);
+    game.playMove(move);
+    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(4, 3).piece);
+    assertEquals(game.getGameState().getBoard().getBoard().getPieceAt(1, 4).piece, Piece.EMPTY);
+  }
+
+  @Test
+  public void testCaptureMove() {
+    game = Game.initialize(false, false, null, null);
+    Move move = new Move(new Position(1, 4), new Position(3, 4));
+    game.playMove(move);
     Move move1 = new Move(new Position(6, 3), new Position(4, 3));
-    game.getGameState().getBoard().makeMove(move1);
+    game.playMove(move1);
 
-    Move move2 = new Move(new Position(3, 4), new Position(4, 3)); // capture
-    Position sourcePosition = new Position(move2.getSource().getY(), move2.getSource().getX());
-    List<Move> availableMoves = game.getGameState().getBoard().getAvailableMoves(sourcePosition);
-    Move classicalMove = move2.isMoveClassical(availableMoves);
-    game.getGameState().getBoard().makeMove(classicalMove);
+    Move move2 = new Move(new Position(3, 4), new Position(4, 3));
+    game.playMove(move2);
 
-    assertEquals(
-        Piece.PAWN,
-        game.getGameState()
-            .getBoard()
-            .getBoard()
-            .getPieceAt(3, 4)
-            .piece); // Le pion blanc est maintenant ici
+    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(3, 4).piece);
   }
 
   @Test
@@ -564,10 +550,22 @@ public class BoardTest {
         "Long castle should not be possible for white when a square is attacked !");
   }
 
-  /*@Test
-  void testEnPassant() {
+  @Test
+  public void testEnPassant() {
+    game = Game.initialize(false, false, null, null);
+    Move move = new Move(new Position(1, 4), new Position(3, 4));
+    game.playMove(move);
+    Move move1 = new Move(new Position(6, 1), new Position(5, 1));
+    game.playMove(move1);
+    Move move2 = new Move(new Position(3, 4), new Position(4, 4));
+    game.playMove(move2);
+    Move move3 = new Move(new Position(6, 3), new Position(4, 3));
+    game.playMove(move3);
 
+    assertEquals(Piece.EMPTY, game.getGameState().getBoard().getBoard().getPieceAt(3, 5).piece);
+    Move move4 = new Move(new Position(4, 4), new Position(5, 3));
+    game.playMove(move4);
+    assertEquals(Piece.EMPTY, game.getGameState().getBoard().getBoard().getPieceAt(3, 4).piece);
+    assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(3, 5).piece);
   }
-  */
-
 }
