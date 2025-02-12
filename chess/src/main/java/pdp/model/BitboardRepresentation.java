@@ -699,10 +699,21 @@ public class BitboardRepresentation implements BoardRepresentation {
       List<Move> availableMoves =
           getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
       for (Move move : availableMoves) {
+        ColoredPiece removedPiece = null;
+        if (move.isTake) {
+          removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
+          deletePieceAt(move.getDest().getX(), move.getDest().getY());
+        }
         movePiece(move.source, move.dest); // Play move
         boolean isStillCheck = isCheck(color);
         movePiece(move.dest, move.source); // Undo move
-        if (!isStillCheck) return false;
+        if (move.isTake) {
+          addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+        }
+        if (!isStillCheck) {
+          DEBUG(LOGGER, color.toString() + " is not stalemate");
+          return false;
+        }
       }
     }
     // Stalemate only if it is someone's turn to play and that someone has no move
@@ -915,6 +926,61 @@ public class BitboardRepresentation implements BoardRepresentation {
         && (move.dest.getX() == (x) && move.dest.getY() == (y))
         && ((move.source.getX() == (x + 1) && move.source.getY() == (y + 1))
             || (move.source.getX() == (x - 1) && move.source.getY() == (y + 1)))) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Method that verifies of a player has enough material to mate. Used for rule loss on time but
+   * enemy does not have enough material to mate
+   *
+   * @param white color of the player we check the material for
+   * @return true if {white} has enouhg material to mate. false otherwise
+   */
+  public boolean hasEnoughMaterialToMate(boolean white) {
+    // Pawn can promote
+    List<Position> posPawns = getPawns(white);
+    if (posPawns.size() > 0) {
+      return true;
+    }
+    // Mate with queen(s)
+    List<Position> queenPos = getQueens(white);
+    if (queenPos.size() > 0) {
+      return true;
+    }
+    // Mate with rook(s)
+    List<Position> rooksPos = getRooks(white);
+    if (rooksPos.size() > 0) {
+      return true;
+    }
+    // Mate with bishops
+    List<Position> bishopsPos = getBishops(white);
+    // Check if at least two bishops are of opposite colors
+    if (bishopsPos.size() >= 2) {
+      int nbBishopsLightSquares = 0;
+      int nbBishopsDarkSquares = 0;
+      for (Position posBishop : bishopsPos) {
+        if ((posBishop.getX() + posBishop.getY()) % 2 == 0) {
+          // Dark squared bishop
+          nbBishopsDarkSquares++;
+        } else {
+          // Light squared bishop
+          nbBishopsLightSquares++;
+        }
+      }
+      // Can mate with bishops
+      if (nbBishopsDarkSquares >= 1 && nbBishopsLightSquares >= 1) {
+        return true;
+      }
+    }
+    // Mate with knights
+    List<Position> knightsPos = getKnights(white);
+    if (knightsPos.size() >= 2) {
+      return true;
+    }
+    // Mate with bishop and knight
+    if (bishopsPos.size() == 1 && knightsPos.size() == 1) {
       return true;
     }
     return false;

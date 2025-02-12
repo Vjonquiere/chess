@@ -103,7 +103,7 @@ public class GameState extends Subject {
   }
 
   private boolean checkDrawAgreement() {
-    if (whiteWantsToDraw && blackWantsToDraw) {
+    if (hasWhiteRequestedDraw() && hasBlackRequestedDraw()) {
       this.isGameOver = true;
       notifyObservers(EventType.DRAW_ACCEPTED);
       notifyObservers(EventType.DRAW);
@@ -140,18 +140,21 @@ public class GameState extends Subject {
     return this.whiteWantsToDraw;
   }
 
-  public void playerLosesOnTime() {
+  public boolean playerLosesOnTime() {
     if (this.moveTimer != null && this.moveTimer.getTimeRemaining() == 0) {
       if (this.isWhiteTurn) {
         this.whiteLosesOnTime = true;
         this.isGameOver = true;
         notifyObservers(EventType.WIN_BLACK);
+        return true;
       } else {
         this.blackLosesOnTime = true;
         this.isGameOver = true;
         notifyObservers(EventType.WIN_WHITE);
+        return true;
       }
     }
+    return false;
   }
 
   public boolean hasWhiteLostOnTime() {
@@ -173,5 +176,75 @@ public class GameState extends Subject {
   public void applyFiftyMoveRule() {
     this.isGameOver = true;
     notifyObservers(EventType.DRAW);
+  }
+
+  /**
+   * This method checks the ongoing or over status of the game. In summary, it will: Verify
+   * checkMate, staleMate, draw by insufficient material, 50 move rule, draw by threefold
+   * repetition, loss or draw on time, draw by mutual agreement, resigning. Will modify
+   * this.isGameOver boolean attribute (or not) so that Game will call this.isGameOver() to know the
+   * status of the game.
+   */
+  public void checkGameStatus() {
+    Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;
+    boolean currPlayerWhite = this.isWhiteTurn();
+    // Draw by agreement
+    if (checkDrawAgreement()) {
+      return;
+    }
+    // White resigns
+    if (hasWhiteResigned()) {
+      whiteResigns();
+      return;
+    }
+    // Black resigns
+    if (hasBlackResigned()) {
+      blackResigns();
+      return;
+    }
+    // Loss on time
+    if (playerLosesOnTime()) {
+      // if insufficient material for enemy then draw else win
+      if (board.getBoard().hasEnoughMaterialToMate(currPlayerWhite)) {
+        this.isGameOver = true;
+        notifyObservers(EventType.DRAW);
+        return;
+      }
+      this.isGameOver = true;
+      if (currPlayerWhite) {
+        notifyObservers(EventType.WIN_BLACK);
+        return;
+      } else {
+        notifyObservers(EventType.WIN_WHITE);
+        return;
+      }
+    }
+    // Fifty Move rule
+    if (isFiftyMoveRule()) {
+      applyFiftyMoveRule();
+      return;
+    }
+    // Checkmate
+    if (board.getBoard().isCheckMate(currColor)) {
+      this.isGameOver = true;
+      if (currColor == Color.WHITE) {
+        notifyObservers(EventType.WIN_BLACK);
+      } else {
+        notifyObservers(EventType.WIN_WHITE);
+      }
+      return;
+    }
+    // Stalemate
+    if (board.getBoard().isStaleMate(currColor, currColor)) {
+      this.isGameOver = true;
+      notifyObservers(EventType.DRAW);
+      return;
+    }
+    // Draw by insufficient material
+    if (board.getBoard().isDrawByInsufficientMaterial()) {
+      this.isGameOver = true;
+      notifyObservers(EventType.DRAW);
+    }
+    // Threefold repetition
   }
 }
