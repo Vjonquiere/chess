@@ -568,4 +568,79 @@ public class BoardTest {
     assertEquals(Piece.EMPTY, game.getGameState().getBoard().getBoard().getPieceAt(3, 4).piece);
     assertEquals(Piece.PAWN, game.getGameState().getBoard().getBoard().getPieceAt(3, 5).piece);
   }
+
+  @Test // must promote a pawn to Queen
+  public void boardPromotionWhiteQueenTest() {
+    game = Game.initialize(false, false, null, null);
+    Move move1 = new Move(new Position(1, 4), new Position(3, 4));
+    game.playMove(move1);
+    Move move2 = new Move(new Position(6, 4), new Position(5, 4));
+    game.playMove(move2);
+
+    Move move3 = new Move(new Position(3, 4), new Position(4, 4));
+    game.playMove(move3);
+    Move move4 = new Move(new Position(6, 3), new Position(4, 3));
+    game.playMove(move4);
+
+    Move move5 = new Move(new Position(4, 4), new Position(5, 3));
+    game.playMove(move5);
+    Move move6 = new Move(new Position(6, 5), new Position(4, 5));
+    game.playMove(move6);
+
+    Move move7 = new Move(new Position(5, 3), new Position(6, 2));
+    game.playMove(move7);
+    Move move8 = new Move(new Position(6, 6), new Position(5, 6));
+    game.playMove(move8);
+
+    Move move9 = new Move(new Position(6, 2), new Position(7, 1));
+    game.playMove(move9);
+
+    assertEquals(Piece.QUEEN, game.getGameState().getBoard().getBoard().getPieceAt(1, 7).piece);
+    Move move10 = new Move(new Position(4, 5), new Position(3, 5));
+    game.playMove(move10);
+    Move move11 = new Move(new Position(7, 1), new Position(4, 4));
+    game.playMove(move11);
+    assertEquals(Piece.EMPTY, game.getGameState().getBoard().getBoard().getPieceAt(1, 7).piece);
+    assertEquals(Piece.QUEEN, game.getGameState().getBoard().getBoard().getPieceAt(4, 4).piece);
+  }
+
+  @Test // must promote a pawn to Queen
+  public void boardPromotionQueenBlackTest() {
+    game = Game.initialize(false, false, null, null);
+
+    Move move1 = new Move(new Position(1, 4), new Position(3, 4)); // b
+    game.playMove(move1);
+    Move move2 = new Move(new Position(6, 3), new Position(4, 3)); // n
+    game.playMove(move2);
+
+    Move move3 = new Move(new Position(3, 4), new Position(4, 4)); // b
+    game.playMove(move3);
+    Move move4 = new Move(new Position(4, 3), new Position(3, 3)); // n
+    game.playMove(move4);
+
+    Move move5 = new Move(new Position(1, 2), new Position(3, 2)); // b
+    game.playMove(move5);
+    Move move6 = new Move(new Position(3, 3), new Position(2, 2)); // n
+    game.playMove(move6);
+
+    Move move7 = new Move(new Position(1, 3), new Position(2, 3)); // b
+    game.playMove(move7);
+    Move move8 = new Move(new Position(2, 2), new Position(1, 2)); // n
+    game.playMove(move8);
+
+    Move move9 = new Move(new Position(2, 3), new Position(3, 3)); // b
+    game.playMove(move9);
+    Move move10 = new Move(new Position(1, 2), new Position(0, 1)); // n
+    game.playMove(move10);
+
+    assertEquals(Piece.QUEEN, game.getGameState().getBoard().getBoard().getPieceAt(1, 0).piece);
+
+    Move move15 = new Move(new Position(3, 3), new Position(4, 3)); // b
+    game.playMove(move15);
+    Move move16 = new Move(new Position(0, 1), new Position(2, 3)); // n
+    game.playMove(move16);
+
+    assertEquals(Piece.EMPTY, game.getGameState().getBoard().getBoard().getPieceAt(1, 0).piece);
+    assertEquals(Piece.QUEEN, game.getGameState().getBoard().getBoard().getPieceAt(3, 2).piece);
+  }
 }

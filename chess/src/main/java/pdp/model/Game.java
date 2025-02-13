@@ -190,13 +190,9 @@ public class Game extends Subject {
 
       // Castle move
       DEBUG(LOGGER, "Checking castle...");
-      Piece isPieceKing =
-          this.gameState
-              .getBoard()
-              .board
-              .getPieceAt(sourcePosition.getX(), sourcePosition.getY())
-              .piece;
-      if (isPieceKing == Piece.KING) {
+      ColoredPiece coloredPiece =
+          this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+      if (coloredPiece.piece == Piece.KING) {
         if ((Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
                 && sourcePosition.getY() == 0
                 && destPosition.getY() == 0)
@@ -250,6 +246,8 @@ public class Game extends Subject {
         if (this.gameState.getBoard().isWhite) {
           this.gameState.incrementsFullTurn();
         }
+        move.piece = coloredPiece;
+        move.isTake = true;
         this.history.addMove(
             new HistoryState(
                 move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
@@ -279,6 +277,7 @@ public class Game extends Subject {
         if (this.gameState.getBoard().isWhite) {
           this.gameState.incrementsFullTurn();
         }
+        move.piece = coloredPiece;
         history.addMove(
             new HistoryState(
                 move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
