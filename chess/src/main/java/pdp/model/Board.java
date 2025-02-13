@@ -72,12 +72,6 @@ public class Board {
 
     board.movePiece(move.source, move.dest);
 
-    if (this.isWhite) {
-      this.isWhite = false;
-    } else {
-      this.isWhite = true;
-    }
-
     if (this.whiteShortCastle == true
         && (move.source.equals(new Position(0, 4))
             || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
@@ -115,6 +109,13 @@ public class Board {
     if (this.isEnPassantTake) {
       this.isLastMoveDoublePush = false;
     }
+
+    if (this.isWhite) {
+      this.isWhite = false;
+    } else {
+      this.isWhite = true;
+    }
+
     move.toString();
   }
 
