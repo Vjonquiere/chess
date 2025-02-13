@@ -62,6 +62,7 @@ From the local `chess` or Docker `app` folder :
 From the local `chess` or Docker `app` folder :
 - `mvn clean test` to install dependencies and run tests
 - `mvn jacoco:report` to generate the report
+
 The reports will be available under `target/site/jacoco`
 
 # About
