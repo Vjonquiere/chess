@@ -1,13 +1,13 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
 import pdp.utils.Position;
+import tests.helpers.DummyBoardRepresentation;
 
 public class ZobristHashingTest {
   Game game;
@@ -342,7 +342,6 @@ public class ZobristHashingTest {
                 new Position(7, 0),
                 new ColoredPiece(Piece.ROOK, Color.BLACK),
                 false));
-    System.out.println(board.canCastle(Color.BLACK, true));
 
     // Same positions on board but Castling rights changed
     assertNotEquals(hashWithCastling, hashUpdate);
@@ -410,5 +409,52 @@ public class ZobristHashingTest {
 
     // Same positions on board but Castling rights changed
     assertNotEquals(hashWithCastling, hashUpdate);
+  }
+
+  static class MockBoard extends Board {
+    @Override
+    public BoardRepresentation getBoard() {
+      return new DummyBoardRepresentation(); // Not a BitboardRepresentation
+    }
+  }
+
+  @Test
+  void testGenerateHashThrowsExceptionForNonBitboard() {
+    MockBoard board = new MockBoard();
+
+    ZobristHashing zobrist = new ZobristHashing();
+
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              zobrist.generateHashFromBitboards(board);
+            });
+
+    assertEquals("Only available for bitboards", exception.getMessage());
+  }
+
+  @Test
+  void testUpdateHashThrowsExceptionForNonBitboard() {
+    MockBoard board = new MockBoard();
+
+    ZobristHashing zobrist = new ZobristHashing();
+
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              zobrist.generateHashFromBitboards(board);
+            });
+    Exception exception2 =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              zobrist.updateHashFromBitboards(
+                  1234532, board, new Move(new Position(1, 4), new Position(2, 4)));
+            });
+
+    assertEquals("Only available for bitboards", exception.getMessage());
+    assertEquals("Only available for bitboards", exception2.getMessage());
   }
 }
