@@ -188,6 +188,15 @@ public class Bitboard {
     return new Bitboard(bitboard ^ b.getBits());
   }
 
+  /**
+   * Invert all the bits of the bitboard
+   *
+   * @return A new bitboard with the inverted bits
+   */
+  public Bitboard not() {
+    return new Bitboard(~bitboard);
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

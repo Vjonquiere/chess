@@ -467,11 +467,11 @@ public class BitboardRepresentation implements BoardRepresentation {
     if (white) {
       attackRight = position.moveUpRight().and(enemies);
       attackLeft = position.moveUpLeft().and(enemies);
-      position = position.moveUp();
+      position = position.moveUp().and(enemies.not());
     } else {
       attackRight = position.moveDownRight().and(enemies);
       attackLeft = position.moveDownLeft().and(enemies);
-      position = position.moveDown();
+      position = position.moveDown().and(enemies.not());
     }
     position = position.xor(position.and(unreachableSquares));
 

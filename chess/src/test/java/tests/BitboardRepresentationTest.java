@@ -768,4 +768,6 @@ public class BitboardRepresentationTest {
     BitboardRepresentation board = new BitboardRepresentation();
     board.deletePieceAt(0, 0);
   }
+
+  // TODO pawn can't eat front
 }
