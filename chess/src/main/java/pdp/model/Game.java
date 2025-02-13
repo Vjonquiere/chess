@@ -1,7 +1,6 @@
 package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
-import static pdp.utils.Logging.VERBOSE;
 
 import java.util.HashMap;
 import java.util.List;
