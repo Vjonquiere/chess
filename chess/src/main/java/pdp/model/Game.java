@@ -38,9 +38,11 @@ public class Game extends Subject {
     this.gameState.setSimplifiedZobristHashing(
         zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
     this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+    DEBUG(LOGGER, "Game created");
   }
 
   private boolean addStateToCount(long simplifiedZobristHashing) {
+    DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
     if (this.stateCount.containsKey(simplifiedZobristHashing)) {
       this.stateCount.put(
           simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
@@ -74,6 +76,7 @@ public class Game extends Subject {
    */
   @Override
   public void addObserver(EventObserver observer) {
+    DEBUG(LOGGER, "An observer have been attached to Game");
     super.addObserver(observer);
     if (gameState != null) {
       this.gameState.addObserver(observer);
@@ -88,6 +91,7 @@ public class Game extends Subject {
    */
   @Override
   public void addErrorObserver(EventObserver observer) {
+    DEBUG(LOGGER, "An error observer have been attached to Game");
     super.addErrorObserver(observer);
     if (gameState != null) {
       this.gameState.addErrorObserver(observer);
@@ -103,7 +107,9 @@ public class Game extends Subject {
    * @return The newly created instance of Game.
    */
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
+    DEBUG(LOGGER, "Initializing Game...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    DEBUG(LOGGER, "Game initialized!");
     return instance;
   }
 
@@ -116,6 +122,7 @@ public class Game extends Subject {
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     Position destPosition = new Position(move.dest.getY(), move.dest.getX());
+    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
                   == Color.WHITE
@@ -156,7 +163,9 @@ public class Game extends Subject {
               classicalMove.toString(),
               this.gameState.getFullTurn(),
               this.gameState.getBoard().isWhite));
+
       this.gameState.getBoard().makeMove(classicalMove);
+      DEBUG(LOGGER, "Move played!");
 
       // Check game status after the classical move was played
       this.gameState.switchPlayerTurn();
@@ -164,18 +173,23 @@ public class Game extends Subject {
           zobristHashing.updateSimplifiedHashFromBitboards(
               this.gameState.getSimplifiedZobristHashing(), getBoard(), classicalMove));
 
+      DEBUG(LOGGER, "Checking threefold repetition...");
       boolean threefoldRepetition =
           this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
       if (threefoldRepetition) {
         this.gameState.activateThreefold();
       }
+      // Check game status after the classical move was played
+      DEBUG(LOGGER, "Checking game status...");
       this.gameState.checkGameStatus();
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
+      DEBUG(LOGGER, "The specified move is not classical -> searching for special move...");
       boolean isSpecialMove = false;
 
       // Castle move
+      DEBUG(LOGGER, "Checking castle...");
       Piece isPieceKing =
           this.gameState
               .getBoard()
@@ -210,6 +224,7 @@ public class Game extends Subject {
       }
 
       // enPassant move
+      DEBUG(LOGGER, "Checking en passant...");
       if (this.gameState.getBoard().isLastMoveDoublePush
           && this.gameState
               .getBoard()
@@ -242,6 +257,7 @@ public class Game extends Subject {
       }
 
       // DoublePawnPush move
+      DEBUG(LOGGER, "Checking double push...");
       if (this.gameState
           .getBoard()
           .board
@@ -272,6 +288,7 @@ public class Game extends Subject {
       }
 
       if (!isSpecialMove) {
+        DEBUG(LOGGER, "Move was not a special move!");
         throw new IllegalMoveException(e.getMessage() + " and not a special move");
         // throw new IllegalMoveException(e.getMessage(), e );
       }
@@ -287,6 +304,7 @@ public class Game extends Subject {
       this.gameState.setSimplifiedZobristHashing(
           zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
 
+      DEBUG(LOGGER, "Checking threefold repetition...");
       boolean threefoldRepetition =
           this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
       if (threefoldRepetition) {

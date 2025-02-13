@@ -1,6 +1,7 @@
 package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.VERBOSE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -547,6 +548,19 @@ public class BitboardRepresentation implements BoardRepresentation {
       unreachableSquares.setBit(
           enemyKing.getX() % 8 + enemyKing.getY() * 8); // Put enemyKing to unreachable positions
     Bitboard enemies = piece.color == Color.WHITE ? getBlackBoard() : getWhiteBoard();
+    VERBOSE(
+        LOGGER,
+        "Generating moves for "
+            + piece.color
+            + " "
+            + piece.piece
+            + " at ["
+            + x
+            + ", "
+            + y
+            + "] (king reachable="
+            + kingReachable
+            + ")");
     return switch (piece.piece) {
       case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies, piece);
       case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies, piece);
@@ -596,6 +610,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isAttacked(int x, int y, Color by) {
+    VERBOSE(LOGGER, "Checking if square [" + x + "," + y + "] is attacked");
     Bitboard pieces = by == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     Position destination = new Position(y, x);
     for (Integer i : pieces.getSetBits()) {
@@ -629,6 +644,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckAfterMove(Color color, Move move) {
+    DEBUG(LOGGER, "Checking if " + color + " is check after move (" + move + ")");
     ColoredPiece removedPiece = null;
     if (move.isTake) {
       removedPiece = getPieceAt(move.getDest().getX(), move.getDest().getY());
@@ -655,6 +671,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckMate(Color color) {
+    DEBUG(LOGGER, "Checking if " + color + " is check mate");
     if (!isCheck(color)) return false;
     Bitboard pieces = color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     for (Integer i : pieces.getSetBits()) {
@@ -735,6 +752,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isDrawByInsufficientMaterial() {
+    DEBUG(LOGGER, "Checking is draw by insufficient material");
     List<Position> posWhiteKing = getKing(true);
     List<Position> posBlackKing = getKing(false);
     if (posWhiteKing.isEmpty() || posBlackKing.isEmpty()) {
@@ -819,6 +837,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isPawnPromoting(int x, int y, boolean white) {
+    DEBUG(LOGGER, "Checking is pawn promoting");
     if (white && y != 7) {
       return false;
     } else if (!white && y != 0) {
@@ -843,6 +862,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void promotePawn(int x, int y, boolean white, Piece newPiece) {
+    DEBUG(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
     ColoredPiece pieceAtPosition = getPieceAt(x, y);
     if (pieceAtPosition.piece != Piece.PAWN
         || pieceAtPosition.color != (white ? Color.WHITE : Color.BLACK)) {
@@ -886,6 +906,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isDoublePushPossible(Move move, boolean white) {
+    DEBUG(LOGGER, "Checking is double push possible");
     ColoredPiece piece = getPieceAt(move.source.getX(), move.source.getY());
     if (white
         && piece.piece == Piece.PAWN
@@ -917,6 +938,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the move is a valid en passant capture, false else
    */
   public boolean isEnPassant(int x, int y, Move move, boolean white) {
+    DEBUG(LOGGER, "Checking is en passant");
     ColoredPiece piece = getPieceAt(move.source.getX(), move.source.getY());
     if (white
         && piece.piece == Piece.PAWN
