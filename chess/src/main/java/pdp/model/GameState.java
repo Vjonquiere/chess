@@ -1,9 +1,15 @@
 package pdp.model;
 
+import static pdp.utils.Logging.DEBUG;
+
+import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.utils.Logging;
 
 public class GameState extends Subject {
+  private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
+
   private Board board;
   private Timer moveTimer;
   private History history;
@@ -22,6 +28,7 @@ public class GameState extends Subject {
 
   // By default, blitz mode is not on
   public GameState() {
+    Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = true;
     this.whiteResigns = false;
@@ -222,6 +229,7 @@ public class GameState extends Subject {
     boolean currPlayerWhite = this.isWhiteTurn();
     // Draw by agreement
     if (checkDrawAgreement()) {
+      DEBUG(LOGGER, "End of game by draw");
       return;
     }
     // White resigns
