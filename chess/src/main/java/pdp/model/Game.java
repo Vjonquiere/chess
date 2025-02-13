@@ -158,6 +158,8 @@ public class Game extends Subject {
               this.gameState.getBoard().isWhite));
       this.gameState.getBoard().makeMove(classicalMove);
 
+      // Check game status after the classical move was played
+      this.gameState.switchPlayerTurn();
       this.gameState.setSimplifiedZobristHashing(
           zobristHashing.updateSimplifiedHashFromBitboards(
               this.gameState.getSimplifiedZobristHashing(), getBoard(), classicalMove));
@@ -167,8 +169,6 @@ public class Game extends Subject {
       if (threefoldRepetition) {
         this.gameState.activateThreefold();
       }
-      // Check game status after the classical move was played
-      this.gameState.switchPlayerTurn();
       this.gameState.checkGameStatus();
       this.notifyObservers(EventType.MOVE_PLAYED);
 
@@ -271,15 +271,6 @@ public class Game extends Subject {
         this.gameState.getBoard().isLastMoveDoublePush = true;
       }
 
-      this.gameState.setSimplifiedZobristHashing(
-          zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
-
-      boolean threefoldRepetition =
-          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
-      if (threefoldRepetition) {
-        this.gameState.activateThreefold();
-      }
-
       if (!isSpecialMove) {
         throw new IllegalMoveException(e.getMessage() + " and not a special move");
         // throw new IllegalMoveException(e.getMessage(), e );
@@ -293,6 +284,14 @@ public class Game extends Subject {
 
       // Check game status after the special move was played
       this.gameState.switchPlayerTurn();
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+
+      boolean threefoldRepetition =
+          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        this.gameState.activateThreefold();
+      }
       this.gameState.checkGameStatus();
       this.notifyObservers(EventType.MOVE_PLAYED);
     }
