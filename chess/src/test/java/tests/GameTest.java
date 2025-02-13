@@ -143,7 +143,41 @@ public class GameTest {
     game.playMove(Move.fromString("g8-f6"));
     game.playMove(Move.fromString("c3-b1"));
     game.playMove(Move.fromString("f6-g8"));
-    assertEquals(true, game.getGameState().isThreefoldRepetition());
-    assertEquals(true, game.isOver());
+    assertTrue(game.getGameState().isThreefoldRepetition());
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void noThreefoldRepetitionOnIllegalClassicalTest() {
+    Game game = Game.initialize(false, false, null, null);
+    try {
+      game.playMove(Move.fromString("h1-h3"));
+    } catch (IllegalMoveException e) {
+
+    }
+    try {
+      game.playMove(Move.fromString("h1-h3"));
+    } catch (IllegalMoveException e) {
+
+    }
+    assertFalse(game.getGameState().isThreefoldRepetition());
+    assertFalse(game.isOver());
+  }
+
+  @Test
+  public void noThreefoldRepetitionOnIllegalSpecialTest() {
+    Game game = Game.initialize(false, false, null, null);
+    try {
+      game.playMove(Move.fromString("o-o-o"));
+    } catch (IllegalMoveException e) {
+
+    }
+    try {
+      game.playMove(Move.fromString("o-o-o"));
+    } catch (IllegalMoveException e) {
+
+    }
+    assertFalse(game.getGameState().isThreefoldRepetition());
+    assertFalse(game.isOver());
   }
 }
