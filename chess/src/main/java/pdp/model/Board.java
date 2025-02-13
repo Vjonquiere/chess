@@ -55,7 +55,9 @@ public class Board {
     }
     if (move.isTake == true) {
       // SAVE DELETED PIECE FOR HASHING
-      board.deletePieceAt(move.dest.getX(), move.dest.getY());
+      if (!this.isEnPassantTake) {
+        board.deletePieceAt(move.dest.getX(), move.dest.getY());
+      }
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
