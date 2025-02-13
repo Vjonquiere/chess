@@ -44,6 +44,6 @@ public class HistoryState {
       sb.append("B ").append(this.stringMove);
     }
 
-    return sb.toString(); // On retourne la chaîne sans espaces superflus
+    return sb.toString();
   }
 }

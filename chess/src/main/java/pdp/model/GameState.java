@@ -1,9 +1,15 @@
 package pdp.model;
 
+import static pdp.utils.Logging.DEBUG;
+
+import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.utils.Logging;
 
 public class GameState extends Subject {
+  private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
+
   private Board board;
   private Timer moveTimer;
   private History history;
@@ -22,6 +28,7 @@ public class GameState extends Subject {
 
   // By default, blitz mode is not on
   public GameState() {
+    Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = true;
     this.whiteResigns = false;
@@ -222,15 +229,18 @@ public class GameState extends Subject {
     boolean currPlayerWhite = this.isWhiteTurn();
     // Draw by agreement
     if (checkDrawAgreement()) {
+      DEBUG(LOGGER, "End of game  Dray by mutual agreement");
       return;
     }
     // White resigns
     if (hasWhiteResigned()) {
+      DEBUG(LOGGER, "End of game : White resigned, Black won");
       whiteResigns();
       return;
     }
     // Black resigns
     if (hasBlackResigned()) {
+      DEBUG(LOGGER, "End of game : Black resigned, White won");
       blackResigns();
       return;
     }
@@ -239,20 +249,24 @@ public class GameState extends Subject {
       // if insufficient material for enemy then draw else win
       if (board.getBoard().hasEnoughMaterialToMate(currPlayerWhite)) {
         this.isGameOver = true;
+        DEBUG(LOGGER, "End of game : Loss on time + insufficient material, Draw");
         notifyObservers(EventType.DRAW);
         return;
       }
       this.isGameOver = true;
       if (currPlayerWhite) {
+        DEBUG(LOGGER, "End of game : Loss on time, Black won");
         notifyObservers(EventType.WIN_BLACK);
         return;
       } else {
+        DEBUG(LOGGER, "End of game : Loss on time, White won");
         notifyObservers(EventType.WIN_WHITE);
         return;
       }
     }
     // Fifty Move rule
     if (isFiftyMoveRule()) {
+      DEBUG(LOGGER, "End of game : Fifty move rule, draw");
       applyFiftyMoveRule();
       return;
     }
@@ -260,8 +274,10 @@ public class GameState extends Subject {
     if (board.getBoard().isCheckMate(currColor)) {
       this.isGameOver = true;
       if (currColor == Color.WHITE) {
+        DEBUG(LOGGER, "End of game : Checkmate, Black won");
         notifyObservers(EventType.WIN_BLACK);
       } else {
+        DEBUG(LOGGER, "End of game : Checkmate, White won");
         notifyObservers(EventType.WIN_WHITE);
       }
       return;
@@ -269,16 +285,19 @@ public class GameState extends Subject {
     // Stalemate
     if (board.getBoard().isStaleMate(currColor, currColor)) {
       this.isGameOver = true;
+      DEBUG(LOGGER, "End of game : Stale mate, Draw");
       notifyObservers(EventType.DRAW);
       return;
     }
     // Draw by insufficient material
     if (board.getBoard().isDrawByInsufficientMaterial()) {
+      DEBUG(LOGGER, "End of game : Insufficient material, Draw");
       this.isGameOver = true;
       notifyObservers(EventType.DRAW);
     }
     // Threefold repetition
     if (this.threefoldRepetition) {
+      DEBUG(LOGGER, "End of game : Threefold repetition, Draw");
       this.isGameOver = true;
       notifyObservers(EventType.DRAW);
     }

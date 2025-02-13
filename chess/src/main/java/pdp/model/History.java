@@ -45,11 +45,8 @@ public class History {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     HistoryNode current = currentMove;
-
-    // Utilisation d'une pile pour inverser l'ordre d'affichage sans changer la liste
     Stack<HistoryNode> stack = new Stack<>();
 
-    // Empiler tous les nœuds de l'historique
     while (current != null) {
       stack.push(current);
       current = current.previous;
