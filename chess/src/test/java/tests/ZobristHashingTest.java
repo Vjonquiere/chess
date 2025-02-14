@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
 import pdp.utils.Position;
-import tests.helpers.DummyBoardRepresentation;
+import tests.helpers.MockBoard;
 
 public class ZobristHashingTest {
   Game game;
@@ -473,13 +473,6 @@ public class ZobristHashingTest {
 
     // Same positions on board but Castling rights changed
     assertNotEquals(hashWithCastling, hashUpdate);
-  }
-
-  static class MockBoard extends Board {
-    @Override
-    public BoardRepresentation getBoard() {
-      return new DummyBoardRepresentation(); // Not a BitboardRepresentation
-    }
   }
 
   @Test
