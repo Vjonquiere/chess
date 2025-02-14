@@ -138,7 +138,9 @@ public class ZobristHashing {
   public long generateHashFromBitboards(Board board) {
     long hash = generatePieceHash(board);
     prevCastlingIndex = translateCastling(board);
-    hash ^= castling[prevCastlingIndex];
+    if (prevCastlingIndex != -1) {
+      hash ^= castling[prevCastlingIndex];
+    }
 
     if (board.enPassantPos != null) {
       prevEnPassantFile = board.enPassantPos.getX();
@@ -175,7 +177,9 @@ public class ZobristHashing {
 
     // update castlings rights if needed
     int newCastlingIndex = translateCastling(board);
-    if (prevCastlingIndex != newCastlingIndex) {
+    if (prevCastlingIndex != newCastlingIndex
+        && newCastlingIndex != -1
+        && prevCastlingIndex != -1) {
       currHash ^= castling[prevCastlingIndex];
       currHash ^= castling[newCastlingIndex];
       prevCastlingIndex = newCastlingIndex;
