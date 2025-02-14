@@ -38,6 +38,7 @@ public class CLIOptionsTest {
           + "                                 (default 5 seconds)\n"
           + " -b,--blitz                      Play in blitz mode\n"
           + " -c,--contest <FILENAME>         AI plays one move in the given file\n"
+          + "    --config <FILENAME>          Sets the configuration file to use\n"
           + " -d,--debug                      Print debugging information\n"
           + " -g,--gui                        Displays the game with a  graphical\n"
           + "                                 interface.\n"
@@ -235,7 +236,7 @@ public class CLIOptionsTest {
     /* Test that asking for the app in english is the default and will display the debug message.*/
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--debug", "--lang=en"}, mockRuntime);
-    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("lang option activated"));
     assertTrue(outputStream.toString().contains("Language = English (already set by default)"));
     assertEquals("Chess game", TextGetter.getText("title"));
     outputStream.reset();
@@ -250,7 +251,7 @@ public class CLIOptionsTest {
      * that the default language of the app is english*/
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--debug", "--lang=ru"}, mockRuntime);
-    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("lang option activated"));
     assertTrue(outputStream.toString().contains("Language ru not supported, language = english"));
     assertEquals("Chess game", TextGetter.getText("title"));
     outputStream.reset();
@@ -262,6 +263,7 @@ public class CLIOptionsTest {
     expectedMap.put(OptionType.BLITZ, "");
     expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
     expectedMap.put(OptionType.AI, "W");
+    expectedMap.put(OptionType.CONFIG, "default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
     expectedMap.put(OptionType.AI_DEPTH, "3");
     expectedMap.put(OptionType.AI_MODE, "test");

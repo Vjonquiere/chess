@@ -40,6 +40,10 @@ public class TextGetter {
     return messages.getString(key);
   }
 
+  public static Locale getLocale() {
+    return locale;
+  }
+
   /**
    * Gets the string corresponding to the key and formats it using the provided arguments.
    *
