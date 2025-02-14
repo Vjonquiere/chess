@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
-import pdp.model.Move;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.board.Move;
 import pdp.utils.Position;
 import tests.helpers.MockBoard;
 
@@ -26,18 +26,18 @@ public class SolverTest {
     solver.setHeuristic(HeuristicType.DUMB);
     assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
 
-    game.playMove(new Move(new Position(1, 4), new Position(2, 4)));
-    game.playMove(new Move(new Position(6, 3), new Position(5, 3)));
-    game.playMove(new Move(new Position(0, 5), new Position(5, 0)));
-    game.playMove(new Move(new Position(6, 2), new Position(5, 2)));
-    game.playMove(new Move(new Position(5, 0), new Position(6, 1)));
-    game.playMove(new Move(new Position(6, 4), new Position(5, 4)));
-    game.playMove(new Move(new Position(6, 1), new Position(7, 2)));
+    game.playMove(new Move(new Position(4, 1), new Position(4, 2)));
+    game.playMove(new Move(new Position(3, 6), new Position(3, 5)));
+    game.playMove(new Move(new Position(5, 0), new Position(0, 5)));
+    game.playMove(new Move(new Position(2, 6), new Position(2, 5)));
+    game.playMove(new Move(new Position(0, 5), new Position(1, 6)));
+    game.playMove(new Move(new Position(4, 6), new Position(4, 5)));
+    game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
     assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
     // position score for white
-    game.playMove(new Move(new Position(6, 0), new Position(5, 0)));
+    game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
     assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
   }
 
@@ -75,10 +75,10 @@ public class SolverTest {
     solver.setHeuristic(HeuristicType.DUMB);
     // same positions and rights --> will use the hash
     int score1 = solver.evaluateBoard(game.getBoard(), true);
-    game.playMove(new Move(new Position(0, 1), new Position(2, 2)));
-    game.playMove(new Move(new Position(7, 1), new Position(5, 0)));
-    game.playMove(new Move(new Position(2, 2), new Position(0, 1)));
-    game.playMove(new Move(new Position(5, 0), new Position(7, 1)));
+    game.playMove(new Move(new Position(1, 0), new Position(2, 2)));
+    game.playMove(new Move(new Position(1, 7), new Position(0, 5)));
+    game.playMove(new Move(new Position(2, 2), new Position(1, 0)));
+    game.playMove(new Move(new Position(0, 5), new Position(1, 7)));
     int score2 = solver.evaluateBoard(game.getBoard(), true);
 
     assertEquals(score1, score2);

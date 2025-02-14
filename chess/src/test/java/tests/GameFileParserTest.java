@@ -2,7 +2,7 @@ package tests;
 
 import java.net.URL;
 import org.junit.jupiter.api.Test;
-import pdp.model.GameFileParser;
+import pdp.model.parsers.GameFileParser;
 
 public class GameFileParserTest {
 

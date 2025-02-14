@@ -1,6 +1,7 @@
-package pdp.model;
+package pdp.model.history;
 
 import java.util.logging.Logger;
+import pdp.model.board.Move;
 import pdp.utils.Logging;
 
 public class HistoryState {

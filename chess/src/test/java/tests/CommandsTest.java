@@ -9,7 +9,7 @@ import pdp.controller.commands.*;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
 import pdp.model.GameState;
-import pdp.model.Move;
+import pdp.model.board.Move;
 
 class CommandTest {
   private Game model;

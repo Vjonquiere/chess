@@ -1,4 +1,4 @@
-package pdp.model;
+package pdp.model.parsers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
 import pdp.BoardLoaderParser;
+import pdp.model.board.BitboardRepresentation;
 
 public class GameFileParser {
 

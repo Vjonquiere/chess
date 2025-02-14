@@ -1,7 +1,7 @@
 package tests.helpers;
 
-import pdp.model.Board;
-import pdp.model.BoardRepresentation;
+import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 
 public class MockBoard extends Board {
   @Override

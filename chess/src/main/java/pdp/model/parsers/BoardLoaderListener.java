@@ -1,4 +1,4 @@
-package pdp.model;
+package pdp.model.parsers;
 
 import static java.util.Map.entry;
 
@@ -6,6 +6,11 @@ import java.util.Map;
 import java.util.Objects;
 import pdp.BoardLoaderBaseListener;
 import pdp.BoardLoaderParser;
+import pdp.model.board.Bitboard;
+import pdp.model.board.BitboardRepresentation;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 
 public class BoardLoaderListener extends BoardLoaderBaseListener {
   private static Map<String, ColoredPiece> pieces =
