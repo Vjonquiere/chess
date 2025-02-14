@@ -20,6 +20,8 @@ import org.apache.commons.cli.ParseException;
 public class CLIOptions {
   private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
 
+  private static final String DEFAULT_CONFIG_FILE = "default.chessrc";
+
   private CLIOptions() {}
 
   public static HashMap<OptionType, String> parseOptions(String[] args, Runtime runtime) {
@@ -35,7 +37,7 @@ public class CLIOptions {
     try {
       CommandLine cmd = parser.parse(options, args);
       String configFile = cmd.getOptionValue(OptionType.CONFIG.getLong(), (String) null);
-      defaultArgs = loadDefaultArgs(configFile);
+      defaultArgs = loadDefaultArgs(configFile, activatedOptions);
       handleLoggingOptions(cmd, defaultArgs);
       if (handleImmediateExitOptions(cmd, options, runtime)) return null;
       processOptions(cmd, defaultArgs, activatedOptions);
@@ -49,8 +51,14 @@ public class CLIOptions {
     return activatedOptions;
   }
 
-  private static Map<String, String> loadDefaultArgs(String file) {
+  private static Map<String, String> loadDefaultArgs(
+      String file, HashMap<OptionType, String> activatedOptions) {
     InputStream inputStream = null;
+    if (file != null && !file.endsWith(".chessrc")) {
+      file = null;
+      System.out.println("Selected file is not of .chessrc format, defaulting to default options");
+      activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
+    }
     if (file != null) {
       try {
         inputStream = new FileInputStream(file);
@@ -58,15 +66,18 @@ public class CLIOptions {
         System.err.println("Error while parsing chessrc file: " + e.getMessage());
         System.err.println("Default options will be used");
         file = null;
+        activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
       }
     }
     if (file == null) {
       try {
-        inputStream = CLIOptions.class.getClassLoader().getResourceAsStream("default.chessrc");
+        inputStream = CLIOptions.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE);
+        activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
         if (inputStream == null)
           throw new FileNotFoundException("config.chessrc not found in classpath!");
       } catch (Exception e) {
         System.err.println("Error while parsing chessrc file: " + e.getMessage());
+        activatedOptions.put(OptionType.CONFIG, null);
         return new HashMap<>();
       }
     }
@@ -76,9 +87,12 @@ public class CLIOptions {
         Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
         return iniMap.getOrDefault("Default", new HashMap<>());
       } catch (Exception e) {
+        activatedOptions.put(OptionType.CONFIG, null);
         return new HashMap<>();
       }
     }
+
+    activatedOptions.put(OptionType.CONFIG, null);
     return new HashMap<>();
   }
 
@@ -120,6 +134,11 @@ public class CLIOptions {
       HashMap<OptionType, String> activatedOptions) {
     for (OptionType option : OptionType.values()) {
 
+      if (option == OptionType.CONFIG) {
+        if (activatedOptions.containsKey(OptionType.CONFIG)) {
+          continue;
+        }
+      }
       boolean userProvided = cmd.hasOption(option.getLong());
       boolean defaultEnabled =
           defaultArgs.containsKey(option.getLong())
