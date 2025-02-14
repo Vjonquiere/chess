@@ -1,11 +1,21 @@
 package pdp;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
+import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPositionException;
+import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.model.Move;
 import pdp.model.Timer;
 import pdp.model.ai.Solver;
+import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.view.CLIView;
 import pdp.view.GameView;
@@ -20,13 +30,6 @@ public abstract class GameInitializer {
    * @return A new GameController instance.
    */
   public static GameController initialize(HashMap<OptionType, String> options) {
-
-    View view;
-    if (options.containsKey(OptionType.GUI)) {
-      view = new GameView();
-    } else {
-      view = new CLIView();
-    }
 
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
@@ -91,7 +94,41 @@ public abstract class GameInitializer {
       throw new UnsupportedOperationException("AI mode not implemented");
     }
 
-    Game model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+    Game model = null;
+
+    if (options.containsKey(OptionType.LOAD)) {
+      InputStream inputStream = null;
+      try {
+        inputStream = new FileInputStream(options.get(OptionType.LOAD));
+
+        List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
+        List<Move> moves = new ArrayList<>();
+
+        for (String move : moveStrings) {
+          moves.add(Move.fromString(move));
+        }
+
+        model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver);
+
+      } catch (IOException
+          | IllegalMoveException
+          | InvalidPositionException
+          | MoveParsingException e) {
+        System.err.println(
+            "Error while using history file: " + e.getMessage()); // TODO use Internationalization
+        System.err.println("Using the default game start");
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+      }
+    } else {
+      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+    }
+
+    View view;
+    if (options.containsKey(OptionType.GUI)) {
+      view = new GameView();
+    } else {
+      view = new CLIView();
+    }
     BagOfCommands bagOfCommands = BagOfCommands.getInstance();
     return new GameController(model, view, bagOfCommands);
   }

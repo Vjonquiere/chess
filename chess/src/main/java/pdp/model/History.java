@@ -37,6 +37,28 @@ public class History {
     currentMove = new HistoryNode(state, currentMove);
   }
 
+  public String toAlgebricString() {
+    StringBuilder sb = new StringBuilder();
+    HistoryNode current = currentMove;
+    Stack<HistoryNode> stack = new Stack<>();
+
+    while (current != null) {
+      stack.push(current);
+      current = current.previous;
+    }
+
+    while (!stack.isEmpty()) {
+      HistoryNode node = stack.pop();
+      if (node != null) {
+        sb.append(node.state.toString());
+        if (!node.state.isWhite()) {
+          sb.append("\n");
+        }
+      }
+    }
+    return sb.toString().trim();
+  }
+
   /**
    * Returns the history of moves grouped by full turns in the format: "1. B h4-h5 W e3-e5"
    *
