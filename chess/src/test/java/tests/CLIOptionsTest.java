@@ -263,6 +263,7 @@ public class CLIOptionsTest {
     expectedMap.put(OptionType.BLITZ, "");
     expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
     expectedMap.put(OptionType.AI, "W");
+    expectedMap.put(OptionType.CONFIG, "default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
     expectedMap.put(OptionType.AI_DEPTH, "3");
     expectedMap.put(OptionType.AI_MODE, "test");
