@@ -1,13 +1,13 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
 import pdp.utils.Position;
+import tests.helpers.DummyBoardRepresentation;
 
 public class ZobristHashingTest {
   Game game;
@@ -230,7 +230,7 @@ public class ZobristHashingTest {
   }
 
   @Test
-  public void testZobristHashingCastling() {
+  public void testZobristHashingWhiteLongCastle() {
     ZobristHashing zobristHashing = new ZobristHashing();
     Board board = game.getBoard();
 
@@ -281,5 +281,244 @@ public class ZobristHashingTest {
 
     // Same positions on board but Castling rights changed
     assertNotEquals(hashOnlyPawn, hashUpdate);
+  }
+
+  @Test
+  public void testZobristHashingBlackShortCastle() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+
+    game.playMove(new Move(new Position(0, 1), new Position(2, 2)));
+    long hashWithCastling = zobristHashing.generateHashFromBitboards(board);
+
+    long hashUpdate = zobristHashing.generateHashFromBitboards(board);
+    Move firstBlackMove =
+        new Move(
+            new Position(6, 0),
+            new Position(5, 0),
+            new ColoredPiece(Piece.PAWN, Color.BLACK),
+            false);
+    game.playMove(new Move(new Position(6, 7), new Position(5, 7)));
+    hashUpdate = zobristHashing.updateHashFromBitboards(hashUpdate, board, firstBlackMove);
+    hashWithCastling =
+        zobristHashing.updateHashFromBitboards(hashWithCastling, board, firstBlackMove);
+    game.playMove(new Move(new Position(2, 2), new Position(0, 1)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(2, 2),
+                new Position(0, 1),
+                new ColoredPiece(Piece.KNIGHT, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(7, 7), new Position(6, 7)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(7, 0),
+                new Position(6, 0),
+                new ColoredPiece(Piece.ROOK, Color.BLACK),
+                false));
+    game.playMove(new Move(new Position(0, 1), new Position(2, 2)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(0, 1),
+                new Position(2, 2),
+                new ColoredPiece(Piece.KNIGHT, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(6, 7), new Position(7, 7)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(6, 0),
+                new Position(7, 0),
+                new ColoredPiece(Piece.ROOK, Color.BLACK),
+                false));
+
+    // Same positions on board but Castling rights changed
+    assertNotEquals(hashWithCastling, hashUpdate);
+  }
+
+  @Test
+  public void testZobristHashingBlackLongCastle() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+
+    game.playMove(new Move(new Position(0, 1), new Position(2, 2)));
+    long hashWithCastling = zobristHashing.generateHashFromBitboards(board);
+
+    long hashUpdate = zobristHashing.generateHashFromBitboards(board);
+    Move firstBlackMove =
+        new Move(
+            new Position(6, 0),
+            new Position(5, 0),
+            new ColoredPiece(Piece.PAWN, Color.BLACK),
+            false);
+    game.playMove(new Move(new Position(6, 0), new Position(5, 0)));
+    hashUpdate = zobristHashing.updateHashFromBitboards(hashUpdate, board, firstBlackMove);
+    hashWithCastling =
+        zobristHashing.updateHashFromBitboards(hashWithCastling, board, firstBlackMove);
+    game.playMove(new Move(new Position(2, 2), new Position(0, 1)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(2, 2),
+                new Position(0, 1),
+                new ColoredPiece(Piece.KNIGHT, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(7, 0), new Position(6, 0)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(7, 0),
+                new Position(6, 0),
+                new ColoredPiece(Piece.ROOK, Color.BLACK),
+                false));
+    game.playMove(new Move(new Position(0, 1), new Position(2, 2)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(0, 1),
+                new Position(2, 2),
+                new ColoredPiece(Piece.KNIGHT, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(6, 0), new Position(7, 0)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(6, 0),
+                new Position(7, 0),
+                new ColoredPiece(Piece.ROOK, Color.BLACK),
+                false));
+
+    // Same positions on board but Castling rights changed
+    assertNotEquals(hashWithCastling, hashUpdate);
+  }
+
+  @Test
+  public void testZobristHashingNoCastle() {
+    ZobristHashing zobristHashing = new ZobristHashing();
+    Board board = game.getBoard();
+
+    game.playMove(new Move(new Position(1, 4), new Position(2, 4)));
+    long hashWithCastling = zobristHashing.generateHashFromBitboards(board);
+
+    long hashUpdate = zobristHashing.generateHashFromBitboards(board);
+    Move firstBlackMove =
+        new Move(
+            new Position(6, 0),
+            new Position(5, 0),
+            new ColoredPiece(Piece.PAWN, Color.BLACK),
+            false);
+    game.playMove(new Move(new Position(6, 4), new Position(5, 4)));
+    hashUpdate = zobristHashing.updateHashFromBitboards(hashUpdate, board, firstBlackMove);
+    hashWithCastling =
+        zobristHashing.updateHashFromBitboards(hashWithCastling, board, firstBlackMove);
+    game.playMove(new Move(new Position(0, 4), new Position(1, 4)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(0, 4),
+                new Position(1, 4),
+                new ColoredPiece(Piece.KING, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(7, 4), new Position(6, 4)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(7, 4),
+                new Position(6, 4),
+                new ColoredPiece(Piece.KING, Color.BLACK),
+                false));
+    game.playMove(new Move(new Position(1, 4), new Position(0, 4)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(1, 4),
+                new Position(0, 4),
+                new ColoredPiece(Piece.KING, Color.WHITE),
+                false));
+    game.playMove(new Move(new Position(6, 4), new Position(7, 4)));
+    hashUpdate =
+        zobristHashing.updateHashFromBitboards(
+            hashUpdate,
+            board,
+            new Move(
+                new Position(6, 4),
+                new Position(7, 4),
+                new ColoredPiece(Piece.KING, Color.BLACK),
+                false));
+
+    // Same positions on board but Castling rights changed
+    assertNotEquals(hashWithCastling, hashUpdate);
+  }
+
+  static class MockBoard extends Board {
+    @Override
+    public BoardRepresentation getBoard() {
+      return new DummyBoardRepresentation(); // Not a BitboardRepresentation
+    }
+  }
+
+  @Test
+  void testGenerateHashThrowsExceptionForNonBitboard() {
+    MockBoard board = new MockBoard();
+
+    ZobristHashing zobrist = new ZobristHashing();
+
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              zobrist.generateHashFromBitboards(board);
+            });
+
+    assertEquals("Only available for bitboards", exception.getMessage());
+  }
+
+  @Test
+  void testUpdateHashThrowsExceptionForNonBitboard() {
+    MockBoard board = new MockBoard();
+
+    ZobristHashing zobrist = new ZobristHashing();
+
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              zobrist.generateHashFromBitboards(board);
+            });
+    Exception exception2 =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              zobrist.updateHashFromBitboards(
+                  1234532, board, new Move(new Position(1, 4), new Position(2, 4)));
+            });
+
+    assertEquals("Only available for bitboards", exception.getMessage());
+    assertEquals("Only available for bitboards", exception2.getMessage());
   }
 }

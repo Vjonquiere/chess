@@ -1,0 +1,117 @@
+package tests.helpers;
+
+import java.util.List;
+import pdp.model.*;
+import pdp.utils.Position;
+
+public class DummyBoardRepresentation implements BoardRepresentation {
+
+  @Override
+  public List<Position> getPawns(boolean white) {
+    return List.of();
+  }
+
+  @Override
+  public List<Position> getRooks(boolean white) {
+    return List.of();
+  }
+
+  @Override
+  public List<Position> getBishops(boolean white) {
+    return List.of();
+  }
+
+  @Override
+  public List<Position> getKnights(boolean white) {
+    return List.of();
+  }
+
+  @Override
+  public List<Position> getQueens(boolean white) {
+    return List.of();
+  }
+
+  @Override
+  public List<Position> getKing(boolean white) {
+    return List.of();
+  }
+
+  @Override
+  public ColoredPiece getPieceAt(int x, int y) {
+    return null;
+  }
+
+  @Override
+  public int getNbCols() {
+    return 0;
+  }
+
+  @Override
+  public int getNbRows() {
+    return 0;
+  }
+
+  @Override
+  public void movePiece(Position from, Position to) {}
+
+  @Override
+  public void deletePieceAt(int x, int y) {}
+
+  @Override
+  public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
+    return List.of();
+  }
+
+  @Override
+  public boolean isAttacked(int x, int y, Color by) {
+    return false;
+  }
+
+  @Override
+  public boolean isCheck(Color color) {
+    return false;
+  }
+
+  @Override
+  public boolean isCheckAfterMove(Color color, Move move) {
+    return false;
+  }
+
+  @Override
+  public boolean isCheckMate(Color color) {
+    return false;
+  }
+
+  @Override
+  public boolean isStaleMate(Color color, Color colorTurnToPlay) {
+    return false;
+  }
+
+  @Override
+  public boolean isDrawByInsufficientMaterial() {
+    return false;
+  }
+
+  @Override
+  public boolean isPawnPromoting(int x, int y, boolean white) {
+    return false;
+  }
+
+  @Override
+  public void promotePawn(int x, int y, boolean white, Piece newPiece) {}
+
+  @Override
+  public boolean isDoublePushPossible(Move move, boolean white) {
+    return false;
+  }
+
+  @Override
+  public boolean isEnPassant(int x, int y, Move move, boolean white) {
+    return false;
+  }
+
+  @Override
+  public boolean hasEnoughMaterialToMate(boolean white) {
+    return false;
+  }
+}

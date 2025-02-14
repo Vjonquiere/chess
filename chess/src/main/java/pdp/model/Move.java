@@ -49,7 +49,7 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(String stringMove) {
+  public static Move fromString(String stringMove) throws MoveParsingException {
 
     if (stringMove.toLowerCase() == "o-o-o") {
       if (Game.getInstance().getGameState().isWhiteTurn()) {
@@ -150,6 +150,19 @@ public class Move {
 
   public boolean isCheckMate() {
     return isCheckMate;
+  }
+
+  public String toAlgebricString() {
+    String piece = "";
+    if (this.piece != null && this.piece.piece != Piece.PAWN) {
+      piece = String.valueOf(this.piece.piece.getCharRepresentation(true));
+    }
+    String sourceStr = positionToString(this.source);
+    String destinationStr = positionToString(this.dest);
+    String separator = this.isTake ? "x" : "-";
+    String annotation = this.isCheckMate ? "#" : (this.isCheck ? "+" : "");
+
+    return piece + sourceStr + separator + destinationStr + annotation;
   }
 
   @Override

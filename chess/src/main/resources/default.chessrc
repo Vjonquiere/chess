@@ -1,0 +1,5 @@
+[Default]
+ai = false
+verbose = false
+debug = false
+blitz = false

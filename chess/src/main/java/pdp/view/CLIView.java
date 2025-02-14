@@ -42,10 +42,8 @@ public class CLIView implements View {
     commands.put(
         "board",
         new CommandEntry(this::displayBoardCommand, TextGetter.getText("boardHelpDescription")));
-    /*
     commands.put(
         "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
-        */
   }
 
   /**
@@ -214,7 +212,7 @@ public class CLIView implements View {
    * @param args The path to where the game should be saved.
    */
   private void saveCommand(String args) {
-    BagOfCommands.getInstance().addCommand(new SaveGameCommand(args));
+    BagOfCommands.getInstance().addCommand(new SaveGameCommand(args.strip()));
   }
 
   /**

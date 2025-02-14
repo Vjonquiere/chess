@@ -14,8 +14,11 @@ public class SaveGameCommand implements Command {
 
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
-    return Optional.of(
-        new UnsupportedOperationException(
-            "Method not implemented in " + this.getClass().getName()));
+    try {
+      model.saveGame(filepath);
+      return Optional.empty();
+    } catch (Exception e) {
+      return Optional.of(e);
+    }
   }
 }
