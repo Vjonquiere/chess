@@ -1,6 +1,7 @@
-package pdp.model;
+package pdp.model.board;
 
 import java.util.List;
+import pdp.model.piece.ColoredPiece;
 import pdp.utils.Position;
 
 public interface BoardRepresentation extends Rules {

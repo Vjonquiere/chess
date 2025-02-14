@@ -8,7 +8,7 @@ public class Position {
   int x;
   int y;
 
-  public Position(int y, int x) {
+  public Position(int x, int y) {
     Logging.configureLogging(LOGGER);
     this.y = y;
     this.x = x;

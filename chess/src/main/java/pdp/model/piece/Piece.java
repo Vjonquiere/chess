@@ -1,4 +1,4 @@
-package pdp.model;
+package pdp.model.piece;
 
 public enum Piece {
   PAWN {

@@ -1,22 +1,25 @@
-package pdp.model;
+package pdp.model.board;
 
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
+import pdp.model.Game;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
-  Position source;
-  Position dest;
-  ColoredPiece piece;
-  ColoredPiece takenPiece;
-  boolean isTake = false;
-  boolean isCheck = false;
-  boolean isCheckMate = false;
+  public Position source;
+  public Position dest;
+  public ColoredPiece piece;
+  public ColoredPiece takenPiece;
+  public boolean isTake = false;
+  public boolean isCheck = false;
+  public boolean isCheckMate = false;
 
   public Move(Position source, Position dest) {
     Logging.configureLogging(LOGGER);
@@ -95,7 +98,7 @@ public class Move {
     int x = colLetter - 'a';
     int y = rowNumber - 1;
 
-    return new Position(y, x);
+    return new Position(x, y);
   }
 
   /**

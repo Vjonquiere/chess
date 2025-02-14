@@ -4,9 +4,9 @@ import static pdp.utils.Logging.DEBUG;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
-import pdp.model.BitboardRepresentation;
-import pdp.model.Board;
-import pdp.model.ZobristHashing;
+import pdp.model.board.BitboardRepresentation;
+import pdp.model.board.Board;
+import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 
 public class Solver {

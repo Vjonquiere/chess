@@ -5,6 +5,9 @@ import static pdp.utils.Logging.DEBUG;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.model.board.Board;
+import pdp.model.history.History;
+import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
 public class GameState extends Subject {

@@ -13,6 +13,14 @@ import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
+import pdp.model.board.Move;
+import pdp.model.board.ZobristHashing;
+import pdp.model.history.History;
+import pdp.model.history.HistoryState;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -129,8 +137,8 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
-    Position sourcePosition = new Position(move.source.getY(), move.source.getX());
-    Position destPosition = new Position(move.dest.getY(), move.dest.getX());
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
@@ -277,8 +285,8 @@ public class Game extends Subject {
         isSpecialMove = true;
         this.gameState.getBoard().enPassantPos =
             this.gameState.getBoard().isWhite
-                ? new Position(move.dest.getY() - 1, move.dest.getX())
-                : new Position(move.dest.getY() + 1, move.dest.getX());
+                ? new Position(move.dest.getX(), move.dest.getY() - 1)
+                : new Position(move.dest.getX(), move.dest.getY() + 1);
         if (this.gameState.getBoard().isWhite) {
           this.gameState.incrementsFullTurn();
         }
