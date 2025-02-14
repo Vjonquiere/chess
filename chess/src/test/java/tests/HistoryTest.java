@@ -12,10 +12,10 @@ public class HistoryTest {
   void testHistoryToString() {
     // Arrange: Create a new history and add moves
     History history = new History();
-    history.addMove(new HistoryState("e3-e5", 1, true)); // White move
-    history.addMove(new HistoryState("h4-h5", 1, false)); // Black move
-    history.addMove(new HistoryState("g1-f3", 2, true)); // White move
-    history.addMove(new HistoryState("e7-e6", 2, false)); // Black move
+    history.addMove(new HistoryState(Move.fromString("e3-e5"), 1, true)); // White move
+    history.addMove(new HistoryState(Move.fromString("h4-h5"), 1, false)); // Black move
+    history.addMove(new HistoryState(Move.fromString("g1-f3"), 2, true)); // White move
+    history.addMove(new HistoryState(Move.fromString("e7-e6"), 2, false)); // Black move
 
     // Act: Convert history to string
     String historyOutput = history.toString();
