@@ -204,7 +204,7 @@ public enum OptionType {
           .optionalArg(true)
           .argName("COLOR")
           .desc(
-              "Launch the program in AI mode, with artificial player with COLOR ’B’ or ’A’ (All),(W by default).")
+              "Launch the program in AI mode, with artificial player with COLOR 'B' or 'A' (All),(W by default).")
           .build();
     }
   },
