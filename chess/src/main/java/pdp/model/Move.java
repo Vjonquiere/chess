@@ -152,6 +152,19 @@ public class Move {
     return isCheckMate;
   }
 
+  public String toAlgebricString() {
+    String piece = "";
+    if (this.piece != null && this.piece.piece != Piece.PAWN) {
+      piece = String.valueOf(this.piece.piece.getCharRepresentation(true));
+    }
+    String sourceStr = positionToString(this.source);
+    String destinationStr = positionToString(this.dest);
+    String separator = this.isTake ? "x" : "-";
+    String annotation = this.isCheckMate ? "#" : (this.isCheck ? "+" : "");
+
+    return piece + sourceStr + separator + destinationStr + annotation;
+  }
+
   @Override
   public String toString() {
     String sourceStr = positionToString(this.source);
