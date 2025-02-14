@@ -2,6 +2,9 @@ package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -160,9 +163,7 @@ public class Game extends Subject {
 
       this.history.addMove(
           new HistoryState(
-              classicalMove.toString(),
-              this.gameState.getFullTurn(),
-              this.gameState.getBoard().isWhite));
+              classicalMove, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
 
       this.gameState.getBoard().makeMove(classicalMove);
       DEBUG(LOGGER, "Move played!");
@@ -212,9 +213,7 @@ public class Game extends Subject {
 
             this.history.addMove(
                 new HistoryState(
-                    move.toString(),
-                    this.gameState.getFullTurn(),
-                    this.gameState.getBoard().isWhite));
+                    move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
           }
         }
       }
@@ -250,7 +249,7 @@ public class Game extends Subject {
         move.isTake = true;
         this.history.addMove(
             new HistoryState(
-                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
+                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
       }
 
@@ -280,7 +279,7 @@ public class Game extends Subject {
         move.piece = coloredPiece;
         history.addMove(
             new HistoryState(
-                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
+                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
@@ -311,6 +310,16 @@ public class Game extends Subject {
       }
       this.gameState.checkGameStatus();
       this.notifyObservers(EventType.MOVE_PLAYED);
+    }
+  }
+
+  public void saveGame(String path) {
+    String gameStr = this.history.toAlgebricString();
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+      writer.write(gameStr);
+    } catch (IOException e) {
+      System.err.println("Error writing to file: " + e.getMessage());
     }
   }
 
