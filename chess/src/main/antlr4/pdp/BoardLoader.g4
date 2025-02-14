@@ -1,11 +1,11 @@
 grammar BoardLoader;
 
 
-board : player boardLine boardLine boardLine boardLine boardLine boardLine boardLine boardLine EOF;
+board : (LINE_COMMENT | NEWLINE)? player boardLine boardLine boardLine boardLine boardLine boardLine boardLine boardLine (LINE_COMMENT | NEWLINE)? EOF;
 
-boardLine : piece ' ' piece ' ' piece ' ' piece ' ' piece ' ' piece ' ' piece ' ' piece LINE_COMMENT? NEWLINE?;
+boardLine : piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE? LINE_COMMENT? NEWLINE?;
 
-player : PLAYER_COLOR LINE_COMMENT? NEWLINE?;
+player : PLAYER_COLOR WHITE_SPACE? LINE_COMMENT? NEWLINE?;
 
 piece : WHITE_KING
       |WHITE_QUEEN
@@ -37,4 +37,5 @@ BLACK_PAWN : 'p';
 PLAYER_COLOR : 'W' | 'B';
 EMPTY_SQUARE : '_';
 LINE_COMMENT : '#' ~[\r\n]* -> skip ;
+WHITE_SPACE : ' ';
 NEWLINE : [\r\n]+ -> skip ;

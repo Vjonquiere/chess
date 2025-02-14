@@ -22,8 +22,22 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
           entry("r", new ColoredPiece(Piece.ROOK, Color.BLACK)),
           entry("n", new ColoredPiece(Piece.KNIGHT, Color.BLACK)),
           entry("p", new ColoredPiece(Piece.PAWN, Color.BLACK)));
-  private BitboardRepresentation bitboardRepresentation = new BitboardRepresentation();
-  int currentSquare = 0;
+  private BitboardRepresentation bitboardRepresentation =
+      new BitboardRepresentation(
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L),
+          new Bitboard(0L));
+  int y = 8;
+  int x = 0;
 
   public BitboardRepresentation getResult() {
     return bitboardRepresentation;
@@ -38,14 +52,18 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
   }
 
   @Override
-  public void enterBoardLine(BoardLoaderParser.BoardLineContext ctx) {}
+  public void enterBoardLine(BoardLoaderParser.BoardLineContext ctx) {
+    y--;
+    x = 0;
+  }
 
   @Override
   public void enterPiece(BoardLoaderParser.PieceContext ctx) {
     if (ctx.getText().equals("_")) {
+      x++;
       return;
     }
-    bitboardRepresentation.setSquare(pieces.get(ctx.getText()), currentSquare);
-    currentSquare++;
+    bitboardRepresentation.setSquare(pieces.get(ctx.getText()), x + (y * 8));
+    x++;
   }
 }
