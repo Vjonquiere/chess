@@ -2,8 +2,11 @@ package pdp.utils;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 import org.apache.commons.cli.*;
@@ -105,18 +108,34 @@ public class CLIOptions {
     options.addOption(ai_time);
     options.addOption(lang);
 
+    Map<String, String> defaultArgs;
+    try {
+      InputStream inputStream =
+          CLIOptions.class.getClassLoader().getResourceAsStream("config.chessrc");
+      if (inputStream == null) {
+        throw new FileNotFoundException("config.chessrc not found in classpath!");
+      }
+      Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
+      defaultArgs = iniMap.get("Default");
+    } catch (Exception e) {
+      System.err.println("Error while parsing chessrc file: " + e.getMessage());
+      defaultArgs = new HashMap<>();
+    }
+
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = null;
     HashMap<OptionType, String> activatedOptions = new HashMap<>();
     try {
       cmd = parser.parse(options, args);
 
-      if (cmd.hasOption(debug)) {
+      if (cmd.hasOption(debug)
+          || defaultArgs.containsKey("debug") && defaultArgs.get("debug").equals("true")) {
         Logging.setDebug(true);
         Logging.configureLogging(LOGGER);
         DEBUG(LOGGER, "Debug mode activated");
       }
-      if (cmd.hasOption(verbose)) {
+      if (cmd.hasOption(verbose)
+          || defaultArgs.containsKey("verbose") && defaultArgs.get("verbose").equals("true")) {
         Logging.setVerbose(true);
         Logging.configureLogging(LOGGER);
         DEBUG(LOGGER, "Verbose mode activated");
@@ -149,7 +168,8 @@ public class CLIOptions {
               "Language " + cmd.getParsedOptionValue(lang) + " not supported, language = english");
         }
       }
-      if (cmd.hasOption(blitz)) {
+      if (cmd.hasOption(blitz)
+          || defaultArgs.containsKey("blitz") && defaultArgs.get("blitz").equals("true")) {
         DEBUG(LOGGER, "Blitz mode activated");
         activatedOptions.put(OptionType.BLITZ, "");
         System.err.println("Blitz not implemented yet");
@@ -163,6 +183,10 @@ public class CLIOptions {
         DEBUG(LOGGER, "Blitz time option activated");
         activatedOptions.put(OptionType.TIME, cmd.getOptionValue(time));
         System.err.println("Blitz time not implemented yet");
+      } else if (defaultArgs.containsKey("time")) {
+        DEBUG(LOGGER, "Blitz time option activated");
+        activatedOptions.put(OptionType.TIME, defaultArgs.get("time"));
+        System.err.println("Blitz time not implemented yet");
       }
       if (cmd.hasOption(contest)) {
         DEBUG(LOGGER, "Contest mode activated");
@@ -173,16 +197,30 @@ public class CLIOptions {
         DEBUG(LOGGER, "AI activated");
         activatedOptions.put(OptionType.AI, cmd.getOptionValue(ai));
         System.err.println("AI not implemented yet");
+      } else if (defaultArgs.containsKey("ai") && !defaultArgs.get("ai").equals("false")) {
+        DEBUG(LOGGER, "AI activated");
+        activatedOptions.put(OptionType.AI, defaultArgs.get("ai"));
+        System.err.println("AI not implemented yet");
       }
+
       if (cmd.hasOption(ai_mode)) {
-        if (!cmd.hasOption(ai)) {
+        if (!activatedOptions.containsKey(OptionType.AI)) {
           System.err.println("Modifying the AI algorithm requires 'a' argument");
         } else {
           DEBUG(LOGGER, "AI-mode activated");
           activatedOptions.put(OptionType.AI_MODE, cmd.getOptionValue(ai_mode));
           System.err.println("AI mode not implemented yet");
         }
+      } else if (defaultArgs.containsKey("ai-mode")) {
+        if (!activatedOptions.containsKey(OptionType.AI)) {
+          System.err.println("Modifying the AI algorithm requires 'a' argument");
+        } else {
+          DEBUG(LOGGER, "AI-mode activated");
+          activatedOptions.put(OptionType.AI_MODE, defaultArgs.get("ai-mode"));
+          System.err.println("AI mode not implemented yet");
+        }
       }
+
       if (cmd.hasOption(ai_heuristic)) {
         if (!cmd.hasOption(ai)) {
           System.err.println("Choosing the AI heuristic requires 'a' argument");
@@ -191,7 +229,16 @@ public class CLIOptions {
           activatedOptions.put(OptionType.AI_HEURISTIC, cmd.getOptionValue(ai_heuristic));
           System.err.println("AI mode not implemented yet");
         }
+      } else if (defaultArgs.containsKey("ai-heuristic")) {
+        if (!activatedOptions.containsKey(OptionType.AI)) {
+          System.err.println("Modifying the AI algorithm requires 'a' argument");
+        } else {
+          DEBUG(LOGGER, "AI-heuristic activated");
+          activatedOptions.put(OptionType.AI_HEURISTIC, defaultArgs.get("ai-heuristic"));
+          System.err.println("AI mode not implemented yet");
+        }
       }
+
       if (cmd.hasOption(ai_depth)) {
         if (!cmd.hasOption(ai)) {
           System.err.println("Modifying the AI depth requires 'a' argument");
@@ -200,13 +247,30 @@ public class CLIOptions {
           activatedOptions.put(OptionType.AI_DEPTH, cmd.getOptionValue(ai_depth));
           System.err.println("AI mode not implemented yet");
         }
+      } else if (defaultArgs.containsKey("ai-depth")) {
+        if (!activatedOptions.containsKey(OptionType.AI)) {
+          System.err.println("Modifying the AI algorithm requires 'a' argument");
+        } else {
+          DEBUG(LOGGER, "AI-mode activated");
+          activatedOptions.put(OptionType.AI_DEPTH, defaultArgs.get("ai-depth"));
+          System.err.println("AI mode not implemented yet");
+        }
       }
+
       if (cmd.hasOption(ai_time)) {
         if (!cmd.hasOption(ai)) {
           System.err.println("Modifying the AI time requires 'a' argument");
         } else {
           DEBUG(LOGGER, "AI-time activated");
           activatedOptions.put(OptionType.AI_TIME, cmd.getOptionValue(ai_time));
+          System.err.println("AI mode not implemented yet");
+        }
+      } else if (defaultArgs.containsKey("ai-time")) {
+        if (!activatedOptions.containsKey(OptionType.AI)) {
+          System.err.println("Modifying the AI algorithm requires 'a' argument");
+        } else {
+          DEBUG(LOGGER, "AI-mode activated");
+          activatedOptions.put(OptionType.AI_TIME, defaultArgs.get("ai-time"));
           System.err.println("AI mode not implemented yet");
         }
       }
@@ -219,6 +283,7 @@ public class CLIOptions {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
     return activatedOptions;
   }
 }
