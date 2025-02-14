@@ -1,5 +1,7 @@
 package pdp.model;
 
+import java.util.Objects;
+
 public class ColoredPiece {
   public Piece piece;
   public Color color;
@@ -20,5 +22,10 @@ public class ColoredPiece {
       return piece.equals(other.piece) && color.equals(other.color);
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(piece, color);
   }
 }

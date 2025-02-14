@@ -1,5 +1,8 @@
 package pdp.model;
 
+import static pdp.utils.Logging.DEBUG;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
@@ -14,11 +17,13 @@ import pdp.utils.TextGetter;
 public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;
+  private static ZobristHashing zobristHashing = new ZobristHashing();
   private GameState gameState;
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
   private History history;
+  private HashMap<Long, Integer> stateCount;
 
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
@@ -28,6 +33,28 @@ public class Game extends Subject {
     this.solver = solver;
     this.gameState = gameState;
     this.history = history;
+    this.stateCount = new HashMap<>();
+    // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
+    this.gameState.setSimplifiedZobristHashing(
+        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+    DEBUG(LOGGER, "Game created");
+  }
+
+  private boolean addStateToCount(long simplifiedZobristHashing) {
+    DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
+    if (this.stateCount.containsKey(simplifiedZobristHashing)) {
+      this.stateCount.put(
+          simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
+      if (this.stateCount.get(simplifiedZobristHashing) == 3) {
+        DEBUG(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
+        return true;
+      }
+      return false;
+    } else {
+      this.stateCount.put(simplifiedZobristHashing, 1);
+      return false;
+    }
   }
 
   public Board getBoard() {
@@ -49,6 +76,7 @@ public class Game extends Subject {
    */
   @Override
   public void addObserver(EventObserver observer) {
+    DEBUG(LOGGER, "An observer have been attached to Game");
     super.addObserver(observer);
     if (gameState != null) {
       this.gameState.addObserver(observer);
@@ -63,6 +91,7 @@ public class Game extends Subject {
    */
   @Override
   public void addErrorObserver(EventObserver observer) {
+    DEBUG(LOGGER, "An error observer have been attached to Game");
     super.addErrorObserver(observer);
     if (gameState != null) {
       this.gameState.addErrorObserver(observer);
@@ -78,7 +107,9 @@ public class Game extends Subject {
    * @return The newly created instance of Game.
    */
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
+    DEBUG(LOGGER, "Initializing Game...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    DEBUG(LOGGER, "Game initialized!");
     return instance;
   }
 
@@ -91,6 +122,7 @@ public class Game extends Subject {
   public void playMove(Move move) throws IllegalMoveException {
     Position sourcePosition = new Position(move.source.getY(), move.source.getX());
     Position destPosition = new Position(move.dest.getY(), move.dest.getX());
+    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
                   == Color.WHITE
@@ -131,24 +163,42 @@ public class Game extends Subject {
               classicalMove.toString(),
               this.gameState.getFullTurn(),
               this.gameState.getBoard().isWhite));
+
       this.gameState.getBoard().makeMove(classicalMove);
+      DEBUG(LOGGER, "Move played!");
+
+      // Check game status after the classical move was played
       this.gameState.switchPlayerTurn();
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.updateSimplifiedHashFromBitboards(
+              this.gameState.getSimplifiedZobristHashing(), getBoard(), classicalMove));
+
+      DEBUG(LOGGER, "Checking threefold repetition...");
+      boolean threefoldRepetition =
+          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        this.gameState.activateThreefold();
+      }
+      // Check game status after the classical move was played
+      DEBUG(LOGGER, "Checking game status...");
+      this.gameState.checkGameStatus();
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
+      DEBUG(LOGGER, "The specified move is not classical -> searching for special move...");
       boolean isSpecialMove = false;
 
       // Castle move
-      Piece isPieceKing =
-          this.gameState
-              .getBoard()
-              .board
-              .getPieceAt(sourcePosition.getX(), sourcePosition.getY())
-              .piece;
-      if (isPieceKing == Piece.KING) {
-        if (Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
-            && sourcePosition.getY() == 0
-            && destPosition.getY() == 0) {
+      DEBUG(LOGGER, "Checking castle...");
+      ColoredPiece coloredPiece =
+          this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+      if (coloredPiece.piece == Piece.KING) {
+        if ((Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
+                && sourcePosition.getY() == 0
+                && destPosition.getY() == 0)
+            || (Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
+                && sourcePosition.getY() == 7
+                && destPosition.getY() == 7)) {
           boolean shortCastleIsAsked = destPosition.getX() > sourcePosition.getX();
           Color color = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
           // Check if castle is possible
@@ -165,14 +215,12 @@ public class Game extends Subject {
                     move.toString(),
                     this.gameState.getFullTurn(),
                     this.gameState.getBoard().isWhite));
-
-            this.gameState.switchPlayerTurn();
-            this.notifyObservers(EventType.MOVE_PLAYED);
           }
         }
       }
 
       // enPassant move
+      DEBUG(LOGGER, "Checking en passant...");
       if (this.gameState.getBoard().isLastMoveDoublePush
           && this.gameState
               .getBoard()
@@ -198,15 +246,16 @@ public class Game extends Subject {
         if (this.gameState.getBoard().isWhite) {
           this.gameState.incrementsFullTurn();
         }
+        move.piece = coloredPiece;
+        move.isTake = true;
         this.history.addMove(
             new HistoryState(
                 move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
       }
 
       // DoublePawnPush move
+      DEBUG(LOGGER, "Checking double push...");
       if (this.gameState
           .getBoard()
           .board
@@ -228,16 +277,17 @@ public class Game extends Subject {
         if (this.gameState.getBoard().isWhite) {
           this.gameState.incrementsFullTurn();
         }
+        move.piece = coloredPiece;
         history.addMove(
             new HistoryState(
                 move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
-        this.gameState.switchPlayerTurn();
-        this.notifyObservers(EventType.MOVE_PLAYED);
       }
+
       if (!isSpecialMove) {
+        DEBUG(LOGGER, "Move was not a special move!");
         throw new IllegalMoveException(e.getMessage() + " and not a special move");
         // throw new IllegalMoveException(e.getMessage(), e );
       }
@@ -248,6 +298,19 @@ public class Game extends Subject {
       // Reasons for being here: the move played could be castling, en passant,doublePawnPush or an
       // illegal move.
 
+      // Check game status after the special move was played
+      this.gameState.switchPlayerTurn();
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+
+      DEBUG(LOGGER, "Checking threefold repetition...");
+      boolean threefoldRepetition =
+          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        this.gameState.activateThreefold();
+      }
+      this.gameState.checkGameStatus();
+      this.notifyObservers(EventType.MOVE_PLAYED);
     }
   }
 

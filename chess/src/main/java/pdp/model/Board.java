@@ -54,7 +54,10 @@ public class Board {
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
     if (move.isTake == true) {
-      board.deletePieceAt(move.dest.getX(), move.dest.getY());
+      // SAVE DELETED PIECE FOR HASHING
+      if (!this.isEnPassantTake) {
+        board.deletePieceAt(move.dest.getX(), move.dest.getY());
+      }
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
@@ -70,12 +73,6 @@ public class Board {
     }
 
     board.movePiece(move.source, move.dest);
-
-    if (this.isWhite) {
-      this.isWhite = false;
-    } else {
-      this.isWhite = true;
-    }
 
     if (this.whiteShortCastle == true
         && (move.source.equals(new Position(0, 4))
@@ -114,6 +111,13 @@ public class Board {
     if (this.isEnPassantTake) {
       this.isLastMoveDoublePush = false;
     }
+
+    if (this.isWhite) {
+      this.isWhite = false;
+    } else {
+      this.isWhite = true;
+    }
+
     move.toString();
   }
 

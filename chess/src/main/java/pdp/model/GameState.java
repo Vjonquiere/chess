@@ -1,9 +1,15 @@
 package pdp.model;
 
+import static pdp.utils.Logging.DEBUG;
+
+import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.utils.Logging;
 
 public class GameState extends Subject {
+  private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
+
   private Board board;
   private Timer moveTimer;
   private History history;
@@ -15,10 +21,14 @@ public class GameState extends Subject {
   private boolean whiteLosesOnTime;
   private boolean blackLosesOnTime;
   private boolean isGameOver;
+  private boolean threefoldRepetition;
   private int fullTurnNumber;
+  private long zobristHashing;
+  private long simplifiedZobristHashing;
 
   // By default, blitz mode is not on
   public GameState() {
+    Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = true;
     this.whiteResigns = false;
@@ -27,6 +37,7 @@ public class GameState extends Subject {
     this.blackWantsToDraw = false;
     this.whiteLosesOnTime = false;
     this.blackLosesOnTime = false;
+    this.threefoldRepetition = false;
     // this.history = new History();  When history is implemented
     this.history = null;
     this.board = new Board();
@@ -70,12 +81,36 @@ public class GameState extends Subject {
     return this.moveTimer;
   }
 
+  /*
+  public long getZobristHashing() {
+    return this.zobristHashing;
+  }
+    */
+
+  public long getSimplifiedZobristHashing() {
+    return this.simplifiedZobristHashing;
+  }
+
   public int getFullTurn() {
     return this.fullTurnNumber;
   }
 
   public void incrementsFullTurn() {
     this.fullTurnNumber += 1;
+  }
+
+  /*
+  public void setZobristHashing(long zobristHashing) {
+    this.zobristHashing = zobristHashing;
+  }
+    */
+
+  public void setSimplifiedZobristHashing(long simplifiedZobristHashing) {
+    this.simplifiedZobristHashing = simplifiedZobristHashing;
+  }
+
+  public void activateThreefold() {
+    this.threefoldRepetition = true;
   }
 
   public void whiteWantsToDraw() {
@@ -103,7 +138,7 @@ public class GameState extends Subject {
   }
 
   private boolean checkDrawAgreement() {
-    if (whiteWantsToDraw && blackWantsToDraw) {
+    if (hasWhiteRequestedDraw() && hasBlackRequestedDraw()) {
       this.isGameOver = true;
       notifyObservers(EventType.DRAW_ACCEPTED);
       notifyObservers(EventType.DRAW);
@@ -140,18 +175,21 @@ public class GameState extends Subject {
     return this.whiteWantsToDraw;
   }
 
-  public void playerLosesOnTime() {
+  public boolean playerLosesOnTime() {
     if (this.moveTimer != null && this.moveTimer.getTimeRemaining() == 0) {
       if (this.isWhiteTurn) {
         this.whiteLosesOnTime = true;
         this.isGameOver = true;
         notifyObservers(EventType.WIN_BLACK);
+        return true;
       } else {
         this.blackLosesOnTime = true;
         this.isGameOver = true;
         notifyObservers(EventType.WIN_WHITE);
+        return true;
       }
     }
+    return false;
   }
 
   public boolean hasWhiteLostOnTime() {
@@ -173,5 +211,95 @@ public class GameState extends Subject {
   public void applyFiftyMoveRule() {
     this.isGameOver = true;
     notifyObservers(EventType.DRAW);
+  }
+
+  public boolean isThreefoldRepetition() {
+    return this.threefoldRepetition;
+  }
+
+  /**
+   * This method checks the ongoing or over status of the game. In summary, it will: Verify
+   * checkMate, staleMate, draw by insufficient material, 50 move rule, draw by threefold
+   * repetition, loss or draw on time, draw by mutual agreement, resigning. Will modify
+   * this.isGameOver boolean attribute (or not) so that Game will call this.isGameOver() to know the
+   * status of the game.
+   */
+  public void checkGameStatus() {
+    Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;
+    boolean currPlayerWhite = this.isWhiteTurn();
+    // Draw by agreement
+    if (checkDrawAgreement()) {
+      DEBUG(LOGGER, "End of game  Dray by mutual agreement");
+      return;
+    }
+    // White resigns
+    if (hasWhiteResigned()) {
+      DEBUG(LOGGER, "End of game : White resigned, Black won");
+      whiteResigns();
+      return;
+    }
+    // Black resigns
+    if (hasBlackResigned()) {
+      DEBUG(LOGGER, "End of game : Black resigned, White won");
+      blackResigns();
+      return;
+    }
+    // Loss on time
+    if (playerLosesOnTime()) {
+      // if insufficient material for enemy then draw else win
+      if (board.getBoard().hasEnoughMaterialToMate(currPlayerWhite)) {
+        this.isGameOver = true;
+        DEBUG(LOGGER, "End of game : Loss on time + insufficient material, Draw");
+        notifyObservers(EventType.DRAW);
+        return;
+      }
+      this.isGameOver = true;
+      if (currPlayerWhite) {
+        DEBUG(LOGGER, "End of game : Loss on time, Black won");
+        notifyObservers(EventType.WIN_BLACK);
+        return;
+      } else {
+        DEBUG(LOGGER, "End of game : Loss on time, White won");
+        notifyObservers(EventType.WIN_WHITE);
+        return;
+      }
+    }
+    // Fifty Move rule
+    if (isFiftyMoveRule()) {
+      DEBUG(LOGGER, "End of game : Fifty move rule, draw");
+      applyFiftyMoveRule();
+      return;
+    }
+    // Checkmate
+    if (board.getBoard().isCheckMate(currColor)) {
+      this.isGameOver = true;
+      if (currColor == Color.WHITE) {
+        DEBUG(LOGGER, "End of game : Checkmate, Black won");
+        notifyObservers(EventType.WIN_BLACK);
+      } else {
+        DEBUG(LOGGER, "End of game : Checkmate, White won");
+        notifyObservers(EventType.WIN_WHITE);
+      }
+      return;
+    }
+    // Stalemate
+    if (board.getBoard().isStaleMate(currColor, currColor)) {
+      this.isGameOver = true;
+      DEBUG(LOGGER, "End of game : Stale mate, Draw");
+      notifyObservers(EventType.DRAW);
+      return;
+    }
+    // Draw by insufficient material
+    if (board.getBoard().isDrawByInsufficientMaterial()) {
+      DEBUG(LOGGER, "End of game : Insufficient material, Draw");
+      this.isGameOver = true;
+      notifyObservers(EventType.DRAW);
+    }
+    // Threefold repetition
+    if (this.threefoldRepetition) {
+      DEBUG(LOGGER, "End of game : Threefold repetition, Draw");
+      this.isGameOver = true;
+      notifyObservers(EventType.DRAW);
+    }
   }
 }

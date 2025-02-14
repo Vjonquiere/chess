@@ -12,7 +12,8 @@ public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
   Position source;
   Position dest;
-  Piece piece;
+  ColoredPiece piece;
+  ColoredPiece takenPiece;
   boolean isTake = false;
   boolean isCheck = false;
   boolean isCheckMate = false;
@@ -23,12 +24,22 @@ public class Move {
     this.dest = dest;
   }
 
-  public Move(Position source, Position dest, Piece piece, boolean isTake) {
+  public Move(Position source, Position dest, ColoredPiece piece, boolean isTake) {
     Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
     this.piece = piece;
     this.isTake = isTake;
+  }
+
+  public Move(
+      Position source, Position dest, ColoredPiece piece, boolean isTake, ColoredPiece takenPiece) {
+    Logging.configureLogging(LOGGER);
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
+    this.takenPiece = takenPiece;
   }
 
   /**
@@ -39,6 +50,20 @@ public class Move {
    * @throws MoveParsingException If the string format is invalid
    */
   public static Move fromString(String stringMove) {
+
+    if (stringMove.toLowerCase() == "o-o-o") {
+      if (Game.getInstance().getGameState().isWhiteTurn()) {
+        stringMove = "e1-c1";
+      } else {
+        stringMove = "e8-c8";
+      }
+    } else if (stringMove.toLowerCase() == "o-o") {
+      if (Game.getInstance().getGameState().isWhiteTurn()) {
+        stringMove = "e1-g1";
+      } else {
+        stringMove = "e8-g8";
+      }
+    }
 
     String[] parts = stringMove.split("-");
     if (parts.length != 2) {
@@ -111,7 +136,7 @@ public class Move {
     return dest;
   }
 
-  public Piece getPiece() {
+  public ColoredPiece getPiece() {
     return piece;
   }
 

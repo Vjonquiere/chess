@@ -76,15 +76,12 @@ public class CLIView implements View {
         System.out.println(Game.getInstance().getGameRepresentation());
         break;
       case WIN_WHITE:
-        System.out.println(Game.getInstance().getGameRepresentation());
         System.out.println(TextGetter.getText("whiteWin"));
         break;
       case WIN_BLACK:
-        System.out.println(Game.getInstance().getGameRepresentation());
         System.out.println(TextGetter.getText("blackWin"));
         break;
       case DRAW:
-        System.out.println(Game.getInstance().getGameRepresentation());
         System.out.println(TextGetter.getText("onDraw"));
         break;
       case WHITE_DRAW_PROPOSAL:
