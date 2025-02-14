@@ -957,6 +957,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  public void setSquare(ColoredPiece piece, int squareIndex) {
+    board[pieces.getFromValue(piece)].setBit(squareIndex);
+  }
+
   protected Bitboard[] getBitboards() {
     return this.board;
   }
