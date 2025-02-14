@@ -2,20 +2,27 @@ package pdp.model.ai;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.model.BitboardRepresentation;
 import pdp.model.Board;
+import pdp.model.ZobristHashing;
 import pdp.utils.Logging;
 
 public class Solver {
   private final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+  // Zobrist hashing to avoid recomputing the position evaluation for the same boards
+  private ZobristHashing zobristHashing = new ZobristHashing();
+  private HashMap<Long, Integer> evaluatedBoards;
+
   AlgorithmType algorithm;
-  HeuristicType heuristic;
+  HeuristicType heuristic = HeuristicType.DUMB;
   int depth = 3;
   int time = 500;
 
   public Solver() {
     Logging.configureLogging(LOGGER);
+    evaluatedBoards = new HashMap<>();
   }
 
   /**
@@ -66,14 +73,19 @@ public class Solver {
       throw new IllegalArgumentException("Board is null");
     }
     int score = 0;
+    long hash = zobristHashing.generateHashFromBitboards(board);
+    if (evaluatedBoards.containsKey(hash)) {
+      return evaluatedBoards.get(hash);
+    }
     switch (heuristic) {
       case DUMB:
         DEBUG(LOGGER, "Evaluate board position with heuristic type DUMB");
         score = evaluationDumb(board, isWhite);
-      default:
-        DEBUG(LOGGER, "Using default heuristic");
         break;
+      default:
+        throw new IllegalArgumentException("No heuristic is set");
     }
+    evaluatedBoards.put(hash, score);
     return score;
   }
 
