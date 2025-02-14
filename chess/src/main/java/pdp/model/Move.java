@@ -152,7 +152,16 @@ public class Move {
     return isCheckMate;
   }
 
-  public String toAlgebricString() {
+  /**
+   * Converts the move to its algebraic notation string representation.
+   *
+   * <p>The format includes the piece type (except for pawns), the source position, a separator ('x'
+   * for captures, '-' otherwise), the destination position, and an optional annotation for check
+   * ('+') or checkmate ('#').
+   *
+   * @return The algebraic notation string representing the move.
+   */
+  public String toAlgebraicString() {
     String piece = "";
     if (this.piece != null && this.piece.piece != Piece.PAWN) {
       piece = String.valueOf(this.piece.piece.getCharRepresentation(true));
@@ -165,6 +174,14 @@ public class Move {
     return piece + sourceStr + separator + destinationStr + annotation;
   }
 
+  /**
+   * Converts the move to a string representation.
+   *
+   * <p>The format is the source position, a separator ('x' for captures, '-' otherwise), and the
+   * destination position.
+   *
+   * @return The string representation of the move.
+   */
   @Override
   public String toString() {
     String sourceStr = positionToString(this.source);

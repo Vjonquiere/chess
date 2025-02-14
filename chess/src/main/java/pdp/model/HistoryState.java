@@ -35,11 +35,23 @@ public class HistoryState {
     return isWhite;
   }
 
-  public String toAlgebricString() {
+  /**
+   * Converts the history state into a string representing the move in algebraic notation.
+   *
+   * <p>The format of the string is:
+   *
+   * <ul>
+   *   <li>For white moves: "1. W e2-e4 "
+   *   <li>For black moves: "B Qe7xe5+"
+   * </ul>
+   *
+   * @return A string representing the move in algebraic notation.
+   */
+  public String toAlgebraicString() {
     StringBuilder sb = new StringBuilder();
 
     if (this.isWhite()) {
-      sb.append(this.fullTurn).append(". W ").append(this.move.toAlgebricString()).append(" ");
+      sb.append(this.fullTurn).append(". W ").append(this.move.toAlgebraicString()).append(" ");
     } else {
       sb.append("B ").append(this.move.toString());
     }
@@ -47,6 +59,19 @@ public class HistoryState {
     return sb.toString();
   }
 
+  /**
+   * Converts the history state into a string representing the move in a format that shows the full
+   * turn number and the move in standard algebraic notation.
+   *
+   * <p>The format of the string is:
+   *
+   * <ul>
+   *   <li>For white moves: "1. W e2-e4 "
+   *   <li>For black moves: "B e7-e5"
+   * </ul>
+   *
+   * @return A string representing the move in the given format.
+   */
   public String toString() {
     StringBuilder sb = new StringBuilder();
 

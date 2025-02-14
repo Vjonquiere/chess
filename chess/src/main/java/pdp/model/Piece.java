@@ -3,23 +3,11 @@ package pdp.model;
 public enum Piece {
   PAWN {
     @Override
-    public Bitboard getMoveMask(Bitboard pos, Board board) {
-      // TODO
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
     public char getCharRepresentation(boolean white) {
       return white ? 'P' : 'p';
     }
   },
   ROOK {
-    @Override
-    public Bitboard getMoveMask(Bitboard pos, Board board) {
-      // TODO
-      throw new UnsupportedOperationException();
-    }
-
     @Override
     public char getCharRepresentation(boolean white) {
       return white ? 'R' : 'r';
@@ -27,23 +15,11 @@ public enum Piece {
   },
   BISHOP {
     @Override
-    public Bitboard getMoveMask(Bitboard pos, Board board) {
-      // TODO
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
     public char getCharRepresentation(boolean white) {
       return white ? 'B' : 'b';
     }
   },
   KNIGHT {
-    @Override
-    public Bitboard getMoveMask(Bitboard pos, Board board) {
-      // TODO
-      throw new UnsupportedOperationException();
-    }
-
     @Override
     public char getCharRepresentation(boolean white) {
       return white ? 'N' : 'n';
@@ -51,23 +27,11 @@ public enum Piece {
   },
   QUEEN {
     @Override
-    public Bitboard getMoveMask(Bitboard pos, Board board) {
-      // TODO
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
     public char getCharRepresentation(boolean white) {
       return white ? 'Q' : 'q';
     }
   },
   KING {
-    @Override
-    public Bitboard getMoveMask(Bitboard pos, Board board) {
-      // TODO
-      throw new UnsupportedOperationException();
-    }
-
     @Override
     public char getCharRepresentation(boolean white) {
       return white ? 'K' : 'k';
@@ -75,18 +39,16 @@ public enum Piece {
   },
   EMPTY {
     @Override
-    public Bitboard getMoveMask(Bitboard pos, Board board) {
-      // TODO
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
     public char getCharRepresentation(boolean white) {
       return '_';
     }
   };
 
-  public abstract Bitboard getMoveMask(Bitboard pos, Board board);
-
+  /**
+   * Get the character representation of the piece
+   *
+   * @param white if true -> white piece, if false -> black piece
+   * @return The character representation of the piece
+   */
   public abstract char getCharRepresentation(boolean white);
 }

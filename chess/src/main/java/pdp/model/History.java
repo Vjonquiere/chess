@@ -37,6 +37,12 @@ public class History {
     currentMove = new HistoryNode(state, currentMove);
   }
 
+  /**
+   * Returns the history of moves grouped by full turns in the format: "1. W h4xh5 B Qe3-e5" with
+   * english algebric notation.
+   *
+   * @return A string representing the history of moves.
+   */
   public String toAlgebricString() {
     StringBuilder sb = new StringBuilder();
     HistoryNode current = currentMove;
@@ -60,7 +66,7 @@ public class History {
   }
 
   /**
-   * Returns the history of moves grouped by full turns in the format: "1. B h4-h5 W e3-e5"
+   * Returns the history of moves grouped by full turns in the format: "1. W h4-h5 B e3-e5"
    *
    * @return A string representing the history of moves.
    */

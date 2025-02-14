@@ -44,6 +44,12 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Game created");
   }
 
+  /**
+   * Add a state to the count of seen states. If the state has been seen 3 times, returns true.
+   *
+   * @param simplifiedZobristHashing the simplified Zobrist hashing of the state
+   * @return true if the state has been seen 3 times, false otherwise
+   */
   private boolean addStateToCount(long simplifiedZobristHashing) {
     DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
     if (this.stateCount.containsKey(simplifiedZobristHashing)) {
@@ -342,6 +348,18 @@ public class Game extends Subject {
     return this.gameState.isGameOver();
   }
 
+  /**
+   * Initializes a new Game object from a list of moves.
+   *
+   * <p>The new game is initialized with the given AI settings, solver, and starting position.
+   *
+   * @param moves The moves to play in sequence.
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to use for AI moves.
+   * @return A new Game object with the given moves played.
+   * @throws IllegalMoveException If any of the given moves are illegal.
+   */
   public static Game fromHistory(
       List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver)
       throws IllegalMoveException {
