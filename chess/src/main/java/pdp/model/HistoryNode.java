@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 import pdp.utils.Logging;
 
 class HistoryNode {
-  private static final Logger LOGGER = Logger.getLogger(History.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(HistoryNode.class.getName());
   HistoryState state;
   HistoryNode previous;
 

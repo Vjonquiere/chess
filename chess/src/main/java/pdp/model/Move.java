@@ -51,13 +51,13 @@ public class Move {
    */
   public static Move fromString(String stringMove) throws MoveParsingException {
 
-    if (stringMove.toLowerCase() == "o-o-o") {
+    if (stringMove.equalsIgnoreCase("o-o-o")) {
       if (Game.getInstance().getGameState().isWhiteTurn()) {
         stringMove = "e1-c1";
       } else {
         stringMove = "e8-c8";
       }
-    } else if (stringMove.toLowerCase() == "o-o") {
+    } else if (stringMove.equalsIgnoreCase("o-o")) {
       if (Game.getInstance().getGameState().isWhiteTurn()) {
         stringMove = "e1-g1";
       } else {
@@ -69,8 +69,7 @@ public class Move {
     if (parts.length != 2) {
       throw new MoveParsingException(stringMove);
     }
-    Move move = new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
-    return move;
+    return new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
   }
 
   /**
@@ -125,7 +124,7 @@ public class Move {
         return move;
       }
     }
-    throw new IllegalMoveException("It's not a classicalMove " + this.toString());
+    throw new IllegalMoveException("It's not a classicalMove " + this);
   }
 
   public Position getSource() {

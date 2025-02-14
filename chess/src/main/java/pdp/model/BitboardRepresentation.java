@@ -13,8 +13,8 @@ import pdp.utils.Position;
 public class BitboardRepresentation implements BoardRepresentation {
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
-  private int nbCols = 8;
-  private int nbRows = 8;
+  private final int nbCols = 8;
+  private final int nbRows = 8;
   public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
 
   static {
@@ -957,6 +957,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  public void setSquare(ColoredPiece piece, int squareIndex) {
+    board[pieces.getFromValue(piece)].setBit(squareIndex);
+  }
+
   protected Bitboard[] getBitboards() {
     return this.board;
   }
@@ -971,17 +975,17 @@ public class BitboardRepresentation implements BoardRepresentation {
   public boolean hasEnoughMaterialToMate(boolean white) {
     // Pawn can promote
     List<Position> posPawns = getPawns(white);
-    if (posPawns.size() > 0) {
+    if (!posPawns.isEmpty()) {
       return true;
     }
     // Mate with queen(s)
     List<Position> queenPos = getQueens(white);
-    if (queenPos.size() > 0) {
+    if (!queenPos.isEmpty()) {
       return true;
     }
     // Mate with rook(s)
     List<Position> rooksPos = getRooks(white);
-    if (rooksPos.size() > 0) {
+    if (!rooksPos.isEmpty()) {
       return true;
     }
     // Mate with bishops

@@ -53,7 +53,7 @@ public class Board {
       // Reset the number of moves with no pawn move
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
-    if (move.isTake == true) {
+    if (move.isTake) {
       // SAVE DELETED PIECE FOR HASHING
       if (!this.isEnPassantTake) {
         board.deletePieceAt(move.dest.getX(), move.dest.getY());
@@ -74,23 +74,23 @@ public class Board {
 
     board.movePiece(move.source, move.dest);
 
-    if (this.whiteShortCastle == true
+    if (this.whiteShortCastle
         && (move.source.equals(new Position(0, 4))
             || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
       this.whiteShortCastle = false;
     }
-    if (this.whiteLongCastle == true
+    if (this.whiteLongCastle
         && (move.source.equals(new Position(0, 4))
             || move.source.equals(new Position(0, 7)))) { // rook on h1 and king on e1
       this.whiteLongCastle = false;
     }
 
-    if (this.blackShortCastle == true
+    if (this.blackShortCastle
         && (move.source.equals(new Position(7, 4))
             || move.source.equals(new Position(7, 7)))) { // rook on h8 and king on e8
       this.blackShortCastle = false;
     }
-    if (this.blackLongCastle == true
+    if (this.blackLongCastle
         && (move.source.equals(new Position(7, 4))
             || move.source.equals(new Position(7, 0)))) { // rook on a8 and king on e8
       this.blackLongCastle = false;
@@ -112,11 +112,7 @@ public class Board {
       this.isLastMoveDoublePush = false;
     }
 
-    if (this.isWhite) {
-      this.isWhite = false;
-    } else {
-      this.isWhite = true;
-    }
+    this.isWhite = !this.isWhite;
 
     move.toString();
   }
