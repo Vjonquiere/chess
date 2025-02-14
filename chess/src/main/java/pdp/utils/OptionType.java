@@ -165,6 +165,27 @@ public enum OptionType {
           .build();
     }
   },
+  CONFIG {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "config";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("FILENAME")
+          .desc("Sets the configuration file to use")
+          .build();
+    }
+  },
   AI {
     @Override
     public String getShort() {

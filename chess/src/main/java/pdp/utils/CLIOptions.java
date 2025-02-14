@@ -2,6 +2,7 @@ package pdp.utils;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,12 +28,14 @@ public class CLIOptions {
       options.addOption(optionType.getOption());
     }
 
-    Map<String, String> defaultArgs = loadDefaultArgs();
+    Map<String, String> defaultArgs = new HashMap<>();
     CommandLineParser parser = new DefaultParser();
     HashMap<OptionType, String> activatedOptions = new HashMap<>();
 
     try {
       CommandLine cmd = parser.parse(options, args);
+      String configFile = cmd.getOptionValue(OptionType.CONFIG.getLong(), (String) null);
+      defaultArgs = loadDefaultArgs(configFile);
       handleLoggingOptions(cmd, defaultArgs);
       if (handleImmediateExitOptions(cmd, options, runtime)) return null;
       processOptions(cmd, defaultArgs, activatedOptions);
@@ -46,16 +49,37 @@ public class CLIOptions {
     return activatedOptions;
   }
 
-  private static Map<String, String> loadDefaultArgs() {
-    try (InputStream inputStream =
-        CLIOptions.class.getClassLoader().getResourceAsStream("config.chessrc")) {
-      if (inputStream == null)
-        throw new FileNotFoundException("config.chessrc not found in classpath!");
-      return IniParser.parseIni(inputStream).getOrDefault("Default", new HashMap<>());
-    } catch (Exception e) {
-      System.err.println("Error while parsing chessrc file: " + e.getMessage());
-      return new HashMap<>();
+  private static Map<String, String> loadDefaultArgs(String file) {
+    InputStream inputStream = null;
+    if (file != null) {
+      try {
+        inputStream = new FileInputStream(file);
+      } catch (FileNotFoundException e) {
+        System.err.println("Error while parsing chessrc file: " + e.getMessage());
+        System.err.println("Default options will be used");
+        file = null;
+      }
     }
+    if (file == null) {
+      try {
+        inputStream = CLIOptions.class.getClassLoader().getResourceAsStream("default.chessrc");
+        if (inputStream == null)
+          throw new FileNotFoundException("config.chessrc not found in classpath!");
+      } catch (Exception e) {
+        System.err.println("Error while parsing chessrc file: " + e.getMessage());
+        return new HashMap<>();
+      }
+    }
+
+    if (inputStream != null) {
+      try {
+        Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
+        return iniMap.getOrDefault("Default", new HashMap<>());
+      } catch (Exception e) {
+        return new HashMap<>();
+      }
+    }
+    return new HashMap<>();
   }
 
   private static void handleLoggingOptions(CommandLine cmd, Map<String, String> defaultArgs) {

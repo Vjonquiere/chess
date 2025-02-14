@@ -38,6 +38,7 @@ public class CLIOptionsTest {
           + "                                 (default 5 seconds)\n"
           + " -b,--blitz                      Play in blitz mode\n"
           + " -c,--contest <FILENAME>         AI plays one move in the given file\n"
+          + "    --config <FILENAME>          Sets the configuration file to use\n"
           + " -d,--debug                      Print debugging information\n"
           + " -g,--gui                        Displays the game with a  graphical\n"
           + "                                 interface.\n"
