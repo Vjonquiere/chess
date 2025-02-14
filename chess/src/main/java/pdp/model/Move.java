@@ -49,7 +49,7 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(String stringMove) {
+  public static Move fromString(String stringMove) throws MoveParsingException {
 
     if (stringMove.toLowerCase() == "o-o-o") {
       if (Game.getInstance().getGameState().isWhiteTurn()) {

@@ -333,6 +333,19 @@ public class Game extends Subject {
     return this.gameState.isGameOver();
   }
 
+  public static Game fromHistory(
+      List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver)
+      throws IllegalMoveException {
+    Game game = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+
+    for (Move move : moves) {
+      game.playMove(move);
+    }
+
+    instance = game;
+    return instance;
+  }
+
   /**
    * Returns a string representation of the game. Includes the ASCII representation of the board,
    * the time remaining (if timer is not null), and the color of the player to play.
