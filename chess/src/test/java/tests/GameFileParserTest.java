@@ -12,7 +12,7 @@ public class GameFileParserTest {
     ClassLoader classLoader = getClass().getClassLoader();
     URL filePath = classLoader.getResource("gameFile");
     try {
-      parser.parseGameFile(filePath.getPath());
+      System.out.println(parser.parseGameFile(filePath.getPath()));
     } catch (Exception e) {
       e.printStackTrace();
     }

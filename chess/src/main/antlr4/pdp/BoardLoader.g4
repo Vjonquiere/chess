@@ -1,25 +1,40 @@
 grammar BoardLoader;
 
 
-board : boardLine{8};
+board : player boardLine boardLine boardLine boardLine boardLine boardLine boardLine boardLine EOF;
 
-boardLine: (piece (' ')){7} piece ('\n');
+boardLine : piece ' ' piece ' ' piece ' ' piece ' ' piece ' ' piece ' ' piece ' ' piece LINE_COMMENT? NEWLINE?;
 
-player : PLAYER_COLOR ('\n');
+player : PLAYER_COLOR LINE_COMMENT? NEWLINE?;
 
-piece : EMPTY_SQUARE
-      | BLACK_BISHOP;
+piece : WHITE_KING
+      |WHITE_QUEEN
+      |WHITE_BISHOP
+      |WHITE_ROOK
+      |WHITE_KNIGHT
+      |WHITE_PAWN
+      |BLACK_KING
+      |BLACK_QUEEN
+      |BLACK_BISHOP
+      |BLACK_ROOK
+      |BLACK_KNIGHT
+      |BLACK_PAWN
+      |PLAYER_COLOR
+      |EMPTY_SQUARE;
 
-BLACK_BISHOP : [b];
-PLAYER_COLOR : [W,B]+;
-EMPTY_SQUARE : [_];
-
-
-expr   : expr ('+'|'-') expr
-       | expr ('*'|'/') expr
-       | '(' expr ')'
-       | INT
-       ;
-
-INT    : [0-9]+ ;
-WS     : [ \t\r\n]+ -> skip ;
+WHITE_KING : 'K';
+WHITE_QUEEN : 'Q';
+WHITE_BISHOP : 'B';
+WHITE_ROOK : 'R';
+WHITE_KNIGHT : 'N';
+WHITE_PAWN : 'P';
+BLACK_KING : 'k';
+BLACK_QUEEN : 'q';
+BLACK_BISHOP : 'b';
+BLACK_ROOK : 'r';
+BLACK_KNIGHT : 'n';
+BLACK_PAWN : 'p';
+PLAYER_COLOR : 'W' | 'B';
+EMPTY_SQUARE : '_';
+LINE_COMMENT : '#' ~[\r\n]* -> skip ;
+NEWLINE : [\r\n]+ -> skip ;

@@ -920,6 +920,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  public void setSquare(ColoredPiece piece, int squareIndex) {
+    // board[pieces.getFromValue(piece)].setBit(squareIndex);
+  }
+
   @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
