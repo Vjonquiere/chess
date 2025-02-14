@@ -1,3 +1,5 @@
+package tests;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -92,4 +94,35 @@ class CommandTest {
   }
 
   // CancelDrawCommand
+
+  @Test
+  void testCancelDrawCommandWhiteSucces() {
+    CancelDrawCommand command = new CancelDrawCommand(true);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(gameState).whiteCancelsDrawRequest();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void testCancelDrawCommandBlackSucces() {
+    CancelDrawCommand command = new CancelDrawCommand(false);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(gameState).blackCancelsDrawRequest();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void testCancelDrawCommandGameOver() {
+    when(model.getGameState().isGameOver()).thenReturn(true);
+    CancelDrawCommand command = new CancelDrawCommand(true);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    assertTrue(result.isPresent());
+    assertTrue(result.get() instanceof CommandNotAvailableNowException);
+  }
 }
