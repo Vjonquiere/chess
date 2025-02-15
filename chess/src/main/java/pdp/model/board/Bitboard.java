@@ -1,4 +1,4 @@
-package pdp.model;
+package pdp.model.board;
 
 import java.util.ArrayList;
 

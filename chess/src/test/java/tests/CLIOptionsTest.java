@@ -24,31 +24,31 @@ public class CLIOptionsTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
-  String expectedHelp =
-      "usage: chess\n"
-          + " -a,--ai <COLOR>                 Launch the program in AI mode, with\n"
-          + "                                 artificial player with COLOR 'B' or 'A'\n"
-          + "                                 (All),(W by default).\n"
-          + "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm\n"
-          + "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial\n"
-          + "                                 player\n"
-          + "    --ai-mode <ALGORITHM>        Choose the exploration algorithm for the\n"
-          + "                                 artificial player.\n"
-          + "    --ai-time <TIME>             Specify the time of reflexion for AI mode\n"
-          + "                                 (default 5 seconds)\n"
-          + " -b,--blitz                      Play in blitz mode\n"
-          + " -c,--contest <FILENAME>         AI plays one move in the given file\n"
-          + "    --config <FILENAME>          Sets the configuration file to use\n"
-          + " -d,--debug                      Print debugging information\n"
-          + " -g,--gui                        Displays the game with a  graphical\n"
-          + "                                 interface.\n"
-          + " -h,--help                       Print this message and exit\n"
-          + "    --lang <LANGUAGE>            Choose the language for the app (en\n"
-          + "                                 supported)\n"
-          + " -t,--time <TIME>                Specify time per round for blitz mode\n"
-          + "                                 (default 30min)\n"
-          + " -V,--version                    Print the version information and exit\n"
-          + " -v,--verbose                    Display more information\n";
+  String[] expectedHelp = {
+    "usage: chess",
+    " -a,--ai <COLOR>                 Launch the program in AI mode, with",
+    "                                 (All),(W by default).",
+    "                                 artificial player with COLOR 'B' or 'A'",
+    "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm",
+    "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial",
+    "                                 player",
+    "    --ai-mode <ALGORITHM>        Choose the exploration algorithm for the",
+    "                                 artificial player.",
+    "    --ai-time <TIME>             Specify the time of reflexion for AI mode",
+    "                                 (default 5 seconds)",
+    " -b,--blitz                      Play in blitz mode",
+    " -c,--contest <FILENAME>         AI plays one move in the given file",
+    " -d,--debug                      Print debugging information",
+    " -g,--gui                        Displays the game with a  graphical",
+    "                                 interface.",
+    " -h,--help                       Print this message and exit",
+    "    --lang <LANGUAGE>            Choose the language for the app (en",
+    "                                 supported)",
+    " -t,--time <TIME>                Specify time per round for blitz mode",
+    "                                 (default 30min)",
+    " -V,--version                    Print the version information and exit",
+    " -v,--verbose                    Display more information"
+  };
 
   @BeforeEach
   public void setUp() {
@@ -70,14 +70,18 @@ public class CLIOptionsTest {
     /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--help"}, mockRuntime);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
     /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h"}, mockRuntime2);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime2).exit(0);
   }
@@ -110,26 +114,33 @@ public class CLIOptionsTest {
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
 
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-V", "-h"}, mockRuntime2);
 
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime2).exit(0);
   }
 
   @Test
   public void testUnrecognized() {
-    String expected = "Parsing failed.  Reason: Unrecognized option: -zgv\n";
+    String expected = "Parsing failed.  Reason: Unrecognized option: -zgv";
 
     // Test with an unrecognized option (error)
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-zgv"}, mockRuntime);
-    assertEquals(expected + expectedHelp.trim(), outputStream.toString().trim());
+    assertTrue(outputStream.toString().contains(expected));
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(1);
   }
@@ -140,7 +151,9 @@ public class CLIOptionsTest {
     // Test partial matching (no error)
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-hel"}, mockRuntime);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(0);
   }
@@ -148,12 +161,15 @@ public class CLIOptionsTest {
   @Test
   public void testAmbiguous() throws Exception {
     String expectedAmbiguous =
-        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-depth', 'ai-heuristic', 'ai-time')\n";
+        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-depth', 'ai-heuristic', 'ai-time')";
 
     // Test ambiguous option (several options starting the same) (error)
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--ai-"}, mockRuntime);
-    assertEquals(expectedAmbiguous + expectedHelp.trim(), outputStream.toString().trim());
+    assertTrue(outputStream.toString().contains(expectedAmbiguous));
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(1);
   }

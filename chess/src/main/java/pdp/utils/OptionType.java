@@ -291,6 +291,27 @@ public enum OptionType {
           .desc("Specify the time of reflexion for AI mode (default 5 seconds)")
           .build();
     }
+  },
+  LOAD {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "load";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .argName("FILENAME")
+          .hasArg(true)
+          .desc("The name of the file from which to load the history")
+          .build();
+    }
   };
 
   public abstract String getShort();

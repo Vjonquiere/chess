@@ -24,6 +24,16 @@ public class CLIOptions {
 
   private CLIOptions() {}
 
+  /**
+   * Parses the given command line arguments..
+   *
+   * <p>Returns a map of the activated options, with the option name as the key and the option value
+   * as the value.
+   *
+   * @param args The command line arguments.
+   * @param runtime The runtime.
+   * @return A map of the activated options.
+   */
   public static HashMap<OptionType, String> parseOptions(String[] args, Runtime runtime) {
     Options options = new Options();
     for (OptionType optionType : OptionType.values()) {
@@ -51,6 +61,18 @@ public class CLIOptions {
     return activatedOptions;
   }
 
+  /**
+   * Loads the default arguments from a specified configuration file.
+   *
+   * <p>The method attempts to load a configuration file with a given ".chessrc" filename. If it
+   * cannot be found, the default configuration file is used instead. If both the specified and
+   * default files are not found, an empty map is returned.
+   *
+   * @param file The filename of the configuration file to load.
+   * @param activatedOptions A map to store the activated options, where the configuration file name
+   *     is stored under the CONFIG key.
+   * @return A map of default arguments read from the configuration file.
+   */
   private static Map<String, String> loadDefaultArgs(
       String file, HashMap<OptionType, String> activatedOptions) {
     InputStream inputStream = null;
@@ -96,6 +118,13 @@ public class CLIOptions {
     return new HashMap<>();
   }
 
+  /**
+   * Sets the logging options to be used in the program according to the command line options and
+   * the default arguments.
+   *
+   * @param cmd The command line options.
+   * @param defaultArgs The default arguments.
+   */
   private static void handleLoggingOptions(CommandLine cmd, Map<String, String> defaultArgs) {
     if (cmd.hasOption(OptionType.DEBUG.getLong()) || "true".equals(defaultArgs.get("debug"))) {
       Logging.setDebug(true);
@@ -109,6 +138,15 @@ public class CLIOptions {
     }
   }
 
+  /**
+   * Checks if the user has requested immediate exit options (help or version) and handles them.
+   *
+   * @param cmd The command line options.
+   * @param options The options to print in the help message.
+   * @param runtime The runtime to exit.
+   * @return true if the option was handled, false otherwise.
+   * @throws IOException If an IO exception occurs.
+   */
   private static boolean handleImmediateExitOptions(
       CommandLine cmd, Options options, Runtime runtime) throws IOException {
     if (cmd.hasOption(OptionType.HELP.getLong())) {
@@ -128,6 +166,15 @@ public class CLIOptions {
     return false;
   }
 
+  /**
+   * Processes the command line general options and the default arguments to build a map of the
+   * activated options. The map contains the option name as the key and the option value as the
+   * value.
+   *
+   * @param cmd The command line options.
+   * @param defaultArgs The default arguments.
+   * @param activatedOptions The map to store the activated options.
+   */
   private static void processOptions(
       CommandLine cmd,
       Map<String, String> defaultArgs,
@@ -175,6 +222,15 @@ public class CLIOptions {
     validateAIOptions(cmd, activatedOptions);
   }
 
+  /**
+   * Validates AI-related command line options and ensures they are correctly activated.
+   *
+   * <p>This method checks if the AI option is present in the activated options map. If not,
+   * AI-related options (AI_MODE, AI_DEPTH, AI_HEURISTIC, AI_TIME) can't be used.
+   *
+   * @param cmd The parsed command line containing user-provided options.
+   * @param activatedOptions The map containing the currently activated options.
+   */
   private static void validateAIOptions(
       CommandLine cmd, HashMap<OptionType, String> activatedOptions) {
     if (!activatedOptions.containsKey(OptionType.AI)) {
@@ -189,6 +245,15 @@ public class CLIOptions {
     }
   }
 
+  /**
+   * Returns whether the given option is implemented in the program or not.
+   *
+   * <p>This method is used to check if a given option is implemented in the program in order to
+   * warn the user.
+   *
+   * @param option The option to check.
+   * @return Whether the given option is implemented.
+   */
   private static boolean isFeatureImplemented(OptionType option) {
     return switch (option) {
       case BLITZ, GUI, TIME, CONTEST, AI, AI_MODE, AI_DEPTH, AI_HEURISTIC, AI_TIME -> false;

@@ -2,6 +2,9 @@ package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -10,6 +13,14 @@ import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
+import pdp.model.board.Move;
+import pdp.model.board.ZobristHashing;
+import pdp.model.history.History;
+import pdp.model.history.HistoryState;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -41,6 +52,12 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Game created");
   }
 
+  /**
+   * Add a state to the count of seen states. If the state has been seen 3 times, returns true.
+   *
+   * @param simplifiedZobristHashing the simplified Zobrist hashing of the state
+   * @return true if the state has been seen 3 times, false otherwise
+   */
   private boolean addStateToCount(long simplifiedZobristHashing) {
     DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
     if (this.stateCount.containsKey(simplifiedZobristHashing)) {
@@ -120,8 +137,8 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
-    Position sourcePosition = new Position(move.source.getY(), move.source.getX());
-    Position destPosition = new Position(move.dest.getY(), move.dest.getX());
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
@@ -160,9 +177,7 @@ public class Game extends Subject {
 
       this.history.addMove(
           new HistoryState(
-              classicalMove.toString(),
-              this.gameState.getFullTurn(),
-              this.gameState.getBoard().isWhite));
+              classicalMove, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
 
       this.gameState.getBoard().makeMove(classicalMove);
       DEBUG(LOGGER, "Move played!");
@@ -212,9 +227,7 @@ public class Game extends Subject {
 
             this.history.addMove(
                 new HistoryState(
-                    move.toString(),
-                    this.gameState.getFullTurn(),
-                    this.gameState.getBoard().isWhite));
+                    move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
           }
         }
       }
@@ -250,7 +263,7 @@ public class Game extends Subject {
         move.isTake = true;
         this.history.addMove(
             new HistoryState(
-                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
+                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
       }
 
@@ -272,15 +285,15 @@ public class Game extends Subject {
         isSpecialMove = true;
         this.gameState.getBoard().enPassantPos =
             this.gameState.getBoard().isWhite
-                ? new Position(move.dest.getY() - 1, move.dest.getX())
-                : new Position(move.dest.getY() + 1, move.dest.getX());
+                ? new Position(move.dest.getX(), move.dest.getY() - 1)
+                : new Position(move.dest.getX(), move.dest.getY() + 1);
         if (this.gameState.getBoard().isWhite) {
           this.gameState.incrementsFullTurn();
         }
         move.piece = coloredPiece;
         history.addMove(
             new HistoryState(
-                move.toString(), this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
+                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
@@ -314,6 +327,16 @@ public class Game extends Subject {
     }
   }
 
+  public void saveGame(String path) {
+    String gameStr = this.history.toAlgebricString();
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+      writer.write(gameStr);
+    } catch (IOException e) {
+      System.err.println("Error writing to file: " + e.getMessage());
+    }
+  }
+
   /**
    * Retrieves the history of moves in the current game as a formatted string.
    *
@@ -331,6 +354,31 @@ public class Game extends Subject {
 
   public boolean isOver() {
     return this.gameState.isGameOver();
+  }
+
+  /**
+   * Initializes a new Game object from a list of moves.
+   *
+   * <p>The new game is initialized with the given AI settings, solver, and starting position.
+   *
+   * @param moves The moves to play in sequence.
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to use for AI moves.
+   * @return A new Game object with the given moves played.
+   * @throws IllegalMoveException If any of the given moves are illegal.
+   */
+  public static Game fromHistory(
+      List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver)
+      throws IllegalMoveException {
+    Game game = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+
+    for (Move move : moves) {
+      game.playMove(move);
+    }
+
+    instance = game;
+    return instance;
   }
 
   /**

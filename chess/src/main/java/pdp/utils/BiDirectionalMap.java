@@ -1,4 +1,4 @@
-package pdp.model;
+package pdp.utils;
 
 import java.util.HashMap;
 import java.util.Map;

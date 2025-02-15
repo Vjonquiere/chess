@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
+import pdp.model.board.Move;
+import pdp.model.history.History;
+import pdp.model.history.HistoryState;
 import pdp.utils.Position;
 
 public class HistoryTest {
@@ -12,10 +15,10 @@ public class HistoryTest {
   void testHistoryToString() {
     // Arrange: Create a new history and add moves
     History history = new History();
-    history.addMove(new HistoryState("e3-e5", 1, true)); // White move
-    history.addMove(new HistoryState("h4-h5", 1, false)); // Black move
-    history.addMove(new HistoryState("g1-f3", 2, true)); // White move
-    history.addMove(new HistoryState("e7-e6", 2, false)); // Black move
+    history.addMove(new HistoryState(Move.fromString("e3-e5"), 1, true)); // White move
+    history.addMove(new HistoryState(Move.fromString("h4-h5"), 1, false)); // Black move
+    history.addMove(new HistoryState(Move.fromString("g1-f3"), 2, true)); // White move
+    history.addMove(new HistoryState(Move.fromString("e7-e6"), 2, false)); // Black move
 
     // Act: Convert history to string
     String historyOutput = history.toString();
@@ -28,13 +31,13 @@ public class HistoryTest {
   @Test
   void HistoryTestInGame() {
     Game game = Game.initialize(false, false, null, null);
-    Move move = new Move(new Position(1, 4), new Position(3, 4)); // Pion avance de deux cases
+    Move move = new Move(new Position(4, 1), new Position(4, 3)); // Pion avance de deux cases
     game.playMove(move);
-    Move move2 = new Move(new Position(6, 4), new Position(4, 4));
+    Move move2 = new Move(new Position(4, 6), new Position(4, 4));
     game.playMove(move2);
-    Move move3 = new Move(new Position(1, 3), new Position(2, 3)); // Pion avance d'une case
+    Move move3 = new Move(new Position(3, 1), new Position(3, 2)); // Pion avance d'une case
     game.playMove(move3);
-    Move move4 = new Move(new Position(6, 3), new Position(5, 3));
+    Move move4 = new Move(new Position(3, 6), new Position(3, 5));
     game.playMove(move4);
 
     String historyOutput = game.getHistory().toString();

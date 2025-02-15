@@ -5,7 +5,7 @@ import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
-import pdp.model.Move;
+import pdp.model.board.Move;
 
 public class PlayMoveCommand implements Command {
   private String move;

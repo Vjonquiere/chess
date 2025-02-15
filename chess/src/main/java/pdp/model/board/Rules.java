@@ -1,6 +1,8 @@
-package pdp.model;
+package pdp.model.board;
 
 import java.util.List;
+import pdp.model.piece.Color;
+import pdp.model.piece.Piece;
 
 public interface Rules {
   public List<Move> getAvailableMoves(int x, int y, boolean kingReachable);
