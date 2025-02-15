@@ -22,7 +22,7 @@ import pdp.view.GameView;
 import pdp.view.View;
 
 public abstract class GameInitializer {
-
+  // TODO Internationalization
   /**
    * Initialize the game with the given options.
    *
