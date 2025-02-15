@@ -1,7 +1,9 @@
 package pdp.exceptions;
 
+import pdp.utils.TextGetter;
+
 public class InvalidPromoteException extends RuntimeException {
   public InvalidPromoteException() {
-    super("Invalid promote format, please use the following format: " + "e7-e8=Q");
+    super(TextGetter.getText("invalidPromoteFormat", "e7-e8=Q"));
   }
 }
