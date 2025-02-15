@@ -1,5 +1,7 @@
 package pdp.model.history;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Logger;
@@ -34,6 +36,9 @@ public class History {
    *     and the color played.
    */
   public void addMove(HistoryState state) {
+    DEBUG(LOGGER, "Adding new state to History");
+    DEBUG(LOGGER, state.getMove().toString());
+    DEBUG(LOGGER, state.isWhite() + " " + String.valueOf(state.getFullTurn()));
     currentMove = new HistoryNode(state, currentMove);
   }
 

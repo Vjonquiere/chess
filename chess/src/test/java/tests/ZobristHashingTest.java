@@ -39,9 +39,10 @@ public class ZobristHashingTest {
     assertEquals(hash1, hash2);
 
     board.makeMove(new Move(new Position(0, 1), new Position(0, 2)));
+    board.setPlayer(!board.getPlayer());
     // different hash for different board
     assertNotEquals(hash1, zobristHashing.generateHashFromBitboards(board));
-    board.getBoard().movePiece(new Position(0, 2), new Position(0, 1));
+    board.getBoardRep().movePiece(new Position(0, 2), new Position(0, 1));
 
     // player changed but board the same
     assertNotEquals(hash1, zobristHashing.generateHashFromBitboards(board));
@@ -96,8 +97,9 @@ public class ZobristHashingTest {
     assertEquals(hash1, hash2);
 
     board.makeMove(new Move(new Position(0, 1), new Position(0, 3)));
+    board.setPlayer(!board.getPlayer());
     assertNotEquals(hash1, zobristHashing.generateSimplifiedHashFromBitboards(board));
-    board.getBoard().movePiece(new Position(0, 3), new Position(0, 1));
+    board.getBoardRep().movePiece(new Position(0, 3), new Position(0, 1));
     assertEquals(hash1, zobristHashing.generateSimplifiedHashFromBitboards(board));
   }
 
@@ -115,6 +117,7 @@ public class ZobristHashingTest {
             new ColoredPiece(Piece.PAWN, Color.WHITE),
             false); // Move white pawn
     board.makeMove(move1);
+    board.setPlayer(!board.getPlayer());
     hash1 = zobristHashing.updateHashFromBitboards(hash1, board, move1);
 
     Move move2 =
@@ -124,6 +127,7 @@ public class ZobristHashingTest {
             new ColoredPiece(Piece.PAWN, Color.BLACK),
             false); // Move black pawn
     board.makeMove(move2);
+    board.setPlayer(!board.getPlayer());
     hash1 = zobristHashing.updateHashFromBitboards(hash1, board, move2);
 
     long hash2 = zobristHashing.generateHashFromBitboards(board);
@@ -145,6 +149,7 @@ public class ZobristHashingTest {
             new ColoredPiece(Piece.PAWN, Color.WHITE),
             false);
     board.makeMove(move);
+    board.setPlayer(!board.getPlayer());
 
     long updatedHash = zobrist.updateSimplifiedHashFromBitboards(initialHash, board, move);
     long recalculatedHash = zobrist.generateSimplifiedHashFromBitboards(board);
@@ -226,13 +231,13 @@ public class ZobristHashingTest {
                 new ColoredPiece(Piece.PAWN, Color.BLACK)));
 
     Board board2 = new Board();
-    if (board2.getBoard() instanceof BitboardRepresentation bitboardRepresentation) {
+    if (board2.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation) {
       bitboardRepresentation.deletePieceAt(0, 6);
       bitboardRepresentation.movePiece(new Position(1, 1), new Position(0, 4));
     }
     long hashGenerate = zobristHashing.generateSimplifiedHashFromBitboards(board2);
     // TODO: find out why bitboard representations are not equals
-    // assertEquals(board.getBoard(),board2.getBoard());
+    // assertEquals(board.Rep(),board2.getBoardRep());
     assertEquals(hashUpdate, hashGenerate);
   }
 
