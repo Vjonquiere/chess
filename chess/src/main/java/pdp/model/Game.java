@@ -13,6 +13,14 @@ import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
+import pdp.model.board.Move;
+import pdp.model.board.ZobristHashing;
+import pdp.model.history.History;
+import pdp.model.history.HistoryState;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -44,6 +52,12 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Game created");
   }
 
+  /**
+   * Add a state to the count of seen states. If the state has been seen 3 times, returns true.
+   *
+   * @param simplifiedZobristHashing the simplified Zobrist hashing of the state
+   * @return true if the state has been seen 3 times, false otherwise
+   */
   private boolean addStateToCount(long simplifiedZobristHashing) {
     DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
     if (this.stateCount.containsKey(simplifiedZobristHashing)) {
@@ -123,8 +137,8 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is not legal.
    */
   public void playMove(Move move) throws IllegalMoveException {
-    Position sourcePosition = new Position(move.source.getY(), move.source.getX());
-    Position destPosition = new Position(move.dest.getY(), move.dest.getX());
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
     try {
       if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
@@ -271,8 +285,8 @@ public class Game extends Subject {
         isSpecialMove = true;
         this.gameState.getBoard().enPassantPos =
             this.gameState.getBoard().isWhite
-                ? new Position(move.dest.getY() - 1, move.dest.getX())
-                : new Position(move.dest.getY() + 1, move.dest.getX());
+                ? new Position(move.dest.getX(), move.dest.getY() - 1)
+                : new Position(move.dest.getX(), move.dest.getY() + 1);
         if (this.gameState.getBoard().isWhite) {
           this.gameState.incrementsFullTurn();
         }
@@ -342,6 +356,18 @@ public class Game extends Subject {
     return this.gameState.isGameOver();
   }
 
+  /**
+   * Initializes a new Game object from a list of moves.
+   *
+   * <p>The new game is initialized with the given AI settings, solver, and starting position.
+   *
+   * @param moves The moves to play in sequence.
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to use for AI moves.
+   * @return A new Game object with the given moves played.
+   * @throws IllegalMoveException If any of the given moves are illegal.
+   */
   public static Game fromHistory(
       List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver)
       throws IllegalMoveException {

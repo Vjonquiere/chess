@@ -1,4 +1,4 @@
-package pdp.model;
+package pdp.model.board;
 
 import static pdp.utils.Logging.DEBUG;
 import static pdp.utils.Logging.VERBOSE;
@@ -7,14 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
+import pdp.utils.BiDirectionalMap;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
-  private int nbCols = 8;
-  private int nbRows = 8;
+  private final int nbCols = 8;
+  private final int nbRows = 8;
   public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
 
   static {
@@ -107,7 +111,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   private List<Position> squaresToPosition(List<Integer> squares) {
     List<Position> positions = new ArrayList<>();
     for (Integer i : squares) {
-      positions.add(new Position(i / 8, i % 8));
+      positions.add(new Position(i % 8, i / 8));
     }
     return positions;
   }
@@ -119,7 +123,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A Position containing the translations
    */
   private Position squareToPosition(int square) {
-    return new Position(square / 8, square % 8);
+    return new Position(square % 8, square / 8);
   }
 
   /**
@@ -562,15 +566,15 @@ public class BitboardRepresentation implements BoardRepresentation {
             + kingReachable
             + ")");
     return switch (piece.piece) {
-      case KING -> getKingMoves(new Position(y, x), unreachableSquares, enemies, piece);
-      case QUEEN -> getQueenMoves(new Position(y, x), unreachableSquares, enemies, piece);
-      case BISHOP -> getBishopMoves(new Position(y, x), unreachableSquares, enemies, piece);
-      case ROOK -> getRookMoves(new Position(y, x), unreachableSquares, enemies, piece);
-      case KNIGHT -> getKnightMoves(new Position(y, x), unreachableSquares, enemies, piece);
+      case KING -> getKingMoves(new Position(x, y), unreachableSquares, enemies, piece);
+      case QUEEN -> getQueenMoves(new Position(x, y), unreachableSquares, enemies, piece);
+      case BISHOP -> getBishopMoves(new Position(x, y), unreachableSquares, enemies, piece);
+      case ROOK -> getRookMoves(new Position(x, y), unreachableSquares, enemies, piece);
+      case KNIGHT -> getKnightMoves(new Position(x, y), unreachableSquares, enemies, piece);
       case PAWN ->
           piece.color == Color.WHITE
-              ? getPawnMoves(new Position(y, x), unreachableSquares, enemies, true)
-              : getPawnMoves(new Position(y, x), unreachableSquares, enemies, false);
+              ? getPawnMoves(new Position(x, y), unreachableSquares, enemies, true)
+              : getPawnMoves(new Position(x, y), unreachableSquares, enemies, false);
       default -> new ArrayList<>();
     };
   }
@@ -612,7 +616,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public boolean isAttacked(int x, int y, Color by) {
     VERBOSE(LOGGER, "Checking if square [" + x + "," + y + "] is attacked");
     Bitboard pieces = by == Color.WHITE ? getWhiteBoard() : getBlackBoard();
-    Position destination = new Position(y, x);
+    Position destination = new Position(x, y);
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = squareToPosition(i);
       List<Move> moves = getAvailableMoves(piecePosition.getX(), piecePosition.getY(), true);
@@ -702,7 +706,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * @Override Checks the StaleMate state for the given color
+   * Checks the StaleMate state for the given color
    *
    * @param color The color you want to check StaleMate for
    * @param colorTurnToPlay Player's turn to know if player who potentially moves in check has to
@@ -957,6 +961,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  public void setSquare(ColoredPiece piece, int squareIndex) {
+    board[pieces.getFromValue(piece)].setBit(squareIndex);
+  }
+
   protected Bitboard[] getBitboards() {
     return this.board;
   }
@@ -971,17 +979,17 @@ public class BitboardRepresentation implements BoardRepresentation {
   public boolean hasEnoughMaterialToMate(boolean white) {
     // Pawn can promote
     List<Position> posPawns = getPawns(white);
-    if (posPawns.size() > 0) {
+    if (!posPawns.isEmpty()) {
       return true;
     }
     // Mate with queen(s)
     List<Position> queenPos = getQueens(white);
-    if (queenPos.size() > 0) {
+    if (!queenPos.isEmpty()) {
       return true;
     }
     // Mate with rook(s)
     List<Position> rooksPos = getRooks(white);
-    if (rooksPos.size() > 0) {
+    if (!rooksPos.isEmpty()) {
       return true;
     }
     // Mate with bishops

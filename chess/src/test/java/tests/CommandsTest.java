@@ -1,3 +1,5 @@
+package tests;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -9,7 +11,7 @@ import pdp.controller.commands.*;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
 import pdp.model.GameState;
-import pdp.model.Move;
+import pdp.model.board.Move;
 
 class CommandTest {
   private Game model;
@@ -92,4 +94,35 @@ class CommandTest {
   }
 
   // CancelDrawCommand
+
+  @Test
+  void testCancelDrawCommandWhiteSucces() {
+    CancelDrawCommand command = new CancelDrawCommand(true);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(gameState).whiteCancelsDrawRequest();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void testCancelDrawCommandBlackSucces() {
+    CancelDrawCommand command = new CancelDrawCommand(false);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(gameState).blackCancelsDrawRequest();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void testCancelDrawCommandGameOver() {
+    when(model.getGameState().isGameOver()).thenReturn(true);
+    CancelDrawCommand command = new CancelDrawCommand(true);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    assertTrue(result.isPresent());
+    assertTrue(result.get() instanceof CommandNotAvailableNowException);
+  }
 }

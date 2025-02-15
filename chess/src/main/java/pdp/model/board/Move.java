@@ -1,22 +1,25 @@
-package pdp.model;
+package pdp.model.board;
 
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
+import pdp.model.Game;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
-  Position source;
-  Position dest;
-  ColoredPiece piece;
-  ColoredPiece takenPiece;
-  boolean isTake = false;
-  boolean isCheck = false;
-  boolean isCheckMate = false;
+  public Position source;
+  public Position dest;
+  public ColoredPiece piece;
+  public ColoredPiece takenPiece;
+  public boolean isTake = false;
+  public boolean isCheck = false;
+  public boolean isCheckMate = false;
 
   public Move(Position source, Position dest) {
     Logging.configureLogging(LOGGER);
@@ -51,13 +54,13 @@ public class Move {
    */
   public static Move fromString(String stringMove) throws MoveParsingException {
 
-    if (stringMove.toLowerCase() == "o-o-o") {
+    if (stringMove.equalsIgnoreCase("o-o-o")) {
       if (Game.getInstance().getGameState().isWhiteTurn()) {
         stringMove = "e1-c1";
       } else {
         stringMove = "e8-c8";
       }
-    } else if (stringMove.toLowerCase() == "o-o") {
+    } else if (stringMove.equalsIgnoreCase("o-o")) {
       if (Game.getInstance().getGameState().isWhiteTurn()) {
         stringMove = "e1-g1";
       } else {
@@ -69,8 +72,7 @@ public class Move {
     if (parts.length != 2) {
       throw new MoveParsingException(stringMove);
     }
-    Move move = new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
-    return move;
+    return new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
   }
 
   /**
@@ -96,7 +98,7 @@ public class Move {
     int x = colLetter - 'a';
     int y = rowNumber - 1;
 
-    return new Position(y, x);
+    return new Position(x, y);
   }
 
   /**
@@ -125,7 +127,7 @@ public class Move {
         return move;
       }
     }
-    throw new IllegalMoveException("It's not a classicalMove " + this.toString());
+    throw new IllegalMoveException("It's not a classicalMove " + this);
   }
 
   public Position getSource() {
@@ -152,7 +154,16 @@ public class Move {
     return isCheckMate;
   }
 
-  public String toAlgebricString() {
+  /**
+   * Converts the move to its algebraic notation string representation.
+   *
+   * <p>The format includes the piece type (except for pawns), the source position, a separator ('x'
+   * for captures, '-' otherwise), the destination position, and an optional annotation for check
+   * ('+') or checkmate ('#').
+   *
+   * @return The algebraic notation string representing the move.
+   */
+  public String toAlgebraicString() {
     String piece = "";
     if (this.piece != null && this.piece.piece != Piece.PAWN) {
       piece = String.valueOf(this.piece.piece.getCharRepresentation(true));
@@ -165,6 +176,14 @@ public class Move {
     return piece + sourceStr + separator + destinationStr + annotation;
   }
 
+  /**
+   * Converts the move to a string representation.
+   *
+   * <p>The format is the source position, a separator ('x' for captures, '-' otherwise), and the
+   * destination position.
+   *
+   * @return The string representation of the move.
+   */
   @Override
   public String toString() {
     String sourceStr = positionToString(this.source);

@@ -1,7 +1,11 @@
 package tests.helpers;
 
 import java.util.List;
-import pdp.model.*;
+import pdp.model.board.BoardRepresentation;
+import pdp.model.board.Move;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class DummyBoardRepresentation implements BoardRepresentation {
