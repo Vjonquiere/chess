@@ -45,6 +45,24 @@ public class Move {
     this.takenPiece = takenPiece;
   }
 
+  public Move(
+      Position source,
+      Position dest,
+      ColoredPiece piece,
+      boolean isTake,
+      ColoredPiece takenPiece,
+      boolean isCheck,
+      boolean isCheckMate) {
+    Logging.configureLogging(LOGGER);
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
+    this.takenPiece = takenPiece;
+    this.isCheck = isCheck;
+    this.isCheckMate = isCheckMate;
+  }
+
   /**
    * Parses a string representation of a move and converts it into a {@code Move} object
    *
@@ -71,6 +89,14 @@ public class Move {
     String[] parts = stringMove.split("-");
     if (parts.length != 2) {
       throw new MoveParsingException(stringMove);
+    }
+
+    String[] promoteParts = parts[1].split("=");
+    if (promoteParts.length == 2) {
+      return new PromoteMove(
+          stringToPosition(parts[0]),
+          stringToPosition(promoteParts[0]),
+          stringToPiece(promoteParts[1]));
     }
     return new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
   }
@@ -101,6 +127,25 @@ public class Move {
     return new Position(x, y);
   }
 
+  public static Piece stringToPiece(String pieceStr) {
+    switch (pieceStr.toLowerCase()) {
+      case "p":
+        return Piece.PAWN;
+      case "n":
+        return Piece.KNIGHT;
+      case "b":
+        return Piece.BISHOP;
+      case "r":
+        return Piece.ROOK;
+      case "q":
+        return Piece.QUEEN;
+      case "k":
+        return Piece.KING;
+      default:
+        throw new IllegalArgumentException("Invalid piece string: " + pieceStr);
+    }
+  }
+
   /**
    * Converts a {@code Position} object into its string representation in chess notation
    *
@@ -124,6 +169,17 @@ public class Move {
   public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
     for (Move move : availableMoves) {
       if (move.equals(this)) {
+        if (this instanceof PromoteMove) {
+          return new PromoteMove(
+              move.source,
+              move.dest,
+              ((PromoteMove) this).getPromPiece(),
+              move.piece,
+              move.isTake,
+              move.takenPiece,
+              move.isCheck,
+              move.isCheckMate);
+        }
         return move;
       }
     }
@@ -196,7 +252,7 @@ public class Move {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
-    if (obj == null || getClass() != obj.getClass()) return false;
+    if (obj == null || !(obj instanceof Move)) return false;
     Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }

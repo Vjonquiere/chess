@@ -250,7 +250,7 @@ public class GameState extends Subject {
     // Loss on time
     if (playerLosesOnTime()) {
       // if insufficient material for enemy then draw else win
-      if (board.getBoard().hasEnoughMaterialToMate(currPlayerWhite)) {
+      if (board.getBoardRep().hasEnoughMaterialToMate(currPlayerWhite)) {
         this.isGameOver = true;
         DEBUG(LOGGER, "End of game : Loss on time + insufficient material, Draw");
         notifyObservers(EventType.DRAW);
@@ -274,7 +274,7 @@ public class GameState extends Subject {
       return;
     }
     // Checkmate
-    if (board.getBoard().isCheckMate(currColor)) {
+    if (board.getBoardRep().isCheckMate(currColor)) {
       this.isGameOver = true;
       if (currColor == Color.WHITE) {
         DEBUG(LOGGER, "End of game : Checkmate, Black won");
@@ -286,14 +286,14 @@ public class GameState extends Subject {
       return;
     }
     // Stalemate
-    if (board.getBoard().isStaleMate(currColor, currColor)) {
+    if (board.getBoardRep().isStaleMate(currColor, currColor)) {
       this.isGameOver = true;
       DEBUG(LOGGER, "End of game : Stale mate, Draw");
       notifyObservers(EventType.DRAW);
       return;
     }
     // Draw by insufficient material
-    if (board.getBoard().isDrawByInsufficientMaterial()) {
+    if (board.getBoardRep().isDrawByInsufficientMaterial()) {
       DEBUG(LOGGER, "End of game : Insufficient material, Draw");
       this.isGameOver = true;
       notifyObservers(EventType.DRAW);

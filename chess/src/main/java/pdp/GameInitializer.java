@@ -22,7 +22,7 @@ import pdp.view.GameView;
 import pdp.view.View;
 
 public abstract class GameInitializer {
-
+  // TODO Internationalization
   /**
    * Initialize the game with the given options.
    *
@@ -105,7 +105,7 @@ public abstract class GameInitializer {
         List<Move> moves = new ArrayList<>();
 
         for (String move : moveStrings) {
-          moves.add(Move.fromString(move));
+          moves.add(Move.fromString(move.replace("x", "-")));
         }
 
         model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver);

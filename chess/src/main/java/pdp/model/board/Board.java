@@ -43,9 +43,16 @@ public class Board {
     return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
+  public boolean getPlayer() {
+    return this.isWhite;
+  }
+
+  public void setPlayer(boolean isWhite) {
+    this.isWhite = isWhite;
+  }
+
   /**
    * Executes a given move on the board, handling captures, en passant, castling, pawn promotion,
-   * and turn switching
    *
    * @param move The move to be executed
    */
@@ -98,12 +105,12 @@ public class Board {
       this.blackLongCastle = false;
     }
     if (board.isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
-      // Piece newPiece = new Piece(ask to what the user want to promote his pawn)
+      Piece newPiece = ((PromoteMove) move).getPromPiece();
       board.promotePawn(
           move.dest.getX(),
           move.dest.getY(),
           this.isWhite,
-          Piece.QUEEN); // replace Piece.QUEEN by newPiece
+          newPiece); // replace Piece.QUEEN by newPiece
     }
 
     if (isLastMoveDoublePush) {
@@ -113,10 +120,6 @@ public class Board {
     if (this.isEnPassantTake) {
       this.isLastMoveDoublePush = false;
     }
-
-    this.isWhite = !this.isWhite;
-
-    move.toString();
   }
 
   public Board getCopy() {
@@ -124,7 +127,7 @@ public class Board {
     throw new UnsupportedOperationException();
   }
 
-  public BoardRepresentation getBoard() {
+  public BoardRepresentation getBoardRep() {
     return board;
   }
 
@@ -284,7 +287,6 @@ public class Board {
       this.board.movePiece(e1Square, g1Square);
       // Move rook
       this.board.movePiece(h1Square, f1Square);
-      this.isWhite = false;
 
     } else {
       Position e8Square = new Position(4, 7);
@@ -295,7 +297,6 @@ public class Board {
       this.board.movePiece(e8Square, g8Square);
       // Move rook
       this.board.movePiece(h8Square, f8Square);
-      this.isWhite = true;
     }
   }
 
@@ -314,8 +315,6 @@ public class Board {
       this.board.movePiece(e1Square, c1Square);
       // Move rook
       this.board.movePiece(a1Square, d1Square);
-      this.isWhite = false;
-
     } else {
       Position e8Square = new Position(4, 7);
       Position d8Square = new Position(3, 7);
@@ -325,7 +324,6 @@ public class Board {
       this.board.movePiece(e8Square, c8Square);
       // Move rook
       this.board.movePiece(a8Square, d8Square);
-      this.isWhite = true;
     }
   }
 
