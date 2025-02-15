@@ -3,8 +3,10 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import pdp.exceptions.InvalidPromoteException;
 import pdp.model.*;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.piece.Color;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
@@ -595,7 +597,7 @@ public class BoardTest {
     Move move8 = new Move(new Position(6, 6), new Position(6, 5));
     game.playMove(move8);
 
-    Move move9 = new Move(new Position(2, 6), new Position(1, 7));
+    PromoteMove move9 = new PromoteMove(new Position(2, 6), new Position(1, 7), Piece.QUEEN);
     game.playMove(move9);
 
     assertEquals(Piece.QUEEN, game.getGameState().getBoard().getBoard().getPieceAt(1, 7).piece);
@@ -611,39 +613,73 @@ public class BoardTest {
   public void boardPromotionQueenBlackTest() {
     game = Game.initialize(false, false, null, null);
 
-    Move move1 = new Move(new Position(4, 1), new Position(4, 3)); // b
+    Move move1 = new Move(new Position(4, 1), new Position(4, 3)); // w
     game.playMove(move1);
-    Move move2 = new Move(new Position(3, 6), new Position(3, 4)); // n
+    Move move2 = new Move(new Position(3, 6), new Position(3, 4)); // b
     game.playMove(move2);
 
-    Move move3 = new Move(new Position(4, 3), new Position(4, 4)); // b
+    Move move3 = new Move(new Position(4, 3), new Position(4, 4)); // w
     game.playMove(move3);
-    Move move4 = new Move(new Position(3, 4), new Position(3, 3)); // n
+    Move move4 = new Move(new Position(3, 4), new Position(3, 3)); // b
     game.playMove(move4);
 
-    Move move5 = new Move(new Position(2, 1), new Position(2, 3)); // b
+    Move move5 = new Move(new Position(2, 1), new Position(2, 3)); // w
     game.playMove(move5);
-    Move move6 = new Move(new Position(3, 3), new Position(2, 2)); // n
+    Move move6 = new Move(new Position(3, 3), new Position(2, 2)); // b
     game.playMove(move6);
 
-    Move move7 = new Move(new Position(3, 1), new Position(3, 2)); // b
+    Move move7 = new Move(new Position(3, 1), new Position(3, 2)); // w
     game.playMove(move7);
-    Move move8 = new Move(new Position(2, 2), new Position(2, 1)); // n
+    Move move8 = new Move(new Position(2, 2), new Position(2, 1)); // b
     game.playMove(move8);
 
-    Move move9 = new Move(new Position(3, 2), new Position(3, 3)); // b
+    Move move9 = new Move(new Position(3, 2), new Position(3, 3)); // w
     game.playMove(move9);
-    Move move10 = new Move(new Position(2, 1), new Position(1, 0)); // n
+    PromoteMove move10 = new PromoteMove(new Position(2, 1), new Position(1, 0), Piece.QUEEN); // b
     game.playMove(move10);
 
     assertEquals(Piece.QUEEN, game.getGameState().getBoard().getBoard().getPieceAt(1, 0).piece);
 
-    Move move15 = new Move(new Position(3, 3), new Position(3, 4)); // b
+    Move move15 = new Move(new Position(3, 3), new Position(3, 4)); // w
     game.playMove(move15);
-    Move move16 = new Move(new Position(1, 0), new Position(3, 2)); // n
+    Move move16 = new Move(new Position(1, 0), new Position(3, 2)); // b
     game.playMove(move16);
 
     assertEquals(Piece.EMPTY, game.getGameState().getBoard().getBoard().getPieceAt(1, 0).piece);
     assertEquals(Piece.QUEEN, game.getGameState().getBoard().getBoard().getPieceAt(3, 2).piece);
+  }
+
+  @Test
+  public void exceptionOnPromotionWithoutTargetPiece() {
+    game = Game.initialize(false, false, null, null);
+
+    Move move1 = new Move(new Position(4, 1), new Position(4, 3)); // w
+    game.playMove(move1);
+    Move move2 = new Move(new Position(3, 6), new Position(3, 4)); // b
+    game.playMove(move2);
+
+    Move move3 = new Move(new Position(4, 3), new Position(4, 4)); // w
+    game.playMove(move3);
+    Move move4 = new Move(new Position(3, 4), new Position(3, 3)); // b
+    game.playMove(move4);
+
+    Move move5 = new Move(new Position(2, 1), new Position(2, 3)); // w
+    game.playMove(move5);
+    Move move6 = new Move(new Position(3, 3), new Position(2, 2)); // b
+    game.playMove(move6);
+
+    Move move7 = new Move(new Position(3, 1), new Position(3, 2)); // w
+    game.playMove(move7);
+    Move move8 = new Move(new Position(2, 2), new Position(2, 1)); // b
+    game.playMove(move8);
+
+    Move move9 = new Move(new Position(3, 2), new Position(3, 3)); // w
+    game.playMove(move9);
+    Move move10 = new Move(new Position(2, 1), new Position(1, 0)); // b
+    assertThrows(
+        InvalidPromoteException.class,
+        () -> {
+          game.playMove(move10);
+        });
   }
 }

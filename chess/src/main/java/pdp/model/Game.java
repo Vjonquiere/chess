@@ -12,9 +12,11 @@ import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPromoteException;
 import pdp.model.ai.Solver;
 import pdp.model.board.Board;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
@@ -136,23 +138,27 @@ public class Game extends Subject {
    * @param move The move to be executed.
    * @throws IllegalMoveException If the move is not legal.
    */
-  public void playMove(Move move) throws IllegalMoveException {
+  public void playMove(Move move) throws IllegalMoveException, InvalidPromoteException {
     Position sourcePosition = new Position(move.source.getX(), move.source.getY());
     Position destPosition = new Position(move.dest.getX(), move.dest.getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
-    try {
-      if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
-                  == Color.WHITE
-              && !this.gameState.getBoard().isWhite)
-          || this.gameState
-                      .getBoard()
-                      .board
-                      .getPieceAt(move.source.getX(), move.source.getY())
-                      .color
-                  == Color.BLACK
-              && this.gameState.getBoard().isWhite) {
-        throw new IllegalMoveException("Not your piece " + move.toString());
+
+    if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
+                == Color.WHITE
+            && !this.gameState.getBoard().isWhite)
+        || this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
+                == Color.BLACK
+            && this.gameState.getBoard().isWhite) {
+      throw new IllegalMoveException("Not your piece " + move.toString());
+    }
+
+    if (this.isPromotionMove(move)) {
+      if (!(move instanceof PromoteMove)) {
+        throw new InvalidPromoteException();
       }
+    }
+
+    try {
 
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
       Move classicalMove = move.isMoveClassical(availableMoves);
@@ -171,6 +177,9 @@ public class Game extends Subject {
         throw new IllegalMoveException("Move puts the king in check " + classicalMove.toString());
       }
 
+      this.gameState.getBoard().makeMove(classicalMove);
+      DEBUG(LOGGER, "Move played!");
+
       if (this.gameState.getBoard().isWhite) {
         this.gameState.incrementsFullTurn();
       }
@@ -178,9 +187,6 @@ public class Game extends Subject {
       this.history.addMove(
           new HistoryState(
               classicalMove, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
-
-      this.gameState.getBoard().makeMove(classicalMove);
-      DEBUG(LOGGER, "Move played!");
 
       // Check game status after the classical move was played
       this.gameState.switchPlayerTurn();
@@ -200,6 +206,7 @@ public class Game extends Subject {
       this.notifyObservers(EventType.MOVE_PLAYED);
 
     } catch (Exception e) {
+
       DEBUG(LOGGER, "The specified move is not classical -> searching for special move...");
       boolean isSpecialMove = false;
 
@@ -430,6 +437,20 @@ public class Game extends Subject {
     sb.append("\n");
 
     return sb.toString();
+  }
+
+  public boolean isPromotionMove(Move move) {
+    if (this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).piece
+        != Piece.PAWN) {
+      return false;
+    }
+    if (this.gameState.isWhiteTurn() && move.dest.getY() == 7) {
+      return true;
+    }
+    if (!this.gameState.isWhiteTurn() && move.dest.getY() == 0) {
+      return true;
+    }
+    return false;
   }
 
   public static Game getInstance() {

@@ -98,12 +98,12 @@ public class Board {
       this.blackLongCastle = false;
     }
     if (board.isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
-      // Piece newPiece = new Piece(ask to what the user want to promote his pawn)
+      Piece newPiece = ((PromoteMove) move).getPromPiece();
       board.promotePawn(
           move.dest.getX(),
           move.dest.getY(),
           this.isWhite,
-          Piece.QUEEN); // replace Piece.QUEEN by newPiece
+          newPiece); // replace Piece.QUEEN by newPiece
     }
 
     if (isLastMoveDoublePush) {
