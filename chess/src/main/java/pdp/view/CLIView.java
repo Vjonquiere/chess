@@ -15,6 +15,7 @@ import pdp.controller.commands.SaveGameCommand;
 import pdp.events.EventType;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
+import pdp.exceptions.InvalidPromoteException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
@@ -114,7 +115,8 @@ public class CLIView implements View {
   public void onErrorEvent(Exception e) {
     if (e instanceof IllegalMoveException
         || e instanceof MoveParsingException
-        || e instanceof InvalidPositionException) {
+        || e instanceof InvalidPositionException
+        || e instanceof InvalidPromoteException) {
       System.out.println(e.getMessage());
     } else {
       System.err.println(e);
