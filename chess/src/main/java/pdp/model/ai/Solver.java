@@ -98,7 +98,7 @@ public class Solver {
    */
   private int evaluationDumb(Board board, boolean isWhite) {
     int score = 0;
-    if (!(board.getBoard() instanceof BitboardRepresentation bitboardRepresentation))
+    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation))
       throw new RuntimeException("Only available for bitboards");
     score +=
         bitboardRepresentation.getPawns(isWhite).size()

@@ -18,13 +18,13 @@ public class GameTest {
     BitboardRepresentation bitboards = new BitboardRepresentation();
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     bitboards.movePiece(new Position(0, 1), new Position(0, 2));
-    assertEquals(game.getBoard().getBoard(), bitboards);
+    assertEquals(game.getBoard().getBoardRep(), bitboards);
 
     // Play move only in game
     game.playMove(new Move(new Position(1, 6), new Position(1, 5)));
-    assertNotEquals(game.getBoard().getBoard(), bitboards);
+    assertNotEquals(game.getBoard().getBoardRep(), bitboards);
     bitboards.movePiece(new Position(1, 6), new Position(1, 5)); // Play move in bitboards
-    assertEquals(game.getBoard().getBoard(), bitboards);
+    assertEquals(game.getBoard().getBoardRep(), bitboards);
 
     // Tests to add
     // 6. try a move that is not a classical or special move
@@ -42,7 +42,7 @@ public class GameTest {
     bitboards.deletePieceAt(1, 6);
     bitboards.movePiece(new Position(0, 1), new Position(1, 5));
     bitboards.movePiece(new Position(0, 6), new Position(0, 5));
-    assertEquals(bitboards, game.getBoard().getBoard());
+    assertEquals(bitboards, game.getBoard().getBoardRep());
   }
 
   @Test
@@ -70,7 +70,7 @@ public class GameTest {
     game.playMove(new Move(new Position(1, 1), new Position(1, 3)));
     BitboardRepresentation bitboards = new BitboardRepresentation();
     bitboards.movePiece(new Position(1, 1), new Position(1, 3));
-    assertEquals(bitboards, game.getBoard().getBoard());
+    assertEquals(bitboards, game.getBoard().getBoardRep());
   }
 
   @Test

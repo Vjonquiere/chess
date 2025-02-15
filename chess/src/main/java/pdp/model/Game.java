@@ -159,7 +159,6 @@ public class Game extends Subject {
     }
 
     try {
-
       List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
       Move classicalMove = move.isMoveClassical(availableMoves);
 
@@ -190,6 +189,7 @@ public class Game extends Subject {
 
       // Check game status after the classical move was played
       this.gameState.switchPlayerTurn();
+      this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
       this.gameState.setSimplifiedZobristHashing(
           zobristHashing.updateSimplifiedHashFromBitboards(
               this.gameState.getSimplifiedZobristHashing(), getBoard(), classicalMove));
@@ -226,15 +226,8 @@ public class Game extends Subject {
           // Check if castle is possible
           if (this.gameState.getBoard().canCastle(color, shortCastleIsAsked)) {
             // If castle is possible then apply changes
-            if (this.gameState.getBoard().isWhite) {
-              this.gameState.incrementsFullTurn();
-            }
             this.gameState.getBoard().applyCastle(color, shortCastleIsAsked);
             isSpecialMove = true;
-
-            this.history.addMove(
-                new HistoryState(
-                    move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
           }
         }
       }
@@ -263,14 +256,8 @@ public class Game extends Subject {
         this.gameState.getBoard().enPassantPos = null;
         this.gameState.getBoard().isEnPassantTake = true;
 
-        if (this.gameState.getBoard().isWhite) {
-          this.gameState.incrementsFullTurn();
-        }
         move.piece = coloredPiece;
         move.isTake = true;
-        this.history.addMove(
-            new HistoryState(
-                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
       }
 
@@ -294,13 +281,8 @@ public class Game extends Subject {
             this.gameState.getBoard().isWhite
                 ? new Position(move.dest.getX(), move.dest.getY() - 1)
                 : new Position(move.dest.getX(), move.dest.getY() + 1);
-        if (this.gameState.getBoard().isWhite) {
-          this.gameState.incrementsFullTurn();
-        }
+
         move.piece = coloredPiece;
-        history.addMove(
-            new HistoryState(
-                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
         this.gameState.getBoard().makeMove(move);
 
         this.gameState.getBoard().isLastMoveDoublePush = true;
@@ -315,11 +297,18 @@ public class Game extends Subject {
       // Checks if it is checkmate or stalemate, and more generally if the game is over. If so, end
       // the game accordingly.
 
-      // Reasons for being here: the move played could be castling, en passant,doublePawnPush or an
-      // illegal move.
+      // Reasons for being here: the move played could be castling, en passant,doublePawnPush
+
+      if (this.gameState.getBoard().isWhite) {
+        this.gameState.incrementsFullTurn();
+      }
+
+      this.history.addMove(
+          new HistoryState(move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
 
       // Check game status after the special move was played
       this.gameState.switchPlayerTurn();
+      this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
       this.gameState.setSimplifiedZobristHashing(
           zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
 
