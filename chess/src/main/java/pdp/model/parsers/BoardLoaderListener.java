@@ -41,19 +41,22 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
           new Bitboard(0L),
           new Bitboard(0L),
           new Bitboard(0L));
-  int y = 8;
-  int x = 0;
+  private int y = 8;
+  private int x = 0;
+  private boolean whiteTurn;
 
-  public BitboardRepresentation getResult() {
-    return bitboardRepresentation;
+  /**
+   * Get the result of the parsing
+   *
+   * @return The board and current player parsed
+   */
+  public FileBoard getResult() {
+    return new FileBoard(bitboardRepresentation, whiteTurn);
   }
 
   @Override
   public void enterPlayer(BoardLoaderParser.PlayerContext ctx) {
-    if (Objects.equals(ctx.PLAYER_COLOR().getText(), "W")) {
-      // Set current player to white
-      return;
-    }
+    whiteTurn = Objects.equals(ctx.PLAYER_COLOR().getText(), "W");
   }
 
   @Override
@@ -68,7 +71,14 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
       x++;
       return;
     }
-    bitboardRepresentation.setSquare(pieces.get(ctx.getText()), x + (y * 8));
+    ColoredPiece piece = pieces.get(ctx.getText());
+    int square = (x + (y * 8));
+    if (piece == null) {
+      throw new RuntimeException(
+          "Piece `" + ctx.getText() + "` at square " + square + " is not recognized");
+    } else {
+      bitboardRepresentation.setSquare(piece, square);
+    }
     x++;
   }
 }

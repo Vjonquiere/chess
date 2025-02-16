@@ -21,9 +21,9 @@ public class SolverTest {
   }
 
   @Test
-  public void testEvaluationDumb() {
+  public void testEvaluationMaterial() {
     Game game = Game.initialize(false, false, null, null);
-    solver.setHeuristic(HeuristicType.DUMB);
+    solver.setHeuristic(HeuristicType.MATERIAL);
     assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
 
     game.playMove(new Move(new Position(4, 1), new Position(4, 2)));
@@ -58,7 +58,7 @@ public class SolverTest {
   public void testEvaluationErrorBoardNonBitboardRepresentation() {
     MockBoard board = new MockBoard();
 
-    solver.setHeuristic(HeuristicType.DUMB);
+    solver.setHeuristic(HeuristicType.MATERIAL);
 
     Exception exception =
         assertThrows(
@@ -72,7 +72,7 @@ public class SolverTest {
   @Test
   public void testEvaluationHash() {
     Game game = Game.initialize(false, false, null, null);
-    solver.setHeuristic(HeuristicType.DUMB);
+    solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
     int score1 = solver.evaluateBoard(game.getBoard(), true);
     game.playMove(new Move(new Position(1, 0), new Position(2, 2)));

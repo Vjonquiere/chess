@@ -580,6 +580,25 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Generate the possible moves for a player. This function do not apply special rules (castling,
+   * pinned, ...)
+   *
+   * @param isWhite {true} if pawn is white, {false} if pawn is black
+   * @return The list of possible moves (without special cases)
+   */
+  @Override
+  public List<Move> getAllAvailableMoves(boolean isWhite) {
+    DEBUG(LOGGER, "Getting all available moves for a player");
+    Bitboard pieces = isWhite ? getWhiteBoard() : getBlackBoard();
+    List<Move> moves = new ArrayList<>();
+    for (Integer i : pieces.getSetBits()) {
+      Position piecePosition = squareToPosition(i);
+      moves.addAll(getAvailableMoves(piecePosition.getX(), piecePosition.getY(), false));
+    }
+    return moves;
+  }
+
+  /**
    * Delete the piece contained at the given position
    *
    * @param x The board column

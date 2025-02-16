@@ -16,7 +16,7 @@ import pdp.events.EventType;
 import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
-import pdp.exceptions.InvalidPromoteException;
+import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
@@ -121,7 +121,8 @@ public class CLIView implements View {
         || e instanceof MoveParsingException
         || e instanceof InvalidPositionException
         || e instanceof InvalidPromoteException
-        || e instanceof FailedSaveException) {
+        || e instanceof FailedSaveException
+        || e instanceof InvalidPromoteFormatException) {
       System.out.println(e.getMessage());
     } else {
       System.err.println(e);
