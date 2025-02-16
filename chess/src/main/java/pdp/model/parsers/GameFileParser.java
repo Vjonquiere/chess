@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
 import pdp.BoardLoaderParser;
 import pdp.model.board.BitboardRepresentation;
+import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
 public class GameFileParser {
@@ -36,6 +37,12 @@ public class GameFileParser {
     return fileContent.toString();
   }
 
+  /**
+   * GAME CAN CRASH IF NO KING
+   *
+   * @param fileName
+   * @return
+   */
   public BitboardRepresentation parseGameFile(String fileName) {
     String content;
     try {
@@ -59,9 +66,17 @@ public class GameFileParser {
       BoardLoaderListener listener = new BoardLoaderListener();
       walker.walk(listener, tree);
       DEBUG(LOGGER, "Board built successfully");
-      return listener.getResult();
+      BitboardRepresentation result = listener.getResult();
+      if (result.getKing(true).size() != 1
+          || result.getKing(false).size() != 1
+          || result.isCheckMate(Color.WHITE)
+          || result.isCheckMate(Color.BLACK)) {
+        throw new RuntimeException(
+            "Board do not satisfy load requirements (no check mate and one king by player)");
+      }
+      return result;
     } catch (Exception e) {
-      System.out.println("Failed to parse file: " + e.getMessage());
+      System.out.println("Failed to build board: " + e.getMessage());
       return new BitboardRepresentation();
     }
   }

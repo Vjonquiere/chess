@@ -21,7 +21,7 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationCLI() {
-    GameController controller = GameInitializer.initialize(options);
+    GameController controller = GameInitializer.initialize(options, null);
     assertNotNull(controller);
     assertTrue(controller.getView() instanceof CLIView);
   }

@@ -23,12 +23,14 @@ public class GameFileParserTest {
 
   @Test
   public void parseEmptyGameFile() {
+    /* Loading an empty game is not possible,
+       the result should be a default board
+    */
     GameFileParser parser = new GameFileParser();
     ClassLoader classLoader = getClass().getClassLoader();
     URL filePath = classLoader.getResource("gameBoards/emptyGame");
     BoardRepresentation board = parser.parseGameFile(filePath.getPath());
-    assertNotEquals(new BitboardRepresentation(), board);
-    assertEquals(
+    assertNotEquals(
         new BitboardRepresentation(
             new Bitboard(0L),
             new Bitboard(0L),
@@ -43,6 +45,16 @@ public class GameFileParserTest {
             new Bitboard(0L),
             new Bitboard(0L)),
         board);
+    assertEquals(new BitboardRepresentation(), board);
+  }
+
+  @Test
+  public void parseWrongBoardFile() {
+    GameFileParser parser = new GameFileParser();
+    ClassLoader classLoader = getClass().getClassLoader();
+    URL filePath = classLoader.getResource("gameBoards/wrongBoard");
+    BoardRepresentation board = parser.parseGameFile(filePath.getPath());
+    assertEquals(new BitboardRepresentation(), board);
   }
 
   @Test
