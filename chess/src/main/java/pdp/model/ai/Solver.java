@@ -3,9 +3,12 @@ package pdp.model.ai;
 import static pdp.utils.Logging.DEBUG;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
+import pdp.model.Game;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
+import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 
@@ -14,8 +17,9 @@ public class Solver {
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private ZobristHashing zobristHashing = new ZobristHashing();
   private HashMap<Long, Integer> evaluatedBoards;
+  private Move bestMove;
 
-  AlgorithmType algorithm;
+  AlgorithmType algorithm = AlgorithmType.MINIMAX;
   HeuristicType heuristic = HeuristicType.MATERIAL;
   int depth = 3;
   int time = 500;
@@ -61,6 +65,79 @@ public class Solver {
     this.time = time;
   }
 
+  public void playAIMove(Game game) {
+    int score;
+    Board board = game.getBoard();
+    boolean player = false;
+    switch (algorithm) {
+      case MINIMAX:
+        DEBUG(LOGGER, "Using Minimax algorithm");
+        score = maxMin(game, depth, player);
+        break;
+      case ALPHA_BETA:
+        DEBUG(LOGGER, "Using Alpha Beta algorithm");
+        break;
+      case MCTS:
+        DEBUG(LOGGER, "Using Monte Carlo Tree Search algorithm");
+        break;
+      default:
+        throw new IllegalArgumentException("No algorithm is set");
+    }
+    game.playMove(bestMove);
+  }
+
+  /**
+   * Assigns to best-move the move that maximizes the player's score. Part of Minimax algorithm
+   *
+   * @param game current game
+   * @param depth number of moves to be played
+   * @param player current player
+   * @return score of the best move for the player
+   */
+  public int maxMin(Game game, int depth, boolean player) {
+    if (depth == 0 || game.isOver()) {
+      return evaluateBoard(game.getBoard(), player);
+    }
+    int bestScore = Integer.MIN_VALUE;
+    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
+    for (Move move : moves) {
+      game.playMove(move);
+      int score = minMax(game, depth - 1, !player);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = move;
+      }
+      game.previousState();
+    }
+    return bestScore;
+  }
+
+  /**
+   * Assigns to best-move the move that minimizes the player's score. Part of Minimax algorithm
+   *
+   * @param game current game
+   * @param depth number of moves to be played
+   * @param player current player
+   * @return score of the best move for the player
+   */
+  public int minMax(Game game, int depth, boolean player) {
+    if (depth == 0 || game.isOver()) {
+      return evaluateBoard(game.getBoard(), player);
+    }
+    int bestScore = Integer.MAX_VALUE;
+    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
+    for (Move move : moves) {
+      game.playMove(move);
+      int score = maxMin(game, depth - 1, !player);
+      if (score < bestScore) {
+        bestScore = score;
+        bestMove = move;
+      }
+      game.previousState();
+    }
+    return bestScore;
+  }
+
   /**
    * Evaluates the board based on the chosen heuristic.
    *
@@ -79,7 +156,7 @@ public class Solver {
     }
     switch (heuristic) {
       case MATERIAL:
-        DEBUG(LOGGER, "Evaluate board position with heuristic type DUMB");
+        DEBUG(LOGGER, "Evaluate board position with heuristic type MATERIAL");
         score = evaluationMaterial(board, isWhite);
         break;
       default:

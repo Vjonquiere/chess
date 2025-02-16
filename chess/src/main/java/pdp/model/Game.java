@@ -394,6 +394,10 @@ public class Game extends Subject {
     return instance;
   }
 
+  public void previousState() {
+    // TODO: restore previous state from history
+  }
+
   /**
    * Returns a string representation of the game. Includes the ASCII representation of the board,
    * the time remaining (if timer is not null), and the color of the player to play.
