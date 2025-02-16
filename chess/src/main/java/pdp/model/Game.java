@@ -18,9 +18,11 @@ import pdp.model.ai.Solver;
 import pdp.model.board.*;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
+import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
+import pdp.model.savers.BoardSaver;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -140,7 +142,7 @@ public class Game extends Subject {
    * @return The newly created instance of Game.
    */
   public static Game initialize(
-      boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, BoardRepresentation board) {
+      boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, FileBoard board) {
     DEBUG(LOGGER, "Initializing Game from given board...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board), new History());
     DEBUG(LOGGER, "Game initialized!");
@@ -355,10 +357,14 @@ public class Game extends Subject {
   }
 
   public void saveGame(String path) {
+    String board =
+        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite), path);
     String gameStr = this.history.toAlgebricString();
 
+    String game = board + "\n" + gameStr;
+
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-      writer.write(gameStr);
+      writer.write(game);
     } catch (IOException e) {
       System.err.println("Error writing to file: " + e.getMessage());
     }

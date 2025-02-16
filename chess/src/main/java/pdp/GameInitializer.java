@@ -14,8 +14,8 @@ import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.model.Timer;
 import pdp.model.ai.Solver;
-import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.parsers.FileBoard;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.view.CLIView;
@@ -30,8 +30,7 @@ public abstract class GameInitializer {
    * @param options The options to use to initialize the game.
    * @return A new GameController instance.
    */
-  public static GameController initialize(
-      HashMap<OptionType, String> options, BoardRepresentation board) {
+  public static GameController initialize(HashMap<OptionType, String> options, FileBoard board) {
 
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
@@ -123,9 +122,9 @@ public abstract class GameInitializer {
       }
     } else {
       if (board == null) {
-        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer); // Create a new board
       } else {
-        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board);
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board); // Loading a board
       }
     }
 

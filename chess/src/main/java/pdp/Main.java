@@ -3,8 +3,8 @@ package pdp;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.controller.GameController;
-import pdp.model.board.BoardRepresentation;
-import pdp.model.parsers.GameFileParser;
+import pdp.model.parsers.BoardFileParser;
+import pdp.model.parsers.FileBoard;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
@@ -19,9 +19,9 @@ public class Main {
     System.out.println(TextGetter.getText("title"));
     System.out.println("options: " + options.toString());
 
-    BoardRepresentation board = null;
+    FileBoard board = null;
     if (args[args.length - 1].charAt(0) != '-') {
-      GameFileParser parser = new GameFileParser();
+      BoardFileParser parser = new BoardFileParser();
       board = parser.parseGameFile(args[args.length - 1]);
     }
 

@@ -16,13 +16,20 @@ import pdp.model.board.BitboardRepresentation;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
-public class GameFileParser {
-  private static final Logger LOGGER = Logger.getLogger(GameFileParser.class.getName());
+public class BoardFileParser {
+  private static final Logger LOGGER = Logger.getLogger(BoardFileParser.class.getName());
 
-  public GameFileParser() {
+  public BoardFileParser() {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Get the string contained in the given file
+   *
+   * @param path The path to the file
+   * @return The content of the given file has a String
+   * @throws FileNotFoundException
+   */
   public String readFile(String path) throws FileNotFoundException {
     DEBUG(LOGGER, "Loading file: " + path);
     StringBuilder fileContent = new StringBuilder();
@@ -38,19 +45,22 @@ public class GameFileParser {
   }
 
   /**
-   * GAME CAN CRASH IF NO KING
+   * Generate the board and player turn from the given file. If something went wrong at any step,
+   * the returned board is the start position and current player is set to White. To be load, the
+   * board need to have a king by side, and no one can be checkmate
    *
-   * @param fileName
-   * @return
+   * @param fileName The file path
+   * @return The corresponding board and current player
    */
-  public BitboardRepresentation parseGameFile(String fileName) {
+  public FileBoard parseGameFile(String fileName) {
     String content;
     try {
       content = readFile(fileName);
     } catch (FileNotFoundException e) {
       System.out.println("File not found, loading default game");
-      return new BitboardRepresentation();
+      return new FileBoard(new BitboardRepresentation(), true);
     }
+    content = content.split("1\\.")[0].trim(); // Removing history if present
     try {
       DEBUG(LOGGER, "Converting file to charStream...");
       CharStream charStream = CharStreams.fromString(content);
@@ -66,18 +76,18 @@ public class GameFileParser {
       BoardLoaderListener listener = new BoardLoaderListener();
       walker.walk(listener, tree);
       DEBUG(LOGGER, "Board built successfully");
-      BitboardRepresentation result = listener.getResult();
-      if (result.getKing(true).size() != 1
-          || result.getKing(false).size() != 1
-          || result.isCheckMate(Color.WHITE)
-          || result.isCheckMate(Color.BLACK)) {
+      FileBoard result = listener.getResult();
+      if (result.board().getKing(true).size() != 1
+          || result.board().getKing(false).size() != 1
+          || result.board().isCheckMate(Color.WHITE)
+          || result.board().isCheckMate(Color.BLACK)) {
         throw new RuntimeException(
             "Board do not satisfy load requirements (no check mate and one king by player)");
       }
       return result;
     } catch (Exception e) {
       System.out.println("Failed to build board: " + e.getMessage());
-      return new BitboardRepresentation();
+      return new FileBoard(new BitboardRepresentation(), true);
     }
   }
 }

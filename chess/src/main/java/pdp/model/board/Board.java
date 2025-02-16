@@ -3,6 +3,7 @@ package pdp.model.board;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.Piece;
 import pdp.utils.Logging;
@@ -44,10 +45,10 @@ public class Board {
    *
    * @param board The board state to use
    */
-  public Board(BoardRepresentation board) {
+  public Board(FileBoard board) {
     Logging.configureLogging(LOGGER);
-    this.board = board;
-    this.isWhite = true;
+    this.board = board.board();
+    this.isWhite = board.isWhiteTurn();
     this.enPassantPos = null;
     this.whiteShortCastle = true;
     this.blackShortCastle = true;

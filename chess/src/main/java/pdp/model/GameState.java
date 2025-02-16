@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.model.board.Board;
-import pdp.model.board.BoardRepresentation;
+import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
@@ -64,10 +64,10 @@ public class GameState extends Subject {
    *
    * @param board The board to use
    */
-  public GameState(BoardRepresentation board) {
+  public GameState(FileBoard board) {
     Logging.configureLogging(LOGGER);
     this.isGameOver = false;
-    this.isWhiteTurn = true;
+    this.isWhiteTurn = board.isWhiteTurn();
     this.whiteResigns = false;
     this.blackResigns = false;
     this.whiteWantsToDraw = false;
