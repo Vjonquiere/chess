@@ -15,6 +15,7 @@ import pdp.model.Game;
 import pdp.model.Timer;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
+import pdp.model.parsers.FileBoard;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.view.CLIView;
@@ -29,7 +30,7 @@ public abstract class GameInitializer {
    * @param options The options to use to initialize the game.
    * @return A new GameController instance.
    */
-  public static GameController initialize(HashMap<OptionType, String> options) {
+  public static GameController initialize(HashMap<OptionType, String> options, FileBoard board) {
 
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
@@ -120,7 +121,11 @@ public abstract class GameInitializer {
         model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
       }
     } else {
-      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+      if (board == null) {
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer); // Create a new board
+      } else {
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board); // Loading a board
+      }
     }
 
     View view;
