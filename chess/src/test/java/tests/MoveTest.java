@@ -89,6 +89,15 @@ public class MoveTest {
             false);
 
     assertEquals("Qe2xd3+", move.toAlgebraicString());
+
+    source = new Position(4, 1); // "e2"
+    dest = new Position(4, 3); // "e4"
+
+    move =
+        new Move(
+            source, dest, new ColoredPiece(Piece.PAWN, Color.WHITE), false, null, false, false);
+
+    assertEquals("e2-e4", move.toAlgebraicString());
   }
 
   @Test
