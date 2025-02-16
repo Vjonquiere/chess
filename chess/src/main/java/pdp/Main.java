@@ -3,8 +3,6 @@ package pdp;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.controller.GameController;
-import pdp.model.parsers.BoardFileParser;
-import pdp.model.parsers.FileBoard;
 import pdp.utils.CLIOptions;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
@@ -19,17 +17,11 @@ public class Main {
     System.out.println(TextGetter.getText("title"));
     System.out.println("options: " + options.toString());
 
-    FileBoard board = null;
-    if (args[args.length - 1].charAt(0) != '-') {
-      BoardFileParser parser = new BoardFileParser();
-      board = parser.parseGameFile(args[args.length - 1], Runtime.getRuntime());
-    }
-
     if (options.containsKey(OptionType.CONTEST)) {
       throw new UnsupportedOperationException("Contest mode not implemented");
     }
 
-    GameController controller = GameInitializer.initialize(options, board);
+    GameController controller = GameInitializer.initialize(options);
     Thread viewThread = controller.getView().start();
 
     try {

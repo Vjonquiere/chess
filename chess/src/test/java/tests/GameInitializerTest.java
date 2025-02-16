@@ -40,7 +40,7 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationCLI() {
-    GameController controller = GameInitializer.initialize(options, null);
+    GameController controller = GameInitializer.initialize(options);
     assertNotNull(controller);
     assertTrue(controller.getView() instanceof CLIView);
   }
@@ -107,7 +107,7 @@ class GameInitializerTest {
 
     options.put(OptionType.LOAD, tempFile.toString());
 
-    GameController controller = GameInitializer.initialize(options, null);
+    GameController controller = GameInitializer.initialize(options);
 
     Position newPosition = Move.stringToPosition("e4");
 
@@ -123,6 +123,46 @@ class GameInitializerTest {
   }
 
   @Test
+  void testGameInitializationFullGame() throws IOException {
+    tempFile = Files.createTempFile("moveHistory", ".txt");
+    String text =
+        "B\n"
+            + //
+            "r _ b q k b _ r \n"
+            + //
+            "p p p p _ Q p p \n"
+            + //
+            "_ _ n _ _ n _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ B _ P _ _ _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K _ N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-h5 B b8-c6\n"
+            + //
+            "3. W f1-c4 B g8-f6\n"
+            + //
+            "4. W h5xf7";
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.LOAD, tempFile.toString());
+
+    GameController controller = GameInitializer.initialize(options);
+
+    assertTrue(controller.getModel().getGameState().isGameOver());
+  }
+
+  @Test
   void testGameInitializationLoadFallback() {
     options.put(OptionType.LOAD, "non_existent_file.txt");
 
@@ -131,7 +171,7 @@ class GameInitializerTest {
     System.setErr(new PrintStream(errContent));
 
     GameController controller = null;
-    controller = GameInitializer.initialize(options, null);
+    controller = GameInitializer.initialize(options);
 
     String errorOutput = errContent.toString();
 
