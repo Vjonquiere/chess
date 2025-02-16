@@ -1,5 +1,12 @@
 package pdp.model.ai;
 
 public enum HeuristicType {
-  DUMB;
+  DUMB,
+  POSITIONAL,
+  MATERIAL,
+  KING_SAFETY,
+  SPACE_CONTROL,
+  PAWN_STRUCTURE,
+  PIECE_ACTIVITY,
+  ENDGAME;
 }
