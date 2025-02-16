@@ -1059,4 +1059,13 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
     return false;
   }
+
+  public BitboardRepresentation getCopy() {
+    BitboardRepresentation copy = new BitboardRepresentation();
+    for (int i = 0; i < this.board.length; i++) {
+      copy.board[i] = this.board[i].getCopy();
+    }
+
+    return copy;
+  }
 }

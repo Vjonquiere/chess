@@ -313,4 +313,30 @@ public class GameState extends Subject {
       notifyObservers(EventType.DRAW);
     }
   }
+
+  public GameState getCopy() {
+    GameState copy = new GameState();
+
+    copy.board = this.board.getCopy();
+    copy.isWhiteTurn = this.isWhiteTurn;
+    copy.whiteWantsToDraw = this.whiteWantsToDraw;
+    copy.blackWantsToDraw = this.blackWantsToDraw;
+    copy.whiteResigns = this.whiteResigns;
+    copy.blackResigns = this.blackResigns;
+    copy.whiteLosesOnTime = this.whiteLosesOnTime;
+    copy.blackLosesOnTime = this.blackLosesOnTime;
+    copy.isGameOver = this.isGameOver;
+    copy.threefoldRepetition = this.threefoldRepetition;
+    copy.fullTurnNumber = this.fullTurnNumber;
+    copy.zobristHashing = this.zobristHashing;
+    copy.simplifiedZobristHashing = this.simplifiedZobristHashing;
+
+    /* if (this.moveTimer != null) {
+        copy.moveTimer = this.moveTimer.getCopy();
+    } else {
+        copy.moveTimer = null;
+    } */
+
+    return copy;
+  }
 }

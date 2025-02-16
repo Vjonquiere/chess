@@ -123,8 +123,20 @@ public class Board {
   }
 
   public Board getCopy() {
-    // TODO
-    throw new UnsupportedOperationException();
+    Board copy = new Board();
+    copy.board = new BitboardRepresentation();
+    copy.isWhite = this.isWhite;
+    copy.whiteShortCastle = this.whiteShortCastle;
+    copy.blackShortCastle = this.blackShortCastle;
+    copy.whiteLongCastle = this.whiteLongCastle;
+    copy.blackLongCastle = this.blackLongCastle;
+    copy.enPassantPos = (this.enPassantPos != null) ? this.enPassantPos.getCopy() : null;
+    copy.isLastMoveDoublePush = this.isLastMoveDoublePush;
+    copy.isEnPassantTake = this.isEnPassantTake;
+    copy.nbMovesWithNoCaptureOrPawn = this.nbMovesWithNoCaptureOrPawn;
+    copy.doubleMovePawnBlack = this.doubleMovePawnBlack;
+    copy.doubleMovePawnWhite = this.doubleMovePawnWhite;
+    return copy;
   }
 
   public BoardRepresentation getBoardRep() {

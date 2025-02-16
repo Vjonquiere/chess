@@ -218,4 +218,8 @@ public class Bitboard {
     }
     return false;
   }
+
+  public Bitboard getCopy() {
+    return new Bitboard(this.bitboard);
+  }
 }
