@@ -1,14 +1,14 @@
 package pdp.model.ai;
 
-import static pdp.utils.Logging.DEBUG;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Logger;
 import pdp.model.Game;
-import pdp.model.board.BitboardRepresentation;
+import pdp.model.ai.algorithms.AlphaBeta;
+import pdp.model.ai.algorithms.Minimax;
+import pdp.model.ai.algorithms.SearchAlgorithm;
+import pdp.model.ai.heuristics.Heuristic;
+import pdp.model.ai.heuristics.MaterialHeuristic;
 import pdp.model.board.Board;
-import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 
@@ -18,14 +18,16 @@ public class Solver {
   private ZobristHashing zobristHashing = new ZobristHashing();
   private HashMap<Long, Integer> evaluatedBoards;
 
-  AlgorithmType algorithm = AlgorithmType.MINIMAX;
-  HeuristicType heuristic = HeuristicType.MATERIAL;
+  SearchAlgorithm algorithm;
+  Heuristic heuristic;
   int depth = 3;
   int time = 500;
 
   public Solver() {
     Logging.configureLogging(LOGGER);
     evaluatedBoards = new HashMap<>();
+    this.algorithm = new Minimax(this);
+    this.heuristic = new MaterialHeuristic();
   }
 
   /**
@@ -34,7 +36,12 @@ public class Solver {
    * @param algorithm The algorithm to use.
    */
   public void setAlgorithm(AlgorithmType algorithm) {
-    this.algorithm = algorithm;
+    switch (algorithm) {
+      case MINIMAX -> this.algorithm = new Minimax(this);
+      case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
+      case MCTS -> this.algorithm = null;
+      default -> throw new IllegalArgumentException("No algorithm is set");
+    }
   }
 
   /**
@@ -43,7 +50,16 @@ public class Solver {
    * @param heuristic The heuristic to use.
    */
   public void setHeuristic(HeuristicType heuristic) {
-    this.heuristic = heuristic;
+    switch (heuristic) {
+      case MATERIAL -> this.heuristic = new MaterialHeuristic();
+      case POSITIONAL -> this.heuristic = null;
+      case KING_SAFETY -> this.heuristic = null;
+      case SPACE_CONTROL -> this.heuristic = null;
+      case PAWN_STRUCTURE -> this.heuristic = null;
+      case PIECE_ACTIVITY -> this.heuristic = null;
+      case ENDGAME -> this.heuristic = null;
+      default -> throw new IllegalArgumentException("No heuristic is set");
+    }
   }
 
   /**
@@ -64,73 +80,17 @@ public class Solver {
     this.time = time;
   }
 
+  /**
+   * Uses the AI algorithm to find the best move and plays it.
+   *
+   * @param game current game
+   */
   public void playAIMove(Game game) {
-    AIMove bestMove = null;
-    switch (algorithm) {
-      case MINIMAX:
-        DEBUG(LOGGER, "Using Minimax algorithm");
-        bestMove = maxMin(game, depth, game.getBoard().isWhite);
-        break;
-      case ALPHA_BETA:
-        DEBUG(LOGGER, "Using Alpha Beta algorithm");
-        break;
-      case MCTS:
-        DEBUG(LOGGER, "Using Monte Carlo Tree Search algorithm");
-        break;
-      default:
-        throw new IllegalArgumentException("No algorithm is set");
+    if (algorithm == null) {
+      throw new IllegalStateException("No algorithm has been set");
     }
+    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
     game.playMove(bestMove.move());
-  }
-
-  /**
-   * Assigns to best-move the move that maximizes the player's score. Part of Minimax algorithm
-   *
-   * @param game current game
-   * @param depth number of moves to be played
-   * @param player current player
-   * @return score of the best move for the player
-   */
-  public AIMove maxMin(Game game, int depth, boolean player) {
-    if (depth == 0 || game.isOver()) {
-      return new AIMove(null, evaluateBoard(game.getBoard(), player));
-    }
-    AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
-    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
-    for (Move move : moves) {
-      game.playMove(move);
-      AIMove currMove = minMax(game, depth - 1, !player);
-      if (currMove.score() > bestMove.score()) {
-        bestMove = new AIMove(move, currMove.score());
-      }
-      game.previousState();
-    }
-    return bestMove;
-  }
-
-  /**
-   * Assigns to best-move the move that minimizes the player's score. Part of Minimax algorithm
-   *
-   * @param game current game
-   * @param depth number of moves to be played
-   * @param player current player
-   * @return score of the best move for the player
-   */
-  public AIMove minMax(Game game, int depth, boolean player) {
-    if (depth == 0 || game.isOver()) {
-      return new AIMove(null, evaluateBoard(game.getBoard(), player));
-    }
-    AIMove bestMove = new AIMove(null, Integer.MAX_VALUE);
-    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
-    for (Move move : moves) {
-      game.playMove(move);
-      AIMove currMove = maxMin(game, depth - 1, !player);
-      if (currMove.score() < bestMove.score()) {
-        bestMove = new AIMove(move, currMove.score());
-      }
-      game.previousState();
-    }
-    return bestMove;
   }
 
   /**
@@ -144,53 +104,14 @@ public class Solver {
     if (board == null) {
       throw new IllegalArgumentException("Board is null");
     }
-    int score = 0;
+
     long hash = zobristHashing.generateHashFromBitboards(board);
     if (evaluatedBoards.containsKey(hash)) {
       return evaluatedBoards.get(hash);
     }
-    switch (heuristic) {
-      case MATERIAL:
-        DEBUG(LOGGER, "Evaluate board position with heuristic type MATERIAL");
-        score = evaluationMaterial(board, isWhite);
-        break;
-      default:
-        throw new IllegalArgumentException("No heuristic is set");
-    }
-    evaluatedBoards.put(hash, score);
-    return score;
-  }
 
-  /**
-   * Evaluates the board based on the number of pieces still on the board.
-   *
-   * @param board Current board to evaluate
-   * @param isWhite color of the current player
-   * @return score of the board
-   */
-  private int evaluationMaterial(Board board, boolean isWhite) {
-    int score = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation))
-      throw new RuntimeException("Only available for bitboards");
-    score +=
-        bitboardRepresentation.getPawns(isWhite).size()
-            - bitboardRepresentation.getPawns(!isWhite).size();
-    score +=
-        (bitboardRepresentation.getQueens(isWhite).size()
-                - bitboardRepresentation.getQueens(!isWhite).size())
-            * 9;
-    score +=
-        (bitboardRepresentation.getBishops(isWhite).size()
-                - bitboardRepresentation.getBishops(!isWhite).size())
-            * 3;
-    score +=
-        (bitboardRepresentation.getKnights(isWhite).size()
-                - bitboardRepresentation.getKnights(!isWhite).size())
-            * 3;
-    score +=
-        (bitboardRepresentation.getRooks(isWhite).size()
-                - bitboardRepresentation.getRooks(!isWhite).size())
-            * 5;
+    int score = heuristic.evaluate(board, isWhite);
+    evaluatedBoards.put(hash, score);
     return score;
   }
 }
