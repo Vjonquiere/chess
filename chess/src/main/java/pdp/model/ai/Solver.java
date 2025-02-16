@@ -16,7 +16,7 @@ public class Solver {
   private HashMap<Long, Integer> evaluatedBoards;
 
   AlgorithmType algorithm;
-  HeuristicType heuristic = HeuristicType.DUMB;
+  HeuristicType heuristic = HeuristicType.MATERIAL;
   int depth = 3;
   int time = 500;
 
@@ -78,9 +78,9 @@ public class Solver {
       return evaluatedBoards.get(hash);
     }
     switch (heuristic) {
-      case DUMB:
+      case MATERIAL:
         DEBUG(LOGGER, "Evaluate board position with heuristic type DUMB");
-        score = evaluationDumb(board, isWhite);
+        score = evaluationMaterial(board, isWhite);
         break;
       default:
         throw new IllegalArgumentException("No heuristic is set");
@@ -90,13 +90,13 @@ public class Solver {
   }
 
   /**
-   * Evaluates the board based on the number of pieces still on the board. Bad heuristic.
+   * Evaluates the board based on the number of pieces still on the board.
    *
    * @param board Current board to evaluate
    * @param isWhite color of the current player
    * @return score of the board
    */
-  private int evaluationDumb(Board board, boolean isWhite) {
+  private int evaluationMaterial(Board board, boolean isWhite) {
     int score = 0;
     if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation))
       throw new RuntimeException("Only available for bitboards");
