@@ -17,7 +17,6 @@ public class Solver {
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private ZobristHashing zobristHashing = new ZobristHashing();
   private HashMap<Long, Integer> evaluatedBoards;
-  private Move bestMove;
 
   AlgorithmType algorithm = AlgorithmType.MINIMAX;
   HeuristicType heuristic = HeuristicType.MATERIAL;
@@ -66,13 +65,11 @@ public class Solver {
   }
 
   public void playAIMove(Game game) {
-    int score;
-    Board board = game.getBoard();
-    boolean player = false;
+    AIMove bestMove = null;
     switch (algorithm) {
       case MINIMAX:
         DEBUG(LOGGER, "Using Minimax algorithm");
-        score = maxMin(game, depth, player);
+        bestMove = maxMin(game, depth, game.getBoard().isWhite);
         break;
       case ALPHA_BETA:
         DEBUG(LOGGER, "Using Alpha Beta algorithm");
@@ -83,7 +80,7 @@ public class Solver {
       default:
         throw new IllegalArgumentException("No algorithm is set");
     }
-    game.playMove(bestMove);
+    game.playMove(bestMove.move());
   }
 
   /**
@@ -94,22 +91,21 @@ public class Solver {
    * @param player current player
    * @return score of the best move for the player
    */
-  public int maxMin(Game game, int depth, boolean player) {
+  public AIMove maxMin(Game game, int depth, boolean player) {
     if (depth == 0 || game.isOver()) {
-      return evaluateBoard(game.getBoard(), player);
+      return new AIMove(null, evaluateBoard(game.getBoard(), player));
     }
-    int bestScore = Integer.MIN_VALUE;
+    AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
       game.playMove(move);
-      int score = minMax(game, depth - 1, !player);
-      if (score > bestScore) {
-        bestScore = score;
-        bestMove = move;
+      AIMove currMove = minMax(game, depth - 1, !player);
+      if (currMove.score() > bestMove.score()) {
+        bestMove = new AIMove(move, currMove.score());
       }
       game.previousState();
     }
-    return bestScore;
+    return bestMove;
   }
 
   /**
@@ -120,22 +116,21 @@ public class Solver {
    * @param player current player
    * @return score of the best move for the player
    */
-  public int minMax(Game game, int depth, boolean player) {
+  public AIMove minMax(Game game, int depth, boolean player) {
     if (depth == 0 || game.isOver()) {
-      return evaluateBoard(game.getBoard(), player);
+      return new AIMove(null, evaluateBoard(game.getBoard(), player));
     }
-    int bestScore = Integer.MAX_VALUE;
+    AIMove bestMove = new AIMove(null, Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
       game.playMove(move);
-      int score = maxMin(game, depth - 1, !player);
-      if (score < bestScore) {
-        bestScore = score;
-        bestMove = move;
+      AIMove currMove = maxMin(game, depth - 1, !player);
+      if (currMove.score() < bestMove.score()) {
+        bestMove = new AIMove(move, currMove.score());
       }
       game.previousState();
     }
-    return bestScore;
+    return bestMove;
   }
 
   /**
