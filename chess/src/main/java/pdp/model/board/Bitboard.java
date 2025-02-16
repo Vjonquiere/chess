@@ -219,6 +219,11 @@ public class Bitboard {
     return false;
   }
 
+  /**
+   * Creates a deep copy of this Bitboard object.
+   *
+   * @return A new instance of Bitboard with the same state as the current object.
+   */
   public Bitboard getCopy() {
     return new Bitboard(this.bitboard);
   }

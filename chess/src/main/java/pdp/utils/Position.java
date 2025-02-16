@@ -39,6 +39,11 @@ public class Position {
     return "Position [x=" + x + ", y=" + y + "]";
   }
 
+  /**
+   * Creates a deep copy of this Timer object.
+   *
+   * @return A new Position instance with the same state as the current object.
+   */
   public Position getCopy() {
     return new Position(this.x, this.y);
   }

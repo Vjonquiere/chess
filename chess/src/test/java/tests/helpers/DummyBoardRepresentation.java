@@ -123,4 +123,9 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public boolean hasEnoughMaterialToMate(boolean white) {
     return false;
   }
+
+  @Override
+  public BoardRepresentation getCopy() {
+    return new DummyBoardRepresentation();
+  }
 }

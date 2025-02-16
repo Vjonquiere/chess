@@ -314,6 +314,12 @@ public class GameState extends Subject {
     }
   }
 
+  /**
+   * Creates a deep copy of this GameState object. Copies all fields to ensure a completely
+   * independent state.
+   *
+   * @return A new instance of GameState with the same state as the current object.
+   */
   public GameState getCopy() {
     GameState copy = new GameState();
 
