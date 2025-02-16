@@ -15,10 +15,7 @@ import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.Solver;
-import pdp.model.board.Board;
-import pdp.model.board.Move;
-import pdp.model.board.PromoteMove;
-import pdp.model.board.ZobristHashing;
+import pdp.model.board.*;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
 import pdp.model.piece.Color;
@@ -129,6 +126,23 @@ public class Game extends Subject {
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
     DEBUG(LOGGER, "Initializing Game...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    DEBUG(LOGGER, "Game initialized!");
+    return instance;
+  }
+
+  /**
+   * Creates a new instance of the Game class and stores it in the instance variable.
+   *
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to be used for AI moves.
+   * @param board The board state to use
+   * @return The newly created instance of Game.
+   */
+  public static Game initialize(
+      boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, BoardRepresentation board) {
+    DEBUG(LOGGER, "Initializing Game from given board...");
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board), new History());
     DEBUG(LOGGER, "Game initialized!");
     return instance;
   }

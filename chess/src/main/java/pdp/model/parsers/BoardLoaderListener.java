@@ -68,7 +68,14 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
       x++;
       return;
     }
-    bitboardRepresentation.setSquare(pieces.get(ctx.getText()), x + (y * 8));
+    ColoredPiece piece = pieces.get(ctx.getText());
+    int square = (x + (y * 8));
+    if (piece == null) {
+      throw new RuntimeException(
+          "Piece `" + ctx.getText() + "` at square " + square + " is not recognized");
+    } else {
+      bitboardRepresentation.setSquare(piece, square);
+    }
     x++;
   }
 }

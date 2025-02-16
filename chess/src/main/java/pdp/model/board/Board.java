@@ -39,6 +39,27 @@ public class Board {
     this.nbMovesWithNoCaptureOrPawn = 0;
   }
 
+  /**
+   * Create a board from a given board state
+   *
+   * @param board The board state to use
+   */
+  public Board(BoardRepresentation board) {
+    Logging.configureLogging(LOGGER);
+    this.board = board;
+    this.isWhite = true;
+    this.enPassantPos = null;
+    this.whiteShortCastle = true;
+    this.blackShortCastle = true;
+    this.whiteLongCastle = true;
+    this.blackLongCastle = true;
+    this.isLastMoveDoublePush = false;
+    this.isEnPassantTake = false;
+    this.doubleMovePawnBlack = 0;
+    this.doubleMovePawnWhite = 0;
+    this.nbMovesWithNoCaptureOrPawn = 0;
+  }
+
   public List<Move> getAvailableMoves(Position pos) {
     return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }

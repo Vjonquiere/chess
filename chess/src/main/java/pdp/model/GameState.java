@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
@@ -55,6 +56,27 @@ public class GameState extends Subject {
     this.blackLosesOnTime = false;
     this.board = new Board();
     this.moveTimer = timer;
+    this.fullTurnNumber = 0;
+  }
+
+  /**
+   * Create a new GameState from a given board
+   *
+   * @param board The board to use
+   */
+  public GameState(BoardRepresentation board) {
+    Logging.configureLogging(LOGGER);
+    this.isGameOver = false;
+    this.isWhiteTurn = true;
+    this.whiteResigns = false;
+    this.blackResigns = false;
+    this.whiteWantsToDraw = false;
+    this.blackWantsToDraw = false;
+    this.whiteLosesOnTime = false;
+    this.blackLosesOnTime = false;
+    this.threefoldRepetition = false;
+    this.board = new Board(board);
+    this.moveTimer = null;
     this.fullTurnNumber = 0;
   }
 
