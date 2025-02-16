@@ -107,7 +107,7 @@ class GameInitializerTest {
 
     options.put(OptionType.LOAD, tempFile.toString());
 
-    GameController controller = GameInitializer.initialize(options);
+    GameController controller = GameInitializer.initialize(options, null);
 
     Position newPosition = Move.stringToPosition("e4");
 
@@ -131,7 +131,7 @@ class GameInitializerTest {
     System.setErr(new PrintStream(errContent));
 
     GameController controller = null;
-    controller = GameInitializer.initialize(options);
+    controller = GameInitializer.initialize(options, null);
 
     String errorOutput = errContent.toString();
 
