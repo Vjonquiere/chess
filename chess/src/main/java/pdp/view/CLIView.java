@@ -120,7 +120,6 @@ public class CLIView implements View {
     if (e instanceof IllegalMoveException
         || e instanceof MoveParsingException
         || e instanceof InvalidPositionException
-        || e instanceof InvalidPromoteException
         || e instanceof FailedSaveException
         || e instanceof InvalidPromoteFormatException) {
       System.out.println(e.getMessage());
