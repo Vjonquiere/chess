@@ -12,7 +12,6 @@ public class GameStateTest {
     GameState gameBlitzOff = new GameState();
     GameState gameBlitzOn = new GameState(new Timer(30 * 60));
     assertNotNull(gameBlitzOff.getBoard(), "The board should be initialized !");
-    assertNull(gameBlitzOff.getHistory(), "History should be null until implemented !");
     assertTrue(gameBlitzOff.isWhiteTurn(), "The first player should be white !");
     assertNull(gameBlitzOff.getMoveTimer(), "Timer should be null for non-blitz mode !");
 
