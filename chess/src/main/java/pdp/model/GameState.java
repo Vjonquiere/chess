@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.model.board.Board;
-import pdp.model.history.History;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
@@ -15,7 +14,6 @@ public class GameState extends Subject {
 
   private Board board;
   private Timer moveTimer;
-  private History history;
   private boolean isWhiteTurn;
   private boolean whiteWantsToDraw;
   private boolean blackWantsToDraw;
@@ -41,8 +39,6 @@ public class GameState extends Subject {
     this.whiteLosesOnTime = false;
     this.blackLosesOnTime = false;
     this.threefoldRepetition = false;
-    // this.history = new History();  When history is implemented
-    this.history = null;
     this.board = new Board();
     this.moveTimer = null;
     this.fullTurnNumber = 0;
@@ -57,8 +53,6 @@ public class GameState extends Subject {
     this.blackWantsToDraw = false;
     this.whiteLosesOnTime = false;
     this.blackLosesOnTime = false;
-    // this.history = new History();  When history is implemented
-    this.history = null;
     this.board = new Board();
     this.moveTimer = timer;
     this.fullTurnNumber = 0;
@@ -74,10 +68,6 @@ public class GameState extends Subject {
 
   public Board getBoard() {
     return board;
-  }
-
-  public History getHistory() {
-    return history;
   }
 
   public Timer getMoveTimer() {
@@ -140,6 +130,11 @@ public class GameState extends Subject {
     notifyObservers(EventType.BLACK_UNDRAW);
   }
 
+  /**
+   * Checks if both players want to draw
+   *
+   * @return true if there is a draw, meaning both players agreed to a draw
+   */
   private boolean checkDrawAgreement() {
     if (hasWhiteRequestedDraw() && hasBlackRequestedDraw()) {
       this.isGameOver = true;
@@ -150,12 +145,14 @@ public class GameState extends Subject {
     return false;
   }
 
+  /** White decides to resign the game, making Black victorious */
   public void whiteResigns() {
     this.whiteResigns = true;
     this.isGameOver = true;
     notifyObservers(EventType.WIN_BLACK);
   }
 
+  /** Black decides to resign the game, making White victorious */
   public void blackResigns() {
     this.blackResigns = true;
     this.isGameOver = true;
@@ -178,6 +175,11 @@ public class GameState extends Subject {
     return this.whiteWantsToDraw;
   }
 
+  /**
+   * Checks if the current player loses on time
+   *
+   * @return true if the current player runs out of time for his move (blitz mode)
+   */
   public boolean playerLosesOnTime() {
     if (this.moveTimer != null && this.moveTimer.getTimeRemaining() == 0) {
       if (this.isWhiteTurn) {
@@ -207,10 +209,16 @@ public class GameState extends Subject {
     return this.isGameOver;
   }
 
+  /**
+   * Checks if fifty move rule has to be applied
+   *
+   * @return true if fifty move rule is observed
+   */
   public boolean isFiftyMoveRule() {
     return this.board.getNbMovesWithNoCaptureOrPawn() >= 50;
   }
 
+  /** Fifty move rule is observed so change game status to 'Over', it's a draw */
   public void applyFiftyMoveRule() {
     this.isGameOver = true;
     notifyObservers(EventType.DRAW);
