@@ -341,7 +341,7 @@ public class Game extends Subject {
   }
 
   public void saveGame(String path) {
-    String gameStr = this.history.toAlgebricString();
+    String gameStr = this.history.toAlgebraicString();
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(gameStr);
