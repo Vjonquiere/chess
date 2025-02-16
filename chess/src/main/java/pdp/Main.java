@@ -22,7 +22,7 @@ public class Main {
     FileBoard board = null;
     if (args[args.length - 1].charAt(0) != '-') {
       BoardFileParser parser = new BoardFileParser();
-      board = parser.parseGameFile(args[args.length - 1]);
+      board = parser.parseGameFile(args[args.length - 1], Runtime.getRuntime());
     }
 
     if (options.containsKey(OptionType.CONTEST)) {

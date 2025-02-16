@@ -46,18 +46,19 @@ public class BoardFileParser {
 
   /**
    * Generate the board and player turn from the given file. If something went wrong at any step,
-   * the returned board is the start position and current player is set to White. To be load, the
-   * board need to have a king by side, and no one can be checkmate
+   * the application exit with EXIT_FAILURE status. To be load, the board need to have a king by
+   * side, and no one can be checkmate
    *
    * @param fileName The file path
    * @return The corresponding board and current player
    */
-  public FileBoard parseGameFile(String fileName) {
+  public FileBoard parseGameFile(String fileName, Runtime runtime) {
     String content;
     try {
       content = readFile(fileName);
     } catch (FileNotFoundException e) {
       System.out.println("File not found, loading default game");
+      runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true);
     }
     content = content.split("1\\.")[0].trim(); // Removing history if present
@@ -87,6 +88,7 @@ public class BoardFileParser {
       return result;
     } catch (Exception e) {
       System.out.println("Failed to build board: " + e.getMessage());
+      runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true);
     }
   }
