@@ -30,12 +30,4 @@ public interface Rules {
   public boolean isEnPassant(int x, int y, Move move, boolean white);
 
   public boolean hasEnoughMaterialToMate(boolean white);
-
-  public boolean queensOffTheBoard();
-
-  public boolean areKingsActive();
-
-  public boolean pawnsHaveProgressed();
-
-  public int nbPiecesRemaining();
 }

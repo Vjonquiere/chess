@@ -11,7 +11,13 @@ public class EndGameHeuristic implements Heuristic {
     heuristics = new ArrayList<>();
     heuristics.add(new KingSafetyHeuristic());
     heuristics.add(new MaterialHeuristic());
-    // etc.
+    // King activity
+    // Passed pawns (and promotion)
+    // Piece activity --> include legal moves
+    // Number of checks
+    // Pawn structure
+    // King opposition ??
+    // Same colored bishops
   }
 
   @Override

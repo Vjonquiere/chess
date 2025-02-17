@@ -26,4 +26,14 @@ public interface BoardRepresentation extends Rules {
   public void movePiece(Position from, Position to);
 
   public void deletePieceAt(int x, int y);
+
+  public boolean queensOffTheBoard();
+
+  public boolean areKingsActive();
+
+  public boolean pawnsHaveProgressed();
+
+  public int nbPiecesRemaining();
+
+  public List<Move> retrieveKingMoves(boolean white);
 }

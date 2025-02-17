@@ -1,5 +1,6 @@
 package tests.helpers;
 
+import java.util.ArrayList;
 import java.util.List;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
@@ -142,5 +143,10 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   @Override
   public boolean queensOffTheBoard() {
     return false;
+  }
+
+  @Override
+  public List<Move> retrieveKingMoves(boolean white) {
+    return new ArrayList<>();
   }
 }

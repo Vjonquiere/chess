@@ -1141,6 +1141,34 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
+  public List<Move> retrieveKingMoves(boolean white) {
+    if (white) {
+      Position whiteKingPos = getKing(true).get(0);
+      ColoredPiece whiteKing = getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
+      Bitboard unreachableSquaresWhite =
+          whiteKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+      unreachableSquaresWhite.clearBit(whiteKingPos.getX() % 8 + whiteKingPos.getY() * 8);
+      List<Move> whiteKingMoves =
+          getKingMoves(whiteKingPos, unreachableSquaresWhite, getBlackBoard(), whiteKing);
+
+      return whiteKingMoves;
+    } else {
+      Position blackKingPos = getKing(false).get(0);
+
+      ColoredPiece blackKing = getPieceAt(blackKingPos.getX(), blackKingPos.getY());
+
+      Bitboard unreachableSquaresBlack =
+          blackKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+      unreachableSquaresBlack.clearBit(blackKingPos.getX() % 8 + blackKingPos.getY() * 8);
+
+      List<Move> blackKingMoves =
+          getKingMoves(blackKingPos, unreachableSquaresBlack, getWhiteBoard(), blackKing);
+
+      return blackKingMoves;
+    }
+  }
+
+  @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
   }
