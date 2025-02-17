@@ -180,4 +180,56 @@ public class GameTest {
     assertFalse(game.getGameState().isThreefoldRepetition());
     assertFalse(game.isOver());
   }
+
+  @Test
+  public void testIsEndGamePhaseShouldBeFalse() {
+    Game game = Game.initialize(false, false, null, null);
+
+    assertFalse(game.isEndGamePhase());
+  }
+
+  @Test
+  public void testIsEndGamePhaseShouldBeTrue() {
+    Game game = Game.initialize(false, false, null, null);
+
+    // Move pawns
+    game.playMove(Move.fromString("a2-a4"));
+    game.playMove(Move.fromString("a7-a5"));
+    game.playMove(Move.fromString("b2-b4"));
+    game.playMove(Move.fromString("b7-b5"));
+    game.playMove(Move.fromString("c2-c4"));
+    game.playMove(Move.fromString("c7-c5"));
+    game.playMove(Move.fromString("d2-d4"));
+    game.playMove(Move.fromString("d7-d5"));
+    game.playMove(Move.fromString("e2-e4"));
+    game.playMove(Move.fromString("e7-e5"));
+    game.playMove(Move.fromString("f2-f4"));
+    game.playMove(Move.fromString("f7-f5"));
+    game.playMove(Move.fromString("g2-g4"));
+    game.playMove(Move.fromString("g7-g5"));
+    game.playMove(Move.fromString("h2-h4"));
+    game.playMove(Move.fromString("h7-h5"));
+
+    // Move kings
+    game.playMove(Move.fromString("e1-e2"));
+    game.playMove(Move.fromString("e8-e7"));
+
+    // Get queens off the board
+    game.playMove(Move.fromString("d4-e5"));
+    game.playMove(Move.fromString("d5-e4"));
+    game.playMove(Move.fromString("d1-d8"));
+    game.playMove(Move.fromString("e7-d8"));
+
+    // Play a few more moves to reach conditions
+    game.playMove(Move.fromString("a1-a3"));
+    game.playMove(Move.fromString("a8-a6"));
+    game.playMove(Move.fromString("h1-h3"));
+    game.playMove(Move.fromString("h8-h6"));
+    game.playMove(Move.fromString("h3-f3"));
+    game.playMove(Move.fromString("h6-f6"));
+    game.playMove(Move.fromString("a3-c3"));
+    game.playMove(Move.fromString("a6-c6"));
+
+    assertTrue(game.isEndGamePhase());
+  }
 }

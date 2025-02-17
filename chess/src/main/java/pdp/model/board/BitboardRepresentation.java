@@ -1063,32 +1063,33 @@ public class BitboardRepresentation implements BoardRepresentation {
   public boolean pawnsHaveProgressed() {
     List<Position> blackPawns = getPawns(false);
     List<Position> whitePawns = getPawns(true);
+    if (blackPawns.isEmpty() || whitePawns.isEmpty()) {
+      return false;
+    }
 
-    double factorAdvancedPawns = 2 / 3;
+    final double FACTOR_ADVANCED_PAWNS = 2.0 / 3.0;
+    final int MIDDLE_RANK_BLACK = 4;
+    final int MIDDLE_RANK_WHITE = 3;
 
     int nbAdvancedPawnsBlack = 0;
     int nbAdvancedPawnsWhite = 0;
 
-    int nbPawnsBlack = blackPawns.size();
-    int nbPawnsWhite = whitePawns.size();
-
-    int middleForBlack = 4;
-    int middleForWhite = 3;
-
-    for (Position posBlack : blackPawns) {
-      if (posBlack.getY() <= middleForBlack) {
+    for (Position pos : blackPawns) {
+      if (pos.getY() <= MIDDLE_RANK_BLACK) {
         nbAdvancedPawnsBlack++;
       }
     }
 
-    for (Position posWhite : whitePawns) {
-      if (posWhite.getY() >= middleForWhite) {
+    for (Position pos : whitePawns) {
+      if (pos.getY() >= MIDDLE_RANK_WHITE) {
         nbAdvancedPawnsWhite++;
       }
     }
 
-    return (nbAdvancedPawnsBlack / nbPawnsBlack) >= factorAdvancedPawns
-        && (nbAdvancedPawnsWhite / nbPawnsWhite) >= factorAdvancedPawns;
+    double ratioBlack = (double) nbAdvancedPawnsBlack / blackPawns.size();
+    double ratioWhite = (double) nbAdvancedPawnsWhite / whitePawns.size();
+
+    return ratioBlack >= FACTOR_ADVANCED_PAWNS && ratioWhite >= FACTOR_ADVANCED_PAWNS;
   }
 
   /**

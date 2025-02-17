@@ -774,5 +774,161 @@ public class BitboardRepresentationTest {
     board.deletePieceAt(0, 0);
   }
 
+  @Test
+  public void testQueensOffTheBoardWhenGameStarts() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    assertFalse(board.queensOffTheBoard());
+  }
+
+  @Test
+  public void testQueensOffTheBoardShouldBeTrue() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    Position whiteQueenPos = new Position(3, 0);
+    Position blackQueenPos = new Position(3, 7);
+
+    board.deletePieceAt(whiteQueenPos.getX(), whiteQueenPos.getY());
+    board.deletePieceAt(blackQueenPos.getX(), blackQueenPos.getY());
+
+    assertTrue(board.queensOffTheBoard());
+  }
+
+  @Test
+  public void testAreKingsActiveWhenGameStartsShouldBeFalse() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    assertFalse(board.areKingsActive());
+  }
+
+  @Test
+  public void testAreKingsActiveShouldBeTrue() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    Position whiteQueenPos = new Position(3, 0);
+    Position blackQueenPos = new Position(3, 7);
+
+    Position d2Pawn = new Position(3, 1);
+    Position d7Pawn = new Position(3, 6);
+
+    Position e2Pawn = new Position(4, 1);
+    Position e7Pawn = new Position(4, 6);
+
+    Position f2Pawn = new Position(5, 1);
+    Position f7Pawn = new Position(5, 6);
+
+    Position whiteKingsBishop = new Position(5, 0);
+    Position blackKingsBishop = new Position(5, 7);
+
+    board.deletePieceAt(whiteQueenPos.getX(), whiteQueenPos.getY());
+    board.deletePieceAt(blackQueenPos.getX(), blackQueenPos.getY());
+
+    board.deletePieceAt(d2Pawn.getX(), d2Pawn.getY());
+    board.deletePieceAt(d7Pawn.getX(), d7Pawn.getY());
+
+    board.deletePieceAt(e2Pawn.getX(), e2Pawn.getY());
+    board.deletePieceAt(e7Pawn.getX(), e7Pawn.getY());
+
+    board.deletePieceAt(f2Pawn.getX(), f2Pawn.getY());
+    board.deletePieceAt(f7Pawn.getX(), f7Pawn.getY());
+
+    board.deletePieceAt(whiteKingsBishop.getX(), whiteKingsBishop.getY());
+    board.deletePieceAt(blackKingsBishop.getX(), blackKingsBishop.getY());
+
+    assertTrue(board.areKingsActive());
+  }
+
+  @Test
+  public void testNbPiecesRemaining() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    int nbPiecesWhenGameStarts = 32;
+    assertEquals(nbPiecesWhenGameStarts, board.nbPiecesRemaining());
+  }
+
+  @Test
+  public void testPawnsHaveProgressedWhenGameStartsShouldBeFalse() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    assertFalse(board.pawnsHaveProgressed());
+  }
+
+  @Test
+  public void testPawnshaveProgressedWhenNoPawnsWhiteShouldBeFalse() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    int yWhite = 1;
+    // Delete all pawns
+    for (int x = 0; x <= 7; x++) {
+      board.deletePieceAt(x, yWhite);
+    }
+
+    assertFalse(board.pawnsHaveProgressed());
+  }
+
+  @Test
+  public void testPawnsHaveProgressedWhenNoPawnsBlackShouldBeFalse() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    int yBlack = 6;
+    // Delete all pawns
+    for (int x = 0; x <= 7; x++) {
+      board.deletePieceAt(x, yBlack);
+    }
+
+    assertFalse(board.pawnsHaveProgressed());
+  }
+
+  @Test
+  public void TestPawnsHaveProgressedShouldBeTrue() {
+    BitboardRepresentation board = new BitboardRepresentation();
+
+    // from
+    Position a2 = new Position(0, 1);
+    Position b2 = new Position(1, 1);
+    Position c2 = new Position(2, 1);
+    Position d2 = new Position(3, 1);
+    Position e2 = new Position(4, 1);
+    Position f2 = new Position(5, 1);
+
+    Position a7 = new Position(0, 6);
+    Position b7 = new Position(1, 6);
+    Position c7 = new Position(2, 6);
+    Position d7 = new Position(3, 6);
+    Position e7 = new Position(4, 6);
+    Position f7 = new Position(5, 6);
+
+    // to
+    Position a4 = new Position(0, 3);
+    Position b4 = new Position(1, 3);
+    Position c4 = new Position(2, 3);
+    Position d4 = new Position(3, 3);
+    Position e4 = new Position(4, 3);
+    Position f4 = new Position(5, 3);
+
+    Position a5 = new Position(0, 4);
+    Position b5 = new Position(1, 4);
+    Position c5 = new Position(2, 4);
+    Position d5 = new Position(3, 4);
+    Position e5 = new Position(4, 4);
+    Position f5 = new Position(5, 4);
+
+    board.movePiece(a2, a4);
+    board.movePiece(b2, b4);
+    board.movePiece(c2, c4);
+    board.movePiece(d2, d4);
+    board.movePiece(e2, e4);
+    board.movePiece(f2, f4);
+
+    board.movePiece(a7, a5);
+    board.movePiece(b7, b5);
+    board.movePiece(c7, c5);
+    board.movePiece(d7, d5);
+    board.movePiece(e7, e5);
+    board.movePiece(f7, f5);
+
+    assertTrue(board.pawnsHaveProgressed());
+  }
+
   // TODO pawn can't eat front
 }
