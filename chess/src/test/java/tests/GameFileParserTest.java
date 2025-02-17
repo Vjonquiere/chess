@@ -119,11 +119,9 @@ public class GameFileParserTest {
   }
 
   @Test
-  public void parseWhiteCheckMateFile() {
-    Runtime mockRuntime = mock(Runtime.class);
-    URL filePath = classLoader.getResource("gameBoards/whiteIsCheckMate");
-    parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+  public void parseCommentFile() {
+    URL filePath = classLoader.getResource("gameBoards/commentsBoard");
+    parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
   }
 
   @Test
