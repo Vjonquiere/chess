@@ -6,8 +6,7 @@ import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.SearchAlgorithm;
-import pdp.model.ai.heuristics.Heuristic;
-import pdp.model.ai.heuristics.MaterialHeuristic;
+import pdp.model.ai.heuristics.*;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
@@ -57,6 +56,9 @@ public class Solver {
       case SPACE_CONTROL -> this.heuristic = null;
       case PAWN_STRUCTURE -> this.heuristic = null;
       case PIECE_ACTIVITY -> this.heuristic = null;
+      case MOBILITY -> this.heuristic = new MobilityHeuristic();
+      case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
+      case SHANNON -> this.heuristic = new ShannonBasic();
       case ENDGAME -> this.heuristic = null;
       default -> throw new IllegalArgumentException("No heuristic is set");
     }

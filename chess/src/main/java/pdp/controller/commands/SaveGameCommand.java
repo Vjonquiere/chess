@@ -6,10 +6,16 @@ import pdp.controller.GameController;
 import pdp.model.Game;
 
 public class SaveGameCommand implements Command {
+  private static String DEFAULT_FILE_PATH = "save.txt";
+
   private String filepath;
 
   public SaveGameCommand(String filepath) {
-    this.filepath = filepath;
+    if (filepath.isEmpty()) {
+      this.filepath = DEFAULT_FILE_PATH;
+    } else {
+      this.filepath = filepath;
+    }
   }
 
   /**

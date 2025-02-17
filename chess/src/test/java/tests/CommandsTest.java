@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import pdp.controller.GameController;
 import pdp.controller.commands.*;
 import pdp.exceptions.CommandNotAvailableNowException;
+import pdp.exceptions.FailedSaveException;
 import pdp.model.Game;
 import pdp.model.GameState;
 import pdp.model.board.Move;
@@ -124,5 +125,33 @@ class CommandTest {
 
     assertTrue(result.isPresent());
     assertTrue(result.get() instanceof CommandNotAvailableNowException);
+  }
+
+  // SaveGameCommand
+
+  @Test
+  public void testSaveGameCommandSuccess() {
+    SaveGameCommand command = new SaveGameCommand("test.txt");
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model).saveGame("test.txt");
+  }
+
+  @Test
+  public void testSaveGameCommandSuccessNoPath() {
+    SaveGameCommand command = new SaveGameCommand("");
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model).saveGame("save.txt");
+  }
+
+  public void testSaveGameCommandFailure() {
+    doThrow(new FailedSaveException("")).when(model).saveGame(anyString());
+    SaveGameCommand command = new SaveGameCommand("error.txt");
+    Optional<Exception> result = command.execute(model, controller);
+    assertTrue(result.isPresent());
+    assertTrue(result.get() instanceof FailedSaveException);
   }
 }

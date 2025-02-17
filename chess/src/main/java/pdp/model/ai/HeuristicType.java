@@ -7,5 +7,8 @@ public enum HeuristicType {
   SPACE_CONTROL,
   PAWN_STRUCTURE,
   PIECE_ACTIVITY,
+  MOBILITY,
+  SHANNON,
+  BAD_PAWNS,
   ENDGAME;
 }
