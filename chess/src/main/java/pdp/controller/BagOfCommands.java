@@ -85,6 +85,10 @@ public class BagOfCommands {
     this.controller = controller;
   }
 
+  public boolean isRunning() {
+    return this.isRunning;
+  }
+
   /**
    * Gets the single instance of BagOfCommands and creats it if it doesn't exist.
    *
