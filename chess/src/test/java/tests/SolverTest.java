@@ -2,8 +2,6 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +24,7 @@ public class SolverTest {
   public void testEvaluationMaterial() {
     Game game = Game.initialize(false, false, null, null);
     solver.setHeuristic(HeuristicType.MATERIAL);
-    assertEquals(0, solver.evaluateBoard(game, true));
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
 
     game.playMove(new Move(new Position(4, 1), new Position(4, 2)));
     game.playMove(new Move(new Position(3, 6), new Position(3, 5)));
@@ -37,28 +35,28 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-4, solver.evaluateBoard(game, false));
+    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(4, solver.evaluateBoard(game, true));
+    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
   }
 
   @Test
   public void testEvaluationErrors() {
-    Game mockGame = mock(Game.class);
-    when(mockGame.getBoard()).thenReturn(null);
+    Game game = Game.initialize(false, false, null, null);
 
     Exception exception =
-        assertThrows(RuntimeException.class, () -> solver.evaluateBoard(mockGame, true));
-
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              solver.evaluateBoard(null, true);
+            });
     assertEquals("Board is null", exception.getMessage());
   }
 
   @Test
   public void testEvaluationErrorBoardNonBitboardRepresentation() {
-    Game mockGame = mock(Game.class);
-
-    when(mockGame.getBoard()).thenReturn(new MockBoard());
+    MockBoard board = new MockBoard();
 
     solver.setHeuristic(HeuristicType.MATERIAL);
 
@@ -66,7 +64,7 @@ public class SolverTest {
         assertThrows(
             RuntimeException.class,
             () -> {
-              solver.evaluateBoard(mockGame, true);
+              solver.evaluateBoard(board, true);
             });
     assertEquals("Only available for bitboards", exception.getMessage());
   }
@@ -76,12 +74,12 @@ public class SolverTest {
     Game game = Game.initialize(false, false, null, null);
     solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
-    int score1 = solver.evaluateBoard(game, true);
+    int score1 = solver.evaluateBoard(game.getBoard(), true);
     game.playMove(new Move(new Position(1, 0), new Position(2, 2)));
     game.playMove(new Move(new Position(1, 7), new Position(0, 5)));
     game.playMove(new Move(new Position(2, 2), new Position(1, 0)));
     game.playMove(new Move(new Position(0, 5), new Position(1, 7)));
-    int score2 = solver.evaluateBoard(game, true);
+    int score2 = solver.evaluateBoard(game.getBoard(), true);
 
     assertEquals(score1, score2);
   }
