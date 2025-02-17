@@ -1,25 +1,27 @@
 package pdp.model.ai.heuristics;
 
-import java.util.ArrayList;
-import java.util.List;
-import pdp.model.board.Board;
-
-public class ShannonBasic implements Heuristic {
-  List<Heuristic> heuristics;
+/**
+ * Basic Heuristic from Shannon (XXII. Programming a Computer for Playing Chess) f(P) = 200(K-K') +
+ * 9(Q-Q') + 5(R-R') + 3(B-B'+N-N') + (P-P') - 0.5(D-D'+S-S'+I-I') + 0.1(M-M') + ... in which: -
+ *
+ * <ul>
+ *   <li>(1)K,Q,R,B,B,P are the number of White kings, queens, rooks, bishops, knights and pawns on
+ *       the board.
+ *   <li>(2)D,S,I are doubled, backward and isolated White pawns.
+ *   <li>(3)M= White mobility (measured, say, as the number of legal moves available to White).
+ * </ul>
+ *
+ * <ul>
+ *   <li>(1) --> Material
+ *   <li>(2) --> BadPawnsHeuristic
+ *   <li>(3) --> Mobility
+ * </ul>
+ */
+public class ShannonBasic extends AbstractHeuristic {
 
   public ShannonBasic() {
-    heuristics = new ArrayList<>();
-    heuristics.add(new MobilityHeuristic());
-    heuristics.add(new MaterialHeuristic());
-    // heuristics.add(new badPawnsHeuristics());
-  }
-
-  @Override
-  public int evaluate(Board board, boolean isWhite) {
-    int score = 0;
-    for (Heuristic heuristic : heuristics) {
-      score += heuristic.evaluate(board, isWhite);
-    }
-    return score;
+    super.addHeuristic(new MobilityHeuristic());
+    super.addHeuristic(new MaterialHeuristic());
+    super.addHeuristic(new BadPawnsHeuristic());
   }
 }

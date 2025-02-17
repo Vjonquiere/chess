@@ -9,5 +9,6 @@ public enum HeuristicType {
   PIECE_ACTIVITY,
   MOBILITY,
   SHANNON,
+  BAD_PAWNS,
   ENDGAME;
 }
