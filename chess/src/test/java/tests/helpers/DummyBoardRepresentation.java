@@ -149,4 +149,9 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public List<Move> retrieveKingMoves(boolean white) {
     return new ArrayList<>();
   }
+
+  @Override
+  public List<Move> retrieveBishopMoves(boolean white) {
+    return new ArrayList<>();
+  }
 }

@@ -36,4 +36,6 @@ public interface BoardRepresentation extends Rules {
   public int nbPiecesRemaining();
 
   public List<Move> retrieveKingMoves(boolean white);
+
+  public List<Move> retrieveBishopMoves(boolean white);
 }

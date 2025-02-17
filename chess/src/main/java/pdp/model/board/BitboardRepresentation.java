@@ -1160,6 +1160,21 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
+  public List<Move> retrieveBishopMoves(boolean white) {
+    List<Position> bishops = getBishops(white);
+    Bitboard friendlyPieces = white ? getWhiteBoard() : getBlackBoard();
+    Bitboard enemyPieces = white ? getBlackBoard() : getWhiteBoard();
+    List<Move> bishopMoves = new ArrayList<>();
+
+    for (Position bishopPos : bishops) {
+      ColoredPiece bishop = getPieceAt(bishopPos.getX(), bishopPos.getY());
+      bishopMoves.addAll(getBishopMoves(bishopPos, friendlyPieces, enemyPieces, bishop));
+    }
+
+    return bishopMoves;
+  }
+
+  @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
   }

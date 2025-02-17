@@ -32,4 +32,14 @@ public class HeuristicTests {
     assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
     assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
   }
+
+  @Test
+  public void testEndGameHeuristic() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    int score = -35;
+    assertEquals(score, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
+  }
 }
