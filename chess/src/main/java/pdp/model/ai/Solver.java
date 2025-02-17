@@ -61,7 +61,7 @@ public class Solver {
       case SHANNON -> this.heuristic = new ShannonBasic();
       case OPPONENT_CHECK -> this.heuristic = new OpponentCheck();
       case STANDARD -> this.heuristic = new StandardHeuristic();
-      case ENDGAME -> this.heuristic = null;
+      case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
   }

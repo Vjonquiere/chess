@@ -73,4 +73,14 @@ public class HeuristicTests {
     game.getBoard().isWhite = true;
     assertEquals(150, solver.evaluateBoard(game.getBoard(), true));
   }
+
+  @Test
+  public void testEndGameHeuristic() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    int score = -35;
+    assertEquals(score, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
+  }
 }

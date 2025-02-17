@@ -17,6 +17,7 @@ import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.Solver;
 import pdp.model.board.*;
 import pdp.model.history.History;
+import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
@@ -86,6 +87,54 @@ public class Game extends Subject {
 
   public History getHistory() {
     return this.history;
+  }
+
+  /**
+   * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
+   *
+   * @return true if wer're in an endgame (according to the chosen criterias)
+   */
+  public boolean isEndGamePhase() {
+    int nbRequiredConditions = 3;
+    int nbFilledConditions = 0;
+
+    int halfNbPieces = 16;
+    int nbPlayedMovesBeforeEndGame = 25;
+    int nbPossibleMoveInEndGame = 25;
+
+    // Queens are off the board
+    if (getBoard().getBoardRep().queensOffTheBoard()) {
+      nbFilledConditions++;
+    }
+    // Number of pieces remaining
+    if (getBoard().getBoardRep().nbPiecesRemaining() <= halfNbPieces) {
+      nbFilledConditions++;
+    }
+    // King activity
+    if (getBoard().getBoardRep().areKingsActive()) {
+      nbFilledConditions++;
+    }
+    // Number of played moves
+    Optional<HistoryNode> previousNode = history.getPrevious();
+    if (previousNode.isPresent()) {
+      HistoryNode node = previousNode.get();
+      if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+        nbFilledConditions++;
+      }
+    }
+    // Number of possible Moves
+    int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
+    int nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+    if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
+      nbFilledConditions++;
+    }
+
+    // Pawns progresses on the board
+    if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
+      nbFilledConditions++;
+    }
+
+    return nbFilledConditions >= nbRequiredConditions;
   }
 
   /**
