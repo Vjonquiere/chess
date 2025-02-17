@@ -1,17 +1,16 @@
 package pdp.model.ai.heuristics;
 
 import java.util.*;
-import pdp.model.Game;
 import pdp.model.board.Board;
 import pdp.utils.Position;
 
 public class BadPawnsHeuristic implements Heuristic {
 
   @Override
-  public int evaluate(Game game, boolean isWhite) {
+  public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += doubledPawns(game.getBoard(), isWhite) - doubledPawns(game.getBoard(), !isWhite);
-    score += isolatedPawns(game.getBoard(), isWhite) - isolatedPawns(game.getBoard(), !isWhite);
+    score += doubledPawns(board, isWhite) - doubledPawns(board, !isWhite);
+    score += isolatedPawns(board, isWhite) - isolatedPawns(board, !isWhite);
     // score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
     return (int) (-0.5 * score);
   }

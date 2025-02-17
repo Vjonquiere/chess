@@ -37,7 +37,7 @@ public class Minimax implements SearchAlgorithm {
    */
   private AIMove maxMin(Game game, int depth, boolean player) {
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game, player));
+      return new AIMove(null, solver.evaluateBoard(game.getBoard(), player));
     }
     AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
@@ -63,7 +63,7 @@ public class Minimax implements SearchAlgorithm {
    */
   private AIMove minMax(Game game, int depth, boolean player) {
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game, player));
+      return new AIMove(null, solver.evaluateBoard(game.getBoard(), player));
     }
     AIMove bestMove = new AIMove(null, Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);

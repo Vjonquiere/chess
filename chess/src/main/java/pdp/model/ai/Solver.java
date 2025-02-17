@@ -7,6 +7,7 @@ import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.SearchAlgorithm;
 import pdp.model.ai.heuristics.*;
+import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 
@@ -97,21 +98,21 @@ public class Solver {
   /**
    * Evaluates the board based on the chosen heuristic.
    *
-   * @param game Current game containing the board to evaluate
+   * @param board Current board to evaluate
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public int evaluateBoard(Game game, boolean isWhite) {
-    if (game.getBoard() == null) {
+  public int evaluateBoard(Board board, boolean isWhite) {
+    if (board == null) {
       throw new IllegalArgumentException("Board is null");
     }
 
-    long hash = zobristHashing.generateHashFromBitboards(game.getBoard());
+    long hash = zobristHashing.generateHashFromBitboards(board);
     if (evaluatedBoards.containsKey(hash)) {
       return evaluatedBoards.get(hash);
     }
 
-    int score = heuristic.evaluate(game, isWhite);
+    int score = heuristic.evaluate(board, isWhite);
     evaluatedBoards.put(hash, score);
     return score;
   }
