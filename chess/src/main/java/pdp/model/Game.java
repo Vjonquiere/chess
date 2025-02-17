@@ -405,6 +405,14 @@ public class Game extends Subject {
     this.notifyObservers(EventType.MOVE_PLAYED);
   }
 
+  /**
+   * Saves the current game state to a file.
+   *
+   * <p>The saved file contains the current position of the board followed by the move history of
+   * the game in standard algebraic notation.
+   *
+   * @param path The path to the file to write to.
+   */
   public void saveGame(String path) {
     String board =
         BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite));
