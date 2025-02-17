@@ -123,4 +123,24 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public boolean hasEnoughMaterialToMate(boolean white) {
     return false;
   }
+
+  @Override
+  public boolean areKingsActive() {
+    return false;
+  }
+
+  @Override
+  public boolean pawnsHaveProgressed() {
+    return false;
+  }
+
+  @Override
+  public int nbPiecesRemaining() {
+    return 32;
+  }
+
+  @Override
+  public boolean queensOffTheBoard() {
+    return false;
+  }
 }

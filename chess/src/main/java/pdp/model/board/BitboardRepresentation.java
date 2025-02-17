@@ -1043,6 +1043,102 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  /**
+   * Checks if queens are off the board. Method used to detect endgames
+   *
+   * @return true if queens are off the board. false otherwise
+   */
+  @Override
+  public boolean queensOffTheBoard() {
+    return getQueens(true).size() == 0 && getQueens(false).size() == 0;
+  }
+
+  /**
+   * Checks the progress of pawns in the game. Method used to detect endgames.
+   *
+   * @return true if majority of pawns are located on the middle of the board or passed that. false
+   *     otherwise
+   */
+  @Override
+  public boolean pawnsHaveProgressed() {
+    List<Position> blackPawns = getPawns(false);
+    List<Position> whitePawns = getPawns(true);
+
+    double factorAdvancedPawns = 2 / 3;
+
+    int nbAdvancedPawnsBlack = 0;
+    int nbAdvancedPawnsWhite = 0;
+
+    int nbPawnsBlack = blackPawns.size();
+    int nbPawnsWhite = whitePawns.size();
+
+    int middleForBlack = 4;
+    int middleForWhite = 3;
+
+    for (Position posBlack : blackPawns) {
+      if (posBlack.getY() <= middleForBlack) {
+        nbAdvancedPawnsBlack++;
+      }
+    }
+
+    for (Position posWhite : whitePawns) {
+      if (posWhite.getY() >= middleForWhite) {
+        nbAdvancedPawnsWhite++;
+      }
+    }
+
+    return (nbAdvancedPawnsBlack / nbPawnsBlack) >= factorAdvancedPawns
+        && (nbAdvancedPawnsWhite / nbPawnsWhite) >= factorAdvancedPawns;
+  }
+
+  /**
+   * Checks if the kings on the board are active. Method used to detect endgames
+   *
+   * @return true if kings are somewhat active. false otherwise
+   */
+  @Override
+  public boolean areKingsActive() {
+    int nbMovesConsideringKingActive = 4;
+
+    Position blackKingPos = getKing(false).get(0);
+    Position whiteKingPos = getKing(true).get(0);
+
+    ColoredPiece blackKing = getPieceAt(blackKingPos.getX(), blackKingPos.getY());
+    ColoredPiece whiteKing = getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
+
+    Bitboard unreachableSquaresBlack =
+        blackKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    unreachableSquaresBlack.clearBit(blackKingPos.getX() % 8 + blackKingPos.getY() * 8);
+
+    Bitboard unreachableSquaresWhite =
+        whiteKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    unreachableSquaresWhite.clearBit(whiteKingPos.getX() % 8 + whiteKingPos.getY() * 8);
+
+    List<Move> blackKingMoves =
+        getKingMoves(blackKingPos, unreachableSquaresBlack, getWhiteBoard(), blackKing);
+    List<Move> whiteKingMoves =
+        getKingMoves(whiteKingPos, unreachableSquaresWhite, getBlackBoard(), whiteKing);
+
+    return blackKingMoves.size() >= nbMovesConsideringKingActive
+        && whiteKingMoves.size() >= nbMovesConsideringKingActive;
+  }
+
+  /**
+   * Checks and returns the number of remaining pieces on the board
+   *
+   * @return the number of remaining pieces on the board
+   */
+  public int nbPiecesRemaining() {
+    int count = 0;
+    int maxBoardIndex = 11;
+    for (int i = 0; i <= maxBoardIndex; i++) {
+      List<Position> occupiedSquares = getOccupiedSquares(i);
+      count += occupiedSquares.size();
+    }
+
+    return count;
+  }
+
   @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
