@@ -641,6 +641,29 @@ public class BitboardRepresentationTest {
   }
 
   @Test
+  public void testPromotePawnOnEmptySquare() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(65536L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(17592186044416L),
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L));
+    assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), board.getPieceAt(7, 0));
+    board.promotePawn(7, 0, true, Piece.QUEEN);
+    assertEquals(
+        new ColoredPiece(Piece.EMPTY, Color.EMPTY),
+        board.getPieceAt(7, 0)); // check nothing changed
+  }
+
+  @Test
   public void testHasEnoughMaterialToMateWhiteQueen() {
     BitboardRepresentation board = new BitboardRepresentation();
 
@@ -766,6 +789,355 @@ public class BitboardRepresentationTest {
     deleteAllPiecesExceptThosePositions(board, whitePos, blackPos);
 
     assertFalse(board.hasEnoughMaterialToMate(true));
+  }
+
+  @Test
+  public void testDrawMaterialKingVSKing() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L));
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialKingVSKingBishop() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L));
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialKingBishopVSKing() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L));
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialKingKnightVSKing() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L));
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialKingVSKingKnight() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L));
+    assertTrue(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialAtBeginning() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    assertFalse(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialNoWhiteKing() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L));
+    assertFalse(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialNoBlackKing() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L));
+    assertFalse(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testDrawMaterialTwoDifferentColorBishops() {
+    BitboardRepresentation board =
+        new BitboardRepresentation(
+            DEFAULT_WHITE_KING,
+            new Bitboard(0L),
+            new Bitboard(65536L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            new Bitboard(0L),
+            DEFAULT_BLACK_KING,
+            new Bitboard(0L),
+            new Bitboard(17592186044416L),
+            new Bitboard(0L),
+            new Bitboard(4294967296L),
+            new Bitboard(0L));
+    assertFalse(board.isDrawByInsufficientMaterial());
+  }
+
+  @Test
+  public void testIsDoublePushPossibleOnDefaultBoard() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    assertTrue(board.isDoublePushPossible(new Move(new Position(0, 1), new Position(0, 3)), true));
+    assertTrue(board.isDoublePushPossible(new Move(new Position(0, 6), new Position(0, 4)), false));
+  }
+
+  @Test
+  public void testIsDoublePushPossibleObstructedForWhite() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.setSquare(new ColoredPiece(Piece.PAWN, Color.WHITE), 16);
+    assertFalse(board.isDoublePushPossible(new Move(new Position(0, 1), new Position(0, 3)), true));
+    assertTrue(board.isDoublePushPossible(new Move(new Position(0, 6), new Position(0, 4)), false));
+    board.movePiece(new Position(0, 2), new Position(0, 3));
+    assertFalse(board.isDoublePushPossible(new Move(new Position(0, 1), new Position(0, 3)), true));
+    assertTrue(board.isDoublePushPossible(new Move(new Position(0, 6), new Position(0, 4)), false));
+  }
+
+  @Test
+  public void testIsDoublePushPossibleObstructedForBlack() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.setSquare(new ColoredPiece(Piece.PAWN, Color.BLACK), 40);
+    assertTrue(board.isDoublePushPossible(new Move(new Position(0, 1), new Position(0, 3)), true));
+    assertFalse(
+        board.isDoublePushPossible(new Move(new Position(0, 6), new Position(0, 4)), false));
+    board.movePiece(new Position(0, 5), new Position(0, 4));
+    assertTrue(board.isDoublePushPossible(new Move(new Position(0, 1), new Position(0, 3)), true));
+    assertFalse(
+        board.isDoublePushPossible(new Move(new Position(0, 6), new Position(0, 4)), false));
+  }
+
+  @Test
+  public void testIsDoublePushPossibleNotTwoSquaresUp() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    // More or less than 2 squares up
+    assertFalse(board.isDoublePushPossible(new Move(new Position(0, 1), new Position(0, 5)), true));
+    assertFalse(
+        board.isDoublePushPossible(new Move(new Position(0, 6), new Position(0, 3)), false));
+    // X coordinate is modified
+    assertFalse(board.isDoublePushPossible(new Move(new Position(0, 1), new Position(1, 3)), true));
+    assertFalse(
+        board.isDoublePushPossible(new Move(new Position(0, 6), new Position(4, 4)), false));
+  }
+
+  @Test
+  public void testIsDoublePushPossibleNotAtInitialSquare() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    assertFalse(board.isDoublePushPossible(new Move(new Position(0, 3), new Position(0, 5)), true));
+    assertFalse(
+        board.isDoublePushPossible(new Move(new Position(0, 4), new Position(0, 6)), false));
+  }
+
+  @Test
+  public void testEnPassantPossible() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.movePiece(new Position(0, 1), new Position(1, 4));
+    board.movePiece(new Position(1, 1), new Position(3, 4));
+    board.movePiece(new Position(2, 6), new Position(2, 4));
+    assertTrue(board.isEnPassant(2, 5, new Move(new Position(1, 4), new Position(2, 5)), true));
+    assertTrue(board.isEnPassant(2, 5, new Move(new Position(3, 4), new Position(2, 5)), true));
+  }
+
+  @Test
+  public void testEnPassantPossibleNotAWhitePawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.movePiece(new Position(0, 0), new Position(1, 4)); // move rook
+    board.movePiece(new Position(2, 6), new Position(2, 4));
+    assertFalse(board.isEnPassant(2, 5, new Move(new Position(1, 4), new Position(2, 5)), true));
+  }
+
+  @Test
+  public void testEnPassantPossibleNotRightDestinationWhitePawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.movePiece(new Position(0, 1), new Position(1, 4));
+    board.movePiece(new Position(2, 6), new Position(2, 4));
+    assertFalse(
+        board.isEnPassant(
+            2, 5, new Move(new Position(1, 4), new Position(1, 5)), true)); // not right x
+    assertFalse(
+        board.isEnPassant(
+            2, 5, new Move(new Position(1, 4), new Position(2, 4)), true)); // not right y
+  }
+
+  @Test
+  public void testEnPassantPossibleNotRightSourceWhitePawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.movePiece(new Position(0, 1), new Position(1, 4));
+    board.movePiece(new Position(2, 6), new Position(2, 4));
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(2, 4), new Position(2, 5)), true)); // not right x
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(1, 3), new Position(2, 5)), true)); // not right yù
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(2, 3), new Position(2, 5)), true)); // not right x and y
+  }
+
+  @Test
+  public void testEnPassantPossibleBlackPawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.movePiece(new Position(0, 1), new Position(1, 3));
+    board.movePiece(new Position(1, 1), new Position(3, 3));
+    board.movePiece(new Position(2, 1), new Position(2, 3));
+    assertTrue(board.isEnPassant(2, 2, new Move(new Position(1, 3), new Position(2, 2)), false));
+    assertTrue(board.isEnPassant(2, 2, new Move(new Position(3, 3), new Position(2, 2)), false));
+  }
+
+  @Test
+  public void testEnPassantPossibleNotABlackPawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.movePiece(new Position(7, 7), new Position(1, 3)); // move rook
+    board.movePiece(new Position(2, 1), new Position(2, 3));
+    assertFalse(board.isEnPassant(2, 2, new Move(new Position(1, 3), new Position(2, 2)), false));
+  }
+
+  @Test
+  public void testEnPassantPossibleNotRightDestinationBlackPawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    board.movePiece(new Position(0, 7), new Position(1, 3));
+    board.movePiece(new Position(2, 1), new Position(2, 3));
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(1, 3), new Position(1, 2)), false)); // not right x
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(1, 3), new Position(2, 3)), false)); // not right y
+  }
+
+  @Test
+  public void testEnPassantPossibleNotRightSourceBlackPawn() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    System.out.println(board);
+    board.movePiece(new Position(0, 7), new Position(1, 3));
+    board.movePiece(new Position(2, 1), new Position(2, 3));
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(2, 3), new Position(2, 2)), false)); // not right x
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(1, 4), new Position(2, 2)), false)); // not right y
+    assertFalse(
+        board.isEnPassant(
+            2, 2, new Move(new Position(2, 5), new Position(2, 2)), false)); // not right x and y
+  }
+
+  @Test
+  public void testBitboardRepresentationString() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    String[] boardString = {
+      "Bitboard = 0xffff00000000ffff",
+      "1|1|1|1|1|1|1|1",
+      "1|1|1|1|1|1|1|1",
+      "0|0|0|0|0|0|0|0",
+      "0|0|0|0|0|0|0|0",
+      "0|0|0|0|0|0|0|0",
+      "0|0|0|0|0|0|0|0",
+      "1|1|1|1|1|1|1|1",
+      "1|1|1|1|1|1|1|1",
+    };
+    for (String s : boardString) {
+      assertTrue(board.toString().contains(s));
+    }
+  }
+
+  @Test
+  public void testBitboardRepresentationEquals() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    BitboardRepresentation board2 = new BitboardRepresentation();
+    assertEquals(board, board2);
+  }
+
+  @Test
+  public void testBitboardRepresentationNotEquals() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    BitboardRepresentation board2 = new BitboardRepresentation();
+    assertEquals(board, board2);
+    board.movePiece(new Position(0, 1), new Position(1, 3));
+    assertNotEquals(board, board2);
+    board2.movePiece(new Position(0, 1), new Position(1, 3));
+    assertEquals(board, board2);
+  }
+
+  @Test
+  public void testBitboardRepresentationEqualsWithNotSameType() {
+    BitboardRepresentation board = new BitboardRepresentation();
+    String boardString = board.toString();
+    assertNotEquals(board, boardString);
   }
 
   @Test
