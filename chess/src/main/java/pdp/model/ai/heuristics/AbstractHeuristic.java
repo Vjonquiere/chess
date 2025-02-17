@@ -29,6 +29,10 @@ public abstract class AbstractHeuristic implements Heuristic {
     heuristics.remove(heuristic);
   }
 
+  public List<Heuristic> getHeuristics() {
+    return heuristics;
+  }
+
   /**
    * Evaluates the board state by summing up the scores of all sub-heuristics.
    *
