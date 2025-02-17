@@ -7,12 +7,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.Solver;
+import pdp.model.board.*;
+import pdp.model.history.History;
+import pdp.model.history.HistoryState;
+import pdp.model.parsers.FileBoard;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
+import pdp.model.savers.BoardSaver;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -44,6 +54,12 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Game created");
   }
 
+  /**
+   * Add a state to the count of seen states. If the state has been seen 3 times, returns true.
+   *
+   * @param simplifiedZobristHashing the simplified Zobrist hashing of the state
+   * @return true if the state has been seen 3 times, false otherwise
+   */
   private boolean addStateToCount(long simplifiedZobristHashing) {
     DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
     if (this.stateCount.containsKey(simplifiedZobristHashing)) {
@@ -117,207 +133,238 @@ public class Game extends Subject {
   }
 
   /**
+   * Creates a new instance of the Game class and stores it in the instance variable.
+   *
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to be used for AI moves.
+   * @param board The board state to use
+   * @return The newly created instance of Game.
+   */
+  public static Game initialize(
+      boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, FileBoard board) {
+    DEBUG(LOGGER, "Initializing Game from given board...");
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board), new History());
+    DEBUG(LOGGER, "Game initialized!");
+    return instance;
+  }
+
+  /**
    * Tries to play the given move on the game.
    *
    * @param move The move to be executed.
    * @throws IllegalMoveException If the move is not legal.
    */
-  public void playMove(Move move) throws IllegalMoveException {
-    Position sourcePosition = new Position(move.source.getY(), move.source.getX());
-    Position destPosition = new Position(move.dest.getY(), move.dest.getX());
+  public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
-    try {
-      if ((this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).color
-                  == Color.WHITE
-              && !this.gameState.getBoard().isWhite)
-          || this.gameState
-                      .getBoard()
-                      .board
-                      .getPieceAt(move.source.getX(), move.source.getY())
-                      .color
-                  == Color.BLACK
-              && this.gameState.getBoard().isWhite) {
-        throw new IllegalMoveException("Not your piece " + move.toString());
-      }
 
-      List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
-      Move classicalMove = move.isMoveClassical(availableMoves);
+    if (!validatePieceOwnership(sourcePosition)) {
+      throw new IllegalMoveException(move.toString());
+    }
+    validatePromotionMove(move);
 
-      // throws exception if the initial move is not a "classical" move (
-      // and we verify in the catch section if the move is a special move :
-      // castling, en-passant, doublePushPawn)
-      // here, the move is a "classical" move, but we must verify if the king will
-      // be in check after the move
+    List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
+    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
-      if (this.gameState
-          .getBoard()
-          .board
-          .isCheckAfterMove(
-              this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, classicalMove)) {
-        throw new IllegalMoveException("Move puts the king in check " + classicalMove.toString());
-      }
+    if (classicalMove.isPresent()) {
+      move = classicalMove.get();
+      processClassicalMove(move);
+    } else {
+      processSpecialMove(move);
+    }
+    this.updateGameStateAfterMove(move);
+  }
 
-      if (this.gameState.getBoard().isWhite) {
-        this.gameState.incrementsFullTurn();
-      }
-
-      this.history.addMove(
-          new HistoryState(
-              classicalMove, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
-
-      this.gameState.getBoard().makeMove(classicalMove);
-      DEBUG(LOGGER, "Move played!");
-
-      // Check game status after the classical move was played
-      this.gameState.switchPlayerTurn();
-      this.gameState.setSimplifiedZobristHashing(
-          zobristHashing.updateSimplifiedHashFromBitboards(
-              this.gameState.getSimplifiedZobristHashing(), getBoard(), classicalMove));
-
-      DEBUG(LOGGER, "Checking threefold repetition...");
-      boolean threefoldRepetition =
-          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
-      if (threefoldRepetition) {
-        this.gameState.activateThreefold();
-      }
-      // Check game status after the classical move was played
-      DEBUG(LOGGER, "Checking game status...");
-      this.gameState.checkGameStatus();
-      this.notifyObservers(EventType.MOVE_PLAYED);
-
-    } catch (Exception e) {
-      DEBUG(LOGGER, "The specified move is not classical -> searching for special move...");
-      boolean isSpecialMove = false;
-
-      // Castle move
-      DEBUG(LOGGER, "Checking castle...");
-      ColoredPiece coloredPiece =
-          this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
-      if (coloredPiece.piece == Piece.KING) {
-        if ((Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
-                && sourcePosition.getY() == 0
-                && destPosition.getY() == 0)
-            || (Math.abs(destPosition.getX() - sourcePosition.getX()) == 2
-                && sourcePosition.getY() == 7
-                && destPosition.getY() == 7)) {
-          boolean shortCastleIsAsked = destPosition.getX() > sourcePosition.getX();
-          Color color = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
-          // Check if castle is possible
-          if (this.gameState.getBoard().canCastle(color, shortCastleIsAsked)) {
-            // If castle is possible then apply changes
-            if (this.gameState.getBoard().isWhite) {
-              this.gameState.incrementsFullTurn();
-            }
-            this.gameState.getBoard().applyCastle(color, shortCastleIsAsked);
-            isSpecialMove = true;
-
-            this.history.addMove(
-                new HistoryState(
-                    move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
-          }
-        }
-      }
-
-      // enPassant move
-      DEBUG(LOGGER, "Checking en passant...");
-      if (this.gameState.getBoard().isLastMoveDoublePush
-          && this.gameState
-              .getBoard()
-              .board
-              .isEnPassant(
-                  this.gameState.getBoard().enPassantPos.getX(),
-                  this.gameState.getBoard().enPassantPos.getY(),
-                  move,
-                  this.gameState.getBoard().isWhite)) {
-        if (this.gameState
-            .getBoard()
-            .board
-            .isCheckAfterMove(
-                this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
-          throw new IllegalMoveException(
-              "enPassant move puts the king in check " + move.toString());
-        }
-
-        isSpecialMove = true;
-        this.gameState.getBoard().enPassantPos = null;
-        this.gameState.getBoard().isEnPassantTake = true;
-
-        if (this.gameState.getBoard().isWhite) {
-          this.gameState.incrementsFullTurn();
-        }
-        move.piece = coloredPiece;
-        move.isTake = true;
-        this.history.addMove(
-            new HistoryState(
-                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
-        this.gameState.getBoard().makeMove(move);
-      }
-
-      // DoublePawnPush move
-      DEBUG(LOGGER, "Checking double push...");
-      if (this.gameState
-          .getBoard()
-          .board
-          .isDoublePushPossible(move, this.gameState.getBoard().isWhite)) {
-        if (this.gameState
-            .getBoard()
-            .board
-            .isCheckAfterMove(
-                this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
-          throw new IllegalMoveException(
-              "This doublePawnPush puts the king in check " + move.toString());
-        }
-
-        isSpecialMove = true;
-        this.gameState.getBoard().enPassantPos =
-            this.gameState.getBoard().isWhite
-                ? new Position(move.dest.getY() - 1, move.dest.getX())
-                : new Position(move.dest.getY() + 1, move.dest.getX());
-        if (this.gameState.getBoard().isWhite) {
-          this.gameState.incrementsFullTurn();
-        }
-        move.piece = coloredPiece;
-        history.addMove(
-            new HistoryState(
-                move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
-        this.gameState.getBoard().makeMove(move);
-
-        this.gameState.getBoard().isLastMoveDoublePush = true;
-      }
-
-      if (!isSpecialMove) {
-        DEBUG(LOGGER, "Move was not a special move!");
-        throw new IllegalMoveException(e.getMessage() + " and not a special move");
-        // throw new IllegalMoveException(e.getMessage(), e );
-      }
-      // In this section, the variable 'classicalMove' is not defined.
-      // Checks if it is checkmate or stalemate, and more generally if the game is over. If so, end
-      // the game accordingly.
-
-      // Reasons for being here: the move played could be castling, en passant,doublePawnPush or an
-      // illegal move.
-
-      // Check game status after the special move was played
-      this.gameState.switchPlayerTurn();
-      this.gameState.setSimplifiedZobristHashing(
-          zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
-
-      DEBUG(LOGGER, "Checking threefold repetition...");
-      boolean threefoldRepetition =
-          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
-      if (threefoldRepetition) {
-        this.gameState.activateThreefold();
-      }
-      this.gameState.checkGameStatus();
-      this.notifyObservers(EventType.MOVE_PLAYED);
+  /**
+   * Checks if the given move is a promotion move and if is an instance of PromoteMove
+   *
+   * @param move The move to be validated.
+   * @throws InvalidPromoteFormatException If the move is a promotion move but not of PromoteMove
+   *     type.
+   */
+  private void validatePromotionMove(Move move) throws InvalidPromoteFormatException {
+    if (this.isPromotionMove(move) && !(move instanceof PromoteMove)) {
+      throw new InvalidPromoteFormatException();
     }
   }
 
+  private boolean validatePieceOwnership(Position sourcePosition) throws IllegalMoveException {
+    ColoredPiece pieceAtSource =
+        this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+    boolean isWhiteTurn = this.gameState.getBoard().isWhite;
+    if ((pieceAtSource.color == Color.WHITE && !isWhiteTurn)
+        || (pieceAtSource.color == Color.BLACK && isWhiteTurn)) {
+      DEBUG(
+          LOGGER,
+          "Not a " + pieceAtSource.color.toString() + "piece at " + sourcePosition.toString());
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Handles classical moves
+   *
+   * @param move The move to be executed.
+   * @throws IllegalMoveException If the move is illegal in the current configuration.
+   */
+  private void processClassicalMove(Move move) throws IllegalMoveException {
+    Color currentColor = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+    if (this.gameState.getBoard().board.isCheckAfterMove(currentColor, move)) {
+      DEBUG(LOGGER, "Move puts the king in check " + move.toString());
+      throw new IllegalMoveException(move.toString());
+    }
+
+    this.gameState.getBoard().makeMove(move);
+    DEBUG(LOGGER, "Move played!");
+  }
+
+  /**
+   * Handles special moves: castling, en passant, double pawn push
+   *
+   * @param move The move to be executed.
+   * @throws IllegalMoveException If the move is illegal in the current configuration.
+   */
+  private void processSpecialMove(Move move) throws IllegalMoveException {
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    boolean isSpecialMove = false;
+    ColoredPiece coloredPiece =
+        this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+
+    // Check Castle
+    if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
+      boolean shortCastle = destPosition.getX() > sourcePosition.getX();
+      Color color = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+      if (this.gameState.getBoard().canCastle(color, shortCastle)) {
+        this.gameState.getBoard().applyCastle(color, shortCastle);
+        isSpecialMove = true;
+      }
+    }
+
+    // Check en passant
+    if (!isSpecialMove
+        && this.gameState.getBoard().isLastMoveDoublePush
+        && this.gameState
+            .getBoard()
+            .board
+            .isEnPassant(
+                this.gameState.getBoard().enPassantPos.getX(),
+                this.gameState.getBoard().enPassantPos.getY(),
+                move,
+                this.gameState.getBoard().isWhite)) {
+      if (this.gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+        DEBUG(LOGGER, "En passant puts the king in check!");
+        throw new IllegalMoveException(move.toString());
+      }
+      isSpecialMove = true;
+      this.gameState.getBoard().enPassantPos = null;
+      this.gameState.getBoard().isEnPassantTake = true;
+      move.piece = coloredPiece;
+      move.isTake = true;
+      this.gameState.getBoard().makeMove(move);
+    }
+
+    // Check double pawn push
+    if (!isSpecialMove
+        && this.gameState
+            .getBoard()
+            .board
+            .isDoublePushPossible(move, this.gameState.getBoard().isWhite)) {
+      if (this.gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+        DEBUG(LOGGER, "Double push puts the king in check!");
+        throw new IllegalMoveException(move.toString());
+      }
+      isSpecialMove = true;
+      this.gameState.getBoard().enPassantPos =
+          this.gameState.getBoard().isWhite
+              ? new Position(move.dest.getX(), move.dest.getY() - 1)
+              : new Position(move.dest.getX(), move.dest.getY() + 1);
+      move.piece = coloredPiece;
+      this.gameState.getBoard().makeMove(move);
+      this.gameState.getBoard().isLastMoveDoublePush = true;
+    }
+
+    if (!isSpecialMove) {
+      DEBUG(LOGGER, "Move was not a special move!");
+      throw new IllegalMoveException(move.toString());
+    }
+  }
+
+  /**
+   * Determines if the given move is a castle move.
+   *
+   * @param coloredPiece The piece being moved, expected to be a king for castling.
+   * @param source The source position of the move.
+   * @param dest The destination position of the move.
+   * @return true if the move is a castle move, false otherwise.
+   */
+  private boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
+    if (coloredPiece.piece != Piece.KING) {
+      return false;
+    }
+    int deltaX = Math.abs(dest.getX() - source.getX());
+    return deltaX == 2
+        && ((source.getY() == 0 && dest.getY() == 0) || (source.getY() == 7 && dest.getY() == 7));
+  }
+
+  /**
+   * Updates the game state after a move is played.
+   *
+   * <p>The game state is updated by:
+   *
+   * <ul>
+   *   <li>Incrementing the full turn number if the move was made by white.
+   *   <li>Adding the move to the history.
+   *   <li>Switching the current player turn.
+   *   <li>Updating the board player.
+   *   <li>Updating the simplified zobrist hashing.
+   *   <li>Checking for threefold repetition.
+   *   <li>Checking the game status, which may end the game.
+   *   <li>Notifying observers that a move has been played.
+   * </ul>
+   */
+  private void updateGameStateAfterMove(Move move) {
+
+    if (this.gameState.getBoard().isWhite) {
+      this.gameState.incrementsFullTurn();
+    }
+    this.history.addMove(
+        new HistoryState(move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
+
+    this.gameState.switchPlayerTurn();
+    this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
+    this.gameState.setSimplifiedZobristHashing(
+        zobristHashing.updateSimplifiedHashFromBitboards(
+            this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+    DEBUG(LOGGER, "Checking threefold repetition...");
+    boolean threefoldRepetition =
+        this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+    if (threefoldRepetition) {
+      this.gameState.activateThreefold();
+    }
+    DEBUG(LOGGER, "Checking game status...");
+    this.gameState.checkGameStatus();
+    this.notifyObservers(EventType.MOVE_PLAYED);
+  }
+
   public void saveGame(String path) {
-    String gameStr = this.history.toAlgebricString();
+    String board =
+        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite));
+    String gameStr = this.history.toAlgebraicString();
+
+    String game = board + "\n" + gameStr;
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-      writer.write(gameStr);
+      writer.write(game);
     } catch (IOException e) {
       System.err.println("Error writing to file: " + e.getMessage());
     }
@@ -342,6 +389,18 @@ public class Game extends Subject {
     return this.gameState.isGameOver();
   }
 
+  /**
+   * Initializes a new Game object from a list of moves.
+   *
+   * <p>The new game is initialized with the given AI settings, solver, and starting position.
+   *
+   * @param moves The moves to play in sequence.
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to use for AI moves.
+   * @return A new Game object with the given moves played.
+   * @throws IllegalMoveException If any of the given moves are illegal.
+   */
   public static Game fromHistory(
       List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver)
       throws IllegalMoveException {
@@ -353,6 +412,10 @@ public class Game extends Subject {
 
     instance = game;
     return instance;
+  }
+
+  public void previousState() {
+    // TODO: restore previous state from history
   }
 
   /**
@@ -404,6 +467,20 @@ public class Game extends Subject {
     sb.append("\n");
 
     return sb.toString();
+  }
+
+  public boolean isPromotionMove(Move move) {
+    if (this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).piece
+        != Piece.PAWN) {
+      return false;
+    }
+    if (this.gameState.isWhiteTurn() && move.dest.getY() == 7) {
+      return true;
+    }
+    if (!this.gameState.isWhiteTurn() && move.dest.getY() == 0) {
+      return true;
+    }
+    return false;
   }
 
   public static Game getInstance() {

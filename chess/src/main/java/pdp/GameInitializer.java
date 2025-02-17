@@ -12,9 +12,11 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
-import pdp.model.Move;
 import pdp.model.Timer;
 import pdp.model.ai.Solver;
+import pdp.model.board.Move;
+import pdp.model.parsers.BoardFileParser;
+import pdp.model.parsers.FileBoard;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.view.CLIView;
@@ -22,7 +24,7 @@ import pdp.view.GameView;
 import pdp.view.View;
 
 public abstract class GameInitializer {
-
+  // TODO Internationalization
   /**
    * Initialize the game with the given options.
    *
@@ -102,20 +104,28 @@ public abstract class GameInitializer {
         inputStream = new FileInputStream(options.get(OptionType.LOAD));
 
         List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
-        List<Move> moves = new ArrayList<>();
+        if (moveStrings.isEmpty()) {
+          BoardFileParser parser = new BoardFileParser();
+          FileBoard board =
+              parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
+          model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board);
+        } else {
 
-        for (String move : moveStrings) {
-          moves.add(Move.fromString(move));
+          List<Move> moves = new ArrayList<>();
+
+          for (String move : moveStrings) {
+            moves.add(Move.fromString(move.replace("x", "-")));
+          }
+
+          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver);
         }
-
-        model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver);
 
       } catch (IOException
           | IllegalMoveException
           | InvalidPositionException
           | MoveParsingException e) {
         System.err.println(
-            "Error while using history file: " + e.getMessage()); // TODO use Internationalization
+            "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
         System.err.println("Using the default game start");
         model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
       }

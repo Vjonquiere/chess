@@ -13,8 +13,10 @@ import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.ProposeDrawCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.events.EventType;
+import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
+import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
@@ -97,6 +99,9 @@ public class CLIView implements View {
       case DRAW_ACCEPTED:
         System.out.println(TextGetter.getText("drawAccepted"));
         break;
+      case GAME_SAVED:
+        System.out.println(TextGetter.getText("gameSaved"));
+        break;
       default:
         DEBUG(LOGGER, "Received unknown game event: " + event);
         break;
@@ -114,7 +119,9 @@ public class CLIView implements View {
   public void onErrorEvent(Exception e) {
     if (e instanceof IllegalMoveException
         || e instanceof MoveParsingException
-        || e instanceof InvalidPositionException) {
+        || e instanceof InvalidPositionException
+        || e instanceof FailedSaveException
+        || e instanceof InvalidPromoteFormatException) {
       System.out.println(e.getMessage());
     } else {
       System.err.println(e);

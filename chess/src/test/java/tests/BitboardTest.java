@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import pdp.model.Bitboard;
+import pdp.model.board.Bitboard;
 
 public class BitboardTest {
 

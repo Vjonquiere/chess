@@ -1,22 +1,25 @@
-package pdp.model;
+package pdp.model.board;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+import pdp.model.parsers.FileBoard;
+import pdp.model.piece.Color;
+import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class Board {
   private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
-  BoardRepresentation board;
-  boolean isWhite;
+  public BoardRepresentation board;
+  public boolean isWhite;
   boolean whiteShortCastle;
   boolean blackShortCastle;
   boolean whiteLongCastle;
   boolean blackLongCastle;
-  Position enPassantPos;
-  boolean isLastMoveDoublePush;
-  boolean isEnPassantTake;
+  public Position enPassantPos;
+  public boolean isLastMoveDoublePush;
+  public boolean isEnPassantTake;
   int nbMovesWithNoCaptureOrPawn;
   int doubleMovePawnBlack;
   int doubleMovePawnWhite;
@@ -37,13 +40,41 @@ public class Board {
     this.nbMovesWithNoCaptureOrPawn = 0;
   }
 
+  /**
+   * Create a board from a given board state
+   *
+   * @param board The board state to use
+   */
+  public Board(FileBoard board) {
+    Logging.configureLogging(LOGGER);
+    this.board = board.board();
+    this.isWhite = board.isWhiteTurn();
+    this.enPassantPos = null;
+    this.whiteShortCastle = true;
+    this.blackShortCastle = true;
+    this.whiteLongCastle = true;
+    this.blackLongCastle = true;
+    this.isLastMoveDoublePush = false;
+    this.isEnPassantTake = false;
+    this.doubleMovePawnBlack = 0;
+    this.doubleMovePawnWhite = 0;
+    this.nbMovesWithNoCaptureOrPawn = 0;
+  }
+
   public List<Move> getAvailableMoves(Position pos) {
     return board.getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
+  public boolean getPlayer() {
+    return this.isWhite;
+  }
+
+  public void setPlayer(boolean isWhite) {
+    this.isWhite = isWhite;
+  }
+
   /**
    * Executes a given move on the board, handling captures, en passant, castling, pawn promotion,
-   * and turn switching
    *
    * @param move The move to be executed
    */
@@ -53,7 +84,7 @@ public class Board {
       // Reset the number of moves with no pawn move
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
-    if (move.isTake == true) {
+    if (move.isTake) {
       // SAVE DELETED PIECE FOR HASHING
       if (!this.isEnPassantTake) {
         board.deletePieceAt(move.dest.getX(), move.dest.getY());
@@ -74,34 +105,34 @@ public class Board {
 
     board.movePiece(move.source, move.dest);
 
-    if (this.whiteShortCastle == true
-        && (move.source.equals(new Position(0, 4))
+    if (this.whiteShortCastle
+        && (move.source.equals(new Position(4, 0))
             || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
       this.whiteShortCastle = false;
     }
-    if (this.whiteLongCastle == true
-        && (move.source.equals(new Position(0, 4))
-            || move.source.equals(new Position(0, 7)))) { // rook on h1 and king on e1
+    if (this.whiteLongCastle
+        && (move.source.equals(new Position(4, 0))
+            || move.source.equals(new Position(7, 0)))) { // rook on h1 and king on e1
       this.whiteLongCastle = false;
     }
 
-    if (this.blackShortCastle == true
-        && (move.source.equals(new Position(7, 4))
+    if (this.blackShortCastle
+        && (move.source.equals(new Position(4, 7))
             || move.source.equals(new Position(7, 7)))) { // rook on h8 and king on e8
       this.blackShortCastle = false;
     }
-    if (this.blackLongCastle == true
-        && (move.source.equals(new Position(7, 4))
-            || move.source.equals(new Position(7, 0)))) { // rook on a8 and king on e8
+    if (this.blackLongCastle
+        && (move.source.equals(new Position(4, 7))
+            || move.source.equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.blackLongCastle = false;
     }
     if (board.isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
-      // Piece newPiece = new Piece(ask to what the user want to promote his pawn)
+      Piece newPiece = ((PromoteMove) move).getPromPiece();
       board.promotePawn(
           move.dest.getX(),
           move.dest.getY(),
           this.isWhite,
-          Piece.QUEEN); // replace Piece.QUEEN by newPiece
+          newPiece); // replace Piece.QUEEN by newPiece
     }
 
     if (isLastMoveDoublePush) {
@@ -111,14 +142,6 @@ public class Board {
     if (this.isEnPassantTake) {
       this.isLastMoveDoublePush = false;
     }
-
-    if (this.isWhite) {
-      this.isWhite = false;
-    } else {
-      this.isWhite = true;
-    }
-
-    move.toString();
   }
 
   public Board getCopy() {
@@ -126,7 +149,7 @@ public class Board {
     throw new UnsupportedOperationException();
   }
 
-  public BoardRepresentation getBoard() {
+  public BoardRepresentation getBoardRep() {
     return board;
   }
 
@@ -200,12 +223,12 @@ public class Board {
       if (shortCastle && !this.whiteShortCastle) return false;
       if (!shortCastle && !this.whiteLongCastle) return false;
 
-      Position f1Square = new Position(0, 5);
-      Position g1Square = new Position(0, 6);
+      Position f1Square = new Position(5, 0);
+      Position g1Square = new Position(6, 0);
 
-      Position d1Square = new Position(0, 3);
-      Position c1Square = new Position(0, 2);
-      Position b1Square = new Position(0, 1);
+      Position d1Square = new Position(3, 0);
+      Position c1Square = new Position(2, 0);
+      Position b1Square = new Position(1, 0);
 
       if (shortCastle) {
         if ((board.getPieceAt(f1Square.getX(), f1Square.getY()).piece != Piece.EMPTY)
@@ -236,12 +259,12 @@ public class Board {
       if (shortCastle && !this.blackShortCastle) return false;
       if (!shortCastle && !this.blackLongCastle) return false;
 
-      Position f8Square = new Position(7, 5);
-      Position g8Square = new Position(7, 6);
+      Position f8Square = new Position(5, 7);
+      Position g8Square = new Position(6, 7);
 
-      Position d8Square = new Position(7, 3);
-      Position c8Square = new Position(7, 2);
-      Position b8Square = new Position(7, 1);
+      Position d8Square = new Position(3, 7);
+      Position c8Square = new Position(2, 7);
+      Position b8Square = new Position(1, 7);
 
       if (shortCastle) {
         if ((board.getPieceAt(f8Square.getX(), f8Square.getY()).piece != Piece.EMPTY)
@@ -278,26 +301,24 @@ public class Board {
    */
   public void applyShortCastle(Color color) {
     if (color == Color.WHITE) {
-      Position e1Square = new Position(0, 4);
-      Position f1Square = new Position(0, 5);
-      Position g1Square = new Position(0, 6);
-      Position h1Square = new Position(0, 7);
+      Position e1Square = new Position(4, 0);
+      Position f1Square = new Position(5, 0);
+      Position g1Square = new Position(6, 0);
+      Position h1Square = new Position(7, 0);
       // Move king
       this.board.movePiece(e1Square, g1Square);
       // Move rook
       this.board.movePiece(h1Square, f1Square);
-      this.isWhite = false;
 
     } else {
-      Position e8Square = new Position(7, 4);
-      Position f8Square = new Position(7, 5);
-      Position g8Square = new Position(7, 6);
+      Position e8Square = new Position(4, 7);
+      Position f8Square = new Position(5, 7);
+      Position g8Square = new Position(6, 7);
       Position h8Square = new Position(7, 7);
       // Move king
       this.board.movePiece(e8Square, g8Square);
       // Move rook
       this.board.movePiece(h8Square, f8Square);
-      this.isWhite = true;
     }
   }
 
@@ -308,26 +329,23 @@ public class Board {
    */
   public void applyLongCastle(Color color) {
     if (color == Color.WHITE) {
-      Position e1Square = new Position(0, 4);
-      Position d1Square = new Position(0, 3);
-      Position c1Square = new Position(0, 2);
+      Position e1Square = new Position(4, 0);
+      Position d1Square = new Position(3, 0);
+      Position c1Square = new Position(2, 0);
       Position a1Square = new Position(0, 0);
       // Move king
       this.board.movePiece(e1Square, c1Square);
       // Move rook
       this.board.movePiece(a1Square, d1Square);
-      this.isWhite = false;
-
     } else {
-      Position e8Square = new Position(7, 4);
-      Position d8Square = new Position(7, 3);
-      Position c8Square = new Position(7, 2);
-      Position a8Square = new Position(7, 0);
+      Position e8Square = new Position(4, 7);
+      Position d8Square = new Position(3, 7);
+      Position c8Square = new Position(2, 7);
+      Position a8Square = new Position(0, 7);
       // Move king
       this.board.movePiece(e8Square, c8Square);
       // Move rook
       this.board.movePiece(a8Square, d8Square);
-      this.isWhite = true;
     }
   }
 

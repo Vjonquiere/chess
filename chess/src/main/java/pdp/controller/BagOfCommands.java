@@ -67,14 +67,29 @@ public class BagOfCommands {
     }
   }
 
+  /**
+   * Sets the game model linked to the bag of commands.
+   *
+   * @param model The game model to set.
+   */
   public void setModel(Game model) {
     this.model = model;
   }
 
+  /**
+   * Sets the game controller linked to the bag of commands.
+   *
+   * @param controller The game controller to set.
+   */
   public void setController(GameController controller) {
     this.controller = controller;
   }
 
+  /**
+   * Gets the single instance of BagOfCommands and creats it if it doesn't exist.
+   *
+   * @return The single instance of BagOfCommands.
+   */
   public static BagOfCommands getInstance() {
     if (instance == null) {
       instance = new BagOfCommands();
@@ -82,6 +97,11 @@ public class BagOfCommands {
     return instance;
   }
 
+  /**
+   * Sets the instance of BagOfCommands.
+   *
+   * @param instance The instance to be set as the singleton BagOfCommands.
+   */
   public static void setInstance(BagOfCommands instance) {
     BagOfCommands.instance = instance;
   }

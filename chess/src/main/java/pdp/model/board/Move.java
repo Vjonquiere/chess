@@ -1,22 +1,26 @@
-package pdp.model;
+package pdp.model.board;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
+import pdp.model.Game;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
-  Position source;
-  Position dest;
-  ColoredPiece piece;
-  ColoredPiece takenPiece;
-  boolean isTake = false;
-  boolean isCheck = false;
-  boolean isCheckMate = false;
+  public Position source;
+  public Position dest;
+  public ColoredPiece piece;
+  public ColoredPiece takenPiece;
+  public boolean isTake = false;
+  public boolean isCheck = false;
+  public boolean isCheckMate = false;
 
   public Move(Position source, Position dest) {
     Logging.configureLogging(LOGGER);
@@ -42,6 +46,24 @@ public class Move {
     this.takenPiece = takenPiece;
   }
 
+  public Move(
+      Position source,
+      Position dest,
+      ColoredPiece piece,
+      boolean isTake,
+      ColoredPiece takenPiece,
+      boolean isCheck,
+      boolean isCheckMate) {
+    Logging.configureLogging(LOGGER);
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
+    this.takenPiece = takenPiece;
+    this.isCheck = isCheck;
+    this.isCheckMate = isCheckMate;
+  }
+
   /**
    * Parses a string representation of a move and converts it into a {@code Move} object
    *
@@ -51,13 +73,13 @@ public class Move {
    */
   public static Move fromString(String stringMove) throws MoveParsingException {
 
-    if (stringMove.toLowerCase() == "o-o-o") {
+    if (stringMove.equalsIgnoreCase("o-o-o")) {
       if (Game.getInstance().getGameState().isWhiteTurn()) {
         stringMove = "e1-c1";
       } else {
         stringMove = "e8-c8";
       }
-    } else if (stringMove.toLowerCase() == "o-o") {
+    } else if (stringMove.equalsIgnoreCase("o-o")) {
       if (Game.getInstance().getGameState().isWhiteTurn()) {
         stringMove = "e1-g1";
       } else {
@@ -69,8 +91,15 @@ public class Move {
     if (parts.length != 2) {
       throw new MoveParsingException(stringMove);
     }
-    Move move = new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
-    return move;
+
+    String[] promoteParts = parts[1].split("=");
+    if (promoteParts.length == 2) {
+      return new PromoteMove(
+          stringToPosition(parts[0]),
+          stringToPosition(promoteParts[0]),
+          stringToPiece(promoteParts[1]));
+    }
+    return new Move(stringToPosition(parts[0]), stringToPosition(parts[1]));
   }
 
   /**
@@ -96,7 +125,26 @@ public class Move {
     int x = colLetter - 'a';
     int y = rowNumber - 1;
 
-    return new Position(y, x);
+    return new Position(x, y);
+  }
+
+  public static Piece stringToPiece(String pieceStr) {
+    switch (pieceStr.toLowerCase()) {
+      case "p":
+        return Piece.PAWN;
+      case "n":
+        return Piece.KNIGHT;
+      case "b":
+        return Piece.BISHOP;
+      case "r":
+        return Piece.ROOK;
+      case "q":
+        return Piece.QUEEN;
+      case "k":
+        return Piece.KING;
+      default:
+        throw new IllegalArgumentException("Invalid piece string: " + pieceStr);
+    }
   }
 
   /**
@@ -119,13 +167,25 @@ public class Move {
    * @return The matching move if found
    * @throws IllegalMoveException If the move is not found in the list of available moves
    */
-  public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
+  public Optional<Move> isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
     for (Move move : availableMoves) {
       if (move.equals(this)) {
-        return move;
+        if (this instanceof PromoteMove) {
+          return Optional.of(
+              new PromoteMove(
+                  move.source,
+                  move.dest,
+                  ((PromoteMove) this).getPromPiece(),
+                  move.piece,
+                  move.isTake,
+                  move.takenPiece,
+                  move.isCheck,
+                  move.isCheckMate));
+        }
+        return Optional.of(move);
       }
     }
-    throw new IllegalMoveException("It's not a classicalMove " + this.toString());
+    return Optional.empty();
   }
 
   public Position getSource() {
@@ -144,6 +204,10 @@ public class Move {
     return isTake;
   }
 
+  public void setTake(boolean isTake) {
+    this.isTake = isTake;
+  }
+
   public boolean isCheck() {
     return isCheck;
   }
@@ -152,7 +216,16 @@ public class Move {
     return isCheckMate;
   }
 
-  public String toAlgebricString() {
+  /**
+   * Converts the move to its algebraic notation string representation.
+   *
+   * <p>The format includes the piece type (except for pawns), the source position, a separator ('x'
+   * for captures, '-' otherwise), the destination position, and an optional annotation for check
+   * ('+') or checkmate ('#').
+   *
+   * @return The algebraic notation string representing the move.
+   */
+  public String toAlgebraicString() {
     String piece = "";
     if (this.piece != null && this.piece.piece != Piece.PAWN) {
       piece = String.valueOf(this.piece.piece.getCharRepresentation(true));
@@ -165,6 +238,14 @@ public class Move {
     return piece + sourceStr + separator + destinationStr + annotation;
   }
 
+  /**
+   * Converts the move to a string representation.
+   *
+   * <p>The format is the source position, a separator ('x' for captures, '-' otherwise), and the
+   * destination position.
+   *
+   * @return The string representation of the move.
+   */
   @Override
   public String toString() {
     String sourceStr = positionToString(this.source);
@@ -177,7 +258,7 @@ public class Move {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
-    if (obj == null || getClass() != obj.getClass()) return false;
+    if (obj == null || !(obj instanceof Move)) return false;
     Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }
