@@ -33,7 +33,7 @@ public class BadPawnsHeuristic implements Heuristic {
         count++;
       }
     }
-    return 0;
+    return count;
   }
 
   /**
@@ -43,7 +43,7 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if the player is White, false if he is black
    * @return number of isolated pawns
    */
-  public static int isolatedPawns(Board board, boolean isWhite) {
+  private int isolatedPawns(Board board, boolean isWhite) {
     Set<Integer> occupiedFiles = new HashSet<>();
     List<Position> pawns = board.getBoardRep().getPawns(isWhite);
     for (Position p : pawns) {
@@ -62,7 +62,7 @@ public class BadPawnsHeuristic implements Heuristic {
     return count;
   }
 
-  public static int backwardsPawns(Board board, boolean isWhite) {
+  private int backwardsPawns(Board board, boolean isWhite) {
     return 0;
   }
 }
