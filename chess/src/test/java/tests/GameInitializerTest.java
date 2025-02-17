@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import pdp.GameInitializer;
 import pdp.controller.GameController;
 import pdp.model.board.Move;
+import pdp.model.parsers.BoardFileParser;
+import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Piece;
 import pdp.utils.OptionType;
 import pdp.utils.Position;
@@ -180,5 +183,18 @@ class GameInitializerTest {
     assertTrue(errorOutput.contains("Using the default game start"));
 
     assertNotNull(controller);
+  }
+
+  @Test
+  void loadGameWithNoHistoryTest() {
+    // The loaded board should correspond to the board in the given file
+    BoardFileParser parser = new BoardFileParser();
+    ClassLoader classLoader = getClass().getClassLoader();
+    URL filePath = classLoader.getResource("gameBoards/defaultGameWithBlackTurn");
+    FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    options.put(OptionType.LOAD, filePath.getPath());
+    GameController controller = GameInitializer.initialize(options);
+    assertEquals(controller.getModel().getBoard().board, board.board());
+    assertEquals(controller.getModel().getGameState().isWhiteTurn(), board.isWhiteTurn());
   }
 }
