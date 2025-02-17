@@ -2,7 +2,7 @@ package pdp.model.ai.heuristics;
 
 import java.util.ArrayList;
 import java.util.List;
-import pdp.model.board.Board;
+import pdp.model.Game;
 
 /**
  * Used for design pattern composite : all heuristic composed of several simple heuristics must
@@ -36,15 +36,15 @@ public abstract class AbstractHeuristic implements Heuristic {
   /**
    * Evaluates the board state by summing up the scores of all sub-heuristics.
    *
-   * @param board The current Board.
+   * @param game The current Board.
    * @param isWhite true if the player is white, false if he is black
    * @return
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public int evaluate(Game game, boolean isWhite) {
     int score = 0;
     for (Heuristic heuristic : heuristics) {
-      score += heuristic.evaluate(board, isWhite);
+      score += heuristic.evaluate(game, isWhite);
     }
     return score;
   }

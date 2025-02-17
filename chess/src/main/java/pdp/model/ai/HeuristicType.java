@@ -10,5 +10,6 @@ public enum HeuristicType {
   MOBILITY,
   SHANNON,
   BAD_PAWNS,
+  STANDARD,
   ENDGAME;
 }

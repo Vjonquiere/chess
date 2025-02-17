@@ -1,7 +1,7 @@
 package pdp.model.ai.heuristics;
 
-import pdp.model.board.Board;
+import pdp.model.Game;
 
 public interface Heuristic {
-  int evaluate(Board board, boolean isWhite);
+  int evaluate(Game game, boolean isWhite);
 }

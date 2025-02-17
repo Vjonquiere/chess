@@ -20,8 +20,8 @@ public class HeuristicTests {
     game = Game.initialize(false, false, null, null);
     solver = new Solver();
     solver.setHeuristic(HeuristicType.MATERIAL);
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(0, solver.evaluateBoard(game, true));
+    assertEquals(0, solver.evaluateBoard(game, false));
   }
 
   @Test
@@ -29,7 +29,7 @@ public class HeuristicTests {
     game = Game.initialize(false, false, null, null);
     solver = new Solver();
     solver.setHeuristic(HeuristicType.MOBILITY);
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(0, solver.evaluateBoard(game, true));
+    assertEquals(0, solver.evaluateBoard(game, false));
   }
 }
