@@ -850,7 +850,8 @@ public class BitboardRepresentationTest {
   public void testPawnsHaveProgressedWhenGameStartsShouldBeFalse() {
     BitboardRepresentation board = new BitboardRepresentation();
 
-    assertFalse(board.pawnsHaveProgressed());
+    assertFalse(board.pawnsHaveProgressed(true));
+    assertFalse(board.pawnsHaveProgressed(false));
   }
 
   @Test
@@ -863,7 +864,7 @@ public class BitboardRepresentationTest {
       board.deletePieceAt(x, yWhite);
     }
 
-    assertFalse(board.pawnsHaveProgressed());
+    assertFalse(board.pawnsHaveProgressed(true));
   }
 
   @Test
@@ -876,7 +877,7 @@ public class BitboardRepresentationTest {
       board.deletePieceAt(x, yBlack);
     }
 
-    assertFalse(board.pawnsHaveProgressed());
+    assertFalse(board.pawnsHaveProgressed(false));
   }
 
   @Test
@@ -927,7 +928,8 @@ public class BitboardRepresentationTest {
     board.movePiece(e7, e5);
     board.movePiece(f7, f5);
 
-    assertTrue(board.pawnsHaveProgressed());
+    assertTrue(board.pawnsHaveProgressed(true));
+    assertTrue(board.pawnsHaveProgressed(false));
   }
 
   // TODO pawn can't eat front

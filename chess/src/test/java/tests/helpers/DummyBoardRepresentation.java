@@ -131,7 +131,7 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public boolean pawnsHaveProgressed() {
+  public boolean pawnsHaveProgressed(boolean isWhite) {
     return false;
   }
 

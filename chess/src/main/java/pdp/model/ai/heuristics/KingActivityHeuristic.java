@@ -8,8 +8,31 @@ import pdp.utils.Position;
 
 public class KingActivityHeuristic implements Heuristic {
 
+  /**
+   * Checks the activity of the king and returns a score accordingly King is close to the center ?
+   * King has a lot of possible moves ?
+   *
+   * @param board board of the game
+   * @param isWhite true if this is for white, false otherwise
+   * @return score according to the activity of the king
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
+    int score = 0;
+    score += kingIsInCenterScore(board, isWhite);
+    score += kingActivityScore(board, isWhite);
+
+    return score;
+  }
+
+  /**
+   * Checks the location of the king and returns a score accordingly
+   *
+   * @param board board of the game
+   * @param isWhite true if this is for white, false otherwise
+   * @return score according to the location of the king on the board
+   */
+  public int kingIsInCenterScore(Board board, boolean isWhite) {
     int score = 0;
 
     // Delineate center box
@@ -27,9 +50,8 @@ public class KingActivityHeuristic implements Heuristic {
             && kingPosition.getY() >= posDownRightCenter.getY()
             && kingPosition.getY() <= posTopLeftCenter.getY();
 
-    int kingCenterBonus = 0;
     if (isKingInCenter) {
-      kingCenterBonus = 20;
+      score = 20;
     } else {
       // Compute Manhattan distance to center
       int centerX = (posTopLeftCenter.getX() + posTopRightCenter.getX()) / 2;
@@ -39,11 +61,21 @@ public class KingActivityHeuristic implements Heuristic {
           Math.abs(kingPosition.getX() - centerX) + Math.abs(kingPosition.getY() - centerY);
       int noBonus = 0;
       // King more or less far of the center
-      kingCenterBonus = Math.max(noBonus, 15 - (distance * 3));
+      score = Math.max(noBonus, 15 - (distance * 3));
     }
 
-    score += kingCenterBonus;
+    return score;
+  }
 
+  /**
+   * Checks the activity of the king and returns a score accordingly
+   *
+   * @param board board of the game
+   * @param isWhite true if this is for white, false otherwise
+   * @return score according to the activity of the king
+   */
+  public int kingActivityScore(Board board, boolean isWhite) {
+    int score = 0;
     BoardRepresentation bitboard = board.getBoardRep();
     // Check the activity of the King
     List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);

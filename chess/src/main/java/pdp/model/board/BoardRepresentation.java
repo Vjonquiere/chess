@@ -31,7 +31,7 @@ public interface BoardRepresentation extends Rules {
 
   public boolean areKingsActive();
 
-  public boolean pawnsHaveProgressed();
+  public boolean pawnsHaveProgressed(boolean isWhite);
 
   public int nbPiecesRemaining();
 

@@ -1054,42 +1054,33 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Checks the progress of pawns in the game. Method used to detect endgames.
+   * Checks the progress of pawns in the game for a specific color.
    *
-   * @return true if majority of pawns are located on the middle of the board or passed that. false
-   *     otherwise
+   * @param isWhite true for white pawns, false for black pawns
+   * @return true if the majority of pawns for the given color are past the middle of the board.
    */
-  @Override
-  public boolean pawnsHaveProgressed() {
-    List<Position> blackPawns = getPawns(false);
-    List<Position> whitePawns = getPawns(true);
-    if (blackPawns.isEmpty() || whitePawns.isEmpty()) {
+  public boolean pawnsHaveProgressed(boolean isWhite) {
+    List<Position> pawns = getPawns(isWhite);
+    if (pawns.isEmpty()) {
       return false;
     }
 
     final double FACTOR_ADVANCED_PAWNS = 2.0 / 3.0;
-    final int MIDDLE_RANK_BLACK = 4;
     final int MIDDLE_RANK_WHITE = 3;
+    final int MIDDLE_RANK_BLACK = 4;
 
-    int nbAdvancedPawnsBlack = 0;
-    int nbAdvancedPawnsWhite = 0;
+    int advancedPawns = 0;
 
-    for (Position pos : blackPawns) {
-      if (pos.getY() <= MIDDLE_RANK_BLACK) {
-        nbAdvancedPawnsBlack++;
+    for (Position pos : pawns) {
+      if (isWhite && pos.getY() >= MIDDLE_RANK_WHITE) {
+        advancedPawns++;
+      } else if (!isWhite && pos.getY() <= MIDDLE_RANK_BLACK) {
+        advancedPawns++;
       }
     }
 
-    for (Position pos : whitePawns) {
-      if (pos.getY() >= MIDDLE_RANK_WHITE) {
-        nbAdvancedPawnsWhite++;
-      }
-    }
-
-    double ratioBlack = (double) nbAdvancedPawnsBlack / blackPawns.size();
-    double ratioWhite = (double) nbAdvancedPawnsWhite / whitePawns.size();
-
-    return ratioBlack >= FACTOR_ADVANCED_PAWNS && ratioWhite >= FACTOR_ADVANCED_PAWNS;
+    double ratio = (double) advancedPawns / pawns.size();
+    return ratio >= FACTOR_ADVANCED_PAWNS;
   }
 
   /**

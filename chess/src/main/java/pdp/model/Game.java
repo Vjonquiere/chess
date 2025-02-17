@@ -130,7 +130,7 @@ public class Game extends Subject {
     }
 
     // Pawns progresses on the board
-    if (getBoard().getBoardRep().pawnsHaveProgressed()) {
+    if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
       nbFilledConditions++;
     }
 
