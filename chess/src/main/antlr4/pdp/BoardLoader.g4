@@ -22,6 +22,7 @@ piece : WHITE_KING
       |PLAYER_COLOR
       |EMPTY_SQUARE;
 
+PLAYER_COLOR : 'W' | 'B';
 WHITE_KING : 'K';
 WHITE_QUEEN : 'Q';
 WHITE_BISHOP : 'B';
@@ -34,7 +35,6 @@ BLACK_BISHOP : 'b';
 BLACK_ROOK : 'r';
 BLACK_KNIGHT : 'n';
 BLACK_PAWN : 'p';
-PLAYER_COLOR : 'W' | 'B';
 EMPTY_SQUARE : '_';
 LINE_COMMENT : '#' ~[\r\n]* -> skip ;
 WHITE_SPACE : ' ';

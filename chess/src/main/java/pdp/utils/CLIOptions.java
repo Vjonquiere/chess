@@ -51,6 +51,12 @@ public class CLIOptions {
       handleLoggingOptions(cmd, defaultArgs);
       if (handleImmediateExitOptions(cmd, options, runtime)) return null;
       processOptions(cmd, defaultArgs, activatedOptions);
+
+      if (!cmd.getArgList().isEmpty()) {
+        String loadFile = cmd.getArgList().get(0);
+        activatedOptions.put(OptionType.LOAD, loadFile);
+        DEBUG(LOGGER, "Load file set to: " + loadFile);
+      }
     } catch (ParseException exp) {
       System.out.println("Parsing failed.  Reason: " + exp.getMessage());
       new HelpFormatter().printHelp("chess", options);

@@ -1,6 +1,7 @@
 package pdp.model.board;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
@@ -166,24 +167,25 @@ public class Move {
    * @return The matching move if found
    * @throws IllegalMoveException If the move is not found in the list of available moves
    */
-  public Move isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
+  public Optional<Move> isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
     for (Move move : availableMoves) {
       if (move.equals(this)) {
         if (this instanceof PromoteMove) {
-          return new PromoteMove(
-              move.source,
-              move.dest,
-              ((PromoteMove) this).getPromPiece(),
-              move.piece,
-              move.isTake,
-              move.takenPiece,
-              move.isCheck,
-              move.isCheckMate);
+          return Optional.of(
+              new PromoteMove(
+                  move.source,
+                  move.dest,
+                  ((PromoteMove) this).getPromPiece(),
+                  move.piece,
+                  move.isTake,
+                  move.takenPiece,
+                  move.isCheck,
+                  move.isCheckMate));
         }
-        return move;
+        return Optional.of(move);
       }
     }
-    throw new IllegalMoveException("It's not a classicalMove " + this);
+    return Optional.empty();
   }
 
   public Position getSource() {
@@ -200,6 +202,10 @@ public class Move {
 
   public boolean isTake() {
     return isTake;
+  }
+
+  public void setTake(boolean isTake) {
+    this.isTake = isTake;
   }
 
   public boolean isCheck() {

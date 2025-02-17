@@ -42,7 +42,8 @@ public class MoveHistoryParser {
       return moves;
     }
 
-    String regex = "\\b((?:O-O(?:-O)?|[KQRBN]?[a-h][1-8](?:[-x])[a-h][1-8](?:=[QRBN])?))(?:[+#])?";
+    String regex =
+        "\\b(?:[KQRBN])?((?:O-O(?:-O)?|[a-h][1-8](?:[-x])[a-h][1-8](?:=[QRBN])?))(?:[+#])?";
 
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(line);

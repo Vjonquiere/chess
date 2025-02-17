@@ -3,7 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import pdp.exceptions.InvalidPromoteException;
+import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.Game;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
@@ -766,7 +766,7 @@ public class BoardTest {
     game.playMove(move9);
     Move move10 = new Move(new Position(2, 1), new Position(1, 0)); // b
     assertThrows(
-        InvalidPromoteException.class,
+        InvalidPromoteFormatException.class,
         () -> {
           game.playMove(move10);
         });

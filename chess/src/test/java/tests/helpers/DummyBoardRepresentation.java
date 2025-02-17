@@ -67,6 +67,11 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   }
 
   @Override
+  public List<Move> getAllAvailableMoves(boolean isWhite) {
+    return List.of();
+  }
+
+  @Override
   public boolean isAttacked(int x, int y, Color by) {
     return false;
   }
