@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -352,5 +353,37 @@ public class CLIOptionsTest {
     assertTrue(activatedOptionsOverride.containsKey(OptionType.VERBOSE));
 
     Files.deleteIfExists(tempConfig);
+  }
+
+  @Test
+  public void testFileNotFound() throws Exception {
+    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
+    Files.deleteIfExists(tempConfig);
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+
+    assertEquals("default.chessrc", activatedOptions.get(OptionType.CONFIG));
+  }
+
+  @Test
+  public void testBothFilesNotFound() throws Exception {
+    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
+    Files.deleteIfExists(tempConfig);
+
+    Path defaultConfig = Files.createTempFile("nonexistant", ".chessrc");
+    Files.deleteIfExists(defaultConfig);
+
+    Field defaultConfigField = CLIOptions.class.getDeclaredField("DEFAULT_CONFIG_FILE");
+    defaultConfigField.setAccessible(true);
+    String originalDefault = (String) defaultConfigField.get(null);
+    defaultConfigField.set(null, defaultConfig.toString());
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+    assertNull(activatedOptions.get(OptionType.CONFIG));
+    defaultConfigField.set(null, originalDefault);
   }
 }
