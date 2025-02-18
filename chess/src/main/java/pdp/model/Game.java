@@ -135,7 +135,6 @@ public class Game extends Subject {
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }
-
     // Pawns progresses on the board
     if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
       nbFilledConditions++;
