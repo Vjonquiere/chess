@@ -14,10 +14,11 @@ import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.*;
 import pdp.model.history.History;
-import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
@@ -95,7 +96,7 @@ public class Game extends Subject {
    * @return true if wer're in an endgame (according to the chosen criterias)
    */
   public boolean isEndGamePhase() {
-    int nbRequiredConditions = 3;
+    int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 
     int halfNbPieces = 16;
@@ -115,13 +116,20 @@ public class Game extends Subject {
       nbFilledConditions++;
     }
     // Number of played moves
-    Optional<HistoryNode> previousNode = history.getPrevious();
-    if (previousNode.isPresent()) {
-      HistoryNode node = previousNode.get();
-      if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-        nbFilledConditions++;
+    /*
+    if (history != null) {
+      Optional<HistoryNode> previousNode = history.getPrevious();
+      if (previousNode != null && previousNode.isPresent()) {
+        HistoryNode node = previousNode.get();
+        if (node != null) {
+          HistoryState state = node.getState();
+          if (state != null && state.getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+            nbFilledConditions++;
+          }
+        }
       }
     }
+      */
     // Number of possible Moves
     int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
     int nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
@@ -399,6 +407,13 @@ public class Game extends Subject {
         this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
     if (threefoldRepetition) {
       this.gameState.activateThreefold();
+    }
+    DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
+    if (isEndGamePhase() && this.solver != null) {
+      // Set endgame heuristic only once and only if endgame phase
+      if (!(solver.getHeuristic() instanceof EndGameHeuristic)) {
+        this.solver.setHeuristic(HeuristicType.ENDGAME);
+      }
     }
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
