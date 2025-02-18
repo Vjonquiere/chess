@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import pdp.controller.GameController;
 import pdp.controller.commands.*;
 import pdp.exceptions.CommandNotAvailableNowException;
+import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedSaveException;
+import pdp.exceptions.FailedUndoException;
 import pdp.model.Game;
 import pdp.model.GameState;
 import pdp.model.board.Move;
@@ -153,5 +155,53 @@ class CommandTest {
     Optional<Exception> result = command.execute(model, controller);
     assertTrue(result.isPresent());
     assertTrue(result.get() instanceof FailedSaveException);
+  }
+
+  // CancelMoveCommand
+
+  @Test
+  public void testCancelMoveCommandSuccess() {
+    CancelMoveCommand command = new CancelMoveCommand();
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model).previousState();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  public void testCancelMoveCommandFailure() {
+    doThrow(new FailedUndoException()).when(model).previousState();
+    CancelMoveCommand command = new CancelMoveCommand();
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model).previousState();
+    assertTrue(result.isPresent());
+    assertTrue(result.get() instanceof FailedUndoException);
+  }
+
+  // RestoreMoveCommand
+
+  @Test
+  public void testRestoreMoveCommandSuccess() {
+    RestoreMoveCommand command = new RestoreMoveCommand();
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model).nextState();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  public void testRestoreMoveCommandFailure() {
+    doThrow(new FailedRedoException()).when(model).nextState();
+    RestoreMoveCommand command = new RestoreMoveCommand();
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model).nextState();
+    assertTrue(result.isPresent());
+    assertTrue(result.get() instanceof FailedRedoException);
   }
 }

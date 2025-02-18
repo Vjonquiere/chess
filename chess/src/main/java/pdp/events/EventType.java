@@ -11,5 +11,7 @@ public enum EventType {
   WHITE_UNDRAW,
   BLACK_UNDRAW,
   MOVE_PLAYED,
+  MOVE_UNDO,
+  MOVE_REDO,
   GAME_SAVED
 }

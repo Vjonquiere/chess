@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.exceptions.FailedRedoException;
+import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.Solver;
@@ -430,7 +432,7 @@ public class Game extends Subject {
   /**
    * Retrieves the history of moves in the current game as a formatted string.
    *
-   * @return A string representation of the game's move history.
+   * @return A string representation of the game's movverify(model).previousState();e history.
    */
   public String getStringHistory() {
     return this.history.toString();
@@ -473,6 +475,18 @@ public class Game extends Subject {
 
   public void previousState() {
     // TODO: restore previous state from history
+
+    throw new FailedUndoException();
+
+    // this.notifyObservers(EventType.MOVE_UNDO);
+  }
+
+  public void nextState() {
+    // TODO: restore previous state from history
+
+    throw new FailedRedoException();
+
+    // this.notifyObservers(EventType.MOVE_REDO);
   }
 
   /**
