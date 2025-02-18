@@ -212,13 +212,29 @@ public class GameFileParserTest {
   @Test
   public void parseFenDefaultFile() {
     URL filePath = classLoader.getResource("gameBoards/fenVersions/defaultGame");
-    parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    FileBoard fb = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    assertEquals(new BitboardRepresentation(), fb.board());
+    assertTrue(fb.header().whiteKingCastling());
+    assertTrue(fb.header().whiteQueenCastling());
+    assertTrue(fb.header().blackKingCastling());
+    assertTrue(fb.header().blackQueenCastling());
+    assertNull(fb.header().enPassant());
+    assertEquals(0, fb.header().fiftyMoveRule());
+    assertEquals(0, fb.header().playedMoves());
   }
 
   @Test
   public void parseFenDefaultFileWithoutCastling() {
     URL filePath = classLoader.getResource("gameBoards/fenVersions/defaultGameCastlingUnable");
-    parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    FileBoard fb = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    assertEquals(new BitboardRepresentation(), fb.board());
+    assertFalse(fb.header().whiteKingCastling());
+    assertFalse(fb.header().whiteQueenCastling());
+    assertFalse(fb.header().blackKingCastling());
+    assertFalse(fb.header().blackQueenCastling());
+    assertNull(fb.header().enPassant());
+    assertEquals(20, fb.header().fiftyMoveRule());
+    assertEquals(10, fb.header().playedMoves());
   }
 
   @Test
@@ -226,5 +242,13 @@ public class GameFileParserTest {
     URL filePath = classLoader.getResource("gameBoards/fenVersions/defaultGameWithEnPassant");
     FileBoard fb = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     System.out.println(fb.header());
+    assertEquals(new BitboardRepresentation(), fb.board());
+    assertTrue(fb.header().whiteKingCastling());
+    assertTrue(fb.header().whiteQueenCastling());
+    assertTrue(fb.header().blackKingCastling());
+    assertTrue(fb.header().blackQueenCastling());
+    assertEquals(new Position(5, 3), fb.header().enPassant());
+    assertEquals(0, fb.header().fiftyMoveRule());
+    assertEquals(30, fb.header().playedMoves());
   }
 }
