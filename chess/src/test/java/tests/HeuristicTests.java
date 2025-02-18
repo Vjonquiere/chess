@@ -84,16 +84,6 @@ public class HeuristicTests {
   }
 
   @Test
-  public void testEndGameHeuristic() {
-    game = Game.initialize(false, false, null, null);
-    solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
-    int score = 10;
-    assertEquals(score, solver.evaluateBoard(game.getBoard(), true));
-    assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
-  }
-
-  @Test
   public void testPromotionHeuristic() {
     game = Game.initialize(false, false, null, null);
     solver = new Solver();
@@ -123,8 +113,10 @@ public class HeuristicTests {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
       for (Heuristic h : heuristics) {
         if (h instanceof KingActivityHeuristic) {
-          int scoreWhenGameStarts = 0;
-          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+          int scoreWhenGameStartsBlack = 0;
+          int scoreWhenGameStartsWhite = 3;
+          assertEquals(scoreWhenGameStartsBlack, h.evaluate(game.getBoard(), false));
+          assertEquals(scoreWhenGameStartsWhite, h.evaluate(game.getBoard(), true));
         }
       }
     }
@@ -143,6 +135,24 @@ public class HeuristicTests {
         if (h instanceof KingSafetyHeuristic) {
           int scoreWhenGameStarts = 45;
           assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testKingSafetyHeuristicToChecks() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof KingSafetyHeuristic) {
+          int scoreWhenGameStarts = 45;
+          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), true));
         }
       }
     }
@@ -184,9 +194,31 @@ public class HeuristicTests {
       for (Heuristic h : heuristics) {
         if (h instanceof BishopEndgameHeuristic) {
           // Expected score in this position
-          int expectedScore = 14;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), false));
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), false));
+          int expectedScoreBlack = 14;
+          int expectedScoreWhite = 16;
+          assertEquals(expectedScoreBlack, h.evaluate(game.getBoard(), false));
+          assertEquals(expectedScoreWhite, h.evaluate(game.getBoard(), true));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testBishopEndgameHeuristicTwoBishops() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof BishopEndgameHeuristic) {
+          // Expected score in this position
+          int expectedScoreWhenGameStartsWhite = -40;
+          int expectedScoreWhenGameStartsBlack = -38;
+          assertEquals(expectedScoreWhenGameStartsWhite, h.evaluate(game.getBoard(), false));
+          assertEquals(expectedScoreWhenGameStartsBlack, h.evaluate(game.getBoard(), true));
         }
       }
     }
