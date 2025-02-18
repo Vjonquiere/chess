@@ -149,6 +149,7 @@ class CommandTest {
     verify(model).saveGame("save.txt");
   }
 
+  @Test
   public void testSaveGameCommandFailure() {
     doThrow(new FailedSaveException("")).when(model).saveGame(anyString());
     SaveGameCommand command = new SaveGameCommand("error.txt");
@@ -203,5 +204,38 @@ class CommandTest {
     verify(model).nextState();
     assertTrue(result.isPresent());
     assertTrue(result.get() instanceof FailedRedoException);
+  }
+
+  // SurrenderCommand
+
+  @Test
+  void testSurrenderCommandWhiteSuccess() {
+    SurrenderCommand command = new SurrenderCommand(true);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(gameState).whiteResigns();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void testSurrenderCommandBlackSuccess() {
+    SurrenderCommand command = new SurrenderCommand(false);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(gameState).blackResigns();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void testSurrenderCommandGameOver() {
+    when(model.getGameState().isGameOver()).thenReturn(true);
+    SurrenderCommand command = new SurrenderCommand(true);
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    assertTrue(result.isPresent());
+    assertTrue(result.get() instanceof CommandNotAvailableNowException);
   }
 }

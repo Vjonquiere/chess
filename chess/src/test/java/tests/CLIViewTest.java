@@ -14,12 +14,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.CancelDrawCommand;
+import pdp.controller.commands.CancelMoveCommand;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.ProposeDrawCommand;
+import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
+import pdp.controller.commands.SurrenderCommand;
 import pdp.events.EventType;
 import pdp.exceptions.CommandNotAvailableNowException;
+import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedSaveException;
+import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.InvalidPromoteFormatException;
@@ -145,6 +150,24 @@ public class CLIViewTest {
   }
 
   @Test
+  void testUndoCommand() throws Exception {
+    handleUserInputMethod.invoke(view, "undo");
+    verify(mockBagOfCommands).addCommand(any(CancelMoveCommand.class));
+  }
+
+  @Test
+  void testRedoCommand() throws Exception {
+    handleUserInputMethod.invoke(view, "redo");
+    verify(mockBagOfCommands).addCommand(any(RestoreMoveCommand.class));
+  }
+
+  @Test
+  void testSurrenderCommand() throws Exception {
+    handleUserInputMethod.invoke(view, "surrender");
+    verify(mockBagOfCommands).addCommand(any(SurrenderCommand.class));
+  }
+
+  @Test
   void testUnknownCommand() throws Exception {
     handleUserInputMethod.invoke(view, "unknown");
 
@@ -208,6 +231,24 @@ public class CLIViewTest {
     String output = outputStream.toString();
 
     assertTrue(output.contains(TextGetter.getText("blackWin")));
+  }
+
+  @Test
+  public void testUndoEvent() {
+    view.onGameEvent(EventType.MOVE_UNDO);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  public void testRedoEvent() {
+    view.onGameEvent(EventType.MOVE_REDO);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
   }
 
   @Test
@@ -322,6 +363,24 @@ public class CLIViewTest {
     String output = outputStream.toString();
 
     assertTrue(output.contains(TextGetter.getText("invalidPromoteFormat", "e7-e8=Q")));
+  }
+
+  @Test
+  public void testOnFailedUndoException() {
+    view.onErrorEvent(new FailedUndoException());
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("failedUndo")));
+  }
+
+  @Test
+  public void testOnFailedRedoException() {
+    view.onErrorEvent(new FailedRedoException());
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("failedRedo")));
   }
 
   @Test

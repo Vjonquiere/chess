@@ -14,9 +14,12 @@ import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.ProposeDrawCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
+import pdp.controller.commands.SurrenderCommand;
 import pdp.events.EventType;
 import pdp.exceptions.CommandNotAvailableNowException;
+import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedSaveException;
+import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.InvalidPromoteFormatException;
@@ -53,6 +56,9 @@ public class CLIView implements View {
         "undo", new CommandEntry(this::undoCommand, TextGetter.getText("undoHelpDescription")));
     commands.put(
         "redo", new CommandEntry(this::redoCommand, TextGetter.getText("redoHelpDescription")));
+    commands.put(
+        "surrender",
+        new CommandEntry(this::surrenderCommand, TextGetter.getText("surrenderHelpDescription")));
   }
 
   /**
@@ -137,7 +143,9 @@ public class CLIView implements View {
         || e instanceof InvalidPositionException
         || e instanceof FailedSaveException
         || e instanceof InvalidPromoteFormatException
-        || e instanceof CommandNotAvailableNowException) {
+        || e instanceof CommandNotAvailableNowException
+        || e instanceof FailedUndoException
+        || e instanceof FailedRedoException) {
       System.out.println(e.getMessage());
     } else {
       System.err.println(e);
@@ -284,6 +292,16 @@ public class CLIView implements View {
    */
   private void redoCommand(String args) {
     BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+  }
+
+  /**
+   * Handles the surrender command.
+   *
+   * @param args Unused argument
+   */
+  private void surrenderCommand(String args) {
+    BagOfCommands.getInstance()
+        .addCommand(new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
 
   private record CommandEntry(Consumer<String> action, String description) {}
