@@ -24,6 +24,7 @@ public class KingSafetyHeuristic implements Heuristic {
     int score = 0;
     score += kingVulnerabilityScore(board, isWhite);
     score += kingProtectionScore(board, isWhite);
+    score += kingSafetyToChecksFromEnemy(board, isWhite);
     return score;
   }
 

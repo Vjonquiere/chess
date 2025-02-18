@@ -2,17 +2,21 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.BishopEndgameHeuristic;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.ai.heuristics.Heuristic;
 import pdp.model.ai.heuristics.KingActivityHeuristic;
+import pdp.model.ai.heuristics.KingSafetyHeuristic;
 import pdp.model.ai.heuristics.PromotionHeuristic;
 import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
@@ -84,13 +88,13 @@ public class HeuristicTests {
     game = Game.initialize(false, false, null, null);
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
-    int score = -35;
+    int score = 10;
     assertEquals(score, solver.evaluateBoard(game.getBoard(), true));
     assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
   }
 
   @Test
-  public void testPromotionHeuristicWhenGameStarts() {
+  public void testPromotionHeuristic() {
     game = Game.initialize(false, false, null, null);
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
@@ -109,7 +113,7 @@ public class HeuristicTests {
   }
 
   @Test
-  public void testKingActivityHeuristicWhenGameStarts() {
+  public void testKingActivityHeuristic() {
     game = Game.initialize(false, false, null, null);
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
@@ -121,6 +125,68 @@ public class HeuristicTests {
         if (h instanceof KingActivityHeuristic) {
           int scoreWhenGameStarts = 0;
           assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testKingSafetyHeuristic() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof KingSafetyHeuristic) {
+          int scoreWhenGameStarts = 45;
+          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testBishopEndgameHeuristic() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    Position initWhiteKingPos = new Position(4, 0);
+    Position initWhiteBishopPos = new Position(5, 0);
+    Position initBlackKingPos = new Position(4, 7);
+    Position initBlackBishopPos = new Position(5, 7);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(initWhiteBishopPos);
+    posListBlack.add(initBlackKingPos);
+    posListBlack.add(initBlackBishopPos);
+
+    BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
+        board, posListWhite, posListBlack);
+
+    Position e4 = new Position(4, 3);
+    Position e5 = new Position(4, 4);
+
+    board.movePiece(initWhiteBishopPos, e4);
+    board.movePiece(initBlackBishopPos, e5);
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof BishopEndgameHeuristic) {
+          // Expected score in this position
+          int expectedScore = 14;
+          assertEquals(expectedScore, h.evaluate(game.getBoard(), false));
+          assertEquals(expectedScore, h.evaluate(game.getBoard(), false));
         }
       }
     }
