@@ -24,7 +24,7 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score if the pawns were pushed far enough for the majority of them
    */
-  public int pawnsHaveProgressedScore(Board board, boolean isWhite) {
+  private int pawnsHaveProgressedScore(Board board, boolean isWhite) {
     int score = 0;
     if (board.getBoardRep().pawnsHaveProgressed(isWhite)) {
       score += 10;
@@ -40,7 +40,7 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on how many pawns are close to promoting.
    */
-  public int pawnsAreCloseToPromotion(Board board, boolean isWhite) {
+  private int pawnsAreCloseToPromotion(Board board, boolean isWhite) {
     int score = 0;
 
     BoardRepresentation bitboard = board.getBoardRep();

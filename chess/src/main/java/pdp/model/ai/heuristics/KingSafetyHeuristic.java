@@ -36,7 +36,7 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, fahislse otherwise
    * @return a penalty score (negative) if the king is in the center, 0 otherwise
    */
-  public int kingVulnerabilityScore(Board board, boolean isWhite) {
+  private int kingVulnerabilityScore(Board board, boolean isWhite) {
     int score = 0;
 
     // Define center area
@@ -68,7 +68,7 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a positive score if the king has friendly pieces nearby, 0 otherwise
    */
-  public int kingProtectionScore(Board board, boolean isWhite) {
+  private int kingProtectionScore(Board board, boolean isWhite) {
     int score = 0;
     BoardRepresentation bitboard = board.getBoardRep();
 
@@ -108,7 +108,7 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a negative score if the king can get checked, positive otherwise
    */
-  public int kingSafetyToChecksFromEnemy(Board board, boolean isWhite) {
+  private int kingSafetyToChecksFromEnemy(Board board, boolean isWhite) {
     int score = 0;
 
     BoardRepresentation bitboard = board.getBoardRep();

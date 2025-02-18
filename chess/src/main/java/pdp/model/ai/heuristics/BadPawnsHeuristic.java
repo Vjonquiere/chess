@@ -12,7 +12,7 @@ public class BadPawnsHeuristic implements Heuristic {
     int score = 0;
     score += doubledPawns(board, isWhite) - doubledPawns(board, !isWhite);
     score += isolatedPawns(board, isWhite) - isolatedPawns(board, !isWhite);
-    // score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
+    score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
     return (int) (-0.5 * score);
   }
 
@@ -64,30 +64,15 @@ public class BadPawnsHeuristic implements Heuristic {
   }
 
   /**
-   * Penalizes backward pawns
+   * Counts the number of backward pawns (pawns that have no friendly pawns behind them in adjacent
+   * columns and are behind enemy pawns) and returns a score accordingly
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
-   * @return a negative score if backwards pawns, 0 otherwise (no penalty)
+   * @return score based on the number of backward pawns
    */
   private int backwardsPawns(Board board, boolean isWhite) {
-    int penalty = -6;
-    int score = 0;
-    BoardRepresentation bitboard = board.getBoardRep();
-    List<Position> pawns = bitboard.getPawns(isWhite);
-
-    for (Position pawn : pawns) {
-      boolean hasSupport = false;
-      for (Position otherPawn : pawns) {
-        if (Math.abs(otherPawn.getX() - pawn.getX()) == 1 && otherPawn.getY() < pawn.getY()) {
-          hasSupport = true;
-          break;
-        }
-      }
-      if (!hasSupport) {
-        score += penalty;
-      }
-    }
-    return score;
+    return 0;
   }
+
 }

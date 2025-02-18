@@ -32,7 +32,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the location of the king on the board
    */
-  public int kingIsInCenterScore(Board board, boolean isWhite) {
+  private int kingIsInCenterScore(Board board, boolean isWhite) {
     int score = 0;
 
     // Delineate center box
@@ -74,7 +74,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the activity of the king
    */
-  public int kingActivityScore(Board board, boolean isWhite) {
+  private int kingActivityScore(Board board, boolean isWhite) {
     int score = 0;
     BoardRepresentation bitboard = board.getBoardRep();
     // Check the activity of the King

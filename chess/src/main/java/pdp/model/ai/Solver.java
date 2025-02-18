@@ -51,10 +51,9 @@ public class Solver {
   public void setHeuristic(HeuristicType heuristic) {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
-      case POSITIONAL -> this.heuristic = null;
       case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
       case SPACE_CONTROL -> this.heuristic = null;
-      case PAWN_STRUCTURE -> this.heuristic = null;
+      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
       case PIECE_ACTIVITY -> this.heuristic = null;
       case MOBILITY -> this.heuristic = new MobilityHeuristic();
       case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();

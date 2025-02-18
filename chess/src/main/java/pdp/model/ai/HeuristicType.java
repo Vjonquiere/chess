@@ -1,11 +1,10 @@
 package pdp.model.ai;
 
 public enum HeuristicType {
-  POSITIONAL,
   MATERIAL,
   KING_SAFETY,
   SPACE_CONTROL,
-  PAWN_STRUCTURE,
+  PAWN_CHAIN,
   PIECE_ACTIVITY,
   MOBILITY,
   SHANNON,
