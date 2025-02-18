@@ -42,4 +42,6 @@ public interface BoardRepresentation extends Rules {
   public List<List<Position>> retrieveWhitePiecesPos();
 
   public List<List<Position>> retrieveBlackPiecesPos();
+
+  public BoardRepresentation getCopy();
 }

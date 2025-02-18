@@ -20,7 +20,7 @@ public class BoardSaverTest {
     Game game = Game.initialize(false, false, null, null);
     String boardString =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn()));
+            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));
     String[] expectedBoardString = {
       "W",
       "r n b q k b n r",
@@ -48,7 +48,7 @@ public class BoardSaverTest {
             false));
     String boardString =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn()));
+            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));
     String[] expectedBoardString = {
       "B",
       "r n b q k b n r",
@@ -74,7 +74,7 @@ public class BoardSaverTest {
     Game game = Game.initialize(false, false, null, null, board);
     String boardString =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn()));
+            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));
     String[] expectedBoardString = {
       "B",
       "r n b q k b _ r",

@@ -164,4 +164,9 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public List<List<Position>> retrieveBlackPiecesPos() {
     return new ArrayList<>();
   }
+
+  @Override
+  public BoardRepresentation getCopy() {
+    return new DummyBoardRepresentation();
+  }
 }

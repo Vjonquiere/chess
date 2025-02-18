@@ -96,11 +96,9 @@ public class GameState extends Subject {
     return this.moveTimer;
   }
 
-  /*
   public long getZobristHashing() {
     return this.zobristHashing;
   }
-    */
 
   public long getSimplifiedZobristHashing() {
     return this.simplifiedZobristHashing;
@@ -334,5 +332,59 @@ public class GameState extends Subject {
       this.isGameOver = true;
       notifyObservers(EventType.DRAW);
     }
+  }
+
+  /**
+   * Creates a deep copy of this GameState object. Copies all fields to ensure a completely
+   * independent state.
+   *
+   * @return A new instance of GameState with the same state as the current object.
+   */
+  public GameState getCopy() {
+    GameState copy = new GameState();
+
+    copy.board = this.board.getCopy();
+    copy.isWhiteTurn = this.isWhiteTurn;
+    copy.whiteWantsToDraw = this.whiteWantsToDraw;
+    copy.blackWantsToDraw = this.blackWantsToDraw;
+    copy.whiteResigns = this.whiteResigns;
+    copy.blackResigns = this.blackResigns;
+    copy.whiteLosesOnTime = this.whiteLosesOnTime;
+    copy.blackLosesOnTime = this.blackLosesOnTime;
+    copy.isGameOver = this.isGameOver;
+    copy.threefoldRepetition = this.threefoldRepetition;
+    copy.fullTurnNumber = this.fullTurnNumber;
+    copy.zobristHashing = this.zobristHashing;
+    copy.simplifiedZobristHashing = this.simplifiedZobristHashing;
+
+    /* if (this.moveTimer != null) {
+        copy.moveTimer = this.moveTimer.getCopy();
+    } else {
+        copy.moveTimer = null;
+    } */
+
+    return copy;
+  }
+
+  /**
+   * Updates the current game state with the values from another game state.
+   *
+   * @param gameState The GameState from which to copy the values.
+   */
+  public void updateFrom(GameState gameState) {
+    this.board = gameState.getBoard();
+    this.moveTimer = gameState.getMoveTimer();
+    this.isWhiteTurn = gameState.isWhiteTurn();
+    this.whiteWantsToDraw = gameState.hasWhiteRequestedDraw();
+    this.blackWantsToDraw = gameState.hasBlackRequestedDraw();
+    this.whiteResigns = gameState.hasWhiteResigned();
+    this.blackResigns = gameState.hasBlackResigned();
+    this.whiteLosesOnTime = gameState.hasWhiteLostOnTime();
+    this.blackLosesOnTime = gameState.hasBlackLostOnTime();
+    this.isGameOver = gameState.isGameOver();
+    this.threefoldRepetition = gameState.isThreefoldRepetition();
+    this.fullTurnNumber = gameState.getFullTurn();
+    this.zobristHashing = gameState.getZobristHashing();
+    this.simplifiedZobristHashing = gameState.getSimplifiedZobristHashing();
   }
 }

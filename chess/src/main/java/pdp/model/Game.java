@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.exceptions.FailedRedoException;
+import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.HeuristicType;
@@ -19,6 +21,7 @@ import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.*;
 import pdp.model.history.History;
+import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
@@ -116,20 +119,16 @@ public class Game extends Subject {
       nbFilledConditions++;
     }
     // Number of played moves
-    /*
-    if (history != null) {
-      Optional<HistoryNode> previousNode = history.getPrevious();
-      if (previousNode != null && previousNode.isPresent()) {
+    Optional<HistoryNode> previousNode = history.getCurrentMove();
+    if (previousNode.isPresent()) {
+      previousNode = previousNode.get().getPrevious();
+      if (previousNode.isPresent()) {
         HistoryNode node = previousNode.get();
-        if (node != null) {
-          HistoryState state = node.getState();
-          if (state != null && state.getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-            nbFilledConditions++;
-          }
+        if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+          nbFilledConditions++;
         }
       }
     }
-      */
     // Number of possible Moves
     int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
     int nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
@@ -394,8 +393,6 @@ public class Game extends Subject {
     if (this.gameState.getBoard().isWhite) {
       this.gameState.incrementsFullTurn();
     }
-    this.history.addMove(
-        new HistoryState(move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
 
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
@@ -418,6 +415,7 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
     this.notifyObservers(EventType.MOVE_PLAYED);
+    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
   }
 
   /**
@@ -430,7 +428,7 @@ public class Game extends Subject {
    */
   public void saveGame(String path) {
     String board =
-        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite));
+        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite, null));
     String gameStr = this.history.toAlgebraicString();
 
     String game = board + "\n" + gameStr;
@@ -445,7 +443,7 @@ public class Game extends Subject {
   /**
    * Retrieves the history of moves in the current game as a formatted string.
    *
-   * @return A string representation of the game's move history.
+   * @return A string representation of the game's movverify(model).previousState();e history.
    */
   public String getStringHistory() {
     return this.history.toString();
@@ -486,8 +484,54 @@ public class Game extends Subject {
     return instance;
   }
 
-  public void previousState() {
-    // TODO: restore previous state from history
+  /**
+   * Moves to the pevious move in history and updates the game state.
+   *
+   * <p>Throws a FailedUndoException if there is no previous move to undo. Notifies observers of the
+   * move undo event.
+   *
+   * @throws FailedUndoException if no pevious move exists.
+   */
+  public void previousState() throws FailedUndoException {
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+    if (!currentNode.isPresent()) {
+      throw new FailedUndoException();
+    }
+
+    Optional<HistoryNode> previousNode = currentNode.get().getPrevious();
+    if (!previousNode.isPresent()) {
+      throw new FailedUndoException();
+    }
+
+    this.gameState.updateFrom(previousNode.get().getState().getGameState());
+    this.history.setCurrentMove(previousNode.get());
+
+    this.notifyObservers(EventType.MOVE_UNDO);
+  }
+
+  /**
+   * Moves to the next move in history and updates the game state.
+   *
+   * <p>Throws a FailedRedoException if there is no next move to redo. Notifies observers of the
+   * move redo event.
+   *
+   * @throws FailedRedoException if no next move exists.
+   */
+  public void nextState() throws FailedRedoException {
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+    if (!currentNode.isPresent()) {
+      throw new FailedRedoException();
+    }
+
+    Optional<HistoryNode> nextNode = currentNode.get().getNext();
+    if (!nextNode.isPresent()) {
+      throw new FailedRedoException();
+    }
+
+    this.gameState.updateFrom(nextNode.get().getState().getGameState());
+    this.history.setCurrentMove(nextNode.get());
+
+    this.notifyObservers(EventType.MOVE_UNDO);
   }
 
   /**
