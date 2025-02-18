@@ -12,13 +12,13 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
-import pdp.model.Timer;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
+import pdp.utils.Timer;
 import pdp.view.CLIView;
 import pdp.view.GameView;
 import pdp.view.View;
@@ -36,9 +36,9 @@ public abstract class GameInitializer {
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
       if (options.containsKey(OptionType.TIME)) {
-        timer = new Timer(Integer.parseInt(options.get(OptionType.TIME)));
+        timer = new Timer(Long.parseLong(options.get(OptionType.TIME)) * 60 * 1000);
       } else {
-        timer = new Timer(30 * 60);
+        timer = new Timer((long) 30 * 60 * 1000);
       }
       System.err.println("Option time not implemented, defaulting to a game without time limit");
       timer = null;

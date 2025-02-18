@@ -9,6 +9,7 @@ import pdp.model.board.Board;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
+import pdp.utils.Timer;
 
 public class GameState extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
