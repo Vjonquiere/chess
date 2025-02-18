@@ -417,7 +417,7 @@ public class Game extends Subject {
    */
   public void saveGame(String path) {
     String board =
-        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite));
+        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite, null));
     String gameStr = this.history.toAlgebraicString();
 
     String game = board + "\n" + gameStr;

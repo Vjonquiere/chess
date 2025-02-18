@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import java.net.URL;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
@@ -19,6 +20,7 @@ import pdp.utils.Position;
 public class GameFileParserTest {
   private BoardFileParser parser = new BoardFileParser();
   private ClassLoader classLoader = getClass().getClassLoader();
+  private static final Logger LOGGER = Logger.getLogger(GameFileParserTest.class.getName());
 
   @Test
   public void parseDefaultGameFile() {
@@ -205,5 +207,24 @@ public class GameFileParserTest {
     assertEquals(game.getBoard().board, board.board());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
+  }
+
+  @Test
+  public void parseFenDefaultFile() {
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/defaultGame");
+    parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+  }
+
+  @Test
+  public void parseFenDefaultFileWithoutCastling() {
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/defaultGameCastlingUnable");
+    parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+  }
+
+  @Test
+  public void parseFenDefaultFileWithEnPassant() {
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/defaultGameWithEnPassant");
+    FileBoard fb = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    System.out.println(fb.header());
   }
 }

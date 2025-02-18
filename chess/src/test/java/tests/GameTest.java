@@ -407,7 +407,7 @@ public class GameTest {
 
     String board =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer()));
+            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer(), null));
 
     assertTrue(content.contains(board));
 
@@ -430,7 +430,7 @@ public class GameTest {
 
     String board =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer()));
+            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer(), null));
 
     assertTrue(content.contains(board));
 
