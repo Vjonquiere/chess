@@ -8,7 +8,11 @@ import pdp.model.Game;
 public class RestoreMoveCommand implements Command {
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+    try {
+      model.nextState();
+      return Optional.empty();
+    } catch (Exception e) {
+      return Optional.of(e);
+    }
   }
 }
