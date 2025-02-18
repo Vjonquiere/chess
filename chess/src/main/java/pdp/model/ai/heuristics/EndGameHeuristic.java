@@ -34,4 +34,8 @@ public class EndGameHeuristic implements Heuristic {
   public void addHeuristic(Heuristic heuristic) {
     heuristics.add(heuristic);
   }
+
+  public List<Heuristic> getHeuristics() {
+    return this.heuristics;
+  }
 }

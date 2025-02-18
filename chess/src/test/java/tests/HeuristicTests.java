@@ -2,11 +2,16 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.EndGameHeuristic;
+import pdp.model.ai.heuristics.Heuristic;
+import pdp.model.ai.heuristics.KingActivityHeuristic;
+import pdp.model.ai.heuristics.PromotionHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Position;
@@ -82,5 +87,42 @@ public class HeuristicTests {
     int score = -35;
     assertEquals(score, solver.evaluateBoard(game.getBoard(), true));
     assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
+  }
+
+  @Test
+  public void testPromotionHeuristicWhenGameStarts() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof PromotionHeuristic) {
+          int scoreWhenGameStarts = 0;
+          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), true));
+          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testKingActivityHeuristicWhenGameStarts() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof KingActivityHeuristic) {
+          int scoreWhenGameStarts = 0;
+          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+        }
+      }
+    }
   }
 }

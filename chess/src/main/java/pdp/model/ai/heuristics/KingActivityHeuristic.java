@@ -60,7 +60,7 @@ public class KingActivityHeuristic implements Heuristic {
       int distance =
           Math.abs(kingPosition.getX() - centerX) + Math.abs(kingPosition.getY() - centerY);
       int noBonus = 0;
-      // King more or less far of the center
+      // King more or less far from the center
       score = Math.max(noBonus, 15 - (distance * 3));
     }
 

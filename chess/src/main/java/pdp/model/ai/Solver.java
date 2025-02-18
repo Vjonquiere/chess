@@ -52,7 +52,7 @@ public class Solver {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
       case POSITIONAL -> this.heuristic = null;
-      case KING_SAFETY -> this.heuristic = null;
+      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
       case SPACE_CONTROL -> this.heuristic = null;
       case PAWN_STRUCTURE -> this.heuristic = null;
       case PIECE_ACTIVITY -> this.heuristic = null;
@@ -64,6 +64,15 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+  }
+
+  /**
+   * Retrieve the current heuristic
+   *
+   * @return the current heuristic that the solver uses
+   */
+  public Heuristic getHeuristic() {
+    return this.heuristic;
   }
 
   /**

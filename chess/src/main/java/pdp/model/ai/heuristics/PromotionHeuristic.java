@@ -50,9 +50,11 @@ public class PromotionHeuristic implements Heuristic {
 
     for (Position pawn : pawns) {
       if (pawn.getY() == SECOND_LAST_RANK) {
-        score += 20; // Pawn one step from promotion
+        // Pawn one step from promotion
+        score += 20;
       } else if ((isWhite && pawn.getY() >= 5) || (!isWhite && pawn.getY() <= 2)) {
-        score += 10; // Pawn in the final phase of advancement
+        // Pawn in the final phase of advancement
+        score += 10;
       }
     }
 
