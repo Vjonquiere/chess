@@ -2,7 +2,6 @@ package pdp.model.ai.heuristics;
 
 import java.util.*;
 import pdp.model.board.Board;
-import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
 public class BadPawnsHeuristic implements Heuristic {
@@ -74,5 +73,4 @@ public class BadPawnsHeuristic implements Heuristic {
   private int backwardsPawns(Board board, boolean isWhite) {
     return 0;
   }
-
 }
