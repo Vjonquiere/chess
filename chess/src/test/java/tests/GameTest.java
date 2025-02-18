@@ -2,6 +2,9 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -10,6 +13,8 @@ import pdp.model.Game;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.parsers.FileBoard;
+import pdp.model.savers.BoardSaver;
 import pdp.utils.Position;
 
 public class GameTest {
@@ -384,5 +389,53 @@ public class GameTest {
     // Simulate game where 50 move rule can be applied
 
     assertFalse(game.isOver());
+  }
+
+  @Test
+  public void testSaveGame() throws IOException {
+    Game game = Game.initialize(false, false, null, null);
+
+    Path tempFile = Files.createTempFile("game-save-test", ".txt");
+    String tempFilePath = tempFile.toAbsolutePath().toString();
+
+    game.saveGame(tempFilePath);
+
+    String content = Files.readString(tempFile);
+
+    assertNotNull(content);
+    assertFalse(content.isEmpty());
+
+    String board =
+        BoardSaver.saveBoard(
+            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer()));
+
+    assertTrue(content.contains(board));
+
+    Files.deleteIfExists(tempFile);
+  }
+
+  @Test
+  public void testSaveGameWithHistory() throws IOException, IllegalMoveException {
+    Game game = Game.initialize(false, false, null, null);
+
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+
+    game.playMove(move);
+
+    Path tempFile = Files.createTempFile("game-save-test", ".txt");
+    String tempFilePath = tempFile.toAbsolutePath().toString();
+    game.saveGame(tempFilePath);
+
+    String content = Files.readString(tempFile);
+
+    String board =
+        BoardSaver.saveBoard(
+            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer()));
+
+    assertTrue(content.contains(board));
+
+    assertTrue(content.contains(game.getHistory().toAlgebraicString()));
+
+    Files.deleteIfExists(tempFile);
   }
 }
