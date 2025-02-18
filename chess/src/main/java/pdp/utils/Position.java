@@ -22,6 +22,10 @@ public class Position {
     return y;
   }
 
+  public boolean isValid() {
+    return getX() <= 7 && getX() >= 0 && getY() <= 7 && getY() >= 0;
+  }
+
   public boolean equals(Object obj) {
     if (this == obj) return true;
     if (obj == null || getClass() != obj.getClass()) return false;
