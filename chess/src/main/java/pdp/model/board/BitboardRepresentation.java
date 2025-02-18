@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
-
-import javafx.geometry.Pos;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
