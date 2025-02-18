@@ -13,6 +13,7 @@ import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.ProposeDrawCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.events.EventType;
+import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
@@ -121,7 +122,8 @@ public class CLIView implements View {
         || e instanceof MoveParsingException
         || e instanceof InvalidPositionException
         || e instanceof FailedSaveException
-        || e instanceof InvalidPromoteFormatException) {
+        || e instanceof InvalidPromoteFormatException
+        || e instanceof CommandNotAvailableNowException) {
       System.out.println(e.getMessage());
     } else {
       System.err.println(e);
