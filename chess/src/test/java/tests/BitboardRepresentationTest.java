@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.model.board.Bitboard;
 import pdp.model.board.BitboardRepresentation;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
@@ -270,8 +271,29 @@ public class BitboardRepresentationTest {
     assertTrue(board.isCheckMate(Color.BLACK));
   }
 
-  public void deleteAllPiecesExceptThosePositions(
+  public static void deleteAllPiecesExceptThosePositions(
       BitboardRepresentation board, List<Position> posListWhite, List<Position> posListBlack) {
+    for (int yWhite = 0; yWhite <= 1; yWhite++) {
+      for (int xWhite = 0; xWhite <= 7; xWhite++) {
+        Position pos = new Position(xWhite, yWhite);
+        if (!posListWhite.contains(pos)) {
+          board.deletePieceAt(xWhite, yWhite);
+        }
+      }
+    }
+
+    for (int yBlack = 6; yBlack <= 7; yBlack++) {
+      for (int xBlack = 0; xBlack <= 7; xBlack++) {
+        Position pos = new Position(xBlack, yBlack);
+        if (!posListBlack.contains(pos)) {
+          board.deletePieceAt(xBlack, yBlack);
+        }
+      }
+    }
+  }
+
+  public static void deleteAllPiecesExceptThosePositionsBoard(
+      BoardRepresentation board, List<Position> posListWhite, List<Position> posListBlack) {
     for (int yWhite = 0; yWhite <= 1; yWhite++) {
       for (int xWhite = 0; xWhite <= 7; xWhite++) {
         Position pos = new Position(xWhite, yWhite);
