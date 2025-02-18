@@ -96,11 +96,9 @@ public class GameState extends Subject {
     return this.moveTimer;
   }
 
-  /*
   public long getZobristHashing() {
     return this.zobristHashing;
   }
-    */
 
   public long getSimplifiedZobristHashing() {
     return this.simplifiedZobristHashing;
@@ -366,5 +364,27 @@ public class GameState extends Subject {
     } */
 
     return copy;
+  }
+
+  /**
+   * Updates the current game state with the values from another game state.
+   *
+   * @param gameState The GameState from which to copy the values.
+   */
+  public void updateFrom(GameState gameState) {
+    this.board = gameState.getBoard();
+    this.moveTimer = gameState.getMoveTimer();
+    this.isWhiteTurn = gameState.isWhiteTurn();
+    this.whiteWantsToDraw = gameState.hasWhiteRequestedDraw();
+    this.blackWantsToDraw = gameState.hasBlackRequestedDraw();
+    this.whiteResigns = gameState.hasWhiteResigned();
+    this.blackResigns = gameState.hasBlackResigned();
+    this.whiteLosesOnTime = gameState.hasWhiteLostOnTime();
+    this.blackLosesOnTime = gameState.hasBlackLostOnTime();
+    this.isGameOver = gameState.isGameOver();
+    this.threefoldRepetition = gameState.isThreefoldRepetition();
+    this.fullTurnNumber = gameState.getFullTurn();
+    this.zobristHashing = gameState.getZobristHashing();
+    this.simplifiedZobristHashing = gameState.getSimplifiedZobristHashing();
   }
 }

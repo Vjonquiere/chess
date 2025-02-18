@@ -16,6 +16,13 @@ public class History {
     this.currentMove = null;
   }
 
+  public Optional<HistoryNode> getCurrentMove() {
+    if (this.currentMove == null) {
+      return Optional.empty();
+    }
+    return Optional.of(this.currentMove);
+  }
+
   /**
    * Moves back to the previous move in history.
    *
@@ -39,7 +46,10 @@ public class History {
     DEBUG(LOGGER, "Adding new state to History");
     DEBUG(LOGGER, state.getMove().toString());
     DEBUG(LOGGER, state.isWhite() + " " + String.valueOf(state.getFullTurn()));
-    currentMove = new HistoryNode(state, currentMove);
+
+    this.currentMove = new HistoryNode(state, this.currentMove);
+    if (this.currentMove.getPrevious() != null)
+      this.currentMove.getPrevious().ifPresent(prev -> prev.setNext(this.currentMove));
   }
 
   /**

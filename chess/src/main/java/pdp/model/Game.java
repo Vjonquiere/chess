@@ -388,8 +388,7 @@ public class Game extends Subject {
     if (this.gameState.getBoard().isWhite) {
       this.gameState.incrementsFullTurn();
     }
-    this.history.addMove(
-        new HistoryState(move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
+    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
 
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
@@ -473,20 +472,52 @@ public class Game extends Subject {
     return instance;
   }
 
-  public void previousState() {
-    // TODO: restore previous state from history
+  /**
+   * Moves to the pevious move in history and updates the game state.
+   *
+   * <p>Throws a FailedUndoException if there is no previous move to undo. Notifies observers of the
+   * move undo event.
+   *
+   * @throws FailedUndoException if no pevious move exists.
+   */
+  public void previousState() throws FailedUndoException {
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+    if (!currentNode.isPresent()) {
+      throw new FailedUndoException();
+    }
 
-    throw new FailedUndoException();
+    Optional<HistoryNode> previousNode = currentNode.get().getPrevious();
+    if (!previousNode.isPresent()) {
+      throw new FailedUndoException();
+    }
 
-    // this.notifyObservers(EventType.MOVE_UNDO);
+    this.gameState.updateFrom(previousNode.get().getState().getGameState());
+
+    this.notifyObservers(EventType.MOVE_UNDO);
   }
 
-  public void nextState() {
-    // TODO: restore previous state from history
+  /**
+   * Moves to the next move in history and updates the game state.
+   *
+   * <p>Throws a FailedRedoException if there is no next move to redo. Notifies observers of the
+   * move redo event.
+   *
+   * @throws FailedRedoException if no next move exists.
+   */
+  public void nextState() throws FailedRedoException {
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+    if (!currentNode.isPresent()) {
+      throw new FailedRedoException();
+    }
 
-    throw new FailedRedoException();
+    Optional<HistoryNode> nextNode = currentNode.get().getNext();
+    if (!nextNode.isPresent()) {
+      throw new FailedRedoException();
+    }
 
-    // this.notifyObservers(EventType.MOVE_REDO);
+    this.gameState.updateFrom(nextNode.get().getState().getGameState());
+
+    this.notifyObservers(EventType.MOVE_UNDO);
   }
 
   /**
