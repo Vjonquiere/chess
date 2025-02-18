@@ -24,16 +24,13 @@ public class History {
   }
 
   /**
-   * Moves back to the previous move in history.
+   * Updates the currentMove node to the specified HistoryNode. This method is called when
+   * navigating through the history and applying a history node to the game.
    *
-   * @return the previous node, or an empty object if there is no previous move.
+   * @param currentMove the HistoryNode representing the current move in the history.
    */
-  public Optional<HistoryNode> getPrevious() {
-    if (currentMove == null || currentMove.previous == null) {
-      return Optional.empty();
-    }
-    currentMove = currentMove.previous;
-    return Optional.of(currentMove.previous);
+  public void setCurrentMove(HistoryNode currentMove) {
+    this.currentMove = currentMove;
   }
 
   /**
@@ -72,7 +69,7 @@ public class History {
       HistoryNode node = stack.pop();
       if (node != null) {
         sb.append(node.state.toString());
-        if (!node.state.isWhite()) {
+        if (node.state.isWhite()) {
           sb.append("\n");
         }
       }
@@ -99,7 +96,7 @@ public class History {
       HistoryNode node = stack.pop();
       if (node != null) {
         sb.append(node.state.toString());
-        if (!node.state.isWhite()) {
+        if (node.state.isWhite()) {
           sb.append("\n");
         }
       }

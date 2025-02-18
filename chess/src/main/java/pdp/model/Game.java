@@ -117,11 +117,14 @@ public class Game extends Subject {
       nbFilledConditions++;
     }
     // Number of played moves
-    Optional<HistoryNode> previousNode = history.getPrevious();
+    Optional<HistoryNode> previousNode = history.getCurrentMove();
     if (previousNode.isPresent()) {
-      HistoryNode node = previousNode.get();
-      if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-        nbFilledConditions++;
+      previousNode = previousNode.get().getPrevious();
+      if (previousNode.isPresent()) {
+        HistoryNode node = previousNode.get();
+        if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+          nbFilledConditions++;
+        }
       }
     }
     // Number of possible Moves
@@ -388,7 +391,6 @@ public class Game extends Subject {
     if (this.gameState.getBoard().isWhite) {
       this.gameState.incrementsFullTurn();
     }
-    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
 
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
@@ -404,6 +406,7 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
     this.notifyObservers(EventType.MOVE_PLAYED);
+    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
   }
 
   /**
@@ -492,6 +495,7 @@ public class Game extends Subject {
     }
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState());
+    this.history.setCurrentMove(previousNode.get());
 
     this.notifyObservers(EventType.MOVE_UNDO);
   }
@@ -516,6 +520,7 @@ public class Game extends Subject {
     }
 
     this.gameState.updateFrom(nextNode.get().getState().getGameState());
+    this.history.setCurrentMove(nextNode.get());
 
     this.notifyObservers(EventType.MOVE_UNDO);
   }
