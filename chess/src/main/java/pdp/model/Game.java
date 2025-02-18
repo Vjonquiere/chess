@@ -12,18 +12,20 @@ import java.util.logging.Logger;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.exceptions.FailedRedoException;
+import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.Solver;
-import pdp.model.board.Board;
-import pdp.model.board.Move;
-import pdp.model.board.PromoteMove;
-import pdp.model.board.ZobristHashing;
+import pdp.model.board.*;
 import pdp.model.history.History;
+import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
+import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
+import pdp.model.savers.BoardSaver;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -90,6 +92,54 @@ public class Game extends Subject {
   }
 
   /**
+   * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
+   *
+   * @return true if wer're in an endgame (according to the chosen criterias)
+   */
+  public boolean isEndGamePhase() {
+    int nbRequiredConditions = 3;
+    int nbFilledConditions = 0;
+
+    int halfNbPieces = 16;
+    int nbPlayedMovesBeforeEndGame = 25;
+    int nbPossibleMoveInEndGame = 25;
+
+    // Queens are off the board
+    if (getBoard().getBoardRep().queensOffTheBoard()) {
+      nbFilledConditions++;
+    }
+    // Number of pieces remaining
+    if (getBoard().getBoardRep().nbPiecesRemaining() <= halfNbPieces) {
+      nbFilledConditions++;
+    }
+    // King activity
+    if (getBoard().getBoardRep().areKingsActive()) {
+      nbFilledConditions++;
+    }
+    // Number of played moves
+    Optional<HistoryNode> previousNode = history.getPrevious();
+    if (previousNode.isPresent()) {
+      HistoryNode node = previousNode.get();
+      if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+        nbFilledConditions++;
+      }
+    }
+    // Number of possible Moves
+    int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
+    int nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+    if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
+      nbFilledConditions++;
+    }
+
+    // Pawns progresses on the board
+    if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
+      nbFilledConditions++;
+    }
+
+    return nbFilledConditions >= nbRequiredConditions;
+  }
+
+  /**
    * Adds an observer to the game and game state and immediately notifies a GAME_STARTED event.
    *
    * @param observer The observer to be added.
@@ -129,6 +179,23 @@ public class Game extends Subject {
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
     DEBUG(LOGGER, "Initializing Game...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    DEBUG(LOGGER, "Game initialized!");
+    return instance;
+  }
+
+  /**
+   * Creates a new instance of the Game class and stores it in the instance variable.
+   *
+   * @param isWhiteAI Whether the white player is an AI.
+   * @param isBlackAI Whether the black player is an AI.
+   * @param solver The solver to be used for AI moves.
+   * @param board The board state to use
+   * @return The newly created instance of Game.
+   */
+  public static Game initialize(
+      boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, FileBoard board) {
+    DEBUG(LOGGER, "Initializing Game from given board...");
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board), new History());
     DEBUG(LOGGER, "Game initialized!");
     return instance;
   }
@@ -340,11 +407,23 @@ public class Game extends Subject {
     this.notifyObservers(EventType.MOVE_PLAYED);
   }
 
+  /**
+   * Saves the current game state to a file.
+   *
+   * <p>The saved file contains the current position of the board followed by the move history of
+   * the game in standard algebraic notation.
+   *
+   * @param path The path to the file to write to.
+   */
   public void saveGame(String path) {
-    String gameStr = this.history.toAlgebricString();
+    String board =
+        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite));
+    String gameStr = this.history.toAlgebraicString();
+
+    String game = board + "\n" + gameStr;
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-      writer.write(gameStr);
+      writer.write(game);
     } catch (IOException e) {
       System.err.println("Error writing to file: " + e.getMessage());
     }
@@ -353,7 +432,7 @@ public class Game extends Subject {
   /**
    * Retrieves the history of moves in the current game as a formatted string.
    *
-   * @return A string representation of the game's move history.
+   * @return A string representation of the game's movverify(model).previousState();e history.
    */
   public String getStringHistory() {
     return this.history.toString();
@@ -396,6 +475,18 @@ public class Game extends Subject {
 
   public void previousState() {
     // TODO: restore previous state from history
+
+    throw new FailedUndoException();
+
+    // this.notifyObservers(EventType.MOVE_UNDO);
+  }
+
+  public void nextState() {
+    // TODO: restore previous state from history
+
+    throw new FailedRedoException();
+
+    // this.notifyObservers(EventType.MOVE_REDO);
   }
 
   /**

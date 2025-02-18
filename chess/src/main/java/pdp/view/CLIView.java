@@ -9,10 +9,17 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.CancelDrawCommand;
+import pdp.controller.commands.CancelMoveCommand;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.ProposeDrawCommand;
+import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
+import pdp.controller.commands.SurrenderCommand;
 import pdp.events.EventType;
+import pdp.exceptions.CommandNotAvailableNowException;
+import pdp.exceptions.FailedRedoException;
+import pdp.exceptions.FailedSaveException;
+import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.InvalidPromoteFormatException;
@@ -45,6 +52,13 @@ public class CLIView implements View {
         new CommandEntry(this::displayBoardCommand, TextGetter.getText("boardHelpDescription")));
     commands.put(
         "save", new CommandEntry(this::saveCommand, TextGetter.getText("saveHelpDescription")));
+    commands.put(
+        "undo", new CommandEntry(this::undoCommand, TextGetter.getText("undoHelpDescription")));
+    commands.put(
+        "redo", new CommandEntry(this::redoCommand, TextGetter.getText("redoHelpDescription")));
+    commands.put(
+        "surrender",
+        new CommandEntry(this::surrenderCommand, TextGetter.getText("surrenderHelpDescription")));
   }
 
   /**
@@ -98,6 +112,17 @@ public class CLIView implements View {
       case DRAW_ACCEPTED:
         System.out.println(TextGetter.getText("drawAccepted"));
         break;
+      case GAME_SAVED:
+        System.out.println(TextGetter.getText("gameSaved"));
+        break;
+      case MOVE_UNDO:
+        System.out.println(TextGetter.getText("moveUndone"));
+        System.out.println(Game.getInstance().getGameRepresentation());
+        break;
+      case MOVE_REDO:
+        System.out.println(TextGetter.getText("moveRedone"));
+        System.out.println(Game.getInstance().getGameRepresentation());
+        break;
       default:
         DEBUG(LOGGER, "Received unknown game event: " + event);
         break;
@@ -116,7 +141,11 @@ public class CLIView implements View {
     if (e instanceof IllegalMoveException
         || e instanceof MoveParsingException
         || e instanceof InvalidPositionException
-        || e instanceof InvalidPromoteFormatException) {
+        || e instanceof FailedSaveException
+        || e instanceof InvalidPromoteFormatException
+        || e instanceof CommandNotAvailableNowException
+        || e instanceof FailedUndoException
+        || e instanceof FailedRedoException) {
       System.out.println(e.getMessage());
     } else {
       System.err.println(e);
@@ -245,6 +274,34 @@ public class CLIView implements View {
   private void quitCommand(String args) {
     System.out.println(TextGetter.getText("quitting"));
     this.running = false;
+  }
+
+  /**
+   * Handles the undo command by reverting the last move in history.
+   *
+   * @param args Unused argument
+   */
+  private void undoCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+  }
+
+  /**
+   * Handles the redo command by re-executing a previously undone move.
+   *
+   * @param args Unused argument
+   */
+  private void redoCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+  }
+
+  /**
+   * Handles the surrender command.
+   *
+   * @param args Unused argument
+   */
+  private void surrenderCommand(String args) {
+    BagOfCommands.getInstance()
+        .addCommand(new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
 
   private record CommandEntry(Consumer<String> action, String description) {}

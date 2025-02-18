@@ -44,11 +44,11 @@ public class History {
 
   /**
    * Returns the history of moves grouped by full turns in the format: "1. W h4xh5 B Qe3-e5" with
-   * english algebric notation.
+   * english algebraic notation.
    *
    * @return A string representing the history of moves.
    */
-  public String toAlgebricString() {
+  public String toAlgebraicString() {
     StringBuilder sb = new StringBuilder();
     HistoryNode current = currentMove;
     Stack<HistoryNode> stack = new Stack<>();

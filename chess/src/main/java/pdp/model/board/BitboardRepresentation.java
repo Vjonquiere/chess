@@ -1043,6 +1043,137 @@ public class BitboardRepresentation implements BoardRepresentation {
     return false;
   }
 
+  /**
+   * Checks if queens are off the board. Method used to detect endgames
+   *
+   * @return true if queens are off the board. false otherwise
+   */
+  @Override
+  public boolean queensOffTheBoard() {
+    return getQueens(true).size() == 0 && getQueens(false).size() == 0;
+  }
+
+  /**
+   * Checks the progress of pawns in the game for a specific color.
+   *
+   * @param isWhite true for white pawns, false for black pawns
+   * @return true if the majority of pawns for the given color are past the middle of the board.
+   */
+  public boolean pawnsHaveProgressed(boolean isWhite) {
+    List<Position> pawns = getPawns(isWhite);
+    if (pawns.isEmpty()) {
+      return false;
+    }
+
+    final double FACTOR_ADVANCED_PAWNS = 2.0 / 3.0;
+    final int MIDDLE_RANK_WHITE = 3;
+    final int MIDDLE_RANK_BLACK = 4;
+
+    int advancedPawns = 0;
+
+    for (Position pos : pawns) {
+      if (isWhite && pos.getY() >= MIDDLE_RANK_WHITE) {
+        advancedPawns++;
+      } else if (!isWhite && pos.getY() <= MIDDLE_RANK_BLACK) {
+        advancedPawns++;
+      }
+    }
+
+    double ratio = (double) advancedPawns / pawns.size();
+    return ratio >= FACTOR_ADVANCED_PAWNS;
+  }
+
+  /**
+   * Checks if the kings on the board are active. Method used to detect endgames
+   *
+   * @return true if kings are somewhat active. false otherwise
+   */
+  @Override
+  public boolean areKingsActive() {
+    int nbMovesConsideringKingActive = 4;
+
+    Position blackKingPos = getKing(false).get(0);
+    Position whiteKingPos = getKing(true).get(0);
+
+    ColoredPiece blackKing = getPieceAt(blackKingPos.getX(), blackKingPos.getY());
+    ColoredPiece whiteKing = getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
+
+    Bitboard unreachableSquaresBlack =
+        blackKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    unreachableSquaresBlack.clearBit(blackKingPos.getX() % 8 + blackKingPos.getY() * 8);
+
+    Bitboard unreachableSquaresWhite =
+        whiteKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+    unreachableSquaresWhite.clearBit(whiteKingPos.getX() % 8 + whiteKingPos.getY() * 8);
+
+    List<Move> blackKingMoves =
+        getKingMoves(blackKingPos, unreachableSquaresBlack, getWhiteBoard(), blackKing);
+    List<Move> whiteKingMoves =
+        getKingMoves(whiteKingPos, unreachableSquaresWhite, getBlackBoard(), whiteKing);
+
+    return blackKingMoves.size() >= nbMovesConsideringKingActive
+        && whiteKingMoves.size() >= nbMovesConsideringKingActive;
+  }
+
+  /**
+   * Checks and returns the number of remaining pieces on the board
+   *
+   * @return the number of remaining pieces on the board
+   */
+  public int nbPiecesRemaining() {
+    int count = 0;
+    int maxBoardIndex = 11;
+    for (int i = 0; i <= maxBoardIndex; i++) {
+      List<Position> occupiedSquares = getOccupiedSquares(i);
+      count += occupiedSquares.size();
+    }
+
+    return count;
+  }
+
+  @Override
+  public List<Move> retrieveKingMoves(boolean white) {
+    if (white) {
+      Position whiteKingPos = getKing(true).get(0);
+      ColoredPiece whiteKing = getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
+      Bitboard unreachableSquaresWhite =
+          whiteKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+      unreachableSquaresWhite.clearBit(whiteKingPos.getX() % 8 + whiteKingPos.getY() * 8);
+      List<Move> whiteKingMoves =
+          getKingMoves(whiteKingPos, unreachableSquaresWhite, getBlackBoard(), whiteKing);
+
+      return whiteKingMoves;
+    } else {
+      Position blackKingPos = getKing(false).get(0);
+
+      ColoredPiece blackKing = getPieceAt(blackKingPos.getX(), blackKingPos.getY());
+
+      Bitboard unreachableSquaresBlack =
+          blackKing.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
+      unreachableSquaresBlack.clearBit(blackKingPos.getX() % 8 + blackKingPos.getY() * 8);
+
+      List<Move> blackKingMoves =
+          getKingMoves(blackKingPos, unreachableSquaresBlack, getWhiteBoard(), blackKing);
+
+      return blackKingMoves;
+    }
+  }
+
+  @Override
+  public List<Move> retrieveBishopMoves(boolean white) {
+    List<Position> bishops = getBishops(white);
+    Bitboard friendlyPieces = white ? getWhiteBoard() : getBlackBoard();
+    Bitboard enemyPieces = white ? getBlackBoard() : getWhiteBoard();
+    List<Move> bishopMoves = new ArrayList<>();
+
+    for (Position bishopPos : bishops) {
+      ColoredPiece bishop = getPieceAt(bishopPos.getX(), bishopPos.getY());
+      bishopMoves.addAll(getBishopMoves(bishopPos, friendlyPieces, enemyPieces, bishop));
+    }
+
+    return bishopMoves;
+  }
+
   @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();

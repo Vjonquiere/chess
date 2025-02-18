@@ -114,7 +114,7 @@ public class GameStateTest {
   }
 
   @Test
-  public void testCheckGameStatus() {
+  public void testCheckGameStatusCall() {
     GameState gameBlitzOff = new GameState();
     // Simulate cases
     gameBlitzOff.checkGameStatus();

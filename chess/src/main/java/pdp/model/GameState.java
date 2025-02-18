@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.model.board.Board;
+import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
@@ -55,6 +56,27 @@ public class GameState extends Subject {
     this.blackLosesOnTime = false;
     this.board = new Board();
     this.moveTimer = timer;
+    this.fullTurnNumber = 0;
+  }
+
+  /**
+   * Create a new GameState from a given board
+   *
+   * @param board The board to use
+   */
+  public GameState(FileBoard board) {
+    Logging.configureLogging(LOGGER);
+    this.isGameOver = false;
+    this.isWhiteTurn = board.isWhiteTurn();
+    this.whiteResigns = false;
+    this.blackResigns = false;
+    this.whiteWantsToDraw = false;
+    this.blackWantsToDraw = false;
+    this.whiteLosesOnTime = false;
+    this.blackLosesOnTime = false;
+    this.threefoldRepetition = false;
+    this.board = new Board(board);
+    this.moveTimer = null;
     this.fullTurnNumber = 0;
   }
 
@@ -232,8 +254,8 @@ public class GameState extends Subject {
    * This method checks the ongoing or over status of the game. In summary, it will: Verify
    * checkMate, staleMate, draw by insufficient material, 50 move rule, draw by threefold
    * repetition, loss or draw on time, draw by mutual agreement, resigning. Will modify
-   * this.isGameOver boolean attribute (or not) so that Game will call this.isGameOver() to know the
-   * status of the game.
+   * this.isGameOver boolean attribute (or not) and send notification (or not) to observers if the
+   * game is over. This method is called after every move is played.
    */
   public void checkGameStatus() {
     Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;

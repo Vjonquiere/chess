@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import pdp.model.board.Move;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class MoveTest {
@@ -72,10 +75,47 @@ public class MoveTest {
   }
 
   @Test
+  public void testToAlgebraicString() {
+    Position source = new Position(4, 1); // "e2"
+    Position dest = new Position(3, 2); // "d3"
+    Move move =
+        new Move(
+            source,
+            dest,
+            new ColoredPiece(Piece.QUEEN, Color.WHITE),
+            true,
+            new ColoredPiece(Piece.KNIGHT, Color.BLACK),
+            true,
+            false);
+
+    assertEquals("Qe2xd3+", move.toAlgebraicString());
+
+    source = new Position(4, 1); // "e2"
+    dest = new Position(4, 3); // "e4"
+
+    move =
+        new Move(
+            source, dest, new ColoredPiece(Piece.PAWN, Color.WHITE), false, null, false, false);
+
+    assertEquals("e2-e4", move.toAlgebraicString());
+  }
+
+  @Test
   public void testStringToPosition() {
     Position position = Move.stringToPosition("e4");
     Position expected = new Position(4, 3); // "e4" corresponds to (3, 4)
 
     assertEquals(expected, position);
+  }
+
+  @Test
+  public void testStringToPiece() {
+    assertEquals(Piece.ROOK, Move.stringToPiece("R"));
+    assertEquals(Piece.QUEEN, Move.stringToPiece("Q"));
+    assertEquals(Piece.KNIGHT, Move.stringToPiece("N"));
+    assertEquals(Piece.BISHOP, Move.stringToPiece("B"));
+    assertEquals(Piece.PAWN, Move.stringToPiece("P"));
+    assertEquals(Piece.KING, Move.stringToPiece("K"));
+    assertThrows(IllegalArgumentException.class, () -> Move.stringToPiece("A"));
   }
 }
