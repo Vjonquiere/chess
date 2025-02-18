@@ -1,5 +1,7 @@
 package pdp.model.ai;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.model.Game;
@@ -64,6 +66,7 @@ public class Solver {
       case ENDGAME -> this.heuristic = null;
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
   /**
