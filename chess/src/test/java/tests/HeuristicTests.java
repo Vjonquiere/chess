@@ -13,6 +13,7 @@ import pdp.model.ai.heuristics.BishopEndgameHeuristic;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.ai.heuristics.Heuristic;
 import pdp.model.ai.heuristics.KingActivityHeuristic;
+import pdp.model.ai.heuristics.KingOppositionHeuristic;
 import pdp.model.ai.heuristics.KingSafetyHeuristic;
 import pdp.model.ai.heuristics.PawnChainHeuristic;
 import pdp.model.ai.heuristics.PromotionHeuristic;
@@ -234,6 +235,64 @@ public class HeuristicTests {
         if (h instanceof PawnChainHeuristic) {
           // Expected score
           int expectedScoreWhenGameStarts = 0;
+          assertEquals(expectedScoreWhenGameStarts, h.evaluate(game.getBoard(), true));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testKingOppositionHeuristic() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof KingOppositionHeuristic) {
+          // Expected score
+          int expectedScoreWhenGameStarts = 0;
+          assertEquals(expectedScoreWhenGameStarts, h.evaluate(game.getBoard(), true));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testKingOppositionHeuristicStrongOpposition() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    Position initWhiteKingPos = new Position(4, 0);
+    Position initBlackKingPos = new Position(4, 7);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListBlack.add(initBlackKingPos);
+
+    BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
+        board, posListWhite, posListBlack);
+
+    Position e4 = new Position(4, 3);
+    Position e6 = new Position(4, 5);
+
+    board.movePiece(initWhiteKingPos, e4);
+    board.movePiece(initBlackKingPos, e6);
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof KingOppositionHeuristic) {
+          // Expected score
+          int expectedScoreWhenGameStarts = -10;
           assertEquals(expectedScoreWhenGameStarts, h.evaluate(game.getBoard(), true));
         }
       }

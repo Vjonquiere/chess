@@ -15,5 +15,6 @@ public class EndGameHeuristic extends AbstractHeuristic {
     addHeuristic(new OpponentCheck());
     addHeuristic(new KingSafetyHeuristic());
     addHeuristic(new PawnChainHeuristic());
+    addHeuristic(new KingOppositionHeuristic());
   }
 }
