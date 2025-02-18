@@ -237,6 +237,27 @@ public class GameTest {
     game.playMove(Move.fromString("h6-f6"));
     game.playMove(Move.fromString("a3-c3"));
     game.playMove(Move.fromString("a6-c6"));
+    game.playMove(Move.fromString("h4-g5"));
+    game.playMove(Move.fromString("h5-g4"));
+    game.playMove(Move.fromString("c4-b5"));
+    game.playMove(Move.fromString("a5-b4"));
+    game.playMove(Move.fromString("b5-c6"));
+    game.playMove(Move.fromString("b4-c3"));
+    game.playMove(Move.fromString("g5-f6"));
+    game.playMove(Move.fromString("g4-f3"));
+    game.playMove(Move.fromString("g1-f3"));
+    game.playMove(Move.fromString("g8-f6"));
+    game.playMove(Move.fromString("b1-c3"));
+    game.playMove(Move.fromString("b8-c6"));
+    game.playMove(Move.fromString("c1-a3"));
+    game.playMove(Move.fromString("c8-a6"));
+    game.playMove(Move.fromString("e2-e1"));
+    game.playMove(Move.fromString("a6-f1"));
+    game.playMove(Move.fromString("e1-f1"));
+    game.playMove(Move.fromString("c6-e5"));
+    game.playMove(Move.fromString("a3-c5"));
+    game.playMove(Move.fromString("f8-c5"));
+    game.playMove(Move.fromString("f3-e5"));
 
     assertTrue(game.isEndGamePhase());
   }

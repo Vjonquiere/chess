@@ -16,7 +16,9 @@ import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.*;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
@@ -97,7 +99,7 @@ public class Game extends Subject {
    * @return true if wer're in an endgame (according to the chosen criterias)
    */
   public boolean isEndGamePhase() {
-    int nbRequiredConditions = 3;
+    int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 
     int halfNbPieces = 16;
@@ -133,7 +135,6 @@ public class Game extends Subject {
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }
-
     // Pawns progresses on the board
     if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
       nbFilledConditions++;
@@ -402,6 +403,13 @@ public class Game extends Subject {
         this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
     if (threefoldRepetition) {
       this.gameState.activateThreefold();
+    }
+    DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
+    if (isEndGamePhase() && this.solver != null) {
+      // Set endgame heuristic only once and only if endgame phase
+      if (!(solver.getHeuristic() instanceof EndGameHeuristic)) {
+        this.solver.setHeuristic(HeuristicType.ENDGAME);
+      }
     }
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();

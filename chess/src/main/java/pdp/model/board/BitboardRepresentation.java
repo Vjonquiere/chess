@@ -1175,6 +1175,48 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
+  public List<List<Position>> retrieveWhitePiecesPos() {
+    List<List<Position>> whitePositions = new ArrayList<>();
+
+    List<Position> kingPos = getKing(true);
+    List<Position> queenPos = getQueens(true);
+    List<Position> rookPos = getRooks(true);
+    List<Position> bishopPos = getBishops(true);
+    List<Position> knightPos = getKnights(true);
+    List<Position> pawnsPos = getPawns(true);
+
+    whitePositions.add(kingPos);
+    whitePositions.add(queenPos);
+    whitePositions.add(rookPos);
+    whitePositions.add(bishopPos);
+    whitePositions.add(knightPos);
+    whitePositions.add(pawnsPos);
+
+    return whitePositions;
+  }
+
+  @Override
+  public List<List<Position>> retrieveBlackPiecesPos() {
+    List<List<Position>> blackPositions = new ArrayList<>();
+
+    List<Position> kingPos = getKing(false);
+    List<Position> queenPos = getQueens(false);
+    List<Position> rookPos = getRooks(false);
+    List<Position> bishopPos = getBishops(false);
+    List<Position> knightPos = getKnights(false);
+    List<Position> pawnsPos = getPawns(false);
+
+    blackPositions.add(kingPos);
+    blackPositions.add(queenPos);
+    blackPositions.add(rookPos);
+    blackPositions.add(bishopPos);
+    blackPositions.add(knightPos);
+    blackPositions.add(pawnsPos);
+
+    return blackPositions;
+  }
+
+  @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
   }

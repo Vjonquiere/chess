@@ -39,5 +39,9 @@ public interface BoardRepresentation extends Rules {
 
   public List<Move> retrieveBishopMoves(boolean white);
 
+  public List<List<Position>> retrieveWhitePiecesPos();
+
+  public List<List<Position>> retrieveBlackPiecesPos();
+
   public BoardRepresentation getCopy();
 }

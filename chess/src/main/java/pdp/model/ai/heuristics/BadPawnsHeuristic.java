@@ -11,7 +11,7 @@ public class BadPawnsHeuristic implements Heuristic {
     int score = 0;
     score += doubledPawns(board, isWhite) - doubledPawns(board, !isWhite);
     score += isolatedPawns(board, isWhite) - isolatedPawns(board, !isWhite);
-    // score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
+    score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
     return (int) (-0.5 * score);
   }
 
@@ -62,6 +62,14 @@ public class BadPawnsHeuristic implements Heuristic {
     return count;
   }
 
+  /**
+   * Counts the number of backward pawns (pawns that have no friendly pawns behind them in adjacent
+   * columns and are behind enemy pawns) and returns a score accordingly
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return score based on the number of backward pawns
+   */
   private int backwardsPawns(Board board, boolean isWhite) {
     return 0;
   }
