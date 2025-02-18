@@ -38,4 +38,6 @@ public interface BoardRepresentation extends Rules {
   public List<Move> retrieveKingMoves(boolean white);
 
   public List<Move> retrieveBishopMoves(boolean white);
+
+  public BoardRepresentation getCopy();
 }

@@ -1190,4 +1190,20 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
     return false;
   }
+
+  /**
+   * Creates a deep copy of this BitboardRepresentation object. Each bitboard is copied
+   * independently to avoid shared references.
+   *
+   * @return A new instance of BitboardRepresentation with the same state as the current object.
+   */
+  @Override
+  public BoardRepresentation getCopy() {
+    BitboardRepresentation copy = new BitboardRepresentation();
+    for (int i = 0; i < this.board.length; i++) {
+      copy.board[i] = this.board[i].getCopy();
+    }
+
+    return copy;
+  }
 }
