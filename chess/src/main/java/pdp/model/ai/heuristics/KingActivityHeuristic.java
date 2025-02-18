@@ -19,8 +19,8 @@ public class KingActivityHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += kingIsInCenterScore(board, isWhite);
-    score += kingActivityScore(board, isWhite);
+    score += kingIsInCenterScore(board, isWhite) - kingIsInCenterScore(board, !isWhite);
+    score += kingActivityScore(board, isWhite) - kingActivityScore(board, !isWhite);
 
     return score;
   }

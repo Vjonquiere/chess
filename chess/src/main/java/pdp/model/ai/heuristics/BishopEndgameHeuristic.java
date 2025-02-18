@@ -11,11 +11,15 @@ public class BishopEndgameHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += evaluateBishopMobility(board, isWhite);
-    score += evaluateSameColorBishopsSamePlayer(board, isWhite);
-    score += evaluateSameColorBishopsOpponent(board, isWhite);
-    score += evaluateCentralization(board, isWhite);
-    score += evaluateBadBishop(board, isWhite);
+    score += evaluateBishopMobility(board, isWhite) - evaluateBishopMobility(board, !isWhite);
+    score +=
+        evaluateSameColorBishopsSamePlayer(board, isWhite)
+            - evaluateSameColorBishopsSamePlayer(board, !isWhite);
+    score +=
+        evaluateSameColorBishopsOpponent(board, isWhite)
+            - evaluateSameColorBishopsOpponent(board, !isWhite);
+    score += evaluateCentralization(board, isWhite) - evaluateCentralization(board, !isWhite);
+    score += evaluateBadBishop(board, isWhite) - evaluateBadBishop(board, !isWhite);
     return score;
   }
 

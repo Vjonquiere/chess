@@ -2,6 +2,7 @@ package pdp.model.ai.heuristics;
 
 import java.util.*;
 import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
 public class BadPawnsHeuristic implements Heuristic {
@@ -62,7 +63,31 @@ public class BadPawnsHeuristic implements Heuristic {
     return count;
   }
 
+  /**
+   * Penalizes backward pawns
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a negative score if backwards pawns, 0 otherwise (no penalty)
+   */
   private int backwardsPawns(Board board, boolean isWhite) {
-    return 0;
+    int penalty = -6;
+    int score = 0;
+    BoardRepresentation bitboard = board.getBoardRep();
+    List<Position> pawns = bitboard.getPawns(isWhite);
+
+    for (Position pawn : pawns) {
+      boolean hasSupport = false;
+      for (Position otherPawn : pawns) {
+        if (Math.abs(otherPawn.getX() - pawn.getX()) == 1 && otherPawn.getY() < pawn.getY()) {
+          hasSupport = true;
+          break;
+        }
+      }
+      if (!hasSupport) {
+        score += penalty;
+      }
+    }
+    return score;
   }
 }

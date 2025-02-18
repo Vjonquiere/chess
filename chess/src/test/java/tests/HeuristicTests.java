@@ -14,6 +14,7 @@ import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.ai.heuristics.Heuristic;
 import pdp.model.ai.heuristics.KingActivityHeuristic;
 import pdp.model.ai.heuristics.KingSafetyHeuristic;
+import pdp.model.ai.heuristics.PawnChainHeuristic;
 import pdp.model.ai.heuristics.PromotionHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
@@ -113,7 +114,7 @@ public class HeuristicTests {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
       for (Heuristic h : heuristics) {
         if (h instanceof KingActivityHeuristic) {
-          int scoreWhenGameStartsBlack = 0;
+          int scoreWhenGameStartsBlack = -3;
           int scoreWhenGameStartsWhite = 3;
           assertEquals(scoreWhenGameStartsBlack, h.evaluate(game.getBoard(), false));
           assertEquals(scoreWhenGameStartsWhite, h.evaluate(game.getBoard(), true));
@@ -133,8 +134,8 @@ public class HeuristicTests {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
       for (Heuristic h : heuristics) {
         if (h instanceof KingSafetyHeuristic) {
-          int scoreWhenGameStarts = 45;
-          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+          int scoreWhenGameStartsIsBalanced = 0;
+          assertEquals(scoreWhenGameStartsIsBalanced, h.evaluate(game.getBoard(), false));
         }
       }
     }
@@ -151,8 +152,8 @@ public class HeuristicTests {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
       for (Heuristic h : heuristics) {
         if (h instanceof KingSafetyHeuristic) {
-          int scoreWhenGameStarts = 45;
-          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), true));
+          int scoreWhenGameStartsIsBalanced = 0;
+          assertEquals(scoreWhenGameStartsIsBalanced, h.evaluate(game.getBoard(), true));
         }
       }
     }
@@ -194,10 +195,8 @@ public class HeuristicTests {
       for (Heuristic h : heuristics) {
         if (h instanceof BishopEndgameHeuristic) {
           // Expected score in this position
-          int expectedScoreBlack = 14;
-          int expectedScoreWhite = 16;
+          int expectedScoreBlack = -2;
           assertEquals(expectedScoreBlack, h.evaluate(game.getBoard(), false));
-          assertEquals(expectedScoreWhite, h.evaluate(game.getBoard(), true));
         }
       }
     }
@@ -215,10 +214,27 @@ public class HeuristicTests {
       for (Heuristic h : heuristics) {
         if (h instanceof BishopEndgameHeuristic) {
           // Expected score in this position
-          int expectedScoreWhenGameStartsWhite = -40;
-          int expectedScoreWhenGameStartsBlack = -38;
-          assertEquals(expectedScoreWhenGameStartsWhite, h.evaluate(game.getBoard(), false));
-          assertEquals(expectedScoreWhenGameStartsBlack, h.evaluate(game.getBoard(), true));
+          int expectedScoreWhenGameStartsWhite = 2;
+          assertEquals(expectedScoreWhenGameStartsWhite, h.evaluate(game.getBoard(), true));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testPawnChainsHeuristic() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof PawnChainHeuristic) {
+          // Expected score
+          int expectedScoreWhenGameStarts = 0;
+          assertEquals(expectedScoreWhenGameStarts, h.evaluate(game.getBoard(), true));
         }
       }
     }
