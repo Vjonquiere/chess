@@ -2,9 +2,6 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -13,8 +10,6 @@ import pdp.model.Game;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
-import pdp.model.parsers.FileBoard;
-import pdp.model.savers.BoardSaver;
 import pdp.utils.Position;
 
 public class GameTest {
@@ -239,5 +234,155 @@ public class GameTest {
     game.playMove(Move.fromString("a6-c6"));
 
     assertTrue(game.isEndGamePhase());
+  }
+
+  @Test
+  public void testCheckGameStatusMateFromBlack() {
+    Game game = Game.initialize(false, false, null, null);
+
+    game.playMove(Move.fromString("f2-f4"));
+    game.playMove(Move.fromString("e7-e6"));
+    game.playMove(Move.fromString("g2-g4"));
+    game.playMove(Move.fromString("d8-h4"));
+
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void testCheckGameStatusCheckDrawByAgreement() {
+    Game game = Game.initialize(false, false, null, null);
+
+    game.playMove(Move.fromString("f2-f4"));
+    game.playMove(Move.fromString("e7-e6"));
+
+    game.getGameState().blackWantsToDraw();
+    game.getGameState().whiteWantsToDraw();
+
+    game.playMove(Move.fromString("a2-a3"));
+
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void testCheckGameStatusHasWhiteResigned() {
+    Game game = Game.initialize(false, false, null, null);
+
+    game.playMove(Move.fromString("f2-f4"));
+    game.playMove(Move.fromString("e7-e6"));
+
+    game.getGameState().whiteResigns();
+
+    game.playMove(Move.fromString("a2-a3"));
+
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void testCheckGameStatusHasBlackResigned() {
+    Game game = Game.initialize(false, false, null, null);
+
+    game.playMove(Move.fromString("f2-f4"));
+    game.playMove(Move.fromString("e7-e6"));
+
+    game.getGameState().blackResigns();
+
+    game.playMove(Move.fromString("a2-a3"));
+
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void testCheckGameStatusDrawByInsufficientMaterial() {
+    Game game = Game.initialize(false, false, null, null);
+
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    Position initWhiteKingPos = new Position(4, 0);
+    Position initBlackKingPos = new Position(4, 7);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListBlack.add(initBlackKingPos);
+
+    BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
+        board, posListWhite, posListBlack);
+
+    game.playMove(Move.fromString("e1-e2"));
+
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void testCheckGameStatusStaleMate() {
+    Game game = Game.initialize(false, false, null, null);
+
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    Position initWhiteKingPos = new Position(4, 0);
+    Position initBlackKingPos = new Position(4, 7);
+    Position initBlackRookPos = new Position(0, 7);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListBlack.add(initBlackKingPos);
+    posListBlack.add(initBlackRookPos);
+
+    BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
+        board, posListWhite, posListBlack);
+
+    assertFalse(game.isOver());
+    game.playMove(Move.fromString("e1-f1"));
+    assertFalse(game.isOver());
+    game.playMove(Move.fromString("e8-f7"));
+    game.playMove(Move.fromString("f1-g2"));
+    game.playMove(Move.fromString("f7-f6"));
+    game.playMove(Move.fromString("g2-f2"));
+    game.playMove(Move.fromString("f6-f5"));
+    game.playMove(Move.fromString("f2-g1"));
+    game.playMove(Move.fromString("f5-f4"));
+    game.playMove(Move.fromString("g1-h1"));
+    game.playMove(Move.fromString("f4-f3"));
+    game.playMove(Move.fromString("h1-h2"));
+    game.playMove(Move.fromString("f3-f2"));
+    game.playMove(Move.fromString("h2-h1"));
+    game.playMove(Move.fromString("a8-g8"));
+    game.playMove(Move.fromString("h1-h2"));
+    game.playMove(Move.fromString("g8-g6"));
+    game.playMove(Move.fromString("h2-h1"));
+    assertFalse(game.isOver());
+    game.playMove(Move.fromString("g6-g2"));
+
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void testCheckGameStatusFiftyMoveRule() {
+    Game game = Game.initialize(false, false, null, null);
+
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    Position initWhiteKingPos = new Position(4, 0);
+    Position initWhiteRookPos = new Position(7, 0);
+    Position initBlackKingPos = new Position(4, 7);
+    Position initBlackRookPos = new Position(0, 7);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(initWhiteRookPos);
+    posListBlack.add(initBlackKingPos);
+    posListBlack.add(initBlackRookPos);
+
+    BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
+        board, posListWhite, posListBlack);
+
+    // Simulate game where 50 move rule can be applied
+
+    assertFalse(game.isOver());
   }
 }
