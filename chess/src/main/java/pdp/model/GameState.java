@@ -254,8 +254,8 @@ public class GameState extends Subject {
    * This method checks the ongoing or over status of the game. In summary, it will: Verify
    * checkMate, staleMate, draw by insufficient material, 50 move rule, draw by threefold
    * repetition, loss or draw on time, draw by mutual agreement, resigning. Will modify
-   * this.isGameOver boolean attribute (or not) so that Game will call this.isGameOver() to know the
-   * status of the game.
+   * this.isGameOver boolean attribute (or not) and send notification (or not) to observers if the
+   * game is over. This method is called after every move is played.
    */
   public void checkGameStatus() {
     Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;
