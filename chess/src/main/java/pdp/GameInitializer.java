@@ -20,7 +20,7 @@ import pdp.model.parsers.FileBoard;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.view.CLIView;
-import pdp.view.GameView;
+import pdp.view.GUIView;
 import pdp.view.View;
 
 public abstract class GameInitializer {
@@ -135,7 +135,7 @@ public abstract class GameInitializer {
 
     View view;
     if (options.containsKey(OptionType.GUI)) {
-      view = new GameView();
+      view = new GUIView();
     } else {
       view = new CLIView();
     }
