@@ -41,6 +41,7 @@ public class Game extends Subject {
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
+  private boolean explorationAI;
   private History history;
   private HashMap<Long, Integer> stateCount;
 
@@ -49,6 +50,7 @@ public class Game extends Subject {
     Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
+    this.explorationAI = false;
     this.solver = solver;
     this.gameState = gameState;
     this.history = history;
@@ -119,6 +121,10 @@ public class Game extends Subject {
    */
   public Solver getSolver() {
     return solver;
+  }
+
+  public void setExploration(boolean exploration) {
+    this.explorationAI = exploration;
   }
 
   /**
@@ -441,8 +447,17 @@ public class Game extends Subject {
     }
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
-    this.notifyObservers(EventType.MOVE_PLAYED);
+    if (!explorationAI) {
+      this.notifyObservers(EventType.MOVE_PLAYED);
+    }
+
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+
+    if (!explorationAI
+        && ((this.gameState.getBoard().isWhite && isWhiteAI)
+            || (!this.gameState.getBoard().isWhite && isBlackAI))) {
+      solver.playAIMove(this);
+    }
   }
 
   /**
@@ -532,8 +547,9 @@ public class Game extends Subject {
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(previousNode.get());
-
-    this.notifyObservers(EventType.MOVE_UNDO);
+    if (!explorationAI) {
+      this.notifyObservers(EventType.MOVE_UNDO);
+    }
   }
 
   /**
@@ -557,8 +573,9 @@ public class Game extends Subject {
 
     this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(nextNode.get());
-
-    this.notifyObservers(EventType.MOVE_UNDO);
+    if (!explorationAI) {
+      this.notifyObservers(EventType.MOVE_UNDO);
+    }
   }
 
   /**

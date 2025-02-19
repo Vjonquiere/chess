@@ -23,6 +23,8 @@ public class Solver {
   Heuristic heuristic;
   int depth = 2;
   int time = 500;
+  private boolean originalIsBlackAI;
+  private boolean originalIsWhiteAI;
 
   public Solver() {
     Logging.configureLogging(LOGGER);
@@ -127,8 +129,11 @@ public class Solver {
     if (algorithm == null) {
       throw new IllegalStateException("No algorithm has been set");
     }
+    System.out.println("AI is going to play");
+    game.setExploration(true);
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
     DEBUG(LOGGER, "Best move " + bestMove);
+    game.setExploration(false);
     game.playMove(bestMove.move());
   }
 
