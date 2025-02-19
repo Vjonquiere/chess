@@ -1131,6 +1131,12 @@ public class BitboardRepresentation implements BoardRepresentation {
     return count;
   }
 
+  /**
+   * Returns the list of available moves for the king of either white or black
+   *
+   * @param white true if we want the moves of the white king, false otherwise
+   * @return the list of moves for the corresponding king
+   */
   @Override
   public List<Move> retrieveKingMoves(boolean white) {
     if (white) {
@@ -1159,6 +1165,12 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
   }
 
+  /**
+   * Returns the list of available for the bishops of either white or black
+   *
+   * @param white true if we want the moves of the white bishops, false otherwise
+   * @return the list of moves for the corresponding bishops
+   */
   @Override
   public List<Move> retrieveBishopMoves(boolean white) {
     List<Position> bishops = getBishops(white);
@@ -1174,6 +1186,9 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bishopMoves;
   }
 
+  /**
+   * @return the list containing the list of positions for the white pieces
+   */
   @Override
   public List<List<Position>> retrieveWhitePiecesPos() {
     List<List<Position>> whitePositions = new ArrayList<>();
@@ -1195,6 +1210,9 @@ public class BitboardRepresentation implements BoardRepresentation {
     return whitePositions;
   }
 
+  /**
+   * @return the list containing the list of positions for the black pieces
+   */
   @Override
   public List<List<Position>> retrieveBlackPiecesPos() {
     List<List<Position>> blackPositions = new ArrayList<>();

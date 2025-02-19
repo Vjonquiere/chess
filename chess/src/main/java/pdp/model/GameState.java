@@ -122,10 +122,12 @@ public class GameState extends Subject {
     this.simplifiedZobristHashing = simplifiedZobristHashing;
   }
 
+  /** Change threefoldstatus for the gamestate when it is observed */
   public void activateThreefold() {
     this.threefoldRepetition = true;
   }
 
+  /** White requests a draw */
   public void whiteWantsToDraw() {
     this.whiteWantsToDraw = true;
     if (!checkDrawAgreement()) {
@@ -133,6 +135,7 @@ public class GameState extends Subject {
     }
   }
 
+  /** Black requests a draw */
   public void blackWantsToDraw() {
     this.blackWantsToDraw = true;
     if (!checkDrawAgreement()) {
@@ -140,11 +143,13 @@ public class GameState extends Subject {
     }
   }
 
+  /** White cancels their draw request */
   public void whiteCancelsDrawRequest() {
     this.whiteWantsToDraw = false;
     notifyObservers(EventType.WHITE_UNDRAW);
   }
 
+  /** Black cancels their draw request */
   public void blackCancelsDrawRequest() {
     this.blackWantsToDraw = false;
     notifyObservers(EventType.BLACK_UNDRAW);
@@ -179,18 +184,30 @@ public class GameState extends Subject {
     notifyObservers(EventType.WIN_WHITE);
   }
 
+  /**
+   * @return true if white has resigned, false otherwise
+   */
   public boolean hasWhiteResigned() {
     return this.whiteResigns;
   }
 
+  /**
+   * @return true if black has resigned, false otherwise
+   */
   public boolean hasBlackResigned() {
     return this.blackResigns;
   }
 
+  /**
+   * @return true if black has requested a draw, false otherwise
+   */
   public boolean hasBlackRequestedDraw() {
     return this.blackWantsToDraw;
   }
 
+  /**
+   * @return true if white has requested a draw, false otherwise
+   */
   public boolean hasWhiteRequestedDraw() {
     return this.whiteWantsToDraw;
   }
@@ -217,14 +234,23 @@ public class GameState extends Subject {
     return false;
   }
 
+  /**
+   * @return true if white lost on time at this state of the game, false otherwise
+   */
   public boolean hasWhiteLostOnTime() {
     return this.whiteLosesOnTime;
   }
 
+  /**
+   * @return true if black lost on time at this state of the game; false otherwise
+   */
   public boolean hasBlackLostOnTime() {
     return this.blackLosesOnTime;
   }
 
+  /**
+   * @return true if the match is over for this state of the , false otherwise
+   */
   public boolean isGameOver() {
     return this.isGameOver;
   }
@@ -244,6 +270,9 @@ public class GameState extends Subject {
     notifyObservers(EventType.DRAW);
   }
 
+  /**
+   * @return true if the game has stated a threefold repetiton rule, false otherwise
+   */
   public boolean isThreefoldRepetition() {
     return this.threefoldRepetition;
   }

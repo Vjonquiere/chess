@@ -119,15 +119,8 @@ public class Game extends Subject {
       nbFilledConditions++;
     }
     // Number of played moves
-    Optional<HistoryNode> previousNode = history.getCurrentMove();
-    if (previousNode.isPresent()) {
-      previousNode = previousNode.get().getPrevious();
-      if (previousNode.isPresent()) {
-        HistoryNode node = previousNode.get();
-        if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-          nbFilledConditions++;
-        }
-      }
+    if (gameState.getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+      nbFilledConditions++;
     }
     // Number of possible Moves
     int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
