@@ -42,6 +42,8 @@ public class Minimax implements SearchAlgorithm {
     AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
+      System.out.println("Depth : " + depth + "Move : " + move);
+      System.out.println(game.getBoard().board.getKing(true));
       game.playMove(move);
       AIMove currMove = minMax(game, depth - 1, !player);
       if (currMove.score() > bestMove.score()) {
@@ -68,6 +70,7 @@ public class Minimax implements SearchAlgorithm {
     AIMove bestMove = new AIMove(null, Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
+      System.out.println("Depth : " + depth + "Move : " + move);
       game.playMove(move);
       AIMove currMove = maxMin(game, depth - 1, !player);
       if (currMove.score() < bestMove.score()) {
