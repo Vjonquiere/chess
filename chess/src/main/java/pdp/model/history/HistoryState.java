@@ -14,8 +14,7 @@ public class HistoryState {
    * Constructs a history state with the given move notation.
    *
    * @param move The move played.
-   * @param fullTurn The number of the current full turn.
-   * @param isWhite {true} if the move is white, {false} if it is black.
+   * @param gameState a copy of the gameState after the move played.
    */
   public HistoryState(Move move, GameState gameState) {
     Logging.configureLogging(LOGGER);
@@ -23,18 +22,38 @@ public class HistoryState {
     this.gameState = gameState;
   }
 
+  /**
+   * Retrieves the move associated with this object.
+   *
+   * @return The Move object representing the move.
+   */
   public Move getMove() {
     return this.move;
   }
 
+  /**
+   * Retrieves the full turn number from the game state.
+   *
+   * @return The turn number as an integer.
+   */
   public int getFullTurn() {
     return this.gameState.getFullTurn();
   }
 
+  /**
+   * Determines if the current player is white.
+   *
+   * @return true if the current player is white, false otherwise.
+   */
   public boolean isWhite() {
     return this.gameState.getBoard().getPlayer();
   }
 
+  /**
+   * Retrieves the game state associated with this object.
+   *
+   * @return The GameState object representing the current state of the game.
+   */
   public GameState getGameState() {
     return this.gameState;
   }
