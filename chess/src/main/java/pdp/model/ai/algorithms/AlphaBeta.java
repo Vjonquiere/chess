@@ -1,6 +1,7 @@
 package pdp.model.ai.algorithms;
 
 import java.util.List;
+import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
@@ -39,20 +40,24 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   private AIMove maxValue(Game game, int depth, boolean player, int alpha, int beta) {
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game.getBoard(), player));
+      return new AIMove(null, solver.evaluateBoard(game.getBoard(), !player));
     }
     AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
-      game.playMove(move);
-      AIMove currMove = minValue(game, depth - 1, !player, alpha, beta);
-      game.previousState();
-      if (currMove.score() > bestMove.score()) {
-        bestMove = new AIMove(move, currMove.score());
-      }
-      alpha = Math.max(alpha, currMove.score());
-      if (alpha >= beta) {
-        break;
+      try {
+        game.playMove(move);
+        AIMove currMove = minValue(game, depth - 1, !player, alpha, beta);
+        game.previousState();
+        if (currMove.score() > bestMove.score()) {
+          bestMove = new AIMove(move, currMove.score());
+        }
+        alpha = Math.max(alpha, currMove.score());
+        if (alpha >= beta) {
+          break;
+        }
+      } catch (IllegalMoveException e) {
+        // illegal move caught
       }
     }
     return bestMove;
@@ -71,20 +76,24 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   private AIMove minValue(Game game, int depth, boolean player, int alpha, int beta) {
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game.getBoard(), player));
+      return new AIMove(null, solver.evaluateBoard(game.getBoard(), !player));
     }
     AIMove bestMove = new AIMove(null, Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
-      game.playMove(move);
-      AIMove currMove = maxValue(game, depth - 1, !player, alpha, beta);
-      game.previousState();
-      if (currMove.score() < bestMove.score()) {
-        bestMove = new AIMove(move, currMove.score());
-      }
-      beta = Math.min(beta, currMove.score());
-      if (alpha >= beta) {
-        break;
+      try {
+        game.playMove(move);
+        AIMove currMove = maxValue(game, depth - 1, !player, alpha, beta);
+        game.previousState();
+        if (currMove.score() < bestMove.score()) {
+          bestMove = new AIMove(move, currMove.score());
+        }
+        beta = Math.min(beta, currMove.score());
+        if (alpha >= beta) {
+          break;
+        }
+      } catch (IllegalMoveException e) {
+        // illegal move caught
       }
     }
     return bestMove;
