@@ -118,7 +118,7 @@ public class Solver {
       throw new IllegalStateException("No algorithm has been set");
     }
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
-    System.out.println("BEST MOVE" + bestMove);
+    DEBUG(LOGGER, "Best move " + bestMove);
     game.playMove(bestMove.move());
   }
 
