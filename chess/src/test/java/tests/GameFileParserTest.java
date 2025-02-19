@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.net.URL;
 import java.util.logging.Logger;
@@ -54,7 +55,7 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/emptyGame");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -62,14 +63,14 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/wrongBoard");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
   public void parseUnknownFile() {
     Runtime mockRuntime = mock(Runtime.class);
     parser.parseGameFile("Unknow/file/path", mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -77,7 +78,7 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/unknownPlayerGame");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -85,7 +86,7 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/wrongFormattedGame");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -93,7 +94,7 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/unknownPieceGame");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -101,7 +102,7 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/noWhiteKing");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -109,7 +110,7 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/noBlackKing");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -117,7 +118,7 @@ public class GameFileParserTest {
     Runtime mockRuntime = mock(Runtime.class);
     URL filePath = classLoader.getResource("gameBoards/scholarMate");
     parser.parseGameFile(filePath.getPath(), mockRuntime);
-    mockRuntime.exit(1);
+    verify(mockRuntime).exit(1);
   }
 
   @Test
@@ -250,5 +251,34 @@ public class GameFileParserTest {
     assertEquals(new Position(5, 3), fb.header().enPassant());
     assertEquals(0, fb.header().fiftyMoveRule());
     assertEquals(30, fb.header().playedMoves());
+  }
+
+  @Test
+  public void parseWrongFENCastlingHeader() {
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/emptyFENCastling");
+    FileBoard fb = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    assertFalse(fb.header().whiteKingCastling());
+    assertFalse(fb.header().whiteQueenCastling());
+    assertFalse(fb.header().blackKingCastling());
+    assertFalse(fb.header().blackQueenCastling());
+    assertEquals(new Position(5, 2), fb.header().enPassant());
+    assertEquals(43, fb.header().fiftyMoveRule());
+    assertEquals(70, fb.header().playedMoves());
+  }
+
+  @Test
+  public void parseWrongFENEnPassantHeader() {
+    Runtime mockRuntime = mock(Runtime.class);
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/wrongFENEnPassant");
+    parser.parseGameFile(filePath.getPath(), mockRuntime);
+    verify(mockRuntime).exit(1);
+  }
+
+  @Test
+  public void parseWrongFENEnPassantOutOfSquaresHeader() {
+    Runtime mockRuntime = mock(Runtime.class);
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/wrongFENEnPassantOutOfSquares");
+    parser.parseGameFile(filePath.getPath(), mockRuntime);
+    verify(mockRuntime).exit(1);
   }
 }
