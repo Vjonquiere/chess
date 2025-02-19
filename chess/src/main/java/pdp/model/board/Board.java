@@ -24,8 +24,11 @@ public class Board {
   int doubleMovePawnBlack;
   int doubleMovePawnWhite;
 
-  public Board() {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public Board() {
     this.board = new BitboardRepresentation();
     this.isWhite = true;
     this.enPassantPos = null;
@@ -46,7 +49,6 @@ public class Board {
    * @param board The board state to use
    */
   public Board(FileBoard board) {
-    Logging.configureLogging(LOGGER);
     this.board = board.board();
     this.isWhite = board.isWhiteTurn();
     this.enPassantPos = null;

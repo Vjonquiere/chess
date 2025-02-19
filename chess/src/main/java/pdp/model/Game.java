@@ -44,9 +44,12 @@ public class Game extends Subject {
   private History history;
   private HashMap<Long, Integer> stateCount;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
-    Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;
@@ -158,8 +161,21 @@ public class Game extends Subject {
       }
     }
     // Number of possible Moves
-    int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
-    int nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+
+    int nbMovesWhite;
+    int nbMovesBlack;
+
+    if (getBoard().getBoardRep() instanceof BitboardRepresentation) {
+      nbMovesWhite =
+          ((BitboardRepresentation) getBoard().getBoardRep()).getColorMoveBitboard(true).bitCount();
+      nbMovesBlack =
+          ((BitboardRepresentation) getBoard().getBoardRep())
+              .getColorMoveBitboard(false)
+              .bitCount();
+    } else {
+      nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
+      nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+    }
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }

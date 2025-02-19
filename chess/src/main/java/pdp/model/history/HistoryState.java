@@ -10,6 +10,10 @@ public class HistoryState {
   private final GameState gameState;
   private final Move move;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   /**
    * Constructs a history state with the given move notation.
    *
@@ -17,7 +21,6 @@ public class HistoryState {
    * @param gameState a copy of the gameState after the move played.
    */
   public HistoryState(Move move, GameState gameState) {
-    Logging.configureLogging(LOGGER);
     this.move = move;
     this.gameState = gameState;
   }
