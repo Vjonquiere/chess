@@ -6,6 +6,14 @@ import pdp.utils.Position;
 
 public class KingOppositionHeuristic implements Heuristic {
 
+  /**
+   * Computes a score according to the (un)balance of the kings position. The more the kings are in
+   * opposition, the more likely it is for the endgame to be drawish. Heuristic used for endgames.
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a score depending on the progress of the pawns
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;

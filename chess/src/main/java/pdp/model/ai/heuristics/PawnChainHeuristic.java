@@ -7,6 +7,13 @@ import pdp.utils.Position;
 
 public class PawnChainHeuristic implements Heuristic {
 
+  /**
+   * Computes a score according to how strong pawns are connected. Heuristic used for endgames.
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a score depending on the solidity of the pawn chains
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
