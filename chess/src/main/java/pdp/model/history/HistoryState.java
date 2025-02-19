@@ -1,39 +1,61 @@
 package pdp.model.history;
 
 import java.util.logging.Logger;
+import pdp.model.GameState;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
 public class HistoryState {
   private static final Logger LOGGER = Logger.getLogger(HistoryState.class.getName());
-  private final int fullTurn;
-  private final boolean isWhite;
+  private final GameState gameState;
   private final Move move;
 
   /**
    * Constructs a history state with the given move notation.
    *
    * @param move The move played.
-   * @param fullTurn The number of the current full turn.
-   * @param isWhite {true} if the move is white, {false} if it is black.
+   * @param gameState a copy of the gameState after the move played.
    */
-  public HistoryState(Move move, int fullTurn, boolean isWhite) {
+  public HistoryState(Move move, GameState gameState) {
     Logging.configureLogging(LOGGER);
     this.move = move;
-    this.fullTurn = fullTurn;
-    this.isWhite = isWhite;
+    this.gameState = gameState;
   }
 
+  /**
+   * Retrieves the move associated with this object.
+   *
+   * @return The Move object representing the move.
+   */
   public Move getMove() {
     return this.move;
   }
 
+  /**
+   * Retrieves the full turn number from the game state.
+   *
+   * @return The turn number as an integer.
+   */
   public int getFullTurn() {
-    return fullTurn;
+    return this.gameState.getFullTurn();
   }
 
+  /**
+   * Determines if the current player is white.
+   *
+   * @return true if the current player is white, false otherwise.
+   */
   public boolean isWhite() {
-    return isWhite;
+    return this.gameState.getBoard().getPlayer();
+  }
+
+  /**
+   * Retrieves the game state associated with this object.
+   *
+   * @return The GameState object representing the current state of the game.
+   */
+  public GameState getGameState() {
+    return this.gameState;
   }
 
   /**
@@ -51,8 +73,11 @@ public class HistoryState {
   public String toAlgebraicString() {
     StringBuilder sb = new StringBuilder();
 
-    if (this.isWhite()) {
-      sb.append(this.fullTurn).append(". W ").append(this.move.toAlgebraicString()).append(" ");
+    if (!this.isWhite()) {
+      sb.append(this.gameState.getFullTurn())
+          .append(". W ")
+          .append(this.move.toAlgebraicString())
+          .append(" ");
     } else {
       sb.append("B ").append(this.move.toString());
     }
@@ -76,8 +101,11 @@ public class HistoryState {
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
-    if (this.isWhite()) {
-      sb.append(this.fullTurn).append(". W ").append(this.move.toString()).append(" ");
+    if (!this.isWhite()) {
+      sb.append(this.gameState.getFullTurn())
+          .append(". W ")
+          .append(this.move.toString())
+          .append(" ");
     } else {
       sb.append("B ").append(this.move.toString());
     }

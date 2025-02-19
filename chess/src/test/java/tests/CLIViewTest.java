@@ -14,10 +14,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.CancelDrawCommand;
+import pdp.controller.commands.CancelMoveCommand;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.ProposeDrawCommand;
+import pdp.controller.commands.RestoreMoveCommand;
+import pdp.controller.commands.SaveGameCommand;
+import pdp.controller.commands.SurrenderCommand;
+import pdp.events.EventType;
+import pdp.exceptions.CommandNotAvailableNowException;
+import pdp.exceptions.FailedRedoException;
+import pdp.exceptions.FailedSaveException;
+import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPositionException;
+import pdp.exceptions.InvalidPromoteFormatException;
+import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.utils.TextGetter;
 import pdp.view.CLIView;
 
 public class CLIViewTest {
@@ -51,6 +64,8 @@ public class CLIViewTest {
   void setUp() throws Exception {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+
+    outputStream.reset();
 
     mockBagOfCommands = mock(BagOfCommands.class);
     BagOfCommands.setInstance(mockBagOfCommands);
@@ -109,6 +124,50 @@ public class CLIViewTest {
   }
 
   @Test
+  void testSaveCommand() throws Exception {
+
+    handleUserInputMethod.invoke(view, "save");
+
+    verify(mockBagOfCommands).addCommand(any(SaveGameCommand.class));
+  }
+
+  @Test
+  void testDisplayBoardCommand() throws Exception {
+
+    handleUserInputMethod.invoke(view, "board");
+
+    String output = outputStream.toString();
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  void testHistoryCommand() throws Exception {
+
+    handleUserInputMethod.invoke(view, "history");
+
+    String output = outputStream.toString();
+    assertTrue(output.contains(Game.getInstance().getHistory().toString()));
+  }
+
+  @Test
+  void testUndoCommand() throws Exception {
+    handleUserInputMethod.invoke(view, "undo");
+    verify(mockBagOfCommands).addCommand(any(CancelMoveCommand.class));
+  }
+
+  @Test
+  void testRedoCommand() throws Exception {
+    handleUserInputMethod.invoke(view, "redo");
+    verify(mockBagOfCommands).addCommand(any(RestoreMoveCommand.class));
+  }
+
+  @Test
+  void testSurrenderCommand() throws Exception {
+    handleUserInputMethod.invoke(view, "surrender");
+    verify(mockBagOfCommands).addCommand(any(SurrenderCommand.class));
+  }
+
+  @Test
   void testUnknownCommand() throws Exception {
     handleUserInputMethod.invoke(view, "unknown");
 
@@ -132,8 +191,204 @@ public class CLIViewTest {
 
   @Test
   void testOnErrorEventWithIllegalMoveException() {
-    view.onErrorEvent(new IllegalMoveException("Invalid move!"));
+    view.onErrorEvent(new IllegalMoveException("e2-e4"));
 
-    assertTrue(outputStream.toString().contains("Invalid move!"));
+    assertTrue(outputStream.toString().contains("e2-e4"));
+  }
+
+  @Test
+  public void testGameStartedEvent() {
+
+    view.onGameEvent(EventType.GAME_STARTED);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  public void testMovePlayedEvent() {
+    view.onGameEvent(EventType.MOVE_PLAYED);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  public void testWinWhiteEvent() {
+    view.onGameEvent(EventType.WIN_WHITE);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("whiteWin")));
+  }
+
+  @Test
+  public void testWinBlackEvent() {
+    view.onGameEvent(EventType.WIN_BLACK);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("blackWin")));
+  }
+
+  @Test
+  public void testUndoEvent() {
+    view.onGameEvent(EventType.MOVE_UNDO);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  public void testRedoEvent() {
+    view.onGameEvent(EventType.MOVE_REDO);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  public void testDrawEvent() {
+    view.onGameEvent(EventType.DRAW);
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("onDraw")));
+  }
+
+  @Test
+  public void testWhiteDrawProposalEvent() {
+    view.onGameEvent(EventType.WHITE_DRAW_PROPOSAL);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("drawProposal", TextGetter.getText("white"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testBlackDrawProposalEvent() {
+    view.onGameEvent(EventType.BLACK_DRAW_PROPOSAL);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("drawProposal", TextGetter.getText("black"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testWhiteUndrawEvent() {
+    view.onGameEvent(EventType.WHITE_UNDRAW);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("cancelDrawProposal", TextGetter.getText("white"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testBlackUndrawEvent() {
+    view.onGameEvent(EventType.BLACK_UNDRAW);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("cancelDrawProposal", TextGetter.getText("black"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testDrawAcceptedEvent() {
+    view.onGameEvent(EventType.DRAW_ACCEPTED);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("drawAccepted");
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testGameSavedEvent() {
+    view.onGameEvent(EventType.GAME_SAVED);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("gameSaved");
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testOnIllegalMoveException() {
+    view.onErrorEvent(new IllegalMoveException("e2-e4"));
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains("e2-e4"));
+  }
+
+  @Test
+  public void testOnMoveParsingException() {
+    view.onErrorEvent(new MoveParsingException("parsing failed"));
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains("parsing failed"));
+  }
+
+  @Test
+  public void testOnInvalidPositionException() {
+    view.onErrorEvent(new InvalidPositionException("invalid position"));
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains("invalid position"));
+  }
+
+  @Test
+  public void testOnFailedSaveException() {
+    view.onErrorEvent(new FailedSaveException("savefile.txt"));
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains("savefile.txt"));
+  }
+
+  @Test
+  public void testOnInvalidPromoteFormatException() {
+    view.onErrorEvent(new InvalidPromoteFormatException());
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("invalidPromoteFormat", "e7-e8=Q")));
+  }
+
+  @Test
+  public void testOnFailedUndoException() {
+    view.onErrorEvent(new FailedUndoException());
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("failedUndo")));
+  }
+
+  @Test
+  public void testOnFailedRedoException() {
+    view.onErrorEvent(new FailedRedoException());
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("failedRedo")));
+  }
+
+  @Test
+  public void testOnCommandNotAvailableNowException() {
+    view.onErrorEvent(new CommandNotAvailableNowException());
+
+    String output = outputStream.toString();
+
+    assertTrue(output.contains(TextGetter.getText("commandNotAvailable")));
   }
 }

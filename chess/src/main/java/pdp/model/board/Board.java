@@ -144,9 +144,27 @@ public class Board {
     }
   }
 
+  /**
+   * Creates a deep copy of this Board object. Copies all attributes to create a new independent
+   * Board instance.
+   *
+   * @return A new instance of Board with the same state as the current object.
+   */
   public Board getCopy() {
-    // TODO
-    throw new UnsupportedOperationException();
+    Board copy = new Board();
+    copy.board = this.board.getCopy();
+    copy.isWhite = this.isWhite;
+    copy.whiteShortCastle = this.whiteShortCastle;
+    copy.blackShortCastle = this.blackShortCastle;
+    copy.whiteLongCastle = this.whiteLongCastle;
+    copy.blackLongCastle = this.blackLongCastle;
+    copy.enPassantPos = (this.enPassantPos != null) ? this.enPassantPos.getCopy() : null;
+    copy.isLastMoveDoublePush = this.isLastMoveDoublePush;
+    copy.isEnPassantTake = this.isEnPassantTake;
+    copy.nbMovesWithNoCaptureOrPawn = this.nbMovesWithNoCaptureOrPawn;
+    copy.doubleMovePawnBlack = this.doubleMovePawnBlack;
+    copy.doubleMovePawnWhite = this.doubleMovePawnWhite;
+    return copy;
   }
 
   public BoardRepresentation getBoardRep() {

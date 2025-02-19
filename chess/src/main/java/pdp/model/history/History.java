@@ -11,22 +11,33 @@ public class History {
   private static final Logger LOGGER = Logger.getLogger(History.class.getName());
   private HistoryNode currentMove;
 
+  /** Constructs a new History instance. Initializes logging and sets the current move to null. */
   public History() {
     Logging.configureLogging(LOGGER);
     this.currentMove = null;
   }
 
   /**
-   * Moves back to the previous move in history.
+   * Retrieves the current move node in the history.
    *
-   * @return the previous node, or an empty object if there is no previous move.
+   * @return An Optional containing the current HistoryNode if it is present, or an empty Optional
+   *     if there is no current move.
    */
-  public Optional<HistoryNode> getPrevious() {
-    if (currentMove == null || currentMove.previous == null) {
+  public Optional<HistoryNode> getCurrentMove() {
+    if (this.currentMove == null) {
       return Optional.empty();
     }
-    currentMove = currentMove.previous;
-    return Optional.of(currentMove.previous);
+    return Optional.of(this.currentMove);
+  }
+
+  /**
+   * Updates the currentMove node to the specified HistoryNode. This method is called when
+   * navigating through the history and applying a history node to the game.
+   *
+   * @param currentMove the HistoryNode representing the current move in the history.
+   */
+  public void setCurrentMove(HistoryNode currentMove) {
+    this.currentMove = currentMove;
   }
 
   /**
@@ -39,7 +50,10 @@ public class History {
     DEBUG(LOGGER, "Adding new state to History");
     DEBUG(LOGGER, state.getMove().toString());
     DEBUG(LOGGER, state.isWhite() + " " + String.valueOf(state.getFullTurn()));
-    currentMove = new HistoryNode(state, currentMove);
+
+    this.currentMove = new HistoryNode(state, this.currentMove);
+    if (this.currentMove.getPrevious() != null)
+      this.currentMove.getPrevious().ifPresent(prev -> prev.setNext(this.currentMove));
   }
 
   /**
@@ -62,7 +76,7 @@ public class History {
       HistoryNode node = stack.pop();
       if (node != null) {
         sb.append(node.state.toString());
-        if (!node.state.isWhite()) {
+        if (node.state.isWhite()) {
           sb.append("\n");
         }
       }
@@ -89,7 +103,7 @@ public class History {
       HistoryNode node = stack.pop();
       if (node != null) {
         sb.append(node.state.toString());
-        if (!node.state.isWhite()) {
+        if (node.state.isWhite()) {
           sb.append("\n");
         }
       }

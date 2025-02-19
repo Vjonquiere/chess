@@ -21,14 +21,14 @@ public class Solver {
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
-  int depth = 3;
+  int depth = 2;
   int time = 500;
 
   public Solver() {
     Logging.configureLogging(LOGGER);
     evaluatedBoards = new HashMap<>();
     this.algorithm = new Minimax(this);
-    this.heuristic = new MaterialHeuristic();
+    this.heuristic = new StandardHeuristic();
   }
 
   /**
@@ -53,20 +53,37 @@ public class Solver {
   public void setHeuristic(HeuristicType heuristic) {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
-      case POSITIONAL -> this.heuristic = null;
-      case KING_SAFETY -> this.heuristic = null;
+      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
       case SPACE_CONTROL -> this.heuristic = null;
-      case PAWN_STRUCTURE -> this.heuristic = null;
+      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
       case PIECE_ACTIVITY -> this.heuristic = null;
       case MOBILITY -> this.heuristic = new MobilityHeuristic();
       case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
       case SHANNON -> this.heuristic = new ShannonBasic();
       case OPPONENT_CHECK -> this.heuristic = new OpponentCheck();
       case STANDARD -> this.heuristic = new StandardHeuristic();
-      case ENDGAME -> this.heuristic = null;
+      case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
+  }
+
+  /**
+   * Retrieve the current heuristic
+   *
+   * @return the current heuristic that the solver uses
+   */
+  public Heuristic getHeuristic() {
+    return this.heuristic;
+  }
+
+  /**
+   * Retrieve the maximum depth of AI exploration
+   *
+   * @return maximum depth
+   */
+  public int getDepth() {
+    return depth;
   }
 
   /**
@@ -75,6 +92,10 @@ public class Solver {
    * @param depth The depth to use.
    */
   public void setDepth(int depth) {
+    if (depth <= 0) {
+      throw new IllegalArgumentException("Depth must be greater than 0");
+    }
+    DEBUG(LOGGER, "Depth set to " + depth);
     this.depth = depth;
   }
 
@@ -97,6 +118,7 @@ public class Solver {
       throw new IllegalStateException("No algorithm has been set");
     }
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    System.out.println("BEST MOVE" + bestMove);
     game.playMove(bestMove.move());
   }
 
