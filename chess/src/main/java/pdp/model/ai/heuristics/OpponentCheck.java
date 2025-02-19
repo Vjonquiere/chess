@@ -26,10 +26,12 @@ public class OpponentCheck implements Heuristic {
       score -= 50;
     }
     if (board.getBoardRep().isCheckMate(player2)) {
-      score += 100;
+      System.out.println("player 2" + player2);
+      score += 1000;
     }
     if (board.getBoardRep().isCheckMate(player1)) {
-      score -= 100;
+      System.out.println("player 2" + player2);
+      score -= 1000;
     }
     return score;
   }
