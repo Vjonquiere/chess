@@ -1,5 +1,7 @@
 package pdp.model.ai;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.model.Game;
@@ -19,7 +21,7 @@ public class Solver {
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
-  int depth = 3;
+  int depth = 5;
   int time = 500;
 
   public Solver() {
@@ -75,11 +77,24 @@ public class Solver {
   }
 
   /**
+   * Retrieve the maximum depth of AI exploration
+   *
+   * @return maximum depth
+   */
+  public int getDepth() {
+    return depth;
+  }
+
+  /**
    * Set the maximum depth the solver should explore.
    *
    * @param depth The depth to use.
    */
   public void setDepth(int depth) {
+    if (depth <= 0) {
+      throw new IllegalArgumentException("Depth must be greater than 0");
+    }
+    DEBUG(LOGGER, "Depth set to " + depth);
     this.depth = depth;
   }
 

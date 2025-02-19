@@ -503,7 +503,7 @@ public class Game extends Subject {
       throw new FailedUndoException();
     }
 
-    this.gameState.updateFrom(previousNode.get().getState().getGameState());
+    this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(previousNode.get());
 
     this.notifyObservers(EventType.MOVE_UNDO);
@@ -528,7 +528,7 @@ public class Game extends Subject {
       throw new FailedRedoException();
     }
 
-    this.gameState.updateFrom(nextNode.get().getState().getGameState());
+    this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(nextNode.get());
 
     this.notifyObservers(EventType.MOVE_UNDO);
