@@ -27,7 +27,7 @@ public class Solver {
   public Solver() {
     Logging.configureLogging(LOGGER);
     evaluatedBoards = new HashMap<>();
-    this.algorithm = new Minimax(this);
+    this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
   }
 
