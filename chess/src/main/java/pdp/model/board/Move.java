@@ -22,12 +22,26 @@ public class Move {
   public boolean isCheck = false;
   public boolean isCheckMate = false;
 
+  /**
+   * Constructs a new Move object with the specified source and destination positions.
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   */
   public Move(Position source, Position dest) {
     Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
   }
 
+  /**
+   * Constructs a new Move object with the specified source and destination positions.
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
+   *     otherwise).
+   */
   public Move(Position source, Position dest, ColoredPiece piece, boolean isTake) {
     Logging.configureLogging(LOGGER);
     this.source = source;
@@ -36,6 +50,18 @@ public class Move {
     this.isTake = isTake;
   }
 
+  /**
+   * Constructs a new {@code Move} object with the specified source and destination positions, the
+   * piece being moved, a flag indicating whether the move is a capture, and the captured piece (if
+   * any).
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   * @param piece The ColoredPiece being moved.
+   * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
+   *     otherwise).
+   * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
+   */
   public Move(
       Position source, Position dest, ColoredPiece piece, boolean isTake, ColoredPiece takenPiece) {
     Logging.configureLogging(LOGGER);
@@ -46,6 +72,22 @@ public class Move {
     this.takenPiece = takenPiece;
   }
 
+  /**
+   * Constructs a new Move object with the specified source and destination positions, the piece
+   * being moved, a flag indicating whether the move is a capture, the captured piece (if any), and
+   * flags for check and checkmate.
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   * @param piece The ColoredPiece being moved.
+   * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
+   *     otherwise).
+   * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
+   * @param isCheck A boolean indicating whether the move results in a check (true if it's a check,
+   *     false otherwise).
+   * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
+   *     checkmate, false otherwise).
+   */
   public Move(
       Position source,
       Position dest,
@@ -128,6 +170,15 @@ public class Move {
     return new Position(x, y);
   }
 
+  /**
+   * Converts a string representation of a chess piece to the corresponding Piece enum. The input
+   * string should be a single character representing the piece (case-insensitive): - "p" for Pawn -
+   * "n" for Knight - "b" for Bishop - "r" for Rook - "q" for Queen - "k" for King
+   *
+   * @param pieceStr A string representing a chess piece (e.g., "p", "n", "b", "r", "q", "k").
+   * @return The corresponding Piece enum value.
+   * @throws IllegalArgumentException If the input string does not correspond to a valid piece.
+   */
   public static Piece stringToPiece(String pieceStr) {
     switch (pieceStr.toLowerCase()) {
       case "p":
@@ -188,30 +239,65 @@ public class Move {
     return Optional.empty();
   }
 
+  /**
+   * Retrieves the source position of the move.
+   *
+   * @return The Position representing the source of the move.
+   */
   public Position getSource() {
     return source;
   }
 
+  /**
+   * Retrieves the destination position of the move.
+   *
+   * @return The Position representing the destination of the move.
+   */
   public Position getDest() {
     return dest;
   }
 
+  /**
+   * Retrieves the piece involved in the move.
+   *
+   * @return The ColoredPiece being moved.
+   */
   public ColoredPiece getPiece() {
     return piece;
   }
 
+  /**
+   * Checks if the move is a capture.
+   *
+   * @return true if the move is a capture,f alse otherwise.
+   */
   public boolean isTake() {
     return isTake;
   }
 
+  /**
+   * Sets whether the move is a capture.
+   *
+   * @param isTake A boolean indicating whether the move is a capture.
+   */
   public void setTake(boolean isTake) {
     this.isTake = isTake;
   }
 
+  /**
+   * Checks if the move results in a check.
+   *
+   * @return true if the move results in a check, false otherwise.
+   */
   public boolean isCheck() {
     return isCheck;
   }
 
+  /**
+   * Checks if the move results in a checkmate.
+   *
+   * @return true if the move results in a checkmate, false otherwise.
+   */
   public boolean isCheckMate() {
     return isCheckMate;
   }
@@ -255,6 +341,13 @@ public class Move {
     return sourceStr + separator + destinationStr;
   }
 
+  /**
+   * Compares this Move object with another object for equality. Two Move objects are considered
+   * equal if they have the same source and destination positions.
+   *
+   * @param obj The object to compare this Move with.
+   * @return true if the two Move objects are equal, false otherwise.
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
@@ -263,6 +356,13 @@ public class Move {
     return source.equals(move.source) && dest.equals(move.dest);
   }
 
+  /**
+   * Generates a hash code for this Move object based on the source and destination positions. The
+   * hash code is calculated as 31 times the hash code of the source position, plus the hash code of
+   * the destination position.
+   *
+   * @return The hash code of this Move object.
+   */
   @Override
   public int hashCode() {
     return 31 * source.hashCode() + dest.hashCode();
