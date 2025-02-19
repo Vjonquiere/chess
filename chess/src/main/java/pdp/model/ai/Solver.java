@@ -21,7 +21,7 @@ public class Solver {
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
-  int depth = 4;
+  int depth = 2;
   int time = 500;
 
   static {
