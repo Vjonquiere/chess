@@ -12,6 +12,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
@@ -70,11 +71,13 @@ public abstract class GameInitializer {
       solver = new Solver();
       solver = new Solver();
       if (options.containsKey(OptionType.AI_MODE)) {
-        // switch to set solver mode
-      } else {
-        // Set to default (ALPHABETA)
+        try {
+          solver.setAlgorithm(AlgorithmType.valueOf(options.get(OptionType.AI_MODE)));
+        } catch (Exception e) {
+          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI));
+          System.err.println("Defaulting to AlphaBeta.");
+        }
       }
-
       if (options.containsKey(OptionType.AI_HEURISTIC)) {
         // switch to set heuristic
       } else {
