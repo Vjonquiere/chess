@@ -28,6 +28,7 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.model.savers.BoardSaver;
+import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
 import pdp.utils.Timer;
@@ -43,9 +44,12 @@ public class Game extends Subject {
   private History history;
   private HashMap<Long, Integer> stateCount;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
-    // Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;

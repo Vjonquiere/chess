@@ -29,9 +29,12 @@ public class GameState extends Subject {
   private long zobristHashing;
   private long simplifiedZobristHashing;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   // By default, blitz mode is not on
   public GameState() {
-    Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = true;
     this.whiteResigns = false;
@@ -66,7 +69,6 @@ public class GameState extends Subject {
    * @param board The board to use
    */
   public GameState(FileBoard board) {
-    Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = board.isWhiteTurn();
     this.whiteResigns = false;

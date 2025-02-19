@@ -14,18 +14,21 @@ import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 
 public class Solver {
-  private final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private ZobristHashing zobristHashing = new ZobristHashing();
   private HashMap<Long, Integer> evaluatedBoards;
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
-  int depth = 2;
+  int depth = 4;
   int time = 500;
 
-  public Solver() {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public Solver() {
     evaluatedBoards = new HashMap<>();
     this.algorithm = new Minimax(this);
     this.heuristic = new StandardHeuristic();

@@ -11,9 +11,12 @@ public class History {
   private static final Logger LOGGER = Logger.getLogger(History.class.getName());
   private HistoryNode currentMove;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   /** Constructs a new History instance. Initializes logging and sets the current move to null. */
   public History() {
-    Logging.configureLogging(LOGGER);
     this.currentMove = null;
   }
 

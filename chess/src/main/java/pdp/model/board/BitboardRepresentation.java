@@ -11,6 +11,7 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.BiDirectionalMap;
+import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
@@ -21,6 +22,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
 
   static {
+    Logging.configureLogging(LOGGER);
     pieces.put(0, new ColoredPiece(Piece.KING, Color.WHITE));
     pieces.put(1, new ColoredPiece(Piece.QUEEN, Color.WHITE));
     pieces.put(2, new ColoredPiece(Piece.BISHOP, Color.WHITE));
@@ -53,7 +55,6 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /** Initialize all the bitboards to the default values for a board when the game begin */
   public BitboardRepresentation() {
-    // Logging.configureLogging(LOGGER);
     board = new Bitboard[12];
     board[0] = new Bitboard(16L); // WKi
     board[1] = new Bitboard(8L); // WQ
@@ -85,7 +86,6 @@ public class BitboardRepresentation implements BoardRepresentation {
       Bitboard blackRooks,
       Bitboard blackKnights,
       Bitboard blackPawns) {
-    // Logging.configureLogging(LOGGER);
     board = new Bitboard[12];
     board[0] = whiteKing;
     board[1] = whiteQueen;
