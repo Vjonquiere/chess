@@ -60,11 +60,52 @@ public class HeuristicTests {
 
     // 2 isolated pawns ( e3 and 4)
     // 2 doubled pawns --> ({c3-c4} and {e3-e4})
-    // factor -0.5 so (2+2)*-0.5
-    assertEquals(-2, solver.evaluateBoard(board, true));
+    // 1 backward pawn
+    // factor -0.5 so (2+2+4)*-0.5
+    assertEquals(-4, solver.evaluateBoard(board, true));
     board.isWhite =
         false; // to change turn to recalculate (if no change, zobrist takes the previous score)
-    assertEquals(2, solver.evaluateBoard(board, false));
+    assertEquals(4, solver.evaluateBoard(board, false));
+  } // Should be equal
+
+  @Test
+  public void BadPawnsTestBackWardsPawnsOnlyOnePawn() {
+    solver.setHeuristic(HeuristicType.BAD_PAWNS);
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    board.movePiece(new Position(1, 1), new Position(1, 2));
+    board.movePiece(new Position(1, 6), new Position(1, 5));
+
+    // Should be equal since 1 backwards pawn for each player (the a pawn)
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+  }
+
+  @Test
+  public void BadPawnsTestBackWardsPawnsNoDoubledPawns() {
+    solver.setHeuristic(HeuristicType.BAD_PAWNS);
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    board.movePiece(new Position(3, 1), new Position(3, 3));
+    board.movePiece(new Position(4, 1), new Position(4, 2));
+    board.movePiece(new Position(5, 1), new Position(5, 3));
+
+    // Should be equal since 1 backwards pawn for each player (the a pawn)
+    assertEquals(2, solver.evaluateBoard(game.getBoard(), false));
+  }
+
+  @Test
+  public void BadPawnsTestBackWardsPawnsTwoForBlack() {
+    solver.setHeuristic(HeuristicType.BAD_PAWNS);
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    board.movePiece(new Position(3, 6), new Position(3, 4));
+    board.movePiece(new Position(4, 6), new Position(4, 5));
+    board.movePiece(new Position(5, 6), new Position(5, 4));
+    board.movePiece(new Position(2, 6), new Position(2, 5));
+    board.movePiece(new Position(1, 6), new Position(1, 4));
+
+    // Should be equal since 1 backwards pawn for each player (the a pawn)
+    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
   }
 
   @Test
