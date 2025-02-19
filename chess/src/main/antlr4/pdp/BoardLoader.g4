@@ -1,7 +1,7 @@
 grammar BoardLoader;
 
 
-board : (LINE_COMMENT | NEWLINE)? player boardLine boardLine boardLine boardLine boardLine boardLine boardLine boardLine (LINE_COMMENT | NEWLINE)? EOF;
+board : (LINE_COMMENT | NEWLINE)? player fen? boardLine boardLine boardLine boardLine boardLine boardLine boardLine boardLine (LINE_COMMENT | NEWLINE)? EOF;
 
 boardLine : piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE piece WHITE_SPACE? LINE_COMMENT? NEWLINE?;
 
@@ -21,7 +21,12 @@ piece : WHITE_KING
       |BLACK_PAWN
       |PLAYER_COLOR
       |EMPTY_SQUARE;
+castling : (WHITE_KING? WHITE_QUEEN? BLACK_KING? BLACK_QUEEN? WHITE_SPACE) | ('-' WHITE_SPACE);
+fen : castling (CHESS_SQUARE|'-')  WHITE_SPACE INT WHITE_SPACE INT WHITE_SPACE? LINE_COMMENT? NEWLINE?;
 
+PLAYER_COLOR : 'W' | 'B';
+CHESS_SQUARE : [abcdefg] [12345678];
+INT : [0-9]+;
 WHITE_KING : 'K';
 WHITE_QUEEN : 'Q';
 WHITE_BISHOP : 'B';
@@ -34,7 +39,6 @@ BLACK_BISHOP : 'b';
 BLACK_ROOK : 'r';
 BLACK_KNIGHT : 'n';
 BLACK_PAWN : 'p';
-PLAYER_COLOR : 'W' | 'B';
 EMPTY_SQUARE : '_';
 LINE_COMMENT : '#' ~[\r\n]* -> skip ;
 WHITE_SPACE : ' ';

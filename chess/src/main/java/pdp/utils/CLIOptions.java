@@ -20,7 +20,8 @@ import org.apache.commons.cli.ParseException;
 public class CLIOptions {
   private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
 
-  private static final String DEFAULT_CONFIG_FILE = "default.chessrc";
+  // Not final for test purposes
+  private static String DEFAULT_CONFIG_FILE = "default.chessrc";
 
   private CLIOptions() {}
 
@@ -51,6 +52,12 @@ public class CLIOptions {
       handleLoggingOptions(cmd, defaultArgs);
       if (handleImmediateExitOptions(cmd, options, runtime)) return null;
       processOptions(cmd, defaultArgs, activatedOptions);
+
+      if (!cmd.getArgList().isEmpty()) {
+        String loadFile = cmd.getArgList().get(0);
+        activatedOptions.put(OptionType.LOAD, loadFile);
+        DEBUG(LOGGER, "Load file set to: " + loadFile);
+      }
     } catch (ParseException exp) {
       System.out.println("Parsing failed.  Reason: " + exp.getMessage());
       new HelpFormatter().printHelp("chess", options);
@@ -95,8 +102,9 @@ public class CLIOptions {
       try {
         inputStream = CLIOptions.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE);
         activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
-        if (inputStream == null)
+        if (inputStream == null) {
           throw new FileNotFoundException("config.chessrc not found in classpath!");
+        }
       } catch (Exception e) {
         System.err.println("Error while parsing chessrc file: " + e.getMessage());
         activatedOptions.put(OptionType.CONFIG, null);

@@ -8,9 +8,11 @@ import pdp.BoardLoaderBaseListener;
 import pdp.BoardLoaderParser;
 import pdp.model.board.Bitboard;
 import pdp.model.board.BitboardRepresentation;
+import pdp.model.board.Move;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
+import pdp.utils.Position;
 
 public class BoardLoaderListener extends BoardLoaderBaseListener {
   private static Map<String, ColoredPiece> pieces =
@@ -41,19 +43,30 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
           new Bitboard(0L),
           new Bitboard(0L),
           new Bitboard(0L));
-  int y = 8;
-  int x = 0;
+  private int y = 8;
+  private int x = 0;
+  private boolean whiteTurn;
+  private FenHeader fenHeader;
+  private boolean whiteKingCastling;
+  private boolean whiteQueenCastling;
+  private boolean blackKingCastling;
+  private boolean blackQueenCastling;
+  private Position enPassant;
+  private int fiftyMoveRule;
+  private int movePlayed;
 
-  public BitboardRepresentation getResult() {
-    return bitboardRepresentation;
+  /**
+   * Get the result of the parsing
+   *
+   * @return The board and current player parsed
+   */
+  public FileBoard getResult() {
+    return new FileBoard(bitboardRepresentation, whiteTurn, fenHeader);
   }
 
   @Override
   public void enterPlayer(BoardLoaderParser.PlayerContext ctx) {
-    if (Objects.equals(ctx.PLAYER_COLOR().getText(), "W")) {
-      // Set current player to white
-      return;
-    }
+    whiteTurn = Objects.equals(ctx.PLAYER_COLOR().getText(), "W");
   }
 
   @Override
@@ -68,7 +81,43 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
       x++;
       return;
     }
-    bitboardRepresentation.setSquare(pieces.get(ctx.getText()), x + (y * 8));
+    ColoredPiece piece = pieces.get(ctx.getText());
+    int square = (x + (y * 8));
+    if (piece == null) {
+      throw new RuntimeException(
+          "Piece `" + ctx.getText() + "` at square " + square + " is not recognized");
+    } else {
+      bitboardRepresentation.setSquare(piece, square);
+    }
     x++;
+  }
+
+  @Override
+  public void enterCastling(BoardLoaderParser.CastlingContext ctx) {
+    whiteKingCastling = ctx.WHITE_KING() != null;
+    whiteQueenCastling = ctx.WHITE_QUEEN() != null;
+    blackKingCastling = ctx.BLACK_KING() != null;
+    blackQueenCastling = ctx.BLACK_QUEEN() != null;
+  }
+
+  @Override
+  public void enterFen(BoardLoaderParser.FenContext ctx) {
+    enPassant =
+        ctx.CHESS_SQUARE() == null ? null : Move.stringToPosition(ctx.CHESS_SQUARE().getText());
+    fiftyMoveRule = ctx.INT(0) == null ? 0 : Integer.parseInt(ctx.INT(0).getText());
+    movePlayed = ctx.INT(1) == null ? 0 : Integer.parseInt(ctx.INT(1).getText());
+  }
+
+  @Override
+  public void exitFen(BoardLoaderParser.FenContext ctx) {
+    fenHeader =
+        new FenHeader(
+            whiteKingCastling,
+            whiteQueenCastling,
+            blackKingCastling,
+            blackQueenCastling,
+            enPassant,
+            fiftyMoveRule,
+            movePlayed);
   }
 }

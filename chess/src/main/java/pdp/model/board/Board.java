@@ -3,6 +3,7 @@ package pdp.model.board;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.Piece;
 import pdp.utils.Logging;
@@ -27,6 +28,27 @@ public class Board {
     Logging.configureLogging(LOGGER);
     this.board = new BitboardRepresentation();
     this.isWhite = true;
+    this.enPassantPos = null;
+    this.whiteShortCastle = true;
+    this.blackShortCastle = true;
+    this.whiteLongCastle = true;
+    this.blackLongCastle = true;
+    this.isLastMoveDoublePush = false;
+    this.isEnPassantTake = false;
+    this.doubleMovePawnBlack = 0;
+    this.doubleMovePawnWhite = 0;
+    this.nbMovesWithNoCaptureOrPawn = 0;
+  }
+
+  /**
+   * Create a board from a given board state
+   *
+   * @param board The board state to use
+   */
+  public Board(FileBoard board) {
+    Logging.configureLogging(LOGGER);
+    this.board = board.board();
+    this.isWhite = board.isWhiteTurn();
     this.enPassantPos = null;
     this.whiteShortCastle = true;
     this.blackShortCastle = true;
@@ -122,9 +144,27 @@ public class Board {
     }
   }
 
+  /**
+   * Creates a deep copy of this Board object. Copies all attributes to create a new independent
+   * Board instance.
+   *
+   * @return A new instance of Board with the same state as the current object.
+   */
   public Board getCopy() {
-    // TODO
-    throw new UnsupportedOperationException();
+    Board copy = new Board();
+    copy.board = this.board.getCopy();
+    copy.isWhite = this.isWhite;
+    copy.whiteShortCastle = this.whiteShortCastle;
+    copy.blackShortCastle = this.blackShortCastle;
+    copy.whiteLongCastle = this.whiteLongCastle;
+    copy.blackLongCastle = this.blackLongCastle;
+    copy.enPassantPos = (this.enPassantPos != null) ? this.enPassantPos.getCopy() : null;
+    copy.isLastMoveDoublePush = this.isLastMoveDoublePush;
+    copy.isEnPassantTake = this.isEnPassantTake;
+    copy.nbMovesWithNoCaptureOrPawn = this.nbMovesWithNoCaptureOrPawn;
+    copy.doubleMovePawnBlack = this.doubleMovePawnBlack;
+    copy.doubleMovePawnWhite = this.doubleMovePawnWhite;
+    return copy;
   }
 
   public BoardRepresentation getBoardRep() {
