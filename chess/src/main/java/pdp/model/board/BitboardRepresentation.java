@@ -1308,7 +1308,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * @return the list containing the list of positions for the white pieces
+   * @return the list containing the list of current positions for the white pieces
    */
   @Override
   public List<List<Position>> retrieveWhitePiecesPos() {
@@ -1332,7 +1332,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * @return the list containing the list of positions for the black pieces
+   * @return the list containing the list of current positions for the black pieces
    */
   @Override
   public List<List<Position>> retrieveBlackPiecesPos() {
@@ -1353,6 +1353,62 @@ public class BitboardRepresentation implements BoardRepresentation {
     blackPositions.add(pawnsPos);
 
     return blackPositions;
+  }
+
+  /**
+   * @return the list containing the list of initial positions for the white pieces
+   */
+  @Override
+  public List<List<Position>> retrieveInitialWhitePiecesPos() {
+    List<List<Position>> whiteInitPos = new ArrayList<>();
+
+    List<Position> kingPos = List.of(new Position(4, 0));
+    List<Position> queenPos = List.of(new Position(3, 0));
+    List<Position> rooksPos = List.of(new Position(0, 0), new Position(7, 0));
+    List<Position> bishopsPos = List.of(new Position(2, 0), new Position(5, 0));
+    List<Position> knightsPos = List.of(new Position(1, 0), new Position(6, 0));
+    List<Position> pawnsPos = new ArrayList<>();
+
+    for (int i = 0; i < 8; i++) {
+      pawnsPos.add(new Position(i, 1));
+    }
+
+    whiteInitPos.add(kingPos);
+    whiteInitPos.add(queenPos);
+    whiteInitPos.add(rooksPos);
+    whiteInitPos.add(bishopsPos);
+    whiteInitPos.add(knightsPos);
+    whiteInitPos.add(pawnsPos);
+
+    return whiteInitPos;
+  }
+
+  /**
+   * @return the list containing the list of initial positions for the black pieces
+   */
+  @Override
+  public List<List<Position>> retrieveInitialBlackPiecesPos() {
+    List<List<Position>> blackInitPos = new ArrayList<>();
+
+    List<Position> kingPos = List.of(new Position(4, 7));
+    List<Position> queenPos = List.of(new Position(3, 7));
+    List<Position> rooksPos = List.of(new Position(0, 7), new Position(7, 7));
+    List<Position> bishopsPos = List.of(new Position(2, 7), new Position(5, 7));
+    List<Position> knightsPos = List.of(new Position(1, 7), new Position(6, 7));
+    List<Position> pawnsPos = new ArrayList<>();
+
+    for (int i = 0; i < 8; i++) {
+      pawnsPos.add(new Position(i, 6));
+    }
+
+    blackInitPos.add(kingPos);
+    blackInitPos.add(queenPos);
+    blackInitPos.add(rooksPos);
+    blackInitPos.add(bishopsPos);
+    blackInitPos.add(knightsPos);
+    blackInitPos.add(pawnsPos);
+
+    return blackInitPos;
   }
 
   @Override

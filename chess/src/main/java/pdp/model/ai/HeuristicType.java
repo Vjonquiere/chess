@@ -4,6 +4,7 @@ public enum HeuristicType {
   MATERIAL,
   KING_SAFETY,
   SPACE_CONTROL,
+  DEVELOPMENT,
   PAWN_CHAIN,
   MOBILITY,
   SHANNON,
