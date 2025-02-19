@@ -21,14 +21,14 @@ public class Solver {
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
-  int depth = 5;
+  int depth = 2;
   int time = 500;
 
   public Solver() {
     Logging.configureLogging(LOGGER);
     evaluatedBoards = new HashMap<>();
     this.algorithm = new Minimax(this);
-    this.heuristic = new MaterialHeuristic();
+    this.heuristic = new StandardHeuristic();
   }
 
   /**
