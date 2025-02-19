@@ -5,7 +5,6 @@ public enum HeuristicType {
   KING_SAFETY,
   SPACE_CONTROL,
   PAWN_CHAIN,
-  PIECE_ACTIVITY,
   MOBILITY,
   SHANNON,
   BAD_PAWNS,

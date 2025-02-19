@@ -52,9 +52,8 @@ public class Solver {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
       case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
-      case SPACE_CONTROL -> this.heuristic = null;
+      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
       case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
-      case PIECE_ACTIVITY -> this.heuristic = null;
       case MOBILITY -> this.heuristic = new MobilityHeuristic();
       case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
       case SHANNON -> this.heuristic = new ShannonBasic();

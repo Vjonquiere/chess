@@ -66,7 +66,7 @@ public class HeuristicTests {
     board.isWhite =
         false; // to change turn to recalculate (if no change, zobrist takes the previous score)
     assertEquals(4, solver.evaluateBoard(board, false));
-  } // Should be equal
+  }
 
   @Test
   public void BadPawnsTestBackWardsPawnsOnlyOnePawn() {
@@ -76,7 +76,6 @@ public class HeuristicTests {
     board.movePiece(new Position(1, 1), new Position(1, 2));
     board.movePiece(new Position(1, 6), new Position(1, 5));
 
-    // Should be equal since 1 backwards pawn for each player (the a pawn)
     assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
   }
 
@@ -89,7 +88,6 @@ public class HeuristicTests {
     board.movePiece(new Position(4, 1), new Position(4, 2));
     board.movePiece(new Position(5, 1), new Position(5, 3));
 
-    // Should be equal since 1 backwards pawn for each player (the a pawn)
     assertEquals(2, solver.evaluateBoard(game.getBoard(), false));
   }
 
@@ -104,8 +102,98 @@ public class HeuristicTests {
     board.movePiece(new Position(2, 6), new Position(2, 5));
     board.movePiece(new Position(1, 6), new Position(1, 4));
 
-    // Should be equal since 1 backwards pawn for each player (the a pawn)
     assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
+  }
+
+  @Test
+  public void testSpaceControlHeuristicFourPawnsEachSide() {
+    solver.setHeuristic(HeuristicType.SPACE_CONTROL);
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    Position initWhiteKingPos = new Position(4, 0);
+    Position initBlackKingPos = new Position(4, 7);
+
+    Position a2 = new Position(0, 1);
+    Position b2 = new Position(1, 1);
+    Position g2 = new Position(6, 1);
+    Position h2 = new Position(7, 1);
+
+    Position a7 = new Position(0, 6);
+    Position b7 = new Position(1, 6);
+    Position g7 = new Position(6, 6);
+    Position h7 = new Position(7, 6);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(a2);
+    posListWhite.add(b2);
+    posListWhite.add(g2);
+    posListWhite.add(h2);
+
+    posListBlack.add(initBlackKingPos);
+    posListBlack.add(a7);
+    posListBlack.add(b7);
+    posListBlack.add(g7);
+    posListBlack.add(h7);
+
+    BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
+        board, posListWhite, posListBlack);
+
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+  }
+
+  @Test
+  public void testSpaceControlHeuristicBishopsAimCenter() {
+    solver.setHeuristic(HeuristicType.SPACE_CONTROL);
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    Position initWhiteKingPos = new Position(4, 0);
+    Position initBlackKingPos = new Position(4, 7);
+
+    Position bishopsF1 = new Position(5, 0);
+    Position bishopsC1 = new Position(2, 0);
+    Position bishopsF8 = new Position(5, 7);
+    Position bishopsC8 = new Position(2, 7);
+    Position rookA1 = new Position(0, 0);
+    Position rookA8 = new Position(0, 7);
+
+    Position b2 = new Position(1, 1);
+    Position g2 = new Position(6, 1);
+    Position c4 = new Position(2, 3);
+
+    Position b7 = new Position(1, 6);
+    Position g7 = new Position(6, 6);
+    Position c5 = new Position(2, 4);
+
+    List<Position> posListWhite = new ArrayList<>();
+    List<Position> posListBlack = new ArrayList<>();
+
+    posListWhite.add(initWhiteKingPos);
+    posListWhite.add(bishopsC1);
+    posListWhite.add(bishopsF1);
+    posListWhite.add(rookA1);
+
+    posListBlack.add(initBlackKingPos);
+    posListBlack.add(bishopsC8);
+    posListBlack.add(bishopsF8);
+    posListBlack.add(rookA8);
+
+    BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
+        board, posListWhite, posListBlack);
+
+    board.movePiece(bishopsC1, b2);
+    board.movePiece(bishopsF1, g2);
+    board.movePiece(rookA1, c4);
+
+    board.movePiece(bishopsC8, b7);
+    board.movePiece(bishopsF8, g7);
+    board.movePiece(rookA8, c5);
+
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
   }
 
   @Test
