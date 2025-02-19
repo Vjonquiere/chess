@@ -7,6 +7,13 @@ import pdp.utils.Position;
 
 public class PawnChainHeuristic implements Heuristic {
 
+  /**
+   * Computes a score according to how strong pawns are connected. Heuristic used for endgames.
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a score depending on the solidity of the pawn chains
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
@@ -29,8 +36,9 @@ public class PawnChainHeuristic implements Heuristic {
 
     for (Position pawn : pawns) {
       for (Position otherPawn : pawns) {
-        if ((Math.abs(otherPawn.getX() - pawn.getX()) == 1 && otherPawn.getY() == pawn.getY() - 1)
-            || (Math.abs(otherPawn.getX() - pawn.getX()) == 1 && otherPawn.getY() == pawn.getY())) {
+        if ((Math.abs(otherPawn.getX() - pawn.getX()) == 1
+                && Math.abs(otherPawn.getY() - (pawn.getY())) == 1)
+            || (otherPawn.getY() == pawn.getY() && Math.abs(otherPawn.getX() - pawn.getX()) == 1)) {
           // Connected pawn
           score += reward;
         }

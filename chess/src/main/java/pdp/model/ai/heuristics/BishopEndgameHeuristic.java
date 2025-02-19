@@ -8,6 +8,14 @@ import pdp.utils.Position;
 
 public class BishopEndgameHeuristic implements Heuristic {
 
+  /**
+   * Computes a score according to how performant bishops are for an endgame position. Heuristic
+   * used for endgames.
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a score depending on the progress of the pawns
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
@@ -53,9 +61,12 @@ public class BishopEndgameHeuristic implements Heuristic {
       return 0;
     }
 
-    boolean sameColorBishops =
-        (bishops.get(0).getX() + bishops.get(0).getY()) % 2
-            == (bishops.get(1).getX() + bishops.get(1).getY()) % 2;
+    boolean sameColorBishops = false;
+    if (bishops.size() > 0) {
+      sameColorBishops =
+          (bishops.get(0).getX() + bishops.get(0).getY()) % 2
+              == (bishops.get(1).getX() + bishops.get(1).getY()) % 2;
+    }
 
     if (sameColorBishops) {
       return -10;
@@ -78,9 +89,12 @@ public class BishopEndgameHeuristic implements Heuristic {
       return 0;
     }
 
-    boolean sameColorBishops =
-        (bishopsPlayer1.get(0).getX() + bishopsPlayer1.get(0).getY()) % 2
-            == (bishopsPlayer2.get(0).getX() + bishopsPlayer2.get(0).getY()) % 2;
+    boolean sameColorBishops = false;
+    if (!bishopsPlayer1.isEmpty() && !bishopsPlayer2.isEmpty()) {
+      sameColorBishops =
+          (bishopsPlayer1.get(0).getX() + bishopsPlayer1.get(0).getY()) % 2
+              == (bishopsPlayer2.get(0).getX() + bishopsPlayer2.get(0).getY()) % 2;
+    }
 
     if (sameColorBishops) {
       return 5;

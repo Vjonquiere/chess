@@ -6,6 +6,7 @@ import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class KingSafetyHeuristic implements Heuristic {
@@ -55,7 +56,7 @@ public class KingSafetyHeuristic implements Heuristic {
 
     if (isKingInCenter) {
       // Penalize king in the center
-      score -= 20;
+      score = -20;
     }
 
     return score;
@@ -87,9 +88,9 @@ public class KingSafetyHeuristic implements Heuristic {
 
       if (newPos.isValid()) {
         ColoredPiece piece = bitboard.getPieceAt(newX, newY);
-        if (piece != null) {
+        if (piece.piece != Piece.EMPTY) {
           Color colorPiece = piece.color;
-          boolean white = colorPiece == Color.WHITE ? true : false;
+          boolean white = colorPiece == Color.WHITE;
           if (white == isWhite) {
             // Protection from piece of the same color
             score += 5;
@@ -120,13 +121,16 @@ public class KingSafetyHeuristic implements Heuristic {
 
       for (List<Position> posList : posBlackPieces) {
         for (Position posBlackPiece : posList) {
-          List<Move> movesForPiece =
-              bitboard.getAvailableMoves(posBlackPiece.getX(), posBlackPiece.getY(), true);
-          for (Move move : movesForPiece) {
-            if (move.getDest().getX() == whiteKingPosition.getX()
-                && move.getDest().getY() == whiteKingPosition.getY()) {
-              // Check is possible from black
-              score -= 30;
+          // Must not be king
+          if (bitboard.getPieceAt(posBlackPiece.getX(), posBlackPiece.getY()).piece != Piece.KING) {
+            List<Move> movesForPiece =
+                bitboard.getAvailableMoves(posBlackPiece.getX(), posBlackPiece.getY(), true);
+            for (Move move : movesForPiece) {
+              if (move.getDest().getX() == whiteKingPosition.getX()
+                  && move.getDest().getY() == whiteKingPosition.getY()) {
+                // Check is possible from black
+                score -= 30;
+              }
             }
           }
         }
@@ -138,13 +142,16 @@ public class KingSafetyHeuristic implements Heuristic {
 
       for (List<Position> posList : posWhitePieces) {
         for (Position posWhitePiece : posList) {
-          List<Move> movesForPiece =
-              bitboard.getAvailableMoves(posWhitePiece.getX(), posWhitePiece.getY(), true);
-          for (Move move : movesForPiece) {
-            if (move.getDest().getX() == blackKingPosition.getX()
-                && move.getDest().getY() == blackKingPosition.getY()) {
-              // Check is possible from white
-              score -= 30;
+          // Must not be king
+          if (bitboard.getPieceAt(posWhitePiece.getX(), posWhitePiece.getY()).piece != Piece.KING) {
+            List<Move> movesForPiece =
+                bitboard.getAvailableMoves(posWhitePiece.getX(), posWhitePiece.getY(), true);
+            for (Move move : movesForPiece) {
+              if (move.getDest().getX() == blackKingPosition.getX()
+                  && move.getDest().getY() == blackKingPosition.getY()) {
+                // Check is possible from white
+                score -= 30;
+              }
             }
           }
         }
