@@ -50,6 +50,25 @@ public class HistoryTest {
   }
 
   @Test
+  public void HistoryAlgebraicTestInGame() {
+    Game game = Game.initialize(false, false, null, null);
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+    Move move2 = new Move(new Position(4, 6), new Position(4, 4));
+    game.playMove(move2);
+    Move move3 = new Move(new Position(3, 1), new Position(3, 2));
+    game.playMove(move3);
+    Move move4 = new Move(new Position(3, 6), new Position(3, 5));
+    game.playMove(move4);
+
+    String historyOutput = game.getHistory().toAlgebraicString();
+
+    // Assert: Check expected output
+    String expectedOutput = "1. W e2-e4 B e7-e5\n2. W d2-d3 B d7-d6";
+    assertEquals(expectedOutput, historyOutput);
+  }
+
+  @Test
   public void undoHistoryInGame() {
     Game game = Game.initialize(false, false, null, null);
 
@@ -270,7 +289,7 @@ public class HistoryTest {
     Move move3 = new Move(new Position(3, 1), new Position(3, 2));
     game.playMove(move3);
 
-    String historyOutput = game.getHistory().toString();
+    String historyOutput = game.getHistory().getCurrentMove().get().getState().toAlgebraicString();
 
     // Assert: Check expected output
     String expectedOutput = "W d2-d3";

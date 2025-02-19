@@ -11,11 +11,18 @@ public class History {
   private static final Logger LOGGER = Logger.getLogger(History.class.getName());
   private HistoryNode currentMove;
 
+  /** Constructs a new History instance. Initializes logging and sets the current move to null. */
   public History() {
     Logging.configureLogging(LOGGER);
     this.currentMove = null;
   }
 
+  /**
+   * Retrieves the current move node in the history.
+   *
+   * @return An Optional containing the current HistoryNode if it is present, or an empty Optional
+   *     if there is no current move.
+   */
   public Optional<HistoryNode> getCurrentMove() {
     if (this.currentMove == null) {
       return Optional.empty();
