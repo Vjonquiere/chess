@@ -32,7 +32,7 @@ public class HistoryState {
   }
 
   public boolean isWhite() {
-    return this.gameState.getBoard().isWhite;
+    return this.gameState.getBoard().getPlayer();
   }
 
   public GameState getGameState() {
