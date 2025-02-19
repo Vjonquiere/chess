@@ -43,6 +43,7 @@ public class Solver {
       case MCTS -> this.algorithm = null;
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
+    DEBUG(LOGGER, "Algorithm set to " + algorithm);
   }
 
   /**
@@ -75,6 +76,15 @@ public class Solver {
    */
   public Heuristic getHeuristic() {
     return this.heuristic;
+  }
+
+  /**
+   * Retrieve the current algorithm
+   *
+   * @return the current SearchAlgorithm that the solver uses
+   */
+  public SearchAlgorithm getAlgorithm() {
+    return this.algorithm;
   }
 
   /**
@@ -123,7 +133,8 @@ public class Solver {
   }
 
   /**
-   * Evaluates the board based on the chosen heuristic.
+   * Evaluates the board based on the chosen heuristic. Use Zobrist Hashing to avoid recalculating
+   * scores.
    *
    * @param board Current board to evaluate
    * @param isWhite Current player

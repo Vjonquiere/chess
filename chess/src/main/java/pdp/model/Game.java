@@ -95,6 +95,33 @@ public class Game extends Subject {
   }
 
   /**
+   * Returns whether the White player is controlled by an AI.
+   *
+   * @return true if the White player is an AI, false otherwise.
+   */
+  public boolean isWhiteAI() {
+    return isWhiteAI;
+  }
+
+  /**
+   * Returns whether the Black player is controlled by an AI.
+   *
+   * @return true if the Black player is an AI, false otherwise.
+   */
+  public boolean isBlackAI() {
+    return isBlackAI;
+  }
+
+  /**
+   * Gets the solver used by the AI.
+   *
+   * @return the {@link Solver} instance used for AI decision-making.
+   */
+  public Solver getSolver() {
+    return solver;
+  }
+
+  /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
    * @return true if wer're in an endgame (according to the chosen criterias)

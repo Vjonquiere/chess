@@ -264,7 +264,7 @@ public class CLIOptions {
    */
   private static boolean isFeatureImplemented(OptionType option) {
     return switch (option) {
-      case BLITZ, GUI, TIME, CONTEST, AI, AI_MODE, AI_DEPTH, AI_HEURISTIC, AI_TIME -> false;
+      case BLITZ, GUI, TIME, CONTEST, AI_TIME -> false;
       default -> true;
     };
   }
