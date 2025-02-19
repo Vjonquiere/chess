@@ -223,7 +223,7 @@ public class HeuristicTests {
   }
 
   @Test
-  public void testPawnChainsHeuristic() {
+  public void testPawnChainsHeuristicWhenGameStarts() {
     game = Game.initialize(false, false, null, null);
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
@@ -496,6 +496,112 @@ public class HeuristicTests {
         if (h instanceof KingActivityHeuristic) {
           // Expected score in this position
           int expectedScore = 3;
+          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testPawnChainsHeuristic() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    // white pawns
+    Position a2 = new Position(0, 1);
+    Position c2 = new Position(2, 1);
+    Position e2 = new Position(4, 1);
+    Position g2 = new Position(6, 1);
+
+    Position a3 = new Position(0, 2);
+    Position c3 = new Position(2, 2);
+    Position e3 = new Position(4, 2);
+    Position g3 = new Position(6, 2);
+
+    // black pawns
+    Position a7 = new Position(0, 7);
+    Position c7 = new Position(2, 7);
+    Position e7 = new Position(4, 7);
+    Position g7 = new Position(6, 7);
+
+    Position a6 = new Position(0, 6);
+    Position c6 = new Position(2, 6);
+    Position e6 = new Position(4, 6);
+    Position g6 = new Position(6, 6);
+
+    board.movePiece(a2,a3);
+    board.movePiece(c2,c3);
+    board.movePiece(e2,e3);
+    board.movePiece(g2,g3);
+
+    board.movePiece(a7,a6);
+    board.movePiece(c7,c6);
+    board.movePiece(e7,e6);
+    board.movePiece(g7,g6);
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof PawnChainHeuristic) {
+          // Expected score
+          int expectedScore = 0;
+          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testPawnPromotionHeuristicCloseToPromotion() {
+    game = Game.initialize(false, false, null, null);
+    solver = new Solver();
+    solver.setHeuristic(HeuristicType.ENDGAME);
+    Heuristic heuristic = solver.getHeuristic();
+
+    BoardRepresentation board = game.getBoard().getBoardRep();
+
+    // white pawns
+    Position a2 = new Position(0, 1);
+    Position c2 = new Position(2, 1);
+    Position e2 = new Position(4, 1);
+    Position g2 = new Position(6, 1);
+
+    Position a6 = new Position(0, 5);
+    Position c6 = new Position(2, 5);
+    Position e6 = new Position(4, 5);
+    Position g6 = new Position(6, 5);
+
+    // black pawns
+    Position b7 = new Position(1, 6);
+    Position d7 = new Position(3, 6);
+    Position f7 = new Position(5, 6);
+    Position h7 = new Position(7, 6);
+
+    Position b3 = new Position(1, 2);
+    Position d3 = new Position(3, 2);
+    Position f3 = new Position(5, 2);
+    Position h3 = new Position(7, 2);
+
+    board.movePiece(a2,a6);
+    board.movePiece(c2,c6);
+    board.movePiece(e2,e6);
+    board.movePiece(g2,g6);
+
+    board.movePiece(b7,b3);
+    board.movePiece(d7,d3);
+    board.movePiece(f7,f3);
+    board.movePiece(h7,h3);
+
+    if (heuristic instanceof EndGameHeuristic) {
+      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
+      for (Heuristic h : heuristics) {
+        if (h instanceof PromotionHeuristic) {
+          // Expected score
+          int expectedScore = 0;
           assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
         }
       }
