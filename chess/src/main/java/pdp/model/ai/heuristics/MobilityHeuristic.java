@@ -1,5 +1,6 @@
 package pdp.model.ai.heuristics;
 
+import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
 public class MobilityHeuristic implements Heuristic {
@@ -13,6 +14,13 @@ public class MobilityHeuristic implements Heuristic {
    */
   @Override
   public int evaluate(Board board, boolean isWhite) {
+    if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
+      return (int)
+          ((bitBoard.getColorMoveBitboard(isWhite).bitCount()
+                  - bitBoard.getColorMoveBitboard(!isWhite).bitCount())
+              * 0.1);
+    }
+
     return (int)
         ((board.getBoardRep().getAllAvailableMoves(isWhite).size()
                 - board.getBoardRep().getAllAvailableMoves(!isWhite).size())

@@ -22,6 +22,10 @@ public class Move {
   public boolean isCheck = false;
   public boolean isCheckMate = false;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   /**
    * Constructs a new Move object with the specified source and destination positions.
    *
@@ -29,7 +33,6 @@ public class Move {
    * @param dest The destination Position of the move.
    */
   public Move(Position source, Position dest) {
-    Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
   }
@@ -43,7 +46,6 @@ public class Move {
    *     otherwise).
    */
   public Move(Position source, Position dest, ColoredPiece piece, boolean isTake) {
-    Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
     this.piece = piece;
@@ -64,7 +66,6 @@ public class Move {
    */
   public Move(
       Position source, Position dest, ColoredPiece piece, boolean isTake, ColoredPiece takenPiece) {
-    Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
     this.piece = piece;
@@ -96,7 +97,6 @@ public class Move {
       ColoredPiece takenPiece,
       boolean isCheck,
       boolean isCheckMate) {
-    Logging.configureLogging(LOGGER);
     this.source = source;
     this.dest = dest;
     this.piece = piece;
