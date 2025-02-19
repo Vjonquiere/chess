@@ -83,4 +83,30 @@ public class SolverTest {
 
     assertEquals(score1, score2);
   }
+
+  @Test
+  public void testSetDepthClassic() {
+    assertEquals(5, solver.getDepth());
+    solver.setDepth(7);
+    assertEquals(7, solver.getDepth());
+  }
+
+  @Test
+  public void testSetDepthError() {
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              solver.setDepth(0);
+            });
+    assertEquals("Depth must be greater than 0", exception.getMessage());
+
+    Exception exception2 =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              solver.setDepth(-2);
+            });
+    assertEquals("Depth must be greater than 0", exception2.getMessage());
+  }
 }
