@@ -52,6 +52,9 @@ public class Game extends Subject {
     this.solver = solver;
     this.gameState = gameState;
     this.history = history;
+    this.history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
     this.stateCount = new HashMap<>();
     // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
     this.gameState.setSimplifiedZobristHashing(

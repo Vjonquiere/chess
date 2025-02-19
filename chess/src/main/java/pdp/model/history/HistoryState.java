@@ -72,14 +72,15 @@ public class HistoryState {
    */
   public String toAlgebraicString() {
     StringBuilder sb = new StringBuilder();
-
-    if (!this.isWhite()) {
-      sb.append(this.gameState.getFullTurn())
-          .append(". W ")
-          .append(this.move.toAlgebraicString())
-          .append(" ");
-    } else {
-      sb.append("B ").append(this.move.toString());
+    if (!(this.move.getSource().getX() == -1)) {
+      if (!this.isWhite()) {
+        sb.append(this.gameState.getFullTurn())
+            .append(". W ")
+            .append(this.move.toAlgebraicString())
+            .append(" ");
+      } else {
+        sb.append("B ").append(this.move.toString());
+      }
     }
 
     return sb.toString();
@@ -100,14 +101,15 @@ public class HistoryState {
    */
   public String toString() {
     StringBuilder sb = new StringBuilder();
-
-    if (!this.isWhite()) {
-      sb.append(this.gameState.getFullTurn())
-          .append(". W ")
-          .append(this.move.toString())
-          .append(" ");
-    } else {
-      sb.append("B ").append(this.move.toString());
+    if (!(this.move.getSource().getX() == -1)) {
+      if (!this.isWhite()) {
+        sb.append(this.gameState.getFullTurn())
+            .append(". W ")
+            .append(this.move.toString())
+            .append(" ");
+      } else {
+        sb.append("B ").append(this.move.toString());
+      }
     }
 
     return sb.toString();
