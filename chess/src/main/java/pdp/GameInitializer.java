@@ -82,9 +82,13 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_DEPTH)) {
-        // set depth
-      } else {
-        // Set to default
+        try {
+          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH));
+          solver.setDepth(depth);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the depth of AI");
+          System.err.println("Defaulting to depth " + solver.getDepth());
+        }
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
