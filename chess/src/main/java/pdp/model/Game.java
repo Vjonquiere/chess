@@ -56,6 +56,9 @@ public class Game extends Subject {
         zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
     this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
     DEBUG(LOGGER, "Game created");
+    if (this.gameState.getMoveTimer() != null) {
+      this.gameState.getMoveTimer().start();
+    }
   }
 
   /**
@@ -179,7 +182,10 @@ public class Game extends Subject {
    */
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
     DEBUG(LOGGER, "Initializing Game...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
+    if (timer != null) {
+      timer.setCallback(instance::outOfTimeCallback);
+    }
     DEBUG(LOGGER, "Game initialized!");
     return instance;
   }
@@ -196,9 +202,16 @@ public class Game extends Subject {
   public static Game initialize(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, FileBoard board) {
     DEBUG(LOGGER, "Initializing Game from given board...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History());
+    if (timer != null) {
+      timer.setCallback(instance::outOfTimeCallback);
+    }
     DEBUG(LOGGER, "Game initialized!");
     return instance;
+  }
+
+  public void outOfTimeCallback() {
+    this.gameState.playerOutOfTime(this.gameState.isWhiteTurn());
   }
 
   /**
@@ -386,6 +399,10 @@ public class Game extends Subject {
    */
   private void updateGameStateAfterMove(Move move) {
 
+    if (this.gameState.getMoveTimer() != null) {
+      this.gameState.getMoveTimer().stop();
+    }
+
     if (this.gameState.getBoard().isWhite) {
       this.gameState.incrementsFullTurn();
     }
@@ -406,6 +423,10 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
     this.notifyObservers(EventType.MOVE_PLAYED);
+
+    if (this.gameState.getMoveTimer() != null) {
+      this.gameState.getMoveTimer().start();
+    }
   }
 
   /**
@@ -557,7 +578,7 @@ public class Game extends Subject {
 
   public static Game getInstance() {
     if (instance == null) {
-      instance = new Game(false, false, null, new GameState(), new History());
+      throw new IllegalStateException("Game has not been initialized");
     }
     return instance;
   }

@@ -17,14 +17,14 @@ public class GameState extends Subject {
   private Board board;
   private Timer moveTimer;
   private boolean isWhiteTurn;
-  private boolean whiteWantsToDraw;
-  private boolean blackWantsToDraw;
-  private boolean whiteResigns;
-  private boolean blackResigns;
-  private boolean whiteLosesOnTime;
-  private boolean blackLosesOnTime;
-  private boolean isGameOver;
-  private boolean threefoldRepetition;
+  private boolean whiteWantsToDraw = false;
+  private boolean blackWantsToDraw = false;
+  private boolean whiteResigns = false;
+  private boolean blackResigns = false;
+  private boolean whiteLosesOnTime = false;
+  private boolean blackLosesOnTime = false;
+  private boolean isGameOver = false;
+  private boolean threefoldRepetition = false;
   private int fullTurnNumber;
   private long zobristHashing;
   private long simplifiedZobristHashing;
@@ -34,13 +34,6 @@ public class GameState extends Subject {
     Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = true;
-    this.whiteResigns = false;
-    this.blackResigns = false;
-    this.whiteWantsToDraw = false;
-    this.blackWantsToDraw = false;
-    this.whiteLosesOnTime = false;
-    this.blackLosesOnTime = false;
-    this.threefoldRepetition = false;
     this.board = new Board();
     this.moveTimer = null;
     this.fullTurnNumber = 0;
@@ -49,12 +42,6 @@ public class GameState extends Subject {
   public GameState(Timer timer) {
     this.isGameOver = false;
     this.isWhiteTurn = true;
-    this.whiteResigns = false;
-    this.blackResigns = false;
-    this.whiteWantsToDraw = false;
-    this.blackWantsToDraw = false;
-    this.whiteLosesOnTime = false;
-    this.blackLosesOnTime = false;
     this.board = new Board();
     this.moveTimer = timer;
     this.fullTurnNumber = 0;
@@ -69,15 +56,22 @@ public class GameState extends Subject {
     Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = board.isWhiteTurn();
-    this.whiteResigns = false;
-    this.blackResigns = false;
-    this.whiteWantsToDraw = false;
-    this.blackWantsToDraw = false;
-    this.whiteLosesOnTime = false;
-    this.blackLosesOnTime = false;
-    this.threefoldRepetition = false;
     this.board = new Board(board);
     this.moveTimer = null;
+    this.fullTurnNumber = 0;
+  }
+
+  /**
+   * Create a new GameState from a given board with a timer
+   *
+   * @param board The board to use
+   */
+  public GameState(FileBoard board, Timer timer) {
+    Logging.configureLogging(LOGGER);
+    this.isGameOver = false;
+    this.isWhiteTurn = board.isWhiteTurn();
+    this.board = new Board(board);
+    this.moveTimer = timer;
     this.fullTurnNumber = 0;
   }
 
@@ -153,6 +147,33 @@ public class GameState extends Subject {
     notifyObservers(EventType.BLACK_UNDRAW);
   }
 
+  public void playerOutOfTime(boolean isWhite) {
+    if (board.getBoardRep().hasEnoughMaterialToMate(isWhite)
+        && !board.getBoardRep().hasEnoughMaterialToMate(!isWhite)) {
+      this.isGameOver = true;
+      DEBUG(LOGGER, "End of game : Loss on time + insufficient material, Draw");
+      if (isWhite) {
+        notifyObservers(EventType.OUT_OF_TIME_WHITE);
+      } else {
+        notifyObservers(EventType.OUT_OF_TIME_BLACK);
+      }
+      notifyObservers(EventType.DRAW);
+      return;
+    }
+    this.isGameOver = true;
+    if (isWhite) {
+      DEBUG(LOGGER, "End of game : Loss on time, Black won");
+      notifyObservers(EventType.OUT_OF_TIME_WHITE);
+      notifyObservers(EventType.WIN_BLACK);
+      return;
+    } else {
+      DEBUG(LOGGER, "End of game : Loss on time, White won");
+      notifyObservers(EventType.OUT_OF_TIME_BLACK);
+      notifyObservers(EventType.WIN_WHITE);
+      return;
+    }
+  }
+
   /**
    * Checks if both players want to draw
    *
@@ -198,28 +219,6 @@ public class GameState extends Subject {
     return this.whiteWantsToDraw;
   }
 
-  /**
-   * Checks if the current player loses on time
-   *
-   * @return true if the current player runs out of time for his move (blitz mode)
-   */
-  public boolean playerLosesOnTime() {
-    if (this.moveTimer != null && this.moveTimer.getTimeRemaining() == 0) {
-      if (this.isWhiteTurn) {
-        this.whiteLosesOnTime = true;
-        this.isGameOver = true;
-        notifyObservers(EventType.WIN_BLACK);
-        return true;
-      } else {
-        this.blackLosesOnTime = true;
-        this.isGameOver = true;
-        notifyObservers(EventType.WIN_WHITE);
-        return true;
-      }
-    }
-    return false;
-  }
-
   public boolean hasWhiteLostOnTime() {
     return this.whiteLosesOnTime;
   }
@@ -261,43 +260,6 @@ public class GameState extends Subject {
   public void checkGameStatus() {
     Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;
     boolean currPlayerWhite = this.isWhiteTurn();
-    // Draw by agreement
-    if (checkDrawAgreement()) {
-      DEBUG(LOGGER, "End of game  Dray by mutual agreement");
-      return;
-    }
-    // White resigns
-    if (hasWhiteResigned()) {
-      DEBUG(LOGGER, "End of game : White resigned, Black won");
-      whiteResigns();
-      return;
-    }
-    // Black resigns
-    if (hasBlackResigned()) {
-      DEBUG(LOGGER, "End of game : Black resigned, White won");
-      blackResigns();
-      return;
-    }
-    // Loss on time
-    if (playerLosesOnTime()) {
-      // if insufficient material for enemy then draw else win
-      if (board.getBoardRep().hasEnoughMaterialToMate(currPlayerWhite)) {
-        this.isGameOver = true;
-        DEBUG(LOGGER, "End of game : Loss on time + insufficient material, Draw");
-        notifyObservers(EventType.DRAW);
-        return;
-      }
-      this.isGameOver = true;
-      if (currPlayerWhite) {
-        DEBUG(LOGGER, "End of game : Loss on time, Black won");
-        notifyObservers(EventType.WIN_BLACK);
-        return;
-      } else {
-        DEBUG(LOGGER, "End of game : Loss on time, White won");
-        notifyObservers(EventType.WIN_WHITE);
-        return;
-      }
-    }
     // Fifty Move rule
     if (isFiftyMoveRule()) {
       DEBUG(LOGGER, "End of game : Fifty move rule, draw");
