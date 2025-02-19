@@ -12,6 +12,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
@@ -68,7 +69,6 @@ public abstract class GameInitializer {
       }
 
       solver = new Solver();
-      solver = new Solver();
       if (options.containsKey(OptionType.AI_MODE)) {
         // switch to set solver mode
       } else {
@@ -76,9 +76,13 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_HEURISTIC)) {
-        // switch to set heuristic
-      } else {
-        // Set to default
+        try {
+          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC));
+          solver.setHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC));
+          System.err.println("Defaulting to Heuristic STANDARD");
+        }
       }
 
       if (options.containsKey(OptionType.AI_DEPTH)) {
