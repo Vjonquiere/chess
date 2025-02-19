@@ -36,7 +36,7 @@ public class KingOppositionHeuristic implements Heuristic {
       return -10;
     }
     // If kings are diagonally close
-    if (xDiff == 1 && yDiff == 1) {
+    if (xDiff <= 2 && yDiff <= 2) {
       // Marginally drawish cuz slight opposition
       return -5;
     }
