@@ -74,8 +74,8 @@ public abstract class GameInitializer {
         try {
           solver.setAlgorithm(AlgorithmType.valueOf(options.get(OptionType.AI_MODE)));
         } catch (Exception e) {
-          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI));
-          System.err.println("Defaulting to AlphaBeta.");
+          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
+          System.err.println("Defaulting to ALPHABETA.");
         }
       }
       if (options.containsKey(OptionType.AI_HEURISTIC)) {
@@ -100,11 +100,7 @@ public abstract class GameInitializer {
 
       if (options.containsKey(OptionType.AI_TIME)) {
         // set time
-      } else {
-        // Set to default
       }
-
-      throw new UnsupportedOperationException("AI mode not implemented");
     }
 
     Game model = null;
