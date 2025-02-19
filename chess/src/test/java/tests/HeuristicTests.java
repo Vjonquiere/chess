@@ -533,15 +533,15 @@ public class HeuristicTests {
     Position e6 = new Position(4, 6);
     Position g6 = new Position(6, 6);
 
-    board.movePiece(a2,a3);
-    board.movePiece(c2,c3);
-    board.movePiece(e2,e3);
-    board.movePiece(g2,g3);
+    board.movePiece(a2, a3);
+    board.movePiece(c2, c3);
+    board.movePiece(e2, e3);
+    board.movePiece(g2, g3);
 
-    board.movePiece(a7,a6);
-    board.movePiece(c7,c6);
-    board.movePiece(e7,e6);
-    board.movePiece(g7,g6);
+    board.movePiece(a7, a6);
+    board.movePiece(c7, c6);
+    board.movePiece(e7, e6);
+    board.movePiece(g7, g6);
 
     if (heuristic instanceof EndGameHeuristic) {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
@@ -586,15 +586,15 @@ public class HeuristicTests {
     Position f3 = new Position(5, 2);
     Position h3 = new Position(7, 2);
 
-    board.movePiece(a2,a6);
-    board.movePiece(c2,c6);
-    board.movePiece(e2,e6);
-    board.movePiece(g2,g6);
+    board.movePiece(a2, a6);
+    board.movePiece(c2, c6);
+    board.movePiece(e2, e6);
+    board.movePiece(g2, g6);
 
-    board.movePiece(b7,b3);
-    board.movePiece(d7,d3);
-    board.movePiece(f7,f3);
-    board.movePiece(h7,h3);
+    board.movePiece(b7, b3);
+    board.movePiece(d7, d3);
+    board.movePiece(f7, f3);
+    board.movePiece(h7, h3);
 
     if (heuristic instanceof EndGameHeuristic) {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
