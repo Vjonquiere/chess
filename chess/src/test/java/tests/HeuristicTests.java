@@ -736,4 +736,70 @@ public class HeuristicTests {
       }
     }
   }
+
+  @Test
+  public void testDevelopmentHeuristicWhenGameStartsWhite() {
+    solver.setHeuristic(HeuristicType.DEVELOPMENT);
+
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+  }
+
+  @Test
+  public void testDevelopmentHeuristicWhenGameStartsBlack() {
+    solver.setHeuristic(HeuristicType.DEVELOPMENT);
+
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+  }
+
+  @Test
+  public void testDevelopmentHeuristicWhenEveryPawnForwardByTwo() {
+    solver.setHeuristic(HeuristicType.DEVELOPMENT);
+
+    game.playMove(Move.fromString("a2-a4"));
+    game.playMove(Move.fromString("a7-a5"));
+    game.playMove(Move.fromString("b2-b4"));
+    game.playMove(Move.fromString("b7-b5"));
+    game.playMove(Move.fromString("c2-c4"));
+    game.playMove(Move.fromString("c7-c5"));
+    game.playMove(Move.fromString("d2-d4"));
+    game.playMove(Move.fromString("d7-d5"));
+    game.playMove(Move.fromString("e2-e4"));
+    game.playMove(Move.fromString("e7-e5"));
+    game.playMove(Move.fromString("f2-f4"));
+    game.playMove(Move.fromString("f7-f5"));
+    game.playMove(Move.fromString("g2-g4"));
+    game.playMove(Move.fromString("g7-g5"));
+    game.playMove(Move.fromString("h2-h4"));
+    game.playMove(Move.fromString("h7-h5"));
+
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+  }
+
+  @Test
+  public void testDevelopmentHeuristicKnightsBishopsRookMoved() {
+    solver.setHeuristic(HeuristicType.DEVELOPMENT);
+
+    game.playMove(Move.fromString("g1-f3"));
+    game.playMove(Move.fromString("g8-f6"));
+    game.playMove(Move.fromString("b1-c3"));
+    game.playMove(Move.fromString("b8-c6"));
+    game.playMove(Move.fromString("g2-g3"));
+    game.playMove(Move.fromString("g7-g6"));
+    game.playMove(Move.fromString("f1-g2"));
+    game.playMove(Move.fromString("f8-g7"));
+    game.playMove(Move.fromString("e1-f1"));
+    game.playMove(Move.fromString("e8-f8"));
+    game.playMove(Move.fromString("h1-g1"));
+    game.playMove(Move.fromString("h8-g8"));
+    game.playMove(Move.fromString("b2-b3"));
+    game.playMove(Move.fromString("b7-b6"));
+    game.playMove(Move.fromString("c1-b2"));
+    game.playMove(Move.fromString("c8-b7"));
+    game.playMove(Move.fromString("a1-b1"));
+    game.playMove(Move.fromString("a8-b8"));
+    game.playMove(Move.fromString("d1-e1"));
+    game.playMove(Move.fromString("d8-e8"));
+
+    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+  }
 }

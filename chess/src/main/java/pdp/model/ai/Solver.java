@@ -53,6 +53,7 @@ public class Solver {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
       case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
       case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
+      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
       case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
       case MOBILITY -> this.heuristic = new MobilityHeuristic();
       case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();

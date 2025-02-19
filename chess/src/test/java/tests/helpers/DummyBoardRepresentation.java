@@ -166,6 +166,16 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   }
 
   @Override
+  public List<List<Position>> retrieveInitialWhitePiecesPos() {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<List<Position>> retrieveInitialBlackPiecesPos() {
+    return new ArrayList<>();
+  }
+
+  @Override
   public BoardRepresentation getCopy() {
     return new DummyBoardRepresentation();
   }
