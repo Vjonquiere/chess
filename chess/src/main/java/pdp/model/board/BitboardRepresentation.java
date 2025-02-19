@@ -644,6 +644,16 @@ public class BitboardRepresentation implements BoardRepresentation {
     };
   }
 
+  /**
+   * Equivalent to getAvailableMoves but do not generate the move list from the bitboard. Used in
+   * check verification optimisation
+   *
+   * @param x The board column
+   * @param y The board row
+   * @param kingReachable Can the piece reach opponent king (keep false if not checking
+   *     check/checkmate)
+   * @return The bitboard containing all the reachable positions
+   */
   public Bitboard getMoveBitboard(int x, int y, boolean kingReachable) {
     ColoredPiece piece = getPieceAt(x, y);
     int enemyKing = getKingOpti(piece.color != Color.WHITE);
