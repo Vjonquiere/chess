@@ -10,6 +10,13 @@ public class HistoryNode {
   HistoryNode previous;
   HistoryNode next;
 
+  /**
+   * Constructs a new HistoryNode with the specified state and previous node.
+   *
+   * @param state The HistoryState representing the state of the history at this node.
+   * @param previous The previous HistoryNode in the history chain, or null if this is the first
+   *     node.
+   */
   public HistoryNode(HistoryState state, HistoryNode previous) {
     Logging.configureLogging(LOGGER);
     this.state = state;
@@ -51,6 +58,11 @@ public class HistoryNode {
     this.next = next;
   }
 
+  /**
+   * Retrieves the state of the history at the current point.
+   *
+   * @return The HistoryState representing the current state.
+   */
   public HistoryState getState() {
     return this.state;
   }
