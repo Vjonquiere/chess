@@ -13,6 +13,7 @@ import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.FailedRedoException;
+import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
@@ -42,6 +43,7 @@ public class Game extends Subject {
   private Solver solver;
   private boolean isWhiteAI;
   private boolean isBlackAI;
+  private boolean explorationAI;
   private History history;
   private HashMap<Long, Integer> stateCount;
 
@@ -53,6 +55,7 @@ public class Game extends Subject {
       boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
+    this.explorationAI = false;
     this.solver = solver;
     this.gameState = gameState;
     this.history = history;
@@ -126,6 +129,34 @@ public class Game extends Subject {
    */
   public Solver getSolver() {
     return solver;
+  }
+
+  /**
+   * Sets the exploration field to the given boolean. Use it in the solver.
+   *
+   * @param exploration boolean corresponding to the new rights of explorationAI.
+   */
+  public void setExploration(boolean exploration) {
+    this.explorationAI = exploration;
+  }
+
+  /**
+   * Indicates whether the AI is exploring (playing moves in its algorithm).
+   *
+   * @return True if it is exploring, False otherwise
+   */
+  public boolean isAIExploring() {
+    return this.explorationAI;
+  }
+
+  /**
+   * Plays the first AI move if White AI is activated. The other calls to AI will be done in {@link
+   * Game#updateGameStateAfterMove}
+   */
+  public void startAI() {
+    if (isWhiteAI && this.getGameState().isWhiteTurn()) {
+      solver.playAIMove(this);
+    }
   }
 
   /**
@@ -436,15 +467,18 @@ public class Game extends Subject {
 
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
-    this.gameState.setSimplifiedZobristHashing(
-        zobristHashing.updateSimplifiedHashFromBitboards(
-            this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
-    DEBUG(LOGGER, "Checking threefold repetition...");
-    boolean threefoldRepetition =
-        this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
-    if (threefoldRepetition) {
-      this.gameState.activateThreefold();
+    if (!explorationAI) {
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.updateSimplifiedHashFromBitboards(
+              this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+      DEBUG(LOGGER, "Checking threefold repetition...");
+      boolean threefoldRepetition =
+          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        this.gameState.activateThreefold();
+      }
     }
+
     DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase() && this.solver != null) {
       // Set endgame heuristic only once and only if endgame phase
@@ -454,8 +488,17 @@ public class Game extends Subject {
     }
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
+
     this.notifyObservers(EventType.MOVE_PLAYED);
+
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+
+    if (!explorationAI
+        && !isOver()
+        && ((this.gameState.getBoard().isWhite && isWhiteAI)
+            || (!this.gameState.getBoard().isWhite && isBlackAI))) {
+      solver.playAIMove(this);
+    }
   }
 
   /**
@@ -465,8 +508,10 @@ public class Game extends Subject {
    * the game in standard algebraic notation.
    *
    * @param path The path to the file to write to.
+   * @throws FailedSaveException If the file cannot be written to.
    */
-  public void saveGame(String path) {
+
+  public void saveGame(String path) throws FailedSaveException {
     boolean[] castlingRights = getBoard().getCastlingRights();
     String board =
         BoardSaver.saveBoard(
@@ -488,8 +533,11 @@ public class Game extends Subject {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(game);
     } catch (IOException e) {
-      System.err.println("Error writing to file: " + e.getMessage());
+      DEBUG(LOGGER, "Error writing to file: " + e.getMessage());
+      throw new FailedSaveException(path);
     }
+    DEBUG(LOGGER, "Game saved to " + path);
+    this.notifyObservers(EventType.GAME_SAVED);
   }
 
   /**
@@ -537,12 +585,12 @@ public class Game extends Subject {
   }
 
   /**
-   * Moves to the pevious move in history and updates the game state.
+   * Moves to the previous move in history and updates the game state.
    *
    * <p>Throws a FailedUndoException if there is no previous move to undo. Notifies observers of the
    * move undo event.
    *
-   * @throws FailedUndoException if no pevious move exists.
+   * @throws FailedUndoException if no previous move exists.
    */
   public void previousState() throws FailedUndoException {
     Optional<HistoryNode> currentNode = this.history.getCurrentMove();
@@ -554,10 +602,16 @@ public class Game extends Subject {
     if (!previousNode.isPresent()) {
       throw new FailedUndoException();
     }
+    // update zobrist to avoid threefold
+    long currBoardZobrist = this.gameState.getZobristHashing();
+    if (stateCount.containsKey(currBoardZobrist)) {
+
+      stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
+      DEBUG(LOGGER, "Current board zobrist: " + currBoardZobrist);
+    }
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(previousNode.get());
-
     this.notifyObservers(EventType.MOVE_UNDO);
   }
 
@@ -583,6 +637,7 @@ public class Game extends Subject {
     this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(nextNode.get());
 
+    // TODO: MOVE_REDO + add zobrist to statesCount
     this.notifyObservers(EventType.MOVE_UNDO);
   }
 

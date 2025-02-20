@@ -54,7 +54,7 @@ public class CompositeHeuristicTest {
   public void verifyCreationStandard() {
     StandardHeuristic standardHeuristic = new StandardHeuristic();
     List<Heuristic> heuristics = standardHeuristic.getHeuristics();
-    assertEquals(3, heuristics.size(), "Expected exactly 3 heuristics");
+    assertEquals(7, heuristics.size(), "Expected exactly 7 heuristics");
     assertTrue(
         heuristics.stream().anyMatch(h -> h instanceof MobilityHeuristic),
         "Missing MobilityHeuristic");
@@ -80,9 +80,17 @@ public class CompositeHeuristicTest {
     Heuristic material = new MaterialHeuristic();
     Heuristic opponent = new OpponentCheck();
     Heuristic mobility = new MobilityHeuristic();
+    Heuristic badPawnsHeuristic = new BadPawnsHeuristic();
+    Heuristic pawnChainHeuristic = new PawnChainHeuristic();
+    Heuristic developmentHeuristic = new DevelopmentHeuristic();
+    Heuristic KingSafetyHeuristic = new KingSafetyHeuristic();
     score += material.evaluate(game.getBoard(), false);
     score += opponent.evaluate(game.getBoard(), false);
     score += mobility.evaluate(game.getBoard(), false);
+    score += badPawnsHeuristic.evaluate(game.getBoard(), false);
+    score += pawnChainHeuristic.evaluate(game.getBoard(), false);
+    score += developmentHeuristic.evaluate(game.getBoard(), false);
+    score += KingSafetyHeuristic.evaluate(game.getBoard(), false);
     assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
   }
 }

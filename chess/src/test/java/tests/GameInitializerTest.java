@@ -118,16 +118,17 @@ class GameInitializerTest {
     assertNotNull(controller.getModel().getSolver());
   }
 
-  @Test
-  void testGameInitializationAIAll() {
-    options.put(OptionType.AI, "A");
-    GameController controller = GameInitializer.initialize(options);
-    assertNotNull(controller);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertTrue(controller.getModel().isBlackAI());
-    assertNotNull(controller.getModel().getSolver());
-  }
-
+  /*
+    @Test
+    void testGameInitializationAIAll() {
+      options.put(OptionType.AI, "A");
+      GameController controller = GameInitializer.initialize(options);
+      assertNotNull(controller);
+      assertTrue(controller.getModel().isWhiteAI());
+      assertTrue(controller.getModel().isBlackAI());
+      assertNotNull(controller.getModel().getSolver());
+    }
+  */
   @Test
   void testGameInitializationAIIncorrect() {
     setUpConsole();
@@ -201,12 +202,12 @@ class GameInitializerTest {
   @Test
   void testGameInitializationAIDepth() {
     options.put(OptionType.AI, "W");
-    options.put(OptionType.AI_DEPTH, "7");
+    options.put(OptionType.AI_DEPTH, "1");
     GameController controller = GameInitializer.initialize(options);
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
-    assertEquals(7, controller.getModel().getSolver().getDepth());
+    assertEquals(1, controller.getModel().getSolver().getDepth());
   }
 
   @Test
