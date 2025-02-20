@@ -67,9 +67,6 @@ public class Game extends Subject {
         zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
     this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
     DEBUG(LOGGER, "Game created");
-    if (this.gameState.getMoveTimer() != null) {
-      this.gameState.getMoveTimer().start();
-    }
   }
 
   /**
@@ -259,6 +256,7 @@ public class Game extends Subject {
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
+      timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
     return instance;
@@ -279,6 +277,7 @@ public class Game extends Subject {
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History());
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
+      timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
     return instance;
@@ -509,7 +508,7 @@ public class Game extends Subject {
 
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
 
-    if (this.gameState.getMoveTimer() != null) {
+    if (this.gameState.getMoveTimer() != null && !this.gameState.isGameOver()) {
       this.gameState.getMoveTimer().start();
     }
 
@@ -575,19 +574,24 @@ public class Game extends Subject {
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
    * @param solver The solver to use for AI moves.
+   * @param timer The timer to use for the game.
    * @return A new Game object with the given moves played.
    * @throws IllegalMoveException If any of the given moves are illegal.
    */
   public static Game fromHistory(
-      List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver)
+      List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer)
       throws IllegalMoveException {
-    Game game = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
 
     for (Move move : moves) {
-      game.playMove(move);
+      instance.playMove(move);
     }
 
-    instance = game;
+    if (timer != null) {
+      timer.setCallback(instance::outOfTimeCallback);
+      timer.start();
+    }
+
     return instance;
   }
 

@@ -122,7 +122,7 @@ public abstract class GameInitializer {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
 
-          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver);
+          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer);
         }
 
       } catch (IOException
