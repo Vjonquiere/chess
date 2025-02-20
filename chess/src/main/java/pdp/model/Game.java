@@ -24,6 +24,7 @@ import pdp.model.board.*;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
+import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
@@ -510,8 +511,20 @@ public class Game extends Subject {
    * @throws FailedSaveException If the file cannot be written to.
    */
   public void saveGame(String path) throws FailedSaveException {
+    boolean[] castlingRights = getBoard().getCastlingRights();
     String board =
-        BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite, null));
+        BoardSaver.saveBoard(
+            new FileBoard(
+                this.getBoard().board,
+                this.getBoard().isWhite,
+                new FenHeader(
+                    castlingRights[0],
+                    castlingRights[1],
+                    castlingRights[2],
+                    castlingRights[3],
+                    getBoard().enPassantPos,
+                    getBoard().getNbMovesWithNoCaptureOrPawn() * 2,
+                    getGameState().getFullTurn())));
     String gameStr = this.history.toAlgebraicString();
 
     String game = board + "\n" + gameStr;

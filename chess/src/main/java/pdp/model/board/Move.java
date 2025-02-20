@@ -204,7 +204,7 @@ public class Move {
    * @param position The {@code Position} object to convert
    * @return A string representing the position ("e4")
    */
-  public String positionToString(Position position) {
+  public static String positionToString(Position position) {
     char col = (char) ('a' + position.getX());
     int row = position.getY() + 1;
 
