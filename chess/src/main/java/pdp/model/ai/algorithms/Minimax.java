@@ -5,6 +5,10 @@ import pdp.model.Game;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
+import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 
 public class Minimax implements SearchAlgorithm {
   Solver solver;
@@ -43,6 +47,7 @@ public class Minimax implements SearchAlgorithm {
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
       try {
+        move = promoteMove(move);
         game.playMove(move);
         AIMove currMove = minMax(game, depth - 1, !player);
         if (currMove.score() > bestMove.score()) {
@@ -73,6 +78,7 @@ public class Minimax implements SearchAlgorithm {
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
       try {
+        move = promoteMove(move);
         game.playMove(move);
         AIMove currMove = maxMin(game, depth - 1, !player);
         if (currMove.score() < bestMove.score()) {
@@ -84,5 +90,16 @@ public class Minimax implements SearchAlgorithm {
       }
     }
     return bestMove;
+  }
+
+  private Move promoteMove(Move move) {
+    ColoredPiece piece = move.getPiece();
+    if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && move.dest.getY() == 0) {
+      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+    }
+    if (piece.piece == Piece.PAWN && piece.color == Color.WHITE && move.dest.getY() == 7) {
+      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+    }
+    return move;
   }
 }

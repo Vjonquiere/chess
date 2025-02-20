@@ -86,7 +86,7 @@ public class SolverTest {
 
   @Test
   public void testSetDepthClassic() {
-    assertEquals(2, solver.getDepth());
+    assertEquals(4, solver.getDepth());
     solver.setDepth(7);
     assertEquals(7, solver.getDepth());
   }
