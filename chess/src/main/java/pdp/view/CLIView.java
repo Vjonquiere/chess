@@ -132,7 +132,7 @@ public class CLIView implements View {
       case OUT_OF_TIME_BLACK:
         System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
         break;
-      case THREE_FOLD_REPETITION:
+      case THREEFOLD_REPETITION:
         System.out.println(TextGetter.getText("threeFoldRepetition"));
         break;
       case INSUFFICIENT_MATERIAL:
