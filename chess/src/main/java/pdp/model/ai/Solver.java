@@ -23,8 +23,6 @@ public class Solver {
   Heuristic heuristic;
   int depth = 2;
   int time = 500;
-  private boolean originalIsBlackAI;
-  private boolean originalIsWhiteAI;
 
   static {
     Logging.configureLogging(LOGGER);

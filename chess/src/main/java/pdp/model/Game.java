@@ -129,8 +129,32 @@ public class Game extends Subject {
     return solver;
   }
 
+  /**
+   * Sets the exploration field to the given boolean. Use it in the solver.
+   *
+   * @param exploration boolean corresponding to the new rights of explorationAI.
+   */
   public void setExploration(boolean exploration) {
     this.explorationAI = exploration;
+  }
+
+  /**
+   * Indicates whether the AI is exploring (playing moves in its algorithm).
+   *
+   * @return True if it is exploring, False otherwise
+   */
+  public boolean isAIExploring() {
+    return this.explorationAI;
+  }
+
+  /**
+   * Plays the first AI move if White AI is activated. The other calls to AI will be done in {@link
+   * Game#updateGameStateAfterMove}
+   */
+  public void startAI() {
+    if (isWhiteAI && this.getGameState().isWhiteTurn()) {
+      solver.playAIMove(this);
+    }
   }
 
   /**
@@ -441,9 +465,12 @@ public class Game extends Subject {
 
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
-    this.gameState.setSimplifiedZobristHashing(
-        zobristHashing.updateSimplifiedHashFromBitboards(
-            this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+    if (!explorationAI) {
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.updateSimplifiedHashFromBitboards(
+              this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+    }
+
     DEBUG(LOGGER, "Checking threefold repetition...");
     boolean threefoldRepetition =
         this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
@@ -459,13 +486,13 @@ public class Game extends Subject {
     }
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
-    if (!explorationAI) {
-      this.notifyObservers(EventType.MOVE_PLAYED);
-    }
+
+    this.notifyObservers(EventType.MOVE_PLAYED);
 
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
 
     if (!explorationAI
+        && !isOver()
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
       solver.playAIMove(this);
@@ -539,12 +566,12 @@ public class Game extends Subject {
   }
 
   /**
-   * Moves to the pevious move in history and updates the game state.
+   * Moves to the previous move in history and updates the game state.
    *
    * <p>Throws a FailedUndoException if there is no previous move to undo. Notifies observers of the
    * move undo event.
    *
-   * @throws FailedUndoException if no pevious move exists.
+   * @throws FailedUndoException if no previous move exists.
    */
   public void previousState() throws FailedUndoException {
     Optional<HistoryNode> currentNode = this.history.getCurrentMove();
@@ -556,12 +583,17 @@ public class Game extends Subject {
     if (!previousNode.isPresent()) {
       throw new FailedUndoException();
     }
+    // update zobrist to avoid threefold
+    long currBoardZobrist = this.gameState.getZobristHashing();
+    if (stateCount.containsKey(currBoardZobrist)) {
+
+      stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
+      DEBUG(LOGGER, "Current board zobrist: " + currBoardZobrist);
+    }
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(previousNode.get());
-    if (!explorationAI) {
-      this.notifyObservers(EventType.MOVE_UNDO);
-    }
+    this.notifyObservers(EventType.MOVE_UNDO);
   }
 
   /**
@@ -585,9 +617,9 @@ public class Game extends Subject {
 
     this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(nextNode.get());
-    if (!explorationAI) {
-      this.notifyObservers(EventType.MOVE_UNDO);
-    }
+
+    // TODO: MOVE_REDO + add zobrist to statesCount
+    this.notifyObservers(EventType.MOVE_UNDO);
   }
 
   /**
