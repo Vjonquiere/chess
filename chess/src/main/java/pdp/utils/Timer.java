@@ -13,15 +13,17 @@ public class Timer implements Runnable {
   private Runnable timeOverCallback;
   private long startTime;
 
-  public Timer(long time, Runnable timeOverCallback) {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public Timer(long time, Runnable timeOverCallback) {
     this.duration = time;
     this.remaining = this.duration;
     this.timeOverCallback = timeOverCallback;
   }
 
   public Timer(long time) {
-    Logging.configureLogging(LOGGER);
     this.duration = time;
     this.remaining = this.duration;
   }

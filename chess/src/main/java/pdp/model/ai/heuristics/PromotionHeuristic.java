@@ -7,6 +7,13 @@ import pdp.utils.Position;
 
 public class PromotionHeuristic implements Heuristic {
 
+  /**
+   * Computes a score according to the closeness of pawns promoting. Heuristic used for endgames.
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a score depending on the progress of the pawns
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;

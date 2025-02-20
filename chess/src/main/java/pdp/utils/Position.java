@@ -8,8 +8,11 @@ public class Position {
   int x;
   int y;
 
-  public Position(int x, int y) {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public Position(int x, int y) {
     this.y = y;
     this.x = x;
   }

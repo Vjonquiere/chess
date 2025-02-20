@@ -45,15 +45,21 @@ public class Game extends Subject {
   private History history;
   private HashMap<Long, Integer> stateCount;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
-    Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.explorationAI = false;
     this.solver = solver;
     this.gameState = gameState;
     this.history = history;
+    this.history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
     this.stateCount = new HashMap<>();
     // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
     this.gameState.setSimplifiedZobristHashing(
@@ -153,19 +159,25 @@ public class Game extends Subject {
       nbFilledConditions++;
     }
     // Number of played moves
-    Optional<HistoryNode> previousNode = history.getCurrentMove();
-    if (previousNode.isPresent()) {
-      previousNode = previousNode.get().getPrevious();
-      if (previousNode.isPresent()) {
-        HistoryNode node = previousNode.get();
-        if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-          nbFilledConditions++;
-        }
-      }
+    if (gameState.getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+      nbFilledConditions++;
     }
     // Number of possible Moves
-    int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
-    int nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+
+    int nbMovesWhite;
+    int nbMovesBlack;
+
+    if (getBoard().getBoardRep() instanceof BitboardRepresentation) {
+      nbMovesWhite =
+          ((BitboardRepresentation) getBoard().getBoardRep()).getColorMoveBitboard(true).bitCount();
+      nbMovesBlack =
+          ((BitboardRepresentation) getBoard().getBoardRep())
+              .getColorMoveBitboard(false)
+              .bitCount();
+    } else {
+      nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
+      nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+    }
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }

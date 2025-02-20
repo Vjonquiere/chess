@@ -10,6 +10,10 @@ public class HistoryNode {
   HistoryNode previous;
   HistoryNode next;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   /**
    * Constructs a new HistoryNode with the specified state and previous node.
    *
@@ -18,7 +22,6 @@ public class HistoryNode {
    *     node.
    */
   public HistoryNode(HistoryState state, HistoryNode previous) {
-    Logging.configureLogging(LOGGER);
     this.state = state;
     this.previous = previous;
     this.next = null;

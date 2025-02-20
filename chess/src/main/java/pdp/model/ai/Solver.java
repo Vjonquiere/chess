@@ -14,7 +14,7 @@ import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 
 public class Solver {
-  private final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private ZobristHashing zobristHashing = new ZobristHashing();
   private HashMap<Long, Integer> evaluatedBoards;
@@ -26,8 +26,11 @@ public class Solver {
   private boolean originalIsBlackAI;
   private boolean originalIsWhiteAI;
 
-  public Solver() {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public Solver() {
     evaluatedBoards = new HashMap<>();
     this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
@@ -57,9 +60,9 @@ public class Solver {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
       case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
-      case SPACE_CONTROL -> this.heuristic = null;
+      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
+      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
       case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
-      case PIECE_ACTIVITY -> this.heuristic = null;
       case MOBILITY -> this.heuristic = new MobilityHeuristic();
       case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
       case SHANNON -> this.heuristic = new ShannonBasic();
