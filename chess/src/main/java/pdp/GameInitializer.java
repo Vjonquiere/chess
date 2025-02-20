@@ -42,8 +42,6 @@ public abstract class GameInitializer {
       } else {
         timer = new Timer((long) 30 * 60 * 1000);
       }
-      System.err.println("Option time not implemented, defaulting to a game without time limit");
-      timer = null;
     }
 
     boolean isWhiteAI = false;
@@ -124,7 +122,7 @@ public abstract class GameInitializer {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
 
-          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver);
+          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer);
         }
 
       } catch (IOException

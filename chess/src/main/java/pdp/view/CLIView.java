@@ -26,6 +26,7 @@ import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
+import pdp.utils.Timer;
 
 public class CLIView implements View {
   private boolean running = false;
@@ -59,6 +60,8 @@ public class CLIView implements View {
     commands.put(
         "surrender",
         new CommandEntry(this::surrenderCommand, TextGetter.getText("surrenderHelpDescription")));
+    commands.put(
+        "time", new CommandEntry(this::timeCommand, TextGetter.getText("timeHelpDescription")));
   }
 
   /**
@@ -122,6 +125,12 @@ public class CLIView implements View {
       case MOVE_REDO:
         System.out.println(TextGetter.getText("moveRedone"));
         System.out.println(Game.getInstance().getGameRepresentation());
+        break;
+      case OUT_OF_TIME_WHITE:
+        System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
+        break;
+      case OUT_OF_TIME_BLACK:
+        System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
         break;
       default:
         DEBUG(LOGGER, "Received unknown game event: " + event);
@@ -302,6 +311,18 @@ public class CLIView implements View {
   private void surrenderCommand(String args) {
     BagOfCommands.getInstance()
         .addCommand(new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()));
+  }
+
+  private void timeCommand(String args) {
+    Timer timer = Game.getInstance().getGameState().getMoveTimer();
+    if (timer != null) {
+      System.out.println(
+          TextGetter.getText(
+              "timeRemainingCurrent",
+              Game.getInstance().getGameState().getMoveTimer().getTimeRemainingString()));
+    } else {
+      System.out.println(TextGetter.getText("noTimer"));
+    }
   }
 
   private record CommandEntry(Consumer<String> action, String description) {}

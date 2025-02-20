@@ -254,7 +254,11 @@ public class Game extends Subject {
    */
   public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
     DEBUG(LOGGER, "Initializing Game...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
+    if (timer != null) {
+      timer.setCallback(instance::outOfTimeCallback);
+      timer.start();
+    }
     DEBUG(LOGGER, "Game initialized!");
     return instance;
   }
@@ -271,9 +275,17 @@ public class Game extends Subject {
   public static Game initialize(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, FileBoard board) {
     DEBUG(LOGGER, "Initializing Game from given board...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History());
+    if (timer != null) {
+      timer.setCallback(instance::outOfTimeCallback);
+      timer.start();
+    }
     DEBUG(LOGGER, "Game initialized!");
     return instance;
+  }
+
+  public void outOfTimeCallback() {
+    this.gameState.playerOutOfTime(this.gameState.isWhiteTurn());
   }
 
   /**
@@ -461,6 +473,10 @@ public class Game extends Subject {
    */
   private void updateGameStateAfterMove(Move move) {
 
+    if (this.gameState.getMoveTimer() != null) {
+      this.gameState.getMoveTimer().stop();
+    }
+
     if (this.gameState.getBoard().isWhite) {
       this.gameState.incrementsFullTurn();
     }
@@ -492,6 +508,10 @@ public class Game extends Subject {
     this.notifyObservers(EventType.MOVE_PLAYED);
 
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+
+    if (this.gameState.getMoveTimer() != null && !this.gameState.isGameOver()) {
+      this.gameState.getMoveTimer().start();
+    }
 
     if (!explorationAI
         && !isOver()
@@ -567,19 +587,24 @@ public class Game extends Subject {
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
    * @param solver The solver to use for AI moves.
+   * @param timer The timer to use for the game.
    * @return A new Game object with the given moves played.
    * @throws IllegalMoveException If any of the given moves are illegal.
    */
   public static Game fromHistory(
-      List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver)
+      List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer)
       throws IllegalMoveException {
-    Game game = new Game(isWhiteAI, isBlackAI, solver, new GameState(), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
 
     for (Move move : moves) {
-      game.playMove(move);
+      instance.playMove(move);
     }
 
-    instance = game;
+    if (timer != null) {
+      timer.setCallback(instance::outOfTimeCallback);
+      timer.start();
+    }
+
     return instance;
   }
 
@@ -707,7 +732,7 @@ public class Game extends Subject {
 
   public static Game getInstance() {
     if (instance == null) {
-      instance = new Game(false, false, null, new GameState(), new History());
+      throw new IllegalStateException("Game has not been initialized");
     }
     return instance;
   }
