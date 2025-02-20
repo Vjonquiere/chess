@@ -19,7 +19,7 @@ import pdp.utils.Logging;
 public class BoardFileParser {
   private static final Logger LOGGER = Logger.getLogger(BoardFileParser.class.getName());
 
-  public BoardFileParser() {
+  static {
     Logging.configureLogging(LOGGER);
   }
 

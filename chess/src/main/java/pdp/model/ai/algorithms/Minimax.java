@@ -37,17 +37,21 @@ public class Minimax implements SearchAlgorithm {
    */
   private AIMove maxMin(Game game, int depth, boolean player) {
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game.getBoard(), player));
+      return new AIMove(null, solver.evaluateBoard(game.getBoard(), !player));
     }
     AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
-      game.playMove(move);
-      AIMove currMove = minMax(game, depth - 1, !player);
-      if (currMove.score() > bestMove.score()) {
-        bestMove = new AIMove(move, currMove.score());
+      try {
+        game.playMove(move);
+        AIMove currMove = minMax(game, depth - 1, !player);
+        if (currMove.score() > bestMove.score()) {
+          bestMove = new AIMove(move, currMove.score());
+        }
+        game.previousState();
+      } catch (Exception e) {
+        // illegal move caught
       }
-      game.previousState();
     }
     return bestMove;
   }
@@ -63,17 +67,21 @@ public class Minimax implements SearchAlgorithm {
    */
   private AIMove minMax(Game game, int depth, boolean player) {
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game.getBoard(), player));
+      return new AIMove(null, solver.evaluateBoard(game.getBoard(), !player));
     }
     AIMove bestMove = new AIMove(null, Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
-      game.playMove(move);
-      AIMove currMove = maxMin(game, depth - 1, !player);
-      if (currMove.score() < bestMove.score()) {
-        bestMove = new AIMove(move, currMove.score());
+      try {
+        game.playMove(move);
+        AIMove currMove = maxMin(game, depth - 1, !player);
+        if (currMove.score() < bestMove.score()) {
+          bestMove = new AIMove(move, currMove.score());
+        }
+        game.previousState();
+      } catch (Exception e) {
+        // illegal move caught
       }
-      game.previousState();
     }
     return bestMove;
   }

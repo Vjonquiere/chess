@@ -9,6 +9,7 @@ import pdp.model.board.Board;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
+import pdp.utils.Timer;
 
 public class GameState extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
@@ -28,9 +29,12 @@ public class GameState extends Subject {
   private long zobristHashing;
   private long simplifiedZobristHashing;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   // By default, blitz mode is not on
   public GameState() {
-    Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = true;
     this.whiteResigns = false;
@@ -65,7 +69,6 @@ public class GameState extends Subject {
    * @param board The board to use
    */
   public GameState(FileBoard board) {
-    Logging.configureLogging(LOGGER);
     this.isGameOver = false;
     this.isWhiteTurn = board.isWhiteTurn();
     this.whiteResigns = false;
@@ -96,11 +99,9 @@ public class GameState extends Subject {
     return this.moveTimer;
   }
 
-  /*
   public long getZobristHashing() {
     return this.zobristHashing;
   }
-    */
 
   public long getSimplifiedZobristHashing() {
     return this.simplifiedZobristHashing;
@@ -124,10 +125,12 @@ public class GameState extends Subject {
     this.simplifiedZobristHashing = simplifiedZobristHashing;
   }
 
+  /** Change threefoldstatus for the gamestate when it is observed */
   public void activateThreefold() {
     this.threefoldRepetition = true;
   }
 
+  /** White requests a draw */
   public void whiteWantsToDraw() {
     this.whiteWantsToDraw = true;
     if (!checkDrawAgreement()) {
@@ -135,6 +138,7 @@ public class GameState extends Subject {
     }
   }
 
+  /** Black requests a draw */
   public void blackWantsToDraw() {
     this.blackWantsToDraw = true;
     if (!checkDrawAgreement()) {
@@ -142,11 +146,13 @@ public class GameState extends Subject {
     }
   }
 
+  /** White cancels their draw request */
   public void whiteCancelsDrawRequest() {
     this.whiteWantsToDraw = false;
     notifyObservers(EventType.WHITE_UNDRAW);
   }
 
+  /** Black cancels their draw request */
   public void blackCancelsDrawRequest() {
     this.blackWantsToDraw = false;
     notifyObservers(EventType.BLACK_UNDRAW);
@@ -181,18 +187,30 @@ public class GameState extends Subject {
     notifyObservers(EventType.WIN_WHITE);
   }
 
+  /**
+   * @return true if white has resigned, false otherwise
+   */
   public boolean hasWhiteResigned() {
     return this.whiteResigns;
   }
 
+  /**
+   * @return true if black has resigned, false otherwise
+   */
   public boolean hasBlackResigned() {
     return this.blackResigns;
   }
 
+  /**
+   * @return true if black has requested a draw, false otherwise
+   */
   public boolean hasBlackRequestedDraw() {
     return this.blackWantsToDraw;
   }
 
+  /**
+   * @return true if white has requested a draw, false otherwise
+   */
   public boolean hasWhiteRequestedDraw() {
     return this.whiteWantsToDraw;
   }
@@ -219,14 +237,23 @@ public class GameState extends Subject {
     return false;
   }
 
+  /**
+   * @return true if white lost on time at this state of the game, false otherwise
+   */
   public boolean hasWhiteLostOnTime() {
     return this.whiteLosesOnTime;
   }
 
+  /**
+   * @return true if black lost on time at this state of the game; false otherwise
+   */
   public boolean hasBlackLostOnTime() {
     return this.blackLosesOnTime;
   }
 
+  /**
+   * @return true if the match is over for this state of the , false otherwise
+   */
   public boolean isGameOver() {
     return this.isGameOver;
   }
@@ -246,6 +273,9 @@ public class GameState extends Subject {
     notifyObservers(EventType.DRAW);
   }
 
+  /**
+   * @return true if the game has stated a threefold repetiton rule, false otherwise
+   */
   public boolean isThreefoldRepetition() {
     return this.threefoldRepetition;
   }
@@ -334,5 +364,59 @@ public class GameState extends Subject {
       this.isGameOver = true;
       notifyObservers(EventType.DRAW);
     }
+  }
+
+  /**
+   * Creates a deep copy of this GameState object. Copies all fields to ensure a completely
+   * independent state.
+   *
+   * @return A new instance of GameState with the same state as the current object.
+   */
+  public GameState getCopy() {
+    GameState copy = new GameState();
+
+    copy.board = this.board.getCopy();
+    copy.isWhiteTurn = this.isWhiteTurn;
+    copy.whiteWantsToDraw = this.whiteWantsToDraw;
+    copy.blackWantsToDraw = this.blackWantsToDraw;
+    copy.whiteResigns = this.whiteResigns;
+    copy.blackResigns = this.blackResigns;
+    copy.whiteLosesOnTime = this.whiteLosesOnTime;
+    copy.blackLosesOnTime = this.blackLosesOnTime;
+    copy.isGameOver = this.isGameOver;
+    copy.threefoldRepetition = this.threefoldRepetition;
+    copy.fullTurnNumber = this.fullTurnNumber;
+    copy.zobristHashing = this.zobristHashing;
+    copy.simplifiedZobristHashing = this.simplifiedZobristHashing;
+
+    /* if (this.moveTimer != null) {
+        copy.moveTimer = this.moveTimer.getCopy();
+    } else {
+        copy.moveTimer = null;
+    } */
+
+    return copy;
+  }
+
+  /**
+   * Updates the current game state with the values from another game state.
+   *
+   * @param gameState The GameState from which to copy the values.
+   */
+  public void updateFrom(GameState gameState) {
+    this.board = gameState.getBoard();
+    this.moveTimer = gameState.getMoveTimer();
+    this.isWhiteTurn = gameState.isWhiteTurn();
+    this.whiteWantsToDraw = gameState.hasWhiteRequestedDraw();
+    this.blackWantsToDraw = gameState.hasBlackRequestedDraw();
+    this.whiteResigns = gameState.hasWhiteResigned();
+    this.blackResigns = gameState.hasBlackResigned();
+    this.whiteLosesOnTime = gameState.hasWhiteLostOnTime();
+    this.blackLosesOnTime = gameState.hasBlackLostOnTime();
+    this.isGameOver = gameState.isGameOver();
+    this.threefoldRepetition = gameState.isThreefoldRepetition();
+    this.fullTurnNumber = gameState.getFullTurn();
+    this.zobristHashing = gameState.getZobristHashing();
+    this.simplifiedZobristHashing = gameState.getSimplifiedZobristHashing();
   }
 }

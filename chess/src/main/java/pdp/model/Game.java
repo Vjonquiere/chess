@@ -16,7 +16,9 @@ import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.*;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
@@ -29,6 +31,7 @@ import pdp.model.savers.BoardSaver;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
+import pdp.utils.Timer;
 
 public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
@@ -41,14 +44,20 @@ public class Game extends Subject {
   private History history;
   private HashMap<Long, Integer> stateCount;
 
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
   private Game(
       boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
-    Logging.configureLogging(LOGGER);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.solver = solver;
     this.gameState = gameState;
     this.history = history;
+    this.history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
     this.stateCount = new HashMap<>();
     // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
     this.gameState.setSimplifiedZobristHashing(
@@ -92,12 +101,39 @@ public class Game extends Subject {
   }
 
   /**
+   * Returns whether the White player is controlled by an AI.
+   *
+   * @return true if the White player is an AI, false otherwise.
+   */
+  public boolean isWhiteAI() {
+    return isWhiteAI;
+  }
+
+  /**
+   * Returns whether the Black player is controlled by an AI.
+   *
+   * @return true if the Black player is an AI, false otherwise.
+   */
+  public boolean isBlackAI() {
+    return isBlackAI;
+  }
+
+  /**
+   * Gets the solver used by the AI.
+   *
+   * @return the {@link Solver} instance used for AI decision-making.
+   */
+  public Solver getSolver() {
+    return solver;
+  }
+
+  /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
    * @return true if wer're in an endgame (according to the chosen criterias)
    */
   public boolean isEndGamePhase() {
-    int nbRequiredConditions = 3;
+    int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 
     int halfNbPieces = 16;
@@ -117,20 +153,28 @@ public class Game extends Subject {
       nbFilledConditions++;
     }
     // Number of played moves
-    Optional<HistoryNode> previousNode = history.getPrevious();
-    if (previousNode.isPresent()) {
-      HistoryNode node = previousNode.get();
-      if (node.getState().getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-        nbFilledConditions++;
-      }
+    if (gameState.getFullTurn() >= nbPlayedMovesBeforeEndGame) {
+      nbFilledConditions++;
     }
     // Number of possible Moves
-    int nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
-    int nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+
+    int nbMovesWhite;
+    int nbMovesBlack;
+
+    if (getBoard().getBoardRep() instanceof BitboardRepresentation) {
+      nbMovesWhite =
+          ((BitboardRepresentation) getBoard().getBoardRep()).getColorMoveBitboard(true).bitCount();
+      nbMovesBlack =
+          ((BitboardRepresentation) getBoard().getBoardRep())
+              .getColorMoveBitboard(false)
+              .bitCount();
+    } else {
+      nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
+      nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
+    }
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }
-
     // Pawns progresses on the board
     if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
       nbFilledConditions++;
@@ -388,8 +432,6 @@ public class Game extends Subject {
     if (this.gameState.getBoard().isWhite) {
       this.gameState.incrementsFullTurn();
     }
-    this.history.addMove(
-        new HistoryState(move, this.gameState.getFullTurn(), this.gameState.getBoard().isWhite));
 
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
@@ -402,9 +444,17 @@ public class Game extends Subject {
     if (threefoldRepetition) {
       this.gameState.activateThreefold();
     }
+    DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
+    if (isEndGamePhase() && this.solver != null) {
+      // Set endgame heuristic only once and only if endgame phase
+      if (!(solver.getHeuristic() instanceof EndGameHeuristic)) {
+        this.solver.setHeuristic(HeuristicType.ENDGAME);
+      }
+    }
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
     this.notifyObservers(EventType.MOVE_PLAYED);
+    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
   }
 
   /**
@@ -473,20 +523,54 @@ public class Game extends Subject {
     return instance;
   }
 
-  public void previousState() {
-    // TODO: restore previous state from history
+  /**
+   * Moves to the pevious move in history and updates the game state.
+   *
+   * <p>Throws a FailedUndoException if there is no previous move to undo. Notifies observers of the
+   * move undo event.
+   *
+   * @throws FailedUndoException if no pevious move exists.
+   */
+  public void previousState() throws FailedUndoException {
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+    if (!currentNode.isPresent()) {
+      throw new FailedUndoException();
+    }
 
-    throw new FailedUndoException();
+    Optional<HistoryNode> previousNode = currentNode.get().getPrevious();
+    if (!previousNode.isPresent()) {
+      throw new FailedUndoException();
+    }
 
-    // this.notifyObservers(EventType.MOVE_UNDO);
+    this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
+    this.history.setCurrentMove(previousNode.get());
+
+    this.notifyObservers(EventType.MOVE_UNDO);
   }
 
-  public void nextState() {
-    // TODO: restore previous state from history
+  /**
+   * Moves to the next move in history and updates the game state.
+   *
+   * <p>Throws a FailedRedoException if there is no next move to redo. Notifies observers of the
+   * move redo event.
+   *
+   * @throws FailedRedoException if no next move exists.
+   */
+  public void nextState() throws FailedRedoException {
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+    if (!currentNode.isPresent()) {
+      throw new FailedRedoException();
+    }
 
-    throw new FailedRedoException();
+    Optional<HistoryNode> nextNode = currentNode.get().getNext();
+    if (!nextNode.isPresent()) {
+      throw new FailedRedoException();
+    }
 
-    // this.notifyObservers(EventType.MOVE_REDO);
+    this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
+    this.history.setCurrentMove(nextNode.get());
+
+    this.notifyObservers(EventType.MOVE_UNDO);
   }
 
   /**

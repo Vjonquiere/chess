@@ -8,8 +8,11 @@ public class Position {
   int x;
   int y;
 
-  public Position(int x, int y) {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public Position(int x, int y) {
     this.y = y;
     this.x = x;
   }
@@ -20,6 +23,10 @@ public class Position {
 
   public int getY() {
     return y;
+  }
+
+  public boolean isValid() {
+    return getX() <= 7 && getX() >= 0 && getY() <= 7 && getY() >= 0;
   }
 
   public boolean equals(Object obj) {
@@ -37,5 +44,14 @@ public class Position {
   @Override
   public String toString() {
     return "Position [x=" + x + ", y=" + y + "]";
+  }
+
+  /**
+   * Creates a deep copy of this Timer object.
+   *
+   * @return A new Position instance with the same state as the current object.
+   */
+  public Position getCopy() {
+    return new Position(this.x, this.y);
   }
 }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
+import pdp.utils.Timer;
 
 public class GameStateTest {
 
