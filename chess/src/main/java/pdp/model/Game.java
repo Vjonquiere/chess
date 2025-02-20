@@ -511,6 +511,7 @@ public class Game extends Subject {
 
     if (this.gameState.getMoveTimer() != null) {
       this.gameState.getMoveTimer().start();
+    }
 
     if (!explorationAI
         && !isOver()
