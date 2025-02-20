@@ -80,7 +80,7 @@ public class GameState extends Subject {
     this.threefoldRepetition = false;
     this.board = new Board(board);
     this.moveTimer = null;
-    this.fullTurnNumber = 0;
+    this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
 
   public boolean isWhiteTurn() {

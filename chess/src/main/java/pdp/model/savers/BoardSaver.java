@@ -1,6 +1,8 @@
 package pdp.model.savers;
 
 import pdp.model.board.BoardRepresentation;
+import pdp.model.board.Move;
+import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
@@ -21,6 +23,39 @@ public class BoardSaver {
       sb.append("W\n");
     } else {
       sb.append("B\n");
+    }
+
+    if (board.header() != null) {
+      FenHeader header = board.header();
+      if (header.whiteKingCastling()) {
+        sb.append("K");
+      }
+      if (header.whiteQueenCastling()) {
+        sb.append("Q");
+      }
+      if (header.blackKingCastling()) {
+        sb.append("k");
+      }
+      if (header.blackQueenCastling()) {
+        sb.append("q");
+      }
+      if (!header.whiteKingCastling()
+          && !header.whiteQueenCastling()
+          && !header.blackKingCastling()
+          && !header.blackQueenCastling()) {
+        sb.append("-");
+      }
+      sb.append(" ");
+
+      if (header.enPassant() != null) {
+        sb.append(Move.positionToString(header.enPassant()));
+      } else {
+        sb.append("-");
+      }
+      sb.append(" ");
+      sb.append(header.fiftyMoveRule()).append(" ");
+      sb.append(header.playedMoves()).append(" ");
+      sb.append("\n");
     }
 
     BoardRepresentation representation = board.board();

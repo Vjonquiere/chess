@@ -281,4 +281,54 @@ public class GameFileParserTest {
     parser.parseGameFile(filePath.getPath(), mockRuntime);
     verify(mockRuntime).exit(1);
   }
+
+  @Test
+  public void parseOneMoveFromFiftyMoveRule() {
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/oneMoveFromFifty");
+    FileBoard fb = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    assertTrue(fb.header().whiteKingCastling());
+    assertTrue(fb.header().whiteQueenCastling());
+    assertTrue(fb.header().blackKingCastling());
+    assertTrue(fb.header().blackQueenCastling());
+    assertNull(fb.header().enPassant());
+    assertEquals(99, fb.header().fiftyMoveRule());
+    assertEquals(140, fb.header().playedMoves());
+
+    Game game = Game.initialize(false, false, null, null, fb);
+
+    // Checking params are given to the game
+    assertNull(game.getBoard().enPassantPos);
+    assertEquals(49, game.getBoard().getNbMovesWithNoCaptureOrPawn());
+    assertEquals(140, game.getGameState().getFullTurn());
+
+    assertFalse(Game.getInstance().isOver());
+    game.playMove(
+        new Move(
+            new Position(3, 0),
+            new Position(5, 2),
+            new ColoredPiece(Piece.QUEEN, Color.WHITE),
+            false)); // Play a move to force 50 move rule
+    assertTrue(Game.getInstance().isOver());
+  }
+
+  @Test
+  public void parseNotLinearHistory() {
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/notLinearHistory");
+    FileBoard fb = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    assertTrue(fb.header().whiteKingCastling());
+    assertTrue(fb.header().whiteQueenCastling());
+    assertTrue(fb.header().blackKingCastling());
+    assertTrue(fb.header().blackQueenCastling());
+    assertEquals(new Position(0, 2), fb.header().enPassant());
+    assertEquals(0, fb.header().fiftyMoveRule());
+    assertEquals(141, fb.header().playedMoves());
+
+    Game game = Game.initialize(false, false, null, null, fb);
+
+    // Checking params are given to the game
+    assertEquals(0, game.getBoard().getNbMovesWithNoCaptureOrPawn());
+    assertEquals(141, game.getGameState().getFullTurn());
+    assertEquals(new Position(0, 2), game.getBoard().enPassantPos);
+    assertFalse(Game.getInstance().isOver());
+  }
 }

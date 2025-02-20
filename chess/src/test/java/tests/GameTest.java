@@ -13,6 +13,7 @@ import pdp.model.Game;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.model.savers.BoardSaver;
 import pdp.utils.Position;
@@ -545,7 +546,10 @@ public class GameTest {
 
     String board =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer(), null));
+            new FileBoard(
+                game.getBoard().getBoardRep(),
+                game.getBoard().getPlayer(),
+                new FenHeader(true, true, true, true, null, 0, 0)));
 
     assertTrue(content.contains(board));
 
@@ -568,7 +572,10 @@ public class GameTest {
 
     String board =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer(), null));
+            new FileBoard(
+                game.getBoard().getBoardRep(),
+                game.getBoard().getPlayer(),
+                new FenHeader(true, true, true, true, new Position(4, 2), 0, 1)));
 
     assertTrue(content.contains(board));
 
