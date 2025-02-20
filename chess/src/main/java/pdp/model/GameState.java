@@ -74,7 +74,7 @@ public class GameState extends Subject {
     this.isWhiteTurn = board.isWhiteTurn();
     this.board = new Board(board);
     this.moveTimer = timer;
-    this.fullTurnNumber = 0;
+    this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
 
   public boolean isWhiteTurn() {
