@@ -198,6 +198,7 @@ public class GameState extends Subject {
   public void whiteResigns() {
     this.whiteResigns = true;
     this.isGameOver = true;
+    notifyObservers(EventType.WHITE_RESIGNS);
     notifyObservers(EventType.WIN_BLACK);
   }
 
@@ -205,6 +206,7 @@ public class GameState extends Subject {
   public void blackResigns() {
     this.blackResigns = true;
     this.isGameOver = true;
+    notifyObservers(EventType.BLACK_RESIGNS);
     notifyObservers(EventType.WIN_WHITE);
   }
 
@@ -266,6 +268,7 @@ public class GameState extends Subject {
   /** Fifty move rule is observed so change game status to 'Over', it's a draw */
   public void applyFiftyMoveRule() {
     this.isGameOver = true;
+    notifyObservers(EventType.FIFTY_MOVE_RULE);
     notifyObservers(EventType.DRAW);
   }
 
@@ -297,9 +300,11 @@ public class GameState extends Subject {
       this.isGameOver = true;
       if (currColor == Color.WHITE) {
         DEBUG(LOGGER, "End of game : Checkmate, Black won");
+        notifyObservers(EventType.CHECKMATE_BLACK);
         notifyObservers(EventType.WIN_BLACK);
       } else {
         DEBUG(LOGGER, "End of game : Checkmate, White won");
+        notifyObservers(EventType.CHECKMATE_WHITE);
         notifyObservers(EventType.WIN_WHITE);
       }
       return;
@@ -308,6 +313,7 @@ public class GameState extends Subject {
     if (board.getBoardRep().isStaleMate(currColor, currColor)) {
       this.isGameOver = true;
       DEBUG(LOGGER, "End of game : Stale mate, Draw");
+      notifyObservers(EventType.STALEMATE);
       notifyObservers(EventType.DRAW);
       return;
     }
@@ -315,12 +321,14 @@ public class GameState extends Subject {
     if (board.getBoardRep().isDrawByInsufficientMaterial()) {
       DEBUG(LOGGER, "End of game : Insufficient material, Draw");
       this.isGameOver = true;
+      notifyObservers(EventType.INSUFFICIENT_MATERIAL);
       notifyObservers(EventType.DRAW);
     }
     // Threefold repetition
     if (this.threefoldRepetition) {
       DEBUG(LOGGER, "End of game : Threefold repetition, Draw");
       this.isGameOver = true;
+      notifyObservers(EventType.THREEFOLD_REPETITION);
       notifyObservers(EventType.DRAW);
     }
   }

@@ -132,6 +132,34 @@ public class CLIView implements View {
       case OUT_OF_TIME_BLACK:
         System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
         break;
+      case THREE_FOLD_REPETITION:
+        System.out.println(TextGetter.getText("threeFoldRepetition"));
+        break;
+      case INSUFFICIENT_MATERIAL:
+        System.out.println(TextGetter.getText("insufficientMaterial"));
+        break;
+      case FIFTY_MOVE_RULE:
+        System.out.println(TextGetter.getText("fiftyMoveRule"));
+        break;
+      case WHITE_RESIGNS:
+        System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
+        break;
+      case BLACK_RESIGNS:
+        System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
+        break;
+      case CHECKMATE_WHITE:
+        System.out.println(
+            TextGetter.getText(
+                "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
+        break;
+      case CHECKMATE_BLACK:
+        System.out.println(
+            TextGetter.getText(
+                "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
+        break;
+      case STALEMATE:
+        System.out.println(TextGetter.getText("stalemate"));
+        break;
       default:
         DEBUG(LOGGER, "Received unknown game event: " + event);
         break;
