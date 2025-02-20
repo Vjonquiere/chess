@@ -8,13 +8,26 @@ import pdp.utils.Position;
 
 public class BishopEndgameHeuristic implements Heuristic {
 
+  /**
+   * Computes a score according to how performant bishops are for an endgame position. Heuristic
+   * used for endgames.
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a score depending on the progress of the pawns
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += evaluateBishopMobility(board, isWhite);
-    score += evaluateSameColorBishops(board, isWhite);
-    score += evaluateCentralization(board, isWhite);
-    score += evaluateBadBishop(board, isWhite);
+    score += evaluateBishopMobility(board, isWhite) - evaluateBishopMobility(board, !isWhite);
+    score +=
+        evaluateSameColorBishopsSamePlayer(board, isWhite)
+            - evaluateSameColorBishopsSamePlayer(board, !isWhite);
+    score +=
+        evaluateSameColorBishopsOpponent(board, isWhite)
+            - evaluateSameColorBishopsOpponent(board, !isWhite);
+    score += evaluateCentralization(board, isWhite) - evaluateCentralization(board, !isWhite);
+    score += evaluateBadBishop(board, isWhite) - evaluateBadBishop(board, !isWhite);
     return score;
   }
 
@@ -42,18 +55,49 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return Negative score if bishops are on the same color
    */
-  private int evaluateSameColorBishops(Board board, boolean isWhite) {
+  private int evaluateSameColorBishopsSamePlayer(Board board, boolean isWhite) {
     List<Position> bishops = board.getBoardRep().getBishops(isWhite);
     if (bishops.size() < 2) {
       return 0;
     }
 
-    boolean sameColorBishops =
-        (bishops.get(0).getX() + bishops.get(0).getY()) % 2
-            == (bishops.get(1).getX() + bishops.get(1).getY()) % 2;
+    boolean sameColorBishops = false;
+    if (bishops.size() > 0) {
+      sameColorBishops =
+          (bishops.get(0).getX() + bishops.get(0).getY()) % 2
+              == (bishops.get(1).getX() + bishops.get(1).getY()) % 2;
+    }
 
     if (sameColorBishops) {
       return -10;
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Increases score having a bishop on the same color squares as the bishop's opponent
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return Positive score if bishops are on the same color, 0 otherwise
+   */
+  private int evaluateSameColorBishopsOpponent(Board board, boolean isWhite) {
+    List<Position> bishopsPlayer1 = board.getBoardRep().getBishops(isWhite);
+    List<Position> bishopsPlayer2 = board.getBoardRep().getBishops(!isWhite);
+    if (bishopsPlayer1.size() > 1 || bishopsPlayer2.size() > 1) {
+      return 0;
+    }
+
+    boolean sameColorBishops = false;
+    if (!bishopsPlayer1.isEmpty() && !bishopsPlayer2.isEmpty()) {
+      sameColorBishops =
+          (bishopsPlayer1.get(0).getX() + bishopsPlayer1.get(0).getY()) % 2
+              == (bishopsPlayer2.get(0).getX() + bishopsPlayer2.get(0).getY()) % 2;
+    }
+
+    if (sameColorBishops) {
+      return 5;
     } else {
       return 0;
     }

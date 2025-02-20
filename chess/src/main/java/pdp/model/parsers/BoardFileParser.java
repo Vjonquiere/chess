@@ -19,7 +19,7 @@ import pdp.utils.Logging;
 public class BoardFileParser {
   private static final Logger LOGGER = Logger.getLogger(BoardFileParser.class.getName());
 
-  public BoardFileParser() {
+  static {
     Logging.configureLogging(LOGGER);
   }
 
@@ -59,7 +59,7 @@ public class BoardFileParser {
     } catch (FileNotFoundException e) {
       System.out.println("File not found, loading default game");
       runtime.exit(1);
-      return new FileBoard(new BitboardRepresentation(), true);
+      return new FileBoard(new BitboardRepresentation(), true, null);
     }
     content = content.split("1\\.")[0].trim(); // Removing history if present
     try {
@@ -89,7 +89,7 @@ public class BoardFileParser {
     } catch (Exception e) {
       System.out.println("Failed to build board: " + e.getMessage());
       runtime.exit(1);
-      return new FileBoard(new BitboardRepresentation(), true);
+      return new FileBoard(new BitboardRepresentation(), true, null);
     }
   }
 }

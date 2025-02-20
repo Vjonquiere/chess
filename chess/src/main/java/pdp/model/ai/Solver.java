@@ -1,5 +1,7 @@
 package pdp.model.ai;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.model.Game;
@@ -12,21 +14,24 @@ import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 
 public class Solver {
-  private final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private ZobristHashing zobristHashing = new ZobristHashing();
   private HashMap<Long, Integer> evaluatedBoards;
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
-  int depth = 3;
+  int depth = 4;
   int time = 500;
 
-  public Solver() {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public Solver() {
     evaluatedBoards = new HashMap<>();
-    this.algorithm = new Minimax(this);
-    this.heuristic = new MaterialHeuristic();
+    this.algorithm = new AlphaBeta(this);
+    this.heuristic = new StandardHeuristic();
   }
 
   /**
@@ -41,6 +46,7 @@ public class Solver {
       case MCTS -> this.algorithm = null;
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
+    DEBUG(LOGGER, "Algorithm set to " + algorithm);
   }
 
   /**
@@ -51,11 +57,10 @@ public class Solver {
   public void setHeuristic(HeuristicType heuristic) {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
-      case POSITIONAL -> this.heuristic = null;
-      case KING_SAFETY -> this.heuristic = null;
-      case SPACE_CONTROL -> this.heuristic = null;
-      case PAWN_STRUCTURE -> this.heuristic = null;
-      case PIECE_ACTIVITY -> this.heuristic = null;
+      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
+      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
+      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
+      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
       case MOBILITY -> this.heuristic = new MobilityHeuristic();
       case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
       case SHANNON -> this.heuristic = new ShannonBasic();
@@ -64,6 +69,34 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
+  }
+
+  /**
+   * Retrieve the current heuristic
+   *
+   * @return the current heuristic that the solver uses
+   */
+  public Heuristic getHeuristic() {
+    return this.heuristic;
+  }
+
+  /**
+   * Retrieve the current algorithm
+   *
+   * @return the current SearchAlgorithm that the solver uses
+   */
+  public SearchAlgorithm getAlgorithm() {
+    return this.algorithm;
+  }
+
+  /**
+   * Retrieve the maximum depth of AI exploration
+   *
+   * @return maximum depth
+   */
+  public int getDepth() {
+    return depth;
   }
 
   /**
@@ -72,6 +105,10 @@ public class Solver {
    * @param depth The depth to use.
    */
   public void setDepth(int depth) {
+    if (depth <= 0) {
+      throw new IllegalArgumentException("Depth must be greater than 0");
+    }
+    DEBUG(LOGGER, "Depth set to " + depth);
     this.depth = depth;
   }
 
@@ -93,12 +130,17 @@ public class Solver {
     if (algorithm == null) {
       throw new IllegalStateException("No algorithm has been set");
     }
+    System.out.println("AI is going to play");
+    game.setExploration(true);
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    DEBUG(LOGGER, "Best move " + bestMove);
+    game.setExploration(false);
     game.playMove(bestMove.move());
   }
 
   /**
-   * Evaluates the board based on the chosen heuristic.
+   * Evaluates the board based on the chosen heuristic. Use Zobrist Hashing to avoid recalculating
+   * scores.
    *
    * @param board Current board to evaluate
    * @param isWhite Current player

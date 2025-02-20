@@ -386,4 +386,75 @@ public class CLIOptionsTest {
     assertNull(activatedOptions.get(OptionType.CONFIG));
     defaultConfigField.set(null, originalDefault);
   }
+
+  @Test
+  public void testAIActivation() {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    // activate AI option with white
+    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=W"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("ai option activated"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI)
+            && activatedOptions.get(OptionType.AI).equals("W"));
+    outputStream.reset();
+    // activate AI option with black
+    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=B"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("ai option activated"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI)
+            && activatedOptions.get(OptionType.AI).equals("B"));
+    outputStream.reset();
+    // activate AI option with black and white
+    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=A"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("ai option activated"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI)
+            && activatedOptions.get(OptionType.AI).equals("A"));
+
+    outputStream.reset();
+  }
+
+  @Test
+  public void testMissingAIActivation() {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    // activate AI mode
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-mode=MINIMAX"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-mode requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_MODE)
+            && activatedOptions.get(OptionType.AI_MODE).equals("MINIMAX"));
+    outputStream.reset();
+    // activate AI heuristic
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-heuristic=MATERIAL"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-heuristic requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_HEURISTIC)
+            && activatedOptions.get(OptionType.AI_HEURISTIC).equals("MATERIAL"));
+    outputStream.reset();
+    // activate AI depth
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-depth=5"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-depth requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_DEPTH)
+            && activatedOptions.get(OptionType.AI_DEPTH).equals("5"));
+
+    outputStream.reset();
+  }
+
+  @Test
+  public void testGetShortOptionNull() {
+    // Check that the options without a short name return null when queried.
+    assertNull(OptionType.AI_MODE.getShort());
+    assertNull(OptionType.AI_TIME.getShort());
+    assertNull(OptionType.AI_DEPTH.getShort());
+    assertNull(OptionType.AI_HEURISTIC.getShort());
+    assertNull(OptionType.LOAD.getShort());
+    assertNull(OptionType.CONFIG.getShort());
+    assertNull(OptionType.LANG.getShort());
+  }
 }

@@ -3,6 +3,8 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import pdp.exceptions.InvalidPositionException;
+import pdp.model.Game;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
@@ -117,5 +119,98 @@ public class MoveTest {
     assertEquals(Piece.PAWN, Move.stringToPiece("P"));
     assertEquals(Piece.KING, Move.stringToPiece("K"));
     assertThrows(IllegalArgumentException.class, () -> Move.stringToPiece("A"));
+  }
+
+  @Test
+  public void testStringToPositionLengthError() {
+    assertThrows(InvalidPositionException.class, () -> Move.stringToPosition("e3-e4-e5"));
+  }
+
+  @Test
+  public void testStringToPositionColAndRow() {
+    assertThrows(InvalidPositionException.class, () -> Move.stringToPosition("e2-e9"));
+    assertThrows(InvalidPositionException.class, () -> Move.stringToPosition("e0-e4"));
+    assertThrows(InvalidPositionException.class, () -> Move.stringToPosition("!2-e4"));
+    assertThrows(InvalidPositionException.class, () -> Move.stringToPosition("i2-e7"));
+  }
+
+  @Test
+  public void testGetPiece() {
+    Game game = Game.initialize(false, false, null, null);
+
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+    Move move2 = new Move(new Position(4, 6), new Position(4, 4));
+    game.playMove(move2);
+
+    assertEquals(
+        game.getHistory().getCurrentMove().get().getState().getMove().getPiece().piece, Piece.PAWN);
+  }
+
+  @Test
+  public void testIsTake() {
+    Game game = Game.initialize(false, false, null, null);
+
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+    Move move2 = new Move(new Position(4, 6), new Position(4, 4));
+    game.playMove(move2);
+    Move move3 = new Move(new Position(3, 1), new Position(3, 3));
+    game.playMove(move3);
+    Move move4 = new Move(new Position(4, 4), new Position(3, 3));
+    game.playMove(move4);
+
+    assertEquals(game.getHistory().getCurrentMove().get().getState().getMove().isTake(), true);
+  }
+
+  @Test
+  public void testIsCheck() {
+    Game game = Game.initialize(false, false, null, null);
+
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+    Move move2 = new Move(new Position(4, 6), new Position(4, 4));
+    game.playMove(move2);
+    Move move3 = new Move(new Position(3, 1), new Position(3, 3));
+    game.playMove(move3);
+    Move move4 = new Move(new Position(4, 4), new Position(3, 3));
+    game.playMove(move4);
+
+    assertEquals(game.getHistory().getCurrentMove().get().getState().getMove().isCheck(), false);
+  }
+
+  @Test
+  public void testSetCheck() {
+    Game game = Game.initialize(false, false, null, null);
+
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+    Move move2 = new Move(new Position(4, 6), new Position(4, 4));
+    game.playMove(move2);
+    Move move3 = new Move(new Position(3, 1), new Position(3, 3));
+    game.playMove(move3);
+    Move move4 = new Move(new Position(4, 4), new Position(3, 3));
+    game.playMove(move4);
+
+    assertEquals(game.getHistory().getCurrentMove().get().getState().getMove().isTake(), true);
+    game.getHistory().getCurrentMove().get().getState().getMove().setTake(false);
+    assertEquals(game.getHistory().getCurrentMove().get().getState().getMove().isTake(), false);
+  }
+
+  @Test
+  public void testIsCheckMate() {
+    Game game = Game.initialize(false, false, null, null);
+
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+    Move move2 = new Move(new Position(4, 6), new Position(4, 4));
+    game.playMove(move2);
+    Move move3 = new Move(new Position(3, 1), new Position(3, 3));
+    game.playMove(move3);
+    Move move4 = new Move(new Position(4, 4), new Position(3, 3));
+    game.playMove(move4);
+
+    assertEquals(
+        game.getHistory().getCurrentMove().get().getState().getMove().isCheckMate(), false);
   }
 }
