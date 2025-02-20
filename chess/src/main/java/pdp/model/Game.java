@@ -510,7 +510,6 @@ public class Game extends Subject {
    * @param path The path to the file to write to.
    * @throws FailedSaveException If the file cannot be written to.
    */
-
   public void saveGame(String path) throws FailedSaveException {
     boolean[] castlingRights = getBoard().getCastlingRights();
     String board =
