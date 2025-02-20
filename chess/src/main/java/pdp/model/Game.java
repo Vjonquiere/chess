@@ -469,14 +469,14 @@ public class Game extends Subject {
       this.gameState.setSimplifiedZobristHashing(
           zobristHashing.updateSimplifiedHashFromBitboards(
               this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+      DEBUG(LOGGER, "Checking threefold repetition...");
+      boolean threefoldRepetition =
+          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        this.gameState.activateThreefold();
+      }
     }
 
-    DEBUG(LOGGER, "Checking threefold repetition...");
-    boolean threefoldRepetition =
-        this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
-    if (threefoldRepetition) {
-      this.gameState.activateThreefold();
-    }
     DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase() && this.solver != null) {
       // Set endgame heuristic only once and only if endgame phase
