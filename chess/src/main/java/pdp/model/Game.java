@@ -13,6 +13,7 @@ import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
 import pdp.exceptions.FailedRedoException;
+import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
@@ -506,8 +507,9 @@ public class Game extends Subject {
    * the game in standard algebraic notation.
    *
    * @param path The path to the file to write to.
+   * @throws FailedSaveException If the file cannot be written to.
    */
-  public void saveGame(String path) {
+  public void saveGame(String path) throws FailedSaveException {
     String board =
         BoardSaver.saveBoard(new FileBoard(this.getBoard().board, this.getBoard().isWhite, null));
     String gameStr = this.history.toAlgebraicString();
@@ -517,8 +519,11 @@ public class Game extends Subject {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(game);
     } catch (IOException e) {
-      System.err.println("Error writing to file: " + e.getMessage());
+      DEBUG(LOGGER, "Error writing to file: " + e.getMessage());
+      throw new FailedSaveException(path);
     }
+    DEBUG(LOGGER, "Game saved to " + path);
+    this.notifyObservers(EventType.GAME_SAVED);
   }
 
   /**
