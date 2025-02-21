@@ -50,7 +50,13 @@ public class Game extends Subject {
   }
 
   private Game(
-      boolean isWhiteAI, boolean isBlackAI, Solver solver, GameState gameState, History history) {
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      GameState gameState,
+      History history,
+      HashMap<OptionType, String> options) {
+    this.options = options;
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.explorationAI = false;
@@ -263,7 +269,7 @@ public class Game extends Subject {
       Timer timer,
       HashMap<OptionType, String> options) {
     DEBUG(LOGGER, "Initializing Game...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
       timer.start();
@@ -290,7 +296,8 @@ public class Game extends Subject {
       FileBoard board,
       HashMap<OptionType, String> options) {
     DEBUG(LOGGER, "Initializing Game from given board...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History());
+    instance =
+        new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History(), options);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
       timer.start();
@@ -617,7 +624,7 @@ public class Game extends Subject {
       Timer timer,
       HashMap<OptionType, String> options)
       throws IllegalMoveException {
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
+    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
 
     for (Move move : moves) {
       instance.playMove(move);
