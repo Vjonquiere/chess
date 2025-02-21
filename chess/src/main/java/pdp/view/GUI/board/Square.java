@@ -1,0 +1,38 @@
+package pdp.view.GUI.board;
+
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
+
+public class Square extends StackPane {
+  public Square(ColoredPiece piece, boolean squareColor) {
+    Canvas sq = new Canvas(100, 100);
+    GraphicsContext gc = sq.getGraphicsContext2D();
+    if (squareColor) {
+      gc.setFill(Color.web("#DAE0F2"));
+    } else {
+      gc.setFill(Color.web("#6D6FD9"));
+    }
+    gc.fillRect(0, 0, 100, 100);
+    super.getChildren().add(sq);
+    if (piece != null && piece.piece != Piece.EMPTY) {
+      super.getChildren().add(addPiece(piece));
+    }
+  }
+
+  private ImageView addPiece(ColoredPiece piece) {
+    String color = piece.color == pdp.model.piece.Color.WHITE ? "white" : "black";
+    String path =
+        "/assets/pieces/" + color + "/" + piece.piece.getCharRepresentation(false) + ".png";
+    Image image = new Image(getClass().getResourceAsStream(path));
+    ImageView imageView = new ImageView(image);
+    imageView.setFitWidth(50);
+    imageView.setFitHeight(50);
+    return imageView;
+  }
+}

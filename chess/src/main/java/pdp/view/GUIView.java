@@ -9,6 +9,7 @@ import pdp.utils.Logging;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.ChessMenu;
 import pdp.view.GUI.GUILauncher;
+import pdp.view.GUI.board.Board;
 
 public class GUIView implements View {
   private static final Logger LOGGER = Logger.getLogger(GUIView.class.getName());
@@ -28,6 +29,7 @@ public class GUIView implements View {
   public void init(Stage stage) {
     stage.setTitle(TextGetter.getText("title"));
     root.setTop(new ChessMenu());
+    root.setCenter(new Board());
     Scene scene = new Scene(root, 1280, 720);
     stage.setScene(scene);
     this.stage = stage;
