@@ -30,10 +30,7 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.model.savers.BoardSaver;
-import pdp.utils.Logging;
-import pdp.utils.Position;
-import pdp.utils.TextGetter;
-import pdp.utils.Timer;
+import pdp.utils.*;
 
 public class Game extends Subject {
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
@@ -46,6 +43,7 @@ public class Game extends Subject {
   private boolean explorationAI;
   private History history;
   private HashMap<Long, Integer> stateCount;
+  private HashMap<OptionType, String> options;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -90,6 +88,10 @@ public class Game extends Subject {
       this.stateCount.put(simplifiedZobristHashing, 1);
       return false;
     }
+  }
+
+  public HashMap<OptionType, String> getOptions() {
+    return options;
   }
 
   public Board getBoard() {
@@ -251,9 +253,15 @@ public class Game extends Subject {
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
    * @param solver The solver to be used for AI moves.
+   * @param options
    * @return The newly created instance of Game.
    */
-  public static Game initialize(boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer) {
+  public static Game initialize(
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      Timer timer,
+      HashMap<OptionType, String> options) {
     DEBUG(LOGGER, "Initializing Game...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
     if (timer != null) {
@@ -271,10 +279,16 @@ public class Game extends Subject {
    * @param isBlackAI Whether the black player is an AI.
    * @param solver The solver to be used for AI moves.
    * @param board The board state to use
+   * @param options
    * @return The newly created instance of Game.
    */
   public static Game initialize(
-      boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer, FileBoard board) {
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      Timer timer,
+      FileBoard board,
+      HashMap<OptionType, String> options) {
     DEBUG(LOGGER, "Initializing Game from given board...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History());
     if (timer != null) {
@@ -591,11 +605,17 @@ public class Game extends Subject {
    * @param isBlackAI Whether the black player is an AI.
    * @param solver The solver to use for AI moves.
    * @param timer The timer to use for the game.
+   * @param options
    * @return A new Game object with the given moves played.
    * @throws IllegalMoveException If any of the given moves are illegal.
    */
   public static Game fromHistory(
-      List<Move> moves, boolean isWhiteAI, boolean isBlackAI, Solver solver, Timer timer)
+      List<Move> moves,
+      boolean isWhiteAI,
+      boolean isBlackAI,
+      Solver solver,
+      Timer timer,
+      HashMap<OptionType, String> options)
       throws IllegalMoveException {
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History());
 

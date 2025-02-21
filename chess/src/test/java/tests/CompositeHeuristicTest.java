@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ public class CompositeHeuristicTest {
   @BeforeEach
   public void setup() {
     solver = new Solver();
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
   }
 
   @Test
