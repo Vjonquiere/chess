@@ -61,8 +61,7 @@ public class CompositeHeuristicTest {
     assertTrue(
         heuristics.stream().anyMatch(h -> h instanceof MaterialHeuristic),
         "Missing MaterialHeuristic");
-    assertTrue(
-        heuristics.stream().anyMatch(h -> h instanceof OpponentCheck), "Missing OpponentCheck");
+    assertTrue(heuristics.stream().anyMatch(h -> h instanceof GameStatus), "Missing GameStatus");
     assertTrue(
         heuristics.stream().anyMatch(h -> h instanceof BadPawnsHeuristic),
         "Missing BadPawnsHeuristic");
@@ -90,14 +89,14 @@ public class CompositeHeuristicTest {
 
     int score = 0;
     Heuristic material = new MaterialHeuristic();
-    Heuristic opponent = new OpponentCheck();
+    Heuristic status = new GameStatus();
     Heuristic mobility = new MobilityHeuristic();
     Heuristic badPawnsHeuristic = new BadPawnsHeuristic();
     Heuristic pawnChainHeuristic = new PawnChainHeuristic();
     Heuristic developmentHeuristic = new DevelopmentHeuristic();
     Heuristic KingSafetyHeuristic = new KingSafetyHeuristic();
     score += material.evaluate(game.getBoard(), false);
-    score += opponent.evaluate(game.getBoard(), false);
+    score += status.evaluate(game.getBoard(), false);
     score += mobility.evaluate(game.getBoard(), false);
     score += badPawnsHeuristic.evaluate(game.getBoard(), false);
     score += pawnChainHeuristic.evaluate(game.getBoard(), false);
