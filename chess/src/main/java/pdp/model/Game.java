@@ -155,6 +155,7 @@ public class Game extends Subject {
    */
   public void startAI() {
     if (isWhiteAI && this.getGameState().isWhiteTurn()) {
+      this.notifyObservers(EventType.AI_PLAYING);
       solver.playAIMove(this);
     }
   }
@@ -517,6 +518,7 @@ public class Game extends Subject {
         && !isOver()
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
+      this.notifyObservers(EventType.AI_PLAYING);
       solver.playAIMove(this);
     }
   }
