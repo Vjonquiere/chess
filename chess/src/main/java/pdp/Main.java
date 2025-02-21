@@ -21,7 +21,7 @@ public class Main {
       throw new UnsupportedOperationException("Contest mode not implemented");
     }
 
-    GameController controller = GameInitializer.initialize(options);
+    GameController controller = GameControllerInit.initialize(options);
     Thread viewThread = controller.getView().start();
 
     try {

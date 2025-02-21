@@ -2,6 +2,7 @@ package pdp.events;
 
 import java.util.ArrayList;
 import java.util.List;
+import pdp.model.Game;
 
 public abstract class Subject {
   List<EventObserver> observers = new ArrayList<>();
@@ -59,8 +60,10 @@ public abstract class Subject {
    * @param event The type of event that occurred.
    */
   public void notifyObservers(EventType event) {
-    for (EventObserver observer : observers) {
-      notifyObserver(observer, event);
+    if (!Game.getInstance().isAIExploring()) {
+      for (EventObserver observer : observers) {
+        notifyObserver(observer, event);
+      }
     }
   }
 
@@ -70,8 +73,10 @@ public abstract class Subject {
    * @param e The exception that occurred.
    */
   public void notifyErrorObservers(Exception e) {
-    for (EventObserver observer : errorObservers) {
-      observer.onErrorEvent(e);
+    if (!Game.getInstance().isAIExploring()) {
+      for (EventObserver observer : errorObservers) {
+        observer.onErrorEvent(e);
+      }
     }
   }
 }
