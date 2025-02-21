@@ -63,6 +63,18 @@ public class CompositeHeuristicTest {
         "Missing MaterialHeuristic");
     assertTrue(
         heuristics.stream().anyMatch(h -> h instanceof OpponentCheck), "Missing OpponentCheck");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof BadPawnsHeuristic),
+        "Missing BadPawnsHeuristic");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof PawnChainHeuristic),
+        "Missing PawnChainHeuristic");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof DevelopmentHeuristic),
+        "Missing DevelopmentHeuristic");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof KingSafetyHeuristic),
+        "Missing KingSafetyHeuristic");
   }
 
   @Test

@@ -155,6 +155,7 @@ public class Game extends Subject {
    */
   public void startAI() {
     if (isWhiteAI && this.getGameState().isWhiteTurn()) {
+      this.notifyObservers(EventType.AI_PLAYING);
       solver.playAIMove(this);
     }
   }
@@ -518,6 +519,7 @@ public class Game extends Subject {
         && !isOver()
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
+      this.notifyObservers(EventType.AI_PLAYING);
       solver.playAIMove(this);
     }
   }
@@ -630,13 +632,12 @@ public class Game extends Subject {
     // update zobrist to avoid threefold
     long currBoardZobrist = this.gameState.getZobristHashing();
     if (stateCount.containsKey(currBoardZobrist)) {
-
       stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
-      DEBUG(LOGGER, "Current board zobrist: " + currBoardZobrist);
     }
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(previousNode.get());
+    DEBUG(LOGGER, "Move undo : change state and update Zobrist for threefold");
     this.notifyObservers(EventType.MOVE_UNDO);
   }
 
@@ -661,9 +662,10 @@ public class Game extends Subject {
 
     this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(nextNode.get());
-
-    // TODO: MOVE_REDO + add zobrist to statesCount
-    this.notifyObservers(EventType.MOVE_UNDO);
+    long currBoardZobrist = this.gameState.getZobristHashing();
+    stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
+    DEBUG(LOGGER, "Move redo : change state and update Zobrist for threefold");
+    this.notifyObservers(EventType.MOVE_REDO);
   }
 
   /**

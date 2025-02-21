@@ -127,10 +127,6 @@ public class Solver {
    * @param game current game
    */
   public void playAIMove(Game game) {
-    if (algorithm == null) {
-      throw new IllegalStateException("No algorithm has been set");
-    }
-    System.out.println("AI is going to play");
     game.setExploration(true);
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
     DEBUG(LOGGER, "Best move " + bestMove);

@@ -160,6 +160,9 @@ public class CLIView implements View {
       case STALEMATE:
         System.out.println(TextGetter.getText("stalemate"));
         break;
+      case AI_PLAYING:
+        System.out.println(TextGetter.getText("ai_playing"));
+        break;
       default:
         DEBUG(LOGGER, "Received unknown game event: " + event);
         break;
