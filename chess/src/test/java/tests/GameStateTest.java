@@ -12,6 +12,7 @@ import pdp.events.EventType;
 import pdp.model.*;
 import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
+import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.utils.Timer;
 import tests.helpers.DummyBoardRepresentation;
@@ -83,6 +84,24 @@ public class GameStateTest {
         gameBlitzOnWithBoard.hasBlackRequestedDraw(),
         "Black should not have requested a draw initially !");
     assertFalse(gameBlitzOnWithBoard.isGameOver(), "Game should not be over initially !");
+
+    board =
+        new FileBoard(
+            new DummyBoardRepresentation(),
+            false,
+            new FenHeader(true, true, true, true, null, 0, 5));
+    GameState gameBlitzOffWithHeader = new GameState(board);
+    assertNotNull(gameBlitzOffWithHeader.getBoard(), "The board should be initialized !");
+    assertFalse(gameBlitzOffWithHeader.isWhiteTurn(), "The current player should be black !");
+    assertNull(gameBlitzOffWithHeader.getMoveTimer(), "Timer should be null for non-blitz mode !");
+    assertEquals(5, gameBlitzOffWithHeader.getFullTurn());
+
+    GameState gameBlitzOnWithHeader = new GameState(board, new Timer(30 * 60));
+    assertNotNull(gameBlitzOnWithHeader.getBoard(), "The board should be initialized !");
+    assertFalse(gameBlitzOnWithHeader.isWhiteTurn(), "The current player should be black !");
+    assertNotNull(
+        gameBlitzOnWithHeader.getMoveTimer(), "Timer should not be null for blitz mode !");
+    assertEquals(5, gameBlitzOnWithHeader.getFullTurn());
   }
 
   @Test
