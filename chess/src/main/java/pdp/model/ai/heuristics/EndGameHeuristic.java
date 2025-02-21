@@ -12,7 +12,7 @@ public class EndGameHeuristic extends AbstractHeuristic {
     addHeuristic(new BishopEndgameHeuristic());
     addHeuristic(new MaterialHeuristic());
     addHeuristic(new BadPawnsHeuristic());
-    addHeuristic(new OpponentCheck());
+    addHeuristic(new GameStatus());
     addHeuristic(new KingSafetyHeuristic());
     addHeuristic(new PawnChainHeuristic());
     addHeuristic(new KingOppositionHeuristic());

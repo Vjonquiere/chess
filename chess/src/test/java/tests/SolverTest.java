@@ -35,10 +35,10 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(-7, solver.evaluateBoard(game.getBoard(), false));
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(7, solver.evaluateBoard(game.getBoard(), true));
   }
 
   @Test

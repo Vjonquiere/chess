@@ -1,14 +1,22 @@
 package pdp.model.ai.heuristics;
 
+import pdp.model.Game;
 import pdp.model.board.Board;
 import pdp.model.piece.Color;
 
-public class OpponentCheck implements Heuristic {
+public class GameStatus implements Heuristic {
 
   /**
-   * Evaluates the board based on the check state of the king. If the opponent king is in check, add
-   * a bonus of 50, if it is checkmate, add a bonus of 100. If the player's king is in check or
-   * checkmate, we subtract the same values from the evaluation
+   * Evaluates the board based on the possible game status.
+   *
+   * <ul>
+   *   <li>If the opponent king is in check, add a bonus of 500
+   *   <li>If the opponent king checkmate add a bonus of 1000.
+   *   <li>If our king is in these position, subtract the according amount
+   *   <li>If the game is in a Threefold repetition, add a malus of 750
+   *   <li>For the fifty move rule, add a malus of 750 (proportional to the percentage of
+   *       advencement of the 50 move rule)
+   * </ul>
    *
    * @param board Current board to evaluate
    * @param isWhite color of the current player
@@ -31,6 +39,10 @@ public class OpponentCheck implements Heuristic {
     if (board.getBoardRep().isCheckMate(player1)) {
       score -= 1000;
     }
+    if (Game.getInstance().getGameState().isThreefoldRepetition()) {
+      score -= 750;
+    }
+    score -= 750 * ((board.getNbMovesWithNoCaptureOrPawn() * 2) / 100);
     return score;
   }
 }
