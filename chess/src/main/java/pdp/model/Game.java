@@ -285,6 +285,7 @@ public class Game extends Subject {
   }
 
   public void outOfTimeCallback() {
+    DEBUG(LOGGER, "outOfTimeCallback called");
     this.gameState.playerOutOfTime(this.gameState.isWhiteTurn());
   }
 

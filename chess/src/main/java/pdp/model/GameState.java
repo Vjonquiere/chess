@@ -153,8 +153,7 @@ public class GameState extends Subject {
   }
 
   public void playerOutOfTime(boolean isWhite) {
-    if (board.getBoardRep().hasEnoughMaterialToMate(isWhite)
-        && !board.getBoardRep().hasEnoughMaterialToMate(!isWhite)) {
+    if (!this.getBoard().getBoardRep().hasEnoughMaterialToMate(!isWhite)) {
       this.isGameOver = true;
       DEBUG(LOGGER, "End of game : Loss on time + insufficient material, Draw");
       if (isWhite) {

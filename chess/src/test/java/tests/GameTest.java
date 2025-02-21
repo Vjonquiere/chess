@@ -1,8 +1,15 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameState;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
@@ -17,6 +25,7 @@ import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.model.savers.BoardSaver;
 import pdp.utils.Position;
+import pdp.utils.Timer;
 
 public class GameTest {
   @Test
@@ -582,5 +591,122 @@ public class GameTest {
     assertTrue(content.contains(game.getHistory().toAlgebraicString()));
 
     Files.deleteIfExists(tempFile);
+  }
+
+  @Test
+  public void testOutOfTimeCallbackWhite() throws Exception {
+    Game game = spy(Game.initialize(false, false, null, new Timer(5000)));
+
+    GameState mockGameState = mock(GameState.class);
+
+    when(mockGameState.isWhiteTurn()).thenReturn(true);
+
+    Field field = Game.class.getDeclaredField("gameState");
+    field.setAccessible(true);
+    field.set(game, mockGameState);
+
+    game.outOfTimeCallback();
+
+    verify(game, times(1)).outOfTimeCallback();
+    verify(mockGameState).playerOutOfTime(true);
+  }
+
+  @Test
+  public void testOutOfTimeCallbackBlack() throws Exception {
+    Game game = spy(Game.initialize(false, false, null, new Timer(5000)));
+
+    GameState mockGameState = mock(GameState.class);
+
+    when(mockGameState.isWhiteTurn()).thenReturn(false);
+
+    Field field = Game.class.getDeclaredField("gameState");
+    field.setAccessible(true);
+    field.set(game, mockGameState);
+
+    game.outOfTimeCallback();
+
+    verify(game, times(1)).outOfTimeCallback();
+    verify(game.getGameState()).playerOutOfTime(false);
+  }
+
+  @Test
+  public void testWhiteLosesOnTime() throws InterruptedException {
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(100);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
+
+    Thread.sleep(150);
+
+    assertEquals(0, game.getGameState().getMoveTimer().getTimeRemaining());
+    verify(callback, times(1)).run();
+  }
+
+  @Test
+  public void testBlackLosesOnTime() throws InterruptedException {
+
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(200);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
+
+    Thread.sleep(20);
+    game.playMove(Move.fromString("e2-e4"));
+
+    Thread.sleep(250);
+
+    assertEquals(0, game.getGameState().getMoveTimer().getTimeRemaining());
+    verify(callback, times(1)).run();
+  }
+
+  @Test
+  public void testNotCalledBeforeTimeout() throws InterruptedException {
+
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(200);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
+
+    Thread.sleep(20);
+
+    game.playMove(Move.fromString("e2-e4"));
+
+    Thread.sleep(20);
+    game.getGameState().getMoveTimer().stop();
+
+    assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() < 200);
+    assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() > 0);
+    verify(callback, never()).run();
+  }
+
+  @Test
+  public void testTimeResetAfterMove() throws InterruptedException {
+
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(100);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
+
+    Thread.sleep(60);
+    game.playMove(Move.fromString("e2-e4"));
+    Thread.sleep(70);
+
+    game.getGameState().getMoveTimer().stop();
+
+    assert (game.getGameState().getMoveTimer().getTimeRemaining() < 100);
+    assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() > 0);
+    verify(callback, never()).run();
   }
 }
