@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import pdp.GameInitializer;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
 import pdp.utils.OptionType;
@@ -26,14 +27,19 @@ public class NewGamePopup {
     blitzCheckBox.setSelected(options.containsKey(OptionType.BLITZ));
 
     VBox timeContainer = new VBox(5);
-    timeContainer.setVisible(false);
-    timeContainer.setManaged(false);
+    timeContainer.setVisible(blitzCheckBox.isSelected());
+    timeContainer.setManaged(blitzCheckBox.isSelected());
 
     blitzCheckBox.setOnAction(
         event -> {
           boolean selected = blitzCheckBox.isSelected();
           timeContainer.setVisible(selected);
           timeContainer.setManaged(selected);
+          if (selected) {
+            options.put(OptionType.BLITZ, "");
+          } else {
+            options.remove(OptionType.BLITZ);
+          }
         });
 
     layout.getChildren().add(blitzCheckBox);
@@ -46,21 +52,36 @@ public class NewGamePopup {
     timeSlider.setMajorTickUnit(1);
     timeSlider.setMinorTickCount(0);
     timeSlider.setSnapToTicks(true);
-    timeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {});
+    timeSlider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) ->
+                options.put(OptionType.TIME, String.valueOf(newVal.intValue())));
 
     if (options.containsKey(OptionType.TIME)) {
       timeSlider.setValue(Integer.parseInt(options.get(OptionType.TIME)));
+    } else {
+      options.put(OptionType.TIME, String.valueOf(Math.round(timeSlider.getValue())));
     }
 
     timeContainer.getChildren().add(timeSlider);
     layout.getChildren().add(timeContainer);
 
-    CheckBox aiCheckBox = new CheckBox("AI");
-    aiCheckBox.setSelected(options.containsKey(OptionType.AI));
-    layout.getChildren().add(aiCheckBox);
+    ComboBox<String> aiDropdown = new ComboBox<>();
+    aiDropdown.getItems().add("None");
+    aiDropdown.getItems().add("W");
+    aiDropdown.getItems().add("B");
+    aiDropdown.getItems().add("A");
+    if (options.containsKey(OptionType.AI)) {
+      aiDropdown.setValue(options.get(OptionType.AI));
+    } else {
+      aiDropdown.setValue("None");
+    }
+    layout.getChildren().add(new Label("AI Player(s)"));
+    layout.getChildren().add(aiDropdown);
     VBox aiContainer = new VBox(5);
-    aiContainer.setVisible(aiCheckBox.isSelected());
-    aiContainer.setManaged(aiCheckBox.isSelected());
+    aiContainer.setVisible(!aiDropdown.getValue().equals("None"));
+    aiContainer.setManaged(!aiDropdown.getValue().equals("None"));
 
     aiContainer.getChildren().add(new Label("AI Mode"));
     ComboBox<String> aiModeDropdown = new ComboBox<>();
@@ -73,6 +94,13 @@ public class NewGamePopup {
       aiModeDropdown.setValue(options.get(OptionType.AI_MODE));
     }
 
+    aiModeDropdown
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(OptionType.AI_MODE, newVal);
+            });
+
     aiContainer.getChildren().add(aiModeDropdown);
 
     aiContainer.getChildren().add(new Label("AI Heuristic"));
@@ -83,8 +111,15 @@ public class NewGamePopup {
     }
 
     if (options.containsKey(OptionType.AI_HEURISTIC)) {
-      aiModeDropdown.setValue(options.get(OptionType.AI_HEURISTIC));
+      heuristicDropdown.setValue(options.get(OptionType.AI_HEURISTIC));
     }
+
+    heuristicDropdown
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(OptionType.AI_HEURISTIC, newVal);
+            });
 
     aiContainer.getChildren().add(heuristicDropdown);
 
@@ -95,7 +130,12 @@ public class NewGamePopup {
     depthSlider.setMajorTickUnit(1);
     depthSlider.setMinorTickCount(0);
     depthSlider.setSnapToTicks(true);
-    depthSlider.valueProperty().addListener((obs, oldVal, newVal) -> {});
+    depthSlider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(OptionType.AI_DEPTH, String.valueOf(newVal.intValue()));
+            });
 
     if (options.containsKey(OptionType.AI_DEPTH)) {
       depthSlider.setValue(Integer.parseInt(options.get(OptionType.AI_DEPTH)));
@@ -110,7 +150,12 @@ public class NewGamePopup {
     aiTimeSlider.setMajorTickUnit(5);
     aiTimeSlider.setMinorTickCount(0);
     aiTimeSlider.setSnapToTicks(true);
-    aiTimeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {});
+    aiTimeSlider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(OptionType.AI_TIME, String.valueOf(newVal.intValue()));
+            });
 
     if (options.containsKey(OptionType.AI_TIME)) {
       aiTimeSlider.setValue(Integer.parseInt(options.get(OptionType.AI_TIME)));
@@ -120,12 +165,19 @@ public class NewGamePopup {
 
     layout.getChildren().add(aiContainer);
 
-    aiCheckBox.setOnAction(
-        event -> {
-          boolean selected = aiCheckBox.isSelected();
-          aiContainer.setVisible(selected);
-          aiContainer.setManaged(selected);
-        });
+    aiDropdown
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              boolean selected = !newVal.equals("None");
+              aiContainer.setVisible(selected);
+              aiContainer.setManaged(selected);
+              if (selected) {
+                options.put(OptionType.AI, newVal);
+              } else {
+                options.remove(OptionType.AI);
+              }
+            });
 
     Label loadLabel = new Label("Load game from:");
     TextField loadTextField = new TextField();
@@ -146,6 +198,9 @@ public class NewGamePopup {
 
           if (selectedFile != null) {
             loadTextField.setText(selectedFile.getAbsolutePath());
+            options.put(OptionType.LOAD, selectedFile.getAbsolutePath());
+          } else {
+            options.remove(OptionType.LOAD);
           }
         });
 
@@ -154,6 +209,14 @@ public class NewGamePopup {
     loadContainer.getChildren().add(new HBox(5, loadTextField, browseButton));
 
     layout.getChildren().add(loadContainer);
+
+    Button startGameButton = new Button("Start Game");
+    startGameButton.setOnAction(
+        event -> {
+          GameInitializer.initialize(options);
+          popupStage.close();
+        });
+    layout.getChildren().add(startGameButton);
 
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setContent(layout);

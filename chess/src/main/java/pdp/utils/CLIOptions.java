@@ -235,6 +235,11 @@ public class CLIOptions {
       activatedOptions.remove(OptionType.TIME);
     }
 
+    if (activatedOptions.containsKey(OptionType.AI)
+        && activatedOptions.get(OptionType.AI).equals("")) {
+      activatedOptions.put(OptionType.AI, "W");
+    }
+
     validateAIOptions(cmd, activatedOptions);
   }
 

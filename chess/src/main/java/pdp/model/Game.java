@@ -275,6 +275,7 @@ public class Game extends Subject {
       timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
@@ -303,6 +304,7 @@ public class Game extends Subject {
       timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
@@ -634,6 +636,8 @@ public class Game extends Subject {
       timer.setCallback(instance::outOfTimeCallback);
       timer.start();
     }
+
+    instance.notifyObservers(EventType.GAME_STARTED);
 
     return instance;
   }
