@@ -6,7 +6,7 @@ import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.utils.OptionType;
 import pdp.view.CLIView;
-import pdp.view.GameView;
+import pdp.view.GUIView;
 import pdp.view.View;
 
 public abstract class GameControllerInit {
@@ -23,7 +23,7 @@ public abstract class GameControllerInit {
 
     View view;
     if (options.containsKey(OptionType.GUI)) {
-      view = new GameView();
+      view = new GUIView();
     } else {
       view = new CLIView();
     }
