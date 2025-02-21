@@ -9,6 +9,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -171,12 +173,18 @@ public class CLIViewTest {
   @Test
   void testTimeCommand() throws Exception {
 
-    Game game = Game.initialize(false, false, null, new Timer(200));
+    Game game = Game.initialize(false, false, null, new Timer(3500000));
+
+    Thread.sleep(100);
 
     game.getGameState().getMoveTimer().stop();
 
     handleUserInputMethod.invoke(view, "time");
     String output = outputStream.toString();
+    Pattern pattern = Pattern.compile("\\d{2}:\\d{2}");
+    Matcher matcher = pattern.matcher(output);
+
+    assertTrue(matcher.find());
     assertTrue(output.contains(game.getGameState().getMoveTimer().getTimeRemainingString()));
   }
 
