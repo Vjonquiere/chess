@@ -10,11 +10,13 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 
 public class Square extends StackPane {
-  public Square(ColoredPiece piece, boolean squareColor) {
+  public Square(ColoredPiece piece, boolean squareColor, boolean selected) {
     Canvas sq = new Canvas(100, 100);
     GraphicsContext gc = sq.getGraphicsContext2D();
     if (squareColor) {
       gc.setFill(Color.web("#DAE0F2"));
+    } else if (selected) {
+      gc.setFill(Color.web("#F9CFF2"));
     } else {
       gc.setFill(Color.web("#6D6FD9"));
     }

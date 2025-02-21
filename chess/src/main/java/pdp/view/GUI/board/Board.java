@@ -1,7 +1,8 @@
 package pdp.view.GUI.board;
 
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
+import pdp.controller.BagOfCommands;
+import pdp.controller.commands.PlayMoveCommand;
 import pdp.model.Game;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
@@ -9,42 +10,65 @@ import pdp.model.piece.ColoredPiece;
 import pdp.utils.Position;
 
 public class Board extends GridPane {
-
-  private BoardRepresentation board = Game.getInstance().getBoard().board;
+  private final BoardRepresentation board;
+  private final int boardColumns;
+  private final int boardRows;
   private Position from;
 
-  public Board() {
-    for (int x = 0; x < 8; x++) {
-      for (int y = 0; y < 8; y++) {
-        System.out.println(x * 7 + 7 - y);
-        ColoredPiece piece = board.getPieceAt(x, 7 - y);
-        Square sq = new Square(null, false);
+  public Board(Game game) {
+    this.board = game.getBoard().board;
+    this.boardColumns = board.getNbCols();
+    this.boardRows = board.getNbRows();
+
+    updateBoard();
+  }
+
+  public void updateBoard() {
+    super.getChildren().clear();
+    for (int x = 0; x < boardColumns; x++) {
+      for (int y = 0; y < boardRows; y++) {
+        // System.out.println(x * 7 + 7 - y);
+        ColoredPiece piece = board.getPieceAt(x, boardRows - 1 - y);
+        Square sq;
+        boolean selected = from != null && from.getX() == x && from.getY() == boardRows - 1 - y;
         if (x % 2 == 0 && y % 2 == 0) {
-          sq = new Square(piece, true);
+          sq = new Square(piece, true, selected);
         } else if (x % 2 == 0 && y % 2 == 1) {
-          sq = new Square(piece, false);
+          sq = new Square(piece, false, selected);
         } else if (x % 2 == 1 && y % 2 == 0) {
-          sq = new Square(piece, false);
+          sq = new Square(piece, false, selected);
         } else {
-          sq = new Square(piece, true);
+          sq = new Square(piece, true, selected);
         }
-        int finaly = 7 - y;
+        int finaly = boardRows - 1 - y;
         int finalx = x;
         sq.setOnMouseClicked(
             event -> {
-              if (from == null) {
-                from = new Position(finalx, finaly);
-              } else {
-                try {
-                  Game.getInstance().playMove(new Move(from, new Position(finalx, finaly)));
-                  from = null;
-                } catch (Exception e) {
-                  e.printStackTrace();
-                }
-              }
+              switchSelectedSquare(finalx, finaly);
             });
         super.add(sq, x, y);
-        super.add(new Text(Integer.toString(x + y * 8)), x, y);
+        // super.add(new Text(Integer.toString(x + y * 8)), x, y);
+      }
+    }
+  }
+
+  private void switchSelectedSquare(int x, int y) {
+    // System.out.println("SELECTED SQUARE: " + from);
+    if (from == null) {
+      from = new Position(x, y);
+      // System.out.println("SELECTED SQUARE UPDATED TO: " + from);
+      updateBoard();
+    } else {
+      try {
+        String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
+        BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
+        from = null;
+        updateBoard();
+      } catch (Exception e) {
+        from = null;
+        // e.printStackTrace();
+        System.out.println("wrong move:" + e.getMessage());
+        updateBoard();
       }
     }
   }

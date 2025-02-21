@@ -1,10 +1,13 @@
 package pdp.view;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pdp.events.EventType;
+import pdp.model.Game;
 import pdp.utils.Logging;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.ChessMenu;
@@ -15,6 +18,7 @@ public class GUIView implements View {
   private static final Logger LOGGER = Logger.getLogger(GUIView.class.getName());
   private BorderPane root;
   private Stage stage;
+  private Board board;
 
   public GUIView() {
     Logging.configureLogging(LOGGER);
@@ -29,8 +33,8 @@ public class GUIView implements View {
   public void init(Stage stage) {
     stage.setTitle(TextGetter.getText("title"));
     root.setTop(new ChessMenu());
-    root.setCenter(new Board());
-    Scene scene = new Scene(root, 1280, 720);
+    root.setCenter(board);
+    Scene scene = new Scene(root, 820, 820);
     stage.setScene(scene);
     this.stage = stage;
   }
@@ -54,9 +58,107 @@ public class GUIView implements View {
 
   @Override
   public void onGameEvent(EventType event) {
-    // TODO: manage game events
-    /*throw new UnsupportedOperationException(
-    "Method not implemented in " + this.getClass().getName());*/
+    if (event.equals(EventType.MOVE_PLAYED)) {
+      if (board != null) {
+        board.updateBoard();
+        System.out.println("Board updated " + board);
+      } else {
+        System.out.println("Board is null");
+      }
+    }
+    switch (event) {
+      case GAME_STARTED:
+        board = new Board(Game.getInstance());
+        System.out.println("GUI board displayed"); // TODO: Add in resource bundle
+        if (board != null) {
+          board.updateBoard();
+        }
+        System.out.println("Board updated " + board);
+        break;
+      case MOVE_PLAYED:
+        // System.out.println("Move test");
+        if (board != null) {
+          board.updateBoard();
+        }
+        System.out.println("Board updated " + board);
+        break;
+      case WIN_WHITE:
+        System.out.println(TextGetter.getText("whiteWin"));
+        break;
+      case WIN_BLACK:
+        System.out.println(TextGetter.getText("blackWin"));
+        break;
+      case DRAW:
+        System.out.println(TextGetter.getText("onDraw"));
+        break;
+      case WHITE_DRAW_PROPOSAL:
+        System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("white")));
+        break;
+      case BLACK_DRAW_PROPOSAL:
+        System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("black")));
+        break;
+      case WHITE_UNDRAW:
+        System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")));
+        break;
+      case BLACK_UNDRAW:
+        System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
+        break;
+      case DRAW_ACCEPTED:
+        System.out.println(TextGetter.getText("drawAccepted"));
+        break;
+      case GAME_SAVED:
+        System.out.println(TextGetter.getText("gameSaved"));
+        break;
+      case MOVE_UNDO:
+        System.out.println(TextGetter.getText("moveUndone"));
+        if (board != null) {
+          board.updateBoard();
+        }
+        break;
+      case MOVE_REDO:
+        System.out.println(TextGetter.getText("moveRedone"));
+        if (board != null) {
+          board.updateBoard();
+        }
+        break;
+      case OUT_OF_TIME_WHITE:
+        System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
+        break;
+      case OUT_OF_TIME_BLACK:
+        System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
+        break;
+      case THREEFOLD_REPETITION:
+        System.out.println(TextGetter.getText("threeFoldRepetition"));
+        break;
+      case INSUFFICIENT_MATERIAL:
+        System.out.println(TextGetter.getText("insufficientMaterial"));
+        break;
+      case FIFTY_MOVE_RULE:
+        System.out.println(TextGetter.getText("fiftyMoveRule"));
+        break;
+      case WHITE_RESIGNS:
+        System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
+        break;
+      case BLACK_RESIGNS:
+        System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
+        break;
+      case CHECKMATE_WHITE:
+        System.out.println(
+            TextGetter.getText(
+                "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
+        break;
+      case CHECKMATE_BLACK:
+        System.out.println(
+            TextGetter.getText(
+                "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
+        break;
+      case STALEMATE:
+        System.out.println(TextGetter.getText("stalemate"));
+        break;
+      default:
+        DEBUG(LOGGER, "Received unknown game event: " + event);
+        break;
+    }
   }
 
   @Override
