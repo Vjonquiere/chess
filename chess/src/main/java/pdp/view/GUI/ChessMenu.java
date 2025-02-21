@@ -4,6 +4,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
+import pdp.model.Game;
 
 public class ChessMenu extends VBox {
   public ChessMenu() {
@@ -33,5 +34,7 @@ public class ChessMenu extends VBox {
     return aboutMenu;
   }
 
-  private void openNewGamePopup() {}
+  private void openNewGamePopup() {
+    NewGamePopup.show(Game.getInstance().getOptions());
+  }
 }
