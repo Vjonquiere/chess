@@ -414,6 +414,7 @@ public class CLIViewTest {
 
     assertTrue(output.contains(expected));
   }
+
   @Test
   public void testWhiteResignsEvent() {
     view.onGameEvent(EventType.WHITE_RESIGNS);
@@ -439,7 +440,8 @@ public class CLIViewTest {
     view.onGameEvent(EventType.CHECKMATE_WHITE);
 
     String output = outputStream.toString();
-    String expected = TextGetter.getText("checkmate", TextGetter.getText("white"), TextGetter.getText("black"));
+    String expected =
+        TextGetter.getText("checkmate", TextGetter.getText("white"), TextGetter.getText("black"));
 
     assertTrue(output.contains(expected));
   }
@@ -449,7 +451,8 @@ public class CLIViewTest {
     view.onGameEvent(EventType.CHECKMATE_BLACK);
 
     String output = outputStream.toString();
-    String expected = TextGetter.getText("checkmate", TextGetter.getText("black"), TextGetter.getText("white"));
+    String expected =
+        TextGetter.getText("checkmate", TextGetter.getText("black"), TextGetter.getText("white"));
 
     assertTrue(output.contains(expected));
   }
