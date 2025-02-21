@@ -21,11 +21,12 @@ public class Board {
   public boolean isLastMoveDoublePush;
   public boolean isEnPassantTake;
   int nbMovesWithNoCaptureOrPawn;
-  int doubleMovePawnBlack;
-  int doubleMovePawnWhite;
+
+  static {
+    Logging.configureLogging(LOGGER);
+  }
 
   public Board() {
-    Logging.configureLogging(LOGGER);
     this.board = new BitboardRepresentation();
     this.isWhite = true;
     this.enPassantPos = null;
@@ -35,30 +36,38 @@ public class Board {
     this.blackLongCastle = true;
     this.isLastMoveDoublePush = false;
     this.isEnPassantTake = false;
-    this.doubleMovePawnBlack = 0;
-    this.doubleMovePawnWhite = 0;
     this.nbMovesWithNoCaptureOrPawn = 0;
   }
 
   /**
-   * Create a board from a given board state
+   * Create a board from a given board state (support FileBoard header)
    *
    * @param board The board state to use
    */
   public Board(FileBoard board) {
-    Logging.configureLogging(LOGGER);
     this.board = board.board();
     this.isWhite = board.isWhiteTurn();
-    this.enPassantPos = null;
-    this.whiteShortCastle = true;
-    this.blackShortCastle = true;
-    this.whiteLongCastle = true;
-    this.blackLongCastle = true;
-    this.isLastMoveDoublePush = false;
-    this.isEnPassantTake = false;
-    this.doubleMovePawnBlack = 0;
-    this.doubleMovePawnWhite = 0;
-    this.nbMovesWithNoCaptureOrPawn = 0;
+
+    if (board.header() != null) { // Initialize board with header values
+      this.enPassantPos = board.header().enPassant();
+      if (this.enPassantPos != null) {
+        this.isLastMoveDoublePush = true;
+      }
+      this.whiteShortCastle = board.header().whiteKingCastling();
+      this.blackShortCastle = board.header().blackKingCastling();
+      this.whiteLongCastle = board.header().whiteQueenCastling();
+      this.blackLongCastle = board.header().blackQueenCastling();
+      this.nbMovesWithNoCaptureOrPawn = board.header().fiftyMoveRule();
+    } else { // No header -> default values
+      this.enPassantPos = null;
+      this.whiteShortCastle = true;
+      this.blackShortCastle = true;
+      this.whiteLongCastle = true;
+      this.blackLongCastle = true;
+      this.isLastMoveDoublePush = false;
+      this.isEnPassantTake = false;
+      this.nbMovesWithNoCaptureOrPawn = 0;
+    }
   }
 
   public List<Move> getAvailableMoves(Position pos) {
@@ -144,9 +153,25 @@ public class Board {
     }
   }
 
+  /**
+   * Creates a deep copy of this Board object. Copies all attributes to create a new independent
+   * Board instance.
+   *
+   * @return A new instance of Board with the same state as the current object.
+   */
   public Board getCopy() {
-    // TODO
-    throw new UnsupportedOperationException();
+    Board copy = new Board();
+    copy.board = this.board.getCopy();
+    copy.isWhite = this.isWhite;
+    copy.whiteShortCastle = this.whiteShortCastle;
+    copy.blackShortCastle = this.blackShortCastle;
+    copy.whiteLongCastle = this.whiteLongCastle;
+    copy.blackLongCastle = this.blackLongCastle;
+    copy.enPassantPos = (this.enPassantPos != null) ? this.enPassantPos.getCopy() : null;
+    copy.isLastMoveDoublePush = this.isLastMoveDoublePush;
+    copy.isEnPassantTake = this.isEnPassantTake;
+    copy.nbMovesWithNoCaptureOrPawn = this.nbMovesWithNoCaptureOrPawn;
+    return copy;
   }
 
   public BoardRepresentation getBoardRep() {
@@ -361,5 +386,9 @@ public class Board {
     } else {
       applyLongCastle(color);
     }
+  }
+
+  public boolean[] getCastlingRights() {
+    return new boolean[] {whiteShortCastle, whiteLongCastle, blackShortCastle, blackLongCastle};
   }
 }

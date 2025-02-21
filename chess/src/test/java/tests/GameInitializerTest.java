@@ -16,6 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.GameInitializer;
 import pdp.controller.GameController;
+import pdp.model.ai.algorithms.AlphaBeta;
+import pdp.model.ai.algorithms.Minimax;
+import pdp.model.ai.heuristics.MobilityHeuristic;
+import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
@@ -27,6 +31,9 @@ import pdp.view.CLIView;
 class GameInitializerTest {
   private HashMap<OptionType, String> options;
   private Path tempFile;
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
 
   @BeforeEach
   void setUp() {
@@ -39,6 +46,17 @@ class GameInitializerTest {
     if (tempFile != null && Files.exists(tempFile)) {
       Files.delete(tempFile);
     }
+  }
+
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
   }
 
   @Test
@@ -80,28 +98,151 @@ class GameInitializerTest {
   }
     */
 
+  @Test
+  void testGameInitializationAIWhite() {
+    options.put(OptionType.AI, "W");
+    GameController controller = GameInitializer.initialize(options);
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+  }
+
+  @Test
+  void testGameInitializationAIBlack() {
+    options.put(OptionType.AI, "B");
+    GameController controller = GameInitializer.initialize(options);
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isBlackAI());
+    assertFalse(controller.getModel().isWhiteAI());
+    assertNotNull(controller.getModel().getSolver());
+  }
+
   /*
-    @Test
-    void testGameInitializationAIWhite() {
-      options.put(OptionType.AI, "W");
-      GameController controller = GameInitializer.initialize(options);
-      assertNotNull(controller);
-    }
-
-    @Test
-    void testGameInitializationAIBlack() {
-      options.put(OptionType.AI, "B");
-      GameController controller = GameInitializer.initialize(options);
-      assertNotNull(controller);
-    }
-
     @Test
     void testGameInitializationAIAll() {
       options.put(OptionType.AI, "A");
       GameController controller = GameInitializer.initialize(options);
       assertNotNull(controller);
+      assertTrue(controller.getModel().isWhiteAI());
+      assertTrue(controller.getModel().isBlackAI());
+      assertNotNull(controller.getModel().getSolver());
     }
   */
+  @Test
+  void testGameInitializationAIIncorrect() {
+    setUpConsole();
+    options.put(OptionType.AI, "X");
+    GameController controller = GameInitializer.initialize(options);
+    assertTrue(outputStream.toString().contains("Unknown AI option: X"));
+    assertTrue(outputStream.toString().contains("Defaulting to AI playing White"));
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    tearDownConsole();
+  }
+
+  @Test
+  void testGameInitializationAIModeMinimax() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_MODE, "MINIMAX");
+    GameController controller = GameInitializer.initialize(options);
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    assertInstanceOf(Minimax.class, controller.getModel().getSolver().getAlgorithm());
+  }
+
+  @Test
+  void testGameInitializationAIModeIncorrect() {
+    setUpConsole();
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_MODE, "minimax");
+    GameController controller = GameInitializer.initialize(options);
+    assertTrue(outputStream.toString().contains("Unknown AI mode option: minimax"));
+    assertTrue(outputStream.toString().contains("Defaulting to ALPHABETA"));
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    assertInstanceOf(AlphaBeta.class, controller.getModel().getSolver().getAlgorithm());
+    tearDownConsole();
+  }
+
+  @Test
+  void testGameInitializationAIHeuristic() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_HEURISTIC, "MOBILITY");
+    GameController controller = GameInitializer.initialize(options);
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    assertInstanceOf(MobilityHeuristic.class, controller.getModel().getSolver().getHeuristic());
+  }
+
+  @Test
+  void testGameInitializationAIHeuristicIncorrect() {
+    setUpConsole();
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_HEURISTIC, "MINIMAX");
+    GameController controller = GameInitializer.initialize(options);
+    assertTrue(outputStream.toString().contains("Unknown Heuristic: MINIMAX"));
+    assertTrue(outputStream.toString().contains("Defaulting to Heuristic STANDARD"));
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    assertInstanceOf(StandardHeuristic.class, controller.getModel().getSolver().getHeuristic());
+    tearDownConsole();
+  }
+
+  @Test
+  void testGameInitializationAIDepth() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_DEPTH, "1");
+    GameController controller = GameInitializer.initialize(options);
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    assertEquals(1, controller.getModel().getSolver().getDepth());
+  }
+
+  @Test
+  void testGameInitializationAIDepthIncorrect() {
+    setUpConsole();
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_DEPTH, "abc");
+    GameController controller = GameInitializer.initialize(options);
+    assertTrue(outputStream.toString().contains("Not an integer for the depth of AI"));
+    assertTrue(
+        outputStream
+            .toString()
+            .contains("Defaulting to depth " + controller.getModel().getSolver().getDepth()));
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    tearDownConsole();
+  }
+
+  @Test
+  void testGameInitializationAIDepthIncorrect2() {
+    setUpConsole();
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_DEPTH, "3.1");
+    GameController controller = GameInitializer.initialize(options);
+    assertTrue(outputStream.toString().contains("Not an integer for the depth of AI"));
+    assertTrue(
+        outputStream
+            .toString()
+            .contains("Defaulting to depth " + controller.getModel().getSolver().getDepth()));
+    assertTrue(controller.getModel().isWhiteAI());
+    assertFalse(controller.getModel().isBlackAI());
+    assertNotNull(controller.getModel().getSolver());
+    tearDownConsole();
+  }
 
   @Test
   void testGameInitializationLoadSuccess() throws IOException {

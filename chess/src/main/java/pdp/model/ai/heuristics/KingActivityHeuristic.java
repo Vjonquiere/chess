@@ -19,8 +19,8 @@ public class KingActivityHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += kingIsInCenterScore(board, isWhite);
-    score += kingActivityScore(board, isWhite);
+    score += kingIsInCenterScore(board, isWhite) - kingIsInCenterScore(board, !isWhite);
+    score += kingActivityScore(board, isWhite) - kingActivityScore(board, !isWhite);
 
     return score;
   }
@@ -32,7 +32,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the location of the king on the board
    */
-  public int kingIsInCenterScore(Board board, boolean isWhite) {
+  private int kingIsInCenterScore(Board board, boolean isWhite) {
     int score = 0;
 
     // Delineate center box
@@ -60,7 +60,7 @@ public class KingActivityHeuristic implements Heuristic {
       int distance =
           Math.abs(kingPosition.getX() - centerX) + Math.abs(kingPosition.getY() - centerY);
       int noBonus = 0;
-      // King more or less far of the center
+      // King more or less far from the center
       score = Math.max(noBonus, 15 - (distance * 3));
     }
 
@@ -74,7 +74,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the activity of the king
    */
-  public int kingActivityScore(Board board, boolean isWhite) {
+  private int kingActivityScore(Board board, boolean isWhite) {
     int score = 0;
     BoardRepresentation bitboard = board.getBoardRep();
     // Check the activity of the King

@@ -12,13 +12,15 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
-import pdp.model.Timer;
+import pdp.model.ai.AlgorithmType;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
+import pdp.utils.Timer;
 import pdp.view.CLIView;
 import pdp.view.GUIView;
 import pdp.view.View;
@@ -36,12 +38,10 @@ public abstract class GameInitializer {
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
       if (options.containsKey(OptionType.TIME)) {
-        timer = new Timer(Integer.parseInt(options.get(OptionType.TIME)));
+        timer = new Timer(Long.parseLong(options.get(OptionType.TIME)) * 60 * 1000);
       } else {
-        timer = new Timer(30 * 60);
+        timer = new Timer((long) 30 * 60 * 1000);
       }
-      System.err.println("Option time not implemented, defaulting to a game without time limit");
-      timer = null;
     }
 
     boolean isWhiteAI = false;
@@ -68,32 +68,37 @@ public abstract class GameInitializer {
       }
 
       solver = new Solver();
-      solver = new Solver();
       if (options.containsKey(OptionType.AI_MODE)) {
-        // switch to set solver mode
-      } else {
-        // Set to default (ALPHABETA)
+        try {
+          solver.setAlgorithm(AlgorithmType.valueOf(options.get(OptionType.AI_MODE)));
+        } catch (Exception e) {
+          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
+          System.err.println("Defaulting to ALPHABETA.");
+        }
       }
-
       if (options.containsKey(OptionType.AI_HEURISTIC)) {
-        // switch to set heuristic
-      } else {
-        // Set to default
+        try {
+          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC));
+          solver.setHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC));
+          System.err.println("Defaulting to Heuristic STANDARD");
+        }
       }
 
       if (options.containsKey(OptionType.AI_DEPTH)) {
-        // set depth
-      } else {
-        // Set to default
+        try {
+          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH));
+          solver.setDepth(depth);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the depth of AI");
+          System.err.println("Defaulting to depth " + solver.getDepth());
+        }
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
         // set time
-      } else {
-        // Set to default
       }
-
-      throw new UnsupportedOperationException("AI mode not implemented");
     }
 
     Game model = null;
@@ -117,7 +122,7 @@ public abstract class GameInitializer {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
 
-          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver);
+          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer);
         }
 
       } catch (IOException

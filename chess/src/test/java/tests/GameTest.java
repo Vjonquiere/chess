@@ -13,6 +13,7 @@ import pdp.model.Game;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.model.savers.BoardSaver;
 import pdp.utils.Position;
@@ -237,6 +238,27 @@ public class GameTest {
     game.playMove(Move.fromString("h6-f6"));
     game.playMove(Move.fromString("a3-c3"));
     game.playMove(Move.fromString("a6-c6"));
+    game.playMove(Move.fromString("h4-g5"));
+    game.playMove(Move.fromString("h5-g4"));
+    game.playMove(Move.fromString("c4-b5"));
+    game.playMove(Move.fromString("a5-b4"));
+    game.playMove(Move.fromString("b5-c6"));
+    game.playMove(Move.fromString("b4-c3"));
+    game.playMove(Move.fromString("g5-f6"));
+    game.playMove(Move.fromString("g4-f3"));
+    game.playMove(Move.fromString("g1-f3"));
+    game.playMove(Move.fromString("g8-f6"));
+    game.playMove(Move.fromString("b1-c3"));
+    game.playMove(Move.fromString("b8-c6"));
+    game.playMove(Move.fromString("c1-a3"));
+    game.playMove(Move.fromString("c8-a6"));
+    game.playMove(Move.fromString("e2-e1"));
+    game.playMove(Move.fromString("a6-f1"));
+    game.playMove(Move.fromString("e1-f1"));
+    game.playMove(Move.fromString("c6-e5"));
+    game.playMove(Move.fromString("a3-c5"));
+    game.playMove(Move.fromString("f8-c5"));
+    game.playMove(Move.fromString("f3-e5"));
 
     assertTrue(game.isEndGamePhase());
   }
@@ -386,9 +408,126 @@ public class GameTest {
     BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
         board, posListWhite, posListBlack);
 
-    // Simulate game where 50 move rule can be applied
+    game.playMove(Move.fromString("h1-h2"));
+    game.playMove(Move.fromString("a8-a7"));
+    game.playMove(Move.fromString("h2-g2"));
+    game.playMove(Move.fromString("a7-b7"));
+    game.playMove(Move.fromString("g2-f2"));
+    game.playMove(Move.fromString("b7-c7"));
+    game.playMove(Move.fromString("f2-e2"));
+    // Black king moves away from check
+    game.playMove(Move.fromString("e8-f8"));
+    game.playMove(Move.fromString("e2-d2"));
+    game.playMove(Move.fromString("c7-d7"));
+    game.playMove(Move.fromString("d2-c2"));
+    game.playMove(Move.fromString("d7-e7"));
+    // White king moves away from check
+    game.playMove(Move.fromString("e1-d1"));
+    game.playMove(Move.fromString("e7-f7"));
+    game.playMove(Move.fromString("c2-b2"));
+    game.playMove(Move.fromString("f7-g7"));
+    game.playMove(Move.fromString("b2-a2"));
+    game.playMove(Move.fromString("g7-h7"));
+    game.playMove(Move.fromString("a2-a3"));
+    game.playMove(Move.fromString("h7-h6"));
+    // 10 moves mark reached
+    game.playMove(Move.fromString("a3-b3"));
+    game.playMove(Move.fromString("h6-g6"));
+    game.playMove(Move.fromString("b3-c3"));
+    game.playMove(Move.fromString("g6-f6"));
+    game.playMove(Move.fromString("c3-d3"));
+    game.playMove(Move.fromString("f6-e6"));
+    game.playMove(Move.fromString("d3-e3"));
+    game.playMove(Move.fromString("e6-d6"));
+    // White king moves away from check
+    game.playMove(Move.fromString("d1-e1"));
+    game.playMove(Move.fromString("d6-c6"));
+    game.playMove(Move.fromString("e3-f3"));
+    // Black king moves away from check
+    game.playMove(Move.fromString("f8-e8"));
+    game.playMove(Move.fromString("f3-g3"));
+    game.playMove(Move.fromString("c6-b6"));
+    game.playMove(Move.fromString("g3-h3"));
+    game.playMove(Move.fromString("b6-a6"));
+    game.playMove(Move.fromString("h3-h4"));
+    game.playMove(Move.fromString("a6-a5"));
+    game.playMove(Move.fromString("h4-g4"));
+    game.playMove(Move.fromString("a5-b5"));
+    // 20 moves mark reached
+    game.playMove(Move.fromString("g4-f4"));
+    game.playMove(Move.fromString("b5-c5"));
+    game.playMove(Move.fromString("f4-e4"));
+    // Black king moves away from check
+    game.playMove(Move.fromString("e8-f8"));
+    game.playMove(Move.fromString("e4-d4"));
+    game.playMove(Move.fromString("c5-d5"));
+    game.playMove(Move.fromString("d4-c4"));
+    game.playMove(Move.fromString("d5-e5"));
+    // White king moves away from check
+    game.playMove(Move.fromString("e1-d1"));
+    game.playMove(Move.fromString("e5-f5"));
+    game.playMove(Move.fromString("c4-b4"));
+    game.playMove(Move.fromString("f5-g5"));
+    game.playMove(Move.fromString("b4-a4"));
+    game.playMove(Move.fromString("g5-h5"));
+    // Rooks change side
+    game.playMove(Move.fromString("a4-a5"));
+    game.playMove(Move.fromString("h5-h4"));
+    game.playMove(Move.fromString("a5-b5"));
+    game.playMove(Move.fromString("h4-g4"));
+    game.playMove(Move.fromString("b5-c5"));
+    game.playMove(Move.fromString("g4-f4"));
+    // 30 moves mark reached
+    game.playMove(Move.fromString("c5-d5"));
+    game.playMove(Move.fromString("f4-e4"));
+    game.playMove(Move.fromString("d5-e5"));
+    game.playMove(Move.fromString("e4-d4"));
+    // White king moves away from check
+    game.playMove(Move.fromString("d1-e1"));
+    game.playMove(Move.fromString("d4-c4"));
+    game.playMove(Move.fromString("e5-f5"));
+    // Black king moves away from check
+    game.playMove(Move.fromString("f8-e8"));
+    game.playMove(Move.fromString("f5-g5"));
+    game.playMove(Move.fromString("c4-b4"));
+    game.playMove(Move.fromString("g5-h5"));
+    game.playMove(Move.fromString("b4-a4"));
+    game.playMove(Move.fromString("h5-h6"));
+    game.playMove(Move.fromString("a4-a3"));
+    game.playMove(Move.fromString("h6-g6"));
+    game.playMove(Move.fromString("a3-b3"));
+    game.playMove(Move.fromString("g6-f6"));
+    game.playMove(Move.fromString("b3-c3"));
+    game.playMove(Move.fromString("f6-e6"));
+    // Black king moves away from check
+    game.playMove(Move.fromString("e8-f8"));
+    // 40 moves mark reached
+    game.playMove(Move.fromString("e6-d6"));
+    game.playMove(Move.fromString("c3-d3"));
+    game.playMove(Move.fromString("d6-c6"));
+    game.playMove(Move.fromString("d3-e3"));
+    // White king moves away from check
+    game.playMove(Move.fromString("e1-d1"));
+    game.playMove(Move.fromString("e3-f3"));
+    game.playMove(Move.fromString("c6-b6"));
+    game.playMove(Move.fromString("f3-g3"));
+    game.playMove(Move.fromString("b6-a6"));
+    game.playMove(Move.fromString("g3-h3"));
+    game.playMove(Move.fromString("a6-a7"));
+    game.playMove(Move.fromString("h3-h2"));
+    game.playMove(Move.fromString("a7-b7"));
+    game.playMove(Move.fromString("h2-g2"));
+    game.playMove(Move.fromString("b7-c7"));
+    game.playMove(Move.fromString("g2-f2"));
+    game.playMove(Move.fromString("c7-d7"));
+    game.playMove(Move.fromString("f2-e2"));
+    game.playMove(Move.fromString("d7-e7"));
+    game.playMove(Move.fromString("f8-g8"));
+    // 50 moves mark reached
 
-    assertFalse(game.isOver());
+    // 50 moves rules should be applied
+
+    assertTrue(game.isOver());
   }
 
   @Test
@@ -407,7 +546,10 @@ public class GameTest {
 
     String board =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer()));
+            new FileBoard(
+                game.getBoard().getBoardRep(),
+                game.getBoard().getPlayer(),
+                new FenHeader(true, true, true, true, null, 0, 0)));
 
     assertTrue(content.contains(board));
 
@@ -430,7 +572,10 @@ public class GameTest {
 
     String board =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().getBoardRep(), game.getBoard().getPlayer()));
+            new FileBoard(
+                game.getBoard().getBoardRep(),
+                game.getBoard().getPlayer(),
+                new FenHeader(true, true, true, true, new Position(4, 2), 0, 1)));
 
     assertTrue(content.contains(board));
 
