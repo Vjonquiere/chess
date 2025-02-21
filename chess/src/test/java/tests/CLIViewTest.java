@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
@@ -47,7 +48,7 @@ public class CLIViewTest {
 
   @Test
   public void testBoardToASCII() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     char[][] expectedBoard = {
       {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
@@ -173,7 +174,7 @@ public class CLIViewTest {
   @Test
   void testTimeCommand() throws Exception {
 
-    Game game = Game.initialize(false, false, null, new Timer(3500000));
+    Game game = Game.initialize(false, false, null, new Timer(3500000), new HashMap<>());
 
     Thread.sleep(100);
 
@@ -191,7 +192,7 @@ public class CLIViewTest {
   @Test
   void testTimeCommandNoTimer() throws Exception {
 
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     handleUserInputMethod.invoke(view, "time");
     String output = outputStream.toString();

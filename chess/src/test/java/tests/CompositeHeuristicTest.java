@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ public class CompositeHeuristicTest {
   @BeforeEach
   public void setup() {
     solver = new Solver();
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
   }
 
   @Test
@@ -61,8 +62,19 @@ public class CompositeHeuristicTest {
     assertTrue(
         heuristics.stream().anyMatch(h -> h instanceof MaterialHeuristic),
         "Missing MaterialHeuristic");
+    assertTrue(heuristics.stream().anyMatch(h -> h instanceof GameStatus), "Missing GameStatus");
     assertTrue(
-        heuristics.stream().anyMatch(h -> h instanceof OpponentCheck), "Missing OpponentCheck");
+        heuristics.stream().anyMatch(h -> h instanceof BadPawnsHeuristic),
+        "Missing BadPawnsHeuristic");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof PawnChainHeuristic),
+        "Missing PawnChainHeuristic");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof DevelopmentHeuristic),
+        "Missing DevelopmentHeuristic");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof KingSafetyHeuristic),
+        "Missing KingSafetyHeuristic");
   }
 
   @Test
@@ -78,14 +90,14 @@ public class CompositeHeuristicTest {
 
     int score = 0;
     Heuristic material = new MaterialHeuristic();
-    Heuristic opponent = new OpponentCheck();
+    Heuristic status = new GameStatus();
     Heuristic mobility = new MobilityHeuristic();
     Heuristic badPawnsHeuristic = new BadPawnsHeuristic();
     Heuristic pawnChainHeuristic = new PawnChainHeuristic();
     Heuristic developmentHeuristic = new DevelopmentHeuristic();
     Heuristic KingSafetyHeuristic = new KingSafetyHeuristic();
     score += material.evaluate(game.getBoard(), false);
-    score += opponent.evaluate(game.getBoard(), false);
+    score += status.evaluate(game.getBoard(), false);
     score += mobility.evaluate(game.getBoard(), false);
     score += badPawnsHeuristic.evaluate(game.getBoard(), false);
     score += pawnChainHeuristic.evaluate(game.getBoard(), false);

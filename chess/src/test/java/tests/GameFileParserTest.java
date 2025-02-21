@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
@@ -37,7 +38,7 @@ public class GameFileParserTest {
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     assertEquals(new BitboardRepresentation(), board.board());
     assertFalse(board.isWhiteTurn());
-    Game game = Game.initialize(false, false, null, null, board);
+    Game game = Game.initialize(false, false, null, null, board, new HashMap<>());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertEquals(game.getBoard().board, board.board());
     assertThrows(
@@ -131,7 +132,7 @@ public class GameFileParserTest {
   public void parseTest1() {
     URL filePath = classLoader.getResource("gameBoards/gameExample1");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -173,7 +174,7 @@ public class GameFileParserTest {
     /*Verify that parsing a game with history or do not change output*/
     URL filePath = classLoader.getResource("gameBoards/gameExample1WithHistory");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -294,7 +295,7 @@ public class GameFileParserTest {
     assertEquals(99, fb.header().fiftyMoveRule());
     assertEquals(140, fb.header().playedMoves());
 
-    Game game = Game.initialize(false, false, null, null, fb);
+    Game game = Game.initialize(false, false, null, null, fb, new HashMap<>());
 
     // Checking params are given to the game
     assertNull(game.getBoard().enPassantPos);
@@ -323,7 +324,7 @@ public class GameFileParserTest {
     assertEquals(0, fb.header().fiftyMoveRule());
     assertEquals(141, fb.header().playedMoves());
 
-    Game game = Game.initialize(false, false, null, null, fb);
+    Game game = Game.initialize(false, false, null, null, fb, new HashMap<>());
 
     // Checking params are given to the game
     assertEquals(0, game.getBoard().getNbMovesWithNoCaptureOrPawn());

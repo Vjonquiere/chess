@@ -1,13 +1,14 @@
 package pdp;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import pdp.controller.BagOfCommands;
-import pdp.controller.GameController;
+import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
@@ -18,22 +19,25 @@ import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
+import pdp.utils.CLIOptions;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
-import pdp.view.CLIView;
-import pdp.view.GUIView;
-import pdp.view.View;
 
 public abstract class GameInitializer {
+
+  private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
+
   // TODO Internationalization
   /**
    * Initialize the game with the given options.
    *
    * @param options The options to use to initialize the game.
-   * @return A new GameController instance.
+   * @return A new Game instance.
    */
-  public static GameController initialize(HashMap<OptionType, String> options) {
+  public static Game initialize(HashMap<OptionType, String> options) {
+
+    DEBUG(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
@@ -113,7 +117,7 @@ public abstract class GameInitializer {
           BoardFileParser parser = new BoardFileParser();
           FileBoard board =
               parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
-          model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board);
+          model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board, options);
         } else {
 
           List<Move> moves = new ArrayList<>();
@@ -122,7 +126,7 @@ public abstract class GameInitializer {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
 
-          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer);
+          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer, options);
         }
 
       } catch (IOException
@@ -132,19 +136,12 @@ public abstract class GameInitializer {
         System.err.println(
             "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
         System.err.println("Using the default game start");
-        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
       }
     } else {
-      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
     }
 
-    View view;
-    if (options.containsKey(OptionType.GUI)) {
-      view = new GUIView();
-    } else {
-      view = new CLIView();
-    }
-    BagOfCommands bagOfCommands = BagOfCommands.getInstance();
-    return new GameController(model, view, bagOfCommands);
+    return model;
   }
 }

@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -20,7 +21,7 @@ public class MinimaxTest {
     solver = new Solver();
     solver.setAlgorithm(AlgorithmType.MINIMAX);
     solver.setHeuristic(HeuristicType.STANDARD);
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
   }
 
   @Test

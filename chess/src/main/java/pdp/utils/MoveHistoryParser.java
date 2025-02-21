@@ -54,7 +54,6 @@ public class MoveHistoryParser {
       moves.add(move);
     }
 
-    System.out.println(moves);
     return moves;
   }
 }

@@ -2,7 +2,9 @@ package pdp.view.GUI;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
+import pdp.model.Game;
 
 public class ChessMenu extends VBox {
   public ChessMenu() {
@@ -16,6 +18,9 @@ public class ChessMenu extends VBox {
 
   private Menu createFileMenu() {
     Menu fileMenu = new Menu("File");
+    MenuItem newGameItem = new MenuItem("New Game");
+    newGameItem.setOnAction(event -> openNewGamePopup());
+    fileMenu.getItems().add(newGameItem);
     return fileMenu;
   }
 
@@ -27,5 +32,9 @@ public class ChessMenu extends VBox {
   private Menu createAboutMenu() {
     Menu aboutMenu = new Menu("About");
     return aboutMenu;
+  }
+
+  private void openNewGamePopup() {
+    NewGamePopup.show(Game.getInstance().getOptions());
   }
 }

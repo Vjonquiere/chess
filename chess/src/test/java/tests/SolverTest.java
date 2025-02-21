@@ -3,6 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -22,7 +23,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationMaterial() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
 
@@ -35,15 +36,15 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(-7, solver.evaluateBoard(game.getBoard(), false));
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(7, solver.evaluateBoard(game.getBoard(), true));
   }
 
   @Test
   public void testEvaluationErrors() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     Exception exception =
         assertThrows(
@@ -71,7 +72,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationHash() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
     int score1 = solver.evaluateBoard(game.getBoard(), true);

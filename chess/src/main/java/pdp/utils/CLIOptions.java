@@ -194,6 +194,7 @@ public class CLIOptions {
           continue;
         }
       }
+
       boolean userProvided = cmd.hasOption(option.getLong());
       boolean defaultEnabled =
           defaultArgs.containsKey(option.getLong())
@@ -227,6 +228,18 @@ public class CLIOptions {
         }
       }
     }
+
+    if (activatedOptions.containsKey(OptionType.TIME)
+        && !activatedOptions.containsKey(OptionType.BLITZ)) {
+      System.err.println("The TIME option can't be used without BLITZ activated : option ignored.");
+      activatedOptions.remove(OptionType.TIME);
+    }
+
+    if (activatedOptions.containsKey(OptionType.AI)
+        && activatedOptions.get(OptionType.AI).equals("")) {
+      activatedOptions.put(OptionType.AI, "W");
+    }
+
     validateAIOptions(cmd, activatedOptions);
   }
 
