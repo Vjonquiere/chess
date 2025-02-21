@@ -31,6 +31,7 @@ import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
+import pdp.utils.Timer;
 import pdp.view.CLIView;
 
 public class CLIViewTest {
@@ -165,6 +166,28 @@ public class CLIViewTest {
   void testSurrenderCommand() throws Exception {
     handleUserInputMethod.invoke(view, "surrender");
     verify(mockBagOfCommands).addCommand(any(SurrenderCommand.class));
+  }
+
+  @Test
+  void testTimeCommand() throws Exception {
+
+    Game game = Game.initialize(false, false, null, new Timer(200));
+
+    game.getGameState().getMoveTimer().stop();
+
+    handleUserInputMethod.invoke(view, "time");
+    String output = outputStream.toString();
+    assertTrue(output.contains(game.getGameState().getMoveTimer().getTimeRemainingString()));
+  }
+
+  @Test
+  void testTimeCommandNoTimer() throws Exception {
+
+    Game game = Game.initialize(false, false, null, null);
+
+    handleUserInputMethod.invoke(view, "time");
+    String output = outputStream.toString();
+    assertTrue(output.contains(TextGetter.getText("noTimer")));
   }
 
   @Test
@@ -316,6 +339,127 @@ public class CLIViewTest {
 
     String output = outputStream.toString();
     String expected = TextGetter.getText("gameSaved");
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testMoveUndoEvent() {
+    view.onGameEvent(EventType.MOVE_UNDO);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("moveUndone");
+
+    assertTrue(output.contains(expected));
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  public void testMoveRedoEvent() {
+    view.onGameEvent(EventType.MOVE_REDO);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("moveRedone");
+
+    assertTrue(output.contains(expected));
+    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+  }
+
+  @Test
+  public void testTimeoutWhiteEvent() {
+    view.onGameEvent(EventType.OUT_OF_TIME_WHITE);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("outOfTime", TextGetter.getText("white"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testTimeoutBlackEvent() {
+    view.onGameEvent(EventType.OUT_OF_TIME_BLACK);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("outOfTime", TextGetter.getText("black"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testThreefoldEvent() {
+    view.onGameEvent(EventType.THREEFOLD_REPETITION);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("threeFoldRepetition");
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testInsufficientMaterialEvent() {
+    view.onGameEvent(EventType.INSUFFICIENT_MATERIAL);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("insufficientMaterial");
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testFiftyMoveEvent() {
+    view.onGameEvent(EventType.FIFTY_MOVE_RULE);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("fiftyMoveRule");
+
+    assertTrue(output.contains(expected));
+  }
+  @Test
+  public void testWhiteResignsEvent() {
+    view.onGameEvent(EventType.WHITE_RESIGNS);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("resigns", TextGetter.getText("white"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testBlackResignsEvent() {
+    view.onGameEvent(EventType.BLACK_RESIGNS);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("resigns", TextGetter.getText("black"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testCheckmateWhiteEvent() {
+    view.onGameEvent(EventType.CHECKMATE_WHITE);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("checkmate", TextGetter.getText("white"), TextGetter.getText("black"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testCheckmateBlackEvent() {
+    view.onGameEvent(EventType.CHECKMATE_BLACK);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("checkmate", TextGetter.getText("black"), TextGetter.getText("white"));
+
+    assertTrue(output.contains(expected));
+  }
+
+  @Test
+  public void testStalemateEvent() {
+    view.onGameEvent(EventType.STALEMATE);
+
+    String output = outputStream.toString();
+    String expected = TextGetter.getText("stalemate");
 
     assertTrue(output.contains(expected));
   }
