@@ -1,8 +1,15 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameState;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
@@ -17,6 +25,7 @@ import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.model.savers.BoardSaver;
 import pdp.utils.Position;
+import pdp.utils.Timer;
 
 public class GameTest {
   @Test
@@ -585,102 +594,110 @@ public class GameTest {
   }
 
   @Test
+  public void testOutOfTimeCallbackWhite() throws Exception {
+    Game game = spy(Game.initialize(false, false, null, new Timer(5000)));
+
+    GameState mockGameState = mock(GameState.class);
+
+    when(mockGameState.isWhiteTurn()).thenReturn(true);
+
+    Field field = Game.class.getDeclaredField("gameState");
+    field.setAccessible(true);
+    field.set(game, mockGameState);
+
+    game.outOfTimeCallback();
+
+    verify(game, times(1)).outOfTimeCallback();
+    verify(mockGameState).playerOutOfTime(true);
+  }
+
+  @Test
+  public void testOutOfTimeCallbackBlack() throws Exception {
+    Game game = spy(Game.initialize(false, false, null, new Timer(5000)));
+
+    GameState mockGameState = mock(GameState.class);
+
+    when(mockGameState.isWhiteTurn()).thenReturn(false);
+
+    Field field = Game.class.getDeclaredField("gameState");
+    field.setAccessible(true);
+    field.set(game, mockGameState);
+
+    game.outOfTimeCallback();
+
+    verify(game, times(1)).outOfTimeCallback();
+    verify(game.getGameState()).playerOutOfTime(false);
+  }
+
+  @Test
   public void testWhiteLosesOnTime() throws InterruptedException {
-    /*
-    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(100);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
 
     Thread.sleep(150);
 
-    verify(game).outOfTimeCallback();
-    verify(game).notifyObservers(EventType.OUT_OF_TIME_WHITE);
-    verify(game).notifyObservers(EventType.WIN_BLACK);
-    */
+    assertEquals(0, game.getGameState().getMoveTimer().getTimeRemaining());
+    verify(callback, times(1)).run();
   }
 
   @Test
   public void testBlackLosesOnTime() throws InterruptedException {
-    /*
-    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(200);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
+
+    Thread.sleep(20);
     game.playMove(Move.fromString("e2-e4"));
 
-    Thread.sleep(150);
+    Thread.sleep(250);
 
-    verify(game).outOfTimeCallback();
-    verify(game).notifyObservers(EventType.OUT_OF_TIME_BLACK);
-    verify(game).notifyObservers(EventType.WIN_WHITE);
-    */
-  }
-
-  @Test
-  public void testDrawOnWhiteTimeout() throws InterruptedException {
-    /*
-    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
-    GameState gameState = mock(GameState.class);
-    Board board = mock(Board.class);
-    BoardRepresentation boardRep = mock(BoardRepresentation.class);
-
-    when(game.getGameState()).thenReturn(gameState);
-    when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(boardRep);
-      when(boardRep.hasEnoughMaterialToMate(true)).thenReturn(true);
-      when(boardRep.hasEnoughMaterialToMate(false)).thenReturn(false); // Black can't checkmate
-      game.playMove(Move.fromString("e2-e4"));
-      Thread.sleep(150);
-
-      verify(game, times(1)).outOfTimeCallback();
-      verify(game.getGameState()).playerOutOfTime(true);
-      verify(game).notifyObservers(EventType.OUT_OF_TIME_WHITE);
-      verify(game).notifyObservers(EventType.DRAW);
-      */
-  }
-
-  @Test
-  public void testDrawOnBlackTimeout() throws InterruptedException {
-    /*
-    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
-    GameState gameState = mock(GameState.class);
-    Board board = mock(Board.class);
-    BoardRepresentation boardRep = mock(BoardRepresentation.class);
-
-    when(game.getGameState()).thenReturn(gameState);
-    when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(boardRep);
-
-    when(boardRep.hasEnoughMaterialToMate(false)).thenReturn(true);
-    when(boardRep.hasEnoughMaterialToMate(true)).thenReturn(false); // White can't checkmate
-
-
-    game.playMove(Move.fromString("e2-e4"));
-    game.playMove(Move.fromString("e7-e5"));
-    Thread.sleep(150);
-
-    verify(game, times(1)).outOfTimeCallback();
-    verify(game.getGameState()).playerOutOfTime(true);
-    verify(game).notifyObservers(EventType.OUT_OF_TIME_BLACK);
-    verify(game).notifyObservers(EventType.DRAW);
-    */
+    assertEquals(0, game.getGameState().getMoveTimer().getTimeRemaining());
+    verify(callback, times(1)).run();
   }
 
   @Test
   public void testNotCalledBeforeTimeout() throws InterruptedException {
-    /*
-    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(200);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
+
+    Thread.sleep(20);
+
     game.playMove(Move.fromString("e2-e4"));
 
     Thread.sleep(20);
     game.getGameState().getMoveTimer().stop();
 
-    assert(game.getGameState().getMoveTimer().getTimeRemaining() < 100);
-    verify(game, never()).outOfTimeCallback();
-    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_WHITE);
-    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_BLACK);
-    */
+    assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() < 200);
+    assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() > 0);
+    verify(callback, never()).run();
   }
 
   @Test
   public void testTimeResetAfterMove() throws InterruptedException {
-    /*
-    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+
+    Runnable callback = mock(Runnable.class);
+
+    Timer timer = new Timer(100);
+
+    Game game = spy(Game.initialize(false, false, null, timer));
+
+    timer.setCallback(callback);
 
     Thread.sleep(60);
     game.playMove(Move.fromString("e2-e4"));
@@ -688,10 +705,8 @@ public class GameTest {
 
     game.getGameState().getMoveTimer().stop();
 
-    assert(game.getGameState().getMoveTimer().getTimeRemaining() < 100);
-    verify(game, never()).outOfTimeCallback();
-    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_WHITE);
-    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_BLACK);
-    */
+    assert (game.getGameState().getMoveTimer().getTimeRemaining() < 100);
+    assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() > 0);
+    verify(callback, never()).run();
   }
 }

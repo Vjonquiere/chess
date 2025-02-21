@@ -1,8 +1,12 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
+import pdp.events.EventType;
 import pdp.model.*;
 import pdp.utils.Timer;
 
@@ -123,8 +127,24 @@ public class GameStateTest {
   }
 
   @Test
-  public void testPlayerLosesOnTime() {
-    // TO DO when Time class is implemented
-    // gameBlitzOn.playerLosesOnTime();
+  public void testWhitePlayerLosesOnTime() {
+    GameState gameState = spy(new GameState());
+
+    gameState.playerOutOfTime(true);
+
+    assertTrue(gameState.isGameOver());
+    verify(gameState, times(1)).notifyObservers(EventType.OUT_OF_TIME_WHITE);
+    verify(gameState, times(1)).notifyObservers(EventType.WIN_BLACK);
+  }
+
+  @Test
+  public void testBlackPlayerLosesOnTime() {
+    GameState gameState = spy(new GameState());
+
+    gameState.playerOutOfTime(false);
+
+    assertTrue(gameState.isGameOver());
+    verify(gameState, times(1)).notifyObservers(EventType.OUT_OF_TIME_BLACK);
+    verify(gameState, times(1)).notifyObservers(EventType.WIN_WHITE);
   }
 }
