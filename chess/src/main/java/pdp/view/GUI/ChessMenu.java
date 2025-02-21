@@ -16,6 +16,9 @@ public class ChessMenu extends VBox {
 
   private Menu createFileMenu() {
     Menu fileMenu = new Menu("File");
+    MenuItem newGameItem = new MenuItem("New Game");
+    newGameItem.setOnAction(event -> openNewGamePopup());
+    fileMenu.getItems().add(newGameItem);
     return fileMenu;
   }
 
@@ -28,4 +31,6 @@ public class ChessMenu extends VBox {
     Menu aboutMenu = new Menu("About");
     return aboutMenu;
   }
+
+  private void openNewGamePopup() {}
 }
