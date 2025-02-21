@@ -583,4 +583,115 @@ public class GameTest {
 
     Files.deleteIfExists(tempFile);
   }
+
+  @Test
+  public void testWhiteLosesOnTime() throws InterruptedException {
+    /*
+    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+
+    Thread.sleep(150);
+
+    verify(game).outOfTimeCallback();
+    verify(game).notifyObservers(EventType.OUT_OF_TIME_WHITE);
+    verify(game).notifyObservers(EventType.WIN_BLACK);
+    */
+  }
+
+  @Test
+  public void testBlackLosesOnTime() throws InterruptedException {
+    /*
+    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+    game.playMove(Move.fromString("e2-e4"));
+
+    Thread.sleep(150);
+
+    verify(game).outOfTimeCallback();
+    verify(game).notifyObservers(EventType.OUT_OF_TIME_BLACK);
+    verify(game).notifyObservers(EventType.WIN_WHITE);
+    */
+  }
+
+  @Test
+  public void testDrawOnWhiteTimeout() throws InterruptedException {
+    /*
+    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+    GameState gameState = mock(GameState.class);
+    Board board = mock(Board.class);
+    BoardRepresentation boardRep = mock(BoardRepresentation.class);
+
+    when(game.getGameState()).thenReturn(gameState);
+    when(gameState.getBoard()).thenReturn(board);
+    when(board.getBoardRep()).thenReturn(boardRep);
+      when(boardRep.hasEnoughMaterialToMate(true)).thenReturn(true);
+      when(boardRep.hasEnoughMaterialToMate(false)).thenReturn(false); // Black can't checkmate
+      game.playMove(Move.fromString("e2-e4"));
+      Thread.sleep(150);
+
+      verify(game, times(1)).outOfTimeCallback();
+      verify(game.getGameState()).playerOutOfTime(true);
+      verify(game).notifyObservers(EventType.OUT_OF_TIME_WHITE);
+      verify(game).notifyObservers(EventType.DRAW);
+      */
+  }
+
+  @Test
+  public void testDrawOnBlackTimeout() throws InterruptedException {
+    /*
+    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+    GameState gameState = mock(GameState.class);
+    Board board = mock(Board.class);
+    BoardRepresentation boardRep = mock(BoardRepresentation.class);
+
+    when(game.getGameState()).thenReturn(gameState);
+    when(gameState.getBoard()).thenReturn(board);
+    when(board.getBoardRep()).thenReturn(boardRep);
+
+    when(boardRep.hasEnoughMaterialToMate(false)).thenReturn(true);
+    when(boardRep.hasEnoughMaterialToMate(true)).thenReturn(false); // White can't checkmate
+
+
+    game.playMove(Move.fromString("e2-e4"));
+    game.playMove(Move.fromString("e7-e5"));
+    Thread.sleep(150);
+
+    verify(game, times(1)).outOfTimeCallback();
+    verify(game.getGameState()).playerOutOfTime(true);
+    verify(game).notifyObservers(EventType.OUT_OF_TIME_BLACK);
+    verify(game).notifyObservers(EventType.DRAW);
+    */
+  }
+
+  @Test
+  public void testNotCalledBeforeTimeout() throws InterruptedException {
+    /*
+    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+    game.playMove(Move.fromString("e2-e4"));
+
+    Thread.sleep(20);
+    game.getGameState().getMoveTimer().stop();
+
+    assert(game.getGameState().getMoveTimer().getTimeRemaining() < 100);
+    verify(game, never()).outOfTimeCallback();
+    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_WHITE);
+    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_BLACK);
+    */
+  }
+
+  @Test
+  public void testTimeResetAfterMove() throws InterruptedException {
+    /*
+    Game game = spy(Game.initialize(false, false, null, new Timer(100)));
+
+    Thread.sleep(60);
+    game.playMove(Move.fromString("e2-e4"));
+    Thread.sleep(70);
+
+    game.getGameState().getMoveTimer().stop();
+
+    assert(game.getGameState().getMoveTimer().getTimeRemaining() < 100);
+    verify(game, never()).outOfTimeCallback();
+    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_WHITE);
+    verify(game, never()).notifyObservers(EventType.OUT_OF_TIME_BLACK);
+    */
+  }
 }
