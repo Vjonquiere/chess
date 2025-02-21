@@ -3,6 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,9 +11,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.ai.AlgorithmType;
+import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.model.savers.BoardSaver;
@@ -582,5 +587,57 @@ public class GameTest {
     assertTrue(content.contains(game.getHistory().toAlgebraicString()));
 
     Files.deleteIfExists(tempFile);
+  }
+
+  @Test
+  public void startAITest() {
+    Solver s = new Solver();
+    Game game = Game.initialize(true, false, s, null);
+    game.startAI();
+    // AI white and white's turn
+    assertNotEquals(
+        game.getGameState().isWhiteTurn(),
+        Game.initialize(true, false, s, null).getGameState().isWhiteTurn());
+    assertNotEquals(
+        game.getGameState().getBoard().getBoardRep(),
+        Game.initialize(true, false, s, null).getGameState().getBoard().getBoardRep());
+    BitboardRepresentation bitboard = (BitboardRepresentation) game.getBoard().getBoardRep();
+    // Ai white and Black's turn
+    game.startAI();
+    assertEquals(game.getGameState().getBoard().getBoardRep(), bitboard);
+
+    game = Game.initialize(false, true, s, null);
+    game.startAI();
+    // AI black and white's turn
+    assertEquals(
+        game.getGameState().isWhiteTurn(),
+        Game.initialize(false, true, s, null).getGameState().isWhiteTurn());
+    assertEquals(
+        game.getGameState().getBoard().getBoardRep(),
+        Game.initialize(false, true, s, null).getGameState().getBoard().getBoardRep());
+  }
+
+  @Test
+  public void AIPlayOnItsOwn() {
+    Solver s = new Solver();
+    s.setDepth(3);
+    s.setAlgorithm(AlgorithmType.ALPHA_BETA);
+    Game game = Game.initialize(true, true, s, null);
+
+    game.startAI();
+
+    assertTrue(game.isOver());
+  }
+
+  @Test
+  public void changeHeuristicEndGame() {
+    BoardFileParser parser = new BoardFileParser();
+    ClassLoader classLoader = getClass().getClassLoader();
+    URL filePath = classLoader.getResource("gameBoards/fenVersions/endGame");
+    FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    Solver s = new Solver();
+    Game game = Game.initialize(true, false, s, null, board);
+    game.startAI();
+    assertTrue(s.getHeuristic() instanceof EndGameHeuristic);
   }
 }
