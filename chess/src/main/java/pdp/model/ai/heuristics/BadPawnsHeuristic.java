@@ -2,16 +2,24 @@ package pdp.model.ai.heuristics;
 
 import java.util.*;
 import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
 public class BadPawnsHeuristic implements Heuristic {
 
+  /**
+   * Computes a score according to the potential weaknesses in the observed pawn structures.
+   *
+   * @param board hte board of the game
+   * @param isWhite true if white, false otherwise
+   * @return a score based on how bad pawns are for the corresponding player
+   */
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += doubledPawns(board, isWhite) - doubledPawns(board, !isWhite);
     score += isolatedPawns(board, isWhite) - isolatedPawns(board, !isWhite);
-    // score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
+    score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
     return (int) (-0.5 * score);
   }
 
@@ -62,7 +70,80 @@ public class BadPawnsHeuristic implements Heuristic {
     return count;
   }
 
+  /**
+   * Counts the number of backward pawns and computes the corresponding score. Essentially checks:
+   * If it has no friendly pawns behind it in adjacent files. If it is the most backward pawn in its
+   * column. If an enemy pawn is ahead of it in the same file. If all conditions hold, it is a
+   * backward pawn.
+   *
+   * @param board the board of the game
+   * @param isWhite true if white, false otherwise
+   * @return score based on the number of backward pawns
+   */
   private int backwardsPawns(Board board, boolean isWhite) {
-    return 0;
+    BoardRepresentation bitboard = board.getBoardRep();
+    List<Position> pawns = bitboard.getPawns(isWhite);
+    List<Position> enemyPawns = bitboard.getPawns(!isWhite);
+
+    int count = 0;
+    int penaltyForBackwardsPawn = 4;
+
+    // Track the most advanced friendly pawn in each file
+    Map<Integer, Integer> highestPawnRank = new HashMap<>();
+    for (Position p : pawns) {
+      int currentY = p.getY();
+      if (isWhite) {
+        highestPawnRank.put(
+            p.getX(), Math.max(highestPawnRank.getOrDefault(p.getX(), 0), currentY));
+      } else {
+        highestPawnRank.put(
+            p.getX(), Math.min(highestPawnRank.getOrDefault(p.getX(), 7), currentY));
+      }
+    }
+
+    // Track the closest enemy pawn in each file// Should be equal
+    Map<Integer, Integer> closestEnemyRank = new HashMap<>();
+    for (Position p : enemyPawns) {
+      int currentY = p.getY();
+      if (isWhite) {
+        closestEnemyRank.put(
+            p.getX(), Math.min(closestEnemyRank.getOrDefault(p.getX(), 8), currentY));
+      } else {
+        closestEnemyRank.put(
+            p.getX(), Math.max(closestEnemyRank.getOrDefault(p.getX(), -1), currentY));
+      }
+    }
+
+    for (Position pawn : pawns) {
+      int x = pawn.getX();
+      int y = pawn.getY();
+
+      // Check if this is the most backward pawn in its file
+      boolean isMostBackwards;
+      // Check if there are enemy pawns ahead in the same file
+      boolean enemyIsAhead;
+      // Check potential pawn support from left and from right
+      boolean hasLeftSupport;
+      boolean hasRightSupport;
+
+      if (isWhite) {
+        hasLeftSupport = highestPawnRank.getOrDefault(x - 1, -1) <= y;
+        hasRightSupport = highestPawnRank.getOrDefault(x + 1, -1) <= y;
+        isMostBackwards = highestPawnRank.getOrDefault(x, -1) == y;
+        enemyIsAhead = closestEnemyRank.getOrDefault(x, 8) > y;
+      } else {
+        hasLeftSupport = highestPawnRank.getOrDefault(x - 1, 8) >= y;
+        hasRightSupport = highestPawnRank.getOrDefault(x + 1, 8) >= y;
+        isMostBackwards = highestPawnRank.getOrDefault(x, 8) == y;
+        enemyIsAhead = closestEnemyRank.getOrDefault(x, -1) < y;
+      }
+
+      // If the pawn has no support, is the most backward in its file, and is behind enemy pawns
+      if (!hasLeftSupport && !hasRightSupport && isMostBackwards && enemyIsAhead) {
+        count++;
+      }
+    }
+
+    return count * penaltyForBackwardsPawn;
   }
 }

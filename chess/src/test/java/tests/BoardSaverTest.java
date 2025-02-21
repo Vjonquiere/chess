@@ -1,8 +1,9 @@
-package tests.helpers;
+package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
+import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 import pdp.model.board.Move;
@@ -17,10 +18,10 @@ import pdp.utils.Position;
 public class BoardSaverTest {
   @Test
   public void testDefaultBoardSave() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
     String boardString =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn()));
+            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));
     String[] expectedBoardString = {
       "W",
       "r n b q k b n r",
@@ -39,7 +40,7 @@ public class BoardSaverTest {
 
   @Test
   public void testBoardSaveAfterOneMovePlayed() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -48,7 +49,7 @@ public class BoardSaverTest {
             false));
     String boardString =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn()));
+            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));
     String[] expectedBoardString = {
       "B",
       "r n b q k b n r",
@@ -71,10 +72,10 @@ public class BoardSaverTest {
     ClassLoader classLoader = getClass().getClassLoader();
     URL filePath = classLoader.getResource("gameBoards/gameExample1WithHistory");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
-    Game game = Game.initialize(false, false, null, null, board);
+    Game game = Game.initialize(false, false, null, null, board, new HashMap<>());
     String boardString =
         BoardSaver.saveBoard(
-            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn()));
+            new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));
     String[] expectedBoardString = {
       "B",
       "r n b q k b _ r",
