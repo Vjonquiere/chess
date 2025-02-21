@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,12 +22,12 @@ public class ZobristHashingTest {
 
   @BeforeEach
   public void setUp() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
   }
 
   @AfterEach
   public void tearDown() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
   }
 
   @Test
@@ -57,7 +58,7 @@ public class ZobristHashingTest {
     long hashEnPassant = zobristHashing.generateHashFromBitboards(board);
 
     // move a pawn two rows ahead but in two times (same pos as en passantPos but not registered)
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     board = game.getBoard();
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     game.playMove(new Move(new Position(1, 7), new Position(2, 5)));
@@ -77,7 +78,7 @@ public class ZobristHashingTest {
     long hashEnPassant = zobristHashing.generateSimplifiedHashFromBitboards(board);
 
     // move a pawn two rows ahead but in two times (same pos as en passantPos but not registered)
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     board = game.getBoard();
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     game.playMove(new Move(new Position(1, 7), new Position(2, 5)));

@@ -3,6 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class HeuristicTests {
   @BeforeEach
   public void setup() {
     solver = new Solver();
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
   }
 
   @Test
@@ -216,7 +217,7 @@ public class HeuristicTests {
 
   @Test
   public void testPromotionHeuristic() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -235,7 +236,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingActivityHeuristic() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -255,7 +256,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingSafetyHeuristic() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -273,7 +274,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingSafetyHeuristicToChecks() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -291,7 +292,7 @@ public class HeuristicTests {
 
   @Test
   public void testBishopEndgameHeuristic() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -334,7 +335,7 @@ public class HeuristicTests {
 
   @Test
   public void testBishopEndgameHeuristicTwoBishops() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -353,7 +354,7 @@ public class HeuristicTests {
 
   @Test
   public void testPawnChainsHeuristicWhenGameStarts() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -372,7 +373,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingOppositionHeuristic() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -391,7 +392,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingOppositionHeuristicStrongOpposition() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -430,7 +431,7 @@ public class HeuristicTests {
 
   @Test
   public void testBishopEndgameHeuristicSameColorBishopOpponent() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -473,7 +474,7 @@ public class HeuristicTests {
 
   @Test
   public void testBishopEndgameHeuristicSameColorBishopSamePlayer() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -516,7 +517,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingOppositionHeuristicDiagonal() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -555,7 +556,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingSafetyHeuristicInCenter() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -594,7 +595,7 @@ public class HeuristicTests {
 
   @Test
   public void testKingActivityHeuristicKingHasManyMoves() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -633,7 +634,7 @@ public class HeuristicTests {
 
   @Test
   public void testPawnChainsHeuristic() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
@@ -686,7 +687,7 @@ public class HeuristicTests {
 
   @Test
   public void testPawnPromotionHeuristicCloseToPromotion() {
-    game = Game.initialize(false, false, null, null);
+    game = Game.initialize(false, false, null, null, new HashMap<>());
     solver = new Solver();
     solver.setHeuristic(HeuristicType.ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
