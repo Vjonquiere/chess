@@ -272,7 +272,7 @@ public class CLIOptions {
    */
   private static boolean isFeatureImplemented(OptionType option) {
     return switch (option) {
-      case GUI, CONTEST, AI_TIME -> false;
+      case GUI, CONTEST -> false;
       default -> true;
     };
   }

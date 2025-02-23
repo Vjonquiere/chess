@@ -35,6 +35,7 @@ public class Solver {
     evaluatedBoards = new HashMap<>();
     this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
+    this.timer = new Timer(time);
   }
 
   /**
@@ -121,7 +122,9 @@ public class Solver {
    * @param time The time to use.
    */
   public void setTime(long time) {
-
+    if (time <= 0) {
+      throw new IllegalArgumentException("Time must be greater than 0");
+    }
     this.time = time;
     timer = new Timer(time);
     DEBUG(LOGGER, "Time set to " + time);
@@ -138,13 +141,13 @@ public class Solver {
    */
   public void playAIMove(Game game) {
     game.setExploration(true);
-    if (timer != null) {
-      timer.start();
-    }
+
+    timer.start();
+
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
-    if (timer != null) {
-      timer.stop();
-    }
+
+    timer.stop();
+
     DEBUG(LOGGER, "Best move " + bestMove);
     game.setExploration(false);
     try {

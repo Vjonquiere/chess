@@ -39,9 +39,8 @@ public class MinimaxTest {
   }
 
   @Test
-  public void testTimer5s() {
+  public void testTimerDefault() {
     long timeLimit = 5000;
-    solver.setTime(timeLimit);
     solver.setDepth(5);
 
     long startTime = System.currentTimeMillis();
@@ -74,7 +73,8 @@ public class MinimaxTest {
 
   @Test
   public void testTimerOverStartFunction() {
-    long timeLimit = 0;
+    long timeLimit = 1;
+    solver.setDepth(20);
     solver.setTime(timeLimit);
     long startTime = System.currentTimeMillis();
     solver.playAIMove(game);

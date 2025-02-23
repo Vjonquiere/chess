@@ -1,7 +1,6 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,5 +108,35 @@ public class SolverTest {
               solver.setDepth(-2);
             });
     assertEquals("Depth must be greater than 0", exception2.getMessage());
+  }
+
+  @Test
+  public void testSetTimeError() {
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              solver.setTime(0);
+            });
+    assertEquals("Time must be greater than 0", exception.getMessage());
+
+    Exception exception2 =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              solver.setTime(-2);
+            });
+    assertEquals("Time must be greater than 0", exception2.getMessage());
+  }
+
+  @Test
+  public void testNotEnoughTime() {
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    solver.setTime(1);
+    solver.setDepth(100);
+    game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
+    solver.playAIMove(game);
+
+    assertTrue(game.getGameState().hasBlackResigned());
   }
 }

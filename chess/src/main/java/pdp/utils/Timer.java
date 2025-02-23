@@ -52,7 +52,7 @@ public class Timer implements Runnable {
         this.timeOverCallback.run();
       }
     } catch (Exception e) {
-      System.err.println(e.getMessage());
+      // System.err.println(e.getMessage());
     }
     running = false;
   }

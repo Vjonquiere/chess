@@ -92,7 +92,13 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
-        // set time
+        try {
+          long time = Long.parseLong(options.get(OptionType.AI_TIME));
+          solver.setTime(time);
+        } catch (Exception e) {
+          System.err.println("Not a long for the time of AI (in milliseconds)");
+          System.err.println("Defaulting to a 5 seconds timer");
+        }
       }
     }
 
