@@ -39,7 +39,6 @@ public class AlphaBetaTest {
 
   @Test
   public void testTimerDefault() {
-    long timeLimit = 5000;
     solver.setDepth(5);
     long startTime = System.currentTimeMillis();
     solver.playAIMove(game);
@@ -48,8 +47,8 @@ public class AlphaBetaTest {
     long elapsedTime = endTime - startTime;
     long remainingTime = solver.getTimer().getTimeRemaining();
 
-    assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 100);
-    assertTrue(remainingTime <= timeLimit);
+    assertTrue(elapsedTime >= 0 && elapsedTime <= solver.getTime() + 100);
+    assertTrue(remainingTime <= solver.getTime());
   }
 
   @Test

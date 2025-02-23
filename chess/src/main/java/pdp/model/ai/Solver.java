@@ -134,6 +134,10 @@ public class Solver {
     return timer;
   }
 
+  public long getTime() {
+    return time;
+  }
+
   /**
    * Uses the AI algorithm to find the best move and plays it.
    *

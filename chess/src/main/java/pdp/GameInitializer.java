@@ -100,6 +100,11 @@ public abstract class GameInitializer {
           System.err.println("Defaulting to a 5 seconds timer");
         }
       }
+      if (options.containsKey(OptionType.BLITZ)) {
+        // If blitz, take the minimum between the blitz time and AI time
+        long time = Long.min(solver.getTimer().getTimeRemaining(), timer.getTimeRemaining() - 100);
+        solver.setTime(time);
+      }
     }
 
     Game model = null;
