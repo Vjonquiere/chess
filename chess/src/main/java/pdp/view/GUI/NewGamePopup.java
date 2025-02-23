@@ -2,6 +2,7 @@ package pdp.view.GUI;
 
 import java.io.File;
 import java.util.HashMap;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -66,6 +67,8 @@ public class NewGamePopup {
 
     timeContainer.getChildren().add(timeSlider);
     layout.getChildren().add(timeContainer);
+
+    layout.getChildren().add(new Separator());
 
     ComboBox<String> aiDropdown = new ComboBox<>();
     aiDropdown.getItems().add("None");
@@ -202,6 +205,8 @@ public class NewGamePopup {
               }
             });
 
+    layout.getChildren().add(new Separator());
+
     Label loadLabel = new Label("Load game from:");
     TextField loadTextField = new TextField();
     loadTextField.setPromptText("Select a file...");
@@ -232,6 +237,7 @@ public class NewGamePopup {
     loadContainer.getChildren().add(new HBox(5, loadTextField, browseButton));
 
     layout.getChildren().add(loadContainer);
+    layout.getChildren().add(new Separator());
 
     Button startGameButton = new Button("Start Game");
     startGameButton.setOnAction(
@@ -239,7 +245,10 @@ public class NewGamePopup {
           GameInitializer.initialize(options);
           popupStage.close();
         });
-    layout.getChildren().add(startGameButton);
+
+    HBox buttonContainer = new HBox(startGameButton);
+    buttonContainer.setAlignment(Pos.CENTER);
+    layout.getChildren().add(buttonContainer);
 
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setContent(layout);
