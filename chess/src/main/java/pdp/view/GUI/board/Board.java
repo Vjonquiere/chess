@@ -1,5 +1,7 @@
 package pdp.view.GUI.board;
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.scene.layout.GridPane;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
@@ -10,20 +12,21 @@ import pdp.model.piece.ColoredPiece;
 import pdp.utils.Position;
 
 public class Board extends GridPane {
-  private final BoardRepresentation board;
+  private BoardRepresentation board;
   private final int boardColumns;
   private final int boardRows;
   private Position from;
+  private final Map<Position, Square> pieces = new HashMap<>();
 
   public Board(Game game) {
     this.board = game.getBoard().board;
     this.boardColumns = board.getNbCols();
     this.boardRows = board.getNbRows();
 
-    updateBoard();
+    buildBoard();
   }
 
-  public void updateBoard() {
+  public void buildBoard() {
     super.getChildren().clear();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
@@ -46,8 +49,19 @@ public class Board extends GridPane {
             event -> {
               switchSelectedSquare(finalx, finaly);
             });
+        pieces.put(new Position(x, boardRows - 1 - y), sq);
         super.add(sq, x, y);
         // super.add(new Text(Integer.toString(x + y * 8)), x, y);
+      }
+    }
+  }
+
+  public void updateBoard() {
+    board = Game.getInstance().getBoard().board;
+    for (int x = 0; x < boardColumns; x++) {
+      for (int y = 0; y < boardRows; y++) {
+        ColoredPiece piece = board.getPieceAt(x, boardRows - 1 - y);
+        pieces.get(new Position(x, boardRows - 1 - y)).updatePiece(piece);
       }
     }
   }
@@ -57,18 +71,18 @@ public class Board extends GridPane {
     if (from == null) {
       from = new Position(x, y);
       // System.out.println("SELECTED SQUARE UPDATED TO: " + from);
-      updateBoard();
+      // updateBoard();
     } else {
       try {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
         from = null;
-        updateBoard();
+        // updateBoard();
       } catch (Exception e) {
         from = null;
         // e.printStackTrace();
         System.out.println("wrong move:" + e.getMessage());
-        updateBoard();
+        // updateBoard();
       }
     }
   }

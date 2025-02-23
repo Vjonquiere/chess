@@ -1,5 +1,6 @@
 package pdp.model;
 
+import static java.lang.Thread.sleep;
 import static pdp.utils.Logging.DEBUG;
 
 import java.io.BufferedWriter;
@@ -530,9 +531,11 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
 
-    this.notifyObservers(EventType.MOVE_PLAYED);
-
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+
+    if (!explorationAI) {
+      this.notifyObservers(EventType.MOVE_PLAYED);
+    }
 
     if (this.gameState.getMoveTimer() != null && !this.gameState.isGameOver()) {
       this.gameState.getMoveTimer().start();
@@ -543,6 +546,12 @@ public class Game extends Subject {
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
       this.notifyObservers(EventType.AI_PLAYING);
+      try {
+        sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
       solver.playAIMove(this);
     }
   }

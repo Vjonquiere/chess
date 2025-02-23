@@ -4,6 +4,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
+import pdp.controller.BagOfCommands;
+import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
 
 public class ChessMenu extends VBox {
@@ -26,6 +28,12 @@ public class ChessMenu extends VBox {
 
   private Menu createGameMenu() {
     Menu gameMenu = new Menu("Game");
+    MenuItem start = new MenuItem("Start");
+    start.setOnAction(
+        e -> {
+          BagOfCommands.getInstance().addCommand(new StartGameCommand());
+        });
+    gameMenu.getItems().add(start);
     return gameMenu;
   }
 

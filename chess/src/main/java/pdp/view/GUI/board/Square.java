@@ -10,7 +10,12 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 
 public class Square extends StackPane {
+
+  ColoredPiece currentPiece;
+  ImageView pieceImage;
+
   public Square(ColoredPiece piece, boolean squareColor, boolean selected) {
+    currentPiece = piece;
     Canvas sq = new Canvas(100, 100);
     GraphicsContext gc = sq.getGraphicsContext2D();
     if (squareColor) {
@@ -22,8 +27,9 @@ public class Square extends StackPane {
     }
     gc.fillRect(0, 0, 100, 100);
     super.getChildren().add(sq);
-    if (piece != null && piece.piece != Piece.EMPTY) {
-      super.getChildren().add(addPiece(piece));
+    if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
+      pieceImage = addPiece(piece);
+      super.getChildren().add(pieceImage);
     }
   }
 
@@ -36,5 +42,19 @@ public class Square extends StackPane {
     imageView.setFitWidth(50);
     imageView.setFitHeight(50);
     return imageView;
+  }
+
+  public void updatePiece(ColoredPiece piece) {
+    if (!(piece.equals(currentPiece))) {
+      currentPiece = piece;
+      if (pieceImage != null && super.getChildren().contains(pieceImage)) {
+        super.getChildren().remove(pieceImage);
+      }
+      super.getChildren().remove(pieceImage);
+      if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
+        pieceImage = addPiece(piece);
+        super.getChildren().add(pieceImage);
+      }
+    }
   }
 }

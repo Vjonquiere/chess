@@ -1,4 +1,18 @@
 package pdp.controller.commands;
 
-public class StartGameCommand {
+import java.util.Optional;
+import pdp.controller.Command;
+import pdp.controller.GameController;
+import pdp.model.Game;
+
+public class StartGameCommand implements Command {
+  @Override
+  public Optional<Exception> execute(Game model, GameController controller) {
+    try {
+      model.startAI();
+      return Optional.empty();
+    } catch (Exception e) {
+      return Optional.of(e);
+    }
+  }
 }

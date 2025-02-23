@@ -29,6 +29,7 @@ public class PlayMoveCommand implements Command {
       model.playMove(Move.fromString(this.move));
       return Optional.empty();
     } catch (Exception e) {
+      System.out.println(e.getMessage());
       return Optional.of(e);
     }
   }
