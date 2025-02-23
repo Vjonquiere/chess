@@ -3,6 +3,9 @@ package pdp.model.ai;
 public enum HeuristicType {
   MATERIAL,
   KING_SAFETY,
+  KING_ACTIVITY,
+  KING_OPPOSITION,
+  BISHOP_ENDGAME,
   SPACE_CONTROL,
   DEVELOPMENT,
   PAWN_CHAIN,
@@ -10,6 +13,6 @@ public enum HeuristicType {
   SHANNON,
   BAD_PAWNS,
   STANDARD,
-  OPPONENT_CHECK,
+  GAME_STATUS,
   ENDGAME;
 }

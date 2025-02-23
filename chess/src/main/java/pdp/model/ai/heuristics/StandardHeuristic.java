@@ -1,6 +1,10 @@
 package pdp.model.ai.heuristics;
 
 public class StandardHeuristic extends AbstractHeuristic {
+  /**
+   * StandardHeuristic aggregates multiple heuristics to evaluate the board state during the start
+   * and middle game. It extends AbstractHeuristic to set up the Composite Design Pattern.
+   */
   public StandardHeuristic() {
     super.addHeuristic(new MaterialHeuristic());
     super.addHeuristic(new MobilityHeuristic());

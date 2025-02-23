@@ -267,7 +267,24 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("HEURISTIC")
-          .desc("Choose the heuristic for the artificial player")
+          .desc(
+              "Choose the heuristic for the artificial player.\n"
+                  + "Choose between these heuristic (case sensitive)\n"
+                  + "- STANDARD : Aggregates multiple heuristics to evaluate the board during the start and middle game.\n"
+                  + "- SHANNON : Basic Heuristic from Shannon.\n"
+                  + "- ENDGAME : Aggregates multiple heuristics to evaluate the board state during the endgame phase of the match.\n"
+                  + "- BAD_PAWNS : Computes a score according to the potential weaknesses in the observed pawn structures.\n"
+                  + "- BISHOP_ENDGAME : Computes a score according to how performant bishops are for an endgame position.\n"
+                  + "- DEVELOPMENT : Computes and returns a score corresponding to the level of development for each player.\n"
+                  + "- GAME_STATUS : Computes a score based on the possible game endings.\n"
+                  + "- KING_ACTIVITY : Computes a score based on the king's activity (is in center and has a lot of possible moves).\n"
+                  + "- KING_OPPOSITION : Computes a score according to the (un)balance of the kings position.\n"
+                  + "- KING_SAFETY : Assigns a score to a player according to the safety of his king.\n"
+                  + "- MATERIAL : Computes a score based on the pieces on the board.\n"
+                  + "- MOBILITY : Computes a score based on the available moves for each player.\n"
+                  + "- PAWN_CHAIN : Computes a score according to how strongly pawns are connected.\n"
+                  + "- PROMOTION : Computes a score according to closeness of pawns promoting.\n"
+                  + "- SPACE_CONTROL : Gives a score based on how much control over the entire board the players have.\n")
           .build();
     }
   },
@@ -288,7 +305,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .argName("TIME")
           .hasArg(true)
-          .desc("Specify the time of reflexion for AI mode (default 5 seconds)")
+          .desc("Specify the time of reflexion for AI mode in seconds (default 5 seconds)")
           .build();
     }
   },
