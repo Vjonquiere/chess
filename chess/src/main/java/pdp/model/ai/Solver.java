@@ -4,6 +4,7 @@ import static pdp.utils.Logging.DEBUG;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
+import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.Minimax;
@@ -12,17 +13,19 @@ import pdp.model.ai.heuristics.*;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
+import pdp.utils.Timer;
 
 public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
-  private ZobristHashing zobristHashing = new ZobristHashing();
-  private HashMap<Long, Integer> evaluatedBoards;
+  private final ZobristHashing zobristHashing = new ZobristHashing();
+  private final HashMap<Long, Integer> evaluatedBoards;
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
   int depth = 4;
-  int time = 500;
+  Timer timer;
+  long time = 5000;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -117,8 +120,15 @@ public class Solver {
    *
    * @param time The time to use.
    */
-  public void setTime(int time) {
+  public void setTime(long time) {
+
     this.time = time;
+    timer = new Timer(time);
+    DEBUG(LOGGER, "Time set to " + time);
+  }
+
+  public Timer getTimer() {
+    return timer;
   }
 
   /**
@@ -128,10 +138,26 @@ public class Solver {
    */
   public void playAIMove(Game game) {
     game.setExploration(true);
+    if (timer != null) {
+      timer.start();
+    }
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    if (timer != null) {
+      timer.stop();
+    }
     DEBUG(LOGGER, "Best move " + bestMove);
     game.setExploration(false);
-    game.playMove(bestMove.move());
+    try {
+      game.playMove(bestMove.move());
+    } catch (Exception e) {
+      game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
+      System.err.println(e.getMessage());
+      if (game.getBoard().isWhite) {
+        game.getGameState().whiteResigns();
+      } else {
+        game.getGameState().blackResigns();
+      }
+    }
   }
 
   /**
