@@ -199,7 +199,7 @@ public class HeuristicTests {
 
   @Test
   public void OpponentCheckTest() {
-    solver.setHeuristic(HeuristicType.OPPONENT_CHECK);
+    solver.setHeuristic(HeuristicType.GAME_STATUS);
     // board at init
     assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
     game.playMove(new Move(new Position(4, 1), new Position(4, 3)));

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.*;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 import tests.helpers.MockBoard;
@@ -128,6 +129,7 @@ public class SolverTest {
             });
     assertEquals("Time must be greater than 0", exception2.getMessage());
   }
+
   /*
   @Test
   public void testNotEnoughTime() {
@@ -140,4 +142,20 @@ public class SolverTest {
     assertTrue(game.getGameState().hasBlackResigned());
   }
   */
+
+  @Test
+  public void testSetHeuristic() {
+    solver.setHeuristic(HeuristicType.KING_SAFETY);
+    assertInstanceOf(KingSafetyHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.PAWN_CHAIN);
+    assertInstanceOf(PawnChainHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.SHANNON);
+    assertInstanceOf(ShannonBasic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.KING_ACTIVITY);
+    assertInstanceOf(KingActivityHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
+    assertInstanceOf(BishopEndgameHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.KING_OPPOSITION);
+    assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
+  }
 }
