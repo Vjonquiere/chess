@@ -143,7 +143,16 @@ public class NewGamePopup {
 
     aiContainer.getChildren().add(depthSlider);
 
-    aiContainer.getChildren().add(new Label("AI Time (in seconds)"));
+    CheckBox aiTimeCheckBox = new CheckBox("AI Time limit");
+    aiTimeCheckBox.setSelected(options.containsKey(OptionType.AI_TIME));
+
+    aiContainer.getChildren().add(aiTimeCheckBox);
+
+    VBox aiTimeContainer = new VBox(5);
+    aiTimeContainer.setVisible(aiTimeCheckBox.isSelected());
+    aiTimeContainer.setManaged(aiTimeCheckBox.isSelected());
+
+    aiTimeContainer.getChildren().add(new Label("AI Time (in seconds)"));
     Slider aiTimeSlider = new Slider(5, 60, 10);
     aiTimeSlider.setShowTickLabels(true);
     aiTimeSlider.setShowTickMarks(true);
@@ -161,7 +170,21 @@ public class NewGamePopup {
       aiTimeSlider.setValue(Integer.parseInt(options.get(OptionType.AI_TIME)));
     }
 
-    aiContainer.getChildren().add(aiTimeSlider);
+    aiTimeCheckBox.setOnAction(
+        event -> {
+          boolean selected = aiTimeCheckBox.isSelected();
+          aiTimeContainer.setVisible(selected);
+          aiTimeContainer.setManaged(selected);
+          if (selected) {
+            options.put(OptionType.AI_TIME, String.valueOf(Math.round(aiTimeSlider.getValue())));
+          } else {
+            options.remove(OptionType.AI_TIME);
+          }
+        });
+
+    aiContainer.getChildren().add(aiTimeContainer);
+
+    aiTimeContainer.getChildren().add(aiTimeSlider);
 
     layout.getChildren().add(aiContainer);
 
