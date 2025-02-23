@@ -163,6 +163,8 @@ public class CLIView implements View {
       case AI_PLAYING:
         System.out.println(TextGetter.getText("ai_playing"));
         break;
+      case AI_NOT_ENOUGH_TIME:
+        System.out.println(TextGetter.getText("ai_not_enough_time"));
       default:
         DEBUG(LOGGER, "Received unknown game event: " + event);
         break;

@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import pdp.controller.BagOfCommands;
-import pdp.controller.GameController;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
@@ -21,9 +19,6 @@ import pdp.model.parsers.FileBoard;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
-import pdp.view.CLIView;
-import pdp.view.GameView;
-import pdp.view.View;
 
 public abstract class GameInitializer {
   // TODO Internationalization
@@ -31,9 +26,9 @@ public abstract class GameInitializer {
    * Initialize the game with the given options.
    *
    * @param options The options to use to initialize the game.
-   * @return A new GameController instance.
+   * @return A new Game instance.
    */
-  public static GameController initialize(HashMap<OptionType, String> options) {
+  public static Game initialize(HashMap<OptionType, String> options) {
 
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
@@ -97,7 +92,18 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
-        // set time
+        try {
+          long time = Long.parseLong(options.get(OptionType.AI_TIME));
+          solver.setTime(time);
+        } catch (Exception e) {
+          System.err.println("Not a long for the time of AI (in milliseconds)");
+          System.err.println("Defaulting to a 5 seconds timer");
+        }
+      }
+      if (options.containsKey(OptionType.BLITZ)) {
+        // If blitz, take the minimum between the blitz time and AI time
+        long time = Long.min(solver.getTimer().getTimeRemaining(), timer.getTimeRemaining() - 100);
+        solver.setTime(time);
       }
     }
 
@@ -113,7 +119,7 @@ public abstract class GameInitializer {
           BoardFileParser parser = new BoardFileParser();
           FileBoard board =
               parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
-          model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board);
+          model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board, options);
         } else {
 
           List<Move> moves = new ArrayList<>();
@@ -122,7 +128,7 @@ public abstract class GameInitializer {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
 
-          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer);
+          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer, options);
         }
 
       } catch (IOException
@@ -132,19 +138,12 @@ public abstract class GameInitializer {
         System.err.println(
             "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
         System.err.println("Using the default game start");
-        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
       }
     } else {
-      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
+      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
     }
 
-    View view;
-    if (options.containsKey(OptionType.GUI)) {
-      view = new GameView();
-    } else {
-      view = new CLIView();
-    }
-    BagOfCommands bagOfCommands = BagOfCommands.getInstance();
-    return new GameController(model, view, bagOfCommands);
+    return model;
   }
 }

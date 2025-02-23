@@ -384,7 +384,8 @@ public class CLIOptionsTest {
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> activatedOptionsOverride =
         CLIOptions.parseOptions(
-            new String[] {"--config=" + tempConfig.toString(), "--time=200", "-d"}, mockRuntime);
+            new String[] {"--config=" + tempConfig.toString(), "-b", "--time=200", "-d"},
+            mockRuntime);
 
     assertTrue(activatedOptionsOverride.containsKey(OptionType.TIME));
     assertEquals("200", activatedOptionsOverride.get(OptionType.TIME));
@@ -484,6 +485,33 @@ public class CLIOptionsTest {
             && activatedOptions.get(OptionType.AI_DEPTH).equals("5"));
 
     outputStream.reset();
+  }
+
+  @Test
+  public void testBlitz() throws Exception {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CLIOptions.parseOptions(new String[] {"-b"}, mockRuntime);
+    assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
+  }
+
+  @Test
+  public void testBlitzWithTime() throws Exception {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CLIOptions.parseOptions(new String[] {"-b", "-t=10"}, mockRuntime);
+    assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
+    assertTrue(activatedOptions.containsKey(OptionType.TIME));
+    assertTrue(activatedOptions.get(OptionType.TIME).equals("10"));
+  }
+
+  @Test
+  public void testTimeWithoutBlitz() throws Exception {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CLIOptions.parseOptions(new String[] {"-t=10"}, mockRuntime);
+    assertFalse(activatedOptions.containsKey(OptionType.BLITZ));
+    assertFalse(activatedOptions.containsKey(OptionType.TIME));
   }
 
   @Test

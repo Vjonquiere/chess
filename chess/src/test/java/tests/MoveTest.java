@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPositionException;
 import pdp.model.Game;
@@ -136,7 +137,7 @@ public class MoveTest {
 
   @Test
   public void testGetPiece() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -149,7 +150,7 @@ public class MoveTest {
 
   @Test
   public void testIsTake() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -165,7 +166,7 @@ public class MoveTest {
 
   @Test
   public void testIsCheck() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -181,7 +182,7 @@ public class MoveTest {
 
   @Test
   public void testSetCheck() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -199,7 +200,7 @@ public class MoveTest {
 
   @Test
   public void testIsCheckMate() {
-    Game game = Game.initialize(false, false, null, null);
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
