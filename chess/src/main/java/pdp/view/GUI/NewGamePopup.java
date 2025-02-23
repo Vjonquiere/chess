@@ -2,6 +2,7 @@ package pdp.view.GUI;
 
 import java.io.File;
 import java.util.HashMap;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -66,6 +67,8 @@ public class NewGamePopup {
 
     timeContainer.getChildren().add(timeSlider);
     layout.getChildren().add(timeContainer);
+
+    layout.getChildren().add(new Separator());
 
     ComboBox<String> aiDropdown = new ComboBox<>();
     aiDropdown.getItems().add("None");
@@ -143,7 +146,16 @@ public class NewGamePopup {
 
     aiContainer.getChildren().add(depthSlider);
 
-    aiContainer.getChildren().add(new Label("AI Time (in seconds)"));
+    CheckBox aiTimeCheckBox = new CheckBox("AI Time limit");
+    aiTimeCheckBox.setSelected(options.containsKey(OptionType.AI_TIME));
+
+    aiContainer.getChildren().add(aiTimeCheckBox);
+
+    VBox aiTimeContainer = new VBox(5);
+    aiTimeContainer.setVisible(aiTimeCheckBox.isSelected());
+    aiTimeContainer.setManaged(aiTimeCheckBox.isSelected());
+
+    aiTimeContainer.getChildren().add(new Label("AI Time (in seconds)"));
     Slider aiTimeSlider = new Slider(5, 60, 10);
     aiTimeSlider.setShowTickLabels(true);
     aiTimeSlider.setShowTickMarks(true);
@@ -161,7 +173,21 @@ public class NewGamePopup {
       aiTimeSlider.setValue(Integer.parseInt(options.get(OptionType.AI_TIME)));
     }
 
-    aiContainer.getChildren().add(aiTimeSlider);
+    aiTimeCheckBox.setOnAction(
+        event -> {
+          boolean selected = aiTimeCheckBox.isSelected();
+          aiTimeContainer.setVisible(selected);
+          aiTimeContainer.setManaged(selected);
+          if (selected) {
+            options.put(OptionType.AI_TIME, String.valueOf(Math.round(aiTimeSlider.getValue())));
+          } else {
+            options.remove(OptionType.AI_TIME);
+          }
+        });
+
+    aiContainer.getChildren().add(aiTimeContainer);
+
+    aiTimeContainer.getChildren().add(aiTimeSlider);
 
     layout.getChildren().add(aiContainer);
 
@@ -178,6 +204,8 @@ public class NewGamePopup {
                 options.remove(OptionType.AI);
               }
             });
+
+    layout.getChildren().add(new Separator());
 
     Label loadLabel = new Label("Load game from:");
     TextField loadTextField = new TextField();
@@ -209,6 +237,7 @@ public class NewGamePopup {
     loadContainer.getChildren().add(new HBox(5, loadTextField, browseButton));
 
     layout.getChildren().add(loadContainer);
+    layout.getChildren().add(new Separator());
 
     Button startGameButton = new Button("Start Game");
     startGameButton.setOnAction(
@@ -216,7 +245,10 @@ public class NewGamePopup {
           GameInitializer.initialize(options);
           popupStage.close();
         });
-    layout.getChildren().add(startGameButton);
+
+    HBox buttonContainer = new HBox(startGameButton);
+    buttonContainer.setAlignment(Pos.CENTER);
+    layout.getChildren().add(buttonContainer);
 
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setContent(layout);
