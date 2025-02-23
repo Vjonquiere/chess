@@ -22,16 +22,17 @@ public class MCTS implements SearchAlgorithm {
 
   // Simulation
 
-  // BackPropagation
-
-  // To know which node to visit next, use UCT (Upper Confidence bound applied to Trees).
-  // w(i)/n(i) + c * sqrt(ln(t)/n(i))
-
-  // w = number of wins after the i-th move (can be 0)
-  // n = number of simulations after the i-th move
-  // c = exploration parameter
-  // t = total number of simulations for the parent node
-
-  // Basically we want to retain some aspect of "history" in the decision making
-  // And expand the exploration of possibilities
+  /**
+   * Back propagates the obtained result during the algorithm
+   *
+   * @param node the current tree node in the algorithm
+   * @param result the onbtained result after simulation
+   */
+  private void backpropagate(TreeNodeMCTS node, int result) {
+    while (node != null) {
+      node.incrementNbVisits();
+      node.incrementNbWinsBy(result);
+      node = node.getParentNode();
+    }
+  }
 }

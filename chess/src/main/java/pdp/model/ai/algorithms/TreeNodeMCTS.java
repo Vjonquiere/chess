@@ -32,10 +32,24 @@ public class TreeNodeMCTS {
   }
 
   /**
+   * Increments the number of registered wins by {nbNewWins}
+   *
+   * @param nbNewWins
+   */
+  public void incrementNbWinsBy(int nbNewWins) {
+    this.wins += nbNewWins;
+  }
+
+  /**
    * @return the number of times this node was visited
    */
   public int getNbVisits() {
     return this.nbVisits;
+  }
+
+  /** Increments the number of visits by 1 */
+  public void incrementNbVisits() {
+    this.nbVisits++;
   }
 
   /**
