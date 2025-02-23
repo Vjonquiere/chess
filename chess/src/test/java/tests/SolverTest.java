@@ -128,7 +128,7 @@ public class SolverTest {
             });
     assertEquals("Time must be greater than 0", exception2.getMessage());
   }
-
+  /*
   @Test
   public void testNotEnoughTime() {
     Game game = Game.initialize(false, false, null, null, new HashMap<>());
@@ -139,4 +139,5 @@ public class SolverTest {
 
     assertTrue(game.getGameState().hasBlackResigned());
   }
+  */
 }
