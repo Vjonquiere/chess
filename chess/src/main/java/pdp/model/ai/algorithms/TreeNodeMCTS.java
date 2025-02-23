@@ -64,8 +64,8 @@ public class TreeNodeMCTS {
    *
    * <p>UCT = w(i)/n(i) + c * sqrt(ln(t)/n(i))
    *
-   * <p>w = number of wins after the i-th move (can be 0) n = number of simulations after the i-th
-   * move c = exploration parameter t = total number of simulations for the parent node
+   * <p>w = number of wins after the i-th move (can be 0). n = number of simulations after the i-th
+   * move. c = exploration parameter. t = total number of simulations for the parent node.
    *
    * @param node the child node
    * @param exploration the exploration factor (c value in formula)
@@ -86,5 +86,28 @@ public class TreeNodeMCTS {
    */
   public void addChildToTree(TreeNodeMCTS child) {
     children.add(child);
+  }
+
+  /**
+   * Return the best child based on the UCT formula
+   *
+   * @param exploration the exploration parameter (c value in formula)
+   * @return the best child node in the tree (current node is root)
+   */
+  public TreeNodeMCTS getChildToExplore(double exploration) {
+    TreeNodeMCTS bestChild = null;
+    // First -inf and upload it later when better child is found
+    double bestValue = Double.NEGATIVE_INFINITY;
+
+    for (TreeNodeMCTS child : this.children) {
+      double uct = uctValue(child, exploration);
+      if (uct > bestValue) {
+        // Upload best child
+        bestValue = uct;
+        bestChild = child;
+      }
+    }
+
+    return bestChild;
   }
 }
