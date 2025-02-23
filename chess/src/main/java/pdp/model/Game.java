@@ -1,6 +1,5 @@
 package pdp.model;
 
-import static java.lang.Thread.sleep;
 import static pdp.utils.Logging.DEBUG;
 
 import java.io.BufferedWriter;
@@ -9,6 +8,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
@@ -45,6 +47,8 @@ public class Game extends Subject {
   private History history;
   private HashMap<Long, Integer> stateCount;
   private HashMap<OptionType, String> options;
+  public final Lock viewLock = new ReentrantLock();
+  public final Condition workingView = viewLock.newCondition();
 
   static {
     Logging.configureLogging(LOGGER);
@@ -546,12 +550,15 @@ public class Game extends Subject {
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
       this.notifyObservers(EventType.AI_PLAYING);
+      viewLock.lock();
       try {
-        sleep(100);
+        System.out.println("Waiting for View");
+        workingView.await();
       } catch (InterruptedException e) {
         e.printStackTrace();
+      } finally {
+        viewLock.unlock();
       }
-
       solver.playAIMove(this);
     }
   }
