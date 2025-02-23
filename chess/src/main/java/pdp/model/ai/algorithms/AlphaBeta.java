@@ -44,12 +44,18 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   private AIMove alphaBeta(
       Game game, int depth, boolean player, int alpha, int beta, boolean isMinimizing) {
+    if (solver.getTimer().getTimeRemaining() <= 0) {
+      return new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
+    }
     if (depth == 0 || game.isOver()) {
       return new AIMove(null, solver.evaluateBoard(game.getBoard(), !player));
     }
     AIMove bestMove = new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
     for (Move move : moves) {
+      if (solver.getTimer().getTimeRemaining() <= 0) {
+        break;
+      }
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
