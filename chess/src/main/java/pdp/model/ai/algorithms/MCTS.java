@@ -67,7 +67,7 @@ public class MCTS implements SearchAlgorithm {
    * Select the node to explore
    *
    * @param node the current tree node in the algorithm
-   * @return the node that the algorithm select to explore (based on UCT)
+   * @return the node that the algorithm selects to explore (based on UCT)
    */
   private TreeNodeMCTS select(TreeNodeMCTS node) {
     while (!node.getChildrenNodes().isEmpty()) {
@@ -81,7 +81,7 @@ public class MCTS implements SearchAlgorithm {
    *
    * @param game the current ongoing game
    * @param node the current node in the algorithm
-   * @return
+   * @return the expanded node
    */
   private TreeNodeMCTS expand(Game game, TreeNodeMCTS node) {
     if (node.getGameState().isGameOver()) {
@@ -101,6 +101,7 @@ public class MCTS implements SearchAlgorithm {
         game.playMove(move);
         // Add node to tree
         node.getChildrenNodes().add(new TreeNodeMCTS(nextState, node, move));
+        game.previousState();
       } catch (Exception e) {
         // Illegal movewas caught
         continue;
@@ -119,7 +120,7 @@ public class MCTS implements SearchAlgorithm {
    *
    * @param game the current ongoing game
    * @param node the current node in the algorithm
-   * @return the evaluation of the simulated sequence of moves
+   * @return the evaluation of the simulated sequence of moves from current node
    */
   private int simulate(Game game, TreeNodeMCTS node) {
     GameState simulatedState = node.getGameState().getCopy();
@@ -140,11 +141,11 @@ public class MCTS implements SearchAlgorithm {
       try {
         randomMove = AlgorithmHelpers.promoteMove(randomMove);
         game.playMove(randomMove);
+        game.previousState();
       } catch (Exception e) {
         // Illegal move was caught
         continue;
       }
-      simulatedState.getBoard().makeMove(randomMove);
     }
 
     return evaluateSimulation(simulatedState);
