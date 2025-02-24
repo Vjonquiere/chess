@@ -64,10 +64,11 @@ public class MCTS implements SearchAlgorithm {
   /**
    * Simulate a game randomly by playing moves randomly and assessing the sequence of played moves
    *
+   * @param game the current ongoing game
    * @param node the current node in the algorithm
    * @return the evaluation of the simulated sequence of moves
    */
-  private int simulate(TreeNodeMCTS node) {
+  private int simulate(Game game, TreeNodeMCTS node) {
     GameState simulatedState = node.getGameState().getCopy();
 
     while (!simulatedState.isGameOver()) {
@@ -83,8 +84,12 @@ public class MCTS implements SearchAlgorithm {
       }
 
       Move randomMove = selectRandomMove(availableMoves);
-
-      // GAME.playMove()
+      try {
+        randomMove = AlgorithmHelpers.promoteMove(randomMove);
+        game.playMove(randomMove);
+      } catch (Exception e) {
+        // Illegal move was caught
+      }
       simulatedState.getBoard().makeMove(randomMove);
     }
 
