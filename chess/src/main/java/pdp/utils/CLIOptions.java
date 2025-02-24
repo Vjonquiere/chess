@@ -233,6 +233,9 @@ public class CLIOptions {
         && !activatedOptions.containsKey(OptionType.BLITZ)) {
       System.err.println("The TIME option can't be used without BLITZ activated : option ignored.");
       activatedOptions.remove(OptionType.TIME);
+    } else if (!activatedOptions.containsKey(OptionType.BLITZ)
+        && !activatedOptions.containsKey(OptionType.TIME)) {
+      activatedOptions.put(OptionType.TIME, "30");
     }
 
     validateAIOptions(cmd, activatedOptions);
@@ -258,9 +261,7 @@ public class CLIOptions {
           System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
         }
       }
-    }
-
-    else {
+    } else {
       if (!activatedOptions.containsKey(OptionType.AI_MODE)) {
         activatedOptions.put(OptionType.AI_MODE, "ALPHA_BETA");
       }
