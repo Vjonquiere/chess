@@ -1,7 +1,6 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.heuristics.*;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 import tests.helpers.MockBoard;
@@ -109,5 +109,53 @@ public class SolverTest {
               solver.setDepth(-2);
             });
     assertEquals("Depth must be greater than 0", exception2.getMessage());
+  }
+
+  @Test
+  public void testSetTimeError() {
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              solver.setTime(0);
+            });
+    assertEquals("Time must be greater than 0", exception.getMessage());
+
+    Exception exception2 =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              solver.setTime(-2);
+            });
+    assertEquals("Time must be greater than 0", exception2.getMessage());
+  }
+
+  /*
+  @Test
+  public void testNotEnoughTime() {
+    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    solver.setTime(1);
+    solver.setDepth(10000);
+    game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
+    solver.playAIMove(game);
+
+    assertTrue(game.getGameState().hasBlackResigned());
+  }
+  */
+
+  @Test
+  public void testSetHeuristic() {
+    solver.setHeuristic(HeuristicType.KING_SAFETY);
+    assertInstanceOf(KingSafetyHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.PAWN_CHAIN);
+    assertInstanceOf(PawnChainHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.SHANNON);
+    assertInstanceOf(ShannonBasic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.KING_ACTIVITY);
+    assertInstanceOf(KingActivityHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
+    assertInstanceOf(BishopEndgameHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.KING_OPPOSITION);
+    assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
   }
 }
