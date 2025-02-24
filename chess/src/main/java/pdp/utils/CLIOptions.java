@@ -259,6 +259,18 @@ public class CLIOptions {
         }
       }
     }
+
+    else {
+      if (!activatedOptions.containsKey(OptionType.AI_MODE)) {
+        activatedOptions.put(OptionType.AI_MODE, "ALPHA_BETA");
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
+        activatedOptions.put(OptionType.AI_DEPTH, "4");
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {
+        activatedOptions.put(OptionType.AI_HEURISTIC, "STANDARD");
+      }
+    }
   }
 
   /**
