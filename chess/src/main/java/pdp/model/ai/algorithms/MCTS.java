@@ -18,6 +18,14 @@ public class MCTS implements SearchAlgorithm {
     this.solver = solver;
   }
 
+  /**
+   * Determines the best move using the AlphaBeta algorithm
+   *
+   * @param game The current game state
+   * @param depth The number of moves to look ahead
+   * @param player The current player (true for white, false for black)
+   * @return The best move for the player
+   */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
     return null;
@@ -58,8 +66,43 @@ public class MCTS implements SearchAlgorithm {
     return node;
   }
 
-  // Expansion
-  // Generate child nodes until we reach a Terminal State
+  /**
+   * Generate child nodes until we reach a Terminal State
+   *
+   * @param game the current ongoing game
+   * @param node the current node in the algorithm
+   * @return
+   */
+  private TreeNodeMCTS expand(Game game, TreeNodeMCTS node) {
+    if (node.getGameState().isGameOver()) {
+      // No expansion if game over
+      return node;
+    }
+
+    List<Move> possibleMoves =
+        node.getGameState()
+            .getBoard()
+            .getBoardRep()
+            .getAllAvailableMoves(node.getGameState().isWhiteTurn());
+    for (Move move : possibleMoves) {
+      try {
+        move = AlgorithmHelpers.promoteMove(move);
+        GameState nextState = node.getGameState().getCopy();
+        game.playMove(move);
+        // Add node to tree
+        node.getChildrenNodes().add(new TreeNodeMCTS(nextState, node));
+      } catch (Exception e) {
+        // Illegal movewas caught
+        continue;
+      }
+    }
+
+    if (node.getChildrenNodes().isEmpty()) {
+      return node;
+    } else {
+      return node.getChildrenNodes().get(random.nextInt(node.getChildrenNodes().size()));
+    }
+  }
 
   /**
    * Simulate a game randomly by playing moves randomly and assessing the sequence of played moves
@@ -89,6 +132,7 @@ public class MCTS implements SearchAlgorithm {
         game.playMove(randomMove);
       } catch (Exception e) {
         // Illegal move was caught
+        continue;
       }
       simulatedState.getBoard().makeMove(randomMove);
     }
