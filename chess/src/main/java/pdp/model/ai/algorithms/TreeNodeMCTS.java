@@ -3,6 +3,7 @@ package pdp.model.ai.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 import pdp.model.GameState;
+import pdp.model.board.Move;
 
 /**
  * Node in the MCTS algorithm. Contains GameState, parent node (for backpropagation and other
@@ -15,13 +16,15 @@ public class TreeNodeMCTS {
   private List<TreeNodeMCTS> children;
   private int wins;
   private int nbVisits;
+  private Move startingMove;
 
-  public TreeNodeMCTS(GameState state, TreeNodeMCTS parent) {
+  public TreeNodeMCTS(GameState state, TreeNodeMCTS parent, Move move) {
     this.state = state;
     this.parent = parent;
     this.children = new ArrayList<>();
     this.wins = 0;
     this.nbVisits = 0;
+    this.startingMove = move;
   }
 
   /**
@@ -29,6 +32,13 @@ public class TreeNodeMCTS {
    */
   public int getNbWins() {
     return this.wins;
+  }
+
+  /**
+   * @return the starting move that leads to other game states
+   */
+  public Move getStartingMove() {
+    return this.startingMove;
   }
 
   /**

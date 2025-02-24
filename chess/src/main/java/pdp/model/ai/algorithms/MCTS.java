@@ -8,7 +8,6 @@ import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
-import pdp.utils.Position;
 
 public class MCTS implements SearchAlgorithm {
   Solver solver;
@@ -30,7 +29,7 @@ public class MCTS implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    TreeNodeMCTS root = new TreeNodeMCTS(game.getGameState(), null);
+    TreeNodeMCTS root = new TreeNodeMCTS(game.getGameState(), null, null);
     // Run MCTS for a fixed number of simulations
     for (int i = 0; i < SIMULATION_LIMIT; i++) {
       TreeNodeMCTS selectedNode = select(root);
@@ -101,7 +100,7 @@ public class MCTS implements SearchAlgorithm {
         GameState nextState = node.getGameState().getCopy();
         game.playMove(move);
         // Add node to tree
-        node.getChildrenNodes().add(new TreeNodeMCTS(nextState, node));
+        node.getChildrenNodes().add(new TreeNodeMCTS(nextState, node, move));
       } catch (Exception e) {
         // Illegal movewas caught
         continue;
@@ -200,8 +199,11 @@ public class MCTS implements SearchAlgorithm {
       }
     }
 
-    Move bestMove = new Move(new Position(0, 0), new Position(0, 0));
-    // Move bestMove = game.getHistory().getLastPlayedMove();
+    if (bestNode == null) {
+      return new AIMove(null, 0);
+    }
+
+    Move bestMove = bestNode.getStartingMove();
     double winRate = (double) bestNode.getNbWins() / bestNode.getNbVisits();
 
     return new AIMove(bestMove, (int) winRate);
