@@ -8,18 +8,20 @@ import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
+import pdp.utils.Position;
 
 public class MCTS implements SearchAlgorithm {
   Solver solver;
   private static final double EXPLORATION_FACTOR = Math.sqrt(2); // c value
   private final Random random = new Random(); // Randomizer for the moves
+  private static final int SIMULATION_LIMIT = 1000; // Number of simulations
 
   public MCTS(Solver solver) {
     this.solver = solver;
   }
 
   /**
-   * Determines the best move using the AlphaBeta algorithm
+   * Determines the "best move" using the MCTS algorithm
    *
    * @param game The current game state
    * @param depth The number of moves to look ahead
@@ -28,7 +30,16 @@ public class MCTS implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return null;
+    TreeNodeMCTS root = new TreeNodeMCTS(game.getGameState(), null);
+    // Run MCTS for a fixed number of simulations
+    for (int i = 0; i < SIMULATION_LIMIT; i++) {
+      TreeNodeMCTS selectedNode = select(root);
+      TreeNodeMCTS expandedNode = expand(game, selectedNode);
+      int simulationResult = simulate(game, expandedNode);
+      backpropagate(expandedNode, simulationResult);
+    }
+
+    return getBestMove(game, root);
   }
 
   /**
@@ -162,5 +173,37 @@ public class MCTS implements SearchAlgorithm {
       node.incrementNbWinsBy(result);
       node = node.getParentNode();
     }
+  }
+
+  /**
+   * Returns the move that's considered best, namely the one that has the highest winrate
+   *
+   * @param game the current ongoing game
+   * @param root the root node in the tree representing the initial game state
+   * @return the best computed move based on winrate of the move
+   */
+  private AIMove getBestMove(Game game, TreeNodeMCTS root) {
+    if (root.getChildrenNodes().isEmpty()) {
+      return new AIMove(null, 0);
+    }
+
+    TreeNodeMCTS bestNode = null;
+    int maxVisits = -1;
+
+    // Find the most visited child node
+    List<TreeNodeMCTS> childrenNodes = root.getChildrenNodes();
+    for (TreeNodeMCTS child : childrenNodes) {
+      int visits = child.getNbVisits();
+      if (visits > maxVisits) {
+        maxVisits = visits;
+        bestNode = child;
+      }
+    }
+
+    Move bestMove = new Move(new Position(0, 0), new Position(0, 0));
+    // Move bestMove = game.getHistory().getLastPlayedMove();
+    double winRate = (double) bestNode.getNbWins() / bestNode.getNbVisits();
+
+    return new AIMove(bestMove, (int) winRate);
   }
 }
