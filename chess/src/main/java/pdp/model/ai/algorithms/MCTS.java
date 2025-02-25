@@ -35,7 +35,7 @@ public class MCTS implements SearchAlgorithm {
       TreeNodeMCTS selectedNode = select(root);
       TreeNodeMCTS expandedNode = expand(game, selectedNode);
       int simulationResult = simulate(game, expandedNode);
-      backpropagate(expandedNode, simulationResult);
+      backpropagate(game, expandedNode, simulationResult);
     }
 
     return getBestMove(game, root);
@@ -101,7 +101,6 @@ public class MCTS implements SearchAlgorithm {
         game.playMove(move);
         // Add node to tree
         node.getChildrenNodes().add(new TreeNodeMCTS(nextState, node, move));
-        game.previousState();
       } catch (Exception e) {
         // Illegal movewas caught
         continue;
@@ -141,7 +140,6 @@ public class MCTS implements SearchAlgorithm {
       try {
         randomMove = AlgorithmHelpers.promoteMove(randomMove);
         game.playMove(randomMove);
-        game.previousState();
       } catch (Exception e) {
         // Illegal move was caught
         continue;
@@ -162,16 +160,19 @@ public class MCTS implements SearchAlgorithm {
   }
 
   /**
-   * Back propagate the obtained result during the algorithm
+   * Back propagate the obtained result during the algorithm and undo the played sequence of moves
+   * to get to the starting game configuration
    *
+   * @param game the current ongoing game
    * @param node the current tree node in the algorithm
    * @param result the obtained result after simulation
    */
-  private void backpropagate(TreeNodeMCTS node, int result) {
+  private void backpropagate(Game game, TreeNodeMCTS node, int result) {
     while (node != null) {
       node.incrementNbVisits();
       node.incrementNbWinsBy(result);
       node = node.getParentNode();
+      game.previousState();
     }
   }
 
