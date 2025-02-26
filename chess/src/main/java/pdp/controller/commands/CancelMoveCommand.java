@@ -17,6 +17,9 @@ public class CancelMoveCommand implements Command {
   public Optional<Exception> execute(Game model, GameController controller) {
     try {
       model.previousState();
+      if (model.isBlackAI() || model.isWhiteAI()) {
+        model.previousState();
+      }
       return Optional.empty();
     } catch (Exception e) {
       return Optional.of(e);
