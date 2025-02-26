@@ -485,6 +485,15 @@ public class CLIOptionsTest {
             && activatedOptions.get(OptionType.AI_DEPTH).equals("5"));
 
     outputStream.reset();
+    // activate AI time
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-time=5"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-time requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_TIME)
+            && activatedOptions.get(OptionType.AI_TIME).equals("5"));
+
+    outputStream.reset();
   }
 
   @Test
