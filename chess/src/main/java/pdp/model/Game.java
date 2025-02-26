@@ -592,10 +592,25 @@ public class Game extends Subject {
     return this.history.toString();
   }
 
-  public void resetGame() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  /** Restarts the game by resetting the game state and history. */
+  public void restartGame() {
+    DEBUG(LOGGER, "Restarting game");
+
+    this.gameState = new GameState(this.gameState.getMoveTimer());
+    this.history = new History();
+
+    this.history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
+
+    this.stateCount.clear();
+    this.gameState.setSimplifiedZobristHashing(
+        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+
+    this.notifyObservers(EventType.GAME_RESTART);
+
+    DEBUG(LOGGER, "Game restarted");
   }
 
   public boolean isOver() {

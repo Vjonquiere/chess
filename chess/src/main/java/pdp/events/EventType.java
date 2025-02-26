@@ -2,6 +2,7 @@ package pdp.events;
 
 public enum EventType {
   GAME_STARTED,
+  GAME_RESTART,
   WIN_WHITE,
   WIN_BLACK,
   OUT_OF_TIME_WHITE,
