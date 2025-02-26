@@ -67,22 +67,18 @@ public class Board extends GridPane {
   }
 
   private void switchSelectedSquare(int x, int y) {
-    // System.out.println("SELECTED SQUARE: " + from);
     if (from == null) {
       from = new Position(x, y);
-      // System.out.println("SELECTED SQUARE UPDATED TO: " + from);
-      // updateBoard();
+      pieces.get(from).setSelected(true);
     } else {
+      pieces.get(from).setSelected(false);
       try {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
         from = null;
-        // updateBoard();
       } catch (Exception e) {
         from = null;
-        // e.printStackTrace();
         System.out.println("wrong move:" + e.getMessage());
-        // updateBoard();
       }
     }
   }

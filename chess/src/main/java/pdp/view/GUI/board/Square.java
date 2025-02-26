@@ -10,21 +10,17 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 
 public class Square extends StackPane {
-
+  Color baseColor;
+  Canvas sq;
   ColoredPiece currentPiece;
   ImageView pieceImage;
 
   public Square(ColoredPiece piece, boolean squareColor, boolean selected) {
+    baseColor = squareColor ? Color.web("#DAE0F2") : Color.web("#6D6FD9");
     currentPiece = piece;
-    Canvas sq = new Canvas(100, 100);
+    sq = new Canvas(100, 100);
     GraphicsContext gc = sq.getGraphicsContext2D();
-    if (squareColor) {
-      gc.setFill(Color.web("#DAE0F2"));
-    } else if (selected) {
-      gc.setFill(Color.web("#F9CFF2"));
-    } else {
-      gc.setFill(Color.web("#6D6FD9"));
-    }
+    gc.setFill(baseColor);
     gc.fillRect(0, 0, 100, 100);
     super.getChildren().add(sq);
     if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
@@ -56,5 +52,15 @@ public class Square extends StackPane {
         super.getChildren().add(pieceImage);
       }
     }
+  }
+
+  public void setSelected(boolean selected) {
+    GraphicsContext gc = sq.getGraphicsContext2D();
+    if (selected) {
+      gc.setFill(Color.web("#F9CFF2"));
+    } else {
+      gc.setFill(baseColor);
+    }
+    gc.fillRect(0, 0, 100, 100);
   }
 }

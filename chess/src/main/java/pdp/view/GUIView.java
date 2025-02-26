@@ -38,7 +38,7 @@ public class GUIView implements View {
   public void init(Stage stage) {
     stage.setTitle(TextGetter.getText("title"));
     root.setTop(new ChessMenu());
-    root.setCenter(board);
+    // root.setCenter(board);
     Scene scene = new Scene(root, 820, 820);
     stage.setScene(scene);
 
@@ -62,10 +62,16 @@ public class GUIView implements View {
     return guiThread;
   }
 
+  /**
+   * Handle game events to keep view updated (JavaFx version).
+   *
+   * @param event
+   */
   @Override
   public void onGameEvent(EventType event) {
     DEBUG(LOGGER, "View received event " + event);
     if (!Platform.isFxApplicationThread() && !init) {
+      DEBUG(LOGGER, "Init GUI thread");
       init = true;
       Platform.startup(() -> Platform.runLater(() -> this.onGameEvent(event)));
     }
@@ -76,7 +82,11 @@ public class GUIView implements View {
           try {
             switch (event) {
               case GAME_STARTED:
+                if (board != null) {
+                  root.getChildren().remove(board);
+                }
                 board = new Board(Game.getInstance());
+                root.setCenter(board);
                 System.out.println("GUI board displayed"); // TODO: Add in resource bundle
                 DEBUG(LOGGER, "Board view initialized");
                 break;
