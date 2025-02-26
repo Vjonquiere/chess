@@ -22,8 +22,11 @@ public class GUIView implements View {
   private Board board;
   boolean init = false;
 
-  public GUIView() {
+  static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public GUIView() {
     root = new BorderPane();
   }
 
@@ -61,6 +64,7 @@ public class GUIView implements View {
 
   @Override
   public void onGameEvent(EventType event) {
+    DEBUG(LOGGER, "View received event " + event);
     if (!Platform.isFxApplicationThread() && !init) {
       init = true;
       Platform.startup(() -> Platform.runLater(() -> this.onGameEvent(event)));
@@ -68,6 +72,7 @@ public class GUIView implements View {
     Platform.runLater(
         () -> {
           Game.getInstance().viewLock.lock();
+          DEBUG(LOGGER, "View handling event " + event);
           try {
             switch (event) {
               case GAME_STARTED:

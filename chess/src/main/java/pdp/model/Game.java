@@ -61,6 +61,17 @@ public class Game extends Subject {
       GameState gameState,
       History history,
       HashMap<OptionType, String> options) {
+
+    if (instance != null) {
+      for (EventObserver observer : instance.getObservers()) {
+        this.addObserver(observer);
+      }
+
+      for (EventObserver observer : instance.getErrorObservers()) {
+        this.addErrorObserver(observer);
+      }
+    }
+
     this.options = options;
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
