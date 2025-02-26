@@ -96,14 +96,14 @@ public abstract class GameInitializer {
           long time = Long.parseLong(options.get(OptionType.AI_TIME));
           solver.setTime(time);
         } catch (Exception e) {
-          System.err.println("Not a long for the time of AI (in milliseconds)");
+          System.err.println("Not a long for the time of AI (in seconds)");
           System.err.println("Defaulting to a 5 seconds timer");
         }
       }
       if (options.containsKey(OptionType.BLITZ)) {
         // If blitz, take the minimum between the blitz time and AI time
         long time = Long.min(solver.getTimer().getTimeRemaining(), timer.getTimeRemaining() - 100);
-        solver.setTime(time);
+        solver.setTime(time / 1000);
       }
     }
 

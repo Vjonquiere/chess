@@ -271,6 +271,10 @@ public class CLIOptions {
       if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {
         activatedOptions.put(OptionType.AI_HEURISTIC, "STANDARD");
       }
+      if (activatedOptions.containsKey(OptionType.AI_TIME)
+          && activatedOptions.get(OptionType.AI_TIME).equals("")) {
+        activatedOptions.put(OptionType.AI_TIME, "5");
+      }
     }
   }
 
