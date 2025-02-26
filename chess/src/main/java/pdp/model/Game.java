@@ -1,6 +1,7 @@
 package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -49,6 +50,7 @@ public class Game extends Subject {
   private HashMap<OptionType, String> options;
   public final Lock viewLock = new ReentrantLock();
   public final Condition workingView = viewLock.newCondition();
+  private final boolean VIEW_ON_OTHER_THREAD;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -73,6 +75,7 @@ public class Game extends Subject {
     }
 
     this.options = options;
+    this.VIEW_ON_OTHER_THREAD = options.containsKey(GUI);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.explorationAI = false;
@@ -560,15 +563,20 @@ public class Game extends Subject {
         && !isOver()
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
-      this.notifyObservers(EventType.AI_PLAYING);
-      viewLock.lock();
-      try {
-        System.out.println("Waiting for View");
-        workingView.await();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      } finally {
-        viewLock.unlock();
+
+      if (VIEW_ON_OTHER_THREAD) {
+        viewLock.lock();
+        this.notifyObservers(EventType.AI_PLAYING);
+        try {
+          System.out.println("Waiting for View");
+          workingView.await();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        } finally {
+          viewLock.unlock();
+        }
+      } else {
+        this.notifyObservers(EventType.AI_PLAYING);
       }
       solver.playAIMove(this);
     }
