@@ -12,6 +12,7 @@ import pdp.controller.commands.CancelDrawCommand;
 import pdp.controller.commands.CancelMoveCommand;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.controller.commands.ProposeDrawCommand;
+import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.controller.commands.SurrenderCommand;
@@ -62,6 +63,9 @@ public class CLIView implements View {
         new CommandEntry(this::surrenderCommand, TextGetter.getText("surrenderHelpDescription")));
     commands.put(
         "time", new CommandEntry(this::timeCommand, TextGetter.getText("timeHelpDescription")));
+    commands.put(
+        "restart",
+        new CommandEntry(this::restartCommand, TextGetter.getText("restartHelpDescription")));
   }
 
   /**
@@ -165,6 +169,12 @@ public class CLIView implements View {
         break;
       case AI_NOT_ENOUGH_TIME:
         System.out.println(TextGetter.getText("ai_not_enough_time"));
+      case GAME_RESTART:
+        System.out.println(TextGetter.getText("gameRestart"));
+        System.out.println(TextGetter.getText("welcomeCLI"));
+        System.out.println(TextGetter.getText("welcomeInstructions"));
+        System.out.println(Game.getInstance().getGameRepresentation());
+        break;
       default:
         DEBUG(LOGGER, "Received unknown game event: " + event);
         break;
@@ -334,6 +344,15 @@ public class CLIView implements View {
    */
   private void redoCommand(String args) {
     BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+  }
+
+  /**
+   * Handles the restart command by restarting a new game.
+   *
+   * @param args Unused argument
+   */
+  private void restartCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestartCommand());
   }
 
   /**
