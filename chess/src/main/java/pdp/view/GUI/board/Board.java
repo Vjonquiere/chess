@@ -33,7 +33,6 @@ public class Board extends GridPane {
       for (int y = 0; y < boardRows; y++) {
         ColoredPiece piece = board.getPieceAt(x, boardRows - 1 - y);
         Square sq;
-        boolean selected = from != null && from.getX() == x && from.getY() == boardRows - 1 - y;
         if (x % 2 == 0 && y % 2 == 0) {
           sq = new Square(piece, true);
         } else if (x % 2 == 0 && y % 2 == 1) {
