@@ -247,7 +247,7 @@ class GameInitializerTest {
   @Test
   void testGameInitializationAITime() {
     options.put(OptionType.AI, "W");
-    options.put(OptionType.AI_TIME, "1000");
+    options.put(OptionType.AI_TIME, "1");
     GameController controller = GameControllerInit.initialize(options);
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
@@ -261,7 +261,7 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_TIME, "abc");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(outputStream.toString().contains("Not a long for the time of AI (in milliseconds)"));
+    assertTrue(outputStream.toString().contains("Not a long for the time of AI (in seconds)"));
     assertTrue(outputStream.toString().contains("Defaulting to a 5 seconds timer"));
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
@@ -275,7 +275,7 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_TIME, "3.1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(outputStream.toString().contains("Not a long for the time of AI (in milliseconds)"));
+    assertTrue(outputStream.toString().contains("Not a long for the time of AI (in seconds)"));
     assertTrue(outputStream.toString().contains("Defaulting to a 5 seconds timer"));
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
@@ -286,19 +286,20 @@ class GameInitializerTest {
   @Test
   void testGameInitializationAITimeBlitz1() {
     options.put(OptionType.AI, "W");
-    options.put(OptionType.AI_TIME, "1000");
+    options.put(OptionType.AI_TIME, "60");
     options.put(OptionType.BLITZ, "");
+    options.put(OptionType.TIME, "1");
     GameController controller = GameControllerInit.initialize(options);
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
-    assertEquals(1000, controller.getModel().getSolver().getTime());
+    assertEquals(59000, controller.getModel().getSolver().getTime());
   }
 
   @Test
   void testGameInitializationAITimeBlitz2() {
     options.put(OptionType.AI, "W");
-    options.put(OptionType.AI_TIME, "1000");
+    options.put(OptionType.AI_TIME, "1");
     options.put(OptionType.BLITZ, "");
     options.put(OptionType.TIME, "1");
     GameController controller = GameControllerInit.initialize(options);
@@ -319,7 +320,7 @@ class GameInitializerTest {
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
     // Blitz time - 100ms of margin
-    assertEquals(59900, controller.getModel().getSolver().getTime());
+    assertEquals(59000, controller.getModel().getSolver().getTime());
   }
 
   @Test
