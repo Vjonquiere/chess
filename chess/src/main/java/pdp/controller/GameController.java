@@ -20,7 +20,7 @@ public class GameController {
     this.bagOfCommands.setController(this);
     this.model.addObserver(view);
     this.model.addErrorObserver(view);
-    this.model.startAI();
+    // this.model.startAI();
   }
 
   /**

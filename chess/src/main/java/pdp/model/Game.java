@@ -1,6 +1,7 @@
 package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -8,6 +9,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
@@ -44,6 +48,9 @@ public class Game extends Subject {
   private History history;
   private HashMap<Long, Integer> stateCount;
   private HashMap<OptionType, String> options;
+  public final Lock viewLock = new ReentrantLock();
+  public final Condition workingView = viewLock.newCondition();
+  private final boolean VIEW_ON_OTHER_THREAD;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -56,7 +63,19 @@ public class Game extends Subject {
       GameState gameState,
       History history,
       HashMap<OptionType, String> options) {
+
+    if (instance != null) {
+      for (EventObserver observer : instance.getObservers()) {
+        this.addObserver(observer);
+      }
+
+      for (EventObserver observer : instance.getErrorObservers()) {
+        this.addErrorObserver(observer);
+      }
+    }
+
     this.options = options;
+    this.VIEW_ON_OTHER_THREAD = options.containsKey(GUI);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.explorationAI = false;
@@ -275,6 +294,7 @@ public class Game extends Subject {
       timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
@@ -303,6 +323,7 @@ public class Game extends Subject {
       timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
@@ -528,9 +549,11 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
 
-    this.notifyObservers(EventType.MOVE_PLAYED);
-
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+
+    if (!explorationAI) {
+      this.notifyObservers(EventType.MOVE_PLAYED);
+    }
 
     if (this.gameState.getMoveTimer() != null && !this.gameState.isGameOver()) {
       this.gameState.getMoveTimer().start();
@@ -540,7 +563,21 @@ public class Game extends Subject {
         && !isOver()
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
-      this.notifyObservers(EventType.AI_PLAYING);
+
+      if (VIEW_ON_OTHER_THREAD) {
+        viewLock.lock();
+        this.notifyObservers(EventType.AI_PLAYING);
+        try {
+          System.out.println("Waiting for View");
+          workingView.await();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        } finally {
+          viewLock.unlock();
+        }
+      } else {
+        this.notifyObservers(EventType.AI_PLAYING);
+      }
       solver.playAIMove(this);
     }
   }
@@ -649,6 +686,8 @@ public class Game extends Subject {
       timer.setCallback(instance::outOfTimeCallback);
       timer.start();
     }
+
+    instance.notifyObservers(EventType.GAME_STARTED);
 
     return instance;
   }

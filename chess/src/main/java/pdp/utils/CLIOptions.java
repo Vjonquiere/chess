@@ -238,6 +238,11 @@ public class CLIOptions {
       activatedOptions.put(OptionType.TIME, "30");
     }
 
+    if (activatedOptions.containsKey(OptionType.AI)
+        && activatedOptions.get(OptionType.AI).equals("")) {
+      activatedOptions.put(OptionType.AI, "W");
+    }
+
     validateAIOptions(cmd, activatedOptions);
   }
 
