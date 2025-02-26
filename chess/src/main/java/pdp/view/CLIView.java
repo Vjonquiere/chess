@@ -171,6 +171,8 @@ public class CLIView implements View {
         System.out.println(TextGetter.getText("ai_not_enough_time"));
       case GAME_RESTART:
         System.out.println(TextGetter.getText("gameRestart"));
+        System.out.println(TextGetter.getText("welcomeCLI"));
+        System.out.println(TextGetter.getText("welcomeInstructions"));
         System.out.println(Game.getInstance().getGameRepresentation());
         break;
       default:
