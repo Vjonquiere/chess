@@ -15,7 +15,13 @@ public class Square extends StackPane {
   ColoredPiece currentPiece;
   ImageView pieceImage;
 
-  public Square(ColoredPiece piece, boolean squareColor, boolean selected) {
+  /**
+   * Build a square of the given color with the sprite of the given piece
+   *
+   * @param piece The piece on the square
+   * @param squareColor The default color of the square
+   */
+  public Square(ColoredPiece piece, boolean squareColor) {
     baseColor = squareColor ? Color.web("#DAE0F2") : Color.web("#6D6FD9");
     currentPiece = piece;
     sq = new Canvas(100, 100);
@@ -29,6 +35,12 @@ public class Square extends StackPane {
     }
   }
 
+  /**
+   * Load the sprite of the given piece
+   *
+   * @param piece the piece to get the sprite
+   * @return The ImageView with the sprite
+   */
   private ImageView addPiece(ColoredPiece piece) {
     String color = piece.color == pdp.model.piece.Color.WHITE ? "white" : "black";
     String path =
@@ -40,6 +52,11 @@ public class Square extends StackPane {
     return imageView;
   }
 
+  /**
+   * Update the sprite displayed on the square with the given piece
+   *
+   * @param piece The piece to display
+   */
   public void updatePiece(ColoredPiece piece) {
     if (!(piece.equals(currentPiece))) {
       currentPiece = piece;
@@ -54,6 +71,11 @@ public class Square extends StackPane {
     }
   }
 
+  /**
+   * Update the square color depending on selection state
+   *
+   * @param selected The selected state of the square
+   */
   public void setSelected(boolean selected) {
     GraphicsContext gc = sq.getGraphicsContext2D();
     if (selected) {

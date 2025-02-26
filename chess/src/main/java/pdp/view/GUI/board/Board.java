@@ -26,22 +26,22 @@ public class Board extends GridPane {
     buildBoard();
   }
 
+  /** Build the board for the first time. Init all squares and setup them */
   public void buildBoard() {
     super.getChildren().clear();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
-        // System.out.println(x * 7 + 7 - y);
         ColoredPiece piece = board.getPieceAt(x, boardRows - 1 - y);
         Square sq;
         boolean selected = from != null && from.getX() == x && from.getY() == boardRows - 1 - y;
         if (x % 2 == 0 && y % 2 == 0) {
-          sq = new Square(piece, true, selected);
+          sq = new Square(piece, true);
         } else if (x % 2 == 0 && y % 2 == 1) {
-          sq = new Square(piece, false, selected);
+          sq = new Square(piece, false);
         } else if (x % 2 == 1 && y % 2 == 0) {
-          sq = new Square(piece, false, selected);
+          sq = new Square(piece, false);
         } else {
-          sq = new Square(piece, true, selected);
+          sq = new Square(piece, true);
         }
         int finaly = boardRows - 1 - y;
         int finalx = x;
@@ -51,11 +51,11 @@ public class Board extends GridPane {
             });
         pieces.put(new Position(x, boardRows - 1 - y), sq);
         super.add(sq, x, y);
-        // super.add(new Text(Integer.toString(x + y * 8)), x, y);
       }
     }
   }
 
+  /** Update the pieces sprites of all squares */
   public void updateBoard() {
     board = Game.getInstance().getBoard().board;
     for (int x = 0; x < boardColumns; x++) {
@@ -66,6 +66,12 @@ public class Board extends GridPane {
     }
   }
 
+  /**
+   * Define the selected square (color + command)
+   *
+   * @param x x coordinate of the selected square
+   * @param y y coordinate of the selected square
+   */
   private void switchSelectedSquare(int x, int y) {
     if (from == null) {
       from = new Position(x, y);
