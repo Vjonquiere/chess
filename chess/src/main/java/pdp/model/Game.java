@@ -629,10 +629,25 @@ public class Game extends Subject {
     return this.history.toString();
   }
 
-  public void resetGame() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  /** Restarts the game by resetting the game state and history. */
+  public void restartGame() {
+    DEBUG(LOGGER, "Restarting game");
+
+    this.gameState = new GameState(this.gameState.getMoveTimer());
+    this.history = new History();
+
+    this.history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
+
+    this.stateCount.clear();
+    this.gameState.setSimplifiedZobristHashing(
+        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+
+    this.notifyObservers(EventType.GAME_RESTART);
+
+    DEBUG(LOGGER, "Game restarted");
   }
 
   public boolean isOver() {
@@ -785,6 +800,12 @@ public class Game extends Subject {
     return sb.toString();
   }
 
+  /**
+   * Determines if the given move is a pawn promotion move.
+   *
+   * @param move The move to be checked.
+   * @return true if the move is a promotion move, false otherwise.
+   */
   public boolean isPromotionMove(Move move) {
     if (this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).piece
         != Piece.PAWN) {
@@ -799,7 +820,13 @@ public class Game extends Subject {
     return false;
   }
 
-  public static Game getInstance() {
+  /**
+   * Retrieves the singleton instance of the Game.
+   *
+   * @return The single instance of Game.
+   * @throws IllegalStateException If the Game has not been initialized.
+   */
+  public static Game getInstance() throws IllegalStateException {
     if (instance == null) {
       throw new IllegalStateException("Game has not been initialized");
     }

@@ -18,9 +18,9 @@ public class ProposeDrawCommand implements Command {
    * Executes the ProposeDrawCommand which attempts to propose a draw in the game. If the game is
    * already over, it returns an exception CommandNotAvailableNowException.
    *
-   * @param model the Game model on which the command is executed
-   * @param controller the GameController managing the game state
-   * @return an Optional containing an exception if an error occured, otherwise an empty Optional
+   * @param model the Game model on which the command is executed.
+   * @param controller the GameController managing the game commands.
+   * @return an Optional containing an exception if an error occured, otherwise an empty Optional.
    */
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {

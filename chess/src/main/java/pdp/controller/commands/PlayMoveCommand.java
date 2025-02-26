@@ -18,7 +18,7 @@ public class PlayMoveCommand implements Command {
    * Executes the move on the game model.
    *
    * @param model The game model on which the move is to be executed.
-   * @param controller The game controller managing game operations.
+   * @param controller The game controller managing game commands.
    */
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {

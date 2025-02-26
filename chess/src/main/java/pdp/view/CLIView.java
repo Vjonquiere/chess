@@ -56,6 +56,9 @@ public class CLIView implements View {
         new CommandEntry(this::surrenderCommand, TextGetter.getText("surrenderHelpDescription")));
     commands.put(
         "time", new CommandEntry(this::timeCommand, TextGetter.getText("timeHelpDescription")));
+    commands.put(
+        "restart",
+        new CommandEntry(this::restartCommand, TextGetter.getText("restartHelpDescription")));
   }
 
   /**
@@ -159,6 +162,12 @@ public class CLIView implements View {
           break;
         case AI_PLAYING:
           System.out.println(TextGetter.getText("ai_playing"));
+          break;
+        case GAME_RESTART:
+          System.out.println(TextGetter.getText("gameRestart"));
+          System.out.println(TextGetter.getText("welcomeCLI"));
+          System.out.println(TextGetter.getText("welcomeInstructions"));
+          System.out.println(Game.getInstance().getGameRepresentation());
           break;
         default:
           DEBUG(LOGGER, "Received unknown game event: " + event);
@@ -333,6 +342,15 @@ public class CLIView implements View {
    */
   private void redoCommand(String args) {
     BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+  }
+
+  /**
+   * Handles the restart command by restarting a new game.
+   *
+   * @param args Unused argument
+   */
+  private void restartCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestartCommand());
   }
 
   /**
