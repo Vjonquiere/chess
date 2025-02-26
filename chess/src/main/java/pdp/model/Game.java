@@ -761,6 +761,12 @@ public class Game extends Subject {
     return sb.toString();
   }
 
+  /**
+   * Determines if the given move is a pawn promotion move.
+   *
+   * @param move The move to be checked.
+   * @return true if the move is a promotion move, false otherwise.
+   */
   public boolean isPromotionMove(Move move) {
     if (this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).piece
         != Piece.PAWN) {
@@ -775,7 +781,13 @@ public class Game extends Subject {
     return false;
   }
 
-  public static Game getInstance() {
+  /**
+   * Retrieves the singleton instance of the Game.
+   *
+   * @return The single instance of Game.
+   * @throws IllegalStateException If the Game has not been initialized.
+   */
+  public static Game getInstance() throws IllegalStateException {
     if (instance == null) {
       throw new IllegalStateException("Game has not been initialized");
     }

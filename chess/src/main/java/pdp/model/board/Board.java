@@ -26,6 +26,7 @@ public class Board {
     Logging.configureLogging(LOGGER);
   }
 
+  /** Creates a default board. */
   public Board() {
     this.board = new BitboardRepresentation();
     this.isWhite = true;
