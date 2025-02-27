@@ -633,6 +633,8 @@ public class Game extends Subject {
   public void restartGame() {
     DEBUG(LOGGER, "Restarting game");
 
+    this.startAI();
+
     this.gameState = new GameState(this.gameState.getMoveTimer());
     this.history = new History();
 
@@ -646,6 +648,11 @@ public class Game extends Subject {
     this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
 
     this.notifyObservers(EventType.GAME_RESTART);
+
+    if (this.isWhiteAI()) {
+      this.notifyObservers(EventType.AI_PLAYING);
+      solver.playAIMove(this);
+    }
 
     DEBUG(LOGGER, "Game restarted");
   }
