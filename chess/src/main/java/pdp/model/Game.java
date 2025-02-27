@@ -633,6 +633,12 @@ public class Game extends Subject {
   public void restartGame() {
     DEBUG(LOGGER, "Restarting game");
 
+    if (this.gameState.isWhiteTurn()) {
+      this.gameState.whiteResigns();
+    } else {
+      this.gameState.blackResigns();
+    }
+
     this.startAI();
 
     this.gameState = new GameState(this.gameState.getMoveTimer());
@@ -649,10 +655,7 @@ public class Game extends Subject {
 
     this.notifyObservers(EventType.GAME_RESTART);
 
-    if (this.isWhiteAI()) {
-      this.notifyObservers(EventType.AI_PLAYING);
-      solver.playAIMove(this);
-    }
+    this.startAI();
 
     DEBUG(LOGGER, "Game restarted");
   }
