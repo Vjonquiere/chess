@@ -1,0 +1,51 @@
+package pdp.model.board;
+
+import java.util.List;
+import pdp.model.piece.ColoredPiece;
+import pdp.utils.Position;
+
+public interface BoardRepresentation extends Rules {
+  public List<Position> getPawns(boolean white);
+
+  public List<Position> getRooks(boolean white);
+
+  public List<Position> getBishops(boolean white);
+
+  public List<Position> getKnights(boolean white);
+
+  public List<Position> getQueens(boolean white);
+
+  public List<Position> getKing(boolean white);
+
+  public ColoredPiece getPieceAt(int x, int y);
+
+  public int getNbCols();
+
+  public int getNbRows();
+
+  public void movePiece(Position from, Position to);
+
+  public void deletePieceAt(int x, int y);
+
+  public boolean queensOffTheBoard();
+
+  public boolean areKingsActive();
+
+  public boolean pawnsHaveProgressed(boolean isWhite);
+
+  public int nbPiecesRemaining();
+
+  public List<Move> retrieveKingMoves(boolean white);
+
+  public List<Move> retrieveBishopMoves(boolean white);
+
+  public List<List<Position>> retrieveWhitePiecesPos();
+
+  public List<List<Position>> retrieveBlackPiecesPos();
+
+  public List<List<Position>> retrieveInitialWhitePiecesPos();
+
+  public List<List<Position>> retrieveInitialBlackPiecesPos();
+
+  public BoardRepresentation getCopy();
+}

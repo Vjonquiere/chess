@@ -14,6 +14,15 @@ public class CancelDrawCommand implements Command {
     this.isWhite = isWhite;
   }
 
+  /**
+   * Executes the CancelDrawCommand which attempts to cancel a draw request in the game. If the game
+   * is already over, it returns an exception CommandNotAvailableNowException.
+   *
+   * @param model the Game model on which the command is executed
+   * @param controller the GameController managing the game commands
+   * @return an Optional containing an exception if the command is not available, otherwise an empty
+   *     Optional
+   */
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
     if (model.getGameState().isGameOver()) {

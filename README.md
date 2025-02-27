@@ -9,11 +9,21 @@ cd chess-2/
 ```
 
 ### For contributors
-Contributors should set up the pre-commit hook by running
+1. Contributors should set up the pre-commit hook by running
 ```bash
 chmod +x setup-hooks.sh
 ./setup-hooks.sh
 ```
+2. Setup development environment
+
+It is possible that your IDE don't find the _BoardLoaderBaseListener_ class. It's because
+some of them don't use the `target/` folder for sources.
+Here is how to fix:
+
+  - Intellij: 
+    - Build the project 
+    - Go to file -> project structure -> modules
+    - Change `target/generated-sources/antlr4` from Excluded to **Sources**
 
 # Installation
 ## 1. Docker
@@ -46,6 +56,14 @@ The following are required to run the project:
 ### Build the project
 - `cd chess/` to enter the project folder
 - `mvn clean install` to install dependencies and run tests
+
+## 3. Using release
+### Prerequisites
+- Java 17
+
+### Run the App
+- Download the latest release on the GitLab page ([here](https://gitlab.emi.u-bordeaux.fr/pdp-2025/chess-2/-/releases))
+- Run the jar with `java -jar chess-x.x.x.jar` (x.x.x = version number)
 
 # Usage
 

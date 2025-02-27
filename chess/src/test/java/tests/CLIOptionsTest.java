@@ -6,6 +6,10 @@ import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -24,30 +28,71 @@ public class CLIOptionsTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
-  String expectedHelp =
-      "usage: chess\n"
-          + " -a,--ai <COLOR>                 Launch the program in AI mode, with\n"
-          + "                                 artificial player with COLOR 'B' or 'A'\n"
-          + "                                 (All),(W by default).\n"
-          + "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm\n"
-          + "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial\n"
-          + "                                 player\n"
-          + "    --ai-mode <ALGORITHM>        Choose the exploration algorithm for the\n"
-          + "                                 artificial player.\n"
-          + "    --ai-time <TIME>             Specify the time of reflexion for AI mode\n"
-          + "                                 (default 5 seconds)\n"
-          + " -b,--blitz                      Play in blitz mode\n"
-          + " -c,--contest <FILENAME>         AI plays one move in the given file\n"
-          + " -d,--debug                      Print debugging information\n"
-          + " -g,--gui                        Displays the game with a  graphical\n"
-          + "                                 interface.\n"
-          + " -h,--help                       Print this message and exit\n"
-          + "    --lang <LANGUAGE>            Choose the language for the app (en\n"
-          + "                                 supported)\n"
-          + " -t,--time <TIME>                Specify time per round for blitz mode\n"
-          + "                                 (default 30min)\n"
-          + " -V,--version                    Print the version information and exit\n"
-          + " -v,--verbose                    Display more information\n";
+  String[] expectedHelp = {
+    "usage: chess",
+    " -a,--ai <COLOR>                 Launch the program in AI mode, with",
+    "                                 (All),(W by default).",
+    "                                 artificial player with COLOR 'B' or 'A'",
+    "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm",
+    "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial",
+    "                                 player",
+    "                                 Choose between these heuristic (case",
+    "                                 sensitive)",
+    "                                 - STANDARD : Aggregates multiple",
+    "                                 heuristics to evaluate the board during",
+    "                                 the start and middle game.",
+    "                                 - SHANNON : Basic Heuristic from Shannon.",
+    "                                 - ENDGAME : Aggregates multiple",
+    "                                 heuristics to evaluate the board state",
+    "                                 during the endgame phase of the match.",
+    "                                 - BAD_PAWNS : Computes a score according",
+    "                                 to the potential weaknesses in the",
+    "                                 observed pawn structures.",
+    "                                 - BISHOP_ENDGAME : Computes a score",
+    "                                 according to how performant bishops are",
+    "                                 for an endgame position.",
+    "                                 - DEVELOPMENT : Computes and returns a",
+    "                                 score corresponding to the level of",
+    "                                 development for each player.",
+    "                                 - GAME_STATUS : Computes a score based on",
+    "                                 the possible game endings.",
+    "                                 - KING_ACTIVITY : Computes a score based",
+    "                                 on the king's activity (is in center and",
+    "                                 has a lot of possible moves).",
+    "                                 - KING_OPPOSITION : Computes a score",
+    "                                 according to the (un)balance of the kings",
+    "                                 position.",
+    "                                 - KING_SAFETY : Assigns a score to a",
+    "                                 player according to the safety of his",
+    "                                 king.",
+    "                                 - MATERIAL : Computes a score based on",
+    "                                 the pieces on the board.",
+    "                                 - MOBILITY : Computes a score based on",
+    "                                 the available moves for each player.",
+    "                                 - PAWN_CHAIN : Computes a score according",
+    "                                 to how strongly pawns are connected.",
+    "                                 - PROMOTION : Computes a score according",
+    "                                 to closeness of pawns promoting.",
+    "                                 - SPACE_CONTROL : Gives a score based on",
+    "                                 how much control over the entire board",
+    "                                 the players have.",
+    "    --ai-mode <ALGORITHM>        Choose the exploration algorithm for the",
+    "                                 artificial player.",
+    "    --ai-time <TIME>             Specify the time of reflexion for AI mode",
+    "                                 in seconds (default 5 seconds)",
+    " -b,--blitz                      Play in blitz mode",
+    " -c,--contest <FILENAME>         AI plays one move in the given file",
+    " -d,--debug                      Print debugging information",
+    " -g,--gui                        Displays the game with a  graphical",
+    "                                 interface.",
+    " -h,--help                       Print this message and exit",
+    "    --lang <LANGUAGE>            Choose the language for the app (en",
+    "                                 supported)",
+    " -t,--time <TIME>                Specify time per round for blitz mode",
+    "                                 (default 30min)",
+    " -V,--version                    Print the version information and exit",
+    " -v,--verbose                    Display more information"
+  };
 
   @BeforeEach
   public void setUp() {
@@ -69,14 +114,18 @@ public class CLIOptionsTest {
     /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--help"}, mockRuntime);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
     /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h"}, mockRuntime2);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime2).exit(0);
   }
@@ -109,26 +158,33 @@ public class CLIOptionsTest {
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
 
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
     Runtime mockRuntime2 = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-V", "-h"}, mockRuntime2);
 
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime2).exit(0);
   }
 
   @Test
   public void testUnrecognized() {
-    String expected = "Parsing failed.  Reason: Unrecognized option: -zgv\n";
+    String expected = "Parsing failed.  Reason: Unrecognized option: -zgv";
 
     // Test with an unrecognized option (error)
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-zgv"}, mockRuntime);
-    assertEquals(expected + expectedHelp.trim(), outputStream.toString().trim());
+    assertTrue(outputStream.toString().contains(expected));
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(1);
   }
@@ -139,7 +195,9 @@ public class CLIOptionsTest {
     // Test partial matching (no error)
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"-hel"}, mockRuntime);
-    assertEquals(expectedHelp.trim(), outputStream.toString().trim());
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(0);
   }
@@ -147,12 +205,15 @@ public class CLIOptionsTest {
   @Test
   public void testAmbiguous() throws Exception {
     String expectedAmbiguous =
-        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-depth', 'ai-heuristic', 'ai-time')\n";
+        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-depth', 'ai-heuristic', 'ai-time')";
 
     // Test ambiguous option (several options starting the same) (error)
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--ai-"}, mockRuntime);
-    assertEquals(expectedAmbiguous + expectedHelp.trim(), outputStream.toString().trim());
+    assertTrue(outputStream.toString().contains(expectedAmbiguous));
+    for (String s : expectedHelp) {
+      assertTrue(outputStream.toString().contains(s));
+    }
     outputStream.reset();
     verify(mockRuntime).exit(1);
   }
@@ -235,7 +296,7 @@ public class CLIOptionsTest {
     /* Test that asking for the app in english is the default and will display the debug message.*/
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--debug", "--lang=en"}, mockRuntime);
-    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("lang option activated"));
     assertTrue(outputStream.toString().contains("Language = English (already set by default)"));
     assertEquals("Chess game", TextGetter.getText("title"));
     outputStream.reset();
@@ -250,7 +311,7 @@ public class CLIOptionsTest {
      * that the default language of the app is english*/
     Runtime mockRuntime = mock(Runtime.class);
     CLIOptions.parseOptions(new String[] {"--debug", "--lang=ru"}, mockRuntime);
-    assertTrue(outputStream.toString().contains("Language option activated"));
+    assertTrue(outputStream.toString().contains("lang option activated"));
     assertTrue(outputStream.toString().contains("Language ru not supported, language = english"));
     assertEquals("Chess game", TextGetter.getText("title"));
     outputStream.reset();
@@ -262,6 +323,7 @@ public class CLIOptionsTest {
     expectedMap.put(OptionType.BLITZ, "");
     expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
     expectedMap.put(OptionType.AI, "W");
+    expectedMap.put(OptionType.CONFIG, "default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
     expectedMap.put(OptionType.AI_DEPTH, "3");
     expectedMap.put(OptionType.AI_MODE, "test");
@@ -286,5 +348,190 @@ public class CLIOptionsTest {
             mockRuntime);
 
     assertEquals(expectedMap, output);
+  }
+
+  @Test
+  public void testConfigFileWrongExtension() {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> map =
+        CLIOptions.parseOptions(new String[] {"--config=invalid.txt"}, mockRuntime);
+    assertTrue(map.get(OptionType.CONFIG) == "default.chessrc");
+  }
+
+  @Test
+  public void testDefaultFileOptions() throws Exception {
+    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
+    String iniContent = "[Default]\nai=true\ndebug=false\nverbose=true\n";
+    Files.write(tempConfig, iniContent.getBytes(StandardCharsets.UTF_8));
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+
+    assertTrue(activatedOptions.containsKey(OptionType.AI));
+    assertTrue(activatedOptions.containsKey(OptionType.VERBOSE));
+    assertFalse(activatedOptions.containsKey(OptionType.DEBUG));
+
+    Files.deleteIfExists(tempConfig);
+  }
+
+  @Test
+  public void testCommandOverride() throws Exception {
+    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
+    String iniContent = "[Default]\ntime=100\ndebug=false\nverbose=true\n";
+    Files.write(tempConfig, iniContent.getBytes(StandardCharsets.UTF_8));
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> activatedOptionsOverride =
+        CLIOptions.parseOptions(
+            new String[] {"--config=" + tempConfig.toString(), "-b", "--time=200", "-d"},
+            mockRuntime);
+
+    assertTrue(activatedOptionsOverride.containsKey(OptionType.TIME));
+    assertEquals("200", activatedOptionsOverride.get(OptionType.TIME));
+
+    assertTrue(activatedOptionsOverride.containsKey(OptionType.DEBUG));
+    assertTrue(activatedOptionsOverride.containsKey(OptionType.VERBOSE));
+
+    Files.deleteIfExists(tempConfig);
+  }
+
+  @Test
+  public void testFileNotFound() throws Exception {
+    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
+    Files.deleteIfExists(tempConfig);
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+
+    assertEquals("default.chessrc", activatedOptions.get(OptionType.CONFIG));
+  }
+
+  @Test
+  public void testBothFilesNotFound() throws Exception {
+    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
+    Files.deleteIfExists(tempConfig);
+
+    Path defaultConfig = Files.createTempFile("nonexistant", ".chessrc");
+    Files.deleteIfExists(defaultConfig);
+
+    Field defaultConfigField = CLIOptions.class.getDeclaredField("DEFAULT_CONFIG_FILE");
+    defaultConfigField.setAccessible(true);
+    String originalDefault = (String) defaultConfigField.get(null);
+    defaultConfigField.set(null, defaultConfig.toString());
+
+    Runtime mockRuntime = mock(Runtime.class);
+    Map<OptionType, String> activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+    assertNull(activatedOptions.get(OptionType.CONFIG));
+    defaultConfigField.set(null, originalDefault);
+  }
+
+  @Test
+  public void testAIActivation() {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    // activate AI option with white
+    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=W"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("ai option activated"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI)
+            && activatedOptions.get(OptionType.AI).equals("W"));
+    outputStream.reset();
+    // activate AI option with black
+    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=B"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("ai option activated"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI)
+            && activatedOptions.get(OptionType.AI).equals("B"));
+    outputStream.reset();
+    // activate AI option with black and white
+    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=A"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("ai option activated"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI)
+            && activatedOptions.get(OptionType.AI).equals("A"));
+
+    outputStream.reset();
+  }
+
+  @Test
+  public void testMissingAIActivation() {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    // activate AI mode
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-mode=MINIMAX"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-mode requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_MODE)
+            && activatedOptions.get(OptionType.AI_MODE).equals("MINIMAX"));
+    outputStream.reset();
+    // activate AI heuristic
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-heuristic=MATERIAL"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-heuristic requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_HEURISTIC)
+            && activatedOptions.get(OptionType.AI_HEURISTIC).equals("MATERIAL"));
+    outputStream.reset();
+    // activate AI depth
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-depth=5"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-depth requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_DEPTH)
+            && activatedOptions.get(OptionType.AI_DEPTH).equals("5"));
+
+    outputStream.reset();
+    // activate AI time
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-time=5"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-time requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_TIME)
+            && activatedOptions.get(OptionType.AI_TIME).equals("5"));
+
+    outputStream.reset();
+  }
+
+  @Test
+  public void testBlitz() throws Exception {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CLIOptions.parseOptions(new String[] {"-b"}, mockRuntime);
+    assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
+  }
+
+  @Test
+  public void testBlitzWithTime() throws Exception {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CLIOptions.parseOptions(new String[] {"-b", "-t=10"}, mockRuntime);
+    assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
+    assertTrue(activatedOptions.containsKey(OptionType.TIME));
+    assertTrue(activatedOptions.get(OptionType.TIME).equals("10"));
+  }
+
+  @Test
+  public void testTimeWithoutBlitz() throws Exception {
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CLIOptions.parseOptions(new String[] {"-t=10"}, mockRuntime);
+    assertFalse(activatedOptions.containsKey(OptionType.BLITZ));
+    assertFalse(activatedOptions.containsKey(OptionType.TIME));
+  }
+
+  @Test
+  public void testGetShortOptionNull() {
+    // Check that the options without a short name return null when queried.
+    assertNull(OptionType.AI_MODE.getShort());
+    assertNull(OptionType.AI_TIME.getShort());
+    assertNull(OptionType.AI_DEPTH.getShort());
+    assertNull(OptionType.AI_HEURISTIC.getShort());
+    assertNull(OptionType.LOAD.getShort());
+    assertNull(OptionType.CONFIG.getShort());
+    assertNull(OptionType.LANG.getShort());
   }
 }

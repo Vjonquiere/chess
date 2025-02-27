@@ -15,7 +15,6 @@ public class Logging {
 
   /*Private constructor to avoid instantiation*/
   private Logging() {}
-  ;
 
   public static void setDebug(boolean debug) {
     Logging.debug = debug;

@@ -2,223 +2,300 @@ package pdp.utils;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class CLIOptions {
   private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
 
-  /*Private constructor to avoid instantiation*/
+  // Not final for test purposes
+  private static String DEFAULT_CONFIG_FILE = "default.chessrc";
+
   private CLIOptions() {}
-  ;
 
   /**
-   * Parse the options given in parameters. The help will have the priority over any other option.
-   * If the usage is wrong, an error message will be displayed on the standard error output.
-   * Careful, partial matching : -aifdghj will still enable -a, no errors are displayed.
+   * Parses the given command line arguments..
    *
-   * @param args Array of strings received by main, arguments to parse
-   * @param runtime Runtime to exit cleanly
+   * <p>Returns a map of the activated options, with the option name as the key and the option value
+   * as the value.
+   *
+   * @param args The command line arguments.
+   * @param runtime The runtime.
+   * @return A map of the activated options.
    */
   public static HashMap<OptionType, String> parseOptions(String[] args, Runtime runtime) {
-    final Options options = new Options();
-    Option help = new Option("h", "help", false, "Print this message and exit");
-    Option version = new Option("V", "version", false, "Print the version information and exit");
-    Option verbose = new Option("v", "verbose", false, "Display more information");
-    Option debug = new Option("d", "debug", false, "Print debugging information");
-    Option blitz = new Option("b", "blitz", false, "Play in blitz mode");
-    Option gui = new Option("g", "gui", false, "Displays the game with a  graphical interface.");
-    Option time =
-        Option.builder("t")
-            .longOpt("time")
-            .hasArg(true)
-            .argName("TIME")
-            .desc("Specify time per round for blitz mode (default 30min)")
-            .type(Integer.class)
-            .build();
-    Option contest =
-        Option.builder("c")
-            .longOpt("contest")
-            .hasArg(true)
-            .argName("FILENAME")
-            .desc("AI plays one move in the given file")
-            .build();
-    Option ai =
-        Option.builder("a")
-            .longOpt("ai")
-            .optionalArg(true)
-            .argName("COLOR")
-            .desc(
-                "Launch the program in AI mode, with artificial player with COLOR 'B' or 'A' (All),(W by default).")
-            .build();
-    Option ai_mode =
-        Option.builder()
-            .longOpt("ai-mode")
-            .hasArg(true)
-            .argName("ALGORITHM")
-            .desc("Choose the exploration algorithm for the artificial player.")
-            .build();
-    Option ai_depth =
-        Option.builder()
-            .longOpt("ai-depth")
-            .hasArg(true)
-            .argName("DEPTH")
-            .desc("Specify the depth of the AI algorithm")
-            .build();
-    Option ai_heuristic =
-        Option.builder()
-            .longOpt("ai-heuristic")
-            .hasArg(true)
-            .argName("HEURISTIC")
-            .desc("Choose the heuristic for the artificial player")
-            .build();
-    Option ai_time =
-        Option.builder()
-            .longOpt("ai-time")
-            .argName("TIME")
-            .hasArg(true)
-            .desc("Specify the time of reflexion for AI mode (default 5 seconds)")
-            .build();
-    Option lang =
-        Option.builder()
-            .longOpt("lang")
-            .argName("LANGUAGE")
-            .hasArg(true)
-            .desc("Choose the language for the app (en supported)")
-            .build();
+    Options options = new Options();
+    for (OptionType optionType : OptionType.values()) {
+      options.addOption(optionType.getOption());
+    }
 
-    options.addOption(help);
-    options.addOption(version);
-    options.addOption(verbose);
-    options.addOption(debug);
-    options.addOption(blitz);
-    options.addOption(gui);
-    options.addOption(time);
-    options.addOption(contest);
-    options.addOption(ai);
-    options.addOption(ai_mode);
-    options.addOption(ai_depth);
-    options.addOption(ai_heuristic);
-    options.addOption(ai_time);
-    options.addOption(lang);
-
+    Map<String, String> defaultArgs = new HashMap<>();
     CommandLineParser parser = new DefaultParser();
-    CommandLine cmd = null;
     HashMap<OptionType, String> activatedOptions = new HashMap<>();
+
     try {
-      cmd = parser.parse(options, args);
+      CommandLine cmd = parser.parse(options, args);
+      String configFile = cmd.getOptionValue(OptionType.CONFIG.getLong(), (String) null);
+      defaultArgs = loadDefaultArgs(configFile, activatedOptions);
+      handleLoggingOptions(cmd, defaultArgs);
+      if (handleImmediateExitOptions(cmd, options, runtime)) return null;
+      processOptions(cmd, defaultArgs, activatedOptions);
 
-      if (cmd.hasOption(debug)) {
-        Logging.setDebug(true);
-        Logging.configureLogging(LOGGER);
-        DEBUG(LOGGER, "Debug mode activated");
+      if (!cmd.getArgList().isEmpty()) {
+        String loadFile = cmd.getArgList().get(0);
+        activatedOptions.put(OptionType.LOAD, loadFile);
+        DEBUG(LOGGER, "Load file set to: " + loadFile);
       }
-      if (cmd.hasOption(verbose)) {
-        Logging.setVerbose(true);
-        Logging.configureLogging(LOGGER);
-        DEBUG(LOGGER, "Verbose mode activated");
-      }
-      if (cmd.hasOption(help)) {
-        DEBUG(LOGGER, "Help option activated");
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("chess", options);
-        runtime.exit(0);
-        return null;
-      }
-      if (cmd.hasOption(version)) {
-        DEBUG(LOGGER, "Version option activated");
-        final Properties properties = new Properties();
-        properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
-        System.out.println("Version: " + properties.getProperty("version"));
-        runtime.exit(0);
-        return null;
-      }
-      if (cmd.hasOption(lang)) {
-        DEBUG(LOGGER, "Language option activated");
-        if (cmd.getParsedOptionValue(lang).equals("en")) {
-          DEBUG(LOGGER, "Language = English (already set by default)");
-          // TODO: de-comment when french file finished
-        } /*else if (cmd.getParsedOptionValue(lang).equals("fr")) {
-            DEBUG(LOGGER, "Language = French");
-            TextGetter.setLocale(cmd.getParsedOptionValue("lang"));
-          } */ else {
-          System.err.println(
-              "Language " + cmd.getParsedOptionValue(lang) + " not supported, language = english");
-        }
-      }
-      if (cmd.hasOption(blitz)) {
-        DEBUG(LOGGER, "Blitz mode activated");
-        activatedOptions.put(OptionType.BLITZ, "");
-        System.err.println("Blitz not implemented yet");
-      }
-      if (cmd.hasOption(gui)) {
-        DEBUG(LOGGER, "GUI mode activated");
-        activatedOptions.put(OptionType.GUI, "");
-        System.err.println("GUI not implemented yet");
-      }
-      if (cmd.hasOption(time)) {
-        DEBUG(LOGGER, "Blitz time option activated");
-        activatedOptions.put(OptionType.TIME, cmd.getOptionValue(time));
-        System.err.println("Blitz time not implemented yet");
-      }
-      if (cmd.hasOption(contest)) {
-        DEBUG(LOGGER, "Contest mode activated");
-        activatedOptions.put(OptionType.CONTEST, cmd.getOptionValue(contest));
-        System.err.println("Contest not implemented yet");
-      }
-      if (cmd.hasOption(ai)) {
-        DEBUG(LOGGER, "AI activated");
-        activatedOptions.put(OptionType.AI, cmd.getOptionValue(ai));
-        System.err.println("AI not implemented yet");
-      }
-      if (cmd.hasOption(ai_mode)) {
-        if (!cmd.hasOption(ai)) {
-          System.err.println("Modifying the AI algorithm requires 'a' argument");
-        } else {
-          DEBUG(LOGGER, "AI-mode activated");
-          activatedOptions.put(OptionType.AI_MODE, cmd.getOptionValue(ai_mode));
-          System.err.println("AI mode not implemented yet");
-        }
-      }
-      if (cmd.hasOption(ai_heuristic)) {
-        if (!cmd.hasOption(ai)) {
-          System.err.println("Choosing the AI heuristic requires 'a' argument");
-        } else {
-          DEBUG(LOGGER, "AI-heuristic activated");
-          activatedOptions.put(OptionType.AI_HEURISTIC, cmd.getOptionValue(ai_heuristic));
-          System.err.println("AI mode not implemented yet");
-        }
-      }
-      if (cmd.hasOption(ai_depth)) {
-        if (!cmd.hasOption(ai)) {
-          System.err.println("Modifying the AI depth requires 'a' argument");
-        } else {
-          DEBUG(LOGGER, "AI-depth activated");
-          activatedOptions.put(OptionType.AI_DEPTH, cmd.getOptionValue(ai_depth));
-          System.err.println("AI mode not implemented yet");
-        }
-      }
-      if (cmd.hasOption(ai_time)) {
-        if (!cmd.hasOption(ai)) {
-          System.err.println("Modifying the AI time requires 'a' argument");
-        } else {
-          DEBUG(LOGGER, "AI-time activated");
-          activatedOptions.put(OptionType.AI_TIME, cmd.getOptionValue(ai_time));
-          System.err.println("AI mode not implemented yet");
-        }
-      }
-
     } catch (ParseException exp) {
       System.out.println("Parsing failed.  Reason: " + exp.getMessage());
-      HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("chess", options);
+      new HelpFormatter().printHelp("chess", options);
       runtime.exit(1);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
     return activatedOptions;
+  }
+
+  /**
+   * Loads the default arguments from a specified configuration file.
+   *
+   * <p>The method attempts to load a configuration file with a given ".chessrc" filename. If it
+   * cannot be found, the default configuration file is used instead. If both the specified and
+   * default files are not found, an empty map is returned.
+   *
+   * @param file The filename of the configuration file to load.
+   * @param activatedOptions A map to store the activated options, where the configuration file name
+   *     is stored under the CONFIG key.
+   * @return A map of default arguments read from the configuration file.
+   */
+  private static Map<String, String> loadDefaultArgs(
+      String file, HashMap<OptionType, String> activatedOptions) {
+    InputStream inputStream = null;
+    if (file != null && !file.endsWith(".chessrc")) {
+      file = null;
+      System.out.println("Selected file is not of .chessrc format, defaulting to default options");
+      activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
+    }
+    if (file != null) {
+      try {
+        inputStream = new FileInputStream(file);
+      } catch (FileNotFoundException e) {
+        System.err.println("Error while parsing chessrc file: " + e.getMessage());
+        System.err.println("Default options will be used");
+        file = null;
+        activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
+      }
+    }
+    if (file == null) {
+      try {
+        inputStream = CLIOptions.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE);
+        activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
+        if (inputStream == null) {
+          throw new FileNotFoundException("config.chessrc not found in classpath!");
+        }
+      } catch (Exception e) {
+        System.err.println("Error while parsing chessrc file: " + e.getMessage());
+        activatedOptions.put(OptionType.CONFIG, null);
+        return new HashMap<>();
+      }
+    }
+
+    if (inputStream != null) {
+      try {
+        Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
+        return iniMap.getOrDefault("Default", new HashMap<>());
+      } catch (Exception e) {
+        activatedOptions.put(OptionType.CONFIG, null);
+        return new HashMap<>();
+      }
+    }
+
+    activatedOptions.put(OptionType.CONFIG, null);
+    return new HashMap<>();
+  }
+
+  /**
+   * Sets the logging options to be used in the program according to the command line options and
+   * the default arguments.
+   *
+   * @param cmd The command line options.
+   * @param defaultArgs The default arguments.
+   */
+  private static void handleLoggingOptions(CommandLine cmd, Map<String, String> defaultArgs) {
+    if (cmd.hasOption(OptionType.DEBUG.getLong()) || "true".equals(defaultArgs.get("debug"))) {
+      Logging.setDebug(true);
+      Logging.configureLogging(LOGGER);
+      DEBUG(LOGGER, "Debug mode activated");
+    }
+    if (cmd.hasOption(OptionType.VERBOSE.getLong()) || "true".equals(defaultArgs.get("verbose"))) {
+      Logging.setVerbose(true);
+      Logging.configureLogging(LOGGER);
+      DEBUG(LOGGER, "Verbose mode activated");
+    }
+  }
+
+  /**
+   * Checks if the user has requested immediate exit options (help or version) and handles them.
+   *
+   * @param cmd The command line options.
+   * @param options The options to print in the help message.
+   * @param runtime The runtime to exit.
+   * @return true if the option was handled, false otherwise.
+   * @throws IOException If an IO exception occurs.
+   */
+  private static boolean handleImmediateExitOptions(
+      CommandLine cmd, Options options, Runtime runtime) throws IOException {
+    if (cmd.hasOption(OptionType.HELP.getLong())) {
+      DEBUG(LOGGER, "Help option activated");
+      new HelpFormatter().printHelp("chess", options);
+      runtime.exit(0);
+      return true;
+    }
+    if (cmd.hasOption(OptionType.VERSION.getLong())) {
+      DEBUG(LOGGER, "Version option activated");
+      Properties properties = new Properties();
+      properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+      System.out.println("Version: " + properties.getProperty("version"));
+      runtime.exit(0);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Processes the command line general options and the default arguments to build a map of the
+   * activated options. The map contains the option name as the key and the option value as the
+   * value.
+   *
+   * @param cmd The command line options.
+   * @param defaultArgs The default arguments.
+   * @param activatedOptions The map to store the activated options.
+   */
+  private static void processOptions(
+      CommandLine cmd,
+      Map<String, String> defaultArgs,
+      HashMap<OptionType, String> activatedOptions) {
+    for (OptionType option : OptionType.values()) {
+
+      if (option == OptionType.CONFIG) {
+        if (activatedOptions.containsKey(OptionType.CONFIG)) {
+          continue;
+        }
+      }
+
+      boolean userProvided = cmd.hasOption(option.getLong());
+      boolean defaultEnabled =
+          defaultArgs.containsKey(option.getLong())
+              && !"false".equals(defaultArgs.get(option.getLong()));
+
+      if (userProvided || defaultEnabled) {
+        String value =
+            userProvided
+                ? cmd.getOptionValue(option.getLong(), "")
+                : defaultArgs.get(option.getLong());
+        activatedOptions.put(option, value != null ? value : "");
+        DEBUG(LOGGER, option.getLong() + " option activated");
+
+        if (option == OptionType.LANG) {
+          if (value.equals("en")) {
+            DEBUG(LOGGER, "Language = English (already set by default)");
+            // TODO: de-comment when french file finished
+          } /*else if (value.equals("fr")) {
+              DEBUG(LOGGER, "Language = French");
+              TextGetter.setLocale(cmd.getParsedOptionValue("lang"));
+            } */ else {
+            System.err.println(
+                "Language "
+                    + cmd.getOptionValue(option.getLong(), "")
+                    + " not supported, language = english");
+          }
+        }
+
+        if (!isFeatureImplemented(option)) {
+          System.err.println(option.getLong() + " not implemented yet");
+        }
+      }
+    }
+
+    if (activatedOptions.containsKey(OptionType.TIME)
+        && !activatedOptions.containsKey(OptionType.BLITZ)) {
+      System.err.println("The TIME option can't be used without BLITZ activated : option ignored.");
+      activatedOptions.remove(OptionType.TIME);
+    } else if (!activatedOptions.containsKey(OptionType.BLITZ)
+        && !activatedOptions.containsKey(OptionType.TIME)) {
+      activatedOptions.put(OptionType.TIME, "30");
+    }
+
+    if (activatedOptions.containsKey(OptionType.AI)
+        && activatedOptions.get(OptionType.AI).equals("")) {
+      activatedOptions.put(OptionType.AI, "W");
+    }
+
+    validateAIOptions(cmd, activatedOptions);
+  }
+
+  /**
+   * Validates AI-related command line options and ensures they are correctly activated.
+   *
+   * <p>This method checks if the AI option is present in the activated options map. If not,
+   * AI-related options (AI_MODE, AI_DEPTH, AI_HEURISTIC, AI_TIME) can't be used.
+   *
+   * @param cmd The parsed command line containing user-provided options.
+   * @param activatedOptions The map containing the currently activated options.
+   */
+  private static void validateAIOptions(
+      CommandLine cmd, HashMap<OptionType, String> activatedOptions) {
+    if (!activatedOptions.containsKey(OptionType.AI)) {
+      for (OptionType aiOption :
+          new OptionType[] {
+            OptionType.AI_MODE, OptionType.AI_DEPTH, OptionType.AI_HEURISTIC, OptionType.AI_TIME
+          }) {
+        if (cmd.hasOption(aiOption.getLong())) {
+          System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
+        }
+      }
+    } else {
+      if (!activatedOptions.containsKey(OptionType.AI_MODE)) {
+        activatedOptions.put(OptionType.AI_MODE, "ALPHA_BETA");
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
+        activatedOptions.put(OptionType.AI_DEPTH, "4");
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {
+        activatedOptions.put(OptionType.AI_HEURISTIC, "STANDARD");
+      }
+      if (activatedOptions.containsKey(OptionType.AI_TIME)
+          && activatedOptions.get(OptionType.AI_TIME).equals("")) {
+        activatedOptions.put(OptionType.AI_TIME, "5");
+      }
+    }
+  }
+
+  /**
+   * Returns whether the given option is implemented in the program or not.
+   *
+   * <p>This method is used to check if a given option is implemented in the program in order to
+   * warn the user.
+   *
+   * @param option The option to check.
+   * @return Whether the given option is implemented.
+   */
+  private static boolean isFeatureImplemented(OptionType option) {
+    return switch (option) {
+      case GUI, CONTEST -> false;
+      default -> true;
+    };
   }
 }

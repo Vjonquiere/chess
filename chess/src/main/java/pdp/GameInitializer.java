@@ -1,42 +1,51 @@
 package pdp;
 
+import static pdp.utils.Logging.DEBUG;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
-import pdp.controller.BagOfCommands;
-import pdp.controller.GameController;
+import java.util.List;
+import java.util.logging.Logger;
+import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPositionException;
+import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
-import pdp.model.Timer;
+import pdp.model.ai.AlgorithmType;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.board.Move;
+import pdp.model.parsers.BoardFileParser;
+import pdp.model.parsers.FileBoard;
+import pdp.utils.CLIOptions;
+import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
-import pdp.view.CLIView;
-import pdp.view.GameView;
-import pdp.view.View;
+import pdp.utils.Timer;
 
 public abstract class GameInitializer {
 
+  private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
+
+  // TODO Internationalization
   /**
    * Initialize the game with the given options.
    *
    * @param options The options to use to initialize the game.
-   * @return A new GameController instance.
+   * @return A new Game instance.
    */
-  public static GameController initialize(HashMap<OptionType, String> options) {
+  public static Game initialize(HashMap<OptionType, String> options) {
 
-    View view;
-    if (options.containsKey(OptionType.GUI)) {
-      view = new GameView();
-    } else {
-      view = new CLIView();
-    }
+    DEBUG(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
       if (options.containsKey(OptionType.TIME)) {
-        timer = new Timer(Integer.parseInt(options.get(OptionType.TIME)));
+        timer = new Timer(Long.parseLong(options.get(OptionType.TIME)) * 60 * 1000);
       } else {
-        timer = new Timer(30 * 60);
+        timer = new Timer((long) 30 * 60 * 1000);
       }
-      System.err.println("Option time not implemented, defaulting to a game without time limit");
-      timer = null;
     }
 
     boolean isWhiteAI = false;
@@ -63,36 +72,87 @@ public abstract class GameInitializer {
       }
 
       solver = new Solver();
-      solver = new Solver();
       if (options.containsKey(OptionType.AI_MODE)) {
-        // switch to set solver mode
-      } else {
-        // Set to default (ALPHABETA)
+        try {
+          solver.setAlgorithm(AlgorithmType.valueOf(options.get(OptionType.AI_MODE)));
+        } catch (Exception e) {
+          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
+          System.err.println("Defaulting to ALPHABETA.");
+        }
       }
-
       if (options.containsKey(OptionType.AI_HEURISTIC)) {
-        // switch to set heuristic
-      } else {
-        // Set to default
+        try {
+          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC));
+          solver.setHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC));
+          System.err.println("Defaulting to Heuristic STANDARD");
+        }
       }
 
       if (options.containsKey(OptionType.AI_DEPTH)) {
-        // set depth
-      } else {
-        // Set to default
+        try {
+          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH));
+          solver.setDepth(depth);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the depth of AI");
+          System.err.println("Defaulting to depth " + solver.getDepth());
+        }
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
-        // set time
-      } else {
-        // Set to default
+        try {
+          long time = Long.parseLong(options.get(OptionType.AI_TIME));
+          solver.setTime(time);
+        } catch (Exception e) {
+          System.err.println("Not a long for the time of AI (in seconds)");
+          System.err.println("Defaulting to a 5 seconds timer");
+        }
       }
-
-      throw new UnsupportedOperationException("AI mode not implemented");
+      if (options.containsKey(OptionType.BLITZ)) {
+        // If blitz, take the minimum between the blitz time and AI time
+        long time = Long.min(solver.getTimer().getTimeRemaining(), timer.getTimeRemaining() - 100);
+        solver.setTime(time / 1000);
+      }
     }
 
-    Game model = Game.initialize(isWhiteAI, isBlackAI, solver, timer);
-    BagOfCommands bagOfCommands = BagOfCommands.getInstance();
-    return new GameController(model, view, bagOfCommands);
+    Game model = null;
+
+    if (options.containsKey(OptionType.LOAD)) {
+      InputStream inputStream = null;
+      try {
+        inputStream = new FileInputStream(options.get(OptionType.LOAD));
+
+        List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
+        if (moveStrings.isEmpty()) {
+          BoardFileParser parser = new BoardFileParser();
+          FileBoard board =
+              parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
+          model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board, options);
+        } else {
+
+          List<Move> moves = new ArrayList<>();
+
+          for (String move : moveStrings) {
+            moves.add(Move.fromString(move.replace("x", "-")));
+          }
+
+          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer, options);
+        }
+
+      } catch (IOException
+          | IllegalMoveException
+          | InvalidPositionException
+          | MoveParsingException e) {
+        System.err.println(
+            "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
+        System.err.println("Using the default game start");
+        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
+      }
+    } else {
+      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
+    }
+
+    return model;
   }
 }

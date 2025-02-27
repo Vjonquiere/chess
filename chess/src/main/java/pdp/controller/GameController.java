@@ -20,12 +20,23 @@ public class GameController {
     this.bagOfCommands.setController(this);
     this.model.addObserver(view);
     this.model.addErrorObserver(view);
+    // this.model.startAI();
   }
 
+  /**
+   * Gets the View object of the controller.
+   *
+   * @return The View object of the controller.
+   */
   public View getView() {
     return this.view;
   }
 
+  /**
+   * Gets the Game model of the controller.
+   *
+   * @return The Game model of the controller.
+   */
   public Game getModel() {
     return this.model;
   }
