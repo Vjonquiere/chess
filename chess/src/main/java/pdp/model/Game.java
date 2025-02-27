@@ -711,7 +711,7 @@ public class Game extends Subject {
       throw new FailedUndoException();
     }
     // update zobrist to avoid threefold
-    long currBoardZobrist = this.gameState.getZobristHashing();
+    long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
     if (stateCount.containsKey(currBoardZobrist)) {
       stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
     }
@@ -743,7 +743,7 @@ public class Game extends Subject {
 
     this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(nextNode.get());
-    long currBoardZobrist = this.gameState.getZobristHashing();
+    long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
     stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
     DEBUG(LOGGER, "Move redo : change state and update Zobrist for threefold");
     this.notifyObservers(EventType.MOVE_REDO);
