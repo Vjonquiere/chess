@@ -633,11 +633,7 @@ public class Game extends Subject {
   public void restartGame() {
     DEBUG(LOGGER, "Restarting game");
 
-    if (this.gameState.isWhiteTurn()) {
-      this.gameState.whiteResigns();
-    } else {
-      this.gameState.blackResigns();
-    }
+    this.startAI();
 
     this.gameState = new GameState(this.gameState.getMoveTimer());
     this.history = new History();
