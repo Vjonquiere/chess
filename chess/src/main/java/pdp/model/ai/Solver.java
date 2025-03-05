@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
+import pdp.model.ai.algorithms.MCTS;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.SearchAlgorithm;
 import pdp.model.ai.heuristics.*;
@@ -43,7 +44,7 @@ public class Solver {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
-      case MCTS -> this.algorithm = null;
+      case MCTS -> this.algorithm = new MCTS(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
     DEBUG(LOGGER, "Algorithm set to " + algorithm);

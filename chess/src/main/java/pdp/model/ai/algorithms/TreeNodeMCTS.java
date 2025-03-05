@@ -134,4 +134,14 @@ public class TreeNodeMCTS {
 
     return bestChild;
   }
+
+  /**
+   * Tells if a node is fully explored
+   *
+   * @return true if a node is fully explored, false otherwise
+   */
+  public boolean isFullyExpanded() {
+    boolean isWhite = state.getBoard().isWhite;
+    return state.getBoard().getBoardRep().getAllAvailableMoves(isWhite).size() == children.size();
+  }
 }

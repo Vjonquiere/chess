@@ -760,6 +760,195 @@ public class Game extends Subject {
     return false;
   }
 
+  /**
+   * Tries to play the given move on the game for the game state in parameter
+   *
+   * @param gameState the game state for which we want the move to occur
+   * @param move The move to be executed
+   * @throws IllegalMoveException If the move is not legal
+   */
+  public void playMove(GameState gameState, Move move)
+      throws IllegalMoveException, InvalidPromoteFormatException {
+
+    System.out.println("Entering PLAY MOVE !");
+
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+
+    if (!validatePieceOwnership(gameState, sourcePosition)) {
+      System.out.println("Piece ownership failed !");
+      throw new IllegalMoveException(move.toString());
+    }
+    validatePromotionMove(move);
+
+    List<Move> availableMoves = gameState.getBoard().getAvailableMoves(sourcePosition);
+    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
+
+    if (classicalMove.isPresent()) {
+      move = classicalMove.get();
+      processClassicalMove(gameState, move);
+    } else {
+      processSpecialMove(gameState, move);
+    }
+    updateGameStateAfterMove(gameState, move);
+  }
+
+  private boolean validatePieceOwnership(GameState gameState, Position sourcePosition)
+      throws IllegalMoveException {
+    ColoredPiece pieceAtSource =
+        gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+    boolean isWhiteTurn = gameState.getBoard().isWhite;
+    if ((pieceAtSource.color == Color.WHITE && !isWhiteTurn)
+        || (pieceAtSource.color == Color.BLACK && isWhiteTurn)) {
+      DEBUG(
+          LOGGER,
+          "Not a " + pieceAtSource.color.toString() + " piece at " + sourcePosition.toString());
+      return false;
+    }
+    return true;
+  }
+
+  private void processClassicalMove(GameState gameState, Move move) throws IllegalMoveException {
+    Color currentColor = gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+    if (gameState.getBoard().board.isCheckAfterMove(currentColor, move)) {
+      DEBUG(LOGGER, "Move puts the king in check " + move.toString());
+      System.out.println("PUTS THE KING IN CHECK !");
+      throw new IllegalMoveException(move.toString());
+    }
+
+    gameState.getBoard().makeMove(move);
+    DEBUG(LOGGER, "Move played!");
+  }
+
+  private void processSpecialMove(GameState gameState, Move move) throws IllegalMoveException {
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    boolean isSpecialMove = false;
+    ColoredPiece coloredPiece =
+        gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+
+    // Check Castle
+    if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
+      boolean shortCastle = destPosition.getX() > sourcePosition.getX();
+      Color color = gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+      if (gameState.getBoard().canCastle(color, shortCastle)) {
+        gameState.getBoard().applyCastle(color, shortCastle);
+        isSpecialMove = true;
+      }
+    }
+
+    // Check en passant
+    if (!isSpecialMove
+        && gameState.getBoard().isLastMoveDoublePush
+        && gameState
+            .getBoard()
+            .board
+            .isEnPassant(
+                gameState.getBoard().enPassantPos.getX(),
+                gameState.getBoard().enPassantPos.getY(),
+                move,
+                gameState.getBoard().isWhite)) {
+      if (gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+        DEBUG(LOGGER, "En passant puts the king in check!");
+        throw new IllegalMoveException(move.toString());
+      }
+      isSpecialMove = true;
+      gameState.getBoard().enPassantPos = null;
+      gameState.getBoard().isEnPassantTake = true;
+      move.piece = coloredPiece;
+      move.isTake = true;
+      gameState.getBoard().makeMove(move);
+    }
+
+    // Check double pawn push
+    if (!isSpecialMove
+        && gameState.getBoard().board.isDoublePushPossible(move, gameState.getBoard().isWhite)) {
+      if (gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+        DEBUG(LOGGER, "Double push puts the king in check!");
+        throw new IllegalMoveException(move.toString());
+      }
+      isSpecialMove = true;
+      gameState.getBoard().enPassantPos =
+          gameState.getBoard().isWhite
+              ? new Position(move.dest.getX(), move.dest.getY() - 1)
+              : new Position(move.dest.getX(), move.dest.getY() + 1);
+      move.piece = coloredPiece;
+      gameState.getBoard().makeMove(move);
+      gameState.getBoard().isLastMoveDoublePush = true;
+    }
+
+    if (!isSpecialMove) {
+      DEBUG(LOGGER, "Move was not a special move!");
+      System.out.println("WAS NOT A SPECIAL MOVE !!!");
+      throw new IllegalMoveException(move.toString());
+    }
+  }
+
+  private void updateGameStateAfterMove(GameState gameState, Move move) {
+    if (gameState.getMoveTimer() != null) {
+      gameState.getMoveTimer().stop();
+    }
+
+    if (gameState.getBoard().isWhite) {
+      gameState.incrementsFullTurn();
+    }
+
+    // System.out.println("Turn before switch: " + (gameState.isWhiteTurn() ? "White" : "Black"));
+    gameState.switchPlayerTurn();
+    // System.out.println("Turn after switch: " + (gameState.isWhiteTurn() ? "White" : "Black"));
+
+    gameState.getBoard().setPlayer(gameState.isWhiteTurn());
+
+    DEBUG(LOGGER, "Checking game status...");
+    gameState.checkGameStatus();
+
+    /*
+    if (!explorationAI) {
+      gameState.setSimplifiedZobristHashing(
+          zobristHashing.updateSimplifiedHashFromBitboards(
+              gameState.getSimplifiedZobristHashing(), gameState.getBoard(), move));
+      DEBUG(LOGGER, "Checking threefold repetition...");
+      boolean threefoldRepetition = this.addStateToCount(gameState.getSimplifiedZobristHashing());
+      if (threefoldRepetition) {
+        gameState.activateThreefold();
+      }
+    }
+
+    DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
+    if (isEndGamePhase() && this.solver != null) {
+      // Set endgame heuristic only once and only if endgame phase
+      if (!(solver.getHeuristic() instanceof EndGameHeuristic)) {
+        this.solver.setHeuristic(HeuristicType.ENDGAME);
+      }
+    }
+    DEBUG(LOGGER, "Checking game status...");
+    gameState.checkGameStatus();
+
+    this.notifyObservers(EventType.MOVE_PLAYED);
+
+    this.history.addMove(new HistoryState(move, gameState.getCopy()));
+
+    if (gameState.getMoveTimer() != null && !gameState.isGameOver()) {
+      gameState.getMoveTimer().start();
+    }
+
+    if (!explorationAI
+        && !gameState.isGameOver()
+        && ((gameState.getBoard().isWhite && isWhiteAI)
+            || (!gameState.getBoard().isWhite && isBlackAI))) {
+      this.notifyObservers(EventType.AI_PLAYING);
+      solver.playAIMove(this);
+    }
+      */
+  }
+
   public static Game getInstance() {
     if (instance == null) {
       throw new IllegalStateException("Game has not been initialized");
