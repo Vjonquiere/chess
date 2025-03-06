@@ -271,7 +271,11 @@ public class CLIOptions {
         activatedOptions.put(OptionType.AI_MODE, "ALPHA_BETA");
       }
       if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
-        activatedOptions.put(OptionType.AI_DEPTH, "4");
+        if ("mcts".equalsIgnoreCase(activatedOptions.get(OptionType.AI_MODE))) {
+          activatedOptions.put(OptionType.AI_DEPTH, "100");
+        } else {
+          activatedOptions.put(OptionType.AI_DEPTH, "4");
+        }
       }
       if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {
         activatedOptions.put(OptionType.AI_HEURISTIC, "STANDARD");

@@ -14,10 +14,16 @@ public class MCTS implements SearchAlgorithm {
   Solver solver;
   private static final double EXPLORATION_FACTOR = Math.sqrt(2); // c value
   private final Random random = new Random(); // Randomizer for the moves
-  private static final int SIMULATION_LIMIT = 75; // Number of times to execute MCTS
+  private final int SIMULATION_LIMIT; // Number of times to execute MCTS
+
+  public MCTS(Solver solver, int nbIterations) {
+    this.solver = solver;
+    SIMULATION_LIMIT = nbIterations;
+  }
 
   public MCTS(Solver solver) {
     this.solver = solver;
+    SIMULATION_LIMIT = 100; // 100 by default
   }
 
   /**
@@ -43,7 +49,8 @@ public class MCTS implements SearchAlgorithm {
     }
 
     AIMove move = getBestMove(game, root);
-    System.out.println("MOVE : " + move.toString());
+    System.out.println("MOVE MCTS : " + move.toString());
+    System.out.println("Number of simulations : " + SIMULATION_LIMIT);
 
     return move;
   }

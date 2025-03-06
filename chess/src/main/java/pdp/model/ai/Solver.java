@@ -53,6 +53,10 @@ public class Solver {
     DEBUG(LOGGER, "Algorithm set to " + algorithm);
   }
 
+  public void setMCTSAlgorithm(int numberSimulations) {
+    this.algorithm = new MCTS(this, numberSimulations);
+  }
+
   /**
    * Set the heuristic to be used.
    *

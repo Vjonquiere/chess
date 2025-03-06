@@ -23,6 +23,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.algorithms.MCTS;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.*;
 import pdp.model.history.History;
@@ -542,7 +543,8 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase() && this.solver != null) {
       // Set endgame heuristic only once and only if endgame phase
-      if (!(solver.getHeuristic() instanceof EndGameHeuristic)) {
+      if ((!(this.solver.getAlgorithm() instanceof MCTS))
+          && !(this.solver.getHeuristic() instanceof EndGameHeuristic)) {
         this.solver.setHeuristic(HeuristicType.ENDGAME);
       }
     }
