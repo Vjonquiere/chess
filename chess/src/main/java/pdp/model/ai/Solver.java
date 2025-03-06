@@ -4,6 +4,7 @@ import static pdp.utils.Logging.DEBUG;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
+import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.MCTS;
@@ -13,17 +14,19 @@ import pdp.model.ai.heuristics.*;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
+import pdp.utils.Timer;
 
 public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
-  private ZobristHashing zobristHashing = new ZobristHashing();
-  private HashMap<Long, Integer> evaluatedBoards;
+  private final ZobristHashing zobristHashing = new ZobristHashing();
+  private final HashMap<Long, Integer> evaluatedBoards;
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
   int depth = 4;
-  int time = 500;
+  Timer timer;
+  long time;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -65,7 +68,10 @@ public class Solver {
       case MOBILITY -> this.heuristic = new MobilityHeuristic();
       case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
       case SHANNON -> this.heuristic = new ShannonBasic();
-      case OPPONENT_CHECK -> this.heuristic = new GameStatus();
+      case GAME_STATUS -> this.heuristic = new GameStatus();
+      case KING_ACTIVITY -> this.heuristic = new KingActivityHeuristic();
+      case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
+      case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
       case STANDARD -> this.heuristic = new StandardHeuristic();
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
@@ -114,12 +120,25 @@ public class Solver {
   }
 
   /**
-   * Set the maximum time (in milliseconds) the solver should spend computing a move.
+   * Set the maximum time (in seconds) the solver should spend computing a move.
    *
    * @param time The time to use.
    */
-  public void setTime(int time) {
-    this.time = time;
+  public void setTime(long time) {
+    if (time <= 0) {
+      throw new IllegalArgumentException("Time must be greater than 0");
+    }
+    this.time = time * 1000;
+    timer = new Timer(this.time);
+    DEBUG(LOGGER, "Time set to " + this.time);
+  }
+
+  public Timer getTimer() {
+    return timer;
+  }
+
+  public long getTime() {
+    return time;
   }
 
   /**
@@ -129,10 +148,27 @@ public class Solver {
    */
   public void playAIMove(Game game) {
     game.setExploration(true);
+    if (timer != null) {
+      timer.start();
+    }
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    if (timer != null) {
+      timer.stop();
+    }
+
     DEBUG(LOGGER, "Best move " + bestMove);
     game.setExploration(false);
-    game.playMove(bestMove.move());
+    try {
+      game.playMove(bestMove.move());
+    } catch (Exception e) {
+      game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
+      System.err.println(e.getMessage());
+      if (game.getBoard().isWhite) {
+        game.getGameState().whiteResigns();
+      } else {
+        game.getGameState().blackResigns();
+      }
+    }
   }
 
   /**

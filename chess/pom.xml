@@ -6,7 +6,7 @@
 
     <groupId>pdp</groupId>
     <artifactId>chess</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

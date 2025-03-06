@@ -1,6 +1,7 @@
 package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -8,6 +9,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
@@ -44,6 +48,9 @@ public class Game extends Subject {
   private History history;
   private HashMap<Long, Integer> stateCount;
   private HashMap<OptionType, String> options;
+  public final Lock viewLock = new ReentrantLock();
+  public final Condition workingView = viewLock.newCondition();
+  private final boolean VIEW_ON_OTHER_THREAD;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -56,7 +63,19 @@ public class Game extends Subject {
       GameState gameState,
       History history,
       HashMap<OptionType, String> options) {
+
+    if (instance != null) {
+      for (EventObserver observer : instance.getObservers()) {
+        this.addObserver(observer);
+      }
+
+      for (EventObserver observer : instance.getErrorObservers()) {
+        this.addErrorObserver(observer);
+      }
+    }
+
     this.options = options;
+    this.VIEW_ON_OTHER_THREAD = options.containsKey(GUI);
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.explorationAI = false;
@@ -275,6 +294,7 @@ public class Game extends Subject {
       timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
@@ -303,6 +323,7 @@ public class Game extends Subject {
       timer.start();
     }
     DEBUG(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
@@ -528,9 +549,11 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
 
-    this.notifyObservers(EventType.MOVE_PLAYED);
-
     this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+
+    if (!explorationAI) {
+      this.notifyObservers(EventType.MOVE_PLAYED);
+    }
 
     if (this.gameState.getMoveTimer() != null && !this.gameState.isGameOver()) {
       this.gameState.getMoveTimer().start();
@@ -540,7 +563,21 @@ public class Game extends Subject {
         && !isOver()
         && ((this.gameState.getBoard().isWhite && isWhiteAI)
             || (!this.gameState.getBoard().isWhite && isBlackAI))) {
-      this.notifyObservers(EventType.AI_PLAYING);
+
+      if (VIEW_ON_OTHER_THREAD) {
+        viewLock.lock();
+        this.notifyObservers(EventType.AI_PLAYING);
+        try {
+          System.out.println("Waiting for View");
+          workingView.await();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        } finally {
+          viewLock.unlock();
+        }
+      } else {
+        this.notifyObservers(EventType.AI_PLAYING);
+      }
       solver.playAIMove(this);
     }
   }
@@ -592,10 +629,35 @@ public class Game extends Subject {
     return this.history.toString();
   }
 
-  public void resetGame() {
-    // TODO
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
+  /** Restarts the game by resetting the game state and history. */
+  public void restartGame() {
+    DEBUG(LOGGER, "Restarting game");
+
+    if (this.gameState.isWhiteTurn()) {
+      this.gameState.whiteResigns();
+    } else {
+      this.gameState.blackResigns();
+    }
+
+    this.startAI();
+
+    this.gameState = new GameState(this.gameState.getMoveTimer());
+    this.history = new History();
+
+    this.history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
+
+    this.stateCount.clear();
+    this.gameState.setSimplifiedZobristHashing(
+        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+
+    this.notifyObservers(EventType.GAME_RESTART);
+
+    this.startAI();
+
+    DEBUG(LOGGER, "Game restarted");
   }
 
   public boolean isOver() {
@@ -635,6 +697,8 @@ public class Game extends Subject {
       timer.start();
     }
 
+    instance.notifyObservers(EventType.GAME_STARTED);
+
     return instance;
   }
 
@@ -657,7 +721,7 @@ public class Game extends Subject {
       throw new FailedUndoException();
     }
     // update zobrist to avoid threefold
-    long currBoardZobrist = this.gameState.getZobristHashing();
+    long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
     if (stateCount.containsKey(currBoardZobrist)) {
       stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
     }
@@ -689,7 +753,7 @@ public class Game extends Subject {
 
     this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(nextNode.get());
-    long currBoardZobrist = this.gameState.getZobristHashing();
+    long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
     stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
     DEBUG(LOGGER, "Move redo : change state and update Zobrist for threefold");
     this.notifyObservers(EventType.MOVE_REDO);
@@ -746,6 +810,12 @@ public class Game extends Subject {
     return sb.toString();
   }
 
+  /**
+   * Determines if the given move is a pawn promotion move.
+   *
+   * @param move The move to be checked.
+   * @return true if the move is a promotion move, false otherwise.
+   */
   public boolean isPromotionMove(Move move) {
     if (this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).piece
         != Piece.PAWN) {
@@ -939,7 +1009,13 @@ public class Game extends Subject {
     gameState.checkGameStatus();
   }
 
-  public static Game getInstance() {
+  /**
+   * Retrieves the singleton instance of the Game.
+   *
+   * @return The single instance of Game.
+   * @throws IllegalStateException If the Game has not been initialized.
+   */
+  public static Game getInstance() throws IllegalStateException {
     if (instance == null) {
       throw new IllegalStateException("Game has not been initialized");
     }

@@ -37,4 +37,55 @@ public class MinimaxTest {
     solver.playAIMove(game);
     assertTrue(game.getGameState().isGameOver());
   }
+
+  @Test
+  public void testTimerDefault() {
+    long timeLimit = 5;
+    solver.setTime(timeLimit);
+    solver.setDepth(5);
+
+    long startTime = System.currentTimeMillis();
+    solver.playAIMove(game);
+    long endTime = System.currentTimeMillis();
+
+    long elapsedTime = endTime - startTime;
+    long remainingTime = solver.getTimer().getTimeRemaining();
+
+    assertTrue(elapsedTime >= 0 && elapsedTime <= 5000 + 100);
+    assertTrue(remainingTime <= 5000);
+  }
+
+  @Test
+  public void testTimer2s() {
+    long timeLimit = 2;
+    solver.setTime(timeLimit);
+    solver.setDepth(5);
+
+    long startTime = System.currentTimeMillis();
+    solver.playAIMove(game);
+    long endTime = System.currentTimeMillis();
+
+    long elapsedTime = endTime - startTime;
+    long remainingTime = solver.getTimer().getTimeRemaining();
+
+    assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 100);
+    assertTrue(remainingTime <= 5000);
+  }
+  /*
+   @Test
+   public void testTimerOverStartFunction() {
+     long timeLimit = 1;
+     solver.setDepth(20);
+     solver.setTime(timeLimit);
+     long startTime = System.currentTimeMillis();
+     solver.playAIMove(game);
+     long endTime = System.currentTimeMillis();
+
+     long elapsedTime = endTime - startTime;
+     long remainingTime = solver.getTimer().getTimeRemaining();
+
+     assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 100);
+     assertTrue(remainingTime <= timeLimit);
+   }
+  */
 }

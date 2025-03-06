@@ -233,6 +233,14 @@ public class CLIOptions {
         && !activatedOptions.containsKey(OptionType.BLITZ)) {
       System.err.println("The TIME option can't be used without BLITZ activated : option ignored.");
       activatedOptions.remove(OptionType.TIME);
+    } else if (!activatedOptions.containsKey(OptionType.BLITZ)
+        && !activatedOptions.containsKey(OptionType.TIME)) {
+      activatedOptions.put(OptionType.TIME, "30");
+    }
+
+    if (activatedOptions.containsKey(OptionType.AI)
+        && activatedOptions.get(OptionType.AI).equals("")) {
+      activatedOptions.put(OptionType.AI, "W");
     }
 
     validateAIOptions(cmd, activatedOptions);
@@ -258,6 +266,20 @@ public class CLIOptions {
           System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
         }
       }
+    } else {
+      if (!activatedOptions.containsKey(OptionType.AI_MODE)) {
+        activatedOptions.put(OptionType.AI_MODE, "ALPHA_BETA");
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
+        activatedOptions.put(OptionType.AI_DEPTH, "4");
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {
+        activatedOptions.put(OptionType.AI_HEURISTIC, "STANDARD");
+      }
+      if (activatedOptions.containsKey(OptionType.AI_TIME)
+          && activatedOptions.get(OptionType.AI_TIME).equals("")) {
+        activatedOptions.put(OptionType.AI_TIME, "5");
+      }
     }
   }
 
@@ -272,7 +294,7 @@ public class CLIOptions {
    */
   private static boolean isFeatureImplemented(OptionType option) {
     return switch (option) {
-      case GUI, CONTEST, AI_TIME -> false;
+      case GUI, CONTEST -> false;
       default -> true;
     };
   }

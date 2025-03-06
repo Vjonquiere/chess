@@ -8,13 +8,7 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.CancelDrawCommand;
-import pdp.controller.commands.CancelMoveCommand;
-import pdp.controller.commands.PlayMoveCommand;
-import pdp.controller.commands.ProposeDrawCommand;
-import pdp.controller.commands.RestoreMoveCommand;
-import pdp.controller.commands.SaveGameCommand;
-import pdp.controller.commands.SurrenderCommand;
+import pdp.controller.commands.*;
 import pdp.events.EventType;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.exceptions.FailedRedoException;
@@ -62,6 +56,9 @@ public class CLIView implements View {
         new CommandEntry(this::surrenderCommand, TextGetter.getText("surrenderHelpDescription")));
     commands.put(
         "time", new CommandEntry(this::timeCommand, TextGetter.getText("timeHelpDescription")));
+    commands.put(
+        "restart",
+        new CommandEntry(this::restartCommand, TextGetter.getText("restartHelpDescription")));
   }
 
   /**
@@ -72,6 +69,7 @@ public class CLIView implements View {
   @Override
   public Thread start() {
     running = true;
+    BagOfCommands.getInstance().addCommand(new StartGameCommand());
     return startUserInputListener();
   }
 
@@ -82,90 +80,102 @@ public class CLIView implements View {
    */
   @Override
   public void onGameEvent(EventType event) {
-    switch (event) {
-      case GAME_STARTED:
-        System.out.println(TextGetter.getText("welcomeCLI"));
-        System.out.println(TextGetter.getText("welcomeInstructions"));
-        System.out.println(Game.getInstance().getGameRepresentation());
-        break;
-      case MOVE_PLAYED:
-        System.out.println(Game.getInstance().getGameRepresentation());
-        break;
-      case WIN_WHITE:
-        System.out.println(TextGetter.getText("whiteWin"));
-        break;
-      case WIN_BLACK:
-        System.out.println(TextGetter.getText("blackWin"));
-        break;
-      case DRAW:
-        System.out.println(TextGetter.getText("onDraw"));
-        break;
-      case WHITE_DRAW_PROPOSAL:
-        System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("white")));
-        break;
-      case BLACK_DRAW_PROPOSAL:
-        System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("black")));
-        break;
-      case WHITE_UNDRAW:
-        System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")));
-        break;
-      case BLACK_UNDRAW:
-        System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
-        break;
-      case DRAW_ACCEPTED:
-        System.out.println(TextGetter.getText("drawAccepted"));
-        break;
-      case GAME_SAVED:
-        System.out.println(TextGetter.getText("gameSaved"));
-        break;
-      case MOVE_UNDO:
-        System.out.println(TextGetter.getText("moveUndone"));
-        System.out.println(Game.getInstance().getGameRepresentation());
-        break;
-      case MOVE_REDO:
-        System.out.println(TextGetter.getText("moveRedone"));
-        System.out.println(Game.getInstance().getGameRepresentation());
-        break;
-      case OUT_OF_TIME_WHITE:
-        System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
-        break;
-      case OUT_OF_TIME_BLACK:
-        System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
-        break;
-      case THREEFOLD_REPETITION:
-        System.out.println(TextGetter.getText("threeFoldRepetition"));
-        break;
-      case INSUFFICIENT_MATERIAL:
-        System.out.println(TextGetter.getText("insufficientMaterial"));
-        break;
-      case FIFTY_MOVE_RULE:
-        System.out.println(TextGetter.getText("fiftyMoveRule"));
-        break;
-      case WHITE_RESIGNS:
-        System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
-        break;
-      case BLACK_RESIGNS:
-        System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
-        break;
-      case CHECKMATE_WHITE:
-        System.out.println(
-            TextGetter.getText(
-                "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
-        break;
-      case CHECKMATE_BLACK:
-        System.out.println(
-            TextGetter.getText(
-                "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
-        break;
-      case STALEMATE:
-        System.out.println(TextGetter.getText("stalemate"));
-        break;
-      case AI_PLAYING:
-        System.out.println(TextGetter.getText("ai_playing"));
-        break;
-      default:
-        DEBUG(LOGGER, "Received unknown game event: " + event);
-        break;
+    Game.getInstance().viewLock.lock();
+    try {
+      switch (event) {
+        case GAME_STARTED:
+          System.out.println(TextGetter.getText("welcomeCLI"));
+          System.out.println(TextGetter.getText("welcomeInstructions"));
+          System.out.println(Game.getInstance().getGameRepresentation());
+          break;
+        case MOVE_PLAYED:
+          System.out.println(Game.getInstance().getGameRepresentation());
+          break;
+        case WIN_WHITE:
+          System.out.println(TextGetter.getText("whiteWin"));
+          break;
+        case WIN_BLACK:
+          System.out.println(TextGetter.getText("blackWin"));
+          break;
+        case DRAW:
+          System.out.println(TextGetter.getText("onDraw"));
+          break;
+        case WHITE_DRAW_PROPOSAL:
+          System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("white")));
+          break;
+        case BLACK_DRAW_PROPOSAL:
+          System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("black")));
+          break;
+        case WHITE_UNDRAW:
+          System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")));
+          break;
+        case BLACK_UNDRAW:
+          System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
+          break;
+        case DRAW_ACCEPTED:
+          System.out.println(TextGetter.getText("drawAccepted"));
+          break;
+        case GAME_SAVED:
+          System.out.println(TextGetter.getText("gameSaved"));
+          break;
+        case MOVE_UNDO:
+          System.out.println(TextGetter.getText("moveUndone"));
+          System.out.println(Game.getInstance().getGameRepresentation());
+          break;
+        case MOVE_REDO:
+          System.out.println(TextGetter.getText("moveRedone"));
+          System.out.println(Game.getInstance().getGameRepresentation());
+          break;
+        case OUT_OF_TIME_WHITE:
+          System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
+          break;
+        case OUT_OF_TIME_BLACK:
+          System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
+          break;
+        case THREEFOLD_REPETITION:
+          System.out.println(TextGetter.getText("threeFoldRepetition"));
+          break;
+        case INSUFFICIENT_MATERIAL:
+          System.out.println(TextGetter.getText("insufficientMaterial"));
+          break;
+        case FIFTY_MOVE_RULE:
+          System.out.println(TextGetter.getText("fiftyMoveRule"));
+          break;
+        case WHITE_RESIGNS:
+          System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
+          break;
+        case BLACK_RESIGNS:
+          System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
+          break;
+        case CHECKMATE_WHITE:
+          System.out.println(
+              TextGetter.getText(
+                  "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
+          break;
+        case CHECKMATE_BLACK:
+          System.out.println(
+              TextGetter.getText(
+                  "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
+          break;
+        case STALEMATE:
+          System.out.println(TextGetter.getText("stalemate"));
+          break;
+        case AI_PLAYING:
+          System.out.println(TextGetter.getText("ai_playing"));
+          break;
+        case GAME_RESTART:
+          System.out.println(TextGetter.getText("gameRestart"));
+          System.out.println(TextGetter.getText("welcomeCLI"));
+          System.out.println(TextGetter.getText("welcomeInstructions"));
+          System.out.println(Game.getInstance().getGameRepresentation());
+          break;
+        default:
+          DEBUG(LOGGER, "Received unknown game event: " + event);
+          break;
+      }
+      Game.getInstance().workingView.signal();
+    } finally {
+      Game.getInstance().viewLock.unlock();
     }
   }
 
@@ -332,6 +342,15 @@ public class CLIView implements View {
    */
   private void redoCommand(String args) {
     BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+  }
+
+  /**
+   * Handles the restart command by restarting a new game.
+   *
+   * @param args Unused argument
+   */
+  private void restartCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestartCommand());
   }
 
   /**

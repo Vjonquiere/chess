@@ -36,10 +36,50 @@ public class CLIOptionsTest {
     "    --ai-depth <DEPTH>           Specify the depth of the AI algorithm",
     "    --ai-heuristic <HEURISTIC>   Choose the heuristic for the artificial",
     "                                 player",
+    "                                 Choose between these heuristic (case",
+    "                                 sensitive)",
+    "                                 - STANDARD : Aggregates multiple",
+    "                                 heuristics to evaluate the board during",
+    "                                 the start and middle game.",
+    "                                 - SHANNON : Basic Heuristic from Shannon.",
+    "                                 - ENDGAME : Aggregates multiple",
+    "                                 heuristics to evaluate the board state",
+    "                                 during the endgame phase of the match.",
+    "                                 - BAD_PAWNS : Computes a score according",
+    "                                 to the potential weaknesses in the",
+    "                                 observed pawn structures.",
+    "                                 - BISHOP_ENDGAME : Computes a score",
+    "                                 according to how performant bishops are",
+    "                                 for an endgame position.",
+    "                                 - DEVELOPMENT : Computes and returns a",
+    "                                 score corresponding to the level of",
+    "                                 development for each player.",
+    "                                 - GAME_STATUS : Computes a score based on",
+    "                                 the possible game endings.",
+    "                                 - KING_ACTIVITY : Computes a score based",
+    "                                 on the king's activity (is in center and",
+    "                                 has a lot of possible moves).",
+    "                                 - KING_OPPOSITION : Computes a score",
+    "                                 according to the (un)balance of the kings",
+    "                                 position.",
+    "                                 - KING_SAFETY : Assigns a score to a",
+    "                                 player according to the safety of his",
+    "                                 king.",
+    "                                 - MATERIAL : Computes a score based on",
+    "                                 the pieces on the board.",
+    "                                 - MOBILITY : Computes a score based on",
+    "                                 the available moves for each player.",
+    "                                 - PAWN_CHAIN : Computes a score according",
+    "                                 to how strongly pawns are connected.",
+    "                                 - PROMOTION : Computes a score according",
+    "                                 to closeness of pawns promoting.",
+    "                                 - SPACE_CONTROL : Gives a score based on",
+    "                                 how much control over the entire board",
+    "                                 the players have.",
     "    --ai-mode <ALGORITHM>        Choose the exploration algorithm for the",
     "                                 artificial player.",
     "    --ai-time <TIME>             Specify the time of reflexion for AI mode",
-    "                                 (default 5 seconds)",
+    "                                 in seconds (default 5 seconds)",
     " -b,--blitz                      Play in blitz mode",
     " -c,--contest <FILENAME>         AI plays one move in the given file",
     " -d,--debug                      Print debugging information",
@@ -443,6 +483,15 @@ public class CLIOptionsTest {
     assertTrue(
         activatedOptions.containsKey(OptionType.AI_DEPTH)
             && activatedOptions.get(OptionType.AI_DEPTH).equals("5"));
+
+    outputStream.reset();
+    // activate AI time
+    activatedOptions =
+        CLIOptions.parseOptions(new String[] {"--debug", "--ai-time=5"}, mockRuntime);
+    assertTrue(outputStream.toString().contains("Modifying ai-time requires 'a' argument"));
+    assertTrue(
+        activatedOptions.containsKey(OptionType.AI_TIME)
+            && activatedOptions.get(OptionType.AI_TIME).equals("5"));
 
     outputStream.reset();
   }

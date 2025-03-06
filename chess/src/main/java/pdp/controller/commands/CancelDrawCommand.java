@@ -19,7 +19,7 @@ public class CancelDrawCommand implements Command {
    * is already over, it returns an exception CommandNotAvailableNowException.
    *
    * @param model the Game model on which the command is executed
-   * @param controller the GameController managing the game state
+   * @param controller the GameController managing the game commands
    * @return an Optional containing an exception if the command is not available, otherwise an empty
    *     Optional
    */

@@ -1,11 +1,14 @@
 package pdp;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
@@ -16,11 +19,15 @@ import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
+import pdp.utils.CLIOptions;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
 
 public abstract class GameInitializer {
+
+  private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
+
   // TODO Internationalization
   /**
    * Initialize the game with the given options.
@@ -29,6 +36,8 @@ public abstract class GameInitializer {
    * @return A new Game instance.
    */
   public static Game initialize(HashMap<OptionType, String> options) {
+
+    DEBUG(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
     if (options.containsKey(OptionType.BLITZ)) {
@@ -92,7 +101,18 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
-        // set time
+        try {
+          long time = Long.parseLong(options.get(OptionType.AI_TIME));
+          solver.setTime(time);
+        } catch (Exception e) {
+          System.err.println("Not a long for the time of AI (in seconds)");
+          System.err.println("Defaulting to a 5 seconds timer");
+        }
+      }
+      if (options.containsKey(OptionType.BLITZ)) {
+        // If blitz, take the minimum between the blitz time and AI time
+        long time = Long.min(solver.getTimer().getTimeRemaining(), timer.getTimeRemaining() - 100);
+        solver.setTime(time / 1000);
       }
     }
 
