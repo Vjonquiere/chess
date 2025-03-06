@@ -14,7 +14,7 @@ public class MCTS implements SearchAlgorithm {
   Solver solver;
   private static final double EXPLORATION_FACTOR = Math.sqrt(2); // c value
   private final Random random = new Random(); // Randomizer for the moves
-  private static final int SIMULATION_LIMIT = 45; // Number of simulations
+  private static final int SIMULATION_LIMIT = 75; // Number of times to execute MCTS
 
   public MCTS(Solver solver) {
     this.solver = solver;
@@ -34,56 +34,17 @@ public class MCTS implements SearchAlgorithm {
     // Give the root a copy of the game state to work on new ones
     TreeNodeMCTS root = new TreeNodeMCTS(gameStateCopy, null, null);
 
-    int nbAlgoExec = 0;
-
     // Run MCTS for a fixed number of simulations
     for (int i = 0; i < SIMULATION_LIMIT; i++) {
       TreeNodeMCTS selectedNode = select(root);
       TreeNodeMCTS expandedNode = expand(game, selectedNode);
       int simulationResult = simulate(game, expandedNode);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
-      System.out.println("Here is the result after simulation : " + simulationResult);
       backpropagate(game, expandedNode, simulationResult);
-      nbAlgoExec++;
     }
 
     AIMove move = getBestMove(game, root);
     System.out.println("MOVE : " + move.toString());
-    System.out.println("MOVE : " + move.toString());
-    System.out.println("MOVE : " + move.toString());
-    System.out.println("MOVE : " + move.toString());
-    System.out.println("MOVE : " + move.toString());
-    System.out.println("MOVE : " + move.toString());
-    System.out.println("MOVE : " + move.toString());
 
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
-    System.out.println(nbAlgoExec);
     return move;
   }
 
@@ -141,18 +102,14 @@ public class MCTS implements SearchAlgorithm {
             .getBoardRep()
             .getAllAvailableMoves(node.getGameState().isWhiteTurn());
     for (Move move : possibleMoves) {
-      System.out.println(
-          "Here is the possible move : " + move.getSource().toString() + move.getDest().toString());
       try {
         move = AlgorithmHelpers.promoteMove(move);
         GameState nextState = node.getGameState().getCopy();
-        game.playMove(nextState, move);
+        game.playMoveOtherGameState(nextState, move);
         // Add node to tree
         node.addChildToTree(new TreeNodeMCTS(nextState, node, move));
-        System.out.println("SUCCESS !!!!!!!!!!!!!!!!!!!!!!!");
       } catch (Exception e) {
         // Illegal movewas caught
-        System.out.println("-------------------------------");
         continue;
       }
     }
@@ -175,48 +132,7 @@ public class MCTS implements SearchAlgorithm {
   private int simulate(Game game, TreeNodeMCTS node) {
     GameState simulationState = node.getGameState().getCopy();
 
-    /*
     while (!simulationState.isGameOver()) {
-      System.out.println("====================");
-      List<Move> availableMoves =
-          simulationState
-              .getBoard()
-              .getBoardRep()
-              .getAllAvailableMoves(simulationState.isWhiteTurn());
-
-      System.out.println("Available moves: " + availableMoves);
-
-      if (availableMoves.isEmpty()) {
-        // No more legal moves so end
-        break;
-      }
-      System.out.println("111111111111111111111111111111");
-
-      Move randomMove = selectRandomMove(availableMoves);
-      try {
-        randomMove = AlgorithmHelpers.promoteMove(randomMove);
-        System.out.println("PLAYER TURN BEFORE MOVE IS WHITE : " + simulationState.isWhiteTurn());
-        System.out.println(
-            "PLAYER TURN BEFORE MOVE IS WHITE : " + simulationState.getBoard().isWhite);
-        game.playMove(simulationState, randomMove);
-        System.out.println("PLAYER TURN BEFORE MOVE IS WHITE: " + simulationState.isWhiteTurn());
-        System.out.println(
-            "PLAYER TURN BEFORE MOVE IS WHITE : " + simulationState.getBoard().isWhite);
-      } catch (Exception e) {
-        System.out.println("Illegal move detected: " + randomMove.toString());
-        availableMoves.remove(randomMove); // Remove bad move
-        if (availableMoves.isEmpty()) {
-          break; // Stop if no legal moves left
-        }
-        continue;
-      }
-
-      System.out.println("WHILE LOOPING !");
-    }*/
-
-    while (!simulationState.isGameOver()) {
-      System.out.println("====================");
-
       List<Move> availableMoves =
           simulationState
               .getBoard()
@@ -224,7 +140,6 @@ public class MCTS implements SearchAlgorithm {
               .getAllAvailableMoves(simulationState.isWhiteTurn());
 
       if (availableMoves.isEmpty()) {
-        System.out.println("No available moves, stopping simulation.");
         break;
       }
 
@@ -233,25 +148,25 @@ public class MCTS implements SearchAlgorithm {
       for (Move move : availableMoves) {
         try {
           Move promotedMove = AlgorithmHelpers.promoteMove(move);
+          // Copy GameState and try to play the move to see if move is valid and legal
           GameState testState = simulationState.getCopy();
-          game.playMove(testState, promotedMove);
+          game.playMoveOtherGameState(testState, promotedMove);
           legalMoves.add(promotedMove);
         } catch (Exception e) {
-          // Move was illegal, do nothing
+          // Caught illegal move, pursue
         }
       }
 
       if (legalMoves.isEmpty()) {
-        System.out.println("No legal moves left, stopping simulation.");
         break;
       }
 
       Move randomMove = selectRandomMove(legalMoves);
 
       try {
-        game.playMove(simulationState, randomMove);
+        game.playMoveOtherGameState(simulationState, randomMove);
       } catch (Exception e) {
-        System.out.println("Unexpected error while playing move: " + randomMove);
+        // Exception occured when trying to play the randomly selected move
       }
     }
 
@@ -276,7 +191,6 @@ public class MCTS implements SearchAlgorithm {
    * @param result the obtained result after simulation
    */
   private void backpropagate(Game game, TreeNodeMCTS node, int result) {
-    System.out.println("BACK");
     while (node != null) {
       node.incrementNbVisits();
       node.incrementNbWinsBy(result);
@@ -303,85 +217,6 @@ public class MCTS implements SearchAlgorithm {
     List<TreeNodeMCTS> childrenNodes = root.getChildrenNodes();
     for (TreeNodeMCTS child : childrenNodes) {
       int visits = child.getNbVisits();
-
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-      System.out.println(
-          "Move: "
-              + child.getStartingMove()
-              + " | Visits: "
-              + visits
-              + " | Wins: "
-              + child.getNbWins());
-
       if (visits > maxVisits) {
         maxVisits = visits;
         bestNode = child;
@@ -394,20 +229,6 @@ public class MCTS implements SearchAlgorithm {
 
     Move bestMove = bestNode.getStartingMove();
     double winRate = (double) bestNode.getNbWins() / bestNode.getNbVisits();
-
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
-    System.out.println("Best move selected: " + bestMove + " | Win rate: " + winRate);
 
     return new AIMove(bestMove, (int) winRate);
   }
