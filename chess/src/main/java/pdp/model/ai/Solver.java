@@ -53,6 +53,12 @@ public class Solver {
     DEBUG(LOGGER, "Algorithm set to " + algorithm);
   }
 
+  /**
+   * Assigns a value (typed by the user in CLI) to the simulation limit for MCTS. Method used in
+   * GameInitializer.
+   *
+   * @param numberSimulations the number of MCTS simulations wanted by the user
+   */
   public void setMCTSAlgorithm(int numberSimulations) {
     this.algorithm = new MCTS(this, numberSimulations);
   }

@@ -374,6 +374,13 @@ public class Game extends Subject {
     }
   }
 
+  /**
+   * Return true if the piece located at sourcePosition is of the same color as the player that has
+   * to play a move, false is not, and exception otherwise.
+   *
+   * @param sourcePosition the source position
+   * @throws IllegalMoveException If the move is illegal in the current configuration.
+   */
   private boolean validatePieceOwnership(Position sourcePosition) throws IllegalMoveException {
     ColoredPiece pieceAtSource =
         this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
