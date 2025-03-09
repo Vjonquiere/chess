@@ -233,7 +233,7 @@ public class CLIOptions {
         && !activatedOptions.containsKey(OptionType.BLITZ)) {
       System.err.println("The TIME option can't be used without BLITZ activated : option ignored.");
       activatedOptions.remove(OptionType.TIME);
-    } else if (!activatedOptions.containsKey(OptionType.BLITZ)
+    } else if (activatedOptions.containsKey(OptionType.BLITZ)
         && !activatedOptions.containsKey(OptionType.TIME)) {
       activatedOptions.put(OptionType.TIME, "30");
     }
