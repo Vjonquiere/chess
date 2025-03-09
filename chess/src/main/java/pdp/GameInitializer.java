@@ -74,10 +74,20 @@ public abstract class GameInitializer {
       solver = new Solver();
       if (options.containsKey(OptionType.AI_MODE)) {
         try {
-          solver.setAlgorithm(AlgorithmType.valueOf(options.get(OptionType.AI_MODE)));
+          AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE));
+          if (algorithmType == AlgorithmType.MCTS) {
+            int iterations =
+                options.containsKey(OptionType.AI_DEPTH)
+                    ? Integer.parseInt(options.get(OptionType.AI_DEPTH))
+                    : 100;
+            solver.setMCTSAlgorithm(iterations);
+          } else {
+            solver.setAlgorithm(algorithmType);
+          }
         } catch (Exception e) {
           System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
           System.err.println("Defaulting to ALPHABETA.");
+          solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
         }
       }
       if (options.containsKey(OptionType.AI_HEURISTIC)) {

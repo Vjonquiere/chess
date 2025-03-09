@@ -225,7 +225,12 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("ALGORITHM")
-          .desc("Choose the exploration algorithm for the artificial player.")
+          .desc(
+              "Choose the exploration algorithm for the artificial player.\n"
+                  + "Available options:\n"
+                  + "- MINIMAX : Uses the MiniMax algorithm (default).\n"
+                  + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm.\n"
+                  + "- MCTS : Uses Monte Carlo Tree Search for AI move exploration.")
           .build();
     }
   },
@@ -246,7 +251,8 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("DEPTH")
-          .desc("Specify the depth of the AI algorithm")
+          .desc(
+              "Specify the depth of the AI algorithm or the number of simulations for the MCTS AI algorithm")
           .build();
     }
   },

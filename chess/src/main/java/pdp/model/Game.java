@@ -23,6 +23,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.algorithms.MCTS;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.*;
 import pdp.model.history.History;
@@ -373,6 +374,13 @@ public class Game extends Subject {
     }
   }
 
+  /**
+   * Return true if the piece located at sourcePosition is of the same color as the player that has
+   * to play a move, false is not, and exception otherwise.
+   *
+   * @param sourcePosition the source position
+   * @throws IllegalMoveException If the move is illegal in the current configuration.
+   */
   private boolean validatePieceOwnership(Position sourcePosition) throws IllegalMoveException {
     ColoredPiece pieceAtSource =
         this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
@@ -542,7 +550,8 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase() && this.solver != null) {
       // Set endgame heuristic only once and only if endgame phase
-      if (!(solver.getHeuristic() instanceof EndGameHeuristic)) {
+      if ((!(this.solver.getAlgorithm() instanceof MCTS))
+          && !(this.solver.getHeuristic() instanceof EndGameHeuristic)) {
         this.solver.setHeuristic(HeuristicType.ENDGAME);
       }
     }
@@ -828,6 +837,185 @@ public class Game extends Subject {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Tries to play the given move on the game for the game state in parameter
+   *
+   * @param gameState the game state for which we want the move to occur
+   * @param move The move to be executed
+   * @throws IllegalMoveException If the move is not legal
+   */
+  public void playMoveOtherGameState(GameState gameState, Move move)
+      throws IllegalMoveException, InvalidPromoteFormatException {
+
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+
+    if (!validatePieceOwnershipOtherGameState(gameState, sourcePosition)) {
+      throw new IllegalMoveException(move.toString());
+    }
+    validatePromotionMove(move);
+
+    List<Move> availableMoves = gameState.getBoard().getAvailableMoves(sourcePosition);
+    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
+
+    if (classicalMove.isPresent()) {
+      move = classicalMove.get();
+      processClassicalMoveOtherGameState(gameState, move);
+    } else {
+      processSpecialMoveOtherGameState(gameState, move);
+    }
+    updateOtherGameStateAfterMove(gameState, move);
+  }
+
+  /**
+   * Return true if the piece located at sourcePosition is of the same color as the player that has
+   * to play a move, false is not, and exception otherwise.
+   *
+   * @param gameState the game state for which we want to verify piece ownership
+   * @param sourcePosition the position
+   * @throws IllegalMoveException If the move is illegal in the current configuration.
+   */
+  private boolean validatePieceOwnershipOtherGameState(GameState gameState, Position sourcePosition)
+      throws IllegalMoveException {
+    ColoredPiece pieceAtSource =
+        gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+    boolean isWhiteTurn = gameState.getBoard().isWhite;
+    if ((pieceAtSource.color == Color.WHITE && !isWhiteTurn)
+        || (pieceAtSource.color == Color.BLACK && isWhiteTurn)) {
+      DEBUG(
+          LOGGER,
+          "Not a " + pieceAtSource.color.toString() + " piece at " + sourcePosition.toString());
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Handles classical moves
+   *
+   * @param gameState the game state for which we want the move to occur
+   * @param move The move to be executed.
+   * @throws IllegalMoveException If the move is illegal in the current configuration.
+   */
+  private void processClassicalMoveOtherGameState(GameState gameState, Move move)
+      throws IllegalMoveException {
+    Color currentColor = gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+    if (gameState.getBoard().board.isCheckAfterMove(currentColor, move)) {
+      DEBUG(LOGGER, "Move puts the king in check " + move.toString());
+      throw new IllegalMoveException(move.toString());
+    }
+
+    gameState.getBoard().makeMove(move);
+    DEBUG(LOGGER, "Move played!");
+  }
+
+  /**
+   * Handles special moves: castling, en passant, double pawn push
+   *
+   * @param gameState the game state for which we want the move to occur
+   * @param move The move to be executed.
+   * @throws IllegalMoveException If the move is illegal in the current configuration.
+   */
+  private void processSpecialMoveOtherGameState(GameState gameState, Move move)
+      throws IllegalMoveException {
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    boolean isSpecialMove = false;
+    ColoredPiece coloredPiece =
+        gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+
+    // Check Castle
+    if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
+      boolean shortCastle = destPosition.getX() > sourcePosition.getX();
+      Color color = gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+      if (gameState.getBoard().canCastle(color, shortCastle)) {
+        gameState.getBoard().applyCastle(color, shortCastle);
+        isSpecialMove = true;
+      }
+    }
+
+    // Check en passant
+    if (!isSpecialMove
+        && gameState.getBoard().isLastMoveDoublePush
+        && gameState
+            .getBoard()
+            .board
+            .isEnPassant(
+                gameState.getBoard().enPassantPos.getX(),
+                gameState.getBoard().enPassantPos.getY(),
+                move,
+                gameState.getBoard().isWhite)) {
+      if (gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+        DEBUG(LOGGER, "En passant puts the king in check!");
+        throw new IllegalMoveException(move.toString());
+      }
+      isSpecialMove = true;
+      gameState.getBoard().enPassantPos = null;
+      gameState.getBoard().isEnPassantTake = true;
+      move.piece = coloredPiece;
+      move.isTake = true;
+      gameState.getBoard().makeMove(move);
+    }
+
+    // Check double pawn push
+    if (!isSpecialMove
+        && gameState.getBoard().board.isDoublePushPossible(move, gameState.getBoard().isWhite)) {
+      if (gameState
+          .getBoard()
+          .board
+          .isCheckAfterMove(gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+        DEBUG(LOGGER, "Double push puts the king in check!");
+        throw new IllegalMoveException(move.toString());
+      }
+      isSpecialMove = true;
+      gameState.getBoard().enPassantPos =
+          gameState.getBoard().isWhite
+              ? new Position(move.dest.getX(), move.dest.getY() - 1)
+              : new Position(move.dest.getX(), move.dest.getY() + 1);
+      move.piece = coloredPiece;
+      gameState.getBoard().makeMove(move);
+      gameState.getBoard().isLastMoveDoublePush = true;
+    }
+
+    if (!isSpecialMove) {
+      DEBUG(LOGGER, "Move was not a special move!");
+      throw new IllegalMoveException(move.toString());
+    }
+  }
+
+  /**
+   * Method used for MCTS simulation that processes gameState copies. Updates the game state in
+   * parameter (supposed to be copy) after a move is played.
+   *
+   * <p>The provided game state is updated by:
+   *
+   * <ul>
+   *   <li>Incrementing the full turn number if the move was made by white.
+   *   <li>Switching the current player turn.
+   *   <li>Updating the board player.
+   *   <li>Checking the game status, which may end the game.
+   * </ul>
+   */
+  private void updateOtherGameStateAfterMove(GameState gameState, Move move) {
+    if (gameState.getMoveTimer() != null) {
+      gameState.getMoveTimer().stop();
+    }
+
+    if (gameState.getBoard().isWhite) {
+      gameState.incrementsFullTurn();
+    }
+
+    gameState.switchPlayerTurn();
+    gameState.getBoard().setPlayer(gameState.isWhiteTurn());
+
+    DEBUG(LOGGER, "Checking game status...");
+    gameState.checkGameStatus();
   }
 
   /**
