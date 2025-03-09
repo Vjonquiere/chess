@@ -251,7 +251,8 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("DEPTH")
-          .desc("Specify the depth of the AI algorithm")
+          .desc(
+              "Specify the depth of the AI algorithm or the number of simulations for the MCTS AI algorithm")
           .build();
     }
   },
