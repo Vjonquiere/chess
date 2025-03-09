@@ -287,7 +287,6 @@ public class GameState extends Subject {
    */
   public void checkGameStatus() {
     Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;
-    boolean currPlayerWhite = this.isWhiteTurn();
     // Fifty Move rule
     if (isFiftyMoveRule()) {
       DEBUG(LOGGER, "End of game : Fifty move rule, draw");
