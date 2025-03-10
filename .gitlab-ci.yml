@@ -63,7 +63,7 @@ gui-test-job:
   stage: gui-test
   image: eclipse-temurin:17
   before_script:
-    - apt-get install -y xvfb libxkbcommon-x11-0 libxi6 libxtst6 libglib2.0-0
+    - apt-update && apt-get install -y xvfb libxkbcommon-x11-0 libxi6 libxtst6 libglib2.0-0
     - Xvfb :99 -screen 0 1920x1080x24 &
     - export DISPLAY=:99
   script:
