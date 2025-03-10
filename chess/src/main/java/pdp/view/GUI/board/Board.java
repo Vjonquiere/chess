@@ -8,6 +8,7 @@ import pdp.controller.commands.PlayMoveCommand;
 import pdp.model.Game;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.utils.Position;
 
@@ -22,7 +23,6 @@ public class Board extends GridPane {
     this.board = game.getBoard().board;
     this.boardColumns = board.getNbCols();
     this.boardRows = board.getNbRows();
-
     buildBoard();
   }
 
@@ -72,11 +72,21 @@ public class Board extends GridPane {
    * @param y y coordinate of the selected square
    */
   private void switchSelectedSquare(int x, int y) {
+    boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
+    Color squareColor = Game.getInstance().getBoard().board.getPieceAt(x, y).color;
     if (from == null) {
+      if ((isWhiteTurn && squareColor != Color.WHITE)
+          || (!isWhiteTurn && squareColor != Color.BLACK)) return;
       from = new Position(x, y);
       pieces.get(from).setSelected(true);
     } else {
       pieces.get(from).setSelected(false);
+      if ((isWhiteTurn && squareColor == Color.WHITE)
+          || (!isWhiteTurn && squareColor == Color.BLACK)) {
+        from = new Position(x, y);
+        pieces.get(from).setSelected(true);
+        return;
+      }
       try {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
