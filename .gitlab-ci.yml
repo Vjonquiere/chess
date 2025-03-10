@@ -63,7 +63,7 @@ gui-test-job:
   stage: gui-test
   image: eclipse-temurin:17
   before_script:
-    - apt-update && apt-get install -y xvfb libxkbcommon-x11-0 libxi6 libxtst6 libglib2.0-0
+    - apt-get update && apt-get install -y xvfb libxkbcommon-x11-0 libxi6 libxtst6 libglib2.0-0
     - Xvfb :99 -screen 0 1920x1080x24 &
     - export DISPLAY=:99
   script:
@@ -96,7 +96,7 @@ ubuntu:
   script:
     - echo "Building and testing on Ubuntu with JDK 17..."
     - mvn clean package -DskipTests
-    - mvn clean test
+    - mvn clean test -DexcludedGroups=gui
   artifacts:
     paths:
       - chess/target/
@@ -121,7 +121,7 @@ alpine:
   script:
     - echo "Building and testing on Alpine with JDK 17..."
     - mvn clean package -DskipTests
-    - mvn clean test
+    - mvn clean test -DexcludedGroups=gui
   artifacts:
     paths:
       - chess/target/
