@@ -38,7 +38,7 @@ unit-test-job:   # Test stage: Runs unit tests
   coverage: '/Total.*?([0-9]{1,3}) ?%/'
   script:
     - echo "Running unit tests..."
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test jacoco:report -Dtestfx.headless=true -Djavafx.platform=Monocle -Dprism.order=sw -Dglass.platform=Monocle -Dmonocle.platform=headless
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test jacoco:report -Dtestfx.headless=true -Dprism.order=sw -Dglass.platform=Monocle -Dmonocle.platform=headless
     - cat target/site/jacoco/index.html
   artifacts:
     reports:
