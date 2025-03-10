@@ -13,6 +13,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import pdp.controller.BagOfCommands;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
@@ -290,6 +291,7 @@ public class Game extends Subject {
       HashMap<OptionType, String> options) {
     DEBUG(LOGGER, "Initializing Game...");
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
+    BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
       timer.start();
@@ -319,6 +321,7 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Initializing Game from given board...");
     instance =
         new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History(), options);
+    BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
       timer.start();
@@ -696,6 +699,7 @@ public class Game extends Subject {
       HashMap<OptionType, String> options)
       throws IllegalMoveException {
     instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
+    BagOfCommands.getInstance().setModel(instance);
 
     for (Move move : moves) {
       instance.playMove(move);

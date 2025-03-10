@@ -25,9 +25,11 @@ public class NewGamePopup {
     layout.setStyle("-fx-padding: 10; -fx-alignment: center-left;");
 
     CheckBox blitzCheckBox = new CheckBox("Blitz");
+    blitzCheckBox.setId("blitzCheckBox");
     blitzCheckBox.setSelected(options.containsKey(OptionType.BLITZ));
 
     VBox timeContainer = new VBox(5);
+    timeContainer.setId("timeContainer");
     timeContainer.setVisible(blitzCheckBox.isSelected());
     timeContainer.setManaged(blitzCheckBox.isSelected());
 
@@ -48,6 +50,7 @@ public class NewGamePopup {
     timeContainer.getChildren().add(new Label("Time (in minutes):"));
 
     Slider timeSlider = new Slider(1, 60, 30);
+    timeSlider.setId("timeSlider");
     timeSlider.setShowTickLabels(true);
     timeSlider.setShowTickMarks(true);
     timeSlider.setMajorTickUnit(1);
@@ -71,10 +74,12 @@ public class NewGamePopup {
     layout.getChildren().add(new Separator());
 
     ComboBox<String> aiDropdown = new ComboBox<>();
+    aiDropdown.setId("aiDropdown");
     aiDropdown.getItems().add("None");
     aiDropdown.getItems().add("W");
     aiDropdown.getItems().add("B");
     aiDropdown.getItems().add("A");
+
     if (options.containsKey(OptionType.AI)) {
       aiDropdown.setValue(options.get(OptionType.AI));
     } else {
@@ -83,11 +88,14 @@ public class NewGamePopup {
     layout.getChildren().add(new Label("AI Player(s)"));
     layout.getChildren().add(aiDropdown);
     VBox aiContainer = new VBox(5);
+    aiContainer.setId("aiContainer");
     aiContainer.setVisible(!aiDropdown.getValue().equals("None"));
     aiContainer.setManaged(!aiDropdown.getValue().equals("None"));
 
     aiContainer.getChildren().add(new Label("AI Mode"));
     ComboBox<String> aiModeDropdown = new ComboBox<>();
+
+    aiModeDropdown.setId("aiModeDropdown");
 
     for (AlgorithmType type : AlgorithmType.values()) {
       aiModeDropdown.getItems().add(type.toString());
@@ -109,6 +117,8 @@ public class NewGamePopup {
     aiContainer.getChildren().add(new Label("AI Heuristic"));
     ComboBox<String> heuristicDropdown = new ComboBox<>();
 
+    heuristicDropdown.setId("heuristicDropdown");
+
     for (HeuristicType type : HeuristicType.values()) {
       heuristicDropdown.getItems().add(type.toString());
     }
@@ -128,6 +138,7 @@ public class NewGamePopup {
 
     aiContainer.getChildren().add(new Label("AI Depth"));
     Slider depthSlider = new Slider(1, 10, 3);
+    depthSlider.setId("depthSlider");
     depthSlider.setShowTickLabels(true);
     depthSlider.setShowTickMarks(true);
     depthSlider.setMajorTickUnit(1);
@@ -147,16 +158,19 @@ public class NewGamePopup {
     aiContainer.getChildren().add(depthSlider);
 
     CheckBox aiTimeCheckBox = new CheckBox("AI Time limit");
+    aiTimeCheckBox.setId("aiTimeCheckBox");
     aiTimeCheckBox.setSelected(options.containsKey(OptionType.AI_TIME));
 
     aiContainer.getChildren().add(aiTimeCheckBox);
 
     VBox aiTimeContainer = new VBox(5);
+    aiTimeContainer.setId("aiTimeContainer");
     aiTimeContainer.setVisible(aiTimeCheckBox.isSelected());
     aiTimeContainer.setManaged(aiTimeCheckBox.isSelected());
 
     aiTimeContainer.getChildren().add(new Label("AI Time (in seconds)"));
     Slider aiTimeSlider = new Slider(5, 60, 10);
+    aiTimeSlider.setId("aiTimeSlider");
     aiTimeSlider.setShowTickLabels(true);
     aiTimeSlider.setShowTickMarks(true);
     aiTimeSlider.setMajorTickUnit(5);
@@ -209,10 +223,12 @@ public class NewGamePopup {
 
     Label loadLabel = new Label("Load game from:");
     TextField loadTextField = new TextField();
+    loadTextField.setId("loadTextField");
     loadTextField.setPromptText("Select a file...");
     loadTextField.setEditable(false);
 
     Button browseButton = new Button("Browse");
+    browseButton.setId("browseButton");
     browseButton.setOnAction(
         event -> {
           FileChooser fileChooser = new FileChooser();
@@ -240,6 +256,7 @@ public class NewGamePopup {
     layout.getChildren().add(new Separator());
 
     Button startGameButton = new Button("Start Game");
+    startGameButton.setId("startGameButton");
     startGameButton.setOnAction(
         event -> {
           GameInitializer.initialize(options);
@@ -251,6 +268,7 @@ public class NewGamePopup {
     layout.getChildren().add(buttonContainer);
 
     ScrollPane scrollPane = new ScrollPane();
+    scrollPane.setId("scrollPane");
     scrollPane.setContent(layout);
     scrollPane.setFitToWidth(true);
 
