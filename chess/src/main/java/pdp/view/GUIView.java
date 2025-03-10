@@ -12,6 +12,7 @@ import pdp.model.Game;
 import pdp.utils.Logging;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.ChessMenu;
+import pdp.view.GUI.ControlPanel;
 import pdp.view.GUI.GUILauncher;
 import pdp.view.GUI.board.Board;
 
@@ -20,6 +21,7 @@ public class GUIView implements View {
   private BorderPane root;
   private Stage stage;
   private Board board;
+  private ControlPanel controlPanel;
   boolean init = false;
 
   static {
@@ -39,7 +41,7 @@ public class GUIView implements View {
     stage.setTitle(TextGetter.getText("title"));
     root.setTop(new ChessMenu());
     // root.setCenter(board);
-    Scene scene = new Scene(root, 820, 820);
+    Scene scene = new Scene(root, 1200, 820);
     stage.setScene(scene);
 
     this.stage = stage;
@@ -86,9 +88,11 @@ public class GUIView implements View {
                   root.getChildren().remove(board);
                 }
                 board = new Board(Game.getInstance());
-                root.setCenter(board);
+                root.setLeft(board);
                 System.out.println("GUI board displayed"); // TODO: Add in resource bundle
                 DEBUG(LOGGER, "Board view initialized");
+                controlPanel = new ControlPanel(root);
+                root.setCenter(controlPanel);
                 break;
               case MOVE_PLAYED:
                 if (board != null) {
