@@ -34,6 +34,7 @@ public class NewGamePopupTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testBlitzCheckBox() {
 
     lookup("#timeContainer").query().setVisible(false);
@@ -46,6 +47,7 @@ public class NewGamePopupTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testTimeSlider() {
 
     Slider timeSlider = lookup("#timeSlider").query();
@@ -56,6 +58,7 @@ public class NewGamePopupTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testAIDropdown() {
 
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
@@ -68,6 +71,7 @@ public class NewGamePopupTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testAIModeDropdown() {
 
     ComboBox<String> aiModeDropdown = lookup("#aiModeDropdown").query();
@@ -79,6 +83,7 @@ public class NewGamePopupTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testHeuristicDropdown() {
     ComboBox<String> heuristicDropdown = lookup("#heuristicDropdown").query();
 
@@ -88,6 +93,7 @@ public class NewGamePopupTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testDepthSlider() {
 
     Slider depthSlider = lookup("#depthSlider").query();
@@ -96,6 +102,7 @@ public class NewGamePopupTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testAIComponentsVisibility() {
 
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();

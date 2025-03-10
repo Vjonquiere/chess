@@ -5,6 +5,7 @@ stages:
   - lint
   - build
   - test
+  - gui-test
   - multi-os
   - .post
 
@@ -42,7 +43,7 @@ unit-test-job:   # Test stage: Runs unit tests
     - export DISPLAY=:99
   script:
     - echo "Running unit tests..."
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test -Dtestfx.headless=true jacoco:report
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test jacoco:report -DexcludedGroups=gui
     - cat target/site/jacoco/index.html
   artifacts:
     reports:
@@ -61,6 +62,22 @@ cleanup:
   tags:
       - shell
       - Debian
+
+gui-test-job: 
+  stage: gui-test
+  image: eclipse-temurin:17
+  before_script:
+    - apt-get install -y xvfb libxkbcommon-x11-0 libxi6 libxtst6 libglib2.0-0
+    - Xvfb :99 -screen 0 1920x1080x24 &
+    - export DISPLAY=:99
+  script:
+    - echo "Running GUI tests in Docker..."
+    - mvn test -Dtestfx.headless=true -Dgroups=gui
+  artifacts:
+    reports:
+      junit: chess/target/surefire-reports/*.xml
+  tags:
+    - Docker
 
 #====================
 #     MultiOS
