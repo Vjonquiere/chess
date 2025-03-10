@@ -3,15 +3,15 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.api.FxRobotInterface.*;
-import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 import java.util.HashMap;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -22,6 +22,33 @@ import pdp.view.GUI.NewGamePopup;
 public class NewGamePopupTest extends ApplicationTest {
 
   private HashMap<OptionType, String> options;
+
+  private boolean scrollUntilVisible(String id) {
+
+    ScrollPane scrollPane = lookup("#scrollPane").query();
+
+    while (scrollPane.getVvalue() != 0) {
+      scroll(-1);
+    }
+
+    double previousScrollPosition = -1;
+    double currentScrollPosition = 0;
+
+    while (previousScrollPosition != currentScrollPosition) {
+      try {
+        verifyThat(id, isVisible());
+        return true;
+      } catch (AssertionError e) {
+        scroll(1);
+        waitForFxEvents();
+
+        previousScrollPosition = currentScrollPosition;
+        currentScrollPosition = scrollPane.getVvalue();
+      }
+    }
+
+    return false;
+  }
 
   @BeforeAll
   public void setup() {
@@ -37,21 +64,22 @@ public class NewGamePopupTest extends ApplicationTest {
   @Tag("gui")
   public void testBlitzCheckBox() {
 
-    lookup("#timeContainer").query().setVisible(false);
+    CheckBox blitzCheckBox = lookup("#blitzCheckBox").query();
+    assertTrue(scrollUntilVisible("#blitzCheckBox"));
+    blitzCheckBox.fire();
 
-    clickOn("#blitzCheckBox");
-    verifyThat("#timeContainer", isVisible());
+    assertTrue(scrollUntilVisible("#timeContainer"));
 
-    clickOn("#blitzCheckBox");
-    verifyThat("#timeContainer", isInvisible());
+    blitzCheckBox.fire();
+    assertFalse(scrollUntilVisible("#timeContainer"));
   }
 
   @Test
   @Tag("gui")
   public void testTimeSlider() {
-
     Slider timeSlider = lookup("#timeSlider").query();
     assertEquals(30.0, timeSlider.getValue(), 0.1);
+    assertTrue(scrollUntilVisible("#timeSlider"));
 
     timeSlider.setValue(45);
     assertEquals("45", options.get(OptionType.TIME));
@@ -60,9 +88,9 @@ public class NewGamePopupTest extends ApplicationTest {
   @Test
   @Tag("gui")
   public void testAIDropdown() {
-
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
     assertEquals("None", aiDropdown.getValue());
+    assertTrue(scrollUntilVisible("#aiDropdown"));
 
     clickOn(aiDropdown);
     clickOn("W");
@@ -73,9 +101,8 @@ public class NewGamePopupTest extends ApplicationTest {
   @Test
   @Tag("gui")
   public void testAIModeDropdown() {
-
     ComboBox<String> aiModeDropdown = lookup("#aiModeDropdown").query();
-
+    assertTrue(scrollUntilVisible("#aiModeDropdown"));
     clickOn(aiModeDropdown);
     clickOn("MCTS");
 
@@ -86,7 +113,7 @@ public class NewGamePopupTest extends ApplicationTest {
   @Tag("gui")
   public void testHeuristicDropdown() {
     ComboBox<String> heuristicDropdown = lookup("#heuristicDropdown").query();
-
+    assertTrue(scrollUntilVisible("#heuristicDropdown"));
     clickOn(heuristicDropdown);
     clickOn("SHANNON");
     assertEquals("SHANNON", options.get(OptionType.AI_HEURISTIC));
@@ -95,8 +122,8 @@ public class NewGamePopupTest extends ApplicationTest {
   @Test
   @Tag("gui")
   public void testDepthSlider() {
-
     Slider depthSlider = lookup("#depthSlider").query();
+    assertTrue(scrollUntilVisible("#depthSlider"));
     depthSlider.setValue(5);
     assertEquals("5", options.get(OptionType.AI_DEPTH));
   }
@@ -106,32 +133,32 @@ public class NewGamePopupTest extends ApplicationTest {
   public void testAIComponentsVisibility() {
 
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
+    assertTrue(scrollUntilVisible("#aiDropdown"));
 
     clickOn(aiDropdown);
     clickOn("None");
 
-    VBox aiContainer = lookup("#aiContainer").query();
-    assertFalse(aiContainer.isVisible());
+    assertFalse(scrollUntilVisible("#aiContainer"));
 
+    assertTrue(scrollUntilVisible("#aiDropdown"));
     clickOn(aiDropdown);
     clickOn("B");
 
-    verifyThat("#aiContainer", isVisible());
+    assertTrue(scrollUntilVisible("#aiContainer"));
 
     CheckBox aiTimeCheckBox = lookup("#aiTimeCheckBox").query();
 
-    VBox aiTimeContainer = lookup("#aiTimeContainer").query();
-    assertFalse(aiTimeContainer.isVisible());
+    assertFalse(scrollUntilVisible("#aiTimeContainer"));
 
-    clickOn("#aiTimeCheckBox");
+    aiTimeCheckBox.fire();
 
-    assertTrue(aiTimeContainer.isVisible());
+    assertTrue(scrollUntilVisible("#aiTimeContainer"));
 
     Slider aiTimeSlider = lookup("#aiTimeSlider").query();
     aiTimeSlider.setValue(30);
     assertEquals("30", options.get(OptionType.AI_TIME));
 
-    clickOn("#aiTimeCheckBox");
-    assertFalse(aiTimeContainer.isVisible());
+    aiTimeCheckBox.fire();
+    assertFalse(scrollUntilVisible("#aiTimeContainer"));
   }
 }

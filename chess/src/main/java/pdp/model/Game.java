@@ -66,6 +66,23 @@ public class Game extends Subject {
       History history,
       HashMap<OptionType, String> options) {
 
+    this.gameState = gameState;
+    this.options = options;
+    this.VIEW_ON_OTHER_THREAD = options.containsKey(GUI);
+    this.isWhiteAI = isWhiteAI;
+    this.isBlackAI = isBlackAI;
+    this.explorationAI = false;
+    this.solver = solver;
+    this.history = history;
+    this.history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
+    this.stateCount = new HashMap<>();
+    // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
+    this.gameState.setSimplifiedZobristHashing(
+        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
+    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+
     if (instance != null) {
       for (EventObserver observer : instance.getObservers()) {
         this.addObserver(observer);
@@ -76,22 +93,6 @@ public class Game extends Subject {
       }
     }
 
-    this.options = options;
-    this.VIEW_ON_OTHER_THREAD = options.containsKey(GUI);
-    this.isWhiteAI = isWhiteAI;
-    this.isBlackAI = isBlackAI;
-    this.explorationAI = false;
-    this.solver = solver;
-    this.gameState = gameState;
-    this.history = history;
-    this.history.addMove(
-        new HistoryState(
-            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
-    this.stateCount = new HashMap<>();
-    // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
-    this.gameState.setSimplifiedZobristHashing(
-        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
-    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
     DEBUG(LOGGER, "Game created");
   }
 
