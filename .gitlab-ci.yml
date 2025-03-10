@@ -5,6 +5,7 @@ stages:
   - lint
   - build
   - test
+  - gui-test
   - multi-os
   - .post
 
@@ -36,13 +37,9 @@ unit-test-job:   # Test stage: Runs unit tests
   needs:
     - build-job
   coverage: '/Total.*?([0-9]{1,3}) ?%/'
-  before_script:
-    - echo "Starting virtual display for GUI tests..."
-    - Xvfb :09 -screen 0 1920x1080x24 &
-    - export DISPLAY=:09
   script:
     - echo "Running unit tests..."
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test jacoco:report
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test jacoco:report -DexcludedGroups=gui
     - cat target/site/jacoco/index.html
   artifacts:
     reports:
@@ -61,6 +58,19 @@ cleanup:
   tags:
       - shell
       - Debian
+
+gui-test-job: 
+  stage: gui-test
+  image: eclipse-temurin:17
+  before_script:
+    - apt-get update && apt-get install -y xvfb libxkbcommon-x11-0 libxi6 libxtst6 libglib2.0-0 maven
+    - Xvfb :99 -screen 0 1920x1080x24 &
+    - export DISPLAY=:99
+  script:
+    - echo "Running GUI tests in Docker..."
+    - mvn test -Dtestfx.headless=true -Dgroups=gui
+  tags:
+    - Docker
 
 #====================
 #     MultiOS
@@ -83,7 +93,7 @@ ubuntu:
   script:
     - echo "Building and testing on Ubuntu with JDK 17..."
     - mvn clean package -DskipTests
-    - mvn clean test
+    - mvn clean test -DexcludedGroups=gui
   artifacts:
     paths:
       - chess/target/
@@ -108,7 +118,7 @@ alpine:
   script:
     - echo "Building and testing on Alpine with JDK 17..."
     - mvn clean package -DskipTests
-    - mvn clean test
+    - mvn clean test -DexcludedGroups=gui
   artifacts:
     paths:
       - chess/target/
