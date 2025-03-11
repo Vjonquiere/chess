@@ -17,10 +17,10 @@ public class BadPawnsHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += doubledPawns(board, isWhite) - doubledPawns(board, !isWhite);
-    score += isolatedPawns(board, isWhite) - isolatedPawns(board, !isWhite);
-    score += backwardsPawns(board, isWhite) - backwardsPawns(board, !isWhite);
-    return (int) (-0.5 * score);
+    score += doubledPawns(board, true) - doubledPawns(board, false);
+    score += isolatedPawns(board, true) - isolatedPawns(board, false);
+    score += backwardsPawns(board, true) - backwardsPawns(board, false);
+    return isWhite ? (int) (-0.5 * score) : (int) (-0.5 * -score);
   }
 
   /**

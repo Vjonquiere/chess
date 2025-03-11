@@ -14,11 +14,12 @@ public class MobilityHeuristic implements Heuristic {
    */
   @Override
   public int evaluate(Board board, boolean isWhite) {
+    int score = 0;
     if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
-      return (int)
-          ((bitBoard.getColorMoveBitboard(isWhite).bitCount()
-                  - bitBoard.getColorMoveBitboard(!isWhite).bitCount())
-              * 0.1);
+      score +=
+          bitBoard.getColorMoveBitboard(true).bitCount()
+              - bitBoard.getColorMoveBitboard(false).bitCount();
+      return isWhite ? (int) (score * 0.1) : (int) (-score * 0.1);
     }
 
     return (int)
