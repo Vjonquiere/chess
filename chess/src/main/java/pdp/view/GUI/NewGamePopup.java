@@ -105,11 +105,19 @@ public class NewGamePopup {
       aiModeDropdown.setValue(options.get(OptionType.AI_MODE));
     }
 
+    VBox depthContainer = new VBox(5);
+    VBox simulationContainer = new VBox(5);
+
     aiModeDropdown
         .valueProperty()
         .addListener(
             (obs, oldVal, newVal) -> {
               options.put(OptionType.AI_MODE, newVal);
+              depthContainer.setVisible(newVal != AlgorithmType.MCTS.toString());
+              depthContainer.setManaged(newVal != AlgorithmType.MCTS.toString());
+
+              simulationContainer.setVisible(newVal == AlgorithmType.MCTS.toString());
+              simulationContainer.setManaged(newVal == AlgorithmType.MCTS.toString());
             });
 
     aiContainer.getChildren().add(aiModeDropdown);
@@ -136,7 +144,15 @@ public class NewGamePopup {
 
     aiContainer.getChildren().add(heuristicDropdown);
 
-    aiContainer.getChildren().add(new Label("AI Depth"));
+    depthContainer.setId("depthContainer");
+    depthContainer.setVisible(
+        options.containsKey(OptionType.AI_MODE)
+            && options.get(OptionType.AI_MODE) != AlgorithmType.MCTS.toString());
+    depthContainer.setManaged(
+        options.containsKey(OptionType.AI_MODE)
+            && options.get(OptionType.AI_MODE) != AlgorithmType.MCTS.toString());
+
+    depthContainer.getChildren().add(new Label("AI Depth"));
     Slider depthSlider = new Slider(1, 10, 3);
     depthSlider.setId("depthSlider");
     depthSlider.setShowTickLabels(true);
@@ -155,7 +171,43 @@ public class NewGamePopup {
       depthSlider.setValue(Integer.parseInt(options.get(OptionType.AI_DEPTH)));
     }
 
-    aiContainer.getChildren().add(depthSlider);
+    depthContainer.getChildren().add(depthSlider);
+
+    simulationContainer.setId("simulationContainer");
+    simulationContainer.setVisible(
+        options.containsKey(OptionType.AI_MODE)
+            && options.get(OptionType.AI_MODE) == AlgorithmType.MCTS.toString());
+    simulationContainer.setManaged(
+        options.containsKey(OptionType.AI_MODE)
+            && options.get(OptionType.AI_MODE) == AlgorithmType.MCTS.toString());
+
+    simulationContainer.getChildren().add(new Label("AI Simulations"));
+    Slider simulationSlider = new Slider(100, 1000, 300);
+    simulationSlider.setId("simulationSlider");
+    simulationSlider.setShowTickLabels(true);
+    simulationSlider.setShowTickMarks(true);
+    simulationSlider.setMajorTickUnit(10);
+    simulationSlider.setMinorTickCount(0);
+    simulationSlider.setSnapToTicks(true);
+
+    /*
+    simulationSlider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(OptionType.AI_SIMULATION, String.valueOf(newVal.intValue()));
+            });
+
+    if (options.containsKey(OptionType.AI_SIMULATION)) {
+      depthSlider.setValue(Integer.parseInt(options.get(OptionType.AI_SIMULATION)));
+    }
+
+    */
+
+    simulationContainer.getChildren().add(simulationSlider);
+
+    aiContainer.getChildren().add(depthContainer);
+    aiContainer.getChildren().add(simulationContainer);
 
     CheckBox aiTimeCheckBox = new CheckBox("AI Time limit");
     aiTimeCheckBox.setId("aiTimeCheckBox");
