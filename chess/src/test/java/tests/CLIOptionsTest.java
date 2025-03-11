@@ -30,83 +30,107 @@ public class CLIOptionsTest {
 
   String[] expectedHelp = {
     "usage: chess",
-    " -a,--ai <COLOR>                   Launch the program in AI mode, with",
-    "                                   artificial player with COLOR 'W', 'B'",
-    "                                   or 'A' (All),(W by default).",
-    "    --ai-depth <DEPTH>             Specify the depth of the AI algorithm",
-    "    --ai-heuristic <HEURISTIC>     Choose the heuristic for the artificial",
-    "                                   player.",
-    "                                   Choose between these heuristic (case",
-    "                                   sensitive)",
-    "                                   - STANDARD : Aggregates multiple",
-    "                                   heuristics to evaluate the board during",
-    "                                   the start and middle game.",
-    "                                   - SHANNON : Basic Heuristic from",
-    "                                   Shannon.",
-    "                                   - ENDGAME : Aggregates multiple",
-    "                                   heuristics to evaluate the board state",
-    "                                   during the endgame phase of the match.",
-    "                                   - BAD_PAWNS : Computes a score",
-    "                                   according to the potential weaknesses",
-    "                                   in the observed pawn structures.",
-    "                                   - BISHOP_ENDGAME : Computes a score",
-    "                                   according to how performant bishops are",
-    "                                   for an endgame position.",
-    "                                   - DEVELOPMENT : Computes and returns a",
-    "                                   score corresponding to the level of",
-    "                                   development for each player.",
-    "                                   - GAME_STATUS : Computes a score based",
-    "                                   on the possible game endings.",
-    "                                   - KING_ACTIVITY : Computes a score",
-    "                                   based on the king's activity (is in",
-    "                                   center and has a lot of possible",
-    "                                   moves).",
-    "                                   - KING_OPPOSITION : Computes a score",
-    "                                   according to the (un)balance of the",
-    "                                   kings position.",
-    "                                   - KING_SAFETY : Assigns a score to a",
-    "                                   player according to the safety of his",
-    "                                   king.",
-    "                                   - MATERIAL : Computes a score based on",
-    "                                   the pieces on the board.",
-    "                                   - MOBILITY : Computes a score based on",
-    "                                   the available moves for each player.",
-    "                                   - PAWN_CHAIN : Computes a score",
-    "                                   according to how strongly pawns are",
-    "                                   connected.",
-    "                                   - PROMOTION : Computes a score",
-    "                                   according to closeness of pawns",
-    "                                   promoting.",
-    "                                   - SPACE_CONTROL : Gives a score based",
-    "                                   on how much control over the entire",
-    "                                   board the players have.",
-    "    --ai-mode <ALGORITHM>          Choose the exploration algorithm for",
-    "                                   the artificial player.",
-    "                                   Available options:",
-    "                                   - MINIMAX : Uses the MiniMax algorithm.",
-    "                                   - ALPHA_BETA : Uses the Alpha-Beta",
-    "                                   Pruning algorithm (default).",
-    "                                   - MCTS : Uses Monte Carlo Tree Search",
-    "                                   for AI move exploration.",
-    "    --ai-simulation <SIMULATION>   Specify the number of simulations for",
-    "                                   the MCTS AI algorithm",
-    "    --ai-time <TIME>               Specify the time of reflexion for AI",
-    "                                   mode in seconds (default 5 seconds)",
-    " -b,--blitz                        Play in blitz mode",
-    " -c,--contest <FILENAME>           AI plays one move in the given file",
-    "    --config <FILENAME>            Sets the configuration file to use",
-    " -d,--debug                        Print debugging information",
-    " -g,--gui                          Displays the game with a  graphical",
-    "                                   interface.",
-    " -h,--help                         Print this message and exit",
-    "    --lang <LANGUAGE>              Choose the language for the app (en",
-    "                                   supported)",
-    "    --load <FILENAME>              The name of the file from which to load",
-    "                                   the history",
-    " -t,--time <TIME>                  Specify time per round for blitz mode",
-    "                                   (default 30min)",
-    " -V,--version                      Print the version information and exit",
-    " -v,--verbose                      Display more information"
+    " -a,--ai <COLOR>                      Launch the program in AI mode, with",
+    "                                      artificial player with COLOR 'W',",
+    "                                      'B' or 'A' (All),(W by default).",
+    "    --ai-depth <DEPTH>                Specify the depth of the AI",
+    "                                      algorithm or the number of",
+    "                                      simulations for the MCTS AI",
+    "                                      algorithm",
+    "    --ai-depth-b <DEPTH>              Specify the depth of the AI",
+    "                                      algorithm for the black player",
+    "    --ai-depth-w <DEPTH>              Specify the depth of the AI",
+    "                                      algorithm for the white player",
+    "    --ai-heuristic <HEURISTIC>        Choose the heuristic for the",
+    "                                      artificial players.",
+    "                                      Choose between these heuristic (case",
+    "                                      sensitive)",
+    "                                      - STANDARD : Aggregates multiple",
+    "                                      heuristics to evaluate the board",
+    "                                      during the start and middle game.",
+    "                                      - SHANNON : Basic Heuristic from",
+    "                                      Shannon.",
+    "                                      - ENDGAME : Aggregates multiple",
+    "                                      heuristics to evaluate the board",
+    "                                      state during the endgame phase of",
+    "                                      the match.",
+    "                                      - BAD_PAWNS : Computes a score",
+    "                                      according to the potential",
+    "                                      weaknesses in the observed pawn",
+    "                                      structures.",
+    "                                      - BISHOP_ENDGAME : Computes a score",
+    "                                      according to how performant bishops",
+    "                                      are for an endgame position.",
+    "                                      - DEVELOPMENT : Computes and returns",
+    "                                      a score corresponding to the level",
+    "                                      of development for each player.",
+    "                                      - GAME_STATUS : Computes a score",
+    "                                      based on the possible game endings.",
+    "                                      - KING_ACTIVITY : Computes a score",
+    "                                      based on the king's activity (is in",
+    "                                      center and has a lot of possible",
+    "                                      moves).",
+    "                                      - KING_OPPOSITION : Computes a score",
+    "                                      according to the (un)balance of the",
+    "                                      kings position.",
+    "                                      - KING_SAFETY : Assigns a score to a",
+    "                                      player according to the safety of",
+    "                                      his king.",
+    "                                      - MATERIAL : Computes a score based",
+    "                                      on the pieces on the board.",
+    "                                      - MOBILITY : Computes a score based",
+    "                                      on the available moves for each",
+    "                                      player.",
+    "                                      - PAWN_CHAIN : Computes a score",
+    "                                      according to how strongly pawns are",
+    "                                      connected.",
+    "                                      - PROMOTION : Computes a score",
+    "                                      according to closeness of pawns",
+    "                                      promoting.",
+    "                                      - SPACE_CONTROL : Gives a score",
+    "                                      based on how much control over the",
+    "                                      entire board the players have.",
+    "    --ai-heuristic-b <HEURISTIC>      Choose the heuristic for the",
+    "                                      artificial black player.",
+    "    --ai-heuristic-w <HEURISTIC>      Choose the heuristic for the",
+    "                                      artificial white player.",
+    "    --ai-mode <ALGORITHM>             Choose the exploration algorithm for",
+    "                                      the artificial players.",
+    "                                      Available options:",
+    "                                      - MINIMAX : Uses the MiniMax",
+    "                                      algorithm.",
+    "                                      - ALPHA_BETA : Uses the Alpha-Beta",
+    "                                      Pruning algorithm (default).",
+    "                                      - MCTS : Uses Monte Carlo Tree",
+    "                                      Search for AI move exploration.",
+    "    --ai-mode-b <ALGORITHM>           Choose the exploration algorithm for",
+    "                                      the artificial black player.",
+    "    --ai-mode-w <ALGORITHM>           Choose the exploration algorithm for",
+    "                                      the artificial white player.",
+    "    --ai-simulation <SIMULATION>      Specify the number of simulations",
+    "                                      for the MCTS AI algorithm",
+    "    --ai-simulation-b <SIMULATIONS>   Specify the number of simulations",
+    "                                      for the Black MCTS AI algorithm",
+    "    --ai-simulation-w <SIMULATIONS>   Specify the number of simulations",
+    "                                      for the White MCTS AI algorithm",
+    "    --ai-time <TIME>                  Specify the time of reflexion for AI",
+    "                                      mode in seconds (default 5 seconds)",
+    " -b,--blitz                           Play in blitz mode",
+    " -c,--contest <FILENAME>              AI plays one move in the given file",
+    "    --config <FILENAME>               Sets the configuration file to use",
+    " -d,--debug                           Print debugging information",
+    " -g,--gui                             Displays the game with a  graphical",
+    "                                      interface.",
+    " -h,--help                            Print this message and exit",
+    "    --lang <LANGUAGE>                 Choose the language for the app (en",
+    "                                      supported)",
+    "    --load <FILENAME>                 The name of the file from which to",
+    "                                      load the history",
+    " -t,--time <TIME>                     Specify time per round for blitz",
+    "                                      mode (default 30min)",
+    " -V,--version                         Print the version information and",
+    "                                      exit",
+    " -v,--verbose                         Display more information"
   };
 
   @BeforeEach
@@ -222,7 +246,7 @@ public class CLIOptionsTest {
   @Test
   public void testAmbiguous() throws Exception {
     String expectedAmbiguous =
-        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-simulation', 'ai-depth', 'ai-heuristic', 'ai-time')";
+        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-mode-w', 'ai-mode-b', 'ai-simulation', 'ai-simulation-w', 'ai-simulation-b', 'ai-depth', 'ai-depth-w', 'ai-depth-b', 'ai-heuristic', 'ai-heuristic-w', 'ai-heuristic-b', 'ai-time')";
 
     // Test ambiguous option (several options starting the same) (error)
     Runtime mockRuntime = mock(Runtime.class);
@@ -342,11 +366,16 @@ public class CLIOptionsTest {
     expectedMap.put(OptionType.AI, "W");
     expectedMap.put(OptionType.CONFIG, "default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
-    expectedMap.put(OptionType.AI_DEPTH, "3");
-    expectedMap.put(OptionType.AI_MODE, "test");
+    expectedMap.put(OptionType.AI_DEPTH_B, "3");
+    expectedMap.put(OptionType.AI_DEPTH_W, "3");
+    expectedMap.put(OptionType.AI_MODE_B, "test");
+    expectedMap.put(OptionType.AI_MODE_W, "test");
     expectedMap.put(OptionType.TIME, "12");
     expectedMap.put(OptionType.GUI, "");
-    expectedMap.put(OptionType.AI_HEURISTIC, "test");
+    expectedMap.put(OptionType.AI_HEURISTIC_B, "test2");
+    expectedMap.put(OptionType.AI_HEURISTIC_W, "test2");
+    expectedMap.put(OptionType.AI_SIMULATION_W, "150");
+    expectedMap.put(OptionType.AI_SIMULATION_B, "200");
 
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> output =
@@ -357,10 +386,13 @@ public class CLIOptionsTest {
               "-g",
               "-t=12",
               "--ai-mode=test",
-              "--ai-heuristic=test",
+              "--ai-heuristic=test2",
               "--ai-depth=3",
               "--ai-time=5",
-              "--contest=myfile.chessrc"
+              "--contest=myfile.chessrc",
+              "--ai-simulation=500",
+              "--ai-simulation-w=150",
+              "--ai-simulation-b=200"
             },
             mockRuntime);
 
@@ -481,34 +513,26 @@ public class CLIOptionsTest {
     activatedOptions =
         CLIOptions.parseOptions(new String[] {"--debug", "--ai-mode=MINIMAX"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-mode requires 'a' argument"));
-    assertTrue(
-        activatedOptions.containsKey(OptionType.AI_MODE)
-            && activatedOptions.get(OptionType.AI_MODE).equals("MINIMAX"));
+    assertFalse(activatedOptions.containsKey(OptionType.AI_MODE));
     outputStream.reset();
     // activate AI heuristic
     activatedOptions =
         CLIOptions.parseOptions(new String[] {"--debug", "--ai-heuristic=MATERIAL"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-heuristic requires 'a' argument"));
-    assertTrue(
-        activatedOptions.containsKey(OptionType.AI_HEURISTIC)
-            && activatedOptions.get(OptionType.AI_HEURISTIC).equals("MATERIAL"));
+    assertFalse(activatedOptions.containsKey(OptionType.AI_HEURISTIC));
     outputStream.reset();
     // activate AI depth
     activatedOptions =
         CLIOptions.parseOptions(new String[] {"--debug", "--ai-depth=5"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-depth requires 'a' argument"));
-    assertTrue(
-        activatedOptions.containsKey(OptionType.AI_DEPTH)
-            && activatedOptions.get(OptionType.AI_DEPTH).equals("5"));
+    assertFalse(activatedOptions.containsKey(OptionType.AI_DEPTH));
 
     outputStream.reset();
     // activate AI time
     activatedOptions =
         CLIOptions.parseOptions(new String[] {"--debug", "--ai-time=5"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-time requires 'a' argument"));
-    assertTrue(
-        activatedOptions.containsKey(OptionType.AI_TIME)
-            && activatedOptions.get(OptionType.AI_TIME).equals("5"));
+    assertFalse(activatedOptions.containsKey(OptionType.AI_TIME));
 
     outputStream.reset();
   }

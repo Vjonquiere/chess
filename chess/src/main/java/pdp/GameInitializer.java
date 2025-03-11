@@ -16,6 +16,7 @@ import pdp.model.Game;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.algorithms.MCTS;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
@@ -79,15 +80,7 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_MODE_W)) {
         try {
           AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_W));
-          if (algorithmType == AlgorithmType.MCTS) {
-            int iterations =
-                options.containsKey(OptionType.AI_DEPTH_W)
-                    ? Integer.parseInt(options.get(OptionType.AI_DEPTH_W))
-                    : 100;
-            solverWhite.setMCTSAlgorithm(iterations);
-          } else {
-            solverWhite.setAlgorithm(algorithmType);
-          }
+          solverWhite.setAlgorithm(algorithmType);
         } catch (Exception e) {
           System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
           System.err.println("Defaulting to ALPHABETA.");
@@ -98,15 +91,7 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_MODE_B)) {
         try {
           AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_B));
-          if (algorithmType == AlgorithmType.MCTS) {
-            int iterations =
-                options.containsKey(OptionType.AI_DEPTH_B)
-                    ? Integer.parseInt(options.get(OptionType.AI_DEPTH_B))
-                    : 100;
-            solverBlack.setMCTSAlgorithm(iterations);
-          } else {
-            solverBlack.setAlgorithm(algorithmType);
-          }
+          solverBlack.setAlgorithm(algorithmType);
         } catch (Exception e) {
           System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE_B));
           System.err.println("Defaulting to ALPHABETA.");
@@ -138,7 +123,8 @@ public abstract class GameInitializer {
         }
       }
 
-      if (options.containsKey(OptionType.AI_DEPTH_W)) {
+      if (options.containsKey(OptionType.AI_DEPTH_W)
+          && !(solverWhite.getAlgorithm() instanceof MCTS)) {
         try {
           int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_W));
           solverWhite.setDepth(depth);
@@ -148,13 +134,39 @@ public abstract class GameInitializer {
         }
       }
 
-      if (options.containsKey(OptionType.AI_DEPTH_B)) {
+      if (options.containsKey(OptionType.AI_DEPTH_B)
+          && !(solverBlack.getAlgorithm() instanceof MCTS)) {
         try {
           int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_B));
           solverBlack.setDepth(depth);
         } catch (Exception e) {
           System.err.println("Not an integer for the depth of AI");
           System.err.println("Defaulting to depth " + solverBlack.getDepth());
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_SIMULATION_W)
+          && solverWhite.getAlgorithm() instanceof MCTS) {
+        try {
+          int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
+          solverWhite.setMCTSAlgorithm(simulations);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the simulations of AI");
+          System.err.println(
+              "Defaulting to depth " + ((MCTS) solverWhite.getAlgorithm()).getSimulationLimit());
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_SIMULATION_B)
+          && solverBlack.getAlgorithm() instanceof MCTS) {
+        try {
+          int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
+          solverBlack.setMCTSAlgorithm(simulations);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the simulations of AI");
+          System.err.println(
+              "Defaulting to simulations "
+                  + ((MCTS) solverBlack.getAlgorithm()).getSimulationLimit());
         }
       }
 

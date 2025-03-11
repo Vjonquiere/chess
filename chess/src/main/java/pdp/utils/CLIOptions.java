@@ -289,14 +289,9 @@ public class CLIOptions {
 
       activatedOptions.remove(OptionType.AI_MODE);
 
-      /*
       if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
-        if ("mcts".equalsIgnoreCase(activatedOptions.get(OptionType.AI_MODE))) {
-          activatedOptions.put(OptionType.AI_DEPTH, "100");
-        } else {
-          activatedOptions.put(OptionType.AI_DEPTH, "4");
-        }
-      }*/
+        activatedOptions.put(OptionType.AI_DEPTH, "4");
+      }
 
       if (!activatedOptions.containsKey(OptionType.AI_DEPTH_W)) {
         activatedOptions.put(OptionType.AI_DEPTH_W, activatedOptions.get(OptionType.AI_DEPTH));
@@ -306,6 +301,21 @@ public class CLIOptions {
       }
 
       activatedOptions.remove(OptionType.AI_DEPTH);
+
+      if (!activatedOptions.containsKey(OptionType.AI_SIMULATION)) {
+        activatedOptions.put(OptionType.AI_SIMULATION, "100");
+      }
+
+      if (!activatedOptions.containsKey(OptionType.AI_SIMULATION_W)) {
+        activatedOptions.put(
+            OptionType.AI_SIMULATION_W, activatedOptions.get(OptionType.AI_SIMULATION));
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_SIMULATION_B)) {
+        activatedOptions.put(
+            OptionType.AI_SIMULATION_B, activatedOptions.get(OptionType.AI_SIMULATION));
+      }
+
+      activatedOptions.remove(OptionType.AI_SIMULATION);
 
       if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {
         activatedOptions.put(OptionType.AI_HEURISTIC, "STANDARD");

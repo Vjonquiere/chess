@@ -297,6 +297,48 @@ public enum OptionType {
           .build();
     }
   },
+  AI_SIMULATION_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-simulation-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("SIMULATIONS")
+          .desc("Specify the number of simulations for the White MCTS AI algorithm")
+          .build();
+    }
+  },
+  AI_SIMULATION_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-simulation-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("SIMULATIONS")
+          .desc("Specify the number of simulations for the Black MCTS AI algorithm")
+          .build();
+    }
+  },
   AI_DEPTH {
     @Override
     public String getShort() {
