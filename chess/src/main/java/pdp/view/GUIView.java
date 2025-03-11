@@ -15,6 +15,7 @@ import pdp.view.GUI.ChessMenu;
 import pdp.view.GUI.ControlPanel;
 import pdp.view.GUI.GUILauncher;
 import pdp.view.GUI.board.Board;
+import pdp.view.GUI.themes.ColorTheme;
 
 public class GUIView implements View {
   private static final Logger LOGGER = Logger.getLogger(GUIView.class.getName());
@@ -22,6 +23,7 @@ public class GUIView implements View {
   private Stage stage;
   private Board board;
   private ControlPanel controlPanel;
+  private ColorTheme theme = ColorTheme.BLUE;
   boolean init = false;
 
   static {
@@ -30,6 +32,10 @@ public class GUIView implements View {
 
   public GUIView() {
     root = new BorderPane();
+  }
+
+  public ColorTheme getTheme() {
+    return theme;
   }
 
   /**
