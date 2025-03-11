@@ -23,7 +23,7 @@ public class GUIView implements View {
   private Stage stage;
   private Board board;
   private ControlPanel controlPanel;
-  private ColorTheme theme = ColorTheme.BLUE;
+  public static ColorTheme theme = ColorTheme.SIMPLE;
   boolean init = false;
 
   static {
@@ -32,10 +32,6 @@ public class GUIView implements View {
 
   public GUIView() {
     root = new BorderPane();
-  }
-
-  public ColorTheme getTheme() {
-    return theme;
   }
 
   /**

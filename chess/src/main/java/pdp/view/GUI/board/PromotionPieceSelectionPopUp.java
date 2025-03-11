@@ -17,6 +17,7 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
+import pdp.view.GUIView;
 
 public class PromotionPieceSelectionPopUp extends VBox {
 
@@ -64,7 +65,11 @@ public class PromotionPieceSelectionPopUp extends VBox {
     HBox layout = new HBox(15, queenButton, knightButton, bishopButton, rookButton);
     layout.setAlignment(Pos.CENTER);
     layout.setStyle(
-        "-fx-padding: 15; -fx-border-color: #6D6FD9; -fx-border-width: 5; -fx-background-radius: 10;-fx-background-color: transparent;");
+        "-fx-padding: 15; -fx-border-color: "
+            + GUIView.theme.getPrimary()
+            + "; -fx-border-width: 5; -fx-background-radius: 10;-fx-background-color: "
+            + GUIView.theme.getBackground()
+            + ";");
     Scene scene = new Scene(layout, 500, 150);
     popupStage.setScene(scene);
     popupStage.setTitle("Which piece would you want to promote to?");
@@ -76,15 +81,27 @@ public class PromotionPieceSelectionPopUp extends VBox {
     VBox result = new VBox(imageView, new Label(text));
     result.setAlignment(Pos.CENTER);
     result.setStyle(
-        "-fx-padding: 15; -fx-background-color: #DAE0F2; -fx-border-color: #6D6FD9; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;");
+        "-fx-padding: 15; -fx-background-color: "
+            + GUIView.theme.getSecondary()
+            + "; -fx-border-color: "
+            + GUIView.theme.getPrimary()
+            + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;");
     result.setOnMouseEntered(
         e ->
             result.setStyle(
-                "-fx-padding: 15; -fx-background-color: #6D6FD9; -fx-border-color: #DAE0F2; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
+                "-fx-padding: 15; -fx-background-color: "
+                    + GUIView.theme.getPrimary()
+                    + "; -fx-border-color: "
+                    + GUIView.theme.getSecondary()
+                    + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
     result.setOnMouseExited(
         e ->
             result.setStyle(
-                "-fx-padding: 15; -fx-background-color: #DAE0F2; -fx-border-color: #6D6FD9; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
+                "-fx-padding: 15; -fx-background-color: "
+                    + GUIView.theme.getSecondary()
+                    + "; -fx-border-color: "
+                    + GUIView.theme.getPrimary()
+                    + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
     return result;
   }
 }

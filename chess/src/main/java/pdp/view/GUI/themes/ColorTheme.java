@@ -2,7 +2,8 @@ package pdp.view.GUI.themes;
 
 public enum ColorTheme {
   BLUE("#489FB5", "#82C0CC", "#FFA62B", "#EDE7E3"),
-  PURPLE("#5E548E", "#BE95C4", "#9F86C0", "#F8E6F0");
+  PURPLE("#5E548E", "#BE95C4", "#9F86C0", "#F8E6F0"),
+  SIMPLE("#6D6FD9", "#DAE0F2", "#F9CFF2", "#EDE7E3");
 
   private final String primary;
   private final String secondary;
