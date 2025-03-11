@@ -4,9 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
@@ -23,6 +27,23 @@ public class GameFileParserTest {
   private BoardFileParser parser = new BoardFileParser();
   private ClassLoader classLoader = getClass().getClassLoader();
   private static final Logger LOGGER = Logger.getLogger(GameFileParserTest.class.getName());
+
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
 
   @Test
   public void parseDefaultGameFile() {

@@ -23,7 +23,7 @@ public class Minimax implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return minimax(game, depth, player, false);
+    return minimax(game, depth, player, !player);
   }
 
   /**

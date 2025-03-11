@@ -2,7 +2,10 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -15,9 +18,21 @@ import tests.helpers.MockBoard;
 
 public class SolverTest {
   private Solver solver;
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
 
   @BeforeEach
   void setUp() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
     solver = new Solver();
   }
 
@@ -36,10 +51,10 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-7, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(7, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
   }
 
   @Test

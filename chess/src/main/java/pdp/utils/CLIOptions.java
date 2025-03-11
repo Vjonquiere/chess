@@ -268,7 +268,8 @@ public class CLIOptions {
             OptionType.AI_HEURISTIC_W,
             OptionType.AI_HEURISTIC_B,
             OptionType.AI_MODE_W,
-            OptionType.AI_MODE_B
+            OptionType.AI_MODE_B,
+            OptionType.AI_SIMULATION
           }) {
         if (activatedOptions.containsKey(aiOption)) {
           System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
@@ -288,13 +289,14 @@ public class CLIOptions {
 
       activatedOptions.remove(OptionType.AI_MODE);
 
+      /*
       if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
         if ("mcts".equalsIgnoreCase(activatedOptions.get(OptionType.AI_MODE))) {
           activatedOptions.put(OptionType.AI_DEPTH, "100");
         } else {
           activatedOptions.put(OptionType.AI_DEPTH, "4");
         }
-      }
+      }*/
 
       if (!activatedOptions.containsKey(OptionType.AI_DEPTH_W)) {
         activatedOptions.put(OptionType.AI_DEPTH_W, activatedOptions.get(OptionType.AI_DEPTH));
@@ -337,7 +339,7 @@ public class CLIOptions {
    */
   private static boolean isFeatureImplemented(OptionType option) {
     return switch (option) {
-      case GUI, CONTEST -> false;
+      case CONTEST -> false;
       default -> true;
     };
   }

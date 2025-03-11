@@ -2,6 +2,8 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,14 +22,23 @@ import tests.helpers.MockBoard;
 public class ZobristHashingTest {
   Game game;
 
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
   @BeforeEach
   public void setUp() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
   @AfterEach
   public void tearDown() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
   }
 
   @Test

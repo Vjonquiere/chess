@@ -204,7 +204,7 @@ public enum OptionType {
           .optionalArg(true)
           .argName("COLOR")
           .desc(
-              "Launch the program in AI mode, with artificial player with COLOR 'B' or 'A' (All),(W by default).")
+              "Launch the program in AI mode, with artificial player with COLOR 'W', 'B' or 'A' (All),(W by default).")
           .build();
     }
   },
@@ -228,8 +228,8 @@ public enum OptionType {
           .desc(
               "Choose the exploration algorithm for the artificial players.\n"
                   + "Available options:\n"
-                  + "- MINIMAX : Uses the MiniMax algorithm (default).\n"
-                  + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm.\n"
+                  + "- MINIMAX : Uses the MiniMax algorithm.\n"
+                  + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm (default).\n"
                   + "- MCTS : Uses Monte Carlo Tree Search for AI move exploration.")
           .build();
     }
@@ -273,6 +273,27 @@ public enum OptionType {
           .hasArg(true)
           .argName("ALGORITHM")
           .desc("Choose the exploration algorithm for the artificial black player.\n")
+          .build();
+    }
+  },
+  AI_SIMULATION {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-simulation";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("SIMULATION")
+          .desc("Specify the number of simulations for the MCTS AI algorithm")
           .build();
     }
   },
