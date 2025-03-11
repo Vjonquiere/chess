@@ -234,6 +234,27 @@ public enum OptionType {
           .build();
     }
   },
+  AI_SIMULATION {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-simulation";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("SIMULATION")
+          .desc("Specify the number of simulations for the MCTS AI algorithm")
+          .build();
+    }
+  },
   AI_DEPTH {
     @Override
     public String getShort() {
@@ -251,8 +272,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("DEPTH")
-          .desc(
-              "Specify the depth of the AI algorithm or the number of simulations for the MCTS AI algorithm")
+          .desc("Specify the depth of the AI algorithm")
           .build();
     }
   },
