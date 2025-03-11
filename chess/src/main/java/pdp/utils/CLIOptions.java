@@ -260,7 +260,11 @@ public class CLIOptions {
     if (!activatedOptions.containsKey(OptionType.AI)) {
       for (OptionType aiOption :
           new OptionType[] {
-            OptionType.AI_MODE, OptionType.AI_DEPTH, OptionType.AI_HEURISTIC, OptionType.AI_TIME
+            OptionType.AI_MODE,
+            OptionType.AI_SIMULATION,
+            OptionType.AI_DEPTH,
+            OptionType.AI_HEURISTIC,
+            OptionType.AI_TIME,
           }) {
         if (cmd.hasOption(aiOption.getLong())) {
           System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
@@ -270,11 +274,24 @@ public class CLIOptions {
       if (!activatedOptions.containsKey(OptionType.AI_MODE)) {
         activatedOptions.put(OptionType.AI_MODE, "ALPHA_BETA");
       }
+      /*
       if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
         if ("mcts".equalsIgnoreCase(activatedOptions.get(OptionType.AI_MODE))) {
           activatedOptions.put(OptionType.AI_DEPTH, "100");
         } else {
           activatedOptions.put(OptionType.AI_DEPTH, "4");
+        }
+      }*/
+      String aiMode = activatedOptions.get(OptionType.AI_MODE).toLowerCase();
+
+      if ("alpha_beta".equals(aiMode) || "minimax".equals(aiMode)) {
+        if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
+          activatedOptions.put(OptionType.AI_DEPTH, "4");
+        }
+      }
+      if ("mcts".equals(aiMode)) {
+        if (!activatedOptions.containsKey(OptionType.AI_SIMULATION)) {
+          activatedOptions.put(OptionType.AI_SIMULATION, "100");
         }
       }
       if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {

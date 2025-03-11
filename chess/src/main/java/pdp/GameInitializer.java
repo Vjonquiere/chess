@@ -77,8 +77,8 @@ public abstract class GameInitializer {
           AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE));
           if (algorithmType == AlgorithmType.MCTS) {
             int iterations =
-                options.containsKey(OptionType.AI_DEPTH)
-                    ? Integer.parseInt(options.get(OptionType.AI_DEPTH))
+                options.containsKey(OptionType.AI_SIMULATION)
+                    ? Integer.parseInt(options.get(OptionType.AI_SIMULATION))
                     : 100;
             solver.setMCTSAlgorithm(iterations);
           } else {
