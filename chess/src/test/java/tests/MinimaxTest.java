@@ -21,7 +21,7 @@ public class MinimaxTest {
     solver = new Solver();
     solver.setAlgorithm(AlgorithmType.MINIMAX);
     solver.setHeuristic(HeuristicType.STANDARD);
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
   @Test

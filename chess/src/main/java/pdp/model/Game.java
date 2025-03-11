@@ -43,7 +43,8 @@ public class Game extends Subject {
   private static Game instance;
   private static ZobristHashing zobristHashing = new ZobristHashing();
   private GameState gameState;
-  private Solver solver;
+  private Solver solverWhite;
+  private Solver solverBlack;
   private boolean isWhiteAI;
   private boolean isBlackAI;
   private boolean explorationAI;
@@ -61,7 +62,8 @@ public class Game extends Subject {
   private Game(
       boolean isWhiteAI,
       boolean isBlackAI,
-      Solver solver,
+      Solver solverWhite,
+      Solver solverBlack,
       GameState gameState,
       History history,
       HashMap<OptionType, String> options) {
@@ -72,7 +74,8 @@ public class Game extends Subject {
     this.isWhiteAI = isWhiteAI;
     this.isBlackAI = isBlackAI;
     this.explorationAI = false;
-    this.solver = solver;
+    this.solverWhite = solverWhite;
+    this.solverBlack = solverBlack;
     this.history = history;
     this.history.addMove(
         new HistoryState(
@@ -153,12 +156,21 @@ public class Game extends Subject {
   }
 
   /**
-   * Gets the solver used by the AI.
+   * Gets the solver used by the White AI.
    *
-   * @return the {@link Solver} instance used for AI decision-making.
+   * @return the {@link Solver} instance used for White AI decision-making.
    */
-  public Solver getSolver() {
-    return solver;
+  public Solver getWhiteSolver() {
+    return solverWhite;
+  }
+
+  /**
+   * Gets the solver used by the Black AI.
+   *
+   * @return the {@link Solver} instance used for Black AI decision-making.
+   */
+  public Solver getBlackSolver() {
+    return solverBlack;
   }
 
   /**
@@ -186,7 +198,7 @@ public class Game extends Subject {
   public void startAI() {
     if (isWhiteAI && this.getGameState().isWhiteTurn()) {
       this.notifyObservers(EventType.AI_PLAYING);
-      solver.playAIMove(this);
+      solverWhite.playAIMove(this);
     }
   }
 
@@ -280,18 +292,28 @@ public class Game extends Subject {
    *
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
-   * @param solver The solver to be used for AI moves.
+   * @param solverWhite The solver to use for White AI moves.
+   * @param solverBlack The solver to use for Black AI moves.
    * @param options
    * @return The newly created instance of Game.
    */
   public static Game initialize(
       boolean isWhiteAI,
       boolean isBlackAI,
-      Solver solver,
+      Solver solverWhite,
+      Solver solverBlack,
       Timer timer,
       HashMap<OptionType, String> options) {
     DEBUG(LOGGER, "Initializing Game...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
+    instance =
+        new Game(
+            isWhiteAI,
+            isBlackAI,
+            solverWhite,
+            solverBlack,
+            new GameState(timer),
+            new History(),
+            options);
     BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
@@ -307,7 +329,8 @@ public class Game extends Subject {
    *
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
-   * @param solver The solver to be used for AI moves.
+   * @param solverWhite The solver to use for White AI moves.
+   * @param solverBlack The solver to use for Black AI moves.
    * @param board The board state to use
    * @param options
    * @return The newly created instance of Game.
@@ -315,13 +338,21 @@ public class Game extends Subject {
   public static Game initialize(
       boolean isWhiteAI,
       boolean isBlackAI,
-      Solver solver,
+      Solver solverWhite,
+      Solver solverBlack,
       Timer timer,
       FileBoard board,
       HashMap<OptionType, String> options) {
     DEBUG(LOGGER, "Initializing Game from given board...");
     instance =
-        new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History(), options);
+        new Game(
+            isWhiteAI,
+            isBlackAI,
+            solverWhite,
+            solverBlack,
+            new GameState(board, timer),
+            new History(),
+            options);
     BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
@@ -552,11 +583,19 @@ public class Game extends Subject {
     }
 
     DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
-    if (isEndGamePhase() && this.solver != null) {
-      // Set endgame heuristic only once and only if endgame phase
-      if ((!(this.solver.getAlgorithm() instanceof MCTS))
-          && !(this.solver.getHeuristic() instanceof EndGameHeuristic)) {
-        this.solver.setHeuristic(HeuristicType.ENDGAME);
+    if (isEndGamePhase()) {
+      if (this.solverWhite != null) {
+        // Set endgame heuristic only once and only if endgame phase
+        if ((!(this.solverWhite.getAlgorithm() instanceof MCTS))
+            && !(this.solverWhite.getHeuristic() instanceof EndGameHeuristic)) {
+          this.solverWhite.setHeuristic(HeuristicType.ENDGAME);
+        }
+      }
+      if (this.solverBlack != null) {
+        if ((!(this.solverBlack.getAlgorithm() instanceof MCTS))
+            && !(this.solverBlack.getHeuristic() instanceof EndGameHeuristic)) {
+          this.solverBlack.setHeuristic(HeuristicType.ENDGAME);
+        }
       }
     }
     DEBUG(LOGGER, "Checking game status...");
@@ -591,7 +630,11 @@ public class Game extends Subject {
       } else {
         this.notifyObservers(EventType.AI_PLAYING);
       }
-      solver.playAIMove(this);
+      if (this.gameState.getBoard().isWhite) {
+        solverWhite.playAIMove(this);
+      } else {
+        solverBlack.playAIMove(this);
+      }
     }
   }
 
@@ -685,7 +728,8 @@ public class Game extends Subject {
    * @param moves The moves to play in sequence.
    * @param isWhiteAI Whether the white player is an AI.
    * @param isBlackAI Whether the black player is an AI.
-   * @param solver The solver to use for AI moves.
+   * @param solverWhite The solver to use for White AI moves.
+   * @param solverBlack The solver to use for Black AI moves.
    * @param timer The timer to use for the game.
    * @param options
    * @return A new Game object with the given moves played.
@@ -695,11 +739,20 @@ public class Game extends Subject {
       List<Move> moves,
       boolean isWhiteAI,
       boolean isBlackAI,
-      Solver solver,
+      Solver solverWhite,
+      Solver solverBlack,
       Timer timer,
       HashMap<OptionType, String> options)
       throws IllegalMoveException {
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
+    instance =
+        new Game(
+            isWhiteAI,
+            isBlackAI,
+            solverWhite,
+            solverBlack,
+            new GameState(timer),
+            new History(),
+            options);
     BagOfCommands.getInstance().setModel(instance);
 
     for (Move move : moves) {

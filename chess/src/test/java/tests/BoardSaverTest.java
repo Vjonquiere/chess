@@ -18,7 +18,7 @@ import pdp.utils.Position;
 public class BoardSaverTest {
   @Test
   public void testDefaultBoardSave() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     String boardString =
         BoardSaver.saveBoard(
             new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));
@@ -40,7 +40,7 @@ public class BoardSaverTest {
 
   @Test
   public void testBoardSaveAfterOneMovePlayed() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -72,7 +72,7 @@ public class BoardSaverTest {
     ClassLoader classLoader = getClass().getClassLoader();
     URL filePath = classLoader.getResource("gameBoards/gameExample1WithHistory");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
-    Game game = Game.initialize(false, false, null, null, board, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, board, new HashMap<>());
     String boardString =
         BoardSaver.saveBoard(
             new FileBoard(game.getBoard().board, game.getGameState().isWhiteTurn(), null));

@@ -20,7 +20,7 @@ public class CompositeHeuristicTest {
   @BeforeEach
   public void setup() {
     solver = new Solver();
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
   @Test

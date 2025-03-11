@@ -17,9 +17,11 @@ public class RestoreMoveCommand implements Command {
   public Optional<Exception> execute(Game model, GameController controller) {
     try {
       model.nextState();
-      if (model.isBlackAI() && !model.getGameState().isWhiteTurn()
-          || model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
-        model.getSolver().playAIMove(model);
+      if (model.isBlackAI() && !model.getGameState().isWhiteTurn()) {
+        model.getBlackSolver().playAIMove(model);
+      }
+      if (model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
+        model.getWhiteSolver().playAIMove(model);
       }
       return Optional.empty();
     } catch (Exception e) {
