@@ -9,14 +9,14 @@ import pdp.model.board.Board;
  * extend this class.
  */
 public abstract class AbstractHeuristic implements Heuristic {
-  List<Heuristic> heuristics = new ArrayList<>();
+  List<WeightedHeuristic> heuristics = new ArrayList<>();
 
   /**
    * Adds a heuristic to the composite heuristic.
    *
    * @param heuristic Heuristic to be added
    */
-  public void addHeuristic(Heuristic heuristic) {
+  public void addHeuristic(WeightedHeuristic heuristic) {
     heuristics.add(heuristic);
   }
 
@@ -25,11 +25,19 @@ public abstract class AbstractHeuristic implements Heuristic {
    *
    * @param heuristic Heuristic to be removed
    */
-  public void removeHeuristic(Heuristic heuristic) {
+  public void removeHeuristic(WeightedHeuristic heuristic) {
     heuristics.remove(heuristic);
   }
 
   public List<Heuristic> getHeuristics() {
+    List<Heuristic> h = new ArrayList<>();
+    for (WeightedHeuristic heuristic : heuristics) {
+      h.add(heuristic.heuristic());
+    }
+    return h;
+  }
+
+  public List<WeightedHeuristic> getWeightedHeuristics() {
     return heuristics;
   }
 
@@ -43,8 +51,8 @@ public abstract class AbstractHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    for (Heuristic heuristic : heuristics) {
-      score += heuristic.evaluate(board, isWhite);
+    for (WeightedHeuristic heuristic : heuristics) {
+      score += heuristic.heuristic().evaluate(board, isWhite) * heuristic.weight();
     }
     return score;
   }

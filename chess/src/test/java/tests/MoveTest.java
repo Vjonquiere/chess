@@ -2,7 +2,11 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPositionException;
 import pdp.model.Game;
@@ -13,6 +17,23 @@ import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class MoveTest {
+
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
 
   @Test
   public void testEquals_sameMove() {
@@ -137,7 +158,7 @@ public class MoveTest {
 
   @Test
   public void testGetPiece() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -150,7 +171,7 @@ public class MoveTest {
 
   @Test
   public void testIsTake() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -166,7 +187,7 @@ public class MoveTest {
 
   @Test
   public void testIsCheck() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -182,7 +203,7 @@ public class MoveTest {
 
   @Test
   public void testSetCheck() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -200,7 +221,7 @@ public class MoveTest {
 
   @Test
   public void testIsCheckMate() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);

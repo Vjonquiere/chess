@@ -23,11 +23,10 @@ public class KingSafetyHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += kingVulnerabilityScore(board, isWhite) - kingVulnerabilityScore(board, !isWhite);
-    score += kingProtectionScore(board, isWhite) - kingProtectionScore(board, !isWhite);
-    score +=
-        kingSafetyToChecksFromEnemy(board, isWhite) - kingSafetyToChecksFromEnemy(board, !isWhite);
-    return score;
+    score += kingVulnerabilityScore(board, true) - kingVulnerabilityScore(board, false);
+    score += kingProtectionScore(board, true) - kingProtectionScore(board, false);
+    score += kingSafetyToChecksFromEnemy(board, true) - kingSafetyToChecksFromEnemy(board, false);
+    return isWhite ? score : -score;
   }
 
   /**

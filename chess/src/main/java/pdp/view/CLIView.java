@@ -122,9 +122,25 @@ public class CLIView implements View {
           System.out.println(TextGetter.getText("moveUndone"));
           System.out.println(Game.getInstance().getGameRepresentation());
           break;
+        case WHITE_UNDO_PROPOSAL:
+          System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("white")));
+          System.out.println(TextGetter.getText("undoInstructions", TextGetter.getText("black")));
+          break;
+        case BLACK_UNDO_PROPOSAL:
+          System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("black")));
+          System.out.println(TextGetter.getText("undoInstructions", TextGetter.getText("white")));
+          break;
         case MOVE_REDO:
           System.out.println(TextGetter.getText("moveRedone"));
           System.out.println(Game.getInstance().getGameRepresentation());
+          break;
+        case WHITE_REDO_PROPOSAL:
+          System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("white")));
+          System.out.println(TextGetter.getText("redoInstructions", TextGetter.getText("black")));
+          break;
+        case BLACK_REDO_PROPOSAL:
+          System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("black")));
+          System.out.println(TextGetter.getText("redoInstructions", TextGetter.getText("white")));
           break;
         case OUT_OF_TIME_WHITE:
           System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));

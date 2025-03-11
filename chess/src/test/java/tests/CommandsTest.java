@@ -16,7 +16,7 @@ import pdp.model.Game;
 import pdp.model.GameState;
 import pdp.model.board.Move;
 
-class CommandTest {
+public class CommandsTest {
   private Game model;
   private GameController controller;
   private GameState gameState;
