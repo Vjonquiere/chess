@@ -59,7 +59,7 @@ public class GameTest {
   public void playMoveTest() {
 
     // Correctly play move
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     BitboardRepresentation bitboards = new BitboardRepresentation();
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     bitboards.movePiece(new Position(0, 1), new Position(0, 2));
@@ -77,7 +77,7 @@ public class GameTest {
 
   @Test
   public void playEnPassantTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(new Move(new Position(0, 1), new Position(0, 3)));
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
     game.playMove(new Move(new Position(0, 3), new Position(0, 4)));
@@ -92,7 +92,7 @@ public class GameTest {
 
   @Test
   public void playEnPassantIsCheckTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(new Move(new Position(4, 1), new Position(4, 2)));
     game.playMove(new Move(new Position(7, 6), new Position(7, 4)));
     game.playMove(new Move(new Position(4, 2), new Position(4, 3)));
@@ -111,7 +111,7 @@ public class GameTest {
 
   @Test
   public void playDoublePushTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(new Move(new Position(1, 1), new Position(1, 3)));
     BitboardRepresentation bitboards = new BitboardRepresentation();
     bitboards.movePiece(new Position(1, 1), new Position(1, 3));
@@ -120,7 +120,7 @@ public class GameTest {
 
   @Test
   public void playDoublePushIsCheckTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     game.playMove(new Move(new Position(3, 6), new Position(3, 4)));
     game.playMove(new Move(new Position(0, 2), new Position(0, 3)));
@@ -138,7 +138,7 @@ public class GameTest {
 
   @Test
   public void wrongTurnForWhitePlayerTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     assertThrows(
         IllegalMoveException.class,
@@ -149,7 +149,7 @@ public class GameTest {
 
   @Test
   public void wrongTurnForBlackPlayerTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
     assertThrows(
@@ -161,7 +161,7 @@ public class GameTest {
 
   @Test
   public void pinnedPieceTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     game.playMove(new Move(new Position(2, 6), new Position(2, 4)));
     game.playMove(new Move(new Position(0, 2), new Position(0, 3)));
@@ -175,7 +175,7 @@ public class GameTest {
 
   @Test
   public void threefoldRepetitionTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(Move.fromString("b1-c3"));
     game.playMove(Move.fromString("g8-f6"));
     game.playMove(Move.fromString("c3-b1"));
@@ -194,7 +194,7 @@ public class GameTest {
 
   @Test
   public void noThreefoldRepetitionOnIllegalClassicalTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     try {
       game.playMove(Move.fromString("h1-h3"));
     } catch (IllegalMoveException e) {
@@ -211,7 +211,7 @@ public class GameTest {
 
   @Test
   public void noThreefoldRepetitionOnIllegalSpecialTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     try {
       game.playMove(Move.fromString("o-o-o"));
     } catch (IllegalMoveException e) {
@@ -228,14 +228,14 @@ public class GameTest {
 
   @Test
   public void testIsEndGamePhaseShouldBeFalse() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     assertFalse(game.isEndGamePhase());
   }
 
   @Test
   public void testIsEndGamePhaseShouldBeTrue() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // Move pawns
     game.playMove(Move.fromString("a2-a4"));
@@ -301,7 +301,7 @@ public class GameTest {
 
   @Test
   public void testCheckGameStatusMateFromBlack() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     game.playMove(Move.fromString("f2-f4"));
     game.playMove(Move.fromString("e7-e6"));
@@ -313,7 +313,7 @@ public class GameTest {
 
   @Test
   public void testCheckGameStatusCheckDrawByAgreement() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     game.playMove(Move.fromString("f2-f4"));
     game.playMove(Move.fromString("e7-e6"));
@@ -328,7 +328,7 @@ public class GameTest {
 
   @Test
   public void testCheckGameStatusHasWhiteResigned() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     game.playMove(Move.fromString("f2-f4"));
     game.playMove(Move.fromString("e7-e6"));
@@ -342,7 +342,7 @@ public class GameTest {
 
   @Test
   public void testCheckGameStatusHasBlackResigned() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     game.playMove(Move.fromString("f2-f4"));
     game.playMove(Move.fromString("e7-e6"));
@@ -356,7 +356,7 @@ public class GameTest {
 
   @Test
   public void testCheckGameStatusDrawByInsufficientMaterial() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     BoardRepresentation board = game.getBoard().getBoardRep();
 
@@ -379,7 +379,7 @@ public class GameTest {
 
   @Test
   public void testCheckGameStatusStaleMate() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     BoardRepresentation board = game.getBoard().getBoardRep();
 
@@ -424,7 +424,7 @@ public class GameTest {
 
   @Test
   public void testCheckGameStatusFiftyMoveRule() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     BoardRepresentation board = game.getBoard().getBoardRep();
 
@@ -568,7 +568,7 @@ public class GameTest {
 
   @Test
   public void testSaveGame() throws IOException {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Path tempFile = Files.createTempFile("game-save-test", ".txt");
     String tempFilePath = tempFile.toAbsolutePath().toString();
@@ -594,7 +594,7 @@ public class GameTest {
 
   @Test
   public void testSaveGameWithHistory() throws IOException, IllegalMoveException {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
 
@@ -623,15 +623,15 @@ public class GameTest {
   @Test
   public void startAITest() {
     Solver s = new Solver();
-    Game game = Game.initialize(true, false, s, null, new HashMap<>());
+    Game game = Game.initialize(true, false, s, s, null, new HashMap<>());
     game.startAI();
     // AI white and white's turn
     assertNotEquals(
         game.getGameState().isWhiteTurn(),
-        Game.initialize(true, false, s, null, new HashMap<>()).getGameState().isWhiteTurn());
+        Game.initialize(true, false, s, s, null, new HashMap<>()).getGameState().isWhiteTurn());
     assertNotEquals(
         game.getGameState().getBoard().getBoardRep(),
-        Game.initialize(true, false, s, null, new HashMap<>())
+        Game.initialize(true, false, s, s, null, new HashMap<>())
             .getGameState()
             .getBoard()
             .getBoardRep());
@@ -640,15 +640,15 @@ public class GameTest {
     game.startAI();
     assertEquals(game.getGameState().getBoard().getBoardRep(), bitboard);
 
-    game = Game.initialize(false, true, s, null, new HashMap<>());
+    game = Game.initialize(false, true, s, s, null, new HashMap<>());
     game.startAI();
     // AI black and white's turn
     assertEquals(
         game.getGameState().isWhiteTurn(),
-        Game.initialize(false, true, s, null, new HashMap<>()).getGameState().isWhiteTurn());
+        Game.initialize(false, true, s, s, null, new HashMap<>()).getGameState().isWhiteTurn());
     assertEquals(
         game.getGameState().getBoard().getBoardRep(),
-        Game.initialize(false, true, s, null, new HashMap<>())
+        Game.initialize(false, true, s, s, null, new HashMap<>())
             .getGameState()
             .getBoard()
             .getBoardRep());
@@ -659,7 +659,7 @@ public class GameTest {
     Solver s = new Solver();
     s.setDepth(3);
     s.setAlgorithm(AlgorithmType.ALPHA_BETA);
-    Game game = Game.initialize(true, true, s, null, new HashMap<>());
+    Game game = Game.initialize(true, true, s, s, null, new HashMap<>());
 
     game.startAI();
 
@@ -673,14 +673,14 @@ public class GameTest {
     URL filePath = classLoader.getResource("gameBoards/fenVersions/endGame");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Solver s = new Solver();
-    Game game = Game.initialize(true, false, s, null, board, new HashMap<>());
+    Game game = Game.initialize(true, false, s, s, null, board, new HashMap<>());
     game.startAI();
     assertTrue(s.getHeuristic() instanceof EndGameHeuristic);
   }
 
   @Test
   public void testOutOfTimeCallbackWhite() throws Exception {
-    Game game = spy(Game.initialize(false, false, null, new Timer(5000), new HashMap<>()));
+    Game game = spy(Game.initialize(false, false, null, null, new Timer(5000), new HashMap<>()));
 
     GameState mockGameState = mock(GameState.class);
 
@@ -698,7 +698,7 @@ public class GameTest {
 
   @Test
   public void testOutOfTimeCallbackBlack() throws Exception {
-    Game game = spy(Game.initialize(false, false, null, new Timer(5000), new HashMap<>()));
+    Game game = spy(Game.initialize(false, false, null, null, new Timer(5000), new HashMap<>()));
 
     GameState mockGameState = mock(GameState.class);
 
@@ -720,7 +720,7 @@ public class GameTest {
 
     Timer timer = new Timer(100);
 
-    Game game = spy(Game.initialize(false, false, null, timer, new HashMap<>()));
+    Game game = spy(Game.initialize(false, false, null, null, timer, new HashMap<>()));
 
     timer.setCallback(callback);
 
@@ -737,7 +737,7 @@ public class GameTest {
 
     Timer timer = new Timer(200);
 
-    Game game = spy(Game.initialize(false, false, null, timer, new HashMap<>()));
+    Game game = spy(Game.initialize(false, false, null, null, timer, new HashMap<>()));
 
     timer.setCallback(callback);
 
@@ -757,7 +757,7 @@ public class GameTest {
 
     Timer timer = new Timer(200);
 
-    Game game = spy(Game.initialize(false, false, null, timer, new HashMap<>()));
+    Game game = spy(Game.initialize(false, false, null, null, timer, new HashMap<>()));
 
     timer.setCallback(callback);
 
@@ -780,7 +780,7 @@ public class GameTest {
 
     Timer timer = new Timer(100);
 
-    Game game = spy(Game.initialize(false, false, null, timer, new HashMap<>()));
+    Game game = spy(Game.initialize(false, false, null, null, timer, new HashMap<>()));
 
     timer.setCallback(callback);
 

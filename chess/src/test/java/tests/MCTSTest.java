@@ -35,7 +35,7 @@ public class MCTSTest {
     System.setErr(new PrintStream(outputStream));
     solver = new Solver();
     solver.setAlgorithm(AlgorithmType.MCTS);
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
   private void printBoard(Game game) {
