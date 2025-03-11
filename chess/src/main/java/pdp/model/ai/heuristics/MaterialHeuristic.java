@@ -23,19 +23,19 @@ public class MaterialHeuristic implements Heuristic {
     score +=
         (bitboardRepresentation.getQueens(true).size()
                 - bitboardRepresentation.getQueens(false).size())
-            * 18;
+            * 9;
     score +=
         (bitboardRepresentation.getBishops(true).size()
                 - bitboardRepresentation.getBishops(false).size())
-            * 6;
+            * 3;
     score +=
         (bitboardRepresentation.getKnights(true).size()
                 - bitboardRepresentation.getKnights(false).size())
-            * 6;
+            * 3;
     score +=
         (bitboardRepresentation.getRooks(true).size()
                 - bitboardRepresentation.getRooks(false).size())
-            * 10;
+            * 5;
     return isWhite ? score : -score;
   }
 }
