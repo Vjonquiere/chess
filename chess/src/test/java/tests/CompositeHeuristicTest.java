@@ -2,8 +2,11 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -17,8 +20,21 @@ public class CompositeHeuristicTest {
   Solver solver;
   Game game;
 
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
+
   @BeforeEach
   public void setup() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
     solver = new Solver();
     game = Game.initialize(false, false, null, null, new HashMap<>());
   }
@@ -42,12 +58,12 @@ public class CompositeHeuristicTest {
   @Test
   public void removeHeuristicTest() {
     ShannonBasic shannon = new ShannonBasic();
-    List<Heuristic> heuristics = shannon.getHeuristics();
+    List<WeightedHeuristic> heuristics = shannon.getWeightedHeuristics();
     assertEquals(3, heuristics.size(), "Expected exactly 3 heuristics");
     shannon.removeHeuristic(heuristics.get(0));
     assertEquals(2, heuristics.size(), "Expected exactly 2 heuristics");
     assertFalse(
-        heuristics.stream().anyMatch(h -> h instanceof MobilityHeuristic),
+        heuristics.stream().anyMatch(h -> h.heuristic() instanceof MobilityHeuristic),
         "MobilityHeuristic not removed");
   }
 
@@ -96,7 +112,7 @@ public class CompositeHeuristicTest {
     Heuristic pawnChainHeuristic = new PawnChainHeuristic();
     Heuristic developmentHeuristic = new DevelopmentHeuristic();
     Heuristic KingSafetyHeuristic = new KingSafetyHeuristic();
-    score += material.evaluate(game.getBoard(), false);
+    score += material.evaluate(game.getBoard(), false) * 10;
     score += status.evaluate(game.getBoard(), false);
     score += mobility.evaluate(game.getBoard(), false);
     score += badPawnsHeuristic.evaluate(game.getBoard(), false);

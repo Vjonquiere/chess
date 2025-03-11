@@ -2,8 +2,12 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.board.Bitboard;
 import pdp.model.board.BitboardRepresentation;
@@ -27,6 +31,23 @@ public class BitboardRepresentationTest {
   // Bitboard DEFAULT_BLACK_ROOKS = new Bitboard(9295429630892703744L);
   Bitboard DEFAULT_BLACK_KNIGHT = new Bitboard(4755801206503243776L);
   Bitboard DEFAULT_BLACK_PAWNS = new Bitboard(71776119061217280L);
+
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
 
   @Test
   public void testGetPawns() {

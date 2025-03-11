@@ -49,8 +49,6 @@ public class MCTS implements SearchAlgorithm {
     }
 
     AIMove move = getBestMove(game, root);
-    System.out.println("MOVE MCTS : " + move.toString());
-    System.out.println("Number of simulations : " + SIMULATION_LIMIT);
 
     return move;
   }

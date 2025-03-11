@@ -1,6 +1,5 @@
 package pdp.model.ai.heuristics;
 
-import pdp.model.Game;
 import pdp.model.board.Board;
 import pdp.model.piece.Color;
 
@@ -27,22 +26,25 @@ public class GameStatus implements Heuristic {
     int score = 0;
     Color player1 = isWhite ? Color.WHITE : Color.BLACK;
     Color player2 = isWhite ? Color.BLACK : Color.WHITE;
+    /*
     if (board.getBoardRep().isCheck(player2)) {
       score += 50;
     }
     if (board.getBoardRep().isCheck(player1)) {
       score -= 50;
+    }*/
+    if (board.getBoardRep().isCheckMate(Color.WHITE)) {
+      score -= 10000;
     }
-    if (board.getBoardRep().isCheckMate(player2)) {
-      score += 1000;
+    if (board.getBoardRep().isCheckMate(Color.BLACK)) {
+      score += 10000;
     }
-    if (board.getBoardRep().isCheckMate(player1)) {
-      score -= 1000;
-    }
+    /*
     if (Game.getInstance().getGameState().isThreefoldRepetition()) {
       score -= 750;
     }
     score -= 750 * ((board.getNbMovesWithNoCaptureOrPawn() * 2) / 100);
-    return score;
+     */
+    return isWhite ? score : -score;
   }
 }
