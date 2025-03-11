@@ -361,7 +361,7 @@ public class Game extends Subject {
     } else {
       processSpecialMove(move);
     }
-    this.updateGameStateAfterMove(move);
+    this.updateGameStateAfterMove(move, classicalMove.isPresent());
   }
 
   /**
@@ -526,7 +526,7 @@ public class Game extends Subject {
    *   <li>Notifying observers that a move has been played.
    * </ul>
    */
-  private void updateGameStateAfterMove(Move move) {
+  private void updateGameStateAfterMove(Move move, boolean isSpecialMove) {
 
     if (this.gameState.getMoveTimer() != null) {
       this.gameState.getMoveTimer().stop();
@@ -539,9 +539,15 @@ public class Game extends Subject {
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
     if (!explorationAI) {
-      this.gameState.setSimplifiedZobristHashing(
-          zobristHashing.updateSimplifiedHashFromBitboards(
-              this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+      if (isSpecialMove) {
+        this.gameState.setSimplifiedZobristHashing(
+            zobristHashing.updateSimplifiedHashFromBitboards(
+                this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+      } else {
+        this.gameState.setSimplifiedZobristHashing(
+            zobristHashing.generateSimplifiedHashFromBitboards(getBoard()));
+      }
+
       DEBUG(LOGGER, "Checking threefold repetition...");
       boolean threefoldRepetition =
           this.addStateToCount(this.gameState.getSimplifiedZobristHashing());

@@ -8,8 +8,10 @@ import pdp.controller.commands.PlayMoveCommand;
 import pdp.model.Game;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class Board extends GridPane {
@@ -88,7 +90,7 @@ public class Board extends GridPane {
         return;
       }
       try {
-        String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
+        String move = getFormattedMove(x, y);
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
         from = null;
       } catch (Exception e) {
@@ -96,5 +98,24 @@ public class Board extends GridPane {
         System.out.println("wrong move:" + e.getMessage());
       }
     }
+  }
+
+  /**
+   * Get the move with command creation ready format
+   *
+   * @param x The destination x coordinate
+   * @param y The destination y coordinate
+   * @return Move as string format
+   */
+  public String getFormattedMove(int x, int y) {
+    String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
+    ColoredPiece piece = Game.getInstance().getBoard().board.getPieceAt(from.getX(), from.getY());
+    if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && y == 0) { // Black pawn promote
+      move = new PromoteMove(from, new Position(x, y), Piece.QUEEN).toString();
+    }
+    if (piece.piece == Piece.PAWN && piece.color == Color.WHITE && y == 7) { // White pawn promote
+      move = new PromoteMove(from, new Position(x, y), Piece.QUEEN).toString();
+    }
+    return move;
   }
 }
