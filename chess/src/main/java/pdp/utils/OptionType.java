@@ -204,7 +204,7 @@ public enum OptionType {
           .optionalArg(true)
           .argName("COLOR")
           .desc(
-              "Launch the program in AI mode, with artificial player with COLOR 'B' or 'A' (All),(W by default).")
+              "Launch the program in AI mode, with artificial player with COLOR 'W', 'B' or 'A' (All),(W by default).")
           .build();
     }
   },
@@ -228,8 +228,8 @@ public enum OptionType {
           .desc(
               "Choose the exploration algorithm for the artificial player.\n"
                   + "Available options:\n"
-                  + "- MINIMAX : Uses the MiniMax algorithm (default).\n"
-                  + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm.\n"
+                  + "- MINIMAX : Uses the MiniMax algorithm.\n"
+                  + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm (default).\n"
                   + "- MCTS : Uses Monte Carlo Tree Search for AI move exploration.")
           .build();
     }
