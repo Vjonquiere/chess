@@ -181,7 +181,7 @@ public class NewGamePopup {
         options.containsKey(OptionType.AI_MODE)
             && options.get(OptionType.AI_MODE) == AlgorithmType.MCTS.toString());
 
-    simulationContainer.getChildren().add(new Label("AI Simulations"));
+    simulationContainer.getChildren().add(new Label("AI Simulations (MCTS)"));
     Slider simulationSlider = new Slider(100, 1000, 300);
     simulationSlider.setId("simulationSlider");
     simulationSlider.setShowTickLabels(true);
