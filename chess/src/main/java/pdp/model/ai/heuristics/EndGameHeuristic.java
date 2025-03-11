@@ -7,14 +7,14 @@ package pdp.model.ai.heuristics;
 public class EndGameHeuristic extends AbstractHeuristic {
 
   public EndGameHeuristic() {
-    addHeuristic(new KingActivityHeuristic());
-    addHeuristic(new PromotionHeuristic());
-    addHeuristic(new BishopEndgameHeuristic());
-    addHeuristic(new MaterialHeuristic());
-    addHeuristic(new BadPawnsHeuristic());
-    addHeuristic(new GameStatus());
-    addHeuristic(new KingSafetyHeuristic());
-    addHeuristic(new PawnChainHeuristic());
-    addHeuristic(new KingOppositionHeuristic());
+    addHeuristic(new WeightedHeuristic(new KingActivityHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new PromotionHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new BishopEndgameHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new GameStatus(), 1));
+    addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new PawnChainHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new KingOppositionHeuristic(), 1));
   }
 }

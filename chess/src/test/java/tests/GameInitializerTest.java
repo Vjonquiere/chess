@@ -37,6 +37,8 @@ class GameInitializerTest {
 
   @BeforeEach
   void setUp() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
     options = new HashMap<>();
   }
 
@@ -46,14 +48,6 @@ class GameInitializerTest {
     if (tempFile != null && Files.exists(tempFile)) {
       Files.delete(tempFile);
     }
-  }
-
-  void setUpConsole() {
-    System.setOut(new PrintStream(outputStream));
-    System.setErr(new PrintStream(outputStream));
-  }
-
-  void tearDownConsole() {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
@@ -131,7 +125,6 @@ class GameInitializerTest {
   */
   @Test
   void testGameInitializationAIIncorrect() {
-    setUpConsole();
     options.put(OptionType.AI, "X");
     GameController controller = GameControllerInit.initialize(options);
     assertTrue(outputStream.toString().contains("Unknown AI option: X"));
@@ -140,7 +133,6 @@ class GameInitializerTest {
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
-    tearDownConsole();
   }
 
   @Test
@@ -157,7 +149,6 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationAIModeIncorrect() {
-    setUpConsole();
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_MODE, "minimax");
     GameController controller = GameControllerInit.initialize(options);
@@ -168,7 +159,6 @@ class GameInitializerTest {
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
     assertInstanceOf(AlphaBeta.class, controller.getModel().getSolver().getAlgorithm());
-    tearDownConsole();
   }
 
   @Test
@@ -185,7 +175,7 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationAIHeuristicIncorrect() {
-    setUpConsole();
+
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_HEURISTIC, "MINIMAX");
     GameController controller = GameControllerInit.initialize(options);
@@ -196,7 +186,6 @@ class GameInitializerTest {
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
     assertInstanceOf(StandardHeuristic.class, controller.getModel().getSolver().getHeuristic());
-    tearDownConsole();
   }
 
   @Test
@@ -212,7 +201,7 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationAIDepthIncorrect() {
-    setUpConsole();
+
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_DEPTH, "abc");
     GameController controller = GameControllerInit.initialize(options);
@@ -224,12 +213,11 @@ class GameInitializerTest {
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
-    tearDownConsole();
   }
 
   @Test
   void testGameInitializationAIDepthIncorrect2() {
-    setUpConsole();
+
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_DEPTH, "3.1");
     GameController controller = GameControllerInit.initialize(options);
@@ -241,7 +229,6 @@ class GameInitializerTest {
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
-    tearDownConsole();
   }
 
   @Test
@@ -257,7 +244,7 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationAITimeIncorrect() {
-    setUpConsole();
+
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_TIME, "abc");
     GameController controller = GameControllerInit.initialize(options);
@@ -266,12 +253,11 @@ class GameInitializerTest {
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
-    tearDownConsole();
   }
 
   @Test
   void testGameInitializationAITimeIncorrect2() {
-    setUpConsole();
+
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_TIME, "3.1");
     GameController controller = GameControllerInit.initialize(options);
@@ -280,7 +266,6 @@ class GameInitializerTest {
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getSolver());
-    tearDownConsole();
   }
 
   @Test

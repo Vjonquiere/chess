@@ -17,8 +17,8 @@ public class PawnChainHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    score += evaluatePawnChains(board, isWhite) - evaluatePawnChains(board, !isWhite);
-    return score;
+    score += evaluatePawnChains(board, true) - evaluatePawnChains(board, false);
+    return isWhite ? score : -score;
   }
 
   /**

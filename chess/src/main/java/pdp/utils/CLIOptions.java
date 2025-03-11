@@ -298,7 +298,7 @@ public class CLIOptions {
    */
   private static boolean isFeatureImplemented(OptionType option) {
     return switch (option) {
-      case GUI, CONTEST -> false;
+      case CONTEST -> false;
       default -> true;
     };
   }
