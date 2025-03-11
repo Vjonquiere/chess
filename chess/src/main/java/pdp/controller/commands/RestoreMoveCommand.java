@@ -18,9 +18,11 @@ public class RestoreMoveCommand implements Command {
     try {
       if (model.getGameState().getRedoRequestTurnNumber() == model.getGameState().getFullTurn()) {
         model.nextState();
-        if (model.isBlackAI() && !model.getGameState().isWhiteTurn()
-            || model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
-          model.getSolver().playAIMove(model);
+        if (model.isBlackAI() && !model.getGameState().isWhiteTurn()) {
+          model.getBlackSolver().playAIMove(model);
+        }
+        if (model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
+          model.getWhiteSolver().playAIMove(model);
         }
       } else {
         if (model.isBlackAI() || model.isWhiteAI()) model.nextState();

@@ -36,7 +36,7 @@ public class CompositeHeuristicTest {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
     solver = new Solver();
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
   @Test

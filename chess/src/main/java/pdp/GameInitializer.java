@@ -16,6 +16,7 @@ import pdp.model.Game;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
+import pdp.model.ai.algorithms.MCTS;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
@@ -37,6 +38,8 @@ public abstract class GameInitializer {
    */
   public static Game initialize(HashMap<OptionType, String> options) {
 
+    CLIOptions.validateAIOptions(options);
+
     DEBUG(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
@@ -50,7 +53,8 @@ public abstract class GameInitializer {
 
     boolean isWhiteAI = false;
     boolean isBlackAI = false;
-    Solver solver = null;
+    Solver solverWhite = null;
+    Solver solverBlack = null;
 
     if (options.containsKey(OptionType.AI)) {
       switch (options.get(OptionType.AI)) {
@@ -71,49 +75,106 @@ public abstract class GameInitializer {
           break;
       }
 
-      solver = new Solver();
-      if (options.containsKey(OptionType.AI_MODE)) {
+      solverWhite = new Solver();
+      solverBlack = new Solver();
+      if (options.containsKey(OptionType.AI_MODE_W)) {
         try {
-          AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE));
-          if (algorithmType == AlgorithmType.MCTS) {
-            int iterations =
-                options.containsKey(OptionType.AI_SIMULATION)
-                    ? Integer.parseInt(options.get(OptionType.AI_SIMULATION))
-                    : 100;
-            solver.setMCTSAlgorithm(iterations);
-          } else {
-            solver.setAlgorithm(algorithmType);
-          }
+          AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_W));
+          solverWhite.setAlgorithm(algorithmType);
         } catch (Exception e) {
           System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
           System.err.println("Defaulting to ALPHABETA.");
-          solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
-        }
-      }
-      if (options.containsKey(OptionType.AI_HEURISTIC)) {
-        try {
-          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC));
-          solver.setHeuristic(heuristicType);
-        } catch (IllegalArgumentException e) {
-          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC));
-          System.err.println("Defaulting to Heuristic STANDARD");
+          solverWhite.setAlgorithm(AlgorithmType.ALPHA_BETA);
         }
       }
 
-      if (options.containsKey(OptionType.AI_DEPTH)) {
+      if (options.containsKey(OptionType.AI_MODE_B)) {
         try {
-          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH));
-          solver.setDepth(depth);
+          AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_B));
+          solverBlack.setAlgorithm(algorithmType);
+        } catch (Exception e) {
+          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE_B));
+          System.err.println("Defaulting to ALPHABETA.");
+          solverBlack.setAlgorithm(AlgorithmType.ALPHA_BETA);
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_HEURISTIC_W)) {
+        try {
+          HeuristicType heuristicType =
+              HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W));
+          solverWhite.setHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC_W));
+          System.err.println("Defaulting to Heuristic STANDARD");
+          solverWhite.setHeuristic(HeuristicType.STANDARD);
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_HEURISTIC_B)) {
+        try {
+          HeuristicType heuristicType =
+              HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B));
+          solverBlack.setHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC_B));
+          System.err.println("Defaulting to Heuristic STANDARD");
+          solverBlack.setHeuristic(HeuristicType.STANDARD);
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_DEPTH_W)
+          && !(solverWhite.getAlgorithm() instanceof MCTS)) {
+        try {
+          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_W));
+          solverWhite.setDepth(depth);
         } catch (Exception e) {
           System.err.println("Not an integer for the depth of AI");
-          System.err.println("Defaulting to depth " + solver.getDepth());
+          System.err.println("Defaulting to depth " + solverWhite.getDepth());
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_DEPTH_B)
+          && !(solverBlack.getAlgorithm() instanceof MCTS)) {
+        try {
+          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_B));
+          solverBlack.setDepth(depth);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the depth of AI");
+          System.err.println("Defaulting to depth " + solverBlack.getDepth());
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_SIMULATION_W)
+          && solverWhite.getAlgorithm() instanceof MCTS) {
+        try {
+          int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
+          solverWhite.setMCTSAlgorithm(simulations);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the simulations of AI");
+          System.err.println(
+              "Defaulting to depth " + ((MCTS) solverWhite.getAlgorithm()).getSimulationLimit());
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_SIMULATION_B)
+          && solverBlack.getAlgorithm() instanceof MCTS) {
+        try {
+          int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
+          solverBlack.setMCTSAlgorithm(simulations);
+        } catch (Exception e) {
+          System.err.println("Not an integer for the simulations of AI");
+          System.err.println(
+              "Defaulting to simulations "
+                  + ((MCTS) solverBlack.getAlgorithm()).getSimulationLimit());
         }
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
         try {
           long time = Long.parseLong(options.get(OptionType.AI_TIME));
-          solver.setTime(time);
+          solverWhite.setTime(time);
+          solverBlack.setTime(time);
         } catch (Exception e) {
           System.err.println("Not a long for the time of AI (in seconds)");
           System.err.println("Defaulting to a 5 seconds timer");
@@ -121,8 +182,14 @@ public abstract class GameInitializer {
       }
       if (options.containsKey(OptionType.BLITZ)) {
         // If blitz, take the minimum between the blitz time and AI time
-        long time = Long.min(solver.getTimer().getTimeRemaining(), timer.getTimeRemaining() - 100);
-        solver.setTime(time / 1000);
+        long time =
+            Long.min(
+                Long.min(
+                    solverWhite.getTimer().getTimeRemaining(),
+                    solverBlack.getTimer().getTimeRemaining()),
+                timer.getTimeRemaining() - 100);
+        solverWhite.setTime(time / 1000);
+        solverBlack.setTime(time / 1000);
       }
     }
 
@@ -138,7 +205,9 @@ public abstract class GameInitializer {
           BoardFileParser parser = new BoardFileParser();
           FileBoard board =
               parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
-          model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, board, options);
+          model =
+              Game.initialize(
+                  isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, board, options);
         } else {
 
           List<Move> moves = new ArrayList<>();
@@ -147,7 +216,9 @@ public abstract class GameInitializer {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
 
-          model = Game.fromHistory(moves, isWhiteAI, isBlackAI, solver, timer, options);
+          model =
+              Game.fromHistory(
+                  moves, isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, options);
         }
 
       } catch (IOException
@@ -157,10 +228,10 @@ public abstract class GameInitializer {
         System.err.println(
             "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
         System.err.println("Using the default game start");
-        model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
+        model = Game.initialize(isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, options);
       }
     } else {
-      model = Game.initialize(isWhiteAI, isBlackAI, solver, timer, options);
+      model = Game.initialize(isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, options);
     }
 
     return model;

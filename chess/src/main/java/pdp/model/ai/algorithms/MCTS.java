@@ -27,6 +27,15 @@ public class MCTS implements SearchAlgorithm {
   }
 
   /**
+   * Returns the number of iterations to execute MCTS.
+   *
+   * @return The number of iterations
+   */
+  public int getSimulationLimit() {
+    return SIMULATION_LIMIT;
+  }
+
+  /**
    * Determines the "best move" using the MCTS algorithm
    *
    * @param game The current game state
