@@ -21,6 +21,8 @@ public class GameState extends Subject {
   private boolean blackWantsToDraw = false;
   private boolean whiteResigns = false;
   private boolean blackResigns = false;
+  private int undoRequestTurnNumber = -1;
+  private int redoRequestTurnNumber = -1;
   private boolean whiteLosesOnTime = false;
   private boolean blackLosesOnTime = false;
   private boolean isGameOver = false;
@@ -107,6 +109,34 @@ public class GameState extends Subject {
 
   public void incrementsFullTurn() {
     this.fullTurnNumber += 1;
+  }
+
+  public int getUndoRequestTurnNumber() {
+    return this.undoRequestTurnNumber;
+  }
+
+  public int getRedoRequestTurnNumber() {
+    return this.redoRequestTurnNumber;
+  }
+
+  public void undoRequest() {
+    this.undoRequestTurnNumber = this.getFullTurn();
+    if (this.isWhiteTurn()) notifyObservers(EventType.WHITE_UNDO_PROPOSAL);
+    else notifyObservers(EventType.BLACK_UNDO_PROPOSAL);
+  }
+
+  public void undoRequestReset() {
+    this.undoRequestTurnNumber = -1;
+  }
+
+  public void redoRequest() {
+    this.redoRequestTurnNumber = this.getFullTurn();
+    if (this.isWhiteTurn()) notifyObservers(EventType.WHITE_REDO_PROPOSAL);
+    else notifyObservers(EventType.BLACK_REDO_PROPOSAL);
+  }
+
+  public void redoRequestReset() {
+    this.redoRequestTurnNumber = -1;
   }
 
   /*

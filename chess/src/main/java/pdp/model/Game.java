@@ -725,6 +725,8 @@ public class Game extends Subject {
    * @throws FailedUndoException if no previous move exists.
    */
   public void previousState() throws FailedUndoException {
+    this.gameState.undoRequestReset();
+
     Optional<HistoryNode> currentNode = this.history.getCurrentMove();
     if (!currentNode.isPresent()) {
       throw new FailedUndoException();
@@ -755,6 +757,8 @@ public class Game extends Subject {
    * @throws FailedRedoException if no next move exists.
    */
   public void nextState() throws FailedRedoException {
+    this.gameState.redoRequestReset();
+
     Optional<HistoryNode> currentNode = this.history.getCurrentMove();
     if (!currentNode.isPresent()) {
       throw new FailedRedoException();
