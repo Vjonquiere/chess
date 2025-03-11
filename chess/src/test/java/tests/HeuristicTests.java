@@ -210,9 +210,9 @@ public class HeuristicTests {
     game.playMove(new Move(new Position(6, 7), new Position(5, 5)));
     game.playMove(new Move(new Position(7, 4), new Position(5, 6)));
     // Scholar's Mate (black checkmate)
-    assertEquals(-1050, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(-10000, solver.evaluateBoard(game.getBoard(), false));
     game.getBoard().isWhite = true;
-    assertEquals(1050, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(10000, solver.evaluateBoard(game.getBoard(), true));
   }
 
   @Test

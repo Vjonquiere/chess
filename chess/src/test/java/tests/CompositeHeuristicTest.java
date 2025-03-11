@@ -42,12 +42,12 @@ public class CompositeHeuristicTest {
   @Test
   public void removeHeuristicTest() {
     ShannonBasic shannon = new ShannonBasic();
-    List<Heuristic> heuristics = shannon.getHeuristics();
+    List<WeightedHeuristic> heuristics = shannon.getWeightedHeuristics();
     assertEquals(3, heuristics.size(), "Expected exactly 3 heuristics");
     shannon.removeHeuristic(heuristics.get(0));
     assertEquals(2, heuristics.size(), "Expected exactly 2 heuristics");
     assertFalse(
-        heuristics.stream().anyMatch(h -> h instanceof MobilityHeuristic),
+        heuristics.stream().anyMatch(h -> h.heuristic() instanceof MobilityHeuristic),
         "MobilityHeuristic not removed");
   }
 

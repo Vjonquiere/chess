@@ -20,8 +20,8 @@ package pdp.model.ai.heuristics;
 public class ShannonBasic extends AbstractHeuristic {
 
   public ShannonBasic() {
-    super.addHeuristic(new MobilityHeuristic());
-    super.addHeuristic(new MaterialHeuristic());
-    super.addHeuristic(new BadPawnsHeuristic());
+    super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), 1));
+    super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 1));
+    super.addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), 1));
   }
 }
