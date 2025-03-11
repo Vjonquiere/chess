@@ -16,9 +16,15 @@ public class CancelMoveCommand implements Command {
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
     try {
-      model.previousState();
       if (model.isBlackAI() || model.isWhiteAI()) {
         model.previousState();
+        model.previousState();
+      } else {
+        if (model.getGameState().getUndoRequestTurnNumber() == model.getGameState().getFullTurn()) {
+          model.previousState();
+        } else {
+          model.getGameState().undoRequest();
+        }
       }
       return Optional.empty();
     } catch (Exception e) {
