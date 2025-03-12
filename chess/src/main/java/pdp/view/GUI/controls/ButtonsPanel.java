@@ -8,8 +8,11 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.commands.CancelMoveCommand;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
+import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.CustomButton;
+import pdp.view.GUI.popups.RedoPopUp;
+import pdp.view.GUI.popups.UndoPopUp;
 import pdp.view.GUIView;
 
 public class ButtonsPanel extends GridPane {
@@ -64,20 +67,18 @@ public class ButtonsPanel extends GridPane {
     undoButton = new CustomButton(TextGetter.getText("undo"));
     undoButton.setOnAction(
         event -> {
-          System.out.println("undo cliqué !");
           undoCommand("");
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new UndoPopUp();
         });
-    // TODO: add action to button
   }
 
   private void initRedoButton() {
     redoButton = new CustomButton(TextGetter.getText("redo"));
     redoButton.setOnAction(
         event -> {
-          System.out.println("redo cliqué !");
           redoCommand("");
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new RedoPopUp();
         });
-    // TODO: add action to button
   }
 
   private void initDrawButton() {
@@ -102,7 +103,6 @@ public class ButtonsPanel extends GridPane {
           System.out.println("restart cliqué !");
           restartCommand("");
         });
-    // TODO: add action to button
   }
 
   /**
