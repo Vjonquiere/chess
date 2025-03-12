@@ -6,11 +6,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import pdp.utils.TextGetter;
+import pdp.view.GUIView;
 
 public class HistoryPanel extends VBox {
+  private static String styleFileName = "" + GUIView.theme;
 
   public HistoryPanel() {
     ListView<String> list = new ListView<String>();
+    list.setStyle("-fx-background-color: " + GUIView.theme.getBackground() + ";");
     // TODO: add history (just an example for now)
     ObservableList<String> items =
         FXCollections.observableArrayList(
@@ -39,6 +42,8 @@ public class HistoryPanel extends VBox {
             "Suite",
             "Family App");
     list.setItems(items);
+    list.getStylesheets()
+        .add(getClass().getResource("/styles/" + styleFileName + ".css").toExternalForm());
     super.getChildren().add(new Label(TextGetter.getText("gameHistory")));
     super.getChildren().add(list);
   }

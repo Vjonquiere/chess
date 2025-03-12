@@ -1,6 +1,7 @@
 package pdp.view;
 
 import static pdp.utils.Logging.DEBUG;
+import static pdp.view.GUI.themes.ColorTheme.*;
 
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -23,7 +24,7 @@ public class GUIView implements View {
   private Stage stage;
   private Board board;
   private ControlPanel controlPanel;
-  public static ColorTheme theme = ColorTheme.SIMPLE;
+  public static ColorTheme theme = PURPLE;
   boolean init = false;
 
   static {
@@ -43,6 +44,7 @@ public class GUIView implements View {
     System.out.println(stage);
     stage.setTitle(TextGetter.getText("title"));
     root.setTop(new ChessMenu());
+    root.setStyle("-fx-background-color: " + theme.getBackground() + ";");
     // root.setCenter(board);
     Scene scene = new Scene(root, 1200, 820);
     stage.setScene(scene);
