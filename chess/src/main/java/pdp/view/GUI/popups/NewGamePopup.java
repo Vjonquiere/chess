@@ -1,4 +1,4 @@
-package pdp.view.GUI;
+package pdp.view.GUI.popups;
 
 import java.io.File;
 import java.util.HashMap;

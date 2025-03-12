@@ -7,14 +7,18 @@ import javafx.scene.layout.VBox;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
+import pdp.utils.TextGetter;
+import pdp.view.GUI.popups.NewGamePopup;
+import pdp.view.GUI.popups.ThemePopUp;
 import pdp.view.GUIView;
 
 public class ChessMenu extends VBox {
-  public ChessMenu() {
+  public ChessMenu(GUIView view) {
     MenuBar menuBar = new MenuBar();
     menuBar.getMenus().add(createFileMenu());
     menuBar.getMenus().add(createGameMenu());
     menuBar.getMenus().add(createAboutMenu());
+    menuBar.getMenus().add(createOptionsMenu(view));
     menuBar
         .getStylesheets()
         .add(getClass().getResource("/styles/" + GUIView.theme + ".css").toExternalForm());
@@ -45,7 +49,19 @@ public class ChessMenu extends VBox {
     return aboutMenu;
   }
 
+  private Menu createOptionsMenu(GUIView view) {
+    Menu optionsMenu = new Menu("Options");
+    MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
+    theme.setOnAction(event -> openThemePopup(view));
+    optionsMenu.getItems().add(theme);
+    return optionsMenu;
+  }
+
   private void openNewGamePopup() {
     NewGamePopup.show(Game.getInstance().getOptions());
+  }
+
+  private void openThemePopup(GUIView view) {
+    ThemePopUp.show(view);
   }
 }

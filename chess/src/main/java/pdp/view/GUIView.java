@@ -22,6 +22,7 @@ public class GUIView implements View {
   private static final Logger LOGGER = Logger.getLogger(GUIView.class.getName());
   private BorderPane root;
   private Stage stage;
+  private Scene scene;
   private Board board;
   private ControlPanel controlPanel;
   public static ColorTheme theme = SIMPLE;
@@ -29,6 +30,10 @@ public class GUIView implements View {
 
   static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public void updateTheme() {
+    onGameEvent(EventType.GAME_STARTED);
   }
 
   public GUIView() {
@@ -43,10 +48,10 @@ public class GUIView implements View {
   public void init(Stage stage) {
     System.out.println(stage);
     stage.setTitle(TextGetter.getText("title"));
-    root.setTop(new ChessMenu());
+    root.setTop(new ChessMenu(this));
     root.setStyle("-fx-background-color: " + theme.getBackground() + ";");
     // root.setCenter(board);
-    Scene scene = new Scene(root, 1200, 820);
+    scene = new Scene(root, 1200, 820);
     scene
         .getStylesheets()
         .add(getClass().getResource("/styles/" + theme + ".css").toExternalForm());
@@ -185,6 +190,8 @@ public class GUIView implements View {
               case AI_PLAYING:
                 System.out.println(TextGetter.getText("ai_playing"));
                 break;
+              case UPDATE_THEME:
+                updateTheme();
               default:
                 DEBUG(LOGGER, "Received unknown game event: " + event);
                 break;
