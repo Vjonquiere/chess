@@ -89,43 +89,98 @@ public class NewGamePopupTest extends ApplicationTest {
   @Tag("gui")
   public void testAIDropdown() {
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
-    assertEquals("None", aiDropdown.getValue());
     assertTrue(scrollUntilVisible("#aiDropdown"));
+
+    clickOn(aiDropdown);
+    clickOn("None");
+    assertEquals("None", aiDropdown.getValue());
+    assertEquals(null, options.get(OptionType.AI));
 
     clickOn(aiDropdown);
     clickOn("W");
 
+    assertEquals("W", aiDropdown.getValue());
     assertEquals("W", options.get(OptionType.AI));
   }
 
   @Test
   @Tag("gui")
   public void testAIModeDropdown() {
-    ComboBox<String> aiModeDropdown = lookup("#aiModeDropdown").query();
-    assertTrue(scrollUntilVisible("#aiModeDropdown"));
-    clickOn(aiModeDropdown);
+
+    ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
+    assertTrue(scrollUntilVisible("#aiDropdown"));
+
+    clickOn(aiDropdown);
+    clickOn("A");
+
+    ComboBox<String> whiteAiModeDropdown = lookup("#whiteAiModeDropdown").query();
+    assertTrue(scrollUntilVisible("#whiteAiModeDropdown"));
+    clickOn(whiteAiModeDropdown);
     clickOn("MCTS");
 
-    assertEquals("MCTS", options.get(OptionType.AI_MODE));
+    assertEquals("MCTS", options.get(OptionType.AI_MODE_W));
+
+    ComboBox<String> blackAiModeDropdown = lookup("#blackAiModeDropdown").query();
+    assertTrue(scrollUntilVisible("#whiteAiModeDropdown"));
+    clickOn(blackAiModeDropdown);
+    clickOn("ALPHA_BETA");
+
+    assertEquals("ALPHA_BETA", options.get(OptionType.AI_MODE_B));
   }
 
   @Test
   @Tag("gui")
   public void testHeuristicDropdown() {
-    ComboBox<String> heuristicDropdown = lookup("#heuristicDropdown").query();
-    assertTrue(scrollUntilVisible("#heuristicDropdown"));
-    clickOn(heuristicDropdown);
+
+    ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
+    assertTrue(scrollUntilVisible("#aiDropdown"));
+
+    clickOn(aiDropdown);
+    clickOn("A");
+
+    ComboBox<String> whiteHeuristicDropdown = lookup("#whiteHeuristicDropdown").query();
+    assertTrue(scrollUntilVisible("#whiteHeuristicDropdown"));
+    clickOn(whiteHeuristicDropdown);
     clickOn("SHANNON");
-    assertEquals("SHANNON", options.get(OptionType.AI_HEURISTIC));
+    assertEquals("SHANNON", options.get(OptionType.AI_HEURISTIC_W));
+
+    ComboBox<String> blackHeuristicDropdown = lookup("#blackHeuristicDropdown").query();
+    assertTrue(scrollUntilVisible("#blackHeuristicDropdown"));
+    clickOn(blackHeuristicDropdown);
+    clickOn("MATERIAL");
+    assertEquals("MATERIAL", options.get(OptionType.AI_HEURISTIC_B));
   }
 
   @Test
   @Tag("gui")
-  public void testDepthSlider() {
-    Slider depthSlider = lookup("#depthSlider").query();
-    assertTrue(scrollUntilVisible("#depthSlider"));
+  public void testWhiteDepthSlider() {
+
+    ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
+    assertTrue(scrollUntilVisible("#aiDropdown"));
+
+    clickOn(aiDropdown);
+    clickOn("W");
+
+    Slider depthSlider = lookup("#whiteDepthSlider").query();
+    assertTrue(scrollUntilVisible("#whiteDepthSlider"));
     depthSlider.setValue(5);
-    assertEquals("5", options.get(OptionType.AI_DEPTH));
+    assertEquals("5", options.get(OptionType.AI_DEPTH_W));
+  }
+
+  @Test
+  @Tag("gui")
+  public void testBlackeDepthSlider() {
+
+    ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
+    assertTrue(scrollUntilVisible("#aiDropdown"));
+
+    clickOn(aiDropdown);
+    clickOn("B");
+
+    Slider depthSlider = lookup("#blackDepthSlider").query();
+    assertTrue(scrollUntilVisible("#blackDepthSlider"));
+    depthSlider.setValue(5);
+    assertEquals("5", options.get(OptionType.AI_DEPTH_B));
   }
 
   @Test
@@ -138,13 +193,15 @@ public class NewGamePopupTest extends ApplicationTest {
     clickOn(aiDropdown);
     clickOn("None");
 
-    assertFalse(scrollUntilVisible("#aiContainer"));
+    assertFalse(scrollUntilVisible("#aiWhiteContainer"));
+    assertFalse(scrollUntilVisible("#aiBlackContainer"));
 
     assertTrue(scrollUntilVisible("#aiDropdown"));
     clickOn(aiDropdown);
     clickOn("B");
 
-    assertTrue(scrollUntilVisible("#aiContainer"));
+    assertTrue(scrollUntilVisible("#aiBlackContainer"));
+    assertFalse(scrollUntilVisible("#aiWhiteContainer"));
 
     CheckBox aiTimeCheckBox = lookup("#aiTimeCheckBox").query();
 
@@ -160,5 +217,19 @@ public class NewGamePopupTest extends ApplicationTest {
 
     aiTimeCheckBox.fire();
     assertFalse(scrollUntilVisible("#aiTimeContainer"));
+
+    assertTrue(scrollUntilVisible("#aiDropdown"));
+    clickOn(aiDropdown);
+    clickOn("W");
+
+    assertFalse(scrollUntilVisible("#aiBlackContainer"));
+    assertTrue(scrollUntilVisible("#aiWhiteContainer"));
+
+    assertTrue(scrollUntilVisible("#aiDropdown"));
+    clickOn(aiDropdown);
+    clickOn("A");
+
+    assertTrue(scrollUntilVisible("#aiBlackContainer"));
+    assertTrue(scrollUntilVisible("#aiWhiteContainer"));
   }
 }

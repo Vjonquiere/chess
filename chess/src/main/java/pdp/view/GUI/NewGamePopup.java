@@ -14,8 +14,192 @@ import pdp.GameInitializer;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
 import pdp.utils.OptionType;
+import pdp.utils.TextGetter;
 
 public class NewGamePopup {
+
+  private static VBox makeAIBox(boolean isWhite, HashMap<OptionType, String> options) {
+
+    String colorTag = isWhite ? "white" : "black";
+    String colorText = TextGetter.getText(colorTag);
+
+    OptionType modeType = isWhite ? OptionType.AI_MODE_W : OptionType.AI_MODE_B;
+    OptionType heuristicType = isWhite ? OptionType.AI_HEURISTIC_W : OptionType.AI_HEURISTIC_B;
+    OptionType depthType = isWhite ? OptionType.AI_DEPTH_W : OptionType.AI_DEPTH_B;
+    OptionType simulationsType = isWhite ? OptionType.AI_SIMULATION_W : OptionType.AI_SIMULATION_B;
+
+    VBox aiContainer = new VBox(5);
+
+    aiContainer.getChildren().add(new Label(TextGetter.getText("aiModeLabel", colorText)));
+    ComboBox<String> aiModeDropdown = new ComboBox<>();
+
+    aiModeDropdown.setId(colorTag + "AiModeDropdown");
+
+    for (AlgorithmType type : AlgorithmType.values()) {
+      aiModeDropdown.getItems().add(type.toString());
+    }
+
+    if (options.containsKey(modeType)) {
+      aiModeDropdown.setValue(options.get(modeType));
+    }
+
+    VBox depthContainer = new VBox(5);
+    VBox simulationContainer = new VBox(5);
+
+    aiModeDropdown
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(modeType, newVal);
+              depthContainer.setVisible(newVal != AlgorithmType.MCTS.toString());
+              depthContainer.setManaged(newVal != AlgorithmType.MCTS.toString());
+
+              simulationContainer.setVisible(newVal == AlgorithmType.MCTS.toString());
+              simulationContainer.setManaged(newVal == AlgorithmType.MCTS.toString());
+            });
+
+    aiContainer.getChildren().add(aiModeDropdown);
+
+    aiContainer.getChildren().add(new Label(TextGetter.getText("aiHeuristicLabel", colorText)));
+    ComboBox<String> heuristicDropdown = new ComboBox<>();
+
+    heuristicDropdown.setId(colorTag + "HeuristicDropdown");
+
+    for (HeuristicType type : HeuristicType.values()) {
+      heuristicDropdown.getItems().add(type.toString());
+    }
+
+    if (options.containsKey(heuristicType)) {
+      heuristicDropdown.setValue(options.get(heuristicType));
+    }
+
+    heuristicDropdown
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(heuristicType, newVal);
+            });
+
+    aiContainer.getChildren().add(heuristicDropdown);
+
+    depthContainer.setId(colorTag + "DepthContainer");
+    depthContainer.setVisible(
+        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+    depthContainer.setManaged(
+        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+
+    depthContainer.getChildren().add(new Label(TextGetter.getText("aiDepthLabel", colorText)));
+    Slider depthSlider = new Slider(1, 10, 3);
+    depthSlider.setId(colorTag + "DepthSlider");
+    depthSlider.setShowTickLabels(true);
+    depthSlider.setShowTickMarks(true);
+    depthSlider.setMajorTickUnit(1);
+    depthSlider.setMinorTickCount(0);
+    depthSlider.setSnapToTicks(true);
+    depthSlider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(depthType, String.valueOf(newVal.intValue()));
+            });
+
+    if (options.containsKey(depthType)) {
+      depthSlider.setValue(Integer.parseInt(options.get(depthType)));
+    }
+
+    depthContainer.getChildren().add(depthSlider);
+
+    simulationContainer.setId(colorTag + "SimulationContainer");
+    simulationContainer.setVisible(
+        options.containsKey(modeType) && options.get(modeType) == AlgorithmType.MCTS.toString());
+    simulationContainer.setManaged(
+        options.containsKey(modeType) && options.get(modeType) == AlgorithmType.MCTS.toString());
+
+    simulationContainer
+        .getChildren()
+        .add(new Label(TextGetter.getText("aiSimulationsLabel", colorText)));
+    Slider simulationSlider = new Slider(100, 1000, 300);
+    simulationSlider.setId(colorTag + "SimulationSlider");
+    simulationSlider.setShowTickLabels(true);
+    simulationSlider.setShowTickMarks(true);
+    simulationSlider.setMajorTickUnit(10);
+    simulationSlider.setMinorTickCount(0);
+    simulationSlider.setSnapToTicks(true);
+
+    simulationSlider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(simulationsType, String.valueOf(newVal.intValue()));
+            });
+
+    if (options.containsKey(simulationsType)) {
+      depthSlider.setValue(Integer.parseInt(options.get(simulationsType)));
+    }
+
+    simulationContainer.getChildren().add(simulationSlider);
+
+    aiContainer.getChildren().add(depthContainer);
+    aiContainer.getChildren().add(simulationContainer);
+
+    aiContainer.getChildren().add(new Separator());
+
+    return aiContainer;
+  }
+
+  private static VBox makeAITimeBox(HashMap<OptionType, String> options) {
+
+    VBox aiTimeFull = new VBox();
+
+    CheckBox aiTimeCheckBox = new CheckBox(TextGetter.getText("aiTimeLimitLabel"));
+    aiTimeCheckBox.setId("aiTimeCheckBox");
+    aiTimeCheckBox.setSelected(options.containsKey(OptionType.AI_TIME));
+
+    aiTimeFull.getChildren().add(aiTimeCheckBox);
+
+    VBox aiTimeContainer = new VBox(5);
+    aiTimeContainer.setId("aiTimeContainer");
+    aiTimeContainer.setVisible(aiTimeCheckBox.isSelected());
+    aiTimeContainer.setManaged(aiTimeCheckBox.isSelected());
+
+    aiTimeContainer.getChildren().add(new Label(TextGetter.getText("aiTimeLabel")));
+    Slider aiTimeSlider = new Slider(5, 60, 10);
+    aiTimeSlider.setId("aiTimeSlider");
+    aiTimeSlider.setShowTickLabels(true);
+    aiTimeSlider.setShowTickMarks(true);
+    aiTimeSlider.setMajorTickUnit(5);
+    aiTimeSlider.setMinorTickCount(0);
+    aiTimeSlider.setSnapToTicks(true);
+    aiTimeSlider
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(OptionType.AI_TIME, String.valueOf(newVal.intValue()));
+            });
+
+    if (options.containsKey(OptionType.AI_TIME)) {
+      aiTimeSlider.setValue(Integer.parseInt(options.get(OptionType.AI_TIME)));
+    }
+
+    aiTimeCheckBox.setOnAction(
+        event -> {
+          boolean selected = aiTimeCheckBox.isSelected();
+          aiTimeContainer.setVisible(selected);
+          aiTimeContainer.setManaged(selected);
+          if (selected) {
+            options.put(OptionType.AI_TIME, String.valueOf(Math.round(aiTimeSlider.getValue())));
+          } else {
+            options.remove(OptionType.AI_TIME);
+          }
+        });
+
+    aiTimeContainer.getChildren().add(aiTimeSlider);
+
+    aiTimeFull.getChildren().add(aiTimeContainer);
+
+    return aiTimeFull;
+  }
+
   public static void show(HashMap<OptionType, String> options) {
     Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -87,134 +271,46 @@ public class NewGamePopup {
     }
     layout.getChildren().add(new Label("AI Player(s)"));
     layout.getChildren().add(aiDropdown);
-    VBox aiContainer = new VBox(5);
-    aiContainer.setId("aiContainer");
-    aiContainer.setVisible(!aiDropdown.getValue().equals("None"));
-    aiContainer.setManaged(!aiDropdown.getValue().equals("None"));
 
-    aiContainer.getChildren().add(new Label("AI Mode"));
-    ComboBox<String> aiModeDropdown = new ComboBox<>();
+    VBox aiWhiteContainer = makeAIBox(true, options);
+    layout.getChildren().add(aiWhiteContainer);
+    aiWhiteContainer.setVisible(
+        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("W"));
+    aiWhiteContainer.setManaged(
+        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("W"));
+    aiWhiteContainer.setId("aiWhiteContainer");
 
-    aiModeDropdown.setId("aiModeDropdown");
+    VBox aiBlackContainer = makeAIBox(false, options);
+    layout.getChildren().add(aiBlackContainer);
+    aiBlackContainer.setVisible(
+        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("B"));
+    aiBlackContainer.setManaged(
+        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("B"));
+    aiBlackContainer.setId("aiBlackContainer");
 
-    for (AlgorithmType type : AlgorithmType.values()) {
-      aiModeDropdown.getItems().add(type.toString());
-    }
-
-    if (options.containsKey(OptionType.AI_MODE)) {
-      aiModeDropdown.setValue(options.get(OptionType.AI_MODE));
-    }
-
-    aiModeDropdown
-        .valueProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(OptionType.AI_MODE, newVal);
-            });
-
-    aiContainer.getChildren().add(aiModeDropdown);
-
-    aiContainer.getChildren().add(new Label("AI Heuristic"));
-    ComboBox<String> heuristicDropdown = new ComboBox<>();
-
-    heuristicDropdown.setId("heuristicDropdown");
-
-    for (HeuristicType type : HeuristicType.values()) {
-      heuristicDropdown.getItems().add(type.toString());
-    }
-
-    if (options.containsKey(OptionType.AI_HEURISTIC)) {
-      heuristicDropdown.setValue(options.get(OptionType.AI_HEURISTIC));
-    }
-
-    heuristicDropdown
-        .valueProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(OptionType.AI_HEURISTIC, newVal);
-            });
-
-    aiContainer.getChildren().add(heuristicDropdown);
-
-    aiContainer.getChildren().add(new Label("AI Depth"));
-    Slider depthSlider = new Slider(1, 10, 3);
-    depthSlider.setId("depthSlider");
-    depthSlider.setShowTickLabels(true);
-    depthSlider.setShowTickMarks(true);
-    depthSlider.setMajorTickUnit(1);
-    depthSlider.setMinorTickCount(0);
-    depthSlider.setSnapToTicks(true);
-    depthSlider
-        .valueProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(OptionType.AI_DEPTH, String.valueOf(newVal.intValue()));
-            });
-
-    if (options.containsKey(OptionType.AI_DEPTH)) {
-      depthSlider.setValue(Integer.parseInt(options.get(OptionType.AI_DEPTH)));
-    }
-
-    aiContainer.getChildren().add(depthSlider);
-
-    CheckBox aiTimeCheckBox = new CheckBox("AI Time limit");
-    aiTimeCheckBox.setId("aiTimeCheckBox");
-    aiTimeCheckBox.setSelected(options.containsKey(OptionType.AI_TIME));
-
-    aiContainer.getChildren().add(aiTimeCheckBox);
-
-    VBox aiTimeContainer = new VBox(5);
-    aiTimeContainer.setId("aiTimeContainer");
-    aiTimeContainer.setVisible(aiTimeCheckBox.isSelected());
-    aiTimeContainer.setManaged(aiTimeCheckBox.isSelected());
-
-    aiTimeContainer.getChildren().add(new Label("AI Time (in seconds)"));
-    Slider aiTimeSlider = new Slider(5, 60, 10);
-    aiTimeSlider.setId("aiTimeSlider");
-    aiTimeSlider.setShowTickLabels(true);
-    aiTimeSlider.setShowTickMarks(true);
-    aiTimeSlider.setMajorTickUnit(5);
-    aiTimeSlider.setMinorTickCount(0);
-    aiTimeSlider.setSnapToTicks(true);
-    aiTimeSlider
-        .valueProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(OptionType.AI_TIME, String.valueOf(newVal.intValue()));
-            });
-
-    if (options.containsKey(OptionType.AI_TIME)) {
-      aiTimeSlider.setValue(Integer.parseInt(options.get(OptionType.AI_TIME)));
-    }
-
-    aiTimeCheckBox.setOnAction(
-        event -> {
-          boolean selected = aiTimeCheckBox.isSelected();
-          aiTimeContainer.setVisible(selected);
-          aiTimeContainer.setManaged(selected);
-          if (selected) {
-            options.put(OptionType.AI_TIME, String.valueOf(Math.round(aiTimeSlider.getValue())));
-          } else {
-            options.remove(OptionType.AI_TIME);
-          }
-        });
-
-    aiContainer.getChildren().add(aiTimeContainer);
-
-    aiTimeContainer.getChildren().add(aiTimeSlider);
-
-    layout.getChildren().add(aiContainer);
+    VBox aiTimeContainer = makeAITimeBox(options);
+    layout.getChildren().add(aiTimeContainer);
+    aiTimeContainer.setVisible(!aiDropdown.getValue().equals("None"));
+    aiTimeContainer.setManaged(!aiDropdown.getValue().equals("None"));
+    aiTimeContainer.setId("fullAITimeContainer");
 
     aiDropdown
         .valueProperty()
         .addListener(
             (obs, oldVal, newVal) -> {
-              boolean selected = !newVal.equals("None");
-              aiContainer.setVisible(selected);
-              aiContainer.setManaged(selected);
-              if (selected) {
+              boolean selectedWhite = newVal.equals("A") || newVal.equals("W");
+              boolean selectedBlack = newVal.equals("A") || newVal.equals("B");
+              aiWhiteContainer.setVisible(selectedWhite);
+              aiWhiteContainer.setManaged(selectedWhite);
+              aiBlackContainer.setVisible(selectedBlack);
+              aiBlackContainer.setManaged(selectedBlack);
+              if (newVal != "None") {
+                aiTimeContainer.setVisible(true);
+                aiTimeContainer.setManaged(true);
                 options.put(OptionType.AI, newVal);
               } else {
+                aiTimeContainer.setVisible(false);
+                aiTimeContainer.setManaged(false);
                 options.remove(OptionType.AI);
               }
             });

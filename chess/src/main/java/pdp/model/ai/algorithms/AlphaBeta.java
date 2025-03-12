@@ -1,14 +1,21 @@
 package pdp.model.ai.algorithms;
 
 import java.util.List;
+import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
+import pdp.utils.Logging;
 
 public class AlphaBeta implements SearchAlgorithm {
   Solver solver;
+  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+
+  static {
+    Logging.configureLogging(LOGGER);
+  }
 
   public AlphaBeta(Solver solver) {
     this.solver = solver;
@@ -24,7 +31,7 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, !player);
+    return alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
   }
 
   /**
@@ -35,48 +42,46 @@ public class AlphaBeta implements SearchAlgorithm {
    *
    * @param game The current game
    * @param depth The number of moves remaining in the search
-   * @param player The current player (true for white, false for black).
+   * @param currentPlayer The current player (true for white, false for black).
    * @param alpha The best option for the maximizing player
    * @param beta The best option for the minimizing player
-   * @param isMinimizing True if the current level of recursion minimizes the score, false if
-   *     maximizing.
+   * @param originalPlayer The player at root
    * @return The best move with its evaluated score.
    */
   private AIMove alphaBeta(
-      Game game, int depth, boolean player, int alpha, int beta, boolean isMinimizing) {
+      Game game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
+
     if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
-      return new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
+      return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game.getBoard(), !player));
+      int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      return new AIMove(null, evaluation);
     }
-    AIMove bestMove = new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
+    AIMove bestMove =
+        new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     for (Move move : moves) {
-      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
-        break;
-      }
+      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) break;
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AIMove currMove = alphaBeta(game, depth - 1, !player, alpha, beta, !isMinimizing);
+        AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
         game.previousState();
-        if (isMinimizing) {
-          if (currMove.score() < bestMove.score()) {
-            bestMove = new AIMove(move, currMove.score());
-          }
-          beta = Math.min(beta, currMove.score());
-        } else {
+        if (currentPlayer == originalPlayer) { // Maximizing
           if (currMove.score() > bestMove.score()) {
             bestMove = new AIMove(move, currMove.score());
           }
-          alpha = Math.max(alpha, currMove.score());
+          alpha = Math.max(alpha, bestMove.score());
+        } else { // Minimizing
+          if (currMove.score() < bestMove.score()) {
+            bestMove = new AIMove(move, currMove.score());
+          }
+          beta = Math.min(beta, bestMove.score());
         }
-        if (alpha >= beta) {
-          break;
-        }
+        if (alpha >= beta) break;
       } catch (IllegalMoveException e) {
-        // illegal move caught
+        // Skipping illegal move
       }
     }
     return bestMove;

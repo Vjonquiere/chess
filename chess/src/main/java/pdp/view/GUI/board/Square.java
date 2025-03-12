@@ -2,12 +2,12 @@ package pdp.view.GUI.board;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
+import pdp.view.GUIView;
 
 public class Square extends StackPane {
   Color baseColor;
@@ -22,7 +22,10 @@ public class Square extends StackPane {
    * @param squareColor The default color of the square
    */
   public Square(ColoredPiece piece, boolean squareColor) {
-    baseColor = squareColor ? Color.web("#DAE0F2") : Color.web("#6D6FD9");
+    baseColor =
+        squareColor
+            ? Color.web(GUIView.theme.getPrimary())
+            : Color.web(GUIView.theme.getSecondary());
     currentPiece = piece;
     sq = new Canvas(100, 100);
     GraphicsContext gc = sq.getGraphicsContext2D();
@@ -30,26 +33,9 @@ public class Square extends StackPane {
     gc.fillRect(0, 0, 100, 100);
     super.getChildren().add(sq);
     if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
-      pieceImage = addPiece(piece);
+      pieceImage = new PieceImage(piece);
       super.getChildren().add(pieceImage);
     }
-  }
-
-  /**
-   * Load the sprite of the given piece
-   *
-   * @param piece the piece to get the sprite
-   * @return The ImageView with the sprite
-   */
-  private ImageView addPiece(ColoredPiece piece) {
-    String color = piece.color == pdp.model.piece.Color.WHITE ? "white" : "black";
-    String path =
-        "/assets/pieces/" + color + "/" + piece.piece.getCharRepresentation(false) + ".png";
-    Image image = new Image(getClass().getResourceAsStream(path));
-    ImageView imageView = new ImageView(image);
-    imageView.setFitWidth(50);
-    imageView.setFitHeight(50);
-    return imageView;
   }
 
   /**
@@ -65,7 +51,7 @@ public class Square extends StackPane {
       }
       super.getChildren().remove(pieceImage);
       if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
-        pieceImage = addPiece(piece);
+        pieceImage = new PieceImage(piece);
         super.getChildren().add(pieceImage);
       }
     }
@@ -79,7 +65,7 @@ public class Square extends StackPane {
   public void setSelected(boolean selected) {
     GraphicsContext gc = sq.getGraphicsContext2D();
     if (selected) {
-      gc.setFill(Color.web("#F9CFF2"));
+      gc.setFill(Color.web(GUIView.theme.getAccent()));
     } else {
       gc.setFill(baseColor);
     }
