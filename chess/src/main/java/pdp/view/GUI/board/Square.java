@@ -25,8 +25,8 @@ public class Square extends StackPane {
   public Square(ColoredPiece piece, boolean squareColor) {
     baseColor =
         squareColor
-            ? Color.web(GUIView.theme.getPrimary())
-            : Color.web(GUIView.theme.getSecondary());
+            ? Color.web(GUIView.theme.getSecondary())
+            : Color.web(GUIView.theme.getPrimary());
     currentPiece = piece;
     sq = new Canvas(100, 100);
     reachableSq = new Canvas(100, 100);
@@ -75,13 +75,24 @@ public class Square extends StackPane {
     gc.fillRect(0, 0, 100, 100);
   }
 
-  public void setReachable(boolean reachable) {
+  /**
+   * Update the square depending on reachability dans take possibility
+   *
+   * @param reachable The square reachability
+   * @param isTake The square take possibility
+   */
+  public void setReachable(boolean reachable, boolean isTake) {
     GraphicsContext gc = reachableSq.getGraphicsContext2D();
     gc.clearRect(0, 0, reachableSq.getWidth(), reachableSq.getHeight()); // Clear the canvas
 
-    if (reachable) {
+    if (reachable && !isTake) {
       gc.setFill(Color.web(GUIView.theme.getAccent()));
-      gc.fillOval(25, 25, 50, 50);
+      gc.fillOval(37.5, 37.5, 25, 25);
+    } else if (isTake) {
+      gc.setFill(Color.web(GUIView.theme.getAccent()));
+      gc.fillOval(10, 10, 80, 80);
+      gc.setFill(baseColor);
+      gc.fillOval(15, 15, 70, 70);
     }
   }
 }
