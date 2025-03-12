@@ -37,25 +37,21 @@ public class ControlPanel extends VBox {
   }
 
   private void initTimerPanel() {
-    System.out.println("timer panel has been initialized");
     timerPanel = new TimersPanel();
     timerPanel.setStyle(borderStyle);
   }
 
   private void initPlayerPanel() {
-    System.out.println("player panel");
     playerPanel = new HBox(new Label("player panel"));
     playerPanel.setStyle(borderStyle);
   }
 
   private void initButtonsPanel() {
-    System.out.println("buttons panel");
     buttonsPanel = new ButtonsPanel();
     buttonsPanel.setStyle(borderStyle);
   }
 
   private void initHistoryPanel() {
-    System.out.println("history panel");
     historyPanel = new HistoryPanel();
     historyPanel.setStyle(borderStyle);
   }

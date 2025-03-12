@@ -25,7 +25,8 @@ public class GUIView implements View {
   private Scene scene;
   private Board board;
   private ControlPanel controlPanel;
-  public static ColorTheme theme = SIMPLE;
+  private ChessMenu menu;
+  public static ColorTheme theme = PURPLE;
   boolean init = false;
 
   static {
@@ -33,6 +34,10 @@ public class GUIView implements View {
   }
 
   public void updateTheme() {
+    scene.getStylesheets().clear();
+    scene
+        .getStylesheets()
+        .add(getClass().getResource("/styles/" + theme + ".css").toExternalForm());
     onGameEvent(EventType.GAME_STARTED);
   }
 
@@ -48,8 +53,6 @@ public class GUIView implements View {
   public void init(Stage stage) {
     System.out.println(stage);
     stage.setTitle(TextGetter.getText("title"));
-    root.setTop(new ChessMenu(this));
-    root.setStyle("-fx-background-color: " + theme.getBackground() + ";");
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);
     scene
@@ -97,6 +100,7 @@ public class GUIView implements View {
           try {
             switch (event) {
               case GAME_STARTED:
+                root.setStyle("-fx-background-color: " + theme.getBackground() + ";");
                 if (board != null) {
                   root.getChildren().remove(board);
                 }
@@ -104,8 +108,17 @@ public class GUIView implements View {
                 root.setLeft(board);
                 System.out.println("GUI board displayed"); // TODO: Add in resource bundle
                 DEBUG(LOGGER, "Board view initialized");
+                if (controlPanel != null) {
+                  root.getChildren().remove(controlPanel);
+                }
                 controlPanel = new ControlPanel(root);
                 root.setCenter(controlPanel);
+                if (menu != null) {
+                  root.getChildren().remove(menu);
+                }
+                menu = new ChessMenu(this);
+                root.setTop(menu);
+
                 break;
               case MOVE_PLAYED:
                 if (board != null) {

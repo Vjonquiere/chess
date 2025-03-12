@@ -5,11 +5,13 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import pdp.controller.BagOfCommands;
+import pdp.controller.commands.ChangeTheme;
 import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.popups.NewGamePopup;
 import pdp.view.GUI.popups.ThemePopUp;
+import pdp.view.GUI.themes.ColorTheme;
 import pdp.view.GUIView;
 
 public class ChessMenu extends VBox {
@@ -53,7 +55,7 @@ public class ChessMenu extends VBox {
     Menu optionsMenu = new Menu("Options");
     MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
     theme.setOnAction(event -> openThemePopup(view));
-    optionsMenu.getItems().add(theme);
+    optionsMenu.getItems().add(createThemeMenuItem());
     return optionsMenu;
   }
 
@@ -63,5 +65,20 @@ public class ChessMenu extends VBox {
 
   private void openThemePopup(GUIView view) {
     ThemePopUp.show(view);
+  }
+
+  private Menu createThemeMenuItem() {
+    Menu themes = new Menu("Theme", null);
+
+    for (ColorTheme c : ColorTheme.values()) {
+      MenuItem theme = new MenuItem(c.name());
+      theme.setOnAction(
+          e -> {
+            GUIView.theme = c;
+            BagOfCommands.getInstance().addCommand(new ChangeTheme());
+          });
+      themes.getItems().add(theme);
+    }
+    return themes;
   }
 }
