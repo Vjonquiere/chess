@@ -14,19 +14,17 @@ import javafx.stage.Stage;
 import pdp.GameInitializer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.ChangeTheme;
-import pdp.controller.commands.StartGameCommand;
-import pdp.model.Game;
-import pdp.utils.TextGetter;
-import pdp.view.GUI.popups.NewGamePopup;
-import pdp.view.GUI.popups.ThemePopUp;
-import pdp.view.GUI.themes.ColorTheme;
-import pdp.view.GUIView;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
 import pdp.utils.OptionType;
+import pdp.utils.TextGetter;
 import pdp.view.GUI.menu.HelpPopup;
 import pdp.view.GUI.menu.SettingsEditorPopup;
+import pdp.view.GUI.popups.NewGamePopup;
+import pdp.view.GUI.popups.ThemePopUp;
+import pdp.view.GUI.themes.ColorTheme;
+import pdp.view.GUIView;
 
 public class ChessMenu extends VBox {
   public ChessMenu(GUIView view) {
