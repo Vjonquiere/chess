@@ -42,8 +42,6 @@ public class HistoryPanel extends VBox {
             "Suite",
             "Family App");
     list.setItems(items);
-    list.getStylesheets()
-        .add(getClass().getResource("/styles/" + styleFileName + ".css").toExternalForm());
     super.getChildren().add(new Label(TextGetter.getText("gameHistory")));
     super.getChildren().add(list);
   }

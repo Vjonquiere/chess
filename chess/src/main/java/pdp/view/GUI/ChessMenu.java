@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
+import pdp.view.GUIView;
 
 public class ChessMenu extends VBox {
   public ChessMenu() {
@@ -14,7 +15,9 @@ public class ChessMenu extends VBox {
     menuBar.getMenus().add(createFileMenu());
     menuBar.getMenus().add(createGameMenu());
     menuBar.getMenus().add(createAboutMenu());
-
+    menuBar
+        .getStylesheets()
+        .add(getClass().getResource("/styles/" + GUIView.theme + ".css").toExternalForm());
     this.getChildren().add(menuBar);
   }
 

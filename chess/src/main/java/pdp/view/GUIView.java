@@ -24,7 +24,7 @@ public class GUIView implements View {
   private Stage stage;
   private Board board;
   private ControlPanel controlPanel;
-  public static ColorTheme theme = PURPLE;
+  public static ColorTheme theme = SIMPLE;
   boolean init = false;
 
   static {
@@ -47,6 +47,9 @@ public class GUIView implements View {
     root.setStyle("-fx-background-color: " + theme.getBackground() + ";");
     // root.setCenter(board);
     Scene scene = new Scene(root, 1200, 820);
+    scene
+        .getStylesheets()
+        .add(getClass().getResource("/styles/" + theme + ".css").toExternalForm());
     stage.setScene(scene);
     if (board != null) board.setStage(stage);
     this.stage = stage;

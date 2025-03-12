@@ -16,3 +16,17 @@
     -fx-background-color: #82C0CC;
     -fx-text-fill: black;
 }
+
+.menu-bar{
+    -fx-background-color: #16697A;
+    -fx-border-color: #231942;
+}
+.menu-item, .menu, .context-menu{
+    -fx-background-color: #16697A;
+}
+.menu .label{
+    -fx-text-fill: white;
+}
+.menu-item:hover, .menu:hover{
+    -fx-background-color: #82C0CC;
+}
