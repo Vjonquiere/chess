@@ -4,6 +4,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import pdp.controller.BagOfCommands;
+import pdp.controller.commands.CancelMoveCommand;
+import pdp.controller.commands.RestartCommand;
+import pdp.controller.commands.RestoreMoveCommand;
 import pdp.utils.TextGetter;
 
 public class ButtonsPanel extends GridPane {
@@ -52,6 +56,11 @@ public class ButtonsPanel extends GridPane {
     undoButton = new Button(TextGetter.getText("undo"));
     undoButton.setStyle(buttonStyle);
     undoButton.setMinWidth(100);
+    undoButton.setOnAction(
+        event -> {
+          System.out.println("undo cliqué !");
+          undoCommand("");
+        });
     // TODO: add action to button
   }
 
@@ -59,6 +68,11 @@ public class ButtonsPanel extends GridPane {
     redoButton = new Button(TextGetter.getText("redo"));
     redoButton.setStyle(buttonStyle);
     redoButton.setMinWidth(100);
+    redoButton.setOnAction(
+        event -> {
+          System.out.println("redo cliqué !");
+          redoCommand("");
+        });
     // TODO: add action to button
   }
 
@@ -87,6 +101,38 @@ public class ButtonsPanel extends GridPane {
     restartButton = new Button(TextGetter.getText("restart"));
     restartButton.setStyle(buttonStyle);
     restartButton.setMinWidth(100);
+    restartButton.setOnAction(
+        event -> {
+          System.out.println("restart cliqué !");
+          restartCommand("");
+        });
     // TODO: add action to button
+  }
+
+  /**
+   * Handles the undo command by reverting the last move in history.
+   *
+   * @param args Unused argument
+   */
+  private void undoCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+  }
+
+  /**
+   * Handles the redo command by re-executing a previously undone move.
+   *
+   * @param args Unused argument
+   */
+  private void redoCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+  }
+
+  /**
+   * Handles the restart command by restarting a new game.
+   *
+   * @param args Unused argument
+   */
+  private void restartCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestartCommand());
   }
 }
