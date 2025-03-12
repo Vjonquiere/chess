@@ -12,6 +12,7 @@ import pdp.view.GUIView;
 public class Square extends StackPane {
   Color baseColor;
   Canvas sq;
+  Canvas reachableSq;
   ColoredPiece currentPiece;
   ImageView pieceImage;
 
@@ -28,10 +29,12 @@ public class Square extends StackPane {
             : Color.web(GUIView.theme.getSecondary());
     currentPiece = piece;
     sq = new Canvas(100, 100);
+    reachableSq = new Canvas(100, 100);
     GraphicsContext gc = sq.getGraphicsContext2D();
     gc.setFill(baseColor);
     gc.fillRect(0, 0, 100, 100);
     super.getChildren().add(sq);
+    super.getChildren().add(reachableSq);
     if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
       pieceImage = new PieceImage(piece);
       super.getChildren().add(pieceImage);
@@ -70,5 +73,15 @@ public class Square extends StackPane {
       gc.setFill(baseColor);
     }
     gc.fillRect(0, 0, 100, 100);
+  }
+
+  public void setReachable(boolean reachable) {
+    GraphicsContext gc = reachableSq.getGraphicsContext2D();
+    gc.clearRect(0, 0, reachableSq.getWidth(), reachableSq.getHeight()); // Clear the canvas
+
+    if (reachable) {
+      gc.setFill(Color.web(GUIView.theme.getAccent()));
+      gc.fillOval(25, 25, 50, 50);
+    }
   }
 }

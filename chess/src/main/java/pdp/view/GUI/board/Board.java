@@ -1,6 +1,8 @@
 package pdp.view.GUI.board;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -20,6 +22,7 @@ public class Board extends GridPane {
   private final int boardRows;
   private Position from;
   private final Map<Position, Square> pieces = new HashMap<>();
+  private List<Position> reachableSquares;
   private Stage stage;
 
   public Board(Game game, Stage stage) {
@@ -83,23 +86,47 @@ public class Board extends GridPane {
           || (!isWhiteTurn && squareColor != Color.BLACK)) return;
       from = new Position(x, y);
       pieces.get(from).setSelected(true);
+      clearSelectedSquares();
+      setReachableSquares(x, y);
     } else {
       pieces.get(from).setSelected(false);
       if ((isWhiteTurn && squareColor == Color.WHITE)
           || (!isWhiteTurn && squareColor == Color.BLACK)) {
         from = new Position(x, y);
         pieces.get(from).setSelected(true);
+        clearSelectedSquares();
+        setReachableSquares(x, y);
         return;
       }
       try {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
         if (processPawnPromoting(x, y)) return;
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
+        clearSelectedSquares();
         from = null;
       } catch (Exception e) {
+        clearSelectedSquares();
         from = null;
         System.out.println("wrong move:" + e.getMessage());
       }
+    }
+  }
+
+  public void setReachableSquares(int x, int y) {
+    reachableSquares = new ArrayList<>();
+    List<Move> moves = Game.getInstance().getBoard().board.getAvailableMoves(x, y, false);
+    for (Move move : moves) {
+      pieces.get(move.dest).setReachable(true);
+      reachableSquares.add(move.dest);
+    }
+  }
+
+  public void clearSelectedSquares() {
+    if (reachableSquares != null) {
+      for (Position p : reachableSquares) {
+        pieces.get(p).setReachable(false);
+      }
+      reachableSquares = null;
     }
   }
 
