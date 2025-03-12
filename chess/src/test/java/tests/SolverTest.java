@@ -38,7 +38,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationMaterial() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
 
@@ -59,7 +59,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationErrors() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Exception exception =
         assertThrows(
@@ -87,7 +87,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationHash() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
     int score1 = solver.evaluateBoard(game.getBoard(), true);
@@ -148,7 +148,7 @@ public class SolverTest {
   /*
   @Test
   public void testNotEnoughTime() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setTime(1);
     solver.setDepth(10000);
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));

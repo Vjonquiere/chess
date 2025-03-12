@@ -31,7 +31,7 @@ public class RestartGameTest {
     outputStream.reset();
   }
 
-  /* Game game = Game.initialize(false, false, null, null, new HashMap<>());
+  /* Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
      Move move = new Move(new Position(4, 1), new Position(4, 3));
      game.playMove(move);
      Move move2 = new Move(new Position(4, 6), new Position(4, 4));
@@ -43,7 +43,7 @@ public class RestartGameTest {
   */
   @Test
   public void testResetIsOver() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.getGameState().applyFiftyMoveRule();
 
     game.restartGame();
@@ -53,7 +53,7 @@ public class RestartGameTest {
 
   @Test
   public void testResetIsOverWithWAi() {
-    Game game = Game.initialize(true, false, new Solver(), null, new HashMap<>());
+    Game game = Game.initialize(true, false, new Solver(), new Solver(), null, new HashMap<>());
     game.getGameState().applyFiftyMoveRule();
 
     game.restartGame();
@@ -63,7 +63,7 @@ public class RestartGameTest {
 
   @Test
   public void testRestartGame_ResetsHistory() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move2 = new Move(new Position(4, 6), new Position(4, 4));
@@ -85,7 +85,7 @@ public class RestartGameTest {
 
   /* @Test
   public void testRestartGame_ResetsHistoryWithWAi() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move2 = new Move(new Position(4, 6), new Position(4, 4));
@@ -107,7 +107,7 @@ public class RestartGameTest {
 
   @Test
   public void testResetThreefold() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(6, 0), new Position(5, 2));
     game.playMove(move);
     Move move2 = new Move(new Position(6, 7), new Position(5, 5));
@@ -135,7 +135,7 @@ public class RestartGameTest {
 
   @Test
   public void testResetFullTurn() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(6, 0), new Position(5, 2));
     game.playMove(move);
     Move move2 = new Move(new Position(6, 7), new Position(5, 5));
@@ -148,7 +148,7 @@ public class RestartGameTest {
 
   @Test
   public void testResetWhiteTurn() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(6, 0), new Position(5, 2));
     game.playMove(move);
 

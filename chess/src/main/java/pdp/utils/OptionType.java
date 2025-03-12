@@ -204,7 +204,7 @@ public enum OptionType {
           .optionalArg(true)
           .argName("COLOR")
           .desc(
-              "Launch the program in AI mode, with artificial player with COLOR 'B' or 'A' (All),(W by default).")
+              "Launch the program in AI mode, with artificial player with COLOR 'W', 'B' or 'A' (All),(W by default).")
           .build();
     }
   },
@@ -226,11 +226,116 @@ public enum OptionType {
           .hasArg(true)
           .argName("ALGORITHM")
           .desc(
-              "Choose the exploration algorithm for the artificial player.\n"
+              "Choose the exploration algorithm for the artificial players.\n"
                   + "Available options:\n"
-                  + "- MINIMAX : Uses the MiniMax algorithm (default).\n"
-                  + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm.\n"
+                  + "- MINIMAX : Uses the MiniMax algorithm.\n"
+                  + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm (default).\n"
                   + "- MCTS : Uses Monte Carlo Tree Search for AI move exploration.")
+          .build();
+    }
+  },
+  AI_MODE_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-mode-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("ALGORITHM")
+          .desc("Choose the exploration algorithm for the artificial white player.\n")
+          .build();
+    }
+  },
+  AI_MODE_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-mode-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("ALGORITHM")
+          .desc("Choose the exploration algorithm for the artificial black player.\n")
+          .build();
+    }
+  },
+  AI_SIMULATION {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-simulation";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("SIMULATION")
+          .desc("Specify the number of simulations for the MCTS AI algorithm")
+          .build();
+    }
+  },
+  AI_SIMULATION_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-simulation-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("SIMULATIONS")
+          .desc("Specify the number of simulations for the White MCTS AI algorithm")
+          .build();
+    }
+  },
+  AI_SIMULATION_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-simulation-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("SIMULATIONS")
+          .desc("Specify the number of simulations for the Black MCTS AI algorithm")
           .build();
     }
   },
@@ -256,6 +361,48 @@ public enum OptionType {
           .build();
     }
   },
+  AI_DEPTH_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-depth-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("DEPTH")
+          .desc("Specify the depth of the AI algorithm for the white player")
+          .build();
+    }
+  },
+  AI_DEPTH_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-depth-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("DEPTH")
+          .desc("Specify the depth of the AI algorithm for the black player")
+          .build();
+    }
+  },
   AI_HEURISTIC {
     @Override
     public String getShort() {
@@ -274,7 +421,7 @@ public enum OptionType {
           .hasArg(true)
           .argName("HEURISTIC")
           .desc(
-              "Choose the heuristic for the artificial player.\n"
+              "Choose the heuristic for the artificial players.\n"
                   + "Choose between these heuristic (case sensitive)\n"
                   + "- STANDARD : Aggregates multiple heuristics to evaluate the board during the start and middle game.\n"
                   + "- SHANNON : Basic Heuristic from Shannon.\n"
@@ -291,6 +438,48 @@ public enum OptionType {
                   + "- PAWN_CHAIN : Computes a score according to how strongly pawns are connected.\n"
                   + "- PROMOTION : Computes a score according to closeness of pawns promoting.\n"
                   + "- SPACE_CONTROL : Gives a score based on how much control over the entire board the players have.\n")
+          .build();
+    }
+  },
+  AI_HEURISTIC_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-heuristic-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the artificial white player.\n")
+          .build();
+    }
+  },
+  AI_HEURISTIC_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-heuristic-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the artificial black player.\n")
           .build();
     }
   },

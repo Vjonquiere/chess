@@ -21,6 +21,8 @@ public class GameState extends Subject {
   private boolean blackWantsToDraw = false;
   private boolean whiteResigns = false;
   private boolean blackResigns = false;
+  private int undoRequestTurnNumber = -1;
+  private int redoRequestTurnNumber = -1;
   private boolean whiteLosesOnTime = false;
   private boolean blackLosesOnTime = false;
   private boolean isGameOver = false;
@@ -107,6 +109,50 @@ public class GameState extends Subject {
 
   public void incrementsFullTurn() {
     this.fullTurnNumber += 1;
+  }
+
+  public int getUndoRequestTurnNumber() {
+    return this.undoRequestTurnNumber;
+  }
+
+  public int getRedoRequestTurnNumber() {
+    return this.redoRequestTurnNumber;
+  }
+
+  /**
+   * Requests to undo the last move by recording the current turn number. Notifies observers about
+   * the undo proposal based on the player's turn.
+   */
+  public void undoRequest() {
+    this.undoRequestTurnNumber = this.getFullTurn();
+    if (this.isWhiteTurn()) notifyObservers(EventType.WHITE_UNDO_PROPOSAL);
+    else notifyObservers(EventType.BLACK_UNDO_PROPOSAL);
+  }
+
+  /**
+   * Resets the undo request by setting the recorded turn number to -1. This indicates that there is
+   * no more active undo request.
+   */
+  public void undoRequestReset() {
+    this.undoRequestTurnNumber = -1;
+  }
+
+  /**
+   * Requests to redo the last undone move by recording the current turn number. Notifies observers
+   * about the redo proposal based on the player's turn.
+   */
+  public void redoRequest() {
+    this.redoRequestTurnNumber = this.getFullTurn();
+    if (this.isWhiteTurn()) notifyObservers(EventType.WHITE_REDO_PROPOSAL);
+    else notifyObservers(EventType.BLACK_REDO_PROPOSAL);
+  }
+
+  /**
+   * Resets the redo request by setting the recorded turn number to -1. This indicates that there is
+   * no more active redo request.
+   */
+  public void redoRequestReset() {
+    this.redoRequestTurnNumber = -1;
   }
 
   /*

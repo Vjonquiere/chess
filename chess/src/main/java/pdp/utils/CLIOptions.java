@@ -243,7 +243,7 @@ public class CLIOptions {
       activatedOptions.put(OptionType.AI, "W");
     }
 
-    validateAIOptions(cmd, activatedOptions);
+    validateAIOptions(activatedOptions);
   }
 
   /**
@@ -255,31 +255,82 @@ public class CLIOptions {
    * @param cmd The parsed command line containing user-provided options.
    * @param activatedOptions The map containing the currently activated options.
    */
-  private static void validateAIOptions(
-      CommandLine cmd, HashMap<OptionType, String> activatedOptions) {
+  public static void validateAIOptions(HashMap<OptionType, String> activatedOptions) {
     if (!activatedOptions.containsKey(OptionType.AI)) {
       for (OptionType aiOption :
           new OptionType[] {
-            OptionType.AI_MODE, OptionType.AI_DEPTH, OptionType.AI_HEURISTIC, OptionType.AI_TIME
+            OptionType.AI_MODE,
+            OptionType.AI_DEPTH,
+            OptionType.AI_HEURISTIC,
+            OptionType.AI_TIME,
+            OptionType.AI_DEPTH_W,
+            OptionType.AI_DEPTH_B,
+            OptionType.AI_HEURISTIC_W,
+            OptionType.AI_HEURISTIC_B,
+            OptionType.AI_MODE_W,
+            OptionType.AI_MODE_B,
+            OptionType.AI_SIMULATION
           }) {
-        if (cmd.hasOption(aiOption.getLong())) {
+        if (activatedOptions.containsKey(aiOption)) {
           System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
+          activatedOptions.remove(aiOption);
         }
       }
     } else {
       if (!activatedOptions.containsKey(OptionType.AI_MODE)) {
         activatedOptions.put(OptionType.AI_MODE, "ALPHA_BETA");
       }
-      if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
-        if ("mcts".equalsIgnoreCase(activatedOptions.get(OptionType.AI_MODE))) {
-          activatedOptions.put(OptionType.AI_DEPTH, "100");
-        } else {
-          activatedOptions.put(OptionType.AI_DEPTH, "4");
-        }
+      if (!activatedOptions.containsKey(OptionType.AI_MODE_W)) {
+        activatedOptions.put(OptionType.AI_MODE_W, activatedOptions.get(OptionType.AI_MODE));
       }
+      if (!activatedOptions.containsKey(OptionType.AI_MODE_B)) {
+        activatedOptions.put(OptionType.AI_MODE_B, activatedOptions.get(OptionType.AI_MODE));
+      }
+
+      activatedOptions.remove(OptionType.AI_MODE);
+
+      if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
+        activatedOptions.put(OptionType.AI_DEPTH, "4");
+      }
+
+      if (!activatedOptions.containsKey(OptionType.AI_DEPTH_W)) {
+        activatedOptions.put(OptionType.AI_DEPTH_W, activatedOptions.get(OptionType.AI_DEPTH));
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_DEPTH_B)) {
+        activatedOptions.put(OptionType.AI_DEPTH_B, activatedOptions.get(OptionType.AI_DEPTH));
+      }
+
+      activatedOptions.remove(OptionType.AI_DEPTH);
+
+      if (!activatedOptions.containsKey(OptionType.AI_SIMULATION)) {
+        activatedOptions.put(OptionType.AI_SIMULATION, "100");
+      }
+
+      if (!activatedOptions.containsKey(OptionType.AI_SIMULATION_W)) {
+        activatedOptions.put(
+            OptionType.AI_SIMULATION_W, activatedOptions.get(OptionType.AI_SIMULATION));
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_SIMULATION_B)) {
+        activatedOptions.put(
+            OptionType.AI_SIMULATION_B, activatedOptions.get(OptionType.AI_SIMULATION));
+      }
+
+      activatedOptions.remove(OptionType.AI_SIMULATION);
+
       if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC)) {
         activatedOptions.put(OptionType.AI_HEURISTIC, "STANDARD");
       }
+      if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC_W)) {
+        activatedOptions.put(
+            OptionType.AI_HEURISTIC_W, activatedOptions.get(OptionType.AI_HEURISTIC));
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_HEURISTIC_B)) {
+        activatedOptions.put(
+            OptionType.AI_HEURISTIC_B, activatedOptions.get(OptionType.AI_HEURISTIC));
+      }
+
+      activatedOptions.remove(OptionType.AI_HEURISTIC);
+
       if (activatedOptions.containsKey(OptionType.AI_TIME)
           && activatedOptions.get(OptionType.AI_TIME).equals("")) {
         activatedOptions.put(OptionType.AI_TIME, "5");
