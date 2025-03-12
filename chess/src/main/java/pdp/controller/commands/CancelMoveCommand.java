@@ -22,10 +22,10 @@ public class CancelMoveCommand implements Command {
           model.previousState();
         } catch (Exception e) {
         }
-        if (model.isBlackAI() && !model.getGameState().isWhiteTurn()
-            || model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
-          // model.getSolver().playAIMove(model);
-        }
+        if (model.isBlackAI() && !model.getGameState().isWhiteTurn())
+          model.getBlackSolver().playAIMove(model);
+        if (model.isWhiteAI() && model.getGameState().isWhiteTurn())
+          model.getWhiteSolver().playAIMove(model);
       } else {
         if (model.getGameState().getUndoRequestTurnNumber() == model.getGameState().getFullTurn()) {
           model.previousState();
