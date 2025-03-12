@@ -12,14 +12,18 @@ import pdp.model.Game;
 import pdp.utils.Logging;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.ChessMenu;
+import pdp.view.GUI.ControlPanel;
 import pdp.view.GUI.GUILauncher;
 import pdp.view.GUI.board.Board;
+import pdp.view.GUI.themes.ColorTheme;
 
 public class GUIView implements View {
   private static final Logger LOGGER = Logger.getLogger(GUIView.class.getName());
   private BorderPane root;
   private Stage stage;
   private Board board;
+  private ControlPanel controlPanel;
+  public static ColorTheme theme = ColorTheme.SIMPLE;
   boolean init = false;
 
   static {
@@ -36,12 +40,13 @@ public class GUIView implements View {
    * @param stage Main stage of the Application.
    */
   public void init(Stage stage) {
+    System.out.println(stage);
     stage.setTitle(TextGetter.getText("title"));
     root.setTop(new ChessMenu());
     // root.setCenter(board);
-    Scene scene = new Scene(root, 820, 820);
+    Scene scene = new Scene(root, 1200, 820);
     stage.setScene(scene);
-
+    if (board != null) board.setStage(stage);
     this.stage = stage;
   }
 
@@ -85,10 +90,12 @@ public class GUIView implements View {
                 if (board != null) {
                   root.getChildren().remove(board);
                 }
-                board = new Board(Game.getInstance());
-                root.setCenter(board);
+                board = new Board(Game.getInstance(), stage);
+                root.setLeft(board);
                 System.out.println("GUI board displayed"); // TODO: Add in resource bundle
                 DEBUG(LOGGER, "Board view initialized");
+                controlPanel = new ControlPanel(root);
+                root.setCenter(controlPanel);
                 break;
               case MOVE_PLAYED:
                 if (board != null) {

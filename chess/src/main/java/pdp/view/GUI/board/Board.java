@@ -3,12 +3,15 @@ package pdp.view.GUI.board;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.model.Game;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
+import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class Board extends GridPane {
@@ -17,12 +20,13 @@ public class Board extends GridPane {
   private final int boardRows;
   private Position from;
   private final Map<Position, Square> pieces = new HashMap<>();
+  private Stage stage;
 
-  public Board(Game game) {
+  public Board(Game game, Stage stage) {
     this.board = game.getBoard().board;
     this.boardColumns = board.getNbCols();
     this.boardRows = board.getNbRows();
-
+    this.stage = stage;
     buildBoard();
   }
 
@@ -72,13 +76,24 @@ public class Board extends GridPane {
    * @param y y coordinate of the selected square
    */
   private void switchSelectedSquare(int x, int y) {
+    boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
+    Color squareColor = Game.getInstance().getBoard().board.getPieceAt(x, y).color;
     if (from == null) {
+      if ((isWhiteTurn && squareColor != Color.WHITE)
+          || (!isWhiteTurn && squareColor != Color.BLACK)) return;
       from = new Position(x, y);
       pieces.get(from).setSelected(true);
     } else {
       pieces.get(from).setSelected(false);
+      if ((isWhiteTurn && squareColor == Color.WHITE)
+          || (!isWhiteTurn && squareColor == Color.BLACK)) {
+        from = new Position(x, y);
+        pieces.get(from).setSelected(true);
+        return;
+      }
       try {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
+        if (processPawnPromoting(x, y)) return;
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
         from = null;
       } catch (Exception e) {
@@ -86,5 +101,29 @@ public class Board extends GridPane {
         System.out.println("wrong move:" + e.getMessage());
       }
     }
+  }
+
+  /**
+   * Get the move with command creation ready format
+   *
+   * @param x The destination x coordinate
+   * @param y The destination y coordinate
+   * @return Move as string format
+   */
+  public boolean processPawnPromoting(int x, int y) {
+    ColoredPiece piece = Game.getInstance().getBoard().board.getPieceAt(from.getX(), from.getY());
+    if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && y == 0) { // Black pawn promote
+      new PromotionPieceSelectionPopUp(stage, from, new Position(x, y));
+      return true;
+    }
+    if (piece.piece == Piece.PAWN && piece.color == Color.WHITE && y == 7) { // White pawn promote
+      new PromotionPieceSelectionPopUp(stage, from, new Position(x, y));
+      return true;
+    }
+    return false;
+  }
+
+  public void setStage(Stage stage) {
+    this.stage = stage;
   }
 }
