@@ -711,9 +711,7 @@ public class Game extends Subject {
       this.gameState.blackResigns();
     }
 
-    this.startAI();
-
-    this.gameState = new GameState(this.gameState.getMoveTimer());
+    this.gameState.updateFrom(new GameState(this.gameState.getMoveTimer()));
     this.history = new History();
 
     this.history.addMove(
