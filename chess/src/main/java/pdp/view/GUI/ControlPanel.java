@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import pdp.view.GUI.controls.ButtonsPanel;
 import pdp.view.GUI.controls.HistoryPanel;
 import pdp.view.GUI.controls.TimersPanel;
+import pdp.view.GUIView;
 
 public class ControlPanel extends VBox {
   private VBox timerPanel;
@@ -15,7 +16,9 @@ public class ControlPanel extends VBox {
   private VBox historyPanel;
   private ButtonsPanel buttonsPanel;
   String borderStyle =
-      "-fx-border-color: #6D6FD9;\n"
+      "-fx-border-color: "
+          + GUIView.theme.getPrimary()
+          + ";\n"
           + "-fx-border-width: 2;\n"
           + "-fx-border-radius: 10;\n"
           + "-fx-padding: 5;\n"
