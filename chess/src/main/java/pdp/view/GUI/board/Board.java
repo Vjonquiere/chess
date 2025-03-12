@@ -86,7 +86,7 @@ public class Board extends GridPane {
           || (!isWhiteTurn && squareColor != Color.BLACK)) return;
       from = new Position(x, y);
       pieces.get(from).setSelected(true);
-      clearSelectedSquares();
+      clearReachableSquares();
       setReachableSquares(x, y);
     } else {
       pieces.get(from).setSelected(false);
@@ -94,7 +94,7 @@ public class Board extends GridPane {
           || (!isWhiteTurn && squareColor == Color.BLACK)) {
         from = new Position(x, y);
         pieces.get(from).setSelected(true);
-        clearSelectedSquares();
+        clearReachableSquares();
         setReachableSquares(x, y);
         return;
       }
@@ -102,29 +102,36 @@ public class Board extends GridPane {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
         if (processPawnPromoting(x, y)) return;
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
-        clearSelectedSquares();
+        clearReachableSquares();
         from = null;
       } catch (Exception e) {
-        clearSelectedSquares();
+        clearReachableSquares();
         from = null;
         System.out.println("wrong move:" + e.getMessage());
       }
     }
   }
 
+  /**
+   * Update the given square to display a capture possibility
+   *
+   * @param x The x coordinate of the square
+   * @param y The y coordinate of the square
+   */
   public void setReachableSquares(int x, int y) {
     reachableSquares = new ArrayList<>();
     List<Move> moves = Game.getInstance().getBoard().board.getAvailableMoves(x, y, false);
     for (Move move : moves) {
-      pieces.get(move.dest).setReachable(true);
+      pieces.get(move.dest).setReachable(true, move.isTake);
       reachableSquares.add(move.dest);
     }
   }
 
-  public void clearSelectedSquares() {
+  /** Update the squares that can be captured to their initial states */
+  public void clearReachableSquares() {
     if (reachableSquares != null) {
       for (Position p : reachableSquares) {
-        pieces.get(p).setReachable(false);
+        pieces.get(p).setReachable(false, false);
       }
       reachableSquares = null;
     }
