@@ -3,6 +3,9 @@ package pdp.view;
 import static pdp.utils.Logging.DEBUG;
 import static pdp.view.GUI.themes.ColorTheme.*;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -26,18 +29,31 @@ public class GUIView implements View {
   private Board board;
   private ControlPanel controlPanel;
   private ChessMenu menu;
-  public static ColorTheme theme = PURPLE;
+  public static ColorTheme theme = SIMPLE;
   boolean init = false;
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
+  public void applyCSS(String cssContent) {
+    try {
+      File tempFile = File.createTempFile("theme-", ".css");
+      tempFile.deleteOnExit();
+
+      try (FileWriter writer = new FileWriter(tempFile)) {
+        writer.write(cssContent);
+      }
+
+      scene.getStylesheets().clear();
+      scene.getStylesheets().add(tempFile.toURI().toString());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   public void updateTheme() {
-    scene.getStylesheets().clear();
-    scene
-        .getStylesheets()
-        .add(getClass().getResource("/styles/" + theme + ".css").toExternalForm());
+    applyCSS(theme.getCSSStyle());
     onGameEvent(EventType.GAME_STARTED);
   }
 
@@ -55,9 +71,7 @@ public class GUIView implements View {
     stage.setTitle(TextGetter.getText("title"));
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);
-    scene
-        .getStylesheets()
-        .add(getClass().getResource("/styles/" + theme + ".css").toExternalForm());
+    applyCSS(theme.getCSSStyle());
     stage.setScene(scene);
     if (board != null) board.setStage(stage);
     this.stage = stage;

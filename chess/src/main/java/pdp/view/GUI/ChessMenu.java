@@ -21,9 +21,6 @@ public class ChessMenu extends VBox {
     menuBar.getMenus().add(createGameMenu());
     menuBar.getMenus().add(createAboutMenu());
     menuBar.getMenus().add(createOptionsMenu(view));
-    menuBar
-        .getStylesheets()
-        .add(getClass().getResource("/styles/" + GUIView.theme + ".css").toExternalForm());
     this.getChildren().add(menuBar);
   }
 

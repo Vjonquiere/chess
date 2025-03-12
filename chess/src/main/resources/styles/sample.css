@@ -2,25 +2,26 @@
     -fx-background-color: transparent;
 }
 
-.list-cell:even {
-    -fx-background-color: #f0f0f0;
+.list-cell:even  {
+    -fx-background-color: #E8C8DA;
     -fx-text-fill: black;
 }
 
-.list-cell:odd {
-    -fx-background-color: #d0d0d0;
+.list-cell:odd{
+    -fx-background-color: #F8E6F0;
     -fx-text-fill: black;
 }
 
-.list-cell:selected {
-    -fx-background-color: #0078D7;
-    -fx-text-fill: white;
+.list-cell:selected  {
+    -fx-background-color: #BE95C4;
+    -fx-text-fill: #5E548E;
 }
+
 .menu-bar{
     -fx-background-color: #9F86C0;
     -fx-border-color: #231942;
 }
-.menu-item, .menu, .context-menu {
+ .menu-item, .menu, .context-menu {
     -fx-background-color: #9F86C0;
 }
 .menu .label {
