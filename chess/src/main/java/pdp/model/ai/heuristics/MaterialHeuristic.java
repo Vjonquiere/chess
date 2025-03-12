@@ -18,24 +18,24 @@ public class MaterialHeuristic implements Heuristic {
     if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation))
       throw new RuntimeException("Only available for bitboards");
     score +=
-        bitboardRepresentation.getPawns(isWhite).size()
-            - bitboardRepresentation.getPawns(!isWhite).size();
+        bitboardRepresentation.getPawns(true).size()
+            - bitboardRepresentation.getPawns(false).size();
     score +=
-        (bitboardRepresentation.getQueens(isWhite).size()
-                - bitboardRepresentation.getQueens(!isWhite).size())
-            * 18;
+        (bitboardRepresentation.getQueens(true).size()
+                - bitboardRepresentation.getQueens(false).size())
+            * 9;
     score +=
-        (bitboardRepresentation.getBishops(isWhite).size()
-                - bitboardRepresentation.getBishops(!isWhite).size())
-            * 6;
+        (bitboardRepresentation.getBishops(true).size()
+                - bitboardRepresentation.getBishops(false).size())
+            * 3;
     score +=
-        (bitboardRepresentation.getKnights(isWhite).size()
-                - bitboardRepresentation.getKnights(!isWhite).size())
-            * 6;
+        (bitboardRepresentation.getKnights(true).size()
+                - bitboardRepresentation.getKnights(false).size())
+            * 3;
     score +=
-        (bitboardRepresentation.getRooks(isWhite).size()
-                - bitboardRepresentation.getRooks(!isWhite).size())
-            * 10;
-    return score;
+        (bitboardRepresentation.getRooks(true).size()
+                - bitboardRepresentation.getRooks(false).size())
+            * 5;
+    return isWhite ? score : -score;
   }
 }

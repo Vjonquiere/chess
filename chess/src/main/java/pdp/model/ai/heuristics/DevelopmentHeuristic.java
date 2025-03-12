@@ -15,9 +15,8 @@ public class DevelopmentHeuristic implements Heuristic {
    */
   @Override
   public int evaluate(Board board, boolean isWhite) {
-    int score =
-        evaluatePiecesDevelopment(board, isWhite) - evaluatePiecesDevelopment(board, !isWhite);
-    return score;
+    int score = evaluatePiecesDevelopment(board, true) - evaluatePiecesDevelopment(board, false);
+    return isWhite ? score : -score;
   }
 
   /**

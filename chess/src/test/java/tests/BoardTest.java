@@ -2,7 +2,11 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.Game;
@@ -15,9 +19,26 @@ import pdp.utils.Position;
 public class BoardTest {
   public Game game;
 
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
+
   @Test
   public void testClassicMove() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 2));
     game.playMove(move);
     assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(4, 2).piece);
@@ -26,7 +47,7 @@ public class BoardTest {
 
   @Test
   public void testDoublePushMove() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(4, 3).piece);
@@ -35,7 +56,7 @@ public class BoardTest {
 
   @Test
   public void testCaptureMove() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move1 = new Move(new Position(3, 6), new Position(3, 4));
@@ -49,7 +70,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenGameStartsShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     assertFalse(
         game.getBoard().canCastle(Color.WHITE, true),
         "Short castle should not be possible for white at initial position !");
@@ -66,7 +87,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenBlackInCheckShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -99,7 +120,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenWhiteInCheckShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -128,7 +149,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleShortWhenPieceInBetweenShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -157,7 +178,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleLongWhenPieceInBetweenShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -194,7 +215,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleShortWhenSquareAttackedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -239,7 +260,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenKingHasMovedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -292,7 +313,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenRookHasMovedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -353,7 +374,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleShortShouldBeTrue() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -390,7 +411,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleLongShouldBeTrue() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -435,7 +456,7 @@ public class BoardTest {
 
   @Test
   public void testApplyShortCastleShouldBeSuccess() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -505,7 +526,7 @@ public class BoardTest {
 
   @Test
   public void testApplyLongCastleShouldBeSuccess() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -591,7 +612,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleLongWhenSquareAttackedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -647,7 +668,7 @@ public class BoardTest {
 
   @Test
   public void testEnPassant() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move1 = new Move(new Position(1, 6), new Position(1, 5));
@@ -666,7 +687,7 @@ public class BoardTest {
 
   @Test // must promote a pawn to Queen
   public void boardPromotionWhiteQueenTest() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move1);
     Move move2 = new Move(new Position(4, 6), new Position(4, 5));
@@ -701,7 +722,7 @@ public class BoardTest {
 
   @Test // must promote a pawn to Queen
   public void boardPromotionQueenBlackTest() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move1 = new Move(new Position(4, 1), new Position(4, 3)); // w
     game.playMove(move1);
@@ -741,7 +762,7 @@ public class BoardTest {
 
   @Test
   public void exceptionOnPromotionWithoutTargetPiece() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move1 = new Move(new Position(4, 1), new Position(4, 3)); // w
     game.playMove(move1);

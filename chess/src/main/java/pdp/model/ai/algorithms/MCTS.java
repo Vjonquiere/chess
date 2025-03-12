@@ -27,6 +27,15 @@ public class MCTS implements SearchAlgorithm {
   }
 
   /**
+   * Returns the number of iterations to execute MCTS.
+   *
+   * @return The number of iterations
+   */
+  public int getSimulationLimit() {
+    return SIMULATION_LIMIT;
+  }
+
+  /**
    * Determines the "best move" using the MCTS algorithm
    *
    * @param game The current game state
@@ -49,8 +58,6 @@ public class MCTS implements SearchAlgorithm {
     }
 
     AIMove move = getBestMove(game, root);
-    System.out.println("MOVE MCTS : " + move.toString());
-    System.out.println("Number of simulations : " + SIMULATION_LIMIT);
 
     return move;
   }

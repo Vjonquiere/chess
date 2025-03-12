@@ -4,9 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
@@ -24,6 +28,23 @@ public class GameFileParserTest {
   private ClassLoader classLoader = getClass().getClassLoader();
   private static final Logger LOGGER = Logger.getLogger(GameFileParserTest.class.getName());
 
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
+
   @Test
   public void parseDefaultGameFile() {
     URL filePath = classLoader.getResource("gameBoards/defaultGame");
@@ -38,7 +59,7 @@ public class GameFileParserTest {
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     assertEquals(new BitboardRepresentation(), board.board());
     assertFalse(board.isWhiteTurn());
-    Game game = Game.initialize(false, false, null, null, board, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, board, new HashMap<>());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertEquals(game.getBoard().board, board.board());
     assertThrows(
@@ -132,7 +153,7 @@ public class GameFileParserTest {
   public void parseTest1() {
     URL filePath = classLoader.getResource("gameBoards/gameExample1");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -174,7 +195,7 @@ public class GameFileParserTest {
     /*Verify that parsing a game with history or do not change output*/
     URL filePath = classLoader.getResource("gameBoards/gameExample1WithHistory");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -295,7 +316,7 @@ public class GameFileParserTest {
     assertEquals(99, fb.header().fiftyMoveRule());
     assertEquals(140, fb.header().playedMoves());
 
-    Game game = Game.initialize(false, false, null, null, fb, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, fb, new HashMap<>());
 
     // Checking params are given to the game
     assertNull(game.getBoard().enPassantPos);
@@ -324,7 +345,7 @@ public class GameFileParserTest {
     assertEquals(0, fb.header().fiftyMoveRule());
     assertEquals(141, fb.header().playedMoves());
 
-    Game game = Game.initialize(false, false, null, null, fb, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, fb, new HashMap<>());
 
     // Checking params are given to the game
     assertEquals(0, game.getBoard().getNbMovesWithNoCaptureOrPawn());

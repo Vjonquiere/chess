@@ -24,7 +24,7 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+    return alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, !player);
   }
 
   /**

@@ -48,7 +48,7 @@ public class CLIViewTest {
 
   @Test
   public void testBoardToASCII() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     char[][] expectedBoard = {
       {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
@@ -174,7 +174,7 @@ public class CLIViewTest {
   @Test
   void testTimeCommand() throws Exception {
 
-    Game game = Game.initialize(false, false, null, new Timer(3500000), new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, new Timer(3500000), new HashMap<>());
 
     Thread.sleep(100);
 
@@ -192,7 +192,7 @@ public class CLIViewTest {
   @Test
   void testTimeCommandNoTimer() throws Exception {
 
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     handleUserInputMethod.invoke(view, "time");
     String output = outputStream.toString();

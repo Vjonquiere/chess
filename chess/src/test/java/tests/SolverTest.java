@@ -2,7 +2,10 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -15,15 +18,27 @@ import tests.helpers.MockBoard;
 
 public class SolverTest {
   private Solver solver;
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
 
   @BeforeEach
   void setUp() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
     solver = new Solver();
   }
 
   @Test
   public void testEvaluationMaterial() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
 
@@ -36,15 +51,15 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-7, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(7, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
   }
 
   @Test
   public void testEvaluationErrors() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Exception exception =
         assertThrows(
@@ -72,7 +87,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationHash() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
     int score1 = solver.evaluateBoard(game.getBoard(), true);
@@ -133,7 +148,7 @@ public class SolverTest {
   /*
   @Test
   public void testNotEnoughTime() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setTime(1);
     solver.setDepth(10000);
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
