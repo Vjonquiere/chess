@@ -8,11 +8,11 @@ public class EndGameHeuristic extends AbstractHeuristic {
 
   public EndGameHeuristic() {
     addHeuristic(new WeightedHeuristic(new KingActivityHeuristic(), 1));
-    addHeuristic(new WeightedHeuristic(new PromotionHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new PromotionHeuristic(), 5));
     addHeuristic(new WeightedHeuristic(new BishopEndgameHeuristic(), 1));
-    addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 1));
+    addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 50));
     addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), 1));
-    addHeuristic(new WeightedHeuristic(new GameStatus(), 1));
+    addHeuristic(new WeightedHeuristic(new GameStatus(), 100));
     addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), 1));
     addHeuristic(new WeightedHeuristic(new PawnChainHeuristic(), 1));
     addHeuristic(new WeightedHeuristic(new KingOppositionHeuristic(), 1));
