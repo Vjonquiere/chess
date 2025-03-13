@@ -18,7 +18,6 @@ import pdp.controller.commands.SaveGameCommand;
 import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
 import pdp.utils.OptionType;
-import pdp.utils.TextGetter;
 import pdp.view.GUI.menu.HelpPopup;
 import pdp.view.GUI.menu.SettingsEditorPopup;
 import pdp.view.GUI.popups.NewGamePopup;
@@ -124,8 +123,8 @@ public class ChessMenu extends VBox {
 
   private Menu createOptionsMenu(GUIView view) {
     Menu optionsMenu = new Menu("Options");
-    MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
-    theme.setOnAction(event -> openThemePopup(view));
+    // MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
+    // theme.setOnAction(event -> openThemePopup(view));
     optionsMenu.getItems().add(createThemeMenuItem());
     return optionsMenu;
   }
