@@ -19,6 +19,7 @@ import pdp.view.GUI.ChessMenu;
 import pdp.view.GUI.ControlPanel;
 import pdp.view.GUI.GUILauncher;
 import pdp.view.GUI.board.Board;
+import pdp.view.GUI.popups.EndGamePopUp;
 import pdp.view.GUI.themes.ColorTheme;
 
 public class GUIView implements View {
@@ -139,6 +140,20 @@ public class GUIView implements View {
                   board.updateBoard();
                 }
                 break;
+              case DRAW_ACCEPTED,
+                  INSUFFICIENT_MATERIAL,
+                  OUT_OF_TIME_BLACK,
+                  OUT_OF_TIME_WHITE,
+                  AI_NOT_ENOUGH_TIME,
+                  THREEFOLD_REPETITION,
+                  WHITE_RESIGNS,
+                  BLACK_RESIGNS,
+                  FIFTY_MOVE_RULE,
+                  CHECKMATE_BLACK,
+                  STALEMATE,
+                  CHECKMATE_WHITE:
+                EndGamePopUp.show(event);
+                break;
               case WIN_WHITE:
                 System.out.println(TextGetter.getText("whiteWin"));
                 break;
@@ -162,9 +177,11 @@ public class GUIView implements View {
                 System.out.println(
                     TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
                 break;
-              case DRAW_ACCEPTED:
-                System.out.println(TextGetter.getText("drawAccepted"));
-                break;
+                /*
+                case DRAW_ACCEPTED:
+                  System.out.println(TextGetter.getText("drawAccepted"));
+                  break;
+                   */
               case GAME_SAVED:
                 System.out.println(TextGetter.getText("gameSaved"));
                 break;
@@ -206,40 +223,42 @@ public class GUIView implements View {
                 System.out.println(
                     TextGetter.getText("redoInstructions", TextGetter.getText("white")));
                 break;
-              case OUT_OF_TIME_WHITE:
-                System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
-                break;
-              case OUT_OF_TIME_BLACK:
-                System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
-                break;
-              case THREEFOLD_REPETITION:
-                System.out.println(TextGetter.getText("threeFoldRepetition"));
-                break;
-              case INSUFFICIENT_MATERIAL:
-                System.out.println(TextGetter.getText("insufficientMaterial"));
-                break;
-              case FIFTY_MOVE_RULE:
-                System.out.println(TextGetter.getText("fiftyMoveRule"));
-                break;
-              case WHITE_RESIGNS:
-                System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
-                break;
-              case BLACK_RESIGNS:
-                System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
-                break;
-              case CHECKMATE_WHITE:
-                System.out.println(
-                    TextGetter.getText(
-                        "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
-                break;
-              case CHECKMATE_BLACK:
-                System.out.println(
-                    TextGetter.getText(
-                        "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
-                break;
-              case STALEMATE:
-                System.out.println(TextGetter.getText("stalemate"));
-                break;
+                /*
+                case OUT_OF_TIME_WHITE:
+                  System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
+                  break;
+                case OUT_OF_TIME_BLACK:
+                  System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
+                  break;
+                case THREEFOLD_REPETITION:
+                  System.out.println(TextGetter.getText("threeFoldRepetition"));
+                  break;
+                case INSUFFICIENT_MATERIAL:
+                  System.out.println(TextGetter.getText("insufficientMaterial"));
+                  break;
+                case FIFTY_MOVE_RULE:
+                  System.out.println(TextGetter.getText("fiftyMoveRule"));
+                  break;
+                case WHITE_RESIGNS:
+                  System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
+                  break;
+                case BLACK_RESIGNS:
+                  System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
+                  break;
+                case CHECKMATE_WHITE:
+                  System.out.println(
+                      TextGetter.getText(
+                          "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
+                  break;
+                case CHECKMATE_BLACK:
+                  System.out.println(
+                      TextGetter.getText(
+                          "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
+                  break;
+                case STALEMATE:
+                  System.out.println(TextGetter.getText("stalemate"));
+                  break;
+                   */
               case AI_PLAYING:
                 System.out.println(TextGetter.getText("ai_playing"));
                 break;
