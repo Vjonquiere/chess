@@ -1,7 +1,11 @@
 package pdp.view;
 
 import static pdp.utils.Logging.DEBUG;
+import static pdp.view.GUI.themes.ColorTheme.*;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -15,19 +19,43 @@ import pdp.view.GUI.ChessMenu;
 import pdp.view.GUI.ControlPanel;
 import pdp.view.GUI.GUILauncher;
 import pdp.view.GUI.board.Board;
+import pdp.view.GUI.popups.EndGamePopUp;
 import pdp.view.GUI.themes.ColorTheme;
 
 public class GUIView implements View {
   private static final Logger LOGGER = Logger.getLogger(GUIView.class.getName());
   private BorderPane root;
   private Stage stage;
+  private Scene scene;
   private Board board;
   private ControlPanel controlPanel;
-  public static ColorTheme theme = ColorTheme.SIMPLE;
+  private ChessMenu menu;
+  public static ColorTheme theme = SIMPLE;
   boolean init = false;
 
   static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public void applyCSS(String cssContent) {
+    try {
+      File tempFile = File.createTempFile("theme-", ".css");
+      tempFile.deleteOnExit();
+
+      try (FileWriter writer = new FileWriter(tempFile)) {
+        writer.write(cssContent);
+      }
+
+      scene.getStylesheets().clear();
+      scene.getStylesheets().add(tempFile.toURI().toString());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void updateTheme() {
+    applyCSS(theme.getCSSStyle());
+    onGameEvent(EventType.GAME_STARTED);
   }
 
   public GUIView() {
@@ -42,9 +70,9 @@ public class GUIView implements View {
   public void init(Stage stage) {
     System.out.println(stage);
     stage.setTitle(TextGetter.getText("title"));
-    root.setTop(new ChessMenu());
     // root.setCenter(board);
-    Scene scene = new Scene(root, 1200, 820);
+    scene = new Scene(root, 1200, 820);
+    applyCSS(theme.getCSSStyle());
     stage.setScene(scene);
     if (board != null) board.setStage(stage);
     this.stage = stage;
@@ -87,6 +115,7 @@ public class GUIView implements View {
           try {
             switch (event) {
               case GAME_STARTED:
+                root.setStyle("-fx-background-color: " + theme.getBackground() + ";");
                 if (board != null) {
                   root.getChildren().remove(board);
                 }
@@ -94,13 +123,40 @@ public class GUIView implements View {
                 root.setLeft(board);
                 System.out.println("GUI board displayed"); // TODO: Add in resource bundle
                 DEBUG(LOGGER, "Board view initialized");
+                if (controlPanel != null) {
+                  root.getChildren().remove(controlPanel);
+                }
                 controlPanel = new ControlPanel(root);
+                controlPanel.update(event);
                 root.setCenter(controlPanel);
+                if (menu != null) {
+                  root.getChildren().remove(menu);
+                }
+                menu = new ChessMenu(this);
+                root.setTop(menu);
+
                 break;
               case MOVE_PLAYED:
                 if (board != null) {
                   board.updateBoard();
                 }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
+                break;
+              case DRAW_ACCEPTED,
+                  INSUFFICIENT_MATERIAL,
+                  OUT_OF_TIME_BLACK,
+                  OUT_OF_TIME_WHITE,
+                  AI_NOT_ENOUGH_TIME,
+                  THREEFOLD_REPETITION,
+                  WHITE_RESIGNS,
+                  BLACK_RESIGNS,
+                  FIFTY_MOVE_RULE,
+                  CHECKMATE_BLACK,
+                  STALEMATE,
+                  CHECKMATE_WHITE:
+                EndGamePopUp.show(event);
                 break;
               case WIN_WHITE:
                 System.out.println(TextGetter.getText("whiteWin"));
@@ -125,9 +181,11 @@ public class GUIView implements View {
                 System.out.println(
                     TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
                 break;
-              case DRAW_ACCEPTED:
-                System.out.println(TextGetter.getText("drawAccepted"));
-                break;
+                /*
+                case DRAW_ACCEPTED:
+                  System.out.println(TextGetter.getText("drawAccepted"));
+                  break;
+                   */
               case GAME_SAVED:
                 System.out.println(TextGetter.getText("gameSaved"));
                 break;
@@ -136,50 +194,103 @@ public class GUIView implements View {
                 if (board != null) {
                   board.updateBoard();
                 }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
+                break;
+              case WHITE_UNDO_PROPOSAL:
+                System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("white")));
+                System.out.println(
+                    TextGetter.getText("undoInstructions", TextGetter.getText("black")));
+                if (board != null) {
+                  board.updateBoard();
+                }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
+                break;
+              case BLACK_UNDO_PROPOSAL:
+                System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("black")));
+                System.out.println(
+                    TextGetter.getText("undoInstructions", TextGetter.getText("white")));
+                if (board != null) {
+                  board.updateBoard();
+                }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
                 break;
               case MOVE_REDO:
                 System.out.println(TextGetter.getText("moveRedone"));
                 if (board != null) {
                   board.updateBoard();
                 }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
                 break;
-              case OUT_OF_TIME_WHITE:
-                System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
-                break;
-              case OUT_OF_TIME_BLACK:
-                System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
-                break;
-              case THREEFOLD_REPETITION:
-                System.out.println(TextGetter.getText("threeFoldRepetition"));
-                break;
-              case INSUFFICIENT_MATERIAL:
-                System.out.println(TextGetter.getText("insufficientMaterial"));
-                break;
-              case FIFTY_MOVE_RULE:
-                System.out.println(TextGetter.getText("fiftyMoveRule"));
-                break;
-              case WHITE_RESIGNS:
-                System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
-                break;
-              case BLACK_RESIGNS:
-                System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
-                break;
-              case CHECKMATE_WHITE:
+              case WHITE_REDO_PROPOSAL:
+                System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("white")));
                 System.out.println(
-                    TextGetter.getText(
-                        "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
+                    TextGetter.getText("redoInstructions", TextGetter.getText("black")));
                 break;
-              case CHECKMATE_BLACK:
+              case BLACK_REDO_PROPOSAL:
+                System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("black")));
                 System.out.println(
-                    TextGetter.getText(
-                        "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
+                    TextGetter.getText("redoInstructions", TextGetter.getText("white")));
                 break;
-              case STALEMATE:
-                System.out.println(TextGetter.getText("stalemate"));
-                break;
+                /*
+                case OUT_OF_TIME_WHITE:
+                  System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
+                  break;
+                case OUT_OF_TIME_BLACK:
+                  System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
+                  break;
+                case THREEFOLD_REPETITION:
+                  System.out.println(TextGetter.getText("threeFoldRepetition"));
+                  break;
+                case INSUFFICIENT_MATERIAL:
+                  System.out.println(TextGetter.getText("insufficientMaterial"));
+                  break;
+                case FIFTY_MOVE_RULE:
+                  System.out.println(TextGetter.getText("fiftyMoveRule"));
+                  break;
+                case WHITE_RESIGNS:
+                  System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
+                  break;
+                case BLACK_RESIGNS:
+                  System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
+                  break;
+                case CHECKMATE_WHITE:
+                  System.out.println(
+                      TextGetter.getText(
+                          "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
+                  break;
+                case CHECKMATE_BLACK:
+                  System.out.println(
+                      TextGetter.getText(
+                          "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
+                  break;
+                case STALEMATE:
+                  System.out.println(TextGetter.getText("stalemate"));
+                  break;
+                   */
               case AI_PLAYING:
                 System.out.println(TextGetter.getText("ai_playing"));
                 break;
+              case GAME_RESTART:
+                System.out.println(TextGetter.getText("gameRestart"));
+                System.out.println(TextGetter.getText("welcomeCLI"));
+                System.out.println(TextGetter.getText("welcomeInstructions"));
+                if (board != null) {
+                  board.updateBoard();
+                }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
+                break;
+              case UPDATE_THEME:
+                updateTheme();
               default:
                 DEBUG(LOGGER, "Received unknown game event: " + event);
                 break;
