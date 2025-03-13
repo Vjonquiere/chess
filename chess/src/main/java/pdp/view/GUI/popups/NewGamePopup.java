@@ -46,6 +46,7 @@ public class NewGamePopup {
 
     VBox depthContainer = new VBox(5);
     VBox simulationContainer = new VBox(5);
+    VBox heuristicContainer = new VBox(5);
 
     aiModeDropdown
         .valueProperty()
@@ -54,6 +55,8 @@ public class NewGamePopup {
               options.put(modeType, newVal);
               depthContainer.setVisible(newVal != AlgorithmType.MCTS.toString());
               depthContainer.setManaged(newVal != AlgorithmType.MCTS.toString());
+              heuristicContainer.setVisible(newVal != AlgorithmType.MCTS.toString());
+              heuristicContainer.setManaged(newVal != AlgorithmType.MCTS.toString());
 
               simulationContainer.setVisible(newVal == AlgorithmType.MCTS.toString());
               simulationContainer.setManaged(newVal == AlgorithmType.MCTS.toString());
@@ -61,7 +64,9 @@ public class NewGamePopup {
 
     aiContainer.getChildren().add(aiModeDropdown);
 
-    aiContainer.getChildren().add(new Label(TextGetter.getText("aiHeuristicLabel", colorText)));
+    heuristicContainer
+        .getChildren()
+        .add(new Label(TextGetter.getText("aiHeuristicLabel", colorText)));
     ComboBox<String> heuristicDropdown = new ComboBox<>();
 
     heuristicDropdown.setId(colorTag + "HeuristicDropdown");
@@ -81,7 +86,14 @@ public class NewGamePopup {
               options.put(heuristicType, newVal);
             });
 
-    aiContainer.getChildren().add(heuristicDropdown);
+    heuristicContainer.setId(colorTag + "HeuristicContainer");
+    heuristicContainer.setVisible(
+        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+    heuristicContainer.setManaged(
+        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+
+    heuristicContainer.getChildren().add(heuristicDropdown);
+    aiContainer.getChildren().add(heuristicContainer);
 
     depthContainer.setId(colorTag + "DepthContainer");
     depthContainer.setVisible(

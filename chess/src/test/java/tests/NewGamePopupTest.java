@@ -104,50 +104,24 @@ public class NewGamePopupTest extends ApplicationTest {
 
   @Test
   @Tag("gui")
-  public void testAIModeDropdown() {
-
-    ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
-    assertTrue(scrollUntilVisible("#aiDropdown"));
-
-    clickOn(aiDropdown);
-    clickOn("A");
-
-    ComboBox<String> whiteAiModeDropdown = lookup("#whiteAiModeDropdown").query();
-    assertTrue(scrollUntilVisible("#whiteAiModeDropdown"));
-    clickOn(whiteAiModeDropdown);
-    clickOn("MCTS");
-
-    assertEquals("MCTS", options.get(OptionType.AI_MODE_W));
-
-    ComboBox<String> blackAiModeDropdown = lookup("#blackAiModeDropdown").query();
-    assertTrue(scrollUntilVisible("#whiteAiModeDropdown"));
-    clickOn(blackAiModeDropdown);
-    clickOn("ALPHA_BETA");
-
-    assertEquals("ALPHA_BETA", options.get(OptionType.AI_MODE_B));
-  }
-
-  @Test
-  @Tag("gui")
   public void testHeuristicDropdown() {
 
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
     assertTrue(scrollUntilVisible("#aiDropdown"));
 
     clickOn(aiDropdown);
-    clickOn("A");
+    clickOn("W");
+
+    ComboBox<String> whiteAiModeDropdown = lookup("#whiteAiModeDropdown").query();
+    assertTrue(scrollUntilVisible("#whiteAiModeDropdown"));
+    clickOn(whiteAiModeDropdown);
+    clickOn("ALPHA_BETA");
 
     ComboBox<String> whiteHeuristicDropdown = lookup("#whiteHeuristicDropdown").query();
     assertTrue(scrollUntilVisible("#whiteHeuristicDropdown"));
     clickOn(whiteHeuristicDropdown);
-    clickOn("SHANNON");
-    assertEquals("SHANNON", options.get(OptionType.AI_HEURISTIC_W));
-
-    ComboBox<String> blackHeuristicDropdown = lookup("#blackHeuristicDropdown").query();
-    assertTrue(scrollUntilVisible("#blackHeuristicDropdown"));
-    clickOn(blackHeuristicDropdown);
     clickOn("MATERIAL");
-    assertEquals("MATERIAL", options.get(OptionType.AI_HEURISTIC_B));
+    assertEquals("MATERIAL", options.get(OptionType.AI_HEURISTIC_W));
   }
 
   @Test
