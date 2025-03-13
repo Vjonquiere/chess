@@ -21,6 +21,7 @@ import pdp.controller.commands.SaveGameCommand;
 import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
 import pdp.utils.OptionType;
+import pdp.utils.TextGetter;
 import pdp.view.GUI.menu.HelpPopup;
 import pdp.view.GUI.menu.SettingsEditorPopup;
 import pdp.view.GUI.popups.NewGamePopup;
