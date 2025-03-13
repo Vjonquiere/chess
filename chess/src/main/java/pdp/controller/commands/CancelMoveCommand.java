@@ -18,7 +18,14 @@ public class CancelMoveCommand implements Command {
     try {
       if (model.isBlackAI() || model.isWhiteAI()) {
         model.previousState();
-        model.previousState();
+        try {
+          model.previousState();
+        } catch (Exception e) {
+        }
+        if (model.isBlackAI() && !model.getGameState().isWhiteTurn()
+            || model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
+          // model.getSolver().playAIMove(model);
+        }
       } else {
         if (model.getGameState().getUndoRequestTurnNumber() == model.getGameState().getFullTurn()) {
           model.previousState();

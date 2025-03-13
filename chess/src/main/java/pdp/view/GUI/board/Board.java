@@ -1,6 +1,8 @@
 package pdp.view.GUI.board;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -20,6 +22,7 @@ public class Board extends GridPane {
   private final int boardRows;
   private Position from;
   private final Map<Position, Square> pieces = new HashMap<>();
+  private List<Position> reachableSquares;
   private Stage stage;
 
   public Board(Game game, Stage stage) {
@@ -83,23 +86,54 @@ public class Board extends GridPane {
           || (!isWhiteTurn && squareColor != Color.BLACK)) return;
       from = new Position(x, y);
       pieces.get(from).setSelected(true);
+      clearReachableSquares();
+      setReachableSquares(x, y);
     } else {
       pieces.get(from).setSelected(false);
       if ((isWhiteTurn && squareColor == Color.WHITE)
           || (!isWhiteTurn && squareColor == Color.BLACK)) {
         from = new Position(x, y);
         pieces.get(from).setSelected(true);
+        clearReachableSquares();
+        setReachableSquares(x, y);
         return;
       }
       try {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
         if (processPawnPromoting(x, y)) return;
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
+        clearReachableSquares();
         from = null;
       } catch (Exception e) {
+        clearReachableSquares();
         from = null;
         System.out.println("wrong move:" + e.getMessage());
       }
+    }
+  }
+
+  /**
+   * Update the given square to display a capture possibility
+   *
+   * @param x The x coordinate of the square
+   * @param y The y coordinate of the square
+   */
+  public void setReachableSquares(int x, int y) {
+    reachableSquares = new ArrayList<>();
+    List<Move> moves = Game.getInstance().getBoard().board.getAvailableMoves(x, y, false);
+    for (Move move : moves) {
+      pieces.get(move.dest).setReachable(true, move.isTake);
+      reachableSquares.add(move.dest);
+    }
+  }
+
+  /** Update the squares that can be captured to their initial states */
+  public void clearReachableSquares() {
+    if (reachableSquares != null) {
+      for (Position p : reachableSquares) {
+        pieces.get(p).setReachable(false, false);
+      }
+      reachableSquares = null;
     }
   }
 

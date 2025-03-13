@@ -2,7 +2,6 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.api.FxRobotInterface.*;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
@@ -16,7 +15,7 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 import pdp.utils.OptionType;
-import pdp.view.GUI.NewGamePopup;
+import pdp.view.GUI.popups.NewGamePopup;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class NewGamePopupTest extends ApplicationTest {

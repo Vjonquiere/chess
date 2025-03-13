@@ -23,7 +23,7 @@ public class Minimax implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return minimax(game, depth, player, !player);
+    return minimax(game, depth, player, player);
   }
 
   /**
@@ -36,23 +36,27 @@ public class Minimax implements SearchAlgorithm {
    * @param player The current player (true for white, false for black).
    * @return The best move with its evaluated score.
    */
-  private AIMove minimax(Game game, int depth, boolean player, boolean isMinimizing) {
+  private AIMove minimax(Game game, int depth, boolean currentPlayer, boolean originalPlayer) {
     if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
+      boolean isMinimizing = (currentPlayer != originalPlayer);
       return new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      return new AIMove(null, solver.evaluateBoard(game.getBoard(), !player));
+      int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      return new AIMove(null, evaluation);
     }
+
+    boolean isMinimizing = (currentPlayer != originalPlayer);
     AIMove bestMove = new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(player);
+    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     for (Move move : moves) {
-      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
-        break;
-      }
+      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) break;
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AIMove currMove = minimax(game, depth - 1, !player, !isMinimizing);
+        AIMove currMove = minimax(game, depth - 1, !currentPlayer, originalPlayer);
+        game.previousState();
+
         if (isMinimizing) {
           if (currMove.score() < bestMove.score()) {
             bestMove = new AIMove(move, currMove.score());
@@ -62,10 +66,8 @@ public class Minimax implements SearchAlgorithm {
             bestMove = new AIMove(move, currMove.score());
           }
         }
-
-        game.previousState();
       } catch (Exception e) {
-        // illegal move caught
+        // Handle illegal move
       }
     }
     return bestMove;

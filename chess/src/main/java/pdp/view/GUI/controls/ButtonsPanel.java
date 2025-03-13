@@ -4,7 +4,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import pdp.controller.BagOfCommands;
+import pdp.controller.commands.CancelMoveCommand;
+import pdp.controller.commands.RestartCommand;
+import pdp.controller.commands.RestoreMoveCommand;
+import pdp.model.Game;
 import pdp.utils.TextGetter;
+import pdp.view.GUI.CustomButton;
+import pdp.view.GUI.popups.RedoPopUp;
+import pdp.view.GUI.popups.UndoPopUp;
+import pdp.view.GUIView;
 
 public class ButtonsPanel extends GridPane {
   private Button drawButton;
@@ -14,14 +23,20 @@ public class ButtonsPanel extends GridPane {
   private Button undrawButton;
   private Button restartButton;
   String buttonStyle =
-      "-fx-background-color: #DAE0F2;\n"
-          + "-fx-text-fill: #6D6FD9;\n"
-          + "-fx-border-color: #6D6FD9;\n"
-          + "-fx-font-size: 18px;\n"
-          + "-fx-font-weight: bold;\n"
-          + "-fx-padding: 10px 20px;\n"
-          + "-fx-background-radius: 20;\n"
-          + "-fx-border-radius: 20;\n";
+      "-fx-background-color: "
+          + GUIView.theme.getSecondary()
+          + ";"
+          + "-fx-text-fill: "
+          + GUIView.theme.getPrimary()
+          + ";"
+          + "-fx-border-color: "
+          + GUIView.theme.getPrimary()
+          + ";"
+          + "-fx-font-size: 18px;"
+          + "-fx-font-weight: bold;"
+          + "-fx-padding: 15;"
+          + "-fx-background-radius: 20;"
+          + "-fx-border-radius: 20;";
 
   public ButtonsPanel() {
     setPadding(new Insets(10));
@@ -49,44 +64,71 @@ public class ButtonsPanel extends GridPane {
   }
 
   private void initUndoButton() {
-    undoButton = new Button(TextGetter.getText("undo"));
-    undoButton.setStyle(buttonStyle);
-    undoButton.setMinWidth(100);
-    // TODO: add action to button
+    undoButton = new CustomButton(TextGetter.getText("undo"));
+    undoButton.setOnAction(
+        event -> {
+          undoCommand("");
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new UndoPopUp();
+        });
   }
 
   private void initRedoButton() {
-    redoButton = new Button(TextGetter.getText("redo"));
-    redoButton.setStyle(buttonStyle);
-    redoButton.setMinWidth(100);
-    // TODO: add action to button
+    redoButton = new CustomButton(TextGetter.getText("redo"));
+    redoButton.setOnAction(
+        event -> {
+          redoCommand("");
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new RedoPopUp();
+        });
   }
 
   private void initDrawButton() {
-    drawButton = new Button(TextGetter.getText("draw"));
-    drawButton.setStyle(buttonStyle);
-    drawButton.setMinWidth(100);
+    drawButton = new CustomButton(TextGetter.getText("draw"));
     // TODO: add action to button
   }
 
   private void initUndrawButton() {
-    undrawButton = new Button(TextGetter.getText("undraw"));
-    undrawButton.setStyle(buttonStyle);
-    undrawButton.setMinWidth(100);
+    undrawButton = new CustomButton(TextGetter.getText("undraw"));
     // TODO: add action to button
   }
 
   private void initResignButton() {
-    resignButton = new Button(TextGetter.getText("resign"));
-    resignButton.setStyle(buttonStyle);
-    resignButton.setMinWidth(100);
+    resignButton = new CustomButton(TextGetter.getText("resign"));
     // TODO: add action to button
   }
 
   private void initRestartButton() {
-    restartButton = new Button(TextGetter.getText("restart"));
-    restartButton.setStyle(buttonStyle);
-    restartButton.setMinWidth(100);
-    // TODO: add action to button
+    restartButton = new CustomButton(TextGetter.getText("restart"));
+    restartButton.setOnAction(
+        event -> {
+          System.out.println("restart cliqué !");
+          restartCommand("");
+        });
+  }
+
+  /**
+   * Handles the undo command by reverting the last move in history.
+   *
+   * @param args Unused argument
+   */
+  private void undoCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+  }
+
+  /**
+   * Handles the redo command by re-executing a previously undone move.
+   *
+   * @param args Unused argument
+   */
+  private void redoCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+  }
+
+  /**
+   * Handles the restart command by restarting a new game.
+   *
+   * @param args Unused argument
+   */
+  private void restartCommand(String args) {
+    BagOfCommands.getInstance().addCommand(new RestartCommand());
   }
 }
