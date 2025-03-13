@@ -42,13 +42,13 @@ public class ChessMenu extends VBox {
   }
 
   private Menu createFileMenu() {
-    Menu fileMenu = new Menu("File");
-    MenuItem newGameItem = new MenuItem("New Game");
-    MenuItem loadGameItem = new MenuItem("Load Game");
-    MenuItem saveGameItem = new MenuItem("Save Game");
-    MenuItem helpItem = new MenuItem("Help");
-    MenuItem quitItem = new MenuItem("Quit");
-    MenuItem settingItem = new MenuItem("Settings");
+    Menu fileMenu = new Menu(TextGetter.getText("file"));
+    MenuItem newGameItem = new MenuItem(TextGetter.getText("newGame"));
+    MenuItem loadGameItem = new MenuItem(TextGetter.getText("loadGame"));
+    MenuItem saveGameItem = new MenuItem(TextGetter.getText("saveGame"));
+    MenuItem helpItem = new MenuItem(TextGetter.getText("help"));
+    MenuItem quitItem = new MenuItem(TextGetter.getText("quit"));
+    MenuItem settingItem = new MenuItem(TextGetter.getText("settings"));
     newGameItem.setOnAction(event -> openNewGamePopup());
     quitItem.setOnAction(event -> Runtime.getRuntime().exit(0));
     helpItem.setOnAction(event -> new HelpPopup());
@@ -83,15 +83,15 @@ public class ChessMenu extends VBox {
   private File fileChooser() {
     Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
-    popupStage.setTitle("Select a game file to load");
+    popupStage.setTitle(TextGetter.getText("fileChooser.title"));
 
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Open a board");
+    fileChooser.setTitle(TextGetter.getText("fileChooser.open"));
     fileChooser
         .getExtensionFilters()
         .addAll(
             // new FileChooser.ExtensionFilter("Chess Files", "*.chess"),
-            new FileChooser.ExtensionFilter("All Files", "*"));
+            new FileChooser.ExtensionFilter(TextGetter.getText("fileChooser.allFiles"), "*"));
     return fileChooser.showOpenDialog(popupStage);
   }
 
@@ -104,16 +104,16 @@ public class ChessMenu extends VBox {
     TextInputDialog dialog = new TextInputDialog();
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.setHeaderText(null);
-    dialog.setTitle("Enter a game file name");
-    dialog.setContentText("Give a name:");
+    dialog.setTitle(TextGetter.getText("fileSaver.title"));
+    dialog.setContentText(TextGetter.getText("fileSaver.name"));
 
     Optional<String> result = dialog.showAndWait();
     return result.orElse(null);
   }
 
   private Menu createGameMenu() {
-    Menu gameMenu = new Menu("Game");
-    MenuItem start = new MenuItem("Start");
+    Menu gameMenu = new Menu(TextGetter.getText("game"));
+    MenuItem start = new MenuItem(TextGetter.getText("start"));
     MenuItem undo = new MenuItem(TextGetter.getText("undo"));
     MenuItem redo = new MenuItem(TextGetter.getText("redo"));
     MenuItem restart = new MenuItem(TextGetter.getText("restart"));
@@ -143,12 +143,12 @@ public class ChessMenu extends VBox {
   }
 
   private Menu createAboutMenu() {
-    Menu aboutMenu = new Menu("About");
+    Menu aboutMenu = new Menu(TextGetter.getText("about"));
     return aboutMenu;
   }
 
   private Menu createOptionsMenu(GUIView view) {
-    Menu optionsMenu = new Menu("Options");
+    Menu optionsMenu = new Menu(TextGetter.getText("options"));
     // MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
     // theme.setOnAction(event -> openThemePopup(view));
     optionsMenu.getItems().add(createThemeMenuItem());
@@ -164,7 +164,7 @@ public class ChessMenu extends VBox {
   }
 
   private Menu createThemeMenuItem() {
-    Menu themes = new Menu("Theme", null);
+    Menu themes = new Menu(TextGetter.getText("theme"), null);
 
     for (ColorTheme c : ColorTheme.values()) {
       MenuItem theme = new MenuItem(c.name());

@@ -216,7 +216,7 @@ public class NewGamePopup {
   public static void show(HashMap<OptionType, String> options) {
     Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
-    popupStage.setTitle("New Game Options");
+    popupStage.setTitle(TextGetter.getText("newGame.options"));
 
     VBox layout = new VBox(10);
     layout.setStyle(
@@ -247,7 +247,7 @@ public class NewGamePopup {
 
     layout.getChildren().add(blitzCheckBox);
 
-    timeContainer.getChildren().add(new Label("Time (in minutes):"));
+    timeContainer.getChildren().add(new Label(TextGetter.getText("newGame.time")));
 
     Slider timeSlider = new Slider(1, 60, 30);
     timeSlider.setId("timeSlider");
@@ -285,7 +285,7 @@ public class NewGamePopup {
     } else {
       aiDropdown.setValue("None");
     }
-    layout.getChildren().add(new Label("AI Player(s)"));
+    layout.getChildren().add(new Label(TextGetter.getText("newGame.aiPlayers")));
     layout.getChildren().add(aiDropdown);
 
     VBox aiWhiteContainer = makeAIBox(true, options);
@@ -333,22 +333,23 @@ public class NewGamePopup {
 
     layout.getChildren().add(new Separator());
 
-    Label loadLabel = new Label("Load game from:");
+    Label loadLabel = new Label(TextGetter.getText("newGame.load"));
     TextField loadTextField = new TextField();
     loadTextField.setId("loadTextField");
-    loadTextField.setPromptText("Select a file...");
+    loadTextField.setPromptText(TextGetter.getText("newGame.loadPrompt"));
     loadTextField.setEditable(false);
 
-    Button browseButton = new Button("Browse");
+    Button browseButton = new Button(TextGetter.getText("newGame.browse"));
     browseButton.setId("browseButton");
     browseButton.setOnAction(
         event -> {
           FileChooser fileChooser = new FileChooser();
-          fileChooser.setTitle("Select a save file");
+          fileChooser.setTitle(TextGetter.getText("newGame.savePrompt"));
 
           fileChooser
               .getExtensionFilters()
-              .add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+              .add(
+                  new FileChooser.ExtensionFilter(TextGetter.getText("newGame.fileSave", "*.txt")));
 
           File selectedFile = fileChooser.showOpenDialog(popupStage);
 
@@ -367,7 +368,7 @@ public class NewGamePopup {
     layout.getChildren().add(loadContainer);
     layout.getChildren().add(new Separator());
 
-    Button startGameButton = new Button("Start Game");
+    Button startGameButton = new Button(TextGetter.getText("startGame"));
     startGameButton.setId("startGameButton");
     startGameButton.setOnAction(
         event -> {
