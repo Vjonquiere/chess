@@ -100,7 +100,6 @@ public class ButtonsPanel extends GridPane {
     restartButton = new CustomButton(TextGetter.getText("restart"));
     restartButton.setOnAction(
         event -> {
-          System.out.println("restart cliqué !");
           restartCommand("");
         });
   }
