@@ -13,7 +13,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.GameInitializer;
 import pdp.controller.BagOfCommands;
+import pdp.controller.commands.CancelMoveCommand;
 import pdp.controller.commands.ChangeTheme;
+import pdp.controller.commands.RestartCommand;
+import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
@@ -22,7 +25,9 @@ import pdp.utils.TextGetter;
 import pdp.view.GUI.menu.HelpPopup;
 import pdp.view.GUI.menu.SettingsEditorPopup;
 import pdp.view.GUI.popups.NewGamePopup;
+import pdp.view.GUI.popups.RedoPopUp;
 import pdp.view.GUI.popups.ThemePopUp;
+import pdp.view.GUI.popups.UndoPopUp;
 import pdp.view.GUI.themes.ColorTheme;
 import pdp.view.GUIView;
 
@@ -109,11 +114,31 @@ public class ChessMenu extends VBox {
   private Menu createGameMenu() {
     Menu gameMenu = new Menu("Game");
     MenuItem start = new MenuItem("Start");
+    MenuItem undo = new MenuItem(TextGetter.getText("undo"));
+    MenuItem redo = new MenuItem(TextGetter.getText("redo"));
+    MenuItem restart = new MenuItem(TextGetter.getText("restart"));
     start.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new StartGameCommand());
         });
+    undo.setOnAction(
+        e -> {
+          BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new UndoPopUp();
+        });
+    redo.setOnAction(
+        e -> {
+          BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new RedoPopUp();
+        });
+    restart.setOnAction(
+        e -> {
+          BagOfCommands.getInstance().addCommand(new RestartCommand());
+        });
     gameMenu.getItems().add(start);
+    gameMenu.getItems().add(undo);
+    gameMenu.getItems().add(redo);
+    gameMenu.getItems().add(restart);
     return gameMenu;
   }
 
@@ -124,8 +149,8 @@ public class ChessMenu extends VBox {
 
   private Menu createOptionsMenu(GUIView view) {
     Menu optionsMenu = new Menu("Options");
-    MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
-    theme.setOnAction(event -> openThemePopup(view));
+    // MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
+    // theme.setOnAction(event -> openThemePopup(view));
     optionsMenu.getItems().add(createThemeMenuItem());
     return optionsMenu;
   }

@@ -14,30 +14,9 @@ public class HistoryPanel extends VBox {
     // TODO: add history (just an example for now)
     ObservableList<String> items =
         FXCollections.observableArrayList(
-            "Single",
-            "Double",
-            "Suite",
-            "Family App",
-            "Single",
-            "Double",
-            "Suite",
-            "Family App",
-            "Single",
-            "Double",
-            "Suite",
-            "Family App",
-            "Single",
-            "Double",
-            "Suite",
-            "Family App",
-            "Single",
-            "Double",
-            "Suite",
-            "Family App",
-            "Single",
-            "Double",
-            "Suite",
-            "Family App");
+            "Move1", "Move2", "Move3", "Move4", "Move5", "Move6", "Move7", "Move8", "Move9",
+            "Move10", "Move11", "Move12", "Move13", "Move14", "Move15", "Move16", "Move17",
+            "Move18", "Move19", "Move20");
     list.setItems(items);
     super.getChildren().add(new Label(TextGetter.getText("gameHistory")));
     super.getChildren().add(list);
