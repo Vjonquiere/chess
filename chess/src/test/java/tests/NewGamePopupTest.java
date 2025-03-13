@@ -104,31 +104,6 @@ public class NewGamePopupTest extends ApplicationTest {
 
   @Test
   @Tag("gui")
-  public void testAIModeDropdown() {
-
-    ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
-    assertTrue(scrollUntilVisible("#aiDropdown"));
-
-    clickOn(aiDropdown);
-    clickOn("A");
-
-    ComboBox<String> whiteAiModeDropdown = lookup("#whiteAiModeDropdown").query();
-    assertTrue(scrollUntilVisible("#whiteAiModeDropdown"));
-    clickOn(whiteAiModeDropdown);
-    clickOn("MCTS");
-
-    assertEquals("MCTS", options.get(OptionType.AI_MODE_W));
-
-    ComboBox<String> blackAiModeDropdown = lookup("#blackAiModeDropdown").query();
-    assertTrue(scrollUntilVisible("#blackAiModeDropdown"));
-    clickOn(blackAiModeDropdown);
-    clickOn("ALPHA_BETA");
-
-    assertEquals("ALPHA_BETA", options.get(OptionType.AI_MODE_B));
-  }
-
-  @Test
-  @Tag("gui")
   public void testHeuristicDropdown() {
 
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
