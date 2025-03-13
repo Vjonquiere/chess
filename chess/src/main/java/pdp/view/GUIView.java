@@ -58,6 +58,10 @@ public class GUIView implements View {
     onGameEvent(EventType.GAME_STARTED);
   }
 
+  public void updateLanguage() {
+    onGameEvent(EventType.GAME_STARTED);
+  }
+
   public GUIView() {
     root = new BorderPane();
   }
@@ -291,6 +295,10 @@ public class GUIView implements View {
                 break;
               case UPDATE_THEME:
                 updateTheme();
+                break;
+              case UPDATE_LANG:
+                updateLanguage();
+                break;
               default:
                 DEBUG(LOGGER, "Received unknown game event: " + event);
                 break;

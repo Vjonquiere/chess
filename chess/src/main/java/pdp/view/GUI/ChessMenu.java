@@ -13,12 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.GameInitializer;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.CancelMoveCommand;
-import pdp.controller.commands.ChangeTheme;
-import pdp.controller.commands.RestartCommand;
-import pdp.controller.commands.RestoreMoveCommand;
-import pdp.controller.commands.SaveGameCommand;
-import pdp.controller.commands.StartGameCommand;
+import pdp.controller.commands.*;
 import pdp.model.Game;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
@@ -151,7 +146,7 @@ public class ChessMenu extends VBox {
     Menu optionsMenu = new Menu(TextGetter.getText("options"));
     // MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
     // theme.setOnAction(event -> openThemePopup(view));
-    optionsMenu.getItems().add(createThemeMenuItem());
+    optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu());
     return optionsMenu;
   }
 
@@ -176,5 +171,24 @@ public class ChessMenu extends VBox {
       themes.getItems().add(theme);
     }
     return themes;
+  }
+
+  private Menu createLangMenu() {
+    Menu lang = new Menu(TextGetter.getText("language"), null);
+    MenuItem english = new MenuItem(TextGetter.getText("english"));
+    english.setOnAction(
+        e -> {
+          TextGetter.setLocale("en");
+          BagOfCommands.getInstance().addCommand(new ChangeLang());
+        });
+    MenuItem french = new MenuItem(TextGetter.getText("french"));
+    french.setOnAction(
+        e -> {
+          TextGetter.setLocale("fr");
+          BagOfCommands.getInstance().addCommand(new ChangeLang());
+        });
+    lang.getItems().addAll(english, french);
+
+    return lang;
   }
 }
