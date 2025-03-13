@@ -1,18 +1,18 @@
 package pdp.view.GUI;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import pdp.events.EventType;
 import pdp.view.GUI.controls.ButtonsPanel;
 import pdp.view.GUI.controls.HistoryPanel;
+import pdp.view.GUI.controls.PlayerPanel;
 import pdp.view.GUI.controls.TimersPanel;
 import pdp.view.GUIView;
 
 public class ControlPanel extends VBox {
   private VBox timerPanel;
-  private HBox playerPanel;
+  private PlayerPanel playerPanel;
   private VBox historyPanel;
   private ButtonsPanel buttonsPanel;
   String borderStyle =
@@ -42,7 +42,7 @@ public class ControlPanel extends VBox {
   }
 
   private void initPlayerPanel() {
-    playerPanel = new HBox(new Label("player panel"));
+    playerPanel = new PlayerPanel();
     playerPanel.setStyle(borderStyle);
   }
 
@@ -54,5 +54,9 @@ public class ControlPanel extends VBox {
   private void initHistoryPanel() {
     historyPanel = new HistoryPanel();
     historyPanel.setStyle(borderStyle);
+  }
+
+  public void update(EventType type) {
+    playerPanel.switchCurrentPlayer();
   }
 }

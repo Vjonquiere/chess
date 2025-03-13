@@ -126,6 +126,7 @@ public class GUIView implements View {
                   root.getChildren().remove(controlPanel);
                 }
                 controlPanel = new ControlPanel(root);
+                controlPanel.update(event);
                 root.setCenter(controlPanel);
                 if (menu != null) {
                   root.getChildren().remove(menu);
@@ -137,6 +138,9 @@ public class GUIView implements View {
               case MOVE_PLAYED:
                 if (board != null) {
                   board.updateBoard();
+                }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
                 }
                 break;
               case WIN_WHITE:
@@ -173,6 +177,9 @@ public class GUIView implements View {
                 if (board != null) {
                   board.updateBoard();
                 }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
                 break;
               case WHITE_UNDO_PROPOSAL:
                 System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("white")));
@@ -180,6 +187,9 @@ public class GUIView implements View {
                     TextGetter.getText("undoInstructions", TextGetter.getText("black")));
                 if (board != null) {
                   board.updateBoard();
+                }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
                 }
                 break;
               case BLACK_UNDO_PROPOSAL:
@@ -189,11 +199,17 @@ public class GUIView implements View {
                 if (board != null) {
                   board.updateBoard();
                 }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
+                }
                 break;
               case MOVE_REDO:
                 System.out.println(TextGetter.getText("moveRedone"));
                 if (board != null) {
                   board.updateBoard();
+                }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
                 }
                 break;
               case WHITE_REDO_PROPOSAL:
@@ -249,6 +265,9 @@ public class GUIView implements View {
                 System.out.println(TextGetter.getText("welcomeInstructions"));
                 if (board != null) {
                   board.updateBoard();
+                }
+                if (controlPanel != null) {
+                  controlPanel.update(event);
                 }
                 break;
               case UPDATE_THEME:
