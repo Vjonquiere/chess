@@ -17,12 +17,12 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pdp.utils.CLIOptions;
+import pdp.utils.CommandLineOptions;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 
-public class CLIOptionsTest {
+public class CommandLineOptionsTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private Logger logger;
   private final PrintStream originalOut = System.out;
@@ -35,7 +35,7 @@ public class CLIOptionsTest {
     "                                      'B' or 'A' (All),(W by default).",
     "    --ai-depth <DEPTH>                Specify the depth of the AI",
     "                                      algorithm or the number of",
-    "                                      simulations for the MCTS AI",
+    "                                      simulations for the MonteCarloTreeSearch AI",
     "                                      algorithm",
     "    --ai-depth-b <DEPTH>              Specify the depth of the AI",
     "                                      algorithm for the black player",
@@ -101,18 +101,18 @@ public class CLIOptionsTest {
     "                                      algorithm.",
     "                                      - ALPHA_BETA : Uses the Alpha-Beta",
     "                                      Pruning algorithm (default).",
-    "                                      - MCTS : Uses Monte Carlo Tree",
+    "                                      - MonteCarloTreeSearch : Uses Monte Carlo Tree",
     "                                      Search for AI move exploration.",
     "    --ai-mode-b <ALGORITHM>           Choose the exploration algorithm for",
     "                                      the artificial black player.",
     "    --ai-mode-w <ALGORITHM>           Choose the exploration algorithm for",
     "                                      the artificial white player.",
     "    --ai-simulation <SIMULATION>      Specify the number of simulations",
-    "                                      for the MCTS AI algorithm",
+    "                                      for the MonteCarloTreeSearch AI algorithm",
     "    --ai-simulation-b <SIMULATIONS>   Specify the number of simulations",
-    "                                      for the Black MCTS AI algorithm",
+    "                                      for the Black MonteCarloTreeSearch AI algorithm",
     "    --ai-simulation-w <SIMULATIONS>   Specify the number of simulations",
-    "                                      for the White MCTS AI algorithm",
+    "                                      for the White MonteCarloTreeSearch AI algorithm",
     "    --ai-time <TIME>                  Specify the time of reflexion for AI",
     "                                      mode in seconds (default 5 seconds)",
     " -b,--blitz                           Play in blitz mode",
@@ -153,7 +153,7 @@ public class CLIOptionsTest {
   public void testHelp() {
     //Test that the option displays the right output & exit code with the long option name
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"--help"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"--help"}, mockRuntime);
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
     }
@@ -162,7 +162,7 @@ public class CLIOptionsTest {
 
     //Test that the option displays the right output & exit code with the short option name
     Runtime mockRuntime2 = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-h"}, mockRuntime2);
+    CommandLineOptions.parseOptions(new String[] {"-h"}, mockRuntime2);
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
     }
@@ -174,19 +174,19 @@ public class CLIOptionsTest {
   @Test
   public void testVersion() throws Exception {
     final Properties properties = new Properties();
-    properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+    properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
     String expected = "Version: " + properties.getProperty("version");
 
     /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"--version"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"--version"}, mockRuntime);
     assertEquals(expected.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
     /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-V"}, mockRuntime2);
+    CommandLineOptions.parseOptions(new String[] {"-V"}, mockRuntime2);
     assertEquals(expected.trim(), outputStream.toString().trim());
     outputStream.reset();
     verify(mockRuntime2).exit(0);
@@ -197,7 +197,7 @@ public class CLIOptionsTest {
   public void testHelpFirst() {
     // Test that only help is displayed, even with several parameters
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"-h", "-V"}, mockRuntime);
 
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
@@ -206,7 +206,7 @@ public class CLIOptionsTest {
     verify(mockRuntime).exit(0);
 
     Runtime mockRuntime2 = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-V", "-h"}, mockRuntime2);
+    CommandLineOptions.parseOptions(new String[] {"-V", "-h"}, mockRuntime2);
 
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
@@ -221,7 +221,7 @@ public class CLIOptionsTest {
 
     // Test with an unrecognized option (error)
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-zgv"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"-zgv"}, mockRuntime);
     assertTrue(outputStream.toString().contains(expected));
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
@@ -235,7 +235,7 @@ public class CLIOptionsTest {
 
     // Test partial matching (no error)
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-hel"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"-hel"}, mockRuntime);
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
     }
@@ -250,7 +250,7 @@ public class CLIOptionsTest {
 
     // Test ambiguous option (several options starting the same) (error)
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"--ai-"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"--ai-"}, mockRuntime);
     assertTrue(outputStream.toString().contains(expectedAmbiguous));
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
@@ -273,12 +273,12 @@ public class CLIOptionsTest {
     Logging.setDebug(true);
 
     final Properties properties = new Properties();
-    properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+    properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
     String expected = "Version: " + properties.getProperty("version");
 
     /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"--debug", "-V"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"--debug", "-V"}, mockRuntime);
     assertTrue(outputStream.toString().contains("[DEBUG]"));
     assertTrue(outputStream.toString().contains("Debug mode activated"));
     assertTrue(outputStream.toString().contains(expected));
@@ -287,7 +287,7 @@ public class CLIOptionsTest {
 
     /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-V", "-d"}, mockRuntime2);
+    CommandLineOptions.parseOptions(new String[] {"-V", "-d"}, mockRuntime2);
     assertTrue(outputStream.toString().contains("[DEBUG]"));
     assertTrue(outputStream.toString().contains("Debug mode activated"));
     assertTrue(outputStream.toString().contains(expected));
@@ -300,18 +300,18 @@ public class CLIOptionsTest {
   public void testVerbose() throws Exception {
     /*
     The tests display debug because verbose mode also displays debug, and
-    we have decided to display a debug message in CLIOptions
+    we have decided to display a debug message in CommandLineOptions
      */
     setUpLogging();
     Logging.setVerbose(true);
 
     final Properties properties = new Properties();
-    properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+    properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
     String expected = "Version: " + properties.getProperty("version");
 
     /* Test that the option displays the right output & exit code with the long option name */
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"--verbose", "-V"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"--verbose", "-V"}, mockRuntime);
     assertTrue(outputStream.toString().contains("[DEBUG]"));
     assertTrue(outputStream.toString().contains("Verbose mode activated"));
     assertTrue(outputStream.toString().contains(expected));
@@ -320,7 +320,7 @@ public class CLIOptionsTest {
 
     /* Test that the option displays the right output & exit code with the short option name */
     Runtime mockRuntime2 = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"-V", "-v"}, mockRuntime2);
+    CommandLineOptions.parseOptions(new String[] {"-V", "-v"}, mockRuntime2);
     assertTrue(outputStream.toString().contains("[DEBUG]"));
     assertTrue(outputStream.toString().contains("Verbose mode activated"));
     assertTrue(outputStream.toString().contains(expected));
@@ -336,7 +336,7 @@ public class CLIOptionsTest {
 
     /* Test that asking for the app in english is the default and will display the debug message.*/
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"--debug", "--lang=en"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"--debug", "--lang=en"}, mockRuntime);
     assertTrue(outputStream.toString().contains("lang option activated"));
     assertTrue(outputStream.toString().contains("Language = English (already set by default)"));
     assertEquals("Chess game", TextGetter.getText("title"));
@@ -351,7 +351,7 @@ public class CLIOptionsTest {
     /* Test that a language not supported will display the information message and
      * that the default language of the app is english*/
     Runtime mockRuntime = mock(Runtime.class);
-    CLIOptions.parseOptions(new String[] {"--debug", "--lang=ru"}, mockRuntime);
+    CommandLineOptions.parseOptions(new String[] {"--debug", "--lang=ru"}, mockRuntime);
     assertTrue(outputStream.toString().contains("lang option activated"));
     assertTrue(outputStream.toString().contains("Language ru not supported, language = english"));
     assertEquals("Chess game", TextGetter.getText("title"));
@@ -379,7 +379,7 @@ public class CLIOptionsTest {
 
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> output =
-        CLIOptions.parseOptions(
+        CommandLineOptions.parseOptions(
             new String[] {
               "-a=W",
               "-b",
@@ -403,7 +403,7 @@ public class CLIOptionsTest {
   public void testConfigFileWrongExtension() {
     Runtime mockRuntime = mock(Runtime.class);
     HashMap<OptionType, String> map =
-        CLIOptions.parseOptions(new String[] {"--config=invalid.txt"}, mockRuntime);
+        CommandLineOptions.parseOptions(new String[] {"--config=invalid.txt"}, mockRuntime);
     assertTrue(map.get(OptionType.CONFIG) == "default.chessrc");
   }
 
@@ -415,7 +415,8 @@ public class CLIOptionsTest {
 
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> activatedOptions =
-        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+        CommandLineOptions.parseOptions(
+            new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
 
     assertTrue(activatedOptions.containsKey(OptionType.AI));
     assertTrue(activatedOptions.containsKey(OptionType.VERBOSE));
@@ -432,7 +433,7 @@ public class CLIOptionsTest {
 
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> activatedOptionsOverride =
-        CLIOptions.parseOptions(
+        CommandLineOptions.parseOptions(
             new String[] {"--config=" + tempConfig.toString(), "-b", "--time=200", "-d"},
             mockRuntime);
 
@@ -452,7 +453,8 @@ public class CLIOptionsTest {
 
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> activatedOptions =
-        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+        CommandLineOptions.parseOptions(
+            new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
 
     assertEquals("default.chessrc", activatedOptions.get(OptionType.CONFIG));
   }
@@ -465,14 +467,15 @@ public class CLIOptionsTest {
     Path defaultConfig = Files.createTempFile("nonexistant", ".chessrc");
     Files.deleteIfExists(defaultConfig);
 
-    Field defaultConfigField = CLIOptions.class.getDeclaredField("DEFAULT_CONFIG_FILE");
+    Field defaultConfigField = CommandLineOptions.class.getDeclaredField("DEFAULT_CONFIG_FILE");
     defaultConfigField.setAccessible(true);
     String originalDefault = (String) defaultConfigField.get(null);
     defaultConfigField.set(null, defaultConfig.toString());
 
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> activatedOptions =
-        CLIOptions.parseOptions(new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
+        CommandLineOptions.parseOptions(
+            new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
     assertNull(activatedOptions.get(OptionType.CONFIG));
     defaultConfigField.set(null, originalDefault);
   }
@@ -482,21 +485,24 @@ public class CLIOptionsTest {
     Runtime mockRuntime = mock(Runtime.class);
     HashMap<OptionType, String> activatedOptions;
     // activate AI option with white
-    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=W"}, mockRuntime);
+    activatedOptions =
+        CommandLineOptions.parseOptions(new String[] {"--debug", "--ai=W"}, mockRuntime);
     assertTrue(outputStream.toString().contains("ai option activated"));
     assertTrue(
         activatedOptions.containsKey(OptionType.AI)
             && activatedOptions.get(OptionType.AI).equals("W"));
     outputStream.reset();
     // activate AI option with black
-    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=B"}, mockRuntime);
+    activatedOptions =
+        CommandLineOptions.parseOptions(new String[] {"--debug", "--ai=B"}, mockRuntime);
     assertTrue(outputStream.toString().contains("ai option activated"));
     assertTrue(
         activatedOptions.containsKey(OptionType.AI)
             && activatedOptions.get(OptionType.AI).equals("B"));
     outputStream.reset();
     // activate AI option with black and white
-    activatedOptions = CLIOptions.parseOptions(new String[] {"--debug", "--ai=A"}, mockRuntime);
+    activatedOptions =
+        CommandLineOptions.parseOptions(new String[] {"--debug", "--ai=A"}, mockRuntime);
     assertTrue(outputStream.toString().contains("ai option activated"));
     assertTrue(
         activatedOptions.containsKey(OptionType.AI)
@@ -511,26 +517,27 @@ public class CLIOptionsTest {
     HashMap<OptionType, String> activatedOptions;
     // activate AI mode
     activatedOptions =
-        CLIOptions.parseOptions(new String[] {"--debug", "--ai-mode=MINIMAX"}, mockRuntime);
+        CommandLineOptions.parseOptions(new String[] {"--debug", "--ai-mode=MINIMAX"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-mode requires 'a' argument"));
     assertFalse(activatedOptions.containsKey(OptionType.AI_MODE));
     outputStream.reset();
     // activate AI heuristic
     activatedOptions =
-        CLIOptions.parseOptions(new String[] {"--debug", "--ai-heuristic=MATERIAL"}, mockRuntime);
+        CommandLineOptions.parseOptions(
+            new String[] {"--debug", "--ai-heuristic=MATERIAL"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-heuristic requires 'a' argument"));
     assertFalse(activatedOptions.containsKey(OptionType.AI_HEURISTIC));
     outputStream.reset();
     // activate AI depth
     activatedOptions =
-        CLIOptions.parseOptions(new String[] {"--debug", "--ai-depth=5"}, mockRuntime);
+        CommandLineOptions.parseOptions(new String[] {"--debug", "--ai-depth=5"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-depth requires 'a' argument"));
     assertFalse(activatedOptions.containsKey(OptionType.AI_DEPTH));
 
     outputStream.reset();
     // activate AI time
     activatedOptions =
-        CLIOptions.parseOptions(new String[] {"--debug", "--ai-time=5"}, mockRuntime);
+        CommandLineOptions.parseOptions(new String[] {"--debug", "--ai-time=5"}, mockRuntime);
     assertTrue(outputStream.toString().contains("Modifying ai-time requires 'a' argument"));
     assertFalse(activatedOptions.containsKey(OptionType.AI_TIME));
 
@@ -541,7 +548,7 @@ public class CLIOptionsTest {
   public void testBlitz() throws Exception {
     Runtime mockRuntime = mock(Runtime.class);
     HashMap<OptionType, String> activatedOptions;
-    activatedOptions = CLIOptions.parseOptions(new String[] {"-b"}, mockRuntime);
+    activatedOptions = CommandLineOptions.parseOptions(new String[] {"-b"}, mockRuntime);
     assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
   }
 
@@ -549,7 +556,7 @@ public class CLIOptionsTest {
   public void testBlitzWithTime() throws Exception {
     Runtime mockRuntime = mock(Runtime.class);
     HashMap<OptionType, String> activatedOptions;
-    activatedOptions = CLIOptions.parseOptions(new String[] {"-b", "-t=10"}, mockRuntime);
+    activatedOptions = CommandLineOptions.parseOptions(new String[] {"-b", "-t=10"}, mockRuntime);
     assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
     assertTrue(activatedOptions.containsKey(OptionType.TIME));
     assertTrue(activatedOptions.get(OptionType.TIME).equals("10"));
@@ -559,7 +566,7 @@ public class CLIOptionsTest {
   public void testTimeWithoutBlitz() throws Exception {
     Runtime mockRuntime = mock(Runtime.class);
     HashMap<OptionType, String> activatedOptions;
-    activatedOptions = CLIOptions.parseOptions(new String[] {"-t=10"}, mockRuntime);
+    activatedOptions = CommandLineOptions.parseOptions(new String[] {"-t=10"}, mockRuntime);
     assertFalse(activatedOptions.containsKey(OptionType.BLITZ));
     assertFalse(activatedOptions.containsKey(OptionType.TIME));
   }

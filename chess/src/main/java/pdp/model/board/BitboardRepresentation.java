@@ -241,7 +241,9 @@ public class BitboardRepresentation implements BoardRepresentation {
   public ColoredPiece getPieceAt(int x, int y) {
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
-      if (board[index].getBit(square)) return pieces.getFromKey(index);
+      if (board[index].getBit(square)) {
+        return pieces.getFromKey(index);
+      }
     }
     return new ColoredPiece(Piece.EMPTY, Color.EMPTY);
   }
@@ -508,7 +510,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   private List<Move> getPawnMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
     Bitboard position = new Bitboard();
-    Bitboard attackRight, attackLeft;
+    Bitboard attackRight;
+    Bitboard attackLeft;
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
 
@@ -533,7 +536,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   private Bitboard getPawnMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
     Bitboard position = new Bitboard();
-    Bitboard attackRight, attackLeft;
+    Bitboard attackRight;
+    Bitboard attackLeft;
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
 
@@ -613,9 +617,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     Position enemyKing = getKing(piece.color != Color.WHITE).get(0);
     Bitboard unreachableSquares = piece.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     unreachableSquares.clearBit(x % 8 + y * 8); // remove piece position from reachable positions
-    if (!kingReachable)
+    if (!kingReachable) {
       unreachableSquares.setBit(
           enemyKing.getX() % 8 + enemyKing.getY() * 8); // Put enemyKing to unreachable positions
+    }
     Bitboard enemies = piece.color == Color.WHITE ? getBlackBoard() : getWhiteBoard();
     VERBOSE(
         LOGGER,
@@ -659,8 +664,9 @@ public class BitboardRepresentation implements BoardRepresentation {
     int enemyKing = getKingOpti(piece.color != Color.WHITE);
     Bitboard unreachableSquares = piece.color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     unreachableSquares.clearBit(x % 8 + y * 8); // remove piece position from reachable positions
-    if (!kingReachable)
+    if (!kingReachable) {
       unreachableSquares.setBit(enemyKing); // Put enemyKing to unreachable positions
+    }
     Bitboard enemies = piece.color == Color.WHITE ? getBlackBoard() : getWhiteBoard();
     VERBOSE(
         LOGGER,
@@ -714,7 +720,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * Generate the possible moves for a player. This function do not apply special rules (castling,
    * pinned, ...). Optimised for AI
    *
-   * @param isWhite{true} if pawn is white, {false} if pawn is black
+   * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The bitboard containing all possible moves (without special cases)
    */
   public Bitboard getColorMoveBitboard(boolean isWhite) {
@@ -816,7 +822,9 @@ public class BitboardRepresentation implements BoardRepresentation {
   @Override
   public boolean isCheckMate(Color color) {
     DEBUG(LOGGER, "Checking if " + color + " is check mate");
-    if (!isCheck(color)) return false;
+    if (!isCheck(color)) {
+      return false;
+    }
     Bitboard pieces = color == Color.WHITE ? getWhiteBoard() : getBlackBoard();
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = squareToPosition(i);
@@ -1186,22 +1194,22 @@ public class BitboardRepresentation implements BoardRepresentation {
       return false;
     }
 
-    final double FACTOR_ADVANCED_PAWNS = 2.0 / 3.0;
-    final int MIDDLE_RANK_WHITE = 3;
-    final int MIDDLE_RANK_BLACK = 4;
+    final double factorAdvancedPawns = 2.0 / 3.0;
+    final int middleRankWhite = 3;
+    final int middleRankBlack = 4;
 
     int advancedPawns = 0;
 
     for (Position pos : pawns) {
-      if (isWhite && pos.getY() >= MIDDLE_RANK_WHITE) {
+      if (isWhite && pos.getY() >= middleRankWhite) {
         advancedPawns++;
-      } else if (!isWhite && pos.getY() <= MIDDLE_RANK_BLACK) {
+      } else if (!isWhite && pos.getY() <= middleRankBlack) {
         advancedPawns++;
       }
     }
 
     double ratio = (double) advancedPawns / pawns.size();
-    return ratio >= FACTOR_ADVANCED_PAWNS;
+    return ratio >= factorAdvancedPawns;
   }
 
   /**

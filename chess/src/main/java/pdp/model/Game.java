@@ -24,7 +24,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
-import pdp.model.ai.algorithms.MCTS;
+import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
@@ -602,13 +602,13 @@ public class Game extends Subject {
     if (isEndGamePhase()) {
       if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
-        if ((!(this.solverWhite.getAlgorithm() instanceof MCTS))
+        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
             && !(this.solverWhite.getHeuristic() instanceof EndGameHeuristic)) {
           this.solverWhite.setHeuristic(HeuristicType.ENDGAME);
         }
       }
       if (this.solverBlack != null) {
-        if ((!(this.solverBlack.getAlgorithm() instanceof MCTS))
+        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
             && !(this.solverBlack.getHeuristic() instanceof EndGameHeuristic)) {
           this.solverBlack.setHeuristic(HeuristicType.ENDGAME);
         }
@@ -951,8 +951,8 @@ public class Game extends Subject {
   }
 
   /**
-   * Method used for MCTS simulation that processes gameState copies. Updates the game state in
-   * parameter (supposed to be copy) after a move is played.
+   * Method used for MonteCarloTreeSearch simulation that processes gameState copies. Updates the
+   * game state in parameter (supposed to be copy) after a move is played.
    *
    * <p>The provided game state is updated by:
    *

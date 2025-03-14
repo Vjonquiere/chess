@@ -53,7 +53,7 @@ public class GameState extends Subject {
   }
 
   /**
-   * Create a new GameState from a given board
+   * Create a new GameState from a given board.
    *
    * @param board The board to use
    */
@@ -66,7 +66,7 @@ public class GameState extends Subject {
   }
 
   /**
-   * Create a new GameState from a given board with a timer
+   * Create a new GameState from a given board with a timer.
    *
    * @param board The board to use
    */
@@ -125,8 +125,11 @@ public class GameState extends Subject {
    */
   public void undoRequest() {
     this.undoRequestTurnNumber = this.getFullTurn();
-    if (this.isWhiteTurn()) notifyObservers(EventType.WHITE_UNDO_PROPOSAL);
-    else notifyObservers(EventType.BLACK_UNDO_PROPOSAL);
+    if (this.isWhiteTurn()) {
+      notifyObservers(EventType.WHITE_UNDO_PROPOSAL);
+    } else {
+      notifyObservers(EventType.BLACK_UNDO_PROPOSAL);
+    }
   }
 
   /**
@@ -143,8 +146,11 @@ public class GameState extends Subject {
    */
   public void redoRequest() {
     this.redoRequestTurnNumber = this.getFullTurn();
-    if (this.isWhiteTurn()) notifyObservers(EventType.WHITE_REDO_PROPOSAL);
-    else notifyObservers(EventType.BLACK_REDO_PROPOSAL);
+    if (this.isWhiteTurn()) {
+      notifyObservers(EventType.WHITE_REDO_PROPOSAL);
+    } else {
+      notifyObservers(EventType.BLACK_REDO_PROPOSAL);
+    }
   }
 
   /**
@@ -165,12 +171,12 @@ public class GameState extends Subject {
     this.simplifiedZobristHashing = simplifiedZobristHashing;
   }
 
-  /** Change threefoldstatus for the gamestate when it is observed */
+  /** Changes threefoldstatus for the gamestate when it is observed. */
   public void activateThreefold() {
     this.threefoldRepetition = true;
   }
 
-  /** White requests a draw */
+  /** White requests a draw. */
   public void whiteWantsToDraw() {
     this.whiteWantsToDraw = true;
     if (!checkDrawAgreement()) {
@@ -178,7 +184,7 @@ public class GameState extends Subject {
     }
   }
 
-  /** Black requests a draw */
+  /** Black requests a draw. */
   public void blackWantsToDraw() {
     this.blackWantsToDraw = true;
     if (!checkDrawAgreement()) {
@@ -186,13 +192,13 @@ public class GameState extends Subject {
     }
   }
 
-  /** White cancels their draw request */
+  /** White cancels their draw request. */
   public void whiteCancelsDrawRequest() {
     this.whiteWantsToDraw = false;
     notifyObservers(EventType.WHITE_UNDRAW);
   }
 
-  /** Black cancels their draw request */
+  /** Black cancels their draw request. */
   public void blackCancelsDrawRequest() {
     this.blackWantsToDraw = false;
     notifyObservers(EventType.BLACK_UNDRAW);
@@ -225,7 +231,7 @@ public class GameState extends Subject {
   }
 
   /**
-   * Checks if both players want to draw
+   * Checks if both players want to draw.
    *
    * @return true if there is a draw, meaning both players agreed to a draw
    */
@@ -239,7 +245,7 @@ public class GameState extends Subject {
     return false;
   }
 
-  /** White decides to resign the game, making Black victorious */
+  /** White decides to resign the game, making Black victorious. */
   public void whiteResigns() {
     this.whiteResigns = true;
     this.isGameOver = true;
@@ -247,7 +253,7 @@ public class GameState extends Subject {
     notifyObservers(EventType.WIN_BLACK);
   }
 
-  /** Black decides to resign the game, making White victorious */
+  /** Black decides to resign the game, making White victorious. */
   public void blackResigns() {
     this.blackResigns = true;
     this.isGameOver = true;
@@ -302,7 +308,7 @@ public class GameState extends Subject {
   }
 
   /**
-   * Checks if fifty move rule has to be applied
+   * Checks if fifty move rule has to be applied.
    *
    * @return true if fifty move rule is observed
    */
@@ -310,7 +316,7 @@ public class GameState extends Subject {
     return this.board.getNbMovesWithNoCaptureOrPawn() >= 50;
   }
 
-  /** Fifty move rule is observed so change game status to 'Over', it's a draw */
+  /** Fifty move rule is observed so change game status to 'Over', it's a draw. */
   public void applyFiftyMoveRule() {
     this.isGameOver = true;
     notifyObservers(EventType.FIFTY_MOVE_RULE);

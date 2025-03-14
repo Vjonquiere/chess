@@ -230,7 +230,7 @@ public enum OptionType {
                   + "Available options:\n"
                   + "- MINIMAX : Uses the MiniMax algorithm.\n"
                   + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm (default).\n"
-                  + "- MCTS : Uses Monte Carlo Tree Search for AI move exploration.")
+                  + "- MonteCarloTreeSearch : Uses Monte Carlo Tree Search for AI move exploration.")
           .build();
     }
   },
@@ -293,7 +293,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("SIMULATION")
-          .desc("Specify the number of simulations for the MCTS AI algorithm")
+          .desc("Specify the number of simulations for the MonteCarloTreeSearch AI algorithm")
           .build();
     }
   },
@@ -314,7 +314,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("SIMULATIONS")
-          .desc("Specify the number of simulations for the White MCTS AI algorithm")
+          .desc("Specify the number of simulations for the White MonteCarloTreeSearch AI algorithm")
           .build();
     }
   },
@@ -335,7 +335,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("SIMULATIONS")
-          .desc("Specify the number of simulations for the Black MCTS AI algorithm")
+          .desc("Specify the number of simulations for the Black MonteCarloTreeSearch AI algorithm")
           .build();
     }
   },
@@ -357,7 +357,7 @@ public enum OptionType {
           .hasArg(true)
           .argName("DEPTH")
           .desc(
-              "Specify the depth of the AI algorithm or the number of simulations for the MCTS AI algorithm")
+              "Specify the depth of the AI algorithm or the number of simulations for the MonteCarloTreeSearch AI algorithm")
           .build();
     }
   },

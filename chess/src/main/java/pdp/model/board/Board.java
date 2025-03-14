@@ -246,8 +246,12 @@ public class Board {
    */
   public boolean canCastle(Color color, boolean shortCastle) {
     if (color == Color.WHITE) {
-      if (shortCastle && !this.whiteShortCastle) return false;
-      if (!shortCastle && !this.whiteLongCastle) return false;
+      if (shortCastle && !this.whiteShortCastle) {
+        return false;
+      }
+      if (!shortCastle && !this.whiteLongCastle) {
+        return false;
+      }
 
       Position f1Square = new Position(5, 0);
       Position g1Square = new Position(6, 0);
@@ -282,8 +286,12 @@ public class Board {
       }
       return true;
     } else {
-      if (shortCastle && !this.blackShortCastle) return false;
-      if (!shortCastle && !this.blackLongCastle) return false;
+      if (shortCastle && !this.blackShortCastle) {
+        return false;
+      }
+      if (!shortCastle && !this.blackLongCastle) {
+        return false;
+      }
 
       Position f8Square = new Position(5, 7);
       Position g8Square = new Position(6, 7);

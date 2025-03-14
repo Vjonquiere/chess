@@ -350,8 +350,12 @@ public class Move {
    */
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null || !(obj instanceof Move)) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || !(obj instanceof Move)) {
+      return false;
+    }
     Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }

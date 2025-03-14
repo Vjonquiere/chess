@@ -62,7 +62,9 @@ public class AlphaBeta implements SearchAlgorithm {
         new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     for (Move move : moves) {
-      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) break;
+      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
+        break;
+      }
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
@@ -79,7 +81,9 @@ public class AlphaBeta implements SearchAlgorithm {
           }
           beta = Math.min(beta, bestMove.score());
         }
-        if (alpha >= beta) break;
+        if (alpha >= beta) {
+          break;
+        }
       } catch (IllegalMoveException e) {
         // Skipping illegal move
       }
