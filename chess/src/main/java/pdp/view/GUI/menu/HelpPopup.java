@@ -7,15 +7,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import pdp.utils.TextGetter;
 
 public class HelpPopup extends VBox {
   public HelpPopup() {
     Stage popupStage = new Stage();
-    popupStage.setTitle("How to use this Software?");
+    popupStage.setTitle(TextGetter.getText("help.title"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
     Label manualLabel = getLabel();
 
-    Button closeButton = new Button("Close");
+    Button closeButton = new Button(TextGetter.getText("close"));
     closeButton.setOnAction(e -> popupStage.close());
 
     VBox layout = new VBox(10, manualLabel, closeButton);
@@ -27,21 +28,7 @@ public class HelpPopup extends VBox {
   }
 
   private Label getLabel() {
-    Label manualLabel =
-        new Label(
-            """
-                        Welcome to chess Software!
-
-                        1. How to configure a new game ?
-                        \tGo to file->new Game and setup your game as you want
-
-                        2. How to load a game from a file ?
-                        \tGo to file->load and select your file
-
-                        3. ?
-                        \t
-
-                        For more details, Check the -h to know all configurable options.""");
+    Label manualLabel = new Label(TextGetter.getText("help.message"));
     manualLabel.setWrapText(true);
     return manualLabel;
   }
