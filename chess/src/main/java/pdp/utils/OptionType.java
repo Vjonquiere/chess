@@ -230,7 +230,7 @@ public enum OptionType {
                   + "Available options:\n"
                   + "- MINIMAX : Uses the MiniMax algorithm.\n"
                   + "- ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm (default).\n"
-                  + "- MonteCarloTreeSearch : Uses Monte Carlo Tree Search for AI move exploration.")
+                  + "- MCTS : Uses Monte Carlo Tree Search for AI move exploration.")
           .build();
     }
   },

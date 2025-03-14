@@ -26,7 +26,7 @@ public class CommandLineOptions {
   private CommandLineOptions() {}
 
   /**
-   * Parses the given command line arguments..
+   * Parses the given command line arguments.
    *
    * <p>Returns a map of the activated options, with the option name as the key and the option value
    * as the value.
