@@ -7,10 +7,24 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
-import pdp.model.ai.algorithms.MCTS;
 import pdp.model.ai.algorithms.Minimax;
+import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.algorithms.SearchAlgorithm;
-import pdp.model.ai.heuristics.*;
+import pdp.model.ai.heuristics.BadPawnsHeuristic;
+import pdp.model.ai.heuristics.BishopEndgameHeuristic;
+import pdp.model.ai.heuristics.DevelopmentHeuristic;
+import pdp.model.ai.heuristics.EndGameHeuristic;
+import pdp.model.ai.heuristics.GameStatus;
+import pdp.model.ai.heuristics.Heuristic;
+import pdp.model.ai.heuristics.KingActivityHeuristic;
+import pdp.model.ai.heuristics.KingOppositionHeuristic;
+import pdp.model.ai.heuristics.KingSafetyHeuristic;
+import pdp.model.ai.heuristics.MaterialHeuristic;
+import pdp.model.ai.heuristics.MobilityHeuristic;
+import pdp.model.ai.heuristics.PawnChainHeuristic;
+import pdp.model.ai.heuristics.ShannonBasic;
+import pdp.model.ai.heuristics.SpaceControlHeuristic;
+import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
@@ -39,7 +53,7 @@ public class Solver {
   }
 
   /**
-   * Set the algorithm to be used.
+   * Set the algorithm to be used.;
    *
    * @param algorithm The algorithm to use.
    */
@@ -47,20 +61,20 @@ public class Solver {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
-      case MCTS -> this.algorithm = new MCTS(this);
+      case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
     DEBUG(LOGGER, "Algorithm set to " + algorithm);
   }
 
   /**
-   * Assigns a value (typed by the user in CLI) to the simulation limit for MCTS. Method used in
-   * GameInitializer.
+   * Assigns a value (typed by the user in CLI) to the simulation limit for MonteCarloTreeSearch.
+   * Method used in GameInitializer. StandardHeuristic
    *
-   * @param numberSimulations the number of MCTS simulations wanted by the user
+   * @param numberSimulations the number of MonteCarloTreeSearch simulations wanted by the user
    */
-  public void setMCTSAlgorithm(int numberSimulations) {
-    this.algorithm = new MCTS(this, numberSimulations);
+  public void setMonteCarloAlgorithm(int numberSimulations) {
+    this.algorithm = new MonteCarloTreeSearch(this, numberSimulations);
   }
 
   /**
@@ -90,7 +104,7 @@ public class Solver {
   }
 
   /**
-   * Retrieve the current heuristic
+   * Retrieve the current heuristic.
    *
    * @return the current heuristic that the solver uses
    */
@@ -99,7 +113,7 @@ public class Solver {
   }
 
   /**
-   * Retrieve the current algorithm
+   * Retrieve the current algorithm.
    *
    * @return the current SearchAlgorithm that the solver uses
    */
@@ -108,7 +122,7 @@ public class Solver {
   }
 
   /**
-   * Retrieve the maximum depth of AI exploration
+   * Retrieve the maximum depth of AI exploration.
    *
    * @return maximum depth
    */

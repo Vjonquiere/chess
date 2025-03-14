@@ -204,7 +204,9 @@ public class Bitboard {
     for (int x = 7; x >= 0; x--) {
       for (int y = 0; y < 8; y++) {
         sb.append(getBit(x * 8 + y) ? '1' : '0');
-        if (y != 7) sb.append("|");
+        if (y != 7) {
+          sb.append("|");
+        }
       }
       sb.append("\n");
     }

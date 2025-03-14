@@ -15,8 +15,9 @@ public class MaterialHeuristic implements Heuristic {
   @Override
   public int evaluate(Board board, boolean isWhite) {
     int score = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation))
+    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation)) {
       throw new RuntimeException("Only available for bitboards");
+    }
     score +=
         bitboardRepresentation.getPawns(true).size()
             - bitboardRepresentation.getPawns(false).size();

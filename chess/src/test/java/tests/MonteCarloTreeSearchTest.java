@@ -14,7 +14,7 @@ import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
-public class MCTSTest {
+public class MonteCarloTreeSearchTest {
   Solver solver;
   Game game;
 

@@ -27,11 +27,15 @@ public class RestoreMoveCommand implements Command {
       } else {
         if (model.isBlackAI() || model.isWhiteAI()) {
           model.nextState();
-          if (model.isBlackAI() && !model.getGameState().isWhiteTurn())
+          if (model.isBlackAI() && !model.getGameState().isWhiteTurn()) {
             model.getBlackSolver().playAIMove(model);
-          if (model.isWhiteAI() && model.getGameState().isWhiteTurn())
+          }
+          if (model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
             model.getWhiteSolver().playAIMove(model);
-        } else model.getGameState().redoRequest();
+          }
+        } else {
+          model.getGameState().redoRequest();
+        }
       }
       return Optional.empty();
     } catch (Exception e) {

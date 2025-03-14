@@ -53,10 +53,10 @@ public class PromotionHeuristic implements Heuristic {
     BoardRepresentation bitboard = board.getBoardRep();
     List<Position> pawns = bitboard.getPawns(isWhite);
 
-    final int SECOND_LAST_RANK = isWhite ? 6 : 1;
+    final int secondLastRank = isWhite ? 6 : 1;
 
     for (Position pawn : pawns) {
-      if (pawn.getY() == SECOND_LAST_RANK) {
+      if (pawn.getY() == secondLastRank) {
         // Pawn one step from promotion
         score += 20;
       } else if ((isWhite && pawn.getY() >= 5) || (!isWhite && pawn.getY() <= 2)) {

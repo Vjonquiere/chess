@@ -135,6 +135,34 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                <configLocation>google_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.26.0</version>
+                <configuration>
+                <rulesets>
+                    <!-- If you want to start small, take only this line -->
+                    <!-- <ruleset>/rulesets/java/quickstart.xml</ruleset> -->
+                    <!-- All the rulesets -->
+                    <ruleset>/category/java/bestpractices.xml</ruleset>
+                    <ruleset>/category/java/codestyle.xml</ruleset>
+                    <ruleset>/category/java/design.xml</ruleset>
+                    <ruleset>/category/java/documentation.xml</ruleset>
+                    <ruleset>/category/java/errorprone.xml</ruleset>
+                    <ruleset>/category/java/multithreading.xml</ruleset>
+                    <ruleset>/category/java/performance.xml</ruleset>
+                    <ruleset>/category/java/security.xml</ruleset>
+                </rulesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>

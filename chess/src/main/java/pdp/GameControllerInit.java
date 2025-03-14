@@ -9,8 +9,8 @@ import pdp.view.CLIView;
 import pdp.view.GUIView;
 import pdp.view.View;
 
+/** Utility class for initializing a {@link GameController} instance. */
 public abstract class GameControllerInit {
-  // TODO Internationalization
   /**
    * Initialize the game with the given options.
    *
