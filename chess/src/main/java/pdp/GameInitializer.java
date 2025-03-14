@@ -149,7 +149,7 @@ public abstract class GameInitializer {
           && solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch) {
         try {
           int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
-          solverWhite.setMCTSAlgorithm(simulations);
+          solverWhite.setMonteCarloAlgorithm(simulations);
         } catch (Exception e) {
           System.err.println("Not an integer for the simulations of AI");
           System.err.println(
@@ -162,7 +162,7 @@ public abstract class GameInitializer {
           && solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch) {
         try {
           int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
-          solverBlack.setMCTSAlgorithm(simulations);
+          solverBlack.setMonteCarloAlgorithm(simulations);
         } catch (Exception e) {
           System.err.println("Not an integer for the simulations of AI");
           System.err.println(
