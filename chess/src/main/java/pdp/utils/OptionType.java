@@ -293,7 +293,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("SIMULATION")
-          .desc("Specify the number of simulations for the MonteCarloTreeSearch AI algorithm")
+          .desc("Specify the number of simulations for the MCTS AI algorithm")
           .build();
     }
   },
@@ -314,7 +314,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("SIMULATIONS")
-          .desc("Specify the number of simulations for the White MonteCarloTreeSearch AI algorithm")
+          .desc("Specify the number of simulations for the White MCTS AI algorithm")
           .build();
     }
   },
@@ -335,7 +335,7 @@ public enum OptionType {
           .longOpt(this.getLong())
           .hasArg(true)
           .argName("SIMULATIONS")
-          .desc("Specify the number of simulations for the Black MonteCarloTreeSearch AI algorithm")
+          .desc("Specify the number of simulations for the Black MCTS AI algorithm")
           .build();
     }
   },
@@ -357,7 +357,7 @@ public enum OptionType {
           .hasArg(true)
           .argName("DEPTH")
           .desc(
-              "Specify the depth of the AI algorithm or the number of simulations for the MonteCarloTreeSearch AI algorithm")
+              "Specify the depth of the AI algorithm or the number of simulations for the MCTS AI algorithm")
           .build();
     }
   },
