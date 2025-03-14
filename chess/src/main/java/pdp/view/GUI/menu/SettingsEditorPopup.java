@@ -14,6 +14,7 @@ import pdp.model.parsers.BoardFileParser;
 import pdp.model.savers.ConfigFileSaver;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
+import pdp.view.GUIView;
 
 public class SettingsEditorPopup extends VBox {
   public SettingsEditorPopup() {
@@ -50,6 +51,7 @@ public class SettingsEditorPopup extends VBox {
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
     Scene scene = new Scene(layout);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

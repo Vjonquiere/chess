@@ -4,6 +4,7 @@ import javafx.scene.control.Button;
 import pdp.view.GUIView;
 
 public class CustomButton extends Button {
+  /*
   private final String buttonStyle =
       "-fx-background-color: "
           + GUIView.theme.getSecondary()
@@ -20,15 +21,17 @@ public class CustomButton extends Button {
           + "-fx-background-radius: 20;"
           + "-fx-border-radius: 20;";
 
+   */
+
   public CustomButton(String name) {
     super(name);
-    applyStyle(buttonStyle);
+    // applyStyle(buttonStyle);
     this.setMinWidth(100);
   }
 
   public CustomButton(String name, String style) {
     super(name);
-    applyStyle(style);
+    // applyStyle(style);
     this.setMinWidth(100);
   }
 

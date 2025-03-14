@@ -97,6 +97,7 @@ public class EndGamePopUp {
     layout.setAlignment(Pos.CENTER);
 
     Scene scene = new Scene(layout, 400, 200);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

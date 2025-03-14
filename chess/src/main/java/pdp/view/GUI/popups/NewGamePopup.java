@@ -390,6 +390,7 @@ public class NewGamePopup {
         .setStyle("-fx-background-color: " + GUIView.theme.getBackground() + ";");
 
     Scene scene = new Scene(scrollPane, 400, 600);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

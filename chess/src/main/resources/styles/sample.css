@@ -1,32 +1,108 @@
+.root {
+    -fx-background-color: #000005; /* Background color for the whole application */
+    -fx-font-family: "Arial";
+    -fx-font-size: 16px;
+    -fx-text-fill: #000007;
+}
+
 .list-view {
     -fx-background-color: transparent;
 }
 
-.list-cell:even  {
-    -fx-background-color: #E8C8DA;
-    -fx-text-fill: black;
+.list-cell:even {
+    -fx-background-color: #000006;
+    -fx-text-fill: #000007;
 }
 
-.list-cell:odd{
-    -fx-background-color: #F8E6F0;
-    -fx-text-fill: black;
+.list-cell:odd {
+    -fx-background-color: #000005;
+    -fx-text-fill: #000007;
 }
 
-.list-cell:selected  {
-    -fx-background-color: #BE95C4;
-    -fx-text-fill: #5E548E;
+.list-cell:selected {
+    -fx-background-color: #000003;
+    -fx-text-fill: #000008;
 }
 
-.menu-bar{
-    -fx-background-color: #9F86C0;
-    -fx-border-color: #231942;
+.menu-bar {
+    -fx-background-color: #000004;
+    -fx-border-color: #000003;
 }
- .menu-item, .menu, .context-menu {
-    -fx-background-color: #9F86C0;
+
+.menu-item, .menu, .context-menu {
+    -fx-background-color: #000004;
 }
+
 .menu .label {
-    -fx-text-fill: #231942;
+    -fx-text-fill: #000007;
 }
+
 .menu-item:hover, .menu:hover {
-    -fx-background-color: #5E548E;
+    -fx-background-color: #000001;
+}
+
+.button:hover {
+    -fx-background-color: #000001;
+    -fx-text-fill: #000002;
+    -fx-border-color: #000002;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 15;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+}
+
+.button {
+    -fx-background-color: #000002;
+    -fx-text-fill: #000001;
+    -fx-border-color: #000001;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 15;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+}
+
+.text-field, .text-area {
+    -fx-border-color: #000002;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
+    -fx-padding: 5px;
+    -fx-background-color: #000006;
+}
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #000004;
+}
+
+.label {
+    -fx-text-fill: #000007;
+    -fx-font-size: 16px;
+}
+.label.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.check-box, .radio-button {
+    -fx-text-fill:  #000007;
+}
+.check-box:selected, .radio-button:selected {
+    -fx-text-fill:  #000007;
+}
+
+.slider .track {
+    -fx-background-color: #ddd;
+}
+.slider .thumb {
+    -fx-background-color: #000004;
+}
+.slider .thumb:hover {
+    -fx-background-color: #000003;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+.scroll-pane .viewport {
+    -fx-background-color: white;
 }
