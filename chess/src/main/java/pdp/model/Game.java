@@ -579,23 +579,21 @@ public class Game extends Subject {
 
     this.gameState.switchPlayerTurn();
     this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
-    if (!explorationAI) {
-      if (isSpecialMove) {
-        this.gameState.setSimplifiedZobristHashing(
-            zobristHashing.updateSimplifiedHashFromBitboards(
-                this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
-      } else {
-        this.gameState.setSimplifiedZobristHashing(
-            zobristHashing.generateSimplifiedHashFromBitboards(getBoard()));
-      }
+    if (isSpecialMove) {
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.updateSimplifiedHashFromBitboards(
+              this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
+    } else {
+      this.gameState.setSimplifiedZobristHashing(
+          zobristHashing.generateSimplifiedHashFromBitboards(getBoard()));
+    }
 
-      DEBUG(LOGGER, "Checking threefold repetition...");
-      boolean threefoldRepetition =
-          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+    DEBUG(LOGGER, "Checking threefold repetition...");
+    boolean threefoldRepetition =
+        this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
 
-      if (threefoldRepetition) {
-        this.gameState.activateThreefold();
-      }
+    if (threefoldRepetition) {
+      this.gameState.activateThreefold();
     }
 
     DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
@@ -703,6 +701,9 @@ public class Game extends Subject {
 
   /** Restarts the game by resetting the game state and history. */
   public void restartGame() {
+
+    System.out.println(stateCount);
+
     DEBUG(LOGGER, "Restarting game");
 
     if (!gameState.isGameOver()) {
@@ -806,11 +807,9 @@ public class Game extends Subject {
       throw new FailedUndoException();
     }
     // update zobrist to avoid threefold
-    if (!explorationAI) {
-      long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
-      if (stateCount.containsKey(currBoardZobrist)) {
-        stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
-      }
+    long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
+    if (stateCount.containsKey(currBoardZobrist)) {
+      stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
     }
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());

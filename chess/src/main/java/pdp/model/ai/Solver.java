@@ -221,10 +221,8 @@ public class Solver {
       evaluatedBoards.put(hash, score);
     }
 
-    // TODO find if it is a threefold repetition
-    if (false && this.isThreefoldImpact()) {
-      System.out.println("Threefold Repetition: set to 0");
-      score = 0;
+    if (Game.getInstance().getGameState().isThreefoldRepetition() && this.isThreefoldImpact()) {
+      score = -score;
     }
 
     return score;
