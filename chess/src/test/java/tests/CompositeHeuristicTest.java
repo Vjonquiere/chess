@@ -112,12 +112,12 @@ public class CompositeHeuristicTest {
     Heuristic pawnChainHeuristic = new PawnChainHeuristic();
     Heuristic developmentHeuristic = new DevelopmentHeuristic();
     Heuristic KingSafetyHeuristic = new KingSafetyHeuristic();
-    score += material.evaluate(game.getBoard(), false) * 10;
-    score += status.evaluate(game.getBoard(), false);
+    score += material.evaluate(game.getBoard(), false) * 100;
+    score += status.evaluate(game.getBoard(), false) * 100;
     score += mobility.evaluate(game.getBoard(), false);
     score += badPawnsHeuristic.evaluate(game.getBoard(), false);
     score += pawnChainHeuristic.evaluate(game.getBoard(), false);
-    score += developmentHeuristic.evaluate(game.getBoard(), false);
+    score += developmentHeuristic.evaluate(game.getBoard(), false) * 3;
     score += KingSafetyHeuristic.evaluate(game.getBoard(), false);
     assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
   }
