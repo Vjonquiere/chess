@@ -1,5 +1,7 @@
 package pdp.model.ai.algorithms;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
@@ -31,7 +33,9 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+    AIMove bestMove = alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+    DEBUG(LOGGER, "Best move: " + bestMove);
+    return bestMove;
   }
 
   /**

@@ -31,6 +31,11 @@ public class BishopEndgameHeuristic implements Heuristic {
     return isWhite ? score : -score;
   }
 
+  @Override
+  public boolean isThreefoldImpact() {
+    return false;
+  }
+
   /**
    * Increase score for bishops that have more activity
    *

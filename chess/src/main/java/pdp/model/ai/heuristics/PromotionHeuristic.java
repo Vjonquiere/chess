@@ -6,7 +6,6 @@ import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
 public class PromotionHeuristic implements Heuristic {
-
   /**
    * Computes a score according to the closeness of pawns promoting. Heuristic used for endgames.
    *
@@ -21,6 +20,11 @@ public class PromotionHeuristic implements Heuristic {
     score += pawnsAreCloseToPromotion(board, true) - pawnsAreCloseToPromotion(board, false);
 
     return isWhite ? score : -score;
+  }
+
+  @Override
+  public boolean isThreefoldImpact() {
+    return false;
   }
 
   /**

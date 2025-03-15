@@ -4,6 +4,7 @@ import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
 public class MobilityHeuristic implements Heuristic {
+
   /**
    * Evaluates the board based on the available moves for each player. The amount is divided by 10
    * based on Shannon's paper (XXII. Programming a Computer for Playing Chess).
@@ -26,5 +27,10 @@ public class MobilityHeuristic implements Heuristic {
         ((board.getBoardRep().getAllAvailableMoves(isWhite).size()
                 - board.getBoardRep().getAllAvailableMoves(!isWhite).size())
             * 0.1);
+  }
+
+  @Override
+  public boolean isThreefoldImpact() {
+    return false;
   }
 }

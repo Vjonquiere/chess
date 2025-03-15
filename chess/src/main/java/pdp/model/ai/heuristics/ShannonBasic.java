@@ -24,4 +24,9 @@ public class ShannonBasic extends AbstractHeuristic {
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), 1));
   }
+
+  @Override
+  public boolean isThreefoldImpact() {
+    return false;
+  }
 }

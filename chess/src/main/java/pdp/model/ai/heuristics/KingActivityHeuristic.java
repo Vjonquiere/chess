@@ -25,6 +25,11 @@ public class KingActivityHeuristic implements Heuristic {
     return isWhite ? score : -score;
   }
 
+  @Override
+  public boolean isThreefoldImpact() {
+    return false;
+  }
+
   /**
    * Checks the location of the king and returns a score accordingly
    *

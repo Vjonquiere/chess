@@ -103,6 +103,10 @@ public class Solver {
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
+  private boolean isThreefoldImpact() {
+    return this.heuristic.isThreefoldImpact();
+  }
+
   /**
    * Retrieve the current heuristic.
    *
@@ -209,12 +213,20 @@ public class Solver {
     }
 
     long hash = zobristHashing.generateHashFromBitboards(board);
+    int score;
     if (evaluatedBoards.containsKey(hash)) {
-      return evaluatedBoards.get(hash);
+      score = evaluatedBoards.get(hash);
+    } else {
+      score = heuristic.evaluate(board, isWhite);
+      evaluatedBoards.put(hash, score);
     }
 
-    int score = heuristic.evaluate(board, isWhite);
-    evaluatedBoards.put(hash, score);
+    // TODO find if it is a threefold repetition
+    if (false && this.isThreefoldImpact()) {
+      System.out.println("Threefold Repetition: set to 0");
+      score = 0;
+    }
+
     return score;
   }
 }

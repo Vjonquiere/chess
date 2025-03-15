@@ -29,6 +29,11 @@ public class BadPawnsHeuristic implements Heuristic {
     return isWhite ? (int) (-0.5 * score) : (int) (-0.5 * -score);
   }
 
+  @Override
+  public boolean isThreefoldImpact() {
+    return false;
+  }
+
   /**
    * Counts the doubled pawns ( 2 or more pawns on the same column)
    *

@@ -23,6 +23,11 @@ public class SpaceControlHeuristic implements Heuristic {
     return isWhite ? score : -score;
   }
 
+  @Override
+  public boolean isThreefoldImpact() {
+    return false;
+  }
+
   /**
    * Gives a score based on how much control over the center the corresponding player has.
    *
