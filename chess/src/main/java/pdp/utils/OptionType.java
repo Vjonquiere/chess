@@ -122,6 +122,22 @@ public enum OptionType {
           this.getShort(), this.getLong(), false, "Displays the game with a  graphical interface.");
     }
   },
+  AI_TRAINING {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-training";
+    }
+
+    @Override
+    public Option getOption() {
+      return new Option(this.getShort(), this.getLong(), false, "Lock display to ai training.");
+    }
+  },
   TIME {
     @Override
     public String getShort() {
@@ -501,6 +517,48 @@ public enum OptionType {
           .argName("TIME")
           .hasArg(true)
           .desc("Specify the time of reflexion for AI mode in seconds (default 5 seconds)")
+          .build();
+    }
+  },
+  AI_WEIGHT_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-weight-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .argName("WEIGHT")
+          .hasArg(true)
+          .desc("Specify the Weight to use with the standard heuristic.")
+          .build();
+    }
+  },
+  AI_WEIGHT_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-weight-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .argName("WEIGHT")
+          .hasArg(true)
+          .desc("Specify the Weight to use with the standard heuristic.")
           .build();
     }
   },

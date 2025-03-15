@@ -5,6 +5,7 @@ import static pdp.utils.Logging.DEBUG;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,24 +102,63 @@ public abstract class GameInitializer {
 
       if (options.containsKey(OptionType.AI_HEURISTIC_W)) {
         try {
-          HeuristicType heuristicType =
-              HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W));
-          solverWhite.setHeuristic(heuristicType);
+          if (options.containsKey(OptionType.AI_WEIGHT_W)
+              && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W))
+                  .equals(HeuristicType.STANDARD)) {
+            String weight = options.get(OptionType.AI_WEIGHT_W);
+            String[] weights = weight.split(",");
+            ArrayList<Integer> weightsInts = new ArrayList<>();
+            for (String w : weights) {
+              weightsInts.add(Integer.parseInt(w));
+            }
+            if (weightsInts.size() != 7) {
+              throw new ParseException("Invalid number of weights", 0);
+            }
+            solverWhite.setHeuristic(
+                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)), weightsInts);
+          } else {
+            solverWhite.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)));
+          }
+
         } catch (IllegalArgumentException e) {
           System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC_W));
           System.err.println("Defaulting to Heuristic STANDARD");
+          solverWhite.setHeuristic(HeuristicType.STANDARD);
+        } catch (ParseException e) {
+          System.err.println(
+              "Weights problem: " + options.get(OptionType.AI_WEIGHT_W) + " -> " + e.getMessage());
+          System.err.println("Defaulting to Unweighted Heuristic STANDARD");
           solverWhite.setHeuristic(HeuristicType.STANDARD);
         }
       }
 
       if (options.containsKey(OptionType.AI_HEURISTIC_B)) {
         try {
-          HeuristicType heuristicType =
-              HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B));
-          solverBlack.setHeuristic(heuristicType);
+          if (options.containsKey(OptionType.AI_WEIGHT_B)
+              && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B))
+                  .equals(HeuristicType.STANDARD)) {
+            String weight = options.get(OptionType.AI_WEIGHT_B);
+            String[] weights = weight.split(",");
+            ArrayList<Integer> weightsInts = new ArrayList<>();
+            for (String w : weights) {
+              weightsInts.add(Integer.parseInt(w));
+            }
+            if (weightsInts.size() != 7) {
+              throw new ParseException("Invalid number of weights", 0);
+            }
+            solverBlack.setHeuristic(
+                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B)), weightsInts);
+          } else {
+            solverBlack.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B)));
+          }
         } catch (IllegalArgumentException e) {
           System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC_B));
           System.err.println("Defaulting to Heuristic STANDARD");
+          solverBlack.setHeuristic(HeuristicType.STANDARD);
+        } catch (ParseException e) {
+          System.err.println(
+              "Weights problem: " + options.get(OptionType.AI_WEIGHT_B) + " -> " + e.getMessage());
+          System.err.println("Defaulting to Unweighted Heuristic STANDARD");
           solverBlack.setHeuristic(HeuristicType.STANDARD);
         }
       }

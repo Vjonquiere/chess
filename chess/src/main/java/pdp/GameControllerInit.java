@@ -5,6 +5,7 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.utils.OptionType;
+import pdp.view.AIView;
 import pdp.view.CLIView;
 import pdp.view.GUIView;
 import pdp.view.View;
@@ -24,6 +25,8 @@ public abstract class GameControllerInit {
     View view;
     if (options.containsKey(OptionType.GUI)) {
       view = new GUIView();
+    } else if (options.containsKey(OptionType.AI_TRAINING)) {
+      view = new AIView();
     } else {
       view = new CLIView();
     }

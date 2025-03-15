@@ -2,6 +2,7 @@ package pdp.model.ai;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.events.EventType;
@@ -97,6 +98,32 @@ public class Solver {
       case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
       case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
       case STANDARD -> this.heuristic = new StandardHeuristic();
+      case ENDGAME -> this.heuristic = new EndGameHeuristic();
+      default -> throw new IllegalArgumentException("No heuristic is set");
+    }
+    DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
+  }
+
+  /**
+   * Set the heuristic to be used.
+   *
+   * @param heuristic The heuristic to use.
+   */
+  public void setHeuristic(HeuristicType heuristic, ArrayList<Integer> weight) {
+    switch (heuristic) {
+      case MATERIAL -> this.heuristic = new MaterialHeuristic();
+      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
+      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
+      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
+      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
+      case MOBILITY -> this.heuristic = new MobilityHeuristic();
+      case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
+      case SHANNON -> this.heuristic = new ShannonBasic();
+      case GAME_STATUS -> this.heuristic = new GameStatus();
+      case KING_ACTIVITY -> this.heuristic = new KingActivityHeuristic();
+      case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
+      case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
+      case STANDARD -> this.heuristic = new StandardHeuristic(weight);
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
