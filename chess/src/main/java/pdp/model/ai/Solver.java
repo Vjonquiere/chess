@@ -35,7 +35,7 @@ public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private final ZobristHashing zobristHashing = new ZobristHashing();
-  private final HashMap<Long, Integer> evaluatedBoards;
+  private final HashMap<Long, Float> evaluatedBoards;
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
@@ -109,7 +109,7 @@ public class Solver {
    *
    * @param heuristic The heuristic to use.
    */
-  public void setHeuristic(HeuristicType heuristic, ArrayList<Integer> weight) {
+  public void setHeuristic(HeuristicType heuristic, ArrayList<Float> weight) {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
       case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
@@ -230,7 +230,7 @@ public class Solver {
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public int evaluateBoard(Board board, boolean isWhite) {
+  public float evaluateBoard(Board board, boolean isWhite) {
     if (board == null) {
       throw new IllegalArgumentException("Board is null");
     }
@@ -240,7 +240,7 @@ public class Solver {
       return evaluatedBoards.get(hash);
     }
 
-    int score = heuristic.evaluate(board, isWhite);
+    float score = heuristic.evaluate(board, isWhite);
     evaluatedBoards.put(hash, score);
     return score;
   }

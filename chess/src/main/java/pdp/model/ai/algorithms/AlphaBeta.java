@@ -49,13 +49,18 @@ public class AlphaBeta implements SearchAlgorithm {
    * @return The best move with its evaluated score.
    */
   private AIMove alphaBeta(
-      Game game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
+      Game game,
+      int depth,
+      boolean currentPlayer,
+      float alpha,
+      float beta,
+      boolean originalPlayer) {
 
     if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
       return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AIMove(null, evaluation);
     }
     AIMove bestMove =

@@ -1,3 +1,3 @@
 package pdp.model.ai.heuristics;
 
-public record WeightedHeuristic(Heuristic heuristic, int weight) {}
+public record WeightedHeuristic(Heuristic heuristic, float weight) {}

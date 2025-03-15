@@ -17,7 +17,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @return score according to the activity of the king
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += kingIsInCenterScore(board, true) - kingIsInCenterScore(board, false);
     score += kingActivityScore(board, true) - kingActivityScore(board, false);

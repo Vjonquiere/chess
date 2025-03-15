@@ -5,10 +5,7 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.utils.OptionType;
-import pdp.view.AIView;
-import pdp.view.CLIView;
-import pdp.view.GUIView;
-import pdp.view.View;
+import pdp.view.*;
 
 /** Utility class for initializing a {@link GameController} instance. */
 public abstract class GameControllerInit {
@@ -27,6 +24,8 @@ public abstract class GameControllerInit {
       view = new GUIView();
     } else if (options.containsKey(OptionType.AI_TRAINING)) {
       view = new AIView();
+    } else if (options.containsKey(OptionType.CONTEST)) {
+      view = new ContestMode();
     } else {
       view = new CLIView();
     }

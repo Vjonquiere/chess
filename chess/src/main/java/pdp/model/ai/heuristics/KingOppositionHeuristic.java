@@ -15,7 +15,7 @@ public class KingOppositionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += evaluateKingOpposition(board, isWhite);
     return score;

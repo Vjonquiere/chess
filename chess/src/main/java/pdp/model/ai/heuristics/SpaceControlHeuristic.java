@@ -16,7 +16,7 @@ public class SpaceControlHeuristic implements Heuristic {
    * @return a score corresponding to the overall control of the board
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += evaluateCenterControl(board, true) - evaluateCenterControl(board, false);
     score += evaluateFlanksControl(board, true) - evaluateFlanksControl(board, false);

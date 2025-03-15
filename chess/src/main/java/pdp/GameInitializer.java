@@ -20,6 +20,7 @@ import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
+import pdp.model.parsers.FENparser;
 import pdp.model.parsers.FileBoard;
 import pdp.utils.CommandLineOptions;
 import pdp.utils.MoveHistoryParser;
@@ -107,15 +108,15 @@ public abstract class GameInitializer {
                   .equals(HeuristicType.STANDARD)) {
             String weight = options.get(OptionType.AI_WEIGHT_W);
             String[] weights = weight.split(",");
-            ArrayList<Integer> weightsInts = new ArrayList<>();
+            ArrayList<Float> weightsFloats = new ArrayList<>();
             for (String w : weights) {
-              weightsInts.add(Integer.parseInt(w));
+              weightsFloats.add(Float.parseFloat(w));
             }
-            if (weightsInts.size() != 7) {
+            if (weightsFloats.size() != 7) {
               throw new ParseException("Invalid number of weights", 0);
             }
             solverWhite.setHeuristic(
-                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)), weightsInts);
+                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)), weightsFloats);
           } else {
             solverWhite.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)));
           }
@@ -139,15 +140,15 @@ public abstract class GameInitializer {
                   .equals(HeuristicType.STANDARD)) {
             String weight = options.get(OptionType.AI_WEIGHT_B);
             String[] weights = weight.split(",");
-            ArrayList<Integer> weightsInts = new ArrayList<>();
+            ArrayList<Float> weightsFloats = new ArrayList<>();
             for (String w : weights) {
-              weightsInts.add(Integer.parseInt(w));
+              weightsFloats.add(Float.parseFloat(w));
             }
-            if (weightsInts.size() != 7) {
+            if (weightsFloats.size() != 7) {
               throw new ParseException("Invalid number of weights", 0);
             }
             solverBlack.setHeuristic(
-                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B)), weightsInts);
+                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B)), weightsFloats);
           } else {
             solverBlack.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B)));
           }
@@ -242,7 +243,15 @@ public abstract class GameInitializer {
         inputStream = new FileInputStream(options.get(OptionType.LOAD));
 
         List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
-        if (moveStrings.isEmpty()) {
+        if (options.containsKey(OptionType.CONTEST)) {
+          BoardFileParser parser = new BoardFileParser();
+
+          FileBoard board =
+              FENparser.loadBoardFromFen(parser.readFile(options.get(OptionType.LOAD)));
+          model =
+              Game.initialize(
+                  isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
+        } else if (moveStrings.isEmpty()) {
           BoardFileParser parser = new BoardFileParser();
           FileBoard board =
               parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());

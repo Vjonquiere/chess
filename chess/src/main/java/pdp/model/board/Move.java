@@ -324,6 +324,12 @@ public class Move {
     return piece + sourceStr + separator + destinationStr + annotation;
   }
 
+  public String toUciString() {
+    String sourceStr = positionToString(this.source);
+    String destinationStr = positionToString(this.dest);
+    return sourceStr + destinationStr;
+  }
+
   /**
    * Converts the move to a string representation.
    *

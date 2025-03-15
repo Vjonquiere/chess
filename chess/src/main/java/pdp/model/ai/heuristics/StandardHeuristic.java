@@ -18,7 +18,7 @@ public class StandardHeuristic extends AbstractHeuristic {
     // super.addHeuristic(new SpaceControlHeuristic());
   }
 
-  public StandardHeuristic(ArrayList<Integer> weight) {
+  public StandardHeuristic(ArrayList<Float> weight) {
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), weight.get(0)));
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), weight.get(1)));
     super.addHeuristic(new WeightedHeuristic(new GameStatus(), weight.get(2)));

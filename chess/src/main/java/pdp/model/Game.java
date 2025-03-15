@@ -39,7 +39,7 @@ import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
-import pdp.model.savers.BoardSaver;
+import pdp.model.savers.FENSaver;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
 import pdp.utils.Position;
@@ -666,7 +666,7 @@ public class Game extends Subject {
   public void saveGame(String path) throws FailedSaveException {
     boolean[] castlingRights = getBoard().getCastlingRights();
     String board =
-        BoardSaver.saveBoard(
+        FENSaver.saveBoard(
             new FileBoard(
                 this.getBoard().board,
                 this.getBoard().isWhite,

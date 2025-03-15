@@ -19,7 +19,7 @@ public class Main {
     System.out.println("options: " + options.toString());
 
     if (options.containsKey(OptionType.CONTEST)) {
-      throw new UnsupportedOperationException("Contest mode not implemented");
+      // throw new UnsupportedOperationException("Contest mode not implemented");
     }
 
     GameController controller = GameControllerInit.initialize(options);
