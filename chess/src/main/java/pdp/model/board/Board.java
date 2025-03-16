@@ -72,7 +72,7 @@ public class Board {
   }
 
   public List<Move> getAvailableMoves(Position pos) {
-    return getBoard().getAvailableMoves(pos.getX(), pos.getY(), false);
+    return getBoardRep().getAvailableMoves(pos.getX(), pos.getY(), false);
   }
 
   public boolean getPlayer() {
@@ -90,14 +90,14 @@ public class Board {
    */
   public void makeMove(Move move) {
     this.nbMovesWithNoCaptureOrPawn++;
-    if (getBoard().getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
+    if (getBoardRep().getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
       // Reset the number of moves with no pawn move
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
     if (move.isTake) {
       // SAVE DELETED PIECE FOR HASHING
       if (!this.isEnPassantTake()) {
-        getBoard().deletePieceAt(move.dest.getX(), move.dest.getY());
+        getBoardRep().deletePieceAt(move.dest.getX(), move.dest.getY());
       }
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
@@ -107,13 +107,13 @@ public class Board {
       this.setLastMoveDoublePush(false);
       this.setEnPassantTake(false);
       if (this.isWhite) {
-        getBoard().deletePieceAt(move.dest.getX(), move.dest.getY() - 1);
+        getBoardRep().deletePieceAt(move.dest.getX(), move.dest.getY() - 1);
       } else {
-        getBoard().deletePieceAt(move.dest.getX(), move.dest.getY() + 1);
+        getBoardRep().deletePieceAt(move.dest.getX(), move.dest.getY() + 1);
       }
     }
 
-    getBoard().movePiece(move.source, move.dest);
+    getBoardRep().movePiece(move.source, move.dest);
 
     if (this.isWhiteShortCastle()
         && (move.source.equals(new Position(4, 0))
@@ -136,9 +136,9 @@ public class Board {
             || move.source.equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.setBlackLongCastle(false);
     }
-    if (getBoard().isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
+    if (getBoardRep().isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
       Piece newPiece = ((PromoteMove) move).getPromPiece();
-      getBoard()
+      getBoardRep()
           .promotePawn(
               move.dest.getX(),
               move.dest.getY(),
@@ -163,7 +163,7 @@ public class Board {
    */
   public Board getCopy() {
     Board copy = new Board();
-    copy.setBoard(this.getBoard().getCopy());
+    copy.setBoard(this.getBoardRep().getCopy());
     copy.isWhite = this.isWhite;
     copy.setWhiteShortCastle(this.isWhiteShortCastle());
     copy.setBlackShortCastle(this.isBlackShortCastle());
@@ -178,7 +178,7 @@ public class Board {
   }
 
   public BoardRepresentation getBoardRep() {
-    return getBoard();
+    return this.board;
   }
 
   /**
@@ -190,8 +190,8 @@ public class Board {
    * @return a 2D array of characters representing the chess board.
    */
   public char[][] getAsciiRepresentation() {
-    int rows = this.getBoard().getNbRows();
-    int cols = this.getBoard().getNbCols();
+    int rows = this.getBoardRep().getNbRows();
+    int cols = this.getBoardRep().getNbCols();
     char[][] charBoard = new char[rows][cols];
 
     for (int i = 0; i < rows; i++) {
@@ -202,17 +202,21 @@ public class Board {
       boolean color = (i == 0);
 
       placePiecesOnBoard(
-          charBoard, this.getBoard().getPawns(color), Piece.PAWN.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getPawns(color), Piece.PAWN.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.getBoard().getRooks(color), Piece.ROOK.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getRooks(color), Piece.ROOK.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.getBoard().getKnights(color), Piece.KNIGHT.getCharRepresentation(color));
+          charBoard,
+          this.getBoardRep().getKnights(color),
+          Piece.KNIGHT.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.getBoard().getBishops(color), Piece.BISHOP.getCharRepresentation(color));
+          charBoard,
+          this.getBoardRep().getBishops(color),
+          Piece.BISHOP.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.getBoard().getQueens(color), Piece.QUEEN.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getQueens(color), Piece.QUEEN.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.getBoard().getKing(color), Piece.KING.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getKing(color), Piece.KING.getCharRepresentation(color));
     }
 
     return charBoard;
@@ -228,7 +232,7 @@ public class Board {
    */
   private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {
     for (Position pos : positions) {
-      board[this.getBoard().getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
+      board[this.getBoardRep().getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
     }
   }
 
@@ -247,7 +251,7 @@ public class Board {
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
   public boolean canCastle(Color color, boolean shortCastle) {
-    return getBoard()
+    return getBoardRep()
         .canCastle(
             color,
             shortCastle,
@@ -265,9 +269,9 @@ public class Board {
    */
   public void applyCastle(Color color, boolean shortCastle) {
     if (shortCastle) {
-      getBoard().applyShortCastle(color);
+      getBoardRep().applyShortCastle(color);
     } else {
-      getBoard().applyLongCastle(color);
+      getBoardRep().applyLongCastle(color);
     }
   }
 
@@ -275,10 +279,6 @@ public class Board {
     return new boolean[] {
       isWhiteShortCastle(), isWhiteLongCastle(), isBlackShortCastle(), isBlackLongCastle()
     };
-  }
-
-  public BoardRepresentation getBoard() {
-    return board;
   }
 
   private void setBoard(BoardRepresentation board) {

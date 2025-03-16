@@ -368,7 +368,7 @@ public class Game extends Subject {
    */
   private void processClassicalMove(GameState gameState, Move move) throws IllegalMoveException {
     Color currentColor = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
-    if (gameState.getBoard().getBoard().isCheckAfterMove(currentColor, move)) {
+    if (gameState.getBoard().getBoardRep().isCheckAfterMove(currentColor, move)) {
       DEBUG(LOGGER, "Move puts the king in check: " + move);
       throw new IllegalMoveException(move.toString());
     }
@@ -389,7 +389,7 @@ public class Game extends Subject {
     Position destPosition = move.dest;
     boolean isSpecialMove = false;
     ColoredPiece coloredPiece =
-        gameState.getBoard().getBoard().getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.getX(), sourcePosition.getY());
 
     // Check Castle
     if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
@@ -406,7 +406,7 @@ public class Game extends Subject {
         && gameState.getBoard().isLastMoveDoublePush()
         && gameState
             .getBoard()
-            .getBoard()
+            .getBoardRep()
             .isEnPassant(
                 gameState.getBoard().getEnPassantPos().getX(),
                 gameState.getBoard().getEnPassantPos().getY(),
@@ -414,7 +414,7 @@ public class Game extends Subject {
                 gameState.isWhiteTurn())) {
       if (gameState
           .getBoard()
-          .getBoard()
+          .getBoardRep()
           .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
         DEBUG(LOGGER, "En passant puts the king in check!");
         throw new IllegalMoveException(move.toString());
@@ -429,10 +429,10 @@ public class Game extends Subject {
 
     // Check double pawn push
     if (!isSpecialMove
-        && gameState.getBoard().getBoard().isDoublePushPossible(move, gameState.isWhiteTurn())) {
+        && gameState.getBoard().getBoardRep().isDoublePushPossible(move, gameState.isWhiteTurn())) {
       if (gameState
           .getBoard()
-          .getBoard()
+          .getBoardRep()
           .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
         DEBUG(LOGGER, "Double push puts the king in check!");
         throw new IllegalMoveException(move.toString());
@@ -492,7 +492,7 @@ public class Game extends Subject {
    * @return true if the move is a castle move, false otherwise.
    */
   private boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
-    return getBoard().getBoard().isCastleMove(coloredPiece, source, dest);
+    return getBoard().getBoardRep().isCastleMove(coloredPiece, source, dest);
   }
 
   /**
@@ -612,7 +612,7 @@ public class Game extends Subject {
     String board =
         BoardSaver.saveBoard(
             new FileBoard(
-                this.getBoard().getBoard(),
+                this.getBoard().getBoardRep(),
                 this.getGameState().isWhiteTurn(),
                 new FenHeader(
                     castlingRights[0],
@@ -854,7 +854,7 @@ public class Game extends Subject {
     // getBoard().getBoardRep().isPawnPromoting(move.source.getX(),move.source.getY(),getGameState().isWhiteTurn()); don't pass the tests
     if (this.gameState
             .getBoard()
-            .getBoard()
+            .getBoardRep()
             .getPieceAt(move.source.getX(), move.source.getY())
             .piece
         != Piece.PAWN) {
