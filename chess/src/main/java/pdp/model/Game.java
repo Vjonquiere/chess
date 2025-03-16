@@ -55,6 +55,8 @@ public class Game extends Subject {
   private boolean isWhiteAI;
   private boolean isBlackAI;
   private boolean explorationAI;
+  private boolean loadedFromFile;
+  private boolean loadingFileHasHistory;
   private History history;
   private HashMap<Long, Integer> stateCount;
   private HashMap<OptionType, String> options;
@@ -228,6 +230,44 @@ public class Game extends Subject {
   }
 
   /**
+   * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
+   * file. Boolean value is used in playMove() to know if history has to be overwritten.
+   */
+  public void setLoadedFromFile() {
+    this.loadedFromFile = true;
+  }
+
+  /**
+   * @return true if the game was loaded from a file, false otherwise
+   */
+  public boolean isLoadedFromFile() {
+    return this.loadedFromFile;
+  }
+
+  /**
+   * @return the path of the file that generated the game
+   */
+  public String getLoadingFile() {
+    return options.get(OptionType.LOAD);
+  }
+
+  /**
+   * @return true if the file that was used to load the game has a history. false otherwise.
+   */
+  public boolean loadingFileHasHistory() {
+    return this.loadingFileHasHistory;
+  }
+
+  /**
+   * Method used in checkAndOverwriteHistory() to know how to handle new moves
+   *
+   * @param fileHasHistory boolean value used to set private boolean loadingFileHasHistory.
+   */
+  public void setLoadingFileHasHistory(boolean fileHasHistory) {
+    this.loadingFileHasHistory = fileHasHistory;
+  }
+
+  /**
    * Plays the first AI move if White AI is activated. The other calls to AI will be done in {@link
    * Game#updateGameStateAfterMove}
    */
@@ -388,6 +428,7 @@ public class Game extends Subject {
     } else {
       processSpecialMove(this.gameState, move);
     }
+
     this.updateGameStateAfterMove(move, classicalMove.isPresent());
   }
 
@@ -594,7 +635,12 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
 
-    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+    // Check for history overwrite
+    if (!isLoadedFromFile()) {
+      this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+    } else {
+      checkAndOverwriteHistory(move);
+    }
 
     if (!explorationAI) {
       this.notifyObservers(EventType.MOVE_PLAYED);
@@ -630,6 +676,53 @@ public class Game extends Subject {
       } else {
         solverBlack.playAIMove(this);
       }
+    }
+  }
+
+  /**
+   * Checks if the move in parameter (the one we would like to play) matches or not the next move in
+   * history. If not, overwrite history. This is used for games that are loaded from files.
+   *
+   * @param move the move we want to play in the game.
+   */
+  private void checkAndOverwriteHistory(Move move) {
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+
+    if (loadingFileHasHistory()) {
+      Optional<HistoryNode> nextNode = currentNode.get().getNext();
+      HistoryState nextState = null;
+      if (nextNode.isPresent()) {
+        nextState = nextNode.get().getState();
+      }
+      if (nextState == null) {
+        // End of history already, so add new move and save
+        this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+        saveGame(getLoadingFile());
+        DEBUG(
+            LOGGER, "Move differs from history. Overwriting history for file :" + getLoadingFile());
+      } else {
+        // Check if move we want to play is the same as the next one. If not, overwrite history and
+        // save
+        if (!move.equals(nextState.getMove())) {
+          // Truncate history
+          this.history.setCurrentMove(null);
+          this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+          saveGame(getLoadingFile());
+          DEBUG(
+              LOGGER,
+              "Move differs from history. Overwriting history for file :" + getLoadingFile());
+        } else {
+          // If same move, just forward by one in the history
+          this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
+          this.history.setCurrentMove(currentNode.get().getNext().get());
+          long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
+          stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
+        }
+      }
+    } else {
+      // If no history just add the move
+      this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+      saveGame(getLoadingFile());
     }
   }
 

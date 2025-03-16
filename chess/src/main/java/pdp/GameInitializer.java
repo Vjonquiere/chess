@@ -216,6 +216,8 @@ public abstract class GameInitializer {
           model =
               Game.initialize(
                   isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
+          model.setLoadedFromFile();
+          model.setLoadingFileHasHistory(false);
         } else {
 
           List<Move> moves = new ArrayList<>();
@@ -227,6 +229,8 @@ public abstract class GameInitializer {
           model =
               Game.fromHistory(
                   moves, isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
+          model.setLoadedFromFile();
+          model.setLoadingFileHasHistory(true);
         }
 
       } catch (IOException

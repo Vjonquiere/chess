@@ -123,7 +123,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
         // Add node to tree
         node.addChildToTree(new TreeNodeMonteCarlo(nextState, node, move));
       } catch (Exception e) {
-        // Illegal movewas caught
+        // Illegal move was caught
         continue;
       }
     }
