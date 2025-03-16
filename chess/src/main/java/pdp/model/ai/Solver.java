@@ -103,10 +103,6 @@ public class Solver {
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
-  private boolean isThreefoldImpact() {
-    return this.heuristic.isThreefoldImpact();
-  }
-
   /**
    * Retrieve the current heuristic.
    *
