@@ -27,6 +27,7 @@ import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
+import pdp.model.piece.Color;
 import pdp.utils.Logging;
 import pdp.utils.Timer;
 
@@ -217,7 +218,11 @@ public class Solver {
       evaluatedBoards.put(hash, score);
     }
 
-    if (Game.getInstance().getGameState().isThreefoldRepetition()) {
+    Color player = isWhite ? Color.WHITE : Color.BLACK;
+
+    if (Game.getInstance().getGameState().isThreefoldRepetition()
+        || board.getBoardRep().isStaleMate(player, player)
+        || board.getNbMovesWithNoCaptureOrPawn() >= 50) {
       score = 0;
     }
 
