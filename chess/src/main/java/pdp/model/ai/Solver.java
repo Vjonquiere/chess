@@ -222,7 +222,7 @@ public class Solver {
     }
 
     if (Game.getInstance().getGameState().isThreefoldRepetition() && this.isThreefoldImpact()) {
-      score = -score;
+      score = 0;
     }
 
     return score;
