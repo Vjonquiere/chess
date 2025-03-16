@@ -6,8 +6,6 @@ package pdp.model.ai.heuristics;
  */
 public class EndGameHeuristic extends AbstractHeuristic {
 
-  private boolean threefoldImpact = true;
-
   public EndGameHeuristic() {
     addHeuristic(new WeightedHeuristic(new KingActivityHeuristic(), 1));
     addHeuristic(new WeightedHeuristic(new PromotionHeuristic(), 5));
@@ -18,10 +16,5 @@ public class EndGameHeuristic extends AbstractHeuristic {
     addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), 1));
     addHeuristic(new WeightedHeuristic(new PawnChainHeuristic(), 1));
     addHeuristic(new WeightedHeuristic(new KingOppositionHeuristic(), 1));
-  }
-
-  @Override
-  public boolean isThreefoldImpact() {
-    return this.threefoldImpact;
   }
 }

@@ -39,9 +39,4 @@ public class MaterialHeuristic implements Heuristic {
             * 5;
     return isWhite ? score : -score;
   }
-
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
 }

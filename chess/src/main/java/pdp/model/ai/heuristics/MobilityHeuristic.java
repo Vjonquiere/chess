@@ -28,9 +28,4 @@ public class MobilityHeuristic implements Heuristic {
                 - board.getBoardRep().getAllAvailableMoves(!isWhite).size())
             * 0.1);
   }
-
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
 }

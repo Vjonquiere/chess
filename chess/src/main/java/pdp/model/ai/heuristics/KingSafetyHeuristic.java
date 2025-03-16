@@ -164,9 +164,4 @@ public class KingSafetyHeuristic implements Heuristic {
 
     return score;
   }
-
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
 }

@@ -19,11 +19,6 @@ public class DevelopmentHeuristic implements Heuristic {
     return isWhite ? score : -score;
   }
 
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
-
   /**
    * Counts the number of pieces that are placed on their home squares If pieces other than pawns
    * and kings are developped then a good score is assigned to the player

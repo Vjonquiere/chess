@@ -21,11 +21,6 @@ public class KingOppositionHeuristic implements Heuristic {
     return score;
   }
 
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
-
   /**
    * Checks king opposition for endgames. If the kings are in opposition (same file, rank, or
    * diagonal with a small distance), the position is more drawish. Else, more imbalance but cannot

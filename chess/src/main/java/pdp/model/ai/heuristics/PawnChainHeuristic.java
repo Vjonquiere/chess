@@ -21,11 +21,6 @@ public class PawnChainHeuristic implements Heuristic {
     return isWhite ? score : -score;
   }
 
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
-
   /**
    * Rewards pawn chains.
    *

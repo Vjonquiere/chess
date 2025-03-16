@@ -56,9 +56,4 @@ public abstract class AbstractHeuristic implements Heuristic {
     }
     return score;
   }
-
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
 }

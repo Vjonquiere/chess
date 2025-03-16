@@ -221,7 +221,7 @@ public class Solver {
       evaluatedBoards.put(hash, score);
     }
 
-    if (Game.getInstance().getGameState().isThreefoldRepetition() && this.isThreefoldImpact()) {
+    if (Game.getInstance().getGameState().isThreefoldRepetition()) {
       score = 0;
     }
 

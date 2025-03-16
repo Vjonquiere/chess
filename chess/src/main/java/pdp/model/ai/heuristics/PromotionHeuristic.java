@@ -22,11 +22,6 @@ public class PromotionHeuristic implements Heuristic {
     return isWhite ? score : -score;
   }
 
-  @Override
-  public boolean isThreefoldImpact() {
-    return false;
-  }
-
   /**
    * Checks if the pawns are well advanced for the corresponding color and returns a score
    * accordingly
