@@ -175,7 +175,7 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
-    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    AIMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
     if (timer != null) {
       timer.stop();
     }
@@ -187,7 +187,7 @@ public class Solver {
     } catch (Exception e) {
       game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
       System.err.println(e.getMessage());
-      if (game.getBoard().isWhite) {
+      if (game.getGameState().isWhiteTurn()) {
         game.getGameState().whiteResigns();
       } else {
         game.getGameState().blackResigns();
