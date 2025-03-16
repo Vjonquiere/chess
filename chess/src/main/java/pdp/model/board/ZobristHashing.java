@@ -58,23 +58,23 @@ public class ZobristHashing {
    * @return An integer (0 to 15) representing castling rights, or -1 if no castling is possible.
    */
   private int translateCastling(Board board) {
-    if (!board.whiteShortCastle
-        && !board.whiteLongCastle
-        && !board.blackShortCastle
-        && !board.blackLongCastle) {
+    if (!board.isWhiteShortCastle()
+        && !board.isWhiteLongCastle()
+        && !board.isBlackShortCastle()
+        && !board.isBlackLongCastle()) {
       return -1;
     }
     int castlingRights = 0;
-    if (board.whiteShortCastle) {
+    if (board.isWhiteShortCastle()) {
       castlingRights |= 1;
     }
-    if (board.whiteLongCastle) {
+    if (board.isWhiteLongCastle()) {
       castlingRights |= 2;
     }
-    if (board.blackShortCastle) {
+    if (board.isBlackShortCastle()) {
       castlingRights |= 4;
     }
-    if (board.blackLongCastle) {
+    if (board.isBlackLongCastle()) {
       castlingRights |= 8;
     }
     return castlingRights;
@@ -144,8 +144,8 @@ public class ZobristHashing {
       hash ^= castling[prevCastlingIndex];
     }
 
-    if (board.enPassantPos != null) {
-      prevEnPassantFile = board.enPassantPos.getX();
+    if (board.getEnPassantPos() != null) {
+      prevEnPassantFile = board.getEnPassantPos().getX();
       hash ^= enPassant[prevEnPassantFile];
     }
     if (board.isWhite) {
@@ -172,8 +172,8 @@ public class ZobristHashing {
       prevEnPassantFile = -1;
     }
     // if en passant is possible
-    if (board.enPassantPos != null) {
-      prevEnPassantFile = board.enPassantPos.getX();
+    if (board.getEnPassantPos() != null) {
+      prevEnPassantFile = board.getEnPassantPos().getX();
       currHash ^= enPassant[prevEnPassantFile];
     }
 

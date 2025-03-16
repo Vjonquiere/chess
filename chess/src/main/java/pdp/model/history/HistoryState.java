@@ -49,7 +49,7 @@ public class HistoryState {
    * @return true if the current player is white, false otherwise.
    */
   public boolean isWhite() {
-    return this.gameState.getBoard().getPlayer();
+    return this.gameState.isWhiteTurn();
   }
 
   /**

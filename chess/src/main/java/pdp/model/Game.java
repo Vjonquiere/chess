@@ -26,7 +26,6 @@ import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.heuristics.EndGameHeuristic;
-import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
@@ -214,57 +213,12 @@ public class Game extends Subject {
   /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
-   * @return true if wer're in an endgame (according to the chosen criterias)
+   * @return true if we're in an endgame (according to the chosen criterias)
    */
   public boolean isEndGamePhase() {
-    int nbRequiredConditions = 4;
-    int nbFilledConditions = 0;
-
-    int halfNbPieces = 16;
-    int nbPlayedMovesBeforeEndGame = 25;
-    int nbPossibleMoveInEndGame = 25;
-
-    // Queens are off the board
-    if (getBoard().getBoardRep().queensOffTheBoard()) {
-      nbFilledConditions++;
-    }
-    // Number of pieces remaining
-    if (getBoard().getBoardRep().nbPiecesRemaining() <= halfNbPieces) {
-      nbFilledConditions++;
-    }
-    // King activity
-    if (getBoard().getBoardRep().areKingsActive()) {
-      nbFilledConditions++;
-    }
-    // Number of played moves
-    if (gameState.getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-      nbFilledConditions++;
-    }
-    // Number of possible Moves
-
-    int nbMovesWhite;
-    int nbMovesBlack;
-
-    if (getBoard().getBoardRep() instanceof BitboardRepresentation) {
-      nbMovesWhite =
-          ((BitboardRepresentation) getBoard().getBoardRep()).getColorMoveBitboard(true).bitCount();
-      nbMovesBlack =
-          ((BitboardRepresentation) getBoard().getBoardRep())
-              .getColorMoveBitboard(false)
-              .bitCount();
-    } else {
-      nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
-      nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
-    }
-    if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
-      nbFilledConditions++;
-    }
-    // Pawns progresses on the board
-    if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
-      nbFilledConditions++;
-    }
-
-    return nbFilledConditions >= nbRequiredConditions;
+    return getBoard()
+        .getBoardRep()
+        .isEndGamePhase(getGameState().getFullTurn(), getGameState().isWhiteTurn());
   }
 
   /**
@@ -413,8 +367,8 @@ public class Game extends Subject {
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
   private void processClassicalMove(GameState gameState, Move move) throws IllegalMoveException {
-    Color currentColor = gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
-    if (gameState.getBoard().board.isCheckAfterMove(currentColor, move)) {
+    Color currentColor = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
+    if (gameState.getBoard().getBoard().isCheckAfterMove(currentColor, move)) {
       DEBUG(LOGGER, "Move puts the king in check: " + move);
       throw new IllegalMoveException(move.toString());
     }
@@ -435,12 +389,12 @@ public class Game extends Subject {
     Position destPosition = move.dest;
     boolean isSpecialMove = false;
     ColoredPiece coloredPiece =
-        gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+        gameState.getBoard().getBoard().getPieceAt(sourcePosition.getX(), sourcePosition.getY());
 
     // Check Castle
     if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
       boolean shortCastle = destPosition.getX() > sourcePosition.getX();
-      Color color = gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
+      Color color = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
       if (gameState.getBoard().canCastle(color, shortCastle)) {
         gameState.getBoard().applyCastle(color, shortCastle);
         isSpecialMove = true;
@@ -449,25 +403,25 @@ public class Game extends Subject {
 
     // Check en passant
     if (!isSpecialMove
-        && gameState.getBoard().isLastMoveDoublePush
+        && gameState.getBoard().isLastMoveDoublePush()
         && gameState
             .getBoard()
-            .board
+            .getBoard()
             .isEnPassant(
-                gameState.getBoard().enPassantPos.getX(),
-                gameState.getBoard().enPassantPos.getY(),
+                gameState.getBoard().getEnPassantPos().getX(),
+                gameState.getBoard().getEnPassantPos().getY(),
                 move,
-                gameState.getBoard().isWhite)) {
+                gameState.isWhiteTurn())) {
       if (gameState
           .getBoard()
-          .board
-          .isCheckAfterMove(gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+          .getBoard()
+          .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
         DEBUG(LOGGER, "En passant puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
       isSpecialMove = true;
-      gameState.getBoard().enPassantPos = null;
-      gameState.getBoard().isEnPassantTake = true;
+      gameState.getBoard().setEnPassantPos(null);
+      gameState.getBoard().setEnPassantTake(true);
       move.piece = coloredPiece;
       move.isTake = true;
       gameState.getBoard().makeMove(move);
@@ -475,22 +429,24 @@ public class Game extends Subject {
 
     // Check double pawn push
     if (!isSpecialMove
-        && gameState.getBoard().board.isDoublePushPossible(move, gameState.getBoard().isWhite)) {
+        && gameState.getBoard().getBoard().isDoublePushPossible(move, gameState.isWhiteTurn())) {
       if (gameState
           .getBoard()
-          .board
-          .isCheckAfterMove(gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
+          .getBoard()
+          .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
         DEBUG(LOGGER, "Double push puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
       isSpecialMove = true;
-      gameState.getBoard().enPassantPos =
-          gameState.getBoard().isWhite
-              ? new Position(move.dest.getX(), move.dest.getY() - 1)
-              : new Position(move.dest.getX(), move.dest.getY() + 1);
+      gameState
+          .getBoard()
+          .setEnPassantPos(
+              gameState.isWhiteTurn()
+                  ? new Position(move.dest.getX(), move.dest.getY() - 1)
+                  : new Position(move.dest.getX(), move.dest.getY() + 1));
       move.piece = coloredPiece;
       gameState.getBoard().makeMove(move);
-      gameState.getBoard().isLastMoveDoublePush = true;
+      gameState.getBoard().setLastMoveDoublePush(true);
     }
 
     if (!isSpecialMove) {
@@ -507,18 +463,11 @@ public class Game extends Subject {
    * @param sourcePosition the position
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
-  private boolean validatePieceOwnership(GameState gameState, Position sourcePosition)
-      throws IllegalMoveException {
-    ColoredPiece pieceAtSource =
-        gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
-    boolean isWhiteTurn = gameState.getBoard().isWhite;
-
-    if ((pieceAtSource.color == Color.WHITE && !isWhiteTurn)
-        || (pieceAtSource.color == Color.BLACK && isWhiteTurn)) {
-      DEBUG(LOGGER, "Not a " + pieceAtSource.color + " piece at " + sourcePosition);
-      return false;
-    }
-    return true;
+  private boolean validatePieceOwnership(GameState gameState, Position sourcePosition) {
+    return gameState
+        .getBoard()
+        .getBoardRep()
+        .validatePieceOwnership(gameState.isWhiteTurn(), sourcePosition);
   }
 
   /**
@@ -543,12 +492,7 @@ public class Game extends Subject {
    * @return true if the move is a castle move, false otherwise.
    */
   private boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
-    if (coloredPiece.piece != Piece.KING) {
-      return false;
-    }
-    int deltaX = Math.abs(dest.getX() - source.getX());
-    return deltaX == 2
-        && ((source.getY() == 0 && dest.getY() == 0) || (source.getY() == 7 && dest.getY() == 7));
+    return getBoard().getBoard().isCastleMove(coloredPiece, source, dest);
   }
 
   /**
@@ -573,7 +517,7 @@ public class Game extends Subject {
       this.gameState.getMoveTimer().stop();
     }
 
-    if (this.gameState.getBoard().isWhite) {
+    if (this.gameState.isWhiteTurn()) {
       this.gameState.incrementsFullTurn();
     }
 
@@ -629,8 +573,8 @@ public class Game extends Subject {
 
     if (!explorationAI
         && !isOver()
-        && ((this.gameState.getBoard().isWhite && isWhiteAI)
-            || (!this.gameState.getBoard().isWhite && isBlackAI))) {
+        && ((this.gameState.isWhiteTurn() && isWhiteAI)
+            || (!this.gameState.isWhiteTurn() && isBlackAI))) {
 
       if (VIEW_ON_OTHER_THREAD) {
         viewLock.lock();
@@ -646,7 +590,7 @@ public class Game extends Subject {
       } else {
         this.notifyObservers(EventType.AI_PLAYING);
       }
-      if (this.gameState.getBoard().isWhite) {
+      if (this.gameState.isWhiteTurn()) {
         solverWhite.playAIMove(this);
       } else {
         solverBlack.playAIMove(this);
@@ -668,14 +612,14 @@ public class Game extends Subject {
     String board =
         BoardSaver.saveBoard(
             new FileBoard(
-                this.getBoard().board,
-                this.getBoard().isWhite,
+                this.getBoard().getBoard(),
+                this.getGameState().isWhiteTurn(),
                 new FenHeader(
                     castlingRights[0],
                     castlingRights[1],
                     castlingRights[2],
                     castlingRights[3],
-                    getBoard().enPassantPos,
+                    getBoard().getEnPassantPos(),
                     getBoard().getNbMovesWithNoCaptureOrPawn() * 2,
                     getGameState().getFullTurn())));
     String gameStr = this.history.toAlgebraicString();
@@ -906,7 +850,13 @@ public class Game extends Subject {
    * @return true if the move is a promotion move, false otherwise.
    */
   public boolean isPromotionMove(Move move) {
-    if (this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).piece
+    // return
+    // getBoard().getBoardRep().isPawnPromoting(move.source.getX(),move.source.getY(),getGameState().isWhiteTurn()); don't pass the tests
+    if (this.gameState
+            .getBoard()
+            .getBoard()
+            .getPieceAt(move.source.getX(), move.source.getY())
+            .piece
         != Piece.PAWN) {
       return false;
     }
@@ -968,7 +918,7 @@ public class Game extends Subject {
       gameState.getMoveTimer().stop();
     }
 
-    if (gameState.getBoard().isWhite) {
+    if (gameState.isWhiteTurn()) {
       gameState.incrementsFullTurn();
     }
 

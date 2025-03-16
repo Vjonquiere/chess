@@ -6,9 +6,9 @@ import pdp.utils.Logging;
 
 public class HistoryNode {
   private static final Logger LOGGER = Logger.getLogger(HistoryNode.class.getName());
-  HistoryState state;
-  HistoryNode previous;
-  HistoryNode next;
+  private HistoryState state;
+  private HistoryNode previous;
+  private HistoryNode next;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -22,7 +22,7 @@ public class HistoryNode {
    *     node.
    */
   public HistoryNode(HistoryState state, HistoryNode previous) {
-    this.state = state;
+    this.setState(state);
     this.previous = previous;
     this.next = null;
   }
@@ -68,5 +68,9 @@ public class HistoryNode {
    */
   public HistoryState getState() {
     return this.state;
+  }
+
+  public void setState(HistoryState state) {
+    this.state = state;
   }
 }
