@@ -436,4 +436,8 @@ public class GameState extends Subject {
     this.zobristHashing = gameState.getZobristHashing();
     this.simplifiedZobristHashing = gameState.getSimplifiedZobristHashing();
   }
+
+  public void setPlayer(boolean white) {
+    this.isWhiteTurn = white;
+  }
 }

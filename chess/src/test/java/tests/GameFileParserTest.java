@@ -61,7 +61,7 @@ public class GameFileParserTest {
     assertFalse(board.isWhiteTurn());
     Game game = Game.initialize(false, false, null, null, null, board, new HashMap<>());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
-    assertEquals(game.getBoard().board, board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertThrows(
         IllegalMoveException.class,
         () -> {
@@ -185,7 +185,7 @@ public class GameFileParserTest {
             new Position(7, 2),
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
-    assertEquals(game.getBoard().board, board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
@@ -227,7 +227,7 @@ public class GameFileParserTest {
             new Position(7, 2),
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
-    assertEquals(game.getBoard().board, board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
@@ -319,7 +319,7 @@ public class GameFileParserTest {
     Game game = Game.initialize(false, false, null, null, null, fb, new HashMap<>());
 
     // Checking params are given to the game
-    assertNull(game.getBoard().enPassantPos);
+    assertNull(game.getBoard().getEnPassantPos());
     assertEquals(49, game.getBoard().getNbMovesWithNoCaptureOrPawn());
     assertEquals(140, game.getGameState().getFullTurn());
 
@@ -350,7 +350,7 @@ public class GameFileParserTest {
     // Checking params are given to the game
     assertEquals(0, game.getBoard().getNbMovesWithNoCaptureOrPawn());
     assertEquals(141, game.getGameState().getFullTurn());
-    assertEquals(new Position(0, 2), game.getBoard().enPassantPos);
+    assertEquals(new Position(0, 2), game.getBoard().getEnPassantPos());
     assertFalse(Game.getInstance().isOver());
   }
 }
