@@ -9,8 +9,8 @@ public class PlayerPanel extends VBox {
 
   public PlayerPanel() {
     setSpacing(5);
-    whitePlayer = new PlayerInfos("white player", Game.getInstance().isWhiteAI());
-    blackPlayer = new PlayerInfos("black player", Game.getInstance().isBlackAI());
+    whitePlayer = new PlayerInfos("white player", Game.getInstance().isWhiteAI(), true);
+    blackPlayer = new PlayerInfos("black player", Game.getInstance().isBlackAI(), false);
     this.getChildren().addAll(whitePlayer, blackPlayer);
   }
 

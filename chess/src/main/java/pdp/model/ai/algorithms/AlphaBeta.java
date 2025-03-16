@@ -55,7 +55,7 @@ public class AlphaBeta implements SearchAlgorithm {
   private AIMove alphaBeta(
       Game game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
 
-    if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
+    if (solver.isSearchStopped()) {
       return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
@@ -66,7 +66,7 @@ public class AlphaBeta implements SearchAlgorithm {
         new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     for (Move move : moves) {
-      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
+      if (solver.isSearchStopped()) {
         break;
       }
       try {
