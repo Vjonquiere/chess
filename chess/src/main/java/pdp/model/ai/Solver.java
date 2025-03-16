@@ -27,6 +27,7 @@ import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
+import pdp.model.piece.Color;
 import pdp.utils.Logging;
 import pdp.utils.Timer;
 
@@ -209,12 +210,22 @@ public class Solver {
     }
 
     long hash = zobristHashing.generateHashFromBitboards(board);
+    int score;
     if (evaluatedBoards.containsKey(hash)) {
-      return evaluatedBoards.get(hash);
+      score = evaluatedBoards.get(hash);
+    } else {
+      score = heuristic.evaluate(board, isWhite);
+      evaluatedBoards.put(hash, score);
     }
 
-    int score = heuristic.evaluate(board, isWhite);
-    evaluatedBoards.put(hash, score);
+    Color player = isWhite ? Color.WHITE : Color.BLACK;
+
+    if (Game.getInstance().getGameState().isThreefoldRepetition()
+        || board.getBoardRep().isStaleMate(player, player)
+        || board.getNbMovesWithNoCaptureOrPawn() >= 50) {
+      score = 0;
+    }
+
     return score;
   }
 }
