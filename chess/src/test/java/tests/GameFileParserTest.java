@@ -56,6 +56,7 @@ public class GameFileParserTest {
     assertTrue(board.isWhiteTurn());
     Game game = Game.initialize(false, false, null, null, null, board, options);
     game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(false);
     game.playMove(Move.fromString("e2-e4"));
   }
 
@@ -150,14 +151,45 @@ public class GameFileParserTest {
   }
 
   @Test
-  public void parseCommentFileAndOverwrite() {
+  public void parseCommentFileAndOverwriteDifferentMoveEndHistory() {
     URL filePath = classLoader.getResource("gameBoards/commentsBoard");
     HashMap<OptionType, String> options = new HashMap<>();
     options.put(OptionType.LOAD, filePath.getPath());
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game game = Game.initialize(false, false, null, null, null, board, options);
     game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(true);
     Move move = Move.fromString("g4-f6");
+    game.playMove(move);
+  }
+
+  @Test
+  public void parseCommentFileAndOverwriteDifferentMoveAfterUndo() {
+    URL filePath = classLoader.getResource("gameBoards/commentsBoardCopy2");
+    HashMap<OptionType, String> options = new HashMap<>();
+    options.put(OptionType.LOAD, filePath.getPath());
+    FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    Game game = Game.initialize(false, false, null, null, null, board, options);
+    game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(true);
+    Move move = Move.fromString("g4-f6");
+    game.playMove(move);
+    game.previousState();
+    game.playMove(Move.fromString("g4-e5"));
+  }
+
+  @Test
+  public void parseCommentFileAndOverwriteSameMove() {
+    URL filePath = classLoader.getResource("gameBoards/commentsBoardCopy");
+    HashMap<OptionType, String> options = new HashMap<>();
+    options.put(OptionType.LOAD, filePath.getPath());
+    FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    Game game = Game.initialize(false, false, null, null, null, board, options);
+    game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(true);
+    Move move = Move.fromString("g4-f6");
+    game.playMove(move);
+    game.previousState();
     game.playMove(move);
   }
 

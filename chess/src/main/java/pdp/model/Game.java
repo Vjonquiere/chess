@@ -56,7 +56,7 @@ public class Game extends Subject {
   private boolean isBlackAI;
   private boolean explorationAI;
   private boolean loadedFromFile;
-  private String loadingFile;
+  private boolean loadingFileHasHistory;
   private History history;
   private HashMap<Long, Integer> stateCount;
   private HashMap<OptionType, String> options;
@@ -217,20 +217,26 @@ public class Game extends Subject {
   }
 
   /**
-   * Method used in GameInitialzer to set the path of the file that was used to generate the game.
-   * Used for history and file overwrite (replay games)
-   *
-   * @param filePath the path of the file that generated intitialzed game
-   */
-  public void setLoadingFile(String filePath) {
-    this.loadingFile = filePath;
-  }
-
-  /**
    * @return the path of the file that generated the game
    */
   public String getLoadingFile() {
     return options.get(OptionType.LOAD);
+  }
+
+  /**
+   * @return true if the file that was used to load the game has a history. false otherwise.
+   */
+  public boolean loadingFileHasHistory() {
+    return this.loadingFileHasHistory;
+  }
+
+  /**
+   * Method used in checkAndOverwriteHistory() to know how to handle new moves
+   *
+   * @param fileHasHistory boolean value used to set private boolean loadingFileHasHistory.
+   */
+  public void setLoadingFileHasHistory(boolean fileHasHistory) {
+    this.loadingFileHasHistory = fileHasHistory;
   }
 
   /**
@@ -391,20 +397,7 @@ public class Game extends Subject {
       processSpecialMove(this.gameState, move);
     }
 
-    if (isLoadedFromFile()) {
-      System.out.println("Is loaded from file : true");
-      System.out.println("Is loaded from file : true");
-      System.out.println("Is loaded from file : true");
-      System.out.println("Is loaded from file : true");
-      checkAndOverwriteHistory(move);
-    }
-
     this.updateGameStateAfterMove(move, classicalMove.isPresent());
-    System.out.println("MOVE WAS PLAYED");
-    System.out.println("MOVE WAS PLAYED");
-    System.out.println("MOVE WAS PLAYED");
-    System.out.println("MOVE WAS PLAYED");
-    System.out.println("MOVE WAS PLAYED");
   }
 
   /**
@@ -609,7 +602,12 @@ public class Game extends Subject {
     DEBUG(LOGGER, "Checking game status...");
     this.gameState.checkGameStatus();
 
-    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+    // Check for history overwrite
+    if (!isLoadedFromFile()) {
+      this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+    } else {
+      checkAndOverwriteHistory(move);
+    }
 
     if (!explorationAI) {
       this.notifyObservers(EventType.MOVE_PLAYED);
@@ -653,41 +651,44 @@ public class Game extends Subject {
    * @param move the move we want to play in the game.
    */
   private void checkAndOverwriteHistory(Move move) {
-    System.out.println("ENTERING checkAndOVerwriteHistory");
-    System.out.println("ENTERING checkAndOVerwriteHistory");
-    System.out.println("ENTERING checkAndOVerwriteHistory");
-    System.out.println("ENTERING checkAndOVerwriteHistory");
     Optional<HistoryNode> currentNode = this.history.getCurrentMove();
-    /*boolean hasHistory = currentNode.isPresent() && currentNode.get().getState().getMove() != null;
 
-    if (hasHistory) {*/
-    HistoryState expectedState = currentNode.get().getState();
-    if (expectedState != null) {
-      if (!expectedState.getMove().equals(move)) {
-        DEBUG(LOGGER, "Move differs from history. Overwriting history...");
-
-        // Truncate history
-        this.history.setCurrentMove(null);
+    if (loadingFileHasHistory()) {
+      Optional<HistoryNode> nextNode = currentNode.get().getNext();
+      HistoryState nextState = null;
+      if (nextNode.isPresent()) {
+        nextState = nextNode.get().getState();
+      }
+      if (nextState == null) {
+        // End of history already, so add new move and save
         this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
         saveGame(getLoadingFile());
-        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
-        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
-        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
-        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
-        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
+        DEBUG(
+            LOGGER, "Move differs from history. Overwriting history for file :" + getLoadingFile());
+      } else {
+        // Check if move we want to play is the same as the next one. If not, overwrite history and
+        // save
+        if (!move.equals(nextState.getMove())) {
+          // Truncate history
+          this.history.setCurrentMove(null);
+          this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+          saveGame(getLoadingFile());
+          DEBUG(
+              LOGGER,
+              "Move differs from history. Overwriting history for file :" + getLoadingFile());
+        } else {
+          // If same move, just forward by one in the history
+          this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
+          this.history.setCurrentMove(currentNode.get().getNext().get());
+          long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
+          stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
+        }
       }
-    }
-    // }
-    /*else {
+    } else {
       // If no history just add the move
       this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
       saveGame(getLoadingFile());
-      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
-      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
-      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
-      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
-      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
-    }*/
+    }
   }
 
   /**
@@ -839,17 +840,6 @@ public class Game extends Subject {
 
     Optional<HistoryNode> previousNode = currentNode.get().getPrevious();
     if (!previousNode.isPresent()) {
-      String moveString1 = getHistory().getCurrentMove().get().getState().toString();
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
-      System.out.println(moveString1);
       throw new FailedUndoException();
     }
     // update zobrist to avoid threefold
