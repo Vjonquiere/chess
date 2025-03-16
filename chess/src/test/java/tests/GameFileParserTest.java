@@ -61,7 +61,7 @@ public class GameFileParserTest {
     assertFalse(board.isWhiteTurn());
     Game game = Game.initialize(false, false, null, null, null, board, new HashMap<>());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
-    assertEquals(game.getBoard().getBoard(), board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertThrows(
         IllegalMoveException.class,
         () -> {
@@ -185,7 +185,7 @@ public class GameFileParserTest {
             new Position(7, 2),
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
-    assertEquals(game.getBoard().getBoard(), board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
@@ -227,7 +227,7 @@ public class GameFileParserTest {
             new Position(7, 2),
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
-    assertEquals(game.getBoard().getBoard(), board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
