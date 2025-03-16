@@ -200,6 +200,7 @@ public abstract class GameInitializer {
       InputStream inputStream = null;
       try {
         inputStream = new FileInputStream(options.get(OptionType.LOAD));
+        String filePath = options.get(OptionType.LOAD);
 
         List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
         if (moveStrings.isEmpty()) {
@@ -220,6 +221,8 @@ public abstract class GameInitializer {
           model =
               Game.fromHistory(
                   moves, isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
+          model.setLoadingFile(filePath);
+          model.setLoadedFromFile();
         }
 
       } catch (IOException

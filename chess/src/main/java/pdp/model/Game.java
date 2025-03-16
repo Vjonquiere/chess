@@ -55,6 +55,8 @@ public class Game extends Subject {
   private boolean isWhiteAI;
   private boolean isBlackAI;
   private boolean explorationAI;
+  private boolean loadedFromFile;
+  private String loadingFile;
   private History history;
   private HashMap<Long, Integer> stateCount;
   private HashMap<OptionType, String> options;
@@ -197,6 +199,38 @@ public class Game extends Subject {
    */
   public boolean isAIExploring() {
     return this.explorationAI;
+  }
+
+  /**
+   * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
+   * file. Boolean value is used in playMove() to know if history has to be overwritten.
+   */
+  public void setLoadedFromFile() {
+    this.loadedFromFile = true;
+  }
+
+  /**
+   * @return true if the game was loaded from a file, false otherwise
+   */
+  public boolean isLoadedFromFile() {
+    return this.loadedFromFile;
+  }
+
+  /**
+   * Method used in GameInitialzer to set the path of the file that was used to generate the game.
+   * Used for history and file overwrite (replay games)
+   *
+   * @param filePath the path of the file that generated intitialzed game
+   */
+  public void setLoadingFile(String filePath) {
+    this.loadingFile = filePath;
+  }
+
+  /**
+   * @return the path of the file that generated the game
+   */
+  public String getLoadingFile() {
+    return options.get(OptionType.LOAD);
   }
 
   /**
@@ -356,7 +390,21 @@ public class Game extends Subject {
     } else {
       processSpecialMove(this.gameState, move);
     }
+
+    if (isLoadedFromFile()) {
+      System.out.println("Is loaded from file : true");
+      System.out.println("Is loaded from file : true");
+      System.out.println("Is loaded from file : true");
+      System.out.println("Is loaded from file : true");
+      checkAndOverwriteHistory(move);
+    }
+
     this.updateGameStateAfterMove(move, classicalMove.isPresent());
+    System.out.println("MOVE WAS PLAYED");
+    System.out.println("MOVE WAS PLAYED");
+    System.out.println("MOVE WAS PLAYED");
+    System.out.println("MOVE WAS PLAYED");
+    System.out.println("MOVE WAS PLAYED");
   }
 
   /**
@@ -599,6 +647,50 @@ public class Game extends Subject {
   }
 
   /**
+   * Checks if the move in parameter (the one we would like to play) matches or not the next move in
+   * history. If not, overwrite history. This is used for games that are loaded from files.
+   *
+   * @param move the move we want to play in the game.
+   */
+  private void checkAndOverwriteHistory(Move move) {
+    System.out.println("ENTERING checkAndOVerwriteHistory");
+    System.out.println("ENTERING checkAndOVerwriteHistory");
+    System.out.println("ENTERING checkAndOVerwriteHistory");
+    System.out.println("ENTERING checkAndOVerwriteHistory");
+    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
+    /*boolean hasHistory = currentNode.isPresent() && currentNode.get().getState().getMove() != null;
+
+    if (hasHistory) {*/
+    HistoryState expectedState = currentNode.get().getState();
+    if (expectedState != null) {
+      if (!expectedState.getMove().equals(move)) {
+        DEBUG(LOGGER, "Move differs from history. Overwriting history...");
+
+        // Truncate history
+        this.history.setCurrentMove(null);
+        this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+        saveGame(getLoadingFile());
+        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
+        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
+        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
+        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
+        System.out.println("SAVING GAME 1 for file :" + getLoadingFile());
+      }
+    }
+    // }
+    /*else {
+      // If no history just add the move
+      this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+      saveGame(getLoadingFile());
+      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
+      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
+      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
+      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
+      System.out.println("SAVING GAME 2 for file :" + getLoadingFile());
+    }*/
+  }
+
+  /**
    * Saves the current game state to a file.
    *
    * <p>The saved file contains the current position of the board followed by the move history of
@@ -747,6 +839,17 @@ public class Game extends Subject {
 
     Optional<HistoryNode> previousNode = currentNode.get().getPrevious();
     if (!previousNode.isPresent()) {
+      String moveString1 = getHistory().getCurrentMove().get().getState().toString();
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
+      System.out.println(moveString1);
       throw new FailedUndoException();
     }
     // update zobrist to avoid threefold
