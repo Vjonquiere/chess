@@ -94,6 +94,13 @@ public class Game extends Subject {
     this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
 
     if (instance != null) {
+      if (instance.getBlackSolver() != null) {
+        instance.getBlackSolver().stopSearch(false);
+      }
+      if (instance.getWhiteSolver() != null) {
+        instance.getWhiteSolver().stopSearch(false);
+      }
+
       for (EventObserver observer : instance.getObservers()) {
         this.addObserver(observer);
       }
@@ -131,6 +138,27 @@ public class Game extends Subject {
 
   public HashMap<OptionType, String> getOptions() {
     return options;
+  }
+
+  public Timer getTimer(boolean isWhite) {
+    if (isWhite && this.isWhiteAI) {
+      return this.solverWhite.getTimer();
+    }
+    if (!isWhite && this.isBlackAI) {
+      return this.solverBlack.getTimer();
+    }
+    return this.gameState.getMoveTimer();
+  }
+
+  public boolean isCurrentPlayerAI() {
+    boolean player = this.gameState.isWhiteTurn();
+    if (player && this.isWhiteAI) {
+      return true;
+    }
+    if (!player && this.isBlackAI) {
+      return true;
+    }
+    return false;
   }
 
   public Board getBoard() {
@@ -280,7 +308,9 @@ public class Game extends Subject {
     BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      timer.start();
+      if (!instance.isCurrentPlayerAI()) {
+        timer.start();
+      }
     }
     DEBUG(LOGGER, "Game initialized!");
     instance.notifyObservers(EventType.GAME_STARTED);
@@ -319,7 +349,9 @@ public class Game extends Subject {
     BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      timer.start();
+      if (!instance.isCurrentPlayerAI()) {
+        timer.start();
+      }
     }
     DEBUG(LOGGER, "Game initialized!");
     instance.notifyObservers(EventType.GAME_STARTED);
@@ -513,7 +545,10 @@ public class Game extends Subject {
    */
   private void updateGameStateAfterMove(Move move, boolean isSpecialMove) {
 
-    if (this.gameState.getMoveTimer() != null) {
+    if (this.gameState.getMoveTimer() != null
+        && !this.isCurrentPlayerAI()
+        && !explorationAI
+        && !this.gameState.isGameOver()) {
       this.gameState.getMoveTimer().stop();
     }
 
@@ -564,8 +599,10 @@ public class Game extends Subject {
     if (!explorationAI) {
       this.notifyObservers(EventType.MOVE_PLAYED);
     }
-
-    if (this.gameState.getMoveTimer() != null && !this.gameState.isGameOver()) {
+    if (this.gameState.getMoveTimer() != null
+        && !this.isCurrentPlayerAI()
+        && !explorationAI
+        && !this.gameState.isGameOver()) {
       this.gameState.getMoveTimer().start();
     }
 
@@ -722,7 +759,9 @@ public class Game extends Subject {
 
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      timer.start();
+      if (!instance.isCurrentPlayerAI()) {
+        timer.start();
+      }
     }
 
     instance.notifyObservers(EventType.GAME_STARTED);

@@ -42,6 +42,8 @@ public class Solver {
   int depth = 4;
   Timer timer;
   long time;
+  boolean isSearchStopped = false;
+  boolean isMoveToPlay = true;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -155,6 +157,7 @@ public class Solver {
     }
     this.time = time * 1000;
     timer = new Timer(this.time);
+    timer.setCallback(() -> this.stopSearch(true));
     DEBUG(LOGGER, "Time set to " + this.time);
   }
 
@@ -164,6 +167,15 @@ public class Solver {
 
   public long getTime() {
     return time;
+  }
+
+  public void stopSearch(boolean playMove) {
+    isSearchStopped = true;
+    isMoveToPlay = playMove;
+  }
+
+  public boolean isSearchStopped() {
+    return isSearchStopped;
   }
 
   /**
@@ -176,6 +188,8 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
+    isSearchStopped = false;
+    isMoveToPlay = true;
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
     if (timer != null) {
       timer.stop();
@@ -183,15 +197,18 @@ public class Solver {
 
     DEBUG(LOGGER, "Best move " + bestMove);
     game.setExploration(false);
-    try {
-      game.playMove(bestMove.move());
-    } catch (Exception e) {
-      game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
-      System.err.println(e.getMessage());
-      if (game.getGameState().isWhiteTurn()) {
-        game.getGameState().whiteResigns();
-      } else {
-        game.getGameState().blackResigns();
+
+    if (isMoveToPlay) {
+      try {
+        game.playMove(bestMove.move());
+      } catch (Exception e) {
+        game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
+        System.err.println(e.getMessage());
+        if (game.getGameState().isWhiteTurn()) {
+          game.getGameState().whiteResigns();
+        } else {
+          game.getGameState().blackResigns();
+        }
       }
     }
   }

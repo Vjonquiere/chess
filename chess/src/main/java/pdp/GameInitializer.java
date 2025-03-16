@@ -43,12 +43,22 @@ public abstract class GameInitializer {
     DEBUG(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
+    Integer blitzTime = 30 * 60;
     if (options.containsKey(OptionType.BLITZ)) {
-      if (options.containsKey(OptionType.TIME)) {
-        timer = new Timer(Long.parseLong(options.get(OptionType.TIME)) * 60 * 1000);
-      } else {
-        timer = new Timer((long) 30 * 60 * 1000);
+      if (!options.containsKey(OptionType.TIME)) {
+        options.put(OptionType.TIME, "30");
       }
+      int time;
+      try {
+        time = Integer.parseInt(options.get(OptionType.TIME));
+      } catch (Exception e) {
+        System.err.println("Not an int for the blitz time");
+        System.err.println("Defaulting to a 30 minutes timer");
+        time = 30;
+      }
+
+      blitzTime = time * 60;
+      timer = new Timer(blitzTime * 1000L);
     }
 
     boolean isWhiteAi = false;
@@ -173,24 +183,21 @@ public abstract class GameInitializer {
 
       if (options.containsKey(OptionType.AI_TIME)) {
         try {
-          long time = Long.parseLong(options.get(OptionType.AI_TIME));
+          int time = Integer.parseInt(options.get(OptionType.AI_TIME));
+          if (options.containsKey(OptionType.BLITZ)) {
+            time = Integer.min(time, blitzTime);
+          }
           solverWhite.setTime(time);
           solverBlack.setTime(time);
         } catch (Exception e) {
-          System.err.println("Not a long for the time of AI (in seconds)");
+          System.err.println("Not an int for the time of AI (in seconds)");
           System.err.println("Defaulting to a 5 seconds timer");
+          solverWhite.setTime(5);
+          solverBlack.setTime(5);
         }
-      }
-      if (options.containsKey(OptionType.BLITZ)) {
-        // If blitz, take the minimum between the blitz time and AI time
-        long time =
-            Long.min(
-                Long.min(
-                    solverWhite.getTimer().getTimeRemaining(),
-                    solverBlack.getTimer().getTimeRemaining()),
-                timer.getTimeRemaining() - 100);
-        solverWhite.setTime(time / 1000);
-        solverBlack.setTime(time / 1000);
+      } else if (options.containsKey(OptionType.BLITZ)) {
+        solverWhite.setTime(blitzTime);
+        solverBlack.setTime(blitzTime);
       }
     }
 

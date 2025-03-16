@@ -20,13 +20,13 @@ public class PlayerInfos extends HBox {
   Label timerLabel = new Label();
   Timeline timeline;
 
-  public PlayerInfos(String name, boolean isAI) {
+  public PlayerInfos(String name, boolean isAI, boolean isWhite) {
     this.setAlignment(Pos.CENTER_LEFT);
     currentPlayer = new Canvas(20, 20);
-    Timer timer = Game.getInstance().getGameState().getMoveTimer();
+    Timer timer = Game.getInstance().getTimer(isWhite);
     if (timer != null) {
       timerLabel.setText(timer.getTimeRemainingString());
-      updateTimer();
+      updateTimer(isWhite);
     }
     this.getChildren().addAll(getPlayerIcon(isAI), new Label(name), timerLabel, currentPlayer);
     this.setSpacing(10);
@@ -43,13 +43,13 @@ public class PlayerInfos extends HBox {
     return imageView;
   }
 
-  public void updateTimer() {
+  public void updateTimer(boolean isWhite) {
     timeline =
         new Timeline(
             new KeyFrame(
                 Duration.seconds(0.5),
                 event -> {
-                  Timer timer = Game.getInstance().getGameState().getMoveTimer();
+                  Timer timer = Game.getInstance().getTimer(isWhite);
                   if (timer != null) {
                     timerLabel.setText(timer.getTimeRemainingString());
                   }

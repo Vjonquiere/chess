@@ -13,11 +13,10 @@ public class GameController {
 
   public GameController(Game model, View view, BagOfCommands bagOfCommands) {
     Logging.configureLogging(LOGGER);
-    this.setModel(model);
     this.setView(view);
     this.setBagOfCommands(bagOfCommands);
-    this.getBagOfCommands().setModel(model);
     this.getBagOfCommands().setController(this);
+    this.getBagOfCommands().setModel(model);
     this.getModel().addObserver(view);
     this.getModel().addErrorObserver(view);
     // this.model.startAI();

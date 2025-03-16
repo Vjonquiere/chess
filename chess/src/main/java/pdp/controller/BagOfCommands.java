@@ -74,6 +74,9 @@ public class BagOfCommands {
    */
   public void setModel(Game model) {
     this.model = model;
+    if (this.controller != null) {
+      this.controller.setModel(model);
+    }
   }
 
   /**
