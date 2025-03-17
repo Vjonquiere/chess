@@ -72,7 +72,7 @@ public class Solver {
 
   /**
    * Assigns a value (typed by the user in CLI) to the simulation limit for MonteCarloTreeSearch.
-   * Method used in GameInitializer. StandardHeuristic
+   * Method used in GameInitializer.
    *
    * @param numberSimulations the number of MonteCarloTreeSearch simulations wanted by the user
    */
