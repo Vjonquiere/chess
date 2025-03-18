@@ -260,6 +260,10 @@ public class BitboardMovesGen {
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
 
+    if (white && square.getY() == 6 || !white && square.getY() == 1) {
+      return new ArrayList<Move>();
+    }
+
     if (white) {
       attackRight = position.moveUpRight().and(enemies);
       attackLeft = position.moveUpLeft().and(enemies);
@@ -285,6 +289,10 @@ public class BitboardMovesGen {
     Bitboard attackLeft;
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
+
+    if (white && square.getY() == 6 || !white && square.getY() == 1) {
+      return new Bitboard(0L);
+    }
 
     if (white) {
       attackRight = position.moveUpRight().and(enemies);
@@ -569,33 +577,34 @@ public class BitboardMovesGen {
 
   public List<Move> getSpecialMoves(boolean white) {
     Color player = white ? Color.WHITE : Color.BLACK;
+    Color opponent = !white ? Color.WHITE : Color.BLACK;
     List<Move> specialMoves = new ArrayList<>();
     if (Game.getInstance().getGameState().getBoard().getEnPassantPos() != null
         && Game.getInstance().getGameState().getBoard().isLastMoveDoublePush()) {
       Position pos = Game.getInstance().getGameState().getBoard().getEnPassantPos();
-      System.out.println("--- CHECK ---");
-      System.out.println(pos);
-      System.out.println(bitboardRepresentation.getPieceAt(pos.getX() - 1, pos.getY()));
-      System.out.println(bitboardRepresentation.getPieceAt(pos.getX() + 1, pos.getY()));
       if (pos.getX() > 0
           && bitboardRepresentation
               .getPieceAt(pos.getX() - 1, pos.getY() - 1)
               .equals(new ColoredPiece(Piece.PAWN, player))) {
-        System.out.println("add left");
         specialMoves.add(
             new Move(
                 new Position(pos.getX() - 1, pos.getY() + (white ? 1 : -1)),
-                new Position(pos.getX(), pos.getY()))); // TODO: Add take ??
+                new Position(pos.getX(), pos.getY()),
+                new ColoredPiece(Piece.PAWN, player),
+                true,
+                new ColoredPiece(Piece.PAWN, opponent)));
       }
       if (pos.getX() < bitboardRepresentation.getNbCols() - 1
           && bitboardRepresentation
               .getPieceAt(pos.getX() + 1, pos.getY() - 1)
               .equals(new ColoredPiece(Piece.PAWN, player))) {
-        System.out.println("add right");
         specialMoves.add(
             new Move(
                 new Position(pos.getX() + 1, pos.getY() + (white ? 1 : -1)),
-                new Position(pos.getX(), pos.getY()))); // TODO: Add take ??
+                new Position(pos.getX(), pos.getY()),
+                new ColoredPiece(Piece.PAWN, player),
+                true,
+                new ColoredPiece(Piece.PAWN, opponent)));
       }
     }
 
@@ -626,7 +635,7 @@ public class BitboardMovesGen {
           && bitboardRepresentation
               .getPieceAt(6, 0)
               .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
-        specialMoves.add(new Move(new Position(4, 0), new Position(5, 0)));
+        specialMoves.add(new Move(new Position(4, 0), new Position(6, 0)));
       }
     }
 
@@ -657,7 +666,7 @@ public class BitboardMovesGen {
           && bitboardRepresentation
               .getPieceAt(6, 7)
               .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
-        specialMoves.add(new Move(new Position(4, 7), new Position(5, 7)));
+        specialMoves.add(new Move(new Position(4, 7), new Position(6, 7)));
       }
     }
 
@@ -670,14 +679,50 @@ public class BitboardMovesGen {
               .getPieceAt(pos.getX(), pos.getY() + 1)
               .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
           && white) {
-        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() + 2)));
+        specialMoves.add(
+            new Move(
+                pos,
+                new Position(pos.getX(), pos.getY() + 2),
+                new ColoredPiece(Piece.PAWN, player),
+                false));
       }
-      if (pos.getY() == 6
-          && this.bitboardRepresentation
-              .getPieceAt(pos.getX(), pos.getY() + 1)
-              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && white) {
-        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() + 1)));
+      if (pos.getY() == 6 && white) {
+        if (this.bitboardRepresentation
+            .getPieceAt(pos.getX(), pos.getY() + 1)
+            .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.BISHOP));
+        }
+        if (pos.getX() < this.bitboardRepresentation.getNbCols() - 1
+            && this.bitboardRepresentation.getPieceAt(pos.getX() + 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.BISHOP));
+        }
+        if (pos.getX() > 0
+            && this.bitboardRepresentation.getPieceAt(pos.getX() - 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.BISHOP));
+        }
       }
       if (pos.getY() == 6
           && this.bitboardRepresentation
@@ -687,14 +732,51 @@ public class BitboardMovesGen {
               .getPieceAt(pos.getX(), pos.getY() - 1)
               .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
           && !white) {
-        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() - 2)));
+        specialMoves.add(
+            new Move(
+                pos,
+                new Position(pos.getX(), pos.getY() - 2),
+                new ColoredPiece(Piece.PAWN, player),
+                false));
       }
-      if (pos.getY() == 1
-          && this.bitboardRepresentation
-              .getPieceAt(pos.getX(), pos.getY() - 1)
-              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && !white) {
-        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() - 1)));
+
+      if (pos.getY() == 1 && !white) {
+        if (this.bitboardRepresentation
+            .getPieceAt(pos.getX(), pos.getY() - 1)
+            .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.BISHOP));
+        }
+        if (pos.getX() < this.bitboardRepresentation.getNbCols() - 1
+            && this.bitboardRepresentation.getPieceAt(pos.getX() + 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.BISHOP));
+        }
+        if (pos.getX() > 0
+            && this.bitboardRepresentation.getPieceAt(pos.getX() - 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.BISHOP));
+        }
       }
     }
 

@@ -268,6 +268,7 @@ public class Board {
    * @param color color for which castling move is applied
    */
   public void applyCastle(Color color, boolean shortCastle) {
+    System.out.println("Castling " + (shortCastle ? "short" : "long") + " for " + color);
     if (shortCastle) {
       getBoardRep().applyShortCastle(color);
     } else {

@@ -156,8 +156,13 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
+
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
+      if (index == 3 && x == 0 && y == 0) {
+        System.out.println("Getting piece at [" + x + ", " + y + "]");
+        System.out.println(board[3].toString());
+      }
       if (board[index].getBit(square)) {
         return pieces.getFromKey(index);
       }
@@ -174,6 +179,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void movePiece(Position from, Position to) {
+    System.out.println(
+        "Moving " + getPieceAt(from.getX(), from.getY()) + " from " + from + " to " + to);
     ColoredPiece piece = getPieceAt(from.getX(), from.getY());
     int fromIndex = from.getX() % 8 + from.getY() * 8;
     int toIndex = to.getX() % 8 + to.getY() * 8;
