@@ -25,9 +25,8 @@ import pdp.utils.TextGetter;
 import pdp.view.GUI.menu.HelpPopup;
 import pdp.view.GUI.menu.SettingsEditorPopup;
 import pdp.view.GUI.popups.NewGamePopup;
-import pdp.view.GUI.popups.RedoPopUp;
 import pdp.view.GUI.popups.ThemePopUp;
-import pdp.view.GUI.popups.UndoPopUp;
+import pdp.view.GUI.popups.YesNoPopUp;
 import pdp.view.GUI.themes.ColorTheme;
 import pdp.view.GUIView;
 
@@ -124,16 +123,25 @@ public class ChessMenu extends VBox {
     undo.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new UndoPopUp();
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+            new YesNoPopUp(
+                "undoInstructionsGui",
+                new CancelMoveCommand(),
+                () -> Game.getInstance().getGameState().undoRequestReset());
         });
     redo.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new RedoPopUp();
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+            new YesNoPopUp(
+                "redoInstructionsGui",
+                new RestoreMoveCommand(),
+                () -> Game.getInstance().getGameState().redoRequestReset());
         });
     restart.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new RestartCommand());
+          new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
         });
     gameMenu.getItems().add(start);
     gameMenu.getItems().add(undo);

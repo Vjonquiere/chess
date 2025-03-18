@@ -8,11 +8,11 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.commands.CancelMoveCommand;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
+import pdp.controller.commands.SurrenderCommand;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.CustomButton;
-import pdp.view.GUI.popups.RedoPopUp;
-import pdp.view.GUI.popups.UndoPopUp;
+import pdp.view.GUI.popups.YesNoPopUp;
 import pdp.view.GUIView;
 
 public class ButtonsPanel extends GridPane {
@@ -67,8 +67,12 @@ public class ButtonsPanel extends GridPane {
     undoButton = new CustomButton(TextGetter.getText("undo"));
     undoButton.setOnAction(
         event -> {
-          undoCommand("");
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new UndoPopUp();
+          BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+            new YesNoPopUp(
+                "undoInstructionsGui",
+                new CancelMoveCommand(),
+                () -> Game.getInstance().getGameState().undoRequestReset());
         });
   }
 
@@ -76,8 +80,12 @@ public class ButtonsPanel extends GridPane {
     redoButton = new CustomButton(TextGetter.getText("redo"));
     redoButton.setOnAction(
         event -> {
-          redoCommand("");
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI()) new RedoPopUp();
+          BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+            new YesNoPopUp(
+                "redoInstructionsGui",
+                new RestoreMoveCommand(),
+                () -> Game.getInstance().getGameState().redoRequestReset());
         });
   }
 
@@ -93,41 +101,21 @@ public class ButtonsPanel extends GridPane {
 
   private void initResignButton() {
     resignButton = new CustomButton(TextGetter.getText("resign"));
-    // TODO: add action to button
+    resignButton.setOnAction(
+        event -> {
+          new YesNoPopUp(
+              "resignInstructionsGui",
+              new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()),
+              null);
+        });
   }
 
   private void initRestartButton() {
     restartButton = new CustomButton(TextGetter.getText("restart"));
     restartButton.setOnAction(
         event -> {
-          restartCommand("");
+          // BagOfCommands.getInstance().addCommand(new RestartCommand());
+          new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
         });
-  }
-
-  /**
-   * Handles the undo command by reverting the last move in history.
-   *
-   * @param args Unused argument
-   */
-  private void undoCommand(String args) {
-    BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-  }
-
-  /**
-   * Handles the redo command by re-executing a previously undone move.
-   *
-   * @param args Unused argument
-   */
-  private void redoCommand(String args) {
-    BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-  }
-
-  /**
-   * Handles the restart command by restarting a new game.
-   *
-   * @param args Unused argument
-   */
-  private void restartCommand(String args) {
-    BagOfCommands.getInstance().addCommand(new RestartCommand());
   }
 }

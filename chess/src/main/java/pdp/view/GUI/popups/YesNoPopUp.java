@@ -8,14 +8,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.RestoreMoveCommand;
-import pdp.model.Game;
+import pdp.controller.Command;
 import pdp.utils.TextGetter;
 
-public class RedoPopUp extends VBox {
-  public RedoPopUp() {
+public class YesNoPopUp extends VBox {
+
+  public YesNoPopUp(String title, Command command, Runnable action) {
     Stage popupStage = new Stage();
-    popupStage.setTitle(TextGetter.getText("redoInstructionsGui"));
+    popupStage.setTitle(TextGetter.getText(title));
     popupStage.initModality(Modality.APPLICATION_MODAL);
 
     Button acceptButton = new Button(TextGetter.getText("accept"));
@@ -24,19 +24,26 @@ public class RedoPopUp extends VBox {
 
     acceptButton.setOnAction(
         e -> {
-          BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+          if (command != null) {
+            BagOfCommands.getInstance().addCommand(command);
+          }
           popupStage.close();
         });
 
     refuseButton.setOnAction(
         e -> {
-          Game.getInstance().getGameState().redoRequestReset();
+          if (action != null) {
+            action.run();
+          }
           popupStage.close();
         });
 
     popupStage.setOnCloseRequest(
         event -> {
-          Game.getInstance().getGameState().redoRequestReset();
+          if (action != null) {
+            action.run();
+          }
+          popupStage.close();
         });
 
     HBox buttonContainer = new HBox(10, acceptButton, refuseButton);
