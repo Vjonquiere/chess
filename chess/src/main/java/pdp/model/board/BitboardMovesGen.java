@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import pdp.model.Game;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
@@ -564,5 +565,139 @@ public class BitboardMovesGen {
     }
 
     return bishopMoves;
+  }
+
+  public List<Move> getSpecialMoves(boolean white) {
+    Color player = white ? Color.WHITE : Color.BLACK;
+    List<Move> specialMoves = new ArrayList<>();
+    if (Game.getInstance().getGameState().getBoard().getEnPassantPos() != null
+        && Game.getInstance().getGameState().getBoard().isLastMoveDoublePush()) {
+      Position pos = Game.getInstance().getGameState().getBoard().getEnPassantPos();
+      System.out.println("--- CHECK ---");
+      System.out.println(pos);
+      System.out.println(bitboardRepresentation.getPieceAt(pos.getX() - 1, pos.getY()));
+      System.out.println(bitboardRepresentation.getPieceAt(pos.getX() + 1, pos.getY()));
+      if (pos.getX() > 0
+          && bitboardRepresentation
+              .getPieceAt(pos.getX() - 1, pos.getY() - 1)
+              .equals(new ColoredPiece(Piece.PAWN, player))) {
+        System.out.println("add left");
+        specialMoves.add(
+            new Move(
+                new Position(pos.getX() - 1, pos.getY() + (white ? 1 : -1)),
+                new Position(pos.getX(), pos.getY()))); // TODO: Add take ??
+      }
+      if (pos.getX() < bitboardRepresentation.getNbCols() - 1
+          && bitboardRepresentation
+              .getPieceAt(pos.getX() + 1, pos.getY() - 1)
+              .equals(new ColoredPiece(Piece.PAWN, player))) {
+        System.out.println("add right");
+        specialMoves.add(
+            new Move(
+                new Position(pos.getX() + 1, pos.getY() + (white ? 1 : -1)),
+                new Position(pos.getX(), pos.getY()))); // TODO: Add take ??
+      }
+    }
+
+    if (Game.getInstance().getGameState().getBoard().isWhiteLongCastle() && white) {
+      if (!bitboardRepresentation.isAttacked(2, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(4, 0, Color.BLACK)
+          && bitboardRepresentation
+              .getPieceAt(1, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(2, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(3, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(new Move(new Position(4, 0), new Position(2, 0)));
+      }
+    }
+
+    if (Game.getInstance().getGameState().getBoard().isWhiteShortCastle() && white) {
+      if (!bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(6, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(4, 0, Color.BLACK)
+          && bitboardRepresentation
+              .getPieceAt(5, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(6, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(new Move(new Position(4, 0), new Position(5, 0)));
+      }
+    }
+
+    if (Game.getInstance().getGameState().getBoard().isBlackLongCastle() && !white) {
+      if (!bitboardRepresentation.isAttacked(2, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(4, 7, Color.WHITE)
+          && bitboardRepresentation
+              .getPieceAt(1, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(2, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(3, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(new Move(new Position(4, 7), new Position(2, 7)));
+      }
+    }
+
+    if (Game.getInstance().getGameState().getBoard().isBlackShortCastle() && !white) {
+      if (!bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(6, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(4, 7, Color.WHITE)
+          && bitboardRepresentation
+              .getPieceAt(5, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(6, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(new Move(new Position(4, 7), new Position(5, 7)));
+      }
+    }
+
+    for (Position pos : this.bitboardRepresentation.getPawns(white)) {
+      if (pos.getY() == 1
+          && this.bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() + 2)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && this.bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() + 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && white) {
+        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() + 2)));
+      }
+      if (pos.getY() == 6
+          && this.bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() + 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && white) {
+        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() + 1)));
+      }
+      if (pos.getY() == 6
+          && this.bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() - 2)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && this.bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() - 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && !white) {
+        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() - 2)));
+      }
+      if (pos.getY() == 1
+          && this.bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() - 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && !white) {
+        specialMoves.add(new Move(pos, new Position(pos.getX(), pos.getY() - 1)));
+      }
+    }
+
+    return specialMoves;
   }
 }

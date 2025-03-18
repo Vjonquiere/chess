@@ -913,6 +913,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     return bitboardUtils.squareToPosition(square);
   }
 
+  public List<Move> getSpecialMoves(boolean white) {
+    return bitboardMovesGen.getSpecialMoves(white);
+  }
+
   /**
    * Get the positions of all bits set to 1 in the given bitboard
    *
