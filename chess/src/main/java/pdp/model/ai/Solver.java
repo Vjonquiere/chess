@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
+import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.algorithms.SearchAlgorithm;
@@ -35,7 +36,9 @@ public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private final ZobristHashing zobristHashing = new ZobristHashing();
-  private final HashMap<Long, Integer> evaluatedBoards;
+  private HashMap<Long, Integer> evaluatedBoards;
+  public int positionsCalculated = 0;
+  public int positionsFromEvaluated = 0;
 
   SearchAlgorithm algorithm;
   Heuristic heuristic;
@@ -64,6 +67,7 @@ public class Solver {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
+      case ALPHA_BETA_ID -> this.algorithm = new AlphaBetaIterativeDeepening(this);
       case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
@@ -103,6 +107,7 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    evaluatedBoards = new HashMap<>();
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
@@ -229,10 +234,12 @@ public class Solver {
     long hash = zobristHashing.generateHashFromBitboards(board);
     int score;
     if (evaluatedBoards.containsKey(hash)) {
+      this.positionsFromEvaluated += 1;
       score = evaluatedBoards.get(hash);
     } else {
       score = heuristic.evaluate(board, isWhite);
       evaluatedBoards.put(hash, score);
+      this.positionsCalculated += 1;
     }
 
     Color player = isWhite ? Color.WHITE : Color.BLACK;

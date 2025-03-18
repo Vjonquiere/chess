@@ -35,6 +35,14 @@ public class AlphaBeta implements SearchAlgorithm {
   public AIMove findBestMove(Game game, int depth, boolean player) {
     AIMove bestMove = alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
     DEBUG(LOGGER, "Best move: " + bestMove);
+    System.out.println(
+        "Positions Calculated for player "
+            + (player ? "White " : "Black ")
+            + this.solver.positionsCalculated);
+    System.out.println(
+        "Positions from saved for player "
+            + (player ? "White " : "Black ")
+            + this.solver.positionsFromEvaluated);
     return bestMove;
   }
 
