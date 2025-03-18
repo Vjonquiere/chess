@@ -94,4 +94,6 @@ public interface BoardRepresentation {
   public boolean isEndGamePhase(int fullTurn, boolean white);
 
   public boolean validatePieceOwnership(boolean white, Position sourcePosition);
+
+  public List<Move> getSpecialMoves(boolean white);
 }

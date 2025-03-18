@@ -211,4 +211,9 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public BoardRepresentation getCopy() {
     return new DummyBoardRepresentation();
   }
+
+  @Override
+  public List<Move> getSpecialMoves(boolean white) {
+    return new ArrayList<>();
+  }
 }
