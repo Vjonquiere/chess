@@ -44,6 +44,7 @@ public class Solver {
   long time;
   boolean isSearchStopped = false;
   boolean isMoveToPlay = true;
+  int nbThreads = 4;
 
   static {
     Logging.configureLogging(LOGGER);

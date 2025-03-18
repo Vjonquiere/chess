@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameState;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.Solver;
@@ -686,7 +687,7 @@ public class GameTest {
 
     when(mockGameState.isWhiteTurn()).thenReturn(true);
 
-    Field field = Game.class.getDeclaredField("gameState");
+    Field field = GameAbstract.class.getDeclaredField("gameState");
     field.setAccessible(true);
     field.set(game, mockGameState);
 
@@ -704,7 +705,7 @@ public class GameTest {
 
     when(mockGameState.isWhiteTurn()).thenReturn(false);
 
-    Field field = Game.class.getDeclaredField("gameState");
+    Field field = GameAbstract.class.getDeclaredField("gameState");
     field.setAccessible(true);
     field.set(game, mockGameState);
 

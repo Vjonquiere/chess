@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameAi;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
@@ -33,7 +34,9 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    AIMove bestMove = alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+    GameAi aiGame = GameAi.fromGame(game);
+    AIMove bestMove =
+        alphaBeta(aiGame, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
     DEBUG(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
@@ -53,7 +56,7 @@ public class AlphaBeta implements SearchAlgorithm {
    * @return The best move with its evaluated score.
    */
   private AIMove alphaBeta(
-      Game game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
+      GameAi game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
 
     if (solver.isSearchStopped()) {
       return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);

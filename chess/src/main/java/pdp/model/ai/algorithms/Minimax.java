@@ -2,6 +2,7 @@ package pdp.model.ai.algorithms;
 
 import java.util.List;
 import pdp.model.Game;
+import pdp.model.GameAi;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
@@ -23,7 +24,8 @@ public class Minimax implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return minimax(game, depth, player, player);
+    GameAi aiGame = GameAi.fromGame(game);
+    return minimax(aiGame, depth, player, player);
   }
 
   /**
@@ -37,7 +39,7 @@ public class Minimax implements SearchAlgorithm {
    * @param currentPlayer The current player (true for white, false for black).
    * @return The best move with its evaluated score.
    */
-  private AIMove minimax(Game game, int depth, boolean currentPlayer, boolean originalPlayer) {
+  private AIMove minimax(GameAi game, int depth, boolean currentPlayer, boolean originalPlayer) {
     if (solver.isSearchStopped()) {
       boolean isMinimizing = (currentPlayer != originalPlayer);
       return new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
