@@ -1,0 +1,181 @@
+package pdp.model.ai.algorithms;
+
+import static pdp.utils.Logging.DEBUG;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.logging.Logger;
+import pdp.exceptions.IllegalMoveException;
+import pdp.model.Game;
+import pdp.model.ai.AIMove;
+import pdp.model.ai.Solver;
+import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
+import pdp.model.piece.ColoredPiece;
+import pdp.utils.Logging;
+
+public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
+  private Solver solver;
+  private AIMove lastIterationBestMove = null;
+  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
+  public AlphaBetaIterativeDeepening(Solver solver) {
+    this.solver = solver;
+  }
+
+  /**
+   * Determines the best move using the AlphaBeta algorithm.
+   *
+   * @param game The current game state.
+   * @param depth The number of moves to look ahead.
+   * @param player The current player (true for white, false for black).
+   * @return The best move for the player.
+   */
+  @Override
+  public AIMove findBestMove(Game game, int maxDepth, boolean player) {
+    AIMove bestMove = null;
+    List<Move> rootMoves =
+        new ArrayList<>(game.getBoard().getBoardRep().getAllAvailableMoves(player));
+
+    for (int depth = 1; depth <= maxDepth; depth++) {
+      if (solver.isSearchStopped()) {
+        break;
+      }
+
+      if (bestMove != null && bestMove.move() != null) {
+        rootMoves.remove(bestMove.move());
+        rootMoves.add(0, bestMove.move());
+      }
+
+      AIMove currentBest =
+          alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player, rootMoves);
+      if (currentBest != null) {
+        bestMove = currentBest;
+      }
+    }
+
+    DEBUG(LOGGER, "Best move: " + bestMove);
+    System.out.println(
+        "Positions Calculated for player "
+            + (player ? "White " : "Black ")
+            + this.solver.positionsCalculated);
+    System.out.println(
+        "Positions from saved for player "
+            + (player ? "White " : "Black ")
+            + this.solver.positionsFromEvaluated);
+    return bestMove;
+  }
+
+  /**
+   * Finds the best move for the given player. It cuts the uninteresting branches with the
+   * AlphaBetaPruning.
+   *
+   * <p>The method evaluates recursively the game state to select the optimal move.
+   *
+   * @param game The current game
+   * @param depth The number of moves remaining in the search
+   * @param currentPlayer The current player (true for white, false for black).
+   * @param alpha The best option for the maximizing player
+   * @param beta The best option for the minimizing player
+   * @param originalPlayer The player at root
+   * @return The best move with its evaluated score.
+   */
+  private AIMove alphaBeta(
+      Game game,
+      int depth,
+      boolean currentPlayer,
+      int alpha,
+      int beta,
+      boolean originalPlayer,
+      List<Move> orderedMoves) {
+
+    if (solver.isSearchStopped()) {
+      return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+    }
+    if (depth == 0 || game.isOver()) {
+      int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      return new AIMove(null, evaluation);
+    }
+
+    List<Move> moves = orderedMoves;
+    if (moves == null) {
+      moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    }
+
+    if (orderedMoves == null) {
+      sortMoves(moves, game);
+    }
+
+    AIMove bestMove =
+        new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+    for (Move move : moves) {
+      if (solver.isSearchStopped()) {
+        break;
+      }
+      try {
+        move = AlgorithmHelpers.promoteMove(move);
+        game.playMove(move);
+        AIMove currMove =
+            alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer, null);
+        game.previousState();
+        if (currentPlayer == originalPlayer) { // Maximizing
+          if (currMove.score() > bestMove.score()) {
+            bestMove = new AIMove(move, currMove.score());
+          }
+          alpha = Math.max(alpha, bestMove.score());
+        } else { // Minimizing
+          if (currMove.score() < bestMove.score()) {
+            bestMove = new AIMove(move, currMove.score());
+          }
+          beta = Math.min(beta, bestMove.score());
+        }
+        if (alpha >= beta) {
+          break;
+        }
+      } catch (IllegalMoveException e) {
+        // Skipping illegal move
+      }
+    }
+    return bestMove;
+  }
+
+  private void sortMoves(List<Move> moves, Game game) {
+    moves.sort(Comparator.comparingInt((Move m) -> -evaluateMove(m, game)));
+  }
+
+  private int evaluateMove(Move move, Game game) {
+    ColoredPiece target =
+        game.getBoard().getBoardRep().getPieceAt(move.getDest().getX(), move.getDest().getY());
+    int score = 0;
+    switch (target.piece) {
+      case PAWN:
+        score += 1;
+        break;
+      case KNIGHT:
+        score += 3;
+        break;
+      case BISHOP:
+        score += 3;
+        break;
+      case ROOK:
+        score += 5;
+        break;
+      case QUEEN:
+        score += 9;
+        break;
+      default:
+        break;
+    }
+
+    if (move instanceof PromoteMove) {
+      score += 100;
+    }
+
+    return score;
+  }
+}
