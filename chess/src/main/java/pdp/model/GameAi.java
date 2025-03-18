@@ -160,6 +160,15 @@ public class GameAi extends GameAbstract {
     gameState.checkGameStatus();
   }
 
+  public GameAi copy() {
+    History history = new History();
+    history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.getGameState().getCopy()));
+    return new GameAi(
+        super.getGameState().getCopy(), history, new HashMap<>(super.getStateCount()));
+  }
+
   public static GameAi fromGame(Game game) {
     History history = new History();
     history.addMove(
