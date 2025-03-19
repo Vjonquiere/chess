@@ -9,6 +9,7 @@ import pdp.model.Game;
 import pdp.model.GameAi;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
@@ -72,7 +73,18 @@ public class AlphaBeta implements SearchAlgorithm {
     AIMove bestMove =
         new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-    moves.addAll(game.getBoard().getBoardRep().getSpecialMoves(currentPlayer));
+    Board board = game.getBoard();
+    moves.addAll(
+        game.getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                currentPlayer,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isWhiteLongCastle()));
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;

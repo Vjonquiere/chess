@@ -214,12 +214,12 @@ public class GameTest {
   public void noThreefoldRepetitionOnIllegalSpecialTest() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     try {
-      game.playMove(Move.fromString("o-o-o"));
+      game.playMove(Move.fromString("e1-c1"));
     } catch (IllegalMoveException e) {
 
     }
     try {
-      game.playMove(Move.fromString("o-o-o"));
+      game.playMove(Move.fromString("e1-g1"));
     } catch (IllegalMoveException e) {
 
     }

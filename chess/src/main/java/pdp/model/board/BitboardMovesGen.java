@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
-import pdp.model.Game;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
@@ -623,13 +622,23 @@ public class BitboardMovesGen {
   }
 
   public static List<Move> getSpecialMoves(
-      boolean white, BitboardRepresentation bitboardRepresentation) {
+      boolean white,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     Color player = white ? Color.WHITE : Color.BLACK;
     Color opponent = !white ? Color.WHITE : Color.BLACK;
     List<Move> specialMoves = new ArrayList<>();
-    if (Game.getInstance().getGameState().getBoard().getEnPassantPos() != null
-        && Game.getInstance().getGameState().getBoard().isLastMoveDoublePush()) {
-      Position pos = Game.getInstance().getGameState().getBoard().getEnPassantPos();
+    if (enPassantPos != null && isLastMoveDoublePush) {
+      System.out.println("EN PASSANT POSSIBLE");
+      System.out.println(enPassantPos);
+    }
+    if (enPassantPos != null && isLastMoveDoublePush) {
+      Position pos = enPassantPos;
       if (pos.getX() > 0
           && bitboardRepresentation
               .getPieceAt(pos.getX() - 1, pos.getY() - 1)
@@ -656,7 +665,7 @@ public class BitboardMovesGen {
       }
     }
 
-    if (Game.getInstance().getGameState().getBoard().isWhiteLongCastle() && white) {
+    if (isWhiteLongCastle && white) {
       if (!bitboardRepresentation.isAttacked(2, 0, Color.BLACK)
           && !bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
           && !bitboardRepresentation.isAttacked(4, 0, Color.BLACK)
@@ -678,7 +687,7 @@ public class BitboardMovesGen {
       }
     }
 
-    if (Game.getInstance().getGameState().getBoard().isWhiteShortCastle() && white) {
+    if (isWhiteShortCastle && white) {
       if (!bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
           && !bitboardRepresentation.isAttacked(6, 0, Color.BLACK)
           && !bitboardRepresentation.isAttacked(4, 0, Color.BLACK)
@@ -697,7 +706,7 @@ public class BitboardMovesGen {
       }
     }
 
-    if (Game.getInstance().getGameState().getBoard().isBlackLongCastle() && !white) {
+    if (isBlackLongCastle && !white) {
       if (!bitboardRepresentation.isAttacked(2, 7, Color.WHITE)
           && !bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
           && !bitboardRepresentation.isAttacked(4, 7, Color.WHITE)
@@ -719,7 +728,7 @@ public class BitboardMovesGen {
       }
     }
 
-    if (Game.getInstance().getGameState().getBoard().isBlackShortCastle() && !white) {
+    if (isBlackShortCastle && !white) {
       if (!bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
           && !bitboardRepresentation.isAttacked(6, 7, Color.WHITE)
           && !bitboardRepresentation.isAttacked(4, 7, Color.WHITE)

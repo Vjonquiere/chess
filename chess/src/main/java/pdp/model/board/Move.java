@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
-import pdp.model.Game;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Logging;
@@ -113,20 +112,39 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(String stringMove) throws MoveParsingException {
+  public static Move fromString(String stringMove, boolean isWhiteTurn)
+      throws MoveParsingException {
 
     if (stringMove.equalsIgnoreCase("o-o-o")) {
-      if (Game.getInstance().getGameState().isWhiteTurn()) {
+      if (isWhiteTurn) {
         stringMove = "e1-c1";
       } else {
         stringMove = "e8-c8";
       }
     } else if (stringMove.equalsIgnoreCase("o-o")) {
-      if (Game.getInstance().getGameState().isWhiteTurn()) {
+      if (isWhiteTurn) {
         stringMove = "e1-g1";
       } else {
         stringMove = "e8-g8";
       }
+    }
+
+    return fromString(stringMove);
+  }
+
+  /**
+   * Parses a string representation of a move and converts it into a {@code Move} object Warning:
+   * Can't handle castling as o-o-o or o-o
+   *
+   * @param stringMove The move in string format ("e2-e4")
+   * @return A {@code Move} object representing the parsed move
+   * @throws MoveParsingException If the string format is invalid
+   */
+  public static Move fromString(String stringMove) throws MoveParsingException {
+
+    if (stringMove.equalsIgnoreCase("o-o-o") || stringMove.equalsIgnoreCase("o-o")) {
+      throw new MoveParsingException(
+          "Castling notation ('o-o' or 'o-o-o') is not supported in this method.");
     }
 
     String[] parts = stringMove.split("-");

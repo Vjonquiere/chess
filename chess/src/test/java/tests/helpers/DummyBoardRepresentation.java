@@ -213,7 +213,14 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public List<Move> getSpecialMoves(boolean white) {
+  public List<Move> getSpecialMoves(
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     return new ArrayList<>();
   }
 }

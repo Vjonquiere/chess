@@ -95,5 +95,12 @@ public interface BoardRepresentation {
 
   public boolean validatePieceOwnership(boolean white, Position sourcePosition);
 
-  public List<Move> getSpecialMoves(boolean white);
+  public List<Move> getSpecialMoves(
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 }

@@ -904,8 +904,23 @@ public class BitboardRepresentation implements BoardRepresentation {
     return BitboardUtils.squareToPosition(square);
   }
 
-  public List<Move> getSpecialMoves(boolean white) {
-    return BitboardMovesGen.getSpecialMoves(white, this);
+  public List<Move> getSpecialMoves(
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardMovesGen.getSpecialMoves(
+        white,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
