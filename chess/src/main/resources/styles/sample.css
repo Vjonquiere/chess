@@ -36,28 +36,23 @@
     -fx-text-fill: #000007;
 }
 
-.menu-item:hover, .menu:hover {
+.menu-item:hover, .menu:hover, .menu .label:hover, .menu-item:hover .label {
     -fx-background-color: #000001;
+    -fx-text-fill: #000008;
 }
 
 .button:hover, dialog-pane .button-bar .button:hover {
     -fx-background-color: #000001;
     -fx-text-fill: #000002;
     -fx-border-color: #000002;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-padding: 15;
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
 }
 
 .button, dialog-pane .button-bar .button {
     -fx-background-color: #000002;
     -fx-text-fill: #000001;
     -fx-border-color: #000001;
-    -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-padding: 15;
+    -fx-padding: 10;
     -fx-background-radius: 20;
     -fx-border-radius: 20;
 }
@@ -105,14 +100,14 @@
 }
 
 .scroll-pane {
-    -fx-background-color: transparent;
+    -fx-background-color: #000005;
 }
 .scroll-pane .viewport {
-    -fx-background-color: white;
+    -fx-background-color: #000005;
 }
 
 .scroll-pane {
-    -fx-background-color: black;
+    -fx-background-color: #000005;
 }
 
 .scroll-bar:horizontal, .scroll-bar:vertical{
@@ -139,3 +134,17 @@
 .scroll-pane > .corner {
     -fx-background-color: transparent;
 }
+
+.color-picker {
+    -fx-background-color: #000002;
+    -fx-border-color: #000001;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}
+
+.color-picker:hover {
+    -fx-background-color: #000001;
+    -fx-border-color: #000002;
+}
+
+

@@ -43,7 +43,7 @@ public class GUIView implements View {
     String text;
     String path = "";
     try {
-      // for the custom style
+      // TODO: allow user to give his css file
       text = new BoardFileParser().readFile(path);
     } catch (FileNotFoundException e) {
       try {
