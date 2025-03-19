@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.RestartCommand;
 import pdp.events.EventType;
+import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.GUIView;
 
@@ -77,6 +78,13 @@ public class EndGamePopUp {
           System.out.println("No game analysis for now");
         });
 
+    Button newGameButton = new Button(TextGetter.getText("newGame"));
+    newGameButton.setId("newGameButton");
+    newGameButton.setOnAction(
+        e -> {
+          NewGamePopup.show(Game.getInstance().getOptions());
+        });
+
     Button restartButton = new Button(TextGetter.getText("restart"));
     restartButton.setId("restartButton");
     restartButton.setOnAction(
@@ -91,12 +99,13 @@ public class EndGamePopUp {
           popupStage.close();
           Runtime.getRuntime().exit(0);
         });
-    buttonBox.getChildren().addAll(analyzeButton, restartButton, quitButton);
+    buttonBox.getChildren().addAll(analyzeButton, newGameButton, restartButton, quitButton);
     buttonBox.setAlignment(Pos.CENTER);
     layout.getChildren().add(buttonBox);
     layout.setAlignment(Pos.CENTER);
 
-    Scene scene = new Scene(layout, 400, 200);
+    Scene scene = new Scene(layout, 600, 300);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

@@ -215,10 +215,10 @@ public class CommandLineOptions {
           if (value.equals("en")) {
             DEBUG(LOGGER, "Language = English (already set by default)");
             // TODO: de-comment when french file finished
-          } /*else if (value.equals("fr")) {
-              DEBUG(LOGGER, "Language = French");
-              TextGetter.setLocale(cmd.getParsedOptionValue("lang"));
-            } */ else {
+          } else if (value.equals("fr")) {
+            DEBUG(LOGGER, "Language = French");
+            TextGetter.setLocale("fr");
+          } else {
             System.err.println(
                 "Language "
                     + cmd.getOptionValue(option.getLong(), "")

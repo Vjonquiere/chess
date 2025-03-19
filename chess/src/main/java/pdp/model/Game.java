@@ -780,14 +780,6 @@ public class Game extends Subject {
 
     DEBUG(LOGGER, "Restarting game");
 
-    if (!gameState.isGameOver()) {
-      if (this.gameState.isWhiteTurn()) {
-        this.gameState.whiteResigns();
-      } else {
-        this.gameState.blackResigns();
-      }
-    }
-
     this.gameState.updateFrom(new GameState(this.gameState.getMoveTimer()));
     this.history = new History();
 

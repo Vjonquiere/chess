@@ -17,6 +17,7 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
+import pdp.utils.TextGetter;
 import pdp.view.GUIView;
 
 public class PromotionPieceSelectionPopUp extends VBox {
@@ -30,7 +31,8 @@ public class PromotionPieceSelectionPopUp extends VBox {
     popupStage.setResizable(false);
     popupStage.initStyle(StageStyle.UNDECORATED);
 
-    VBox queenButton = pieceImage(new ColoredPiece(Piece.QUEEN, Color.WHITE), "Queen");
+    VBox queenButton =
+        pieceImage(new ColoredPiece(Piece.QUEEN, Color.WHITE), TextGetter.getText("queen"));
     queenButton.setOnMouseClicked(
         e -> {
           BagOfCommands.getInstance()
@@ -39,7 +41,8 @@ public class PromotionPieceSelectionPopUp extends VBox {
         });
     queenButton.setId("queenButton");
 
-    VBox knightButton = pieceImage(new ColoredPiece(Piece.KNIGHT, Color.WHITE), "Knight");
+    VBox knightButton =
+        pieceImage(new ColoredPiece(Piece.KNIGHT, Color.WHITE), TextGetter.getText("knight"));
     knightButton.setOnMouseClicked(
         e -> {
           BagOfCommands.getInstance()
@@ -48,7 +51,8 @@ public class PromotionPieceSelectionPopUp extends VBox {
         });
     knightButton.setId("knightButton");
 
-    VBox bishopButton = pieceImage(new ColoredPiece(Piece.BISHOP, Color.WHITE), "Bishop");
+    VBox bishopButton =
+        pieceImage(new ColoredPiece(Piece.BISHOP, Color.WHITE), TextGetter.getText("bishop"));
     bishopButton.setOnMouseClicked(
         e -> {
           BagOfCommands.getInstance()
@@ -57,7 +61,8 @@ public class PromotionPieceSelectionPopUp extends VBox {
         });
     bishopButton.setId("bishopButton");
 
-    VBox rookButton = pieceImage(new ColoredPiece(Piece.ROOK, Color.WHITE), "Rook");
+    VBox rookButton =
+        pieceImage(new ColoredPiece(Piece.ROOK, Color.WHITE), TextGetter.getText("rook"));
     rookButton.setOnMouseClicked(
         e -> {
           BagOfCommands.getInstance()
@@ -76,7 +81,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
             + ";");
     Scene scene = new Scene(layout, 500, 150);
     popupStage.setScene(scene);
-    popupStage.setTitle("Which piece would you want to promote to?");
+    popupStage.setTitle(TextGetter.getText("promotion"));
     popupStage.showAndWait();
   }
 
