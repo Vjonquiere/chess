@@ -37,6 +37,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
               .addCommand(new PlayMoveCommand(new PromoteMove(from, to, Piece.QUEEN).toString()));
           popupStage.close();
         });
+    queenButton.setId("queenButton");
 
     VBox knightButton = pieceImage(new ColoredPiece(Piece.KNIGHT, Color.WHITE), "Knight");
     knightButton.setOnMouseClicked(
@@ -45,6 +46,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
               .addCommand(new PlayMoveCommand(new PromoteMove(from, to, Piece.KNIGHT).toString()));
           popupStage.close();
         });
+    knightButton.setId("knightButton");
 
     VBox bishopButton = pieceImage(new ColoredPiece(Piece.BISHOP, Color.WHITE), "Bishop");
     bishopButton.setOnMouseClicked(
@@ -53,6 +55,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
               .addCommand(new PlayMoveCommand(new PromoteMove(from, to, Piece.BISHOP).toString()));
           popupStage.close();
         });
+    bishopButton.setId("bishopButton");
 
     VBox rookButton = pieceImage(new ColoredPiece(Piece.ROOK, Color.WHITE), "Rook");
     rookButton.setOnMouseClicked(
@@ -61,6 +64,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
               .addCommand(new PlayMoveCommand(new PromoteMove(from, to, Piece.ROOK).toString()));
           popupStage.close();
         });
+    rookButton.setId("rookButton");
 
     HBox layout = new HBox(15, queenButton, knightButton, bishopButton, rookButton);
     layout.setAlignment(Pos.CENTER);
