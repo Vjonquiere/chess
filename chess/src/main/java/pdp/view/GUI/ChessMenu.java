@@ -27,23 +27,31 @@ import pdp.view.GUI.themes.ColorTheme;
 import pdp.view.GUIView;
 
 public class ChessMenu extends VBox {
-  public ChessMenu(GUIView view) {
+  public ChessMenu() {
     MenuBar menuBar = new MenuBar();
+    menuBar.setId("menuBar");
     menuBar.getMenus().add(createFileMenu());
     menuBar.getMenus().add(createGameMenu());
     menuBar.getMenus().add(createAboutMenu());
-    menuBar.getMenus().add(createOptionsMenu(view));
+    menuBar.getMenus().add(createOptionsMenu());
     this.getChildren().add(menuBar);
   }
 
   private Menu createFileMenu() {
     Menu fileMenu = new Menu(TextGetter.getText("file"));
+    fileMenu.setId("filemenu");
     MenuItem newGameItem = new MenuItem(TextGetter.getText("newGame"));
+    newGameItem.setId("newGameItem");
     MenuItem loadGameItem = new MenuItem(TextGetter.getText("loadGame"));
+    loadGameItem.setId("loadGameItem");
     MenuItem saveGameItem = new MenuItem(TextGetter.getText("saveGame"));
+    saveGameItem.setId("saveGameItem");
     MenuItem helpItem = new MenuItem(TextGetter.getText("help"));
+    helpItem.setId("helpItem");
     MenuItem quitItem = new MenuItem(TextGetter.getText("quit"));
+    quitItem.setId("quitItem");
     MenuItem settingItem = new MenuItem(TextGetter.getText("settings"));
+    settingItem.setId("settingsItem");
     newGameItem.setOnAction(event -> openNewGamePopup());
     quitItem.setOnAction(event -> Runtime.getRuntime().exit(0));
     helpItem.setOnAction(event -> new HelpPopup());
@@ -143,10 +151,8 @@ public class ChessMenu extends VBox {
     return aboutMenu;
   }
 
-  private Menu createOptionsMenu(GUIView view) {
+  private Menu createOptionsMenu() {
     Menu optionsMenu = new Menu(TextGetter.getText("options"));
-    // MenuItem theme = new MenuItem(TextGetter.getText("theme.title"));
-    // theme.setOnAction(event -> openThemePopup(view));
     optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu());
     return optionsMenu;
   }

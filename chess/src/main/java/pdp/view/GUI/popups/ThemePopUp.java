@@ -21,22 +21,31 @@ public class ThemePopUp {
     popupStage.setTitle(TextGetter.getText("theme.title"));
 
     VBox layout = new VBox(10);
+    layout.setId("root");
     Label primary = new Label(TextGetter.getText("theme.primary"));
     ColorPicker cp_primary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getPrimary()));
+    cp_primary.setId("primary");
     Label secondary = new Label(TextGetter.getText("theme.secondary"));
     ColorPicker cp_secondary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getSecondary()));
+    cp_secondary.setId("secondary");
     Label tertiary = new Label(TextGetter.getText("theme.tertiary"));
     ColorPicker cp_tertiary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTertiary()));
+    cp_tertiary.setId("tertiary");
     Label accent = new Label(TextGetter.getText("theme.accent"));
     ColorPicker cp_accent = new ColorPicker(Color.web(ColorTheme.CUSTOM.getAccent()));
+    cp_accent.setId("accent");
     Label background = new Label(TextGetter.getText("theme.background"));
     ColorPicker cp_background = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground()));
+    cp_background.setId("background");
     Label background2 = new Label(TextGetter.getText("theme.background2"));
     ColorPicker cp_background2 = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground2()));
+    cp_background2.setId("background2");
     Label text = new Label(TextGetter.getText("theme.text"));
     ColorPicker cp_text = new ColorPicker(Color.web(ColorTheme.CUSTOM.getText()));
+    cp_text.setId("text");
     Label textInverted = new Label(TextGetter.getText("theme.textInverted"));
     ColorPicker cp_textInverted = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTextInverted()));
+    cp_textInverted.setId("textInverted");
     layout
         .getChildren()
         .addAll(
