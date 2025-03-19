@@ -13,6 +13,14 @@ import pdp.utils.TextGetter;
 
 public class YesNoPopUp extends VBox {
 
+  /**
+   * Creates a Yes/No confirmation popup with two buttons: accept and refuse.
+   *
+   * @param title The title of the popup window.
+   * @param command The command to be executed if the accept button is clicked. Can be null.
+   * @param action The action to be executed if the refuse button is clicked or the popup is closed.
+   *     Can be null.
+   */
   public YesNoPopUp(String title, Command command, Runnable action) {
     Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText(title));

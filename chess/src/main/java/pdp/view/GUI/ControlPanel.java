@@ -13,7 +13,7 @@ import pdp.view.GUIView;
 public class ControlPanel extends VBox {
   private VBox timerPanel;
   private PlayerPanel playerPanel;
-  private VBox historyPanel;
+  private HistoryPanel historyPanel;
   private ButtonsPanel buttonsPanel;
   String borderStyle =
       "-fx-border-color: "
@@ -54,6 +54,10 @@ public class ControlPanel extends VBox {
   private void initHistoryPanel() {
     historyPanel = new HistoryPanel();
     historyPanel.setStyle(borderStyle);
+  }
+
+  public HistoryPanel getHistoryPanel() {
+    return this.historyPanel;
   }
 
   public void update(EventType type) {

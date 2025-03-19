@@ -142,6 +142,10 @@ public class GUIView implements View {
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
+                  if (controlPanel.getHistoryPanel() != null) {
+                    controlPanel.getHistoryPanel().updateHistoryPanel();
+                    ;
+                  }
                 }
                 break;
               case DRAW_ACCEPTED,
