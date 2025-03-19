@@ -349,7 +349,9 @@ public class NewGamePopup {
           FileChooser fileChooser = new FileChooser();
           fileChooser.setTitle(TextGetter.getText("newGame.savePrompt"));
 
-          fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(TextGetter.getText("newGame.fileSave"), "*"));
+          fileChooser
+              .getExtensionFilters()
+              .add(new FileChooser.ExtensionFilter(TextGetter.getText("newGame.fileSave"), "*"));
 
           File selectedFile = fileChooser.showOpenDialog(popupStage);
 
