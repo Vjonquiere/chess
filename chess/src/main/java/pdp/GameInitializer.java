@@ -222,8 +222,10 @@ public abstract class GameInitializer {
 
           List<Move> moves = new ArrayList<>();
 
+          boolean isWhite = true;
           for (String move : moveStrings) {
-            moves.add(Move.fromString(move.replace("x", "-")));
+            moves.add(Move.fromString(move.replace("x", "-"), isWhite));
+            isWhite = !isWhite;
           }
 
           model =

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameState;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.Solver;
@@ -213,12 +214,12 @@ public class GameTest {
   public void noThreefoldRepetitionOnIllegalSpecialTest() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     try {
-      game.playMove(Move.fromString("o-o-o"));
+      game.playMove(Move.fromString("e1-c1"));
     } catch (IllegalMoveException e) {
 
     }
     try {
-      game.playMove(Move.fromString("o-o-o"));
+      game.playMove(Move.fromString("e1-g1"));
     } catch (IllegalMoveException e) {
 
     }
@@ -686,7 +687,7 @@ public class GameTest {
 
     when(mockGameState.isWhiteTurn()).thenReturn(true);
 
-    Field field = Game.class.getDeclaredField("gameState");
+    Field field = GameAbstract.class.getDeclaredField("gameState");
     field.setAccessible(true);
     field.set(game, mockGameState);
 
@@ -704,7 +705,7 @@ public class GameTest {
 
     when(mockGameState.isWhiteTurn()).thenReturn(false);
 
-    Field field = Game.class.getDeclaredField("gameState");
+    Field field = GameAbstract.class.getDeclaredField("gameState");
     field.setAccessible(true);
     field.set(game, mockGameState);
 

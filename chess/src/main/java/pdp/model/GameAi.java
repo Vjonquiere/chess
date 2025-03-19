@@ -1,0 +1,184 @@
+package pdp.model;
+
+import static pdp.utils.Logging.DEBUG;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
+import pdp.exceptions.IllegalMoveException;
+import pdp.exceptions.InvalidPromoteFormatException;
+import pdp.model.board.Move;
+import pdp.model.history.History;
+import pdp.model.history.HistoryState;
+import pdp.utils.Logging;
+import pdp.utils.Position;
+
+public class GameAi extends GameAbstract {
+  private static final Logger LOGGER = Logger.getLogger(GameAi.class.getName());
+
+  static {
+    Logging.configureLogging(LOGGER);
+  }
+
+  private GameAi(GameState gameState, History history, HashMap<Long, Integer> stateCount) {
+    super(gameState, history, stateCount);
+  }
+
+  /**
+   * Tries to play the given move on the game.
+   *
+   * @param move The move to be executed.
+   * @throws IllegalMoveException If the move is not legal.
+   */
+  @Override
+  public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+
+    if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
+      throw new IllegalMoveException(move.toString());
+    }
+    super.validatePromotionMove(move);
+
+    List<Move> availableMoves = super.getGameState().getBoard().getAvailableMoves(sourcePosition);
+    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
+
+    if (classicalMove.isPresent()) {
+      move = classicalMove.get();
+      super.processClassicalMove(super.getGameState(), move);
+    } else {
+      super.processSpecialMove(super.getGameState(), move);
+    }
+
+    this.updateGameStateAfterMove(move, classicalMove.isPresent());
+  }
+
+  /**
+   * Updates the game state after a move is played.
+   *
+   * <p>The game state is updated by:
+   *
+   * <ul>
+   *   <li>Incrementing the full turn number if the move was made by white.
+   *   <li>Adding the move to the history.
+   *   <li>Switching the current player turn.
+   *   <li>Updating the board player.
+   *   <li>Updating the simplified zobrist hashing.
+   *   <li>Checking for threefold repetition.
+   *   <li>Checking the game status, which may end the game.
+   *   <li>Notifying observers that a move has been played.
+   * </ul>
+   */
+  private void updateGameStateAfterMove(Move move, boolean isSpecialMove) {
+    if (super.getGameState().isWhiteTurn()) {
+      super.getGameState().incrementsFullTurn();
+    }
+
+    super.getGameState().switchPlayerTurn();
+    super.getGameState().getBoard().setPlayer(super.getGameState().isWhiteTurn());
+    if (isSpecialMove) {
+      super.getGameState()
+          .setSimplifiedZobristHashing(
+              super.getZobristHasher()
+                  .updateSimplifiedHashFromBitboards(
+                      super.getGameState().getSimplifiedZobristHashing(), getBoard(), move));
+    } else {
+      super.getGameState()
+          .setSimplifiedZobristHashing(
+              super.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
+    }
+
+    DEBUG(LOGGER, "Checking threefold repetition...");
+    boolean threefoldRepetition =
+        super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
+
+    if (threefoldRepetition) {
+      super.getGameState().activateThreefold();
+    }
+
+    DEBUG(LOGGER, "Checking game status...");
+    super.getGameState().checkGameStatus();
+
+    super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+  }
+
+  /**
+   * Tries to play the given move on the game for the game state in parameter
+   *
+   * @param gameState the game state for which we want the move to occur
+   * @param move The move to be executed
+   * @throws IllegalMoveException If the move is not legal
+   */
+  public void playMoveOtherGameState(GameState gameState, Move move)
+      throws IllegalMoveException, InvalidPromoteFormatException {
+
+    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
+    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+
+    if (!validatePieceOwnership(gameState, sourcePosition)) {
+      throw new IllegalMoveException(move.toString());
+    }
+    validatePromotionMove(move);
+
+    List<Move> availableMoves = gameState.getBoard().getAvailableMoves(sourcePosition);
+    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
+
+    if (classicalMove.isPresent()) {
+      move = classicalMove.get();
+      processClassicalMove(gameState, move);
+    } else {
+      processSpecialMove(gameState, move);
+    }
+    updateOtherGameStateAfterMove(gameState, move);
+  }
+
+  /**
+   * Method used for MonteCarloTreeSearch simulation that processes gameState copies. Updates the
+   * game state in parameter (supposed to be copy) after a move is played.
+   *
+   * <p>The provided game state is updated by:
+   *
+   * <ul>
+   *   <li>Incrementing the full turn number if the move was made by white.
+   *   <li>Switching the current player turn.
+   *   <li>Updating the board player.
+   *   <li>Checking the game status, which may end the game.
+   * </ul>
+   */
+  private void updateOtherGameStateAfterMove(GameState gameState, Move move) {
+    if (gameState.isWhiteTurn()) {
+      gameState.incrementsFullTurn();
+    }
+
+    gameState.switchPlayerTurn();
+    gameState.getBoard().setPlayer(gameState.isWhiteTurn());
+
+    DEBUG(LOGGER, "Checking game status...");
+    gameState.checkGameStatus();
+  }
+
+  public GameAi copy() {
+    History history = new History();
+    history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), this.getGameState().getCopy()));
+    return new GameAi(
+        super.getGameState().getCopy(), history, new HashMap<>(super.getStateCount()));
+  }
+
+  public static GameAi fromGame(Game game) {
+    History history = new History();
+    history.addMove(
+        new HistoryState(
+            new Move(new Position(-1, -1), new Position(-1, -1)), game.getGameState().getCopy()));
+
+    GameState gameState = game.getGameState().getCopy();
+
+    HashMap<Long, Integer> stateCount = new HashMap<>(game.getStateCount());
+
+    return new GameAi(gameState, history, stateCount);
+  }
+}

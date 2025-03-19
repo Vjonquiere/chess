@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameAi;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
@@ -33,7 +35,14 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    AIMove bestMove = alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+    GameAi aiGame = GameAi.fromGame(game);
+
+    // Heuristically order moves (e.g., capture moves first)
+    // rootMoves.sort((m1, m2) -> ...);
+
+    AIMove bestMove =
+        alphaBeta(aiGame, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+
     DEBUG(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
@@ -53,8 +62,7 @@ public class AlphaBeta implements SearchAlgorithm {
    * @return The best move with its evaluated score.
    */
   private AIMove alphaBeta(
-      Game game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
-
+      GameAi game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
     if (solver.isSearchStopped()) {
       return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
@@ -65,11 +73,24 @@ public class AlphaBeta implements SearchAlgorithm {
     AIMove bestMove =
         new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    Board board = game.getBoard();
+    moves.addAll(
+        game.getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                currentPlayer,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isWhiteLongCastle()));
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
       }
       try {
+
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);

@@ -118,6 +118,8 @@ public class NewGamePopup {
 
     if (options.containsKey(depthType)) {
       depthSlider.setValue(Integer.parseInt(options.get(depthType)));
+    } else {
+      options.put(depthType, String.valueOf(Math.round(depthSlider.getValue())));
     }
 
     depthContainer.getChildren().add(depthSlider);
@@ -147,7 +149,9 @@ public class NewGamePopup {
             });
 
     if (options.containsKey(simulationsType)) {
-      depthSlider.setValue(Integer.parseInt(options.get(simulationsType)));
+      simulationSlider.setValue(Integer.parseInt(options.get(simulationsType)));
+    } else {
+      options.put(simulationsType, String.valueOf(Math.round(simulationSlider.getValue())));
     }
 
     simulationContainer.getChildren().add(simulationSlider);
@@ -192,6 +196,8 @@ public class NewGamePopup {
 
     if (options.containsKey(OptionType.AI_TIME)) {
       aiTimeSlider.setValue(Integer.parseInt(options.get(OptionType.AI_TIME)));
+    } else if (aiTimeCheckBox.isSelected()) {
+      options.put(OptionType.AI_TIME, String.valueOf(Math.round(aiTimeSlider.getValue())));
     }
 
     aiTimeCheckBox.setOnAction(
@@ -345,8 +351,7 @@ public class NewGamePopup {
 
           fileChooser
               .getExtensionFilters()
-              .add(
-                  new FileChooser.ExtensionFilter(TextGetter.getText("newGame.fileSave", "*.txt")));
+              .add(new FileChooser.ExtensionFilter(TextGetter.getText("newGame.fileSave"), "*"));
 
           File selectedFile = fileChooser.showOpenDialog(popupStage);
 

@@ -26,7 +26,7 @@ public class PlayMoveCommand implements Command {
       return Optional.of(new CommandNotAvailableNowException());
     }
     try {
-      model.playMove(Move.fromString(this.move));
+      model.playMove(Move.fromString(this.move, Game.getInstance().getGameState().isWhiteTurn()));
       return Optional.empty();
     } catch (Exception e) {
       System.out.println(e.getMessage());
