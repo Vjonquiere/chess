@@ -15,6 +15,7 @@ public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
   public Position source;
   public Position dest;
+  public Position takeDest;
   public ColoredPiece piece;
   public ColoredPiece takenPiece;
   public boolean isTake = false;
@@ -49,6 +50,7 @@ public class Move {
     this.dest = dest;
     this.piece = piece;
     this.isTake = isTake;
+    this.takeDest = dest;
   }
 
   /**
@@ -70,6 +72,22 @@ public class Move {
     this.piece = piece;
     this.isTake = isTake;
     this.takenPiece = takenPiece;
+    this.takeDest = dest;
+  }
+
+  public Move(
+      Position source,
+      Position dest,
+      ColoredPiece piece,
+      boolean isTake,
+      ColoredPiece takenPiece,
+      Position takeDest) {
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
+    this.takenPiece = takenPiece;
+    this.takeDest = takeDest;
   }
 
   /**
@@ -103,6 +121,7 @@ public class Move {
     this.takenPiece = takenPiece;
     this.isCheck = isCheck;
     this.isCheckMate = isCheckMate;
+    this.takeDest = dest;
   }
 
   /**
@@ -275,6 +294,14 @@ public class Move {
     return dest;
   }
 
+  public Position getTakeDest() {
+    return this.takeDest;
+  }
+
+  public void setTakeDest(Position takeDest) {
+    this.takeDest = takeDest;
+  }
+
   /**
    * Retrieves the piece involved in the move.
    *
@@ -282,6 +309,15 @@ public class Move {
    */
   public ColoredPiece getPiece() {
     return piece;
+  }
+
+  /**
+   * Retrieves the piece taken.
+   *
+   * @return The ColoredPiece taken.
+   */
+  public ColoredPiece getPieceTaken() {
+    return takenPiece;
   }
 
   /**

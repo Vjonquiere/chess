@@ -44,6 +44,7 @@ public class Game extends GameAbstract {
   private boolean isWhiteAI;
   private boolean isBlackAI;
   private boolean explorationAI;
+  private boolean isInitializing;
   private boolean loadedFromFile;
   private boolean loadingFileHasHistory;
   private HashMap<OptionType, String> options;
@@ -127,6 +128,10 @@ public class Game extends GameAbstract {
       return true;
     }
     return false;
+  }
+
+  public void setInitializing(boolean isInit) {
+    this.isInitializing = isInit;
   }
 
   /**
@@ -397,6 +402,7 @@ public class Game extends GameAbstract {
     if (super.getGameState().getMoveTimer() != null
         && !this.isCurrentPlayerAI()
         && !explorationAI
+        && !isInitializing
         && !super.getGameState().isGameOver()) {
       super.getGameState().getMoveTimer().stop();
     }
@@ -453,7 +459,7 @@ public class Game extends GameAbstract {
       checkAndOverwriteHistory(move);
     }
 
-    if (!explorationAI) {
+    if (!explorationAI && !isInitializing) {
       this.notifyObservers(EventType.MOVE_PLAYED);
     }
     if (super.getGameState().getMoveTimer() != null
@@ -464,6 +470,7 @@ public class Game extends GameAbstract {
     }
 
     if (!explorationAI
+        && !isInitializing
         && !isOver()
         && ((super.getGameState().isWhiteTurn() && isWhiteAI)
             || (!super.getGameState().isWhiteTurn() && isBlackAI))) {
@@ -657,7 +664,7 @@ public class Game extends GameAbstract {
             new History(),
             options);
     BagOfCommands.getInstance().setModel(instance);
-
+    instance.setInitializing(true);
     for (Move move : moves) {
       instance.playMove(move);
     }
@@ -669,6 +676,7 @@ public class Game extends GameAbstract {
       }
     }
 
+    instance.setInitializing(false);
     instance.notifyObservers(EventType.GAME_STARTED);
 
     return instance;

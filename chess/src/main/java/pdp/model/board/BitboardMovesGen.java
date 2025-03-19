@@ -634,34 +634,42 @@ public class BitboardMovesGen {
     Color opponent = !white ? Color.WHITE : Color.BLACK;
     List<Move> specialMoves = new ArrayList<>();
     if (enPassantPos != null && isLastMoveDoublePush) {
-      System.out.println("EN PASSANT POSSIBLE");
-      System.out.println(enPassantPos);
-    }
-    if (enPassantPos != null && isLastMoveDoublePush) {
       Position pos = enPassantPos;
-      if (pos.getX() > 0
-          && bitboardRepresentation
-              .getPieceAt(pos.getX() - 1, pos.getY() - 1)
-              .equals(new ColoredPiece(Piece.PAWN, player))) {
-        specialMoves.add(
-            new Move(
-                new Position(pos.getX() - 1, pos.getY() + (white ? 1 : -1)),
-                new Position(pos.getX(), pos.getY()),
-                new ColoredPiece(Piece.PAWN, player),
-                true,
-                new ColoredPiece(Piece.PAWN, opponent)));
+      int pawnY = pos.getY() + (white ? -1 : 1);
+      Position capturedPos = new Position(pos.getX(), pawnY);
+
+      // left
+      if (pos.getX() > 0) {
+        if (bitboardRepresentation
+            .getPieceAt(pos.getX() - 1, pawnY)
+            .equals(new ColoredPiece(Piece.PAWN, player))) {
+          System.out.println("Adding en passant");
+          specialMoves.add(
+              new Move(
+                  new Position(pos.getX() - 1, pawnY),
+                  pos,
+                  new ColoredPiece(Piece.PAWN, player),
+                  true,
+                  new ColoredPiece(Piece.PAWN, opponent),
+                  capturedPos));
+        }
       }
-      if (pos.getX() < bitboardRepresentation.getNbCols() - 1
-          && bitboardRepresentation
-              .getPieceAt(pos.getX() + 1, pos.getY() - 1)
-              .equals(new ColoredPiece(Piece.PAWN, player))) {
-        specialMoves.add(
-            new Move(
-                new Position(pos.getX() + 1, pos.getY() + (white ? 1 : -1)),
-                new Position(pos.getX(), pos.getY()),
-                new ColoredPiece(Piece.PAWN, player),
-                true,
-                new ColoredPiece(Piece.PAWN, opponent)));
+
+      // right
+      if (pos.getX() < bitboardRepresentation.getNbCols() - 1) {
+        if (bitboardRepresentation
+            .getPieceAt(pos.getX() + 1, pawnY)
+            .equals(new ColoredPiece(Piece.PAWN, player))) {
+          System.out.println("Adding en passant");
+          specialMoves.add(
+              new Move(
+                  new Position(pos.getX() + 1, pawnY),
+                  pos,
+                  new ColoredPiece(Piece.PAWN, player),
+                  true,
+                  new ColoredPiece(Piece.PAWN, opponent),
+                  capturedPos));
+        }
       }
     }
 

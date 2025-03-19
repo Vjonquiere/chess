@@ -352,9 +352,7 @@ public class NewGamePopup {
           FileChooser fileChooser = new FileChooser();
           fileChooser.setTitle("Select a save file");
 
-          fileChooser
-              .getExtensionFilters()
-              .add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+          fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*"));
 
           File selectedFile = fileChooser.showOpenDialog(popupStage);
 

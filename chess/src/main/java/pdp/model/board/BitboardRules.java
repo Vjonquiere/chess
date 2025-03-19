@@ -63,16 +63,20 @@ public class BitboardRules {
       Color color, Move move, BitboardRepresentation bitboardRepresentation) {
     DEBUG(LOGGER, "Checking if " + color + " is check after move (" + move + ")");
     ColoredPiece removedPiece = null;
+    if (move.getTakeDest() == null) {
+      move.setTakeDest(move.dest);
+    }
     if (move.isTake) {
       removedPiece =
-          bitboardRepresentation.getPieceAt(move.getDest().getX(), move.getDest().getY());
-      bitboardRepresentation.deletePieceAt(move.getDest().getX(), move.getDest().getY());
+          bitboardRepresentation.getPieceAt(move.getTakeDest().getX(), move.getTakeDest().getY());
+      bitboardRepresentation.deletePieceAt(move.getTakeDest().getX(), move.getTakeDest().getY());
     }
     bitboardRepresentation.movePiece(move.source, move.dest); // Play move
     boolean isCheckAfterMove = isCheck(color, bitboardRepresentation);
     bitboardRepresentation.movePiece(move.dest, move.source); // undo move
     if (move.isTake) {
-      bitboardRepresentation.addPieceAt(move.getDest().getX(), move.getDest().getY(), removedPiece);
+      bitboardRepresentation.addPieceAt(
+          move.getTakeDest().getX(), move.getTakeDest().getY(), removedPiece);
     }
     if (isCheckAfterMove) {
       DEBUG(LOGGER, color.toString() + "will be checked after move");
@@ -102,18 +106,23 @@ public class BitboardRules {
           bitboardRepresentation.getAvailableMoves(
               piecePosition.getX(), piecePosition.getY(), false); // TODO: Check this line
       for (Move move : availableMoves) {
+        if (move.getTakeDest() == null) {
+          move.setTakeDest(move.dest);
+        }
         ColoredPiece removedPiece = null;
         if (move.isTake) {
           removedPiece =
-              bitboardRepresentation.getPieceAt(move.getDest().getX(), move.getDest().getY());
-          bitboardRepresentation.deletePieceAt(move.getDest().getX(), move.getDest().getY());
+              bitboardRepresentation.getPieceAt(
+                  move.getTakeDest().getX(), move.getTakeDest().getY());
+          bitboardRepresentation.deletePieceAt(
+              move.getTakeDest().getX(), move.getTakeDest().getY());
         }
         bitboardRepresentation.movePiece(move.source, move.dest); // Play move
         boolean isStillCheck = isCheck(color, bitboardRepresentation);
         bitboardRepresentation.movePiece(move.dest, move.source); // Undo move
         if (move.isTake) {
           bitboardRepresentation.addPieceAt(
-              move.getDest().getX(), move.getDest().getY(), removedPiece);
+              move.getTakeDest().getX(), move.getTakeDest().getY(), removedPiece);
         }
         if (!isStillCheck) {
           DEBUG(LOGGER, color.toString() + " is not check mate");
