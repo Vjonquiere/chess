@@ -55,6 +55,7 @@ public class Board extends GridPane {
             event -> {
               switchSelectedSquare(finalx, finaly);
             });
+        sq.setId("square" + x + y);
         pieces.put(new Position(x, boardRows - 1 - y), sq);
         super.add(sq, x, y);
       }
