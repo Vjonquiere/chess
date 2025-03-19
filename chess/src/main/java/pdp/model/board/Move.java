@@ -145,6 +145,27 @@ public class Move {
   }
 
   /**
+   * Parses a string representation of a move and converts it into a {@code Move} object
+   *
+   * @param stringMove The move in string format ("e2-e4")
+   * @return A {@code Move} object representing the parsed move
+   * @throws MoveParsingException If the string format is invalid
+   */
+  public static Move fromUCIString(String stringMove) throws MoveParsingException {
+    if (stringMove.length() == 5) {
+      return new PromoteMove(
+          stringToPosition(stringMove.substring(0, 2)),
+          stringToPosition(stringMove.substring(2, 4)),
+          stringToPiece(stringMove.substring(4, 5)));
+    } else if (stringMove.length() == 4) {
+      return new Move(
+          stringToPosition(stringMove.substring(0, 2)),
+          stringToPosition(stringMove.substring(2, 4)));
+    }
+    throw new MoveParsingException(stringMove);
+  }
+
+  /**
    * Converts a string representation of a chess position into a {@code Position} object
    *
    * @param move The position in string format ("e4")

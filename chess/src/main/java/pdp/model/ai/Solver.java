@@ -27,6 +27,7 @@ import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.board.Board;
+import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.utils.Logging;
 import pdp.utils.Timer;
@@ -220,6 +221,21 @@ public class Solver {
         game.getGameState().blackResigns();
       }
     }
+  }
+
+  public Move getBestMove(Game game) {
+    game.setExploration(true);
+    if (timer != null) {
+      timer.start();
+    }
+    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    if (timer != null) {
+      timer.stop();
+    }
+
+    DEBUG(LOGGER, "Best move " + bestMove);
+    game.setExploration(false);
+    return bestMove.move();
   }
 
   /**

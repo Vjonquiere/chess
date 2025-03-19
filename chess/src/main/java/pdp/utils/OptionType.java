@@ -582,6 +582,26 @@ public enum OptionType {
           .desc("The name of the file from which to load the history")
           .build();
     }
+  },
+  UCI {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "uci";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(false)
+          .desc("Launch the engine in UCI mode")
+          .build();
+    }
   };
 
   public abstract String getShort();
