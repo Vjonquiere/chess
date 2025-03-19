@@ -599,14 +599,6 @@ public class Game extends GameAbstract {
 
     DEBUG(LOGGER, "Restarting game");
 
-    if (!super.getGameState().isGameOver()) {
-      if (super.getGameState().isWhiteTurn()) {
-        super.getGameState().whiteResigns();
-      } else {
-        super.getGameState().blackResigns();
-      }
-    }
-
     super.getGameState().updateFrom(new GameState(super.getGameState().getMoveTimer()));
     super.getHistory().clear();
 

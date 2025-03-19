@@ -13,15 +13,17 @@ import pdp.model.Game;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.savers.ConfigFileSaver;
 import pdp.utils.OptionType;
+import pdp.utils.TextGetter;
+import pdp.view.GUIView;
 
 public class SettingsEditorPopup extends VBox {
   public SettingsEditorPopup() {
     Stage popupStage = new Stage();
-    popupStage.setTitle("Edit the default configuration");
+    popupStage.setTitle(TextGetter.getText("settings.edit"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
     VBox layout = new VBox(10);
 
-    Button saveButton = new Button("Save");
+    Button saveButton = new Button(TextGetter.getText("save"));
 
     String path = Game.getInstance().getOptions().get(OptionType.CONFIG);
     String text = "";
@@ -40,7 +42,7 @@ public class SettingsEditorPopup extends VBox {
     saveButton.setOnAction(e -> ConfigFileSaver.save(path, textArea.getText()));
     layout.getChildren().add(textArea);
 
-    Button closeButton = new Button("Close");
+    Button closeButton = new Button(TextGetter.getText("close"));
     closeButton.setOnAction(e -> popupStage.close());
     layout.getChildren().add(closeButton);
 
@@ -49,6 +51,7 @@ public class SettingsEditorPopup extends VBox {
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
     Scene scene = new Scene(layout);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

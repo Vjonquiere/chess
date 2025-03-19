@@ -11,6 +11,7 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
+import pdp.view.GUIView;
 
 public class RedoPopUp extends VBox {
   public RedoPopUp() {
@@ -47,6 +48,7 @@ public class RedoPopUp extends VBox {
     layout.setStyle("-fx-padding: 20;");
 
     Scene scene = new Scene(layout, 300, 150);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }
