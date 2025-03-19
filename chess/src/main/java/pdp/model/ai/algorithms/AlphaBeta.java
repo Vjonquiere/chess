@@ -62,7 +62,6 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   private AIMove alphaBeta(
       GameAi game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
-
     if (solver.isSearchStopped()) {
       return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
@@ -79,6 +78,8 @@ public class AlphaBeta implements SearchAlgorithm {
         break;
       }
       try {
+
+        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
         game.previousState();

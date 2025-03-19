@@ -9,6 +9,11 @@ import pdp.model.piece.Piece;
 public abstract class AlgorithmHelpers {
 
   public static Move promoteMove(Move move) {
+
+    if (move instanceof PromoteMove) {
+      return move;
+    }
+
     ColoredPiece piece = move.getPiece();
     if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && move.dest.getY() == 0) {
       move = new PromoteMove(move.source, move.dest, Piece.QUEEN);

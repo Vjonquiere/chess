@@ -19,11 +19,6 @@ public class BitboardRepresentation implements BoardRepresentation {
   protected final int nbCols = 8;
   protected final int nbRows = 8;
   public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
-  private BitboardMovesGen bitboardMovesGen;
-  private BitboardPieces bitboardPieces;
-  private BitboardRules bitboardRules;
-  private BitboardStatusCheck bitboardStatusCheck;
-  private BitboardUtils bitboardUtils;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -73,11 +68,6 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[9].setBit(63);
     board[10] = new Bitboard(4755801206503243776L); // BKi
     board[11] = new Bitboard(71776119061217280L);
-    bitboardPieces = new BitboardPieces(this);
-    bitboardMovesGen = new BitboardMovesGen(this);
-    bitboardRules = new BitboardRules(this);
-    bitboardStatusCheck = new BitboardStatusCheck(this);
-    bitboardUtils = new BitboardUtils(this);
   }
 
   @Deprecated
@@ -107,11 +97,6 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[9] = blackRooks;
     board[10] = blackKnights;
     board[11] = blackPawns;
-    bitboardPieces = new BitboardPieces(this);
-    bitboardMovesGen = new BitboardMovesGen(this);
-    bitboardRules = new BitboardRules(this);
-    bitboardStatusCheck = new BitboardStatusCheck(this);
-    bitboardUtils = new BitboardUtils(this);
   }
 
   @Override
@@ -156,13 +141,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
-
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
-      if (index == 3 && x == 0 && y == 0) {
-        System.out.println("Getting piece at [" + x + ", " + y + "]");
-        System.out.println(board[3].toString());
-      }
       if (board[index].getBit(square)) {
         return pieces.getFromKey(index);
       }
@@ -179,8 +159,6 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void movePiece(Position from, Position to) {
-    System.out.println(
-        "Moving " + getPieceAt(from.getX(), from.getY()) + " from " + from + " to " + to);
     ColoredPiece piece = getPieceAt(from.getX(), from.getY());
     int fromIndex = from.getX() % 8 + from.getY() * 8;
     int toIndex = to.getX() % 8 + to.getY() * 8;
@@ -347,7 +325,7 @@ public class BitboardRepresentation implements BoardRepresentation {
       Bitboard unreachableSquares,
       Bitboard enemies,
       Function<Bitboard, Bitboard> moveFunction) {
-    return bitboardMovesGen.getMultipleMovesFromDirection(
+    return BitboardMovesGen.getMultipleMovesFromDirection(
         piece, unreachableSquares, enemies, moveFunction);
   }
 
@@ -361,7 +339,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected Bitboard getInlineMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies) {
-    return bitboardMovesGen.getInlineMoves(square, unreachableSquares, enemies);
+    return BitboardMovesGen.getInlineMoves(square, unreachableSquares, enemies);
   }
 
   /**
@@ -375,7 +353,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected Bitboard getDiagonalMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies) {
-    return bitboardMovesGen.getDiagonalMoves(square, unreachableSquares, enemies);
+    return BitboardMovesGen.getDiagonalMoves(square, unreachableSquares, enemies);
   }
 
   /**
@@ -388,7 +366,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected List<Move> bitboardToMoves(
       Bitboard moveBitboard, Bitboard enemies, Position source, ColoredPiece piece) {
-    return bitboardMovesGen.bitboardToMoves(moveBitboard, enemies, source, piece);
+    return BitboardMovesGen.bitboardToMoves(moveBitboard, enemies, source, piece, this);
   }
 
   /**
@@ -401,12 +379,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected List<Move> getKingMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return bitboardMovesGen.getKingMoves(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getKingMoves(square, unreachableSquares, enemies, piece, this);
   }
 
   protected Bitboard getKingMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return bitboardMovesGen.getKingMoveBitboard(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getKingMoveBitboard(square, unreachableSquares, enemies, piece);
   }
 
   /**
@@ -419,12 +397,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected List<Move> getKnightMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return bitboardMovesGen.getKnightMoves(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getKnightMoves(square, unreachableSquares, enemies, piece, this);
   }
 
   protected Bitboard getKnightMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return bitboardMovesGen.getKnightMoveBitboard(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getKnightMoveBitboard(square, unreachableSquares, enemies, piece);
   }
 
   /**
@@ -437,12 +415,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected List<Move> getPawnMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
-    return bitboardMovesGen.getPawnMoves(square, unreachableSquares, enemies, white);
+    return BitboardMovesGen.getPawnMoves(square, unreachableSquares, enemies, white, this);
   }
 
   protected Bitboard getPawnMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
-    return bitboardMovesGen.getPawnMoveBitboard(square, unreachableSquares, enemies, white);
+    return BitboardMovesGen.getPawnMoveBitboard(square, unreachableSquares, enemies, white);
   }
 
   /**
@@ -455,7 +433,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected List<Move> getQueenMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return bitboardMovesGen.getQueenMoves(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getQueenMoves(square, unreachableSquares, enemies, piece, this);
   }
 
   /**
@@ -468,7 +446,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected List<Move> getBishopMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return bitboardMovesGen.getBishopMoves(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getBishopMoves(square, unreachableSquares, enemies, piece, this);
   }
 
   /**
@@ -481,7 +459,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected List<Move> getRookMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return bitboardMovesGen.getRookMoves(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getRookMoves(square, unreachableSquares, enemies, piece, this);
   }
 
   /**
@@ -496,7 +474,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
-    return bitboardMovesGen.getAvailableMoves(x, y, kingReachable);
+    return BitboardMovesGen.getAvailableMoves(x, y, kingReachable, this);
   }
 
   /**
@@ -510,7 +488,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The bitboard containing all the reachable positions
    */
   public Bitboard getMoveBitboard(int x, int y, boolean kingReachable) {
-    return bitboardMovesGen.getMoveBitboard(x, y, kingReachable);
+    return BitboardMovesGen.getMoveBitboard(x, y, kingReachable, this);
   }
 
   /**
@@ -522,7 +500,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Move> getAllAvailableMoves(boolean isWhite) {
-    return bitboardMovesGen.getAllAvailableMoves(isWhite);
+    return BitboardMovesGen.getAllAvailableMoves(isWhite, this);
   }
 
   /**
@@ -533,7 +511,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The bitboard containing all possible moves (without special cases)
    */
   public Bitboard getColorMoveBitboard(boolean isWhite) {
-    return bitboardMovesGen.getColorMoveBitboard(isWhite);
+    return BitboardMovesGen.getColorMoveBitboard(isWhite, this);
   }
 
   // ________________________ BitboardPieces
@@ -546,7 +524,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Position> getPawns(boolean white) {
-    return bitboardPieces.getPawns(white);
+    return BitboardPieces.getPawns(white, this);
   }
 
   /**
@@ -557,7 +535,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Position> getRooks(boolean white) {
-    return bitboardPieces.getRooks(white);
+    return BitboardPieces.getRooks(white, this);
   }
 
   /**
@@ -568,7 +546,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Position> getBishops(boolean white) {
-    return bitboardPieces.getBishops(white);
+    return BitboardPieces.getBishops(white, this);
   }
 
   /**
@@ -579,7 +557,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Position> getKnights(boolean white) {
-    return bitboardPieces.getKnights(white);
+    return BitboardPieces.getKnights(white, this);
   }
 
   /**
@@ -590,7 +568,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Position> getQueens(boolean white) {
-    return bitboardPieces.getQueens(white);
+    return BitboardPieces.getQueens(white, this);
   }
 
   /**
@@ -601,11 +579,11 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Position> getKing(boolean white) {
-    return bitboardPieces.getKing(white);
+    return BitboardPieces.getKing(white, this);
   }
 
   public int getKingOpti(boolean white) {
-    return bitboardPieces.getKingOpti(white);
+    return BitboardPieces.getKingOpti(white, this);
   }
 
   /**
@@ -614,7 +592,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return the number of remaining pieces on the board
    */
   public int nbPiecesRemaining() {
-    return bitboardPieces.nbPiecesRemaining();
+    return BitboardPieces.nbPiecesRemaining(this);
   }
 
   /**
@@ -623,7 +601,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return the bitboard containing all white pieces
    */
   protected Bitboard getWhiteBoard() {
-    return bitboardPieces.getWhiteBoard();
+    return BitboardPieces.getWhiteBoard(this);
   }
 
   /**
@@ -632,7 +610,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return the bitboard containing all black pieces
    */
   protected Bitboard getBlackBoard() {
-    return bitboardPieces.getBlackBoard();
+    return BitboardPieces.getBlackBoard(this);
   }
 
   // ________________________ BitboardRules
@@ -647,7 +625,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isAttacked(int x, int y, Color by) {
-    return bitboardRules.isAttacked(x, y, by);
+    return BitboardRules.isAttacked(x, y, by, this);
   }
 
   /**
@@ -658,7 +636,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheck(Color color) {
-    return bitboardRules.isCheck(color);
+    return BitboardRules.isCheck(color, this);
   }
 
   /**
@@ -670,19 +648,19 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckAfterMove(Color color, Move move) {
-    return bitboardRules.isCheckAfterMove(color, move);
+    return BitboardRules.isCheckAfterMove(color, move, this);
   }
 
   /**
-   * Get the checkMate state for the given color (⚠️ can be resources/time-consuming if there are
-   * many pieces remaining on the board)
+   * Get the checkMate state for the given color (can be resources/time-consuming if there are many
+   * pieces remaining on the board)
    *
    * @param color The piece color you want to know checkMate status
    * @return True if the given color is in checkMate, False else
    */
   @Override
   public boolean isCheckMate(Color color) {
-    return bitboardRules.isCheckMate(color);
+    return BitboardRules.isCheckMate(color, this);
   }
 
   /**
@@ -695,7 +673,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isStaleMate(Color color, Color colorTurnToPlay) {
-    return bitboardRules.isStaleMate(color, colorTurnToPlay);
+    return BitboardRules.isStaleMate(color, colorTurnToPlay, this);
   }
 
   /**
@@ -706,7 +684,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isDrawByInsufficientMaterial() {
-    return bitboardRules.isDrawByInsufficientMaterial();
+    return BitboardRules.isDrawByInsufficientMaterial(this);
   }
 
   /**
@@ -719,7 +697,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isPawnPromoting(int x, int y, boolean white) {
-    return bitboardRules.isPawnPromoting(x, y, white);
+    return BitboardRules.isPawnPromoting(x, y, white, this);
   }
 
   /**
@@ -732,7 +710,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isDoublePushPossible(Move move, boolean white) {
-    return bitboardRules.isDoublePushPossible(move, white);
+    return BitboardRules.isDoublePushPossible(move, white, this);
   }
 
   /**
@@ -745,7 +723,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the move is a valid en passant capture, false else
    */
   public boolean isEnPassant(int x, int y, Move move, boolean white) {
-    return bitboardRules.isEnPassant(x, y, move, white);
+    return BitboardRules.isEnPassant(x, y, move, white, this);
   }
 
   /**
@@ -756,7 +734,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if {white} has enouhg material to mate. false otherwise
    */
   public boolean hasEnoughMaterialToMate(boolean white) {
-    return bitboardRules.hasEnoughMaterialToMate(white);
+    return BitboardRules.hasEnoughMaterialToMate(white, this);
   }
 
   /**
@@ -767,7 +745,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Move> retrieveKingMoves(boolean white) {
-    return bitboardMovesGen.retrieveKingMoves(white);
+    return BitboardMovesGen.retrieveKingMoves(white, this);
   }
 
   /**
@@ -778,7 +756,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Move> retrieveBishopMoves(boolean white) {
-    return bitboardMovesGen.retrieveBishopMoves(white);
+    return BitboardMovesGen.retrieveBishopMoves(white, this);
   }
 
   /**
@@ -786,7 +764,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<List<Position>> retrieveWhitePiecesPos() {
-    return bitboardRules.retrieveWhitePiecesPos();
+    return BitboardRules.retrieveWhitePiecesPos(this);
   }
 
   /**
@@ -794,7 +772,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<List<Position>> retrieveBlackPiecesPos() {
-    return bitboardRules.retrieveBlackPiecesPos();
+    return BitboardRules.retrieveBlackPiecesPos(this);
   }
 
   /**
@@ -802,7 +780,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<List<Position>> retrieveInitialWhitePiecesPos() {
-    return bitboardRules.retrieveInitialWhitePiecesPos();
+    return BitboardRules.retrieveInitialWhitePiecesPos();
   }
 
   /**
@@ -810,7 +788,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<List<Position>> retrieveInitialBlackPiecesPos() {
-    return bitboardRules.retrieveInitialBlackPiecesPos();
+    return BitboardRules.retrieveInitialBlackPiecesPos();
   }
 
   /**
@@ -822,7 +800,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if the move is a castle move, false otherwise.
    */
   public boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
-    return bitboardRules.isCastleMove(coloredPiece, source, dest);
+    return BitboardRules.isCastleMove(coloredPiece, source, dest);
   }
 
   /**
@@ -834,7 +812,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
   public boolean validatePieceOwnership(boolean white, Position sourcePosition) {
-    return bitboardRules.validatePieceOwnership(white, sourcePosition);
+    return BitboardRules.validatePieceOwnership(white, sourcePosition, this);
   }
 
   // ________________________ BitboardStatusCheck
@@ -846,7 +824,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean queensOffTheBoard() {
-    return bitboardStatusCheck.queensOffTheBoard();
+    return BitboardStatusCheck.queensOffTheBoard(this);
   }
 
   /**
@@ -856,7 +834,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if the majority of pawns for the given color are past the middle of the board.
    */
   public boolean pawnsHaveProgressed(boolean isWhite) {
-    return bitboardStatusCheck.pawnsHaveProgressed(isWhite);
+    return BitboardStatusCheck.pawnsHaveProgressed(isWhite, this);
   }
 
   /**
@@ -866,7 +844,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean areKingsActive() {
-    return bitboardStatusCheck.areKingsActive();
+    return BitboardStatusCheck.areKingsActive(this);
   }
 
   /**
@@ -885,8 +863,14 @@ public class BitboardRepresentation implements BoardRepresentation {
       boolean whiteLongCastle,
       boolean blackShortCastle,
       boolean blackLongCastle) {
-    return bitboardStatusCheck.canCastle(
-        color, shortCastle, whiteShortCastle, whiteLongCastle, blackShortCastle, blackLongCastle);
+    return BitboardStatusCheck.canCastle(
+        color,
+        shortCastle,
+        whiteShortCastle,
+        whiteLongCastle,
+        blackShortCastle,
+        blackLongCastle,
+        this);
   }
 
   /**
@@ -895,7 +879,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if we're in an endgame (according to the chosen criterias)
    */
   public boolean isEndGamePhase(int fullTurn, boolean white) {
-    return bitboardStatusCheck.isEndGamePhase(fullTurn, white);
+    return BitboardStatusCheck.isEndGamePhase(fullTurn, white, this);
   }
 
   // ________________________ BitboardUtils
@@ -907,7 +891,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A new list containing the translations
    */
   protected List<Position> squaresToPosition(List<Integer> squares) {
-    return bitboardUtils.squaresToPosition(squares);
+    return BitboardUtils.squaresToPosition(squares);
   }
 
   /**
@@ -917,11 +901,11 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A Position containing the translations
    */
   protected Position squareToPosition(int square) {
-    return bitboardUtils.squareToPosition(square);
+    return BitboardUtils.squareToPosition(square);
   }
 
   public List<Move> getSpecialMoves(boolean white) {
-    return bitboardMovesGen.getSpecialMoves(white);
+    return BitboardMovesGen.getSpecialMoves(white, this);
   }
 
   /**
@@ -931,20 +915,20 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of positions
    */
   protected List<Position> getOccupiedSquares(int bitBoardIndex) {
-    return bitboardUtils.getOccupiedSquares(bitBoardIndex);
+    return BitboardUtils.getOccupiedSquares(bitBoardIndex, this);
   }
 
   /**
    * @return The horizontal size of the board
    */
   public int getNbCols() {
-    return bitboardUtils.getNbCols();
+    return BitboardUtils.getNbCols(this);
   }
 
   /**
    * @return The vertical size of the board
    */
   public int getNbRows() {
-    return bitboardUtils.getNbRows();
+    return BitboardUtils.getNbRows(this);
   }
 }

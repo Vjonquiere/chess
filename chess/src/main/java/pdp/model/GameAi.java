@@ -33,7 +33,6 @@ public class GameAi extends GameAbstract {
    */
   @Override
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
-    System.out.println("Trying to play move " + move);
     Position sourcePosition = new Position(move.source.getX(), move.source.getY());
     Position destPosition = new Position(move.dest.getX(), move.dest.getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");

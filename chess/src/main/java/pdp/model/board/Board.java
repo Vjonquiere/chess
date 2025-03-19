@@ -115,15 +115,15 @@ public class Board {
 
     getBoardRep().movePiece(move.source, move.dest);
 
-    if (this.isWhiteShortCastle()
-        && (move.source.equals(new Position(4, 0))
-            || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
-      this.setWhiteShortCastle(false);
-    }
     if (this.isWhiteLongCastle()
         && (move.source.equals(new Position(4, 0))
-            || move.source.equals(new Position(7, 0)))) { // rook on h1 and king on e1
+            || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
       this.setWhiteLongCastle(false);
+    }
+    if (this.isWhiteShortCastle()
+        && (move.source.equals(new Position(4, 0))
+            || move.source.equals(new Position(7, 0)))) { // rook on h1 and king on e1
+      this.setWhiteShortCastle(false);
     }
 
     if (this.isBlackShortCastle()
@@ -268,7 +268,7 @@ public class Board {
    * @param color color for which castling move is applied
    */
   public void applyCastle(Color color, boolean shortCastle) {
-    System.out.println("Castling " + (shortCastle ? "short" : "long") + " for " + color);
+
     if (shortCastle) {
       getBoardRep().applyShortCastle(color);
     } else {

@@ -8,10 +8,9 @@ import pdp.utils.Position;
 
 public class BitboardUtils {
   private static final Logger LOGGER = Logger.getLogger(BitboardUtils.class.getName());
-  private BitboardRepresentation bitboardRepresentation;
 
-  public BitboardUtils(BitboardRepresentation bitboardRepresentation) {
-    this.bitboardRepresentation = bitboardRepresentation;
+  private BitboardUtils(BitboardRepresentation bitboardRepresentation) {
+    throw new UnsupportedOperationException("Cannot instantiate utility class");
   }
 
   static {
@@ -24,9 +23,9 @@ public class BitboardUtils {
    * @param bitBoardIndex The bitboard to lookUp
    * @return A list of positions
    */
-  protected List<Position> getOccupiedSquares(int bitBoardIndex) {
-    return squaresToPosition(
-        this.bitboardRepresentation.getBitboards()[bitBoardIndex].getSetBits());
+  public static List<Position> getOccupiedSquares(
+      int bitBoardIndex, BitboardRepresentation bitboardRepresentation) {
+    return squaresToPosition(bitboardRepresentation.getBitboards()[bitBoardIndex].getSetBits());
   }
 
   /**
@@ -35,7 +34,7 @@ public class BitboardUtils {
    * @param square The square to change to position
    * @return A Position containing the translations
    */
-  protected Position squareToPosition(int square) {
+  public static Position squareToPosition(int square) {
     return new Position(square % 8, square / 8);
   }
 
@@ -45,7 +44,7 @@ public class BitboardUtils {
    * @param squares The list of squares to change to position
    * @return A new list containing the translations
    */
-  protected List<Position> squaresToPosition(List<Integer> squares) {
+  public static List<Position> squaresToPosition(List<Integer> squares) {
     List<Position> positions = new ArrayList<>();
     for (Integer i : squares) {
       positions.add(new Position(i % 8, i / 8));
@@ -56,14 +55,14 @@ public class BitboardUtils {
   /**
    * @return The horizontal size of the board
    */
-  public int getNbCols() {
-    return this.bitboardRepresentation.nbCols;
+  public static int getNbCols(BitboardRepresentation bitboardRepresentation) {
+    return bitboardRepresentation.nbCols;
   }
 
   /**
    * @return The vertical size of the board
    */
-  public int getNbRows() {
-    return this.bitboardRepresentation.nbRows;
+  public static int getNbRows(BitboardRepresentation bitboardRepresentation) {
+    return bitboardRepresentation.nbRows;
   }
 }
