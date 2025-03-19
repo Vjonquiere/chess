@@ -36,10 +36,12 @@ public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private final ZobristHashing zobristHashing = new ZobristHashing();
-  private final HashMap<Long, Integer> evaluatedBoards;
+  private HashMap<Long, Integer> evaluatedBoards;
 
   private SearchAlgorithm algorithm;
   private Heuristic heuristic;
+  private HeuristicType currentHeuristic;
+  private HeuristicType endgameHeuristic;
   private int depth = 4;
   private Timer timer;
   private long time;
@@ -105,7 +107,21 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    this.currentHeuristic = heuristic;
+    this.evaluatedBoards = new HashMap<>();
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
+  }
+
+  public void setEndgameHeurisic(HeuristicType heuristic) {
+    this.endgameHeuristic = heuristic;
+  }
+
+  public HeuristicType getEndgameHeurisic() {
+    return this.endgameHeuristic;
+  }
+
+  public HeuristicType getCurrentHeurisic() {
+    return this.currentHeuristic;
   }
 
   /**

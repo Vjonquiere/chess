@@ -483,6 +483,69 @@ public enum OptionType {
           .build();
     }
   },
+  AI_ENDGAME {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-eg-heuristic";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the endgame of the artificial players.\n")
+          .build();
+    }
+  },
+  AI_ENDGAME_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-eg-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the endgame of the white artificial player.\n")
+          .build();
+    }
+  },
+  AI_ENDGAME_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-eg-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the endgame of the black artificial player.\n")
+          .build();
+    }
+  },
   AI_TIME {
     @Override
     public String getShort() {
