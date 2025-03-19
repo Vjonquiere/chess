@@ -55,7 +55,7 @@ public class Board extends GridPane {
             event -> {
               switchSelectedSquare(finalx, finaly);
             });
-        sq.setId("square" + x + y);
+        sq.setId("square" + finalx + finaly);
         pieces.put(new Position(x, boardRows - 1 - y), sq);
         super.add(sq, x, y);
       }
@@ -108,7 +108,6 @@ public class Board extends GridPane {
       } catch (Exception e) {
         clearReachableSquares();
         from = null;
-        System.out.println("wrong move:" + e.getMessage());
       }
     }
   }
