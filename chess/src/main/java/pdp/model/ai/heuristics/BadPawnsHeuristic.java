@@ -1,11 +1,17 @@
 package pdp.model.ai.heuristics;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
 public class BadPawnsHeuristic implements Heuristic {
+
+  private static final int penaltyForBackwardsPawn = 4;
 
   /**
    * Computes a score according to the potential weaknesses in the observed pawn structures.
@@ -86,7 +92,6 @@ public class BadPawnsHeuristic implements Heuristic {
     List<Position> enemyPawns = bitboard.getPawns(!isWhite);
 
     int count = 0;
-    int penaltyForBackwardsPawn = 4;
 
     // Track the most advanced friendly pawn in each file
     Map<Integer, Integer> highestPawnRank = new HashMap<>();

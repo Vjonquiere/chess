@@ -1,7 +1,6 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -251,7 +250,7 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_TIME, "abc");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(outputStream.toString().contains("Not a long for the time of AI (in seconds)"));
+    assertTrue(outputStream.toString().contains("Not an int for the time of AI (in seconds)"));
     assertTrue(outputStream.toString().contains("Defaulting to a 5 seconds timer"));
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
@@ -264,7 +263,7 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_TIME, "3.1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(outputStream.toString().contains("Not a long for the time of AI (in seconds)"));
+    assertTrue(outputStream.toString().contains("Not an int for the time of AI (in seconds)"));
     assertTrue(outputStream.toString().contains("Defaulting to a 5 seconds timer"));
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
@@ -281,7 +280,7 @@ class GameInitializerTest {
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getWhiteSolver());
-    assertEquals(59000, controller.getModel().getWhiteSolver().getTime());
+    assertEquals(60000, controller.getModel().getWhiteSolver().getTime());
   }
 
   @Test
@@ -307,8 +306,8 @@ class GameInitializerTest {
     assertTrue(controller.getModel().isWhiteAI());
     assertFalse(controller.getModel().isBlackAI());
     assertNotNull(controller.getModel().getWhiteSolver());
-    // Blitz time - 100ms of margin
-    assertEquals(59000, controller.getModel().getWhiteSolver().getTime());
+    // Blitz time
+    assertEquals(60000, controller.getModel().getWhiteSolver().getTime());
   }
 
   @Test
@@ -402,7 +401,7 @@ class GameInitializerTest {
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     options.put(OptionType.LOAD, filePath.getPath());
     GameController controller = GameControllerInit.initialize(options);
-    assertEquals(controller.getModel().getBoard().board, board.board());
+    assertEquals(controller.getModel().getBoard().getBoardRep(), board.board());
     assertEquals(controller.getModel().getGameState().isWhiteTurn(), board.isWhiteTurn());
   }
 }

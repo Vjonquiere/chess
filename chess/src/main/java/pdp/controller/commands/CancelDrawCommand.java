@@ -8,10 +8,10 @@ import pdp.model.Game;
 
 public class CancelDrawCommand implements Command {
 
-  boolean isWhite;
+  private boolean isWhite;
 
   public CancelDrawCommand(boolean isWhite) {
-    this.isWhite = isWhite;
+    this.setWhite(isWhite);
   }
 
   /**
@@ -28,11 +28,19 @@ public class CancelDrawCommand implements Command {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }
-    if (isWhite) {
+    if (isWhite()) {
       model.getGameState().whiteCancelsDrawRequest();
     } else {
       model.getGameState().blackCancelsDrawRequest();
     }
     return Optional.empty();
+  }
+
+  public boolean isWhite() {
+    return isWhite;
+  }
+
+  public void setWhite(boolean white) {
+    isWhite = white;
   }
 }

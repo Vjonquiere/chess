@@ -7,7 +7,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
@@ -28,7 +31,7 @@ public class BoardFileParser {
    *
    * @param path The path to the file
    * @return The content of the given file has a String
-   * @throws FileNotFoundException
+   * @throws FileNotFoundException if the path is not valid
    */
   public String readFile(String path) throws FileNotFoundException {
     DEBUG(LOGGER, "Loading file: " + path);

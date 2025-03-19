@@ -33,7 +33,7 @@ public class GUIView implements View {
   private ControlPanel controlPanel;
   private ChessMenu menu;
   public static ColorTheme theme = SIMPLE;
-  boolean init = false;
+  private boolean init = false;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -126,9 +126,9 @@ public class GUIView implements View {
   @Override
   public void onGameEvent(EventType event) {
     DEBUG(LOGGER, "View received event " + event);
-    if (!Platform.isFxApplicationThread() && !init) {
+    if (!Platform.isFxApplicationThread() && !isInit()) {
       DEBUG(LOGGER, "Init GUI thread");
-      init = true;
+      setInit(true);
       Platform.startup(() -> Platform.runLater(() -> this.onGameEvent(event)));
     }
     Platform.runLater(
@@ -296,5 +296,13 @@ public class GUIView implements View {
         "Method not implemented in " + this.getClass().getName());
 
      */
+  }
+
+  public boolean isInit() {
+    return init;
+  }
+
+  public void setInit(boolean init) {
+    this.init = init;
   }
 }

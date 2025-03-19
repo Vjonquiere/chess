@@ -4,6 +4,7 @@ import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
 public class MobilityHeuristic implements Heuristic {
+
   /**
    * Evaluates the board based on the available moves for each player. The amount is divided by 10
    * based on Shannon's paper (XXII. Programming a Computer for Playing Chess).

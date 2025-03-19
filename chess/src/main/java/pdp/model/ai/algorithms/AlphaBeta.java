@@ -1,5 +1,7 @@
 package pdp.model.ai.algorithms;
 
+import static pdp.utils.Logging.DEBUG;
+
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
@@ -31,7 +33,9 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    return alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+    AIMove bestMove = alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+    DEBUG(LOGGER, "Best move: " + bestMove);
+    return bestMove;
   }
 
   /**
@@ -51,7 +55,7 @@ public class AlphaBeta implements SearchAlgorithm {
   private AIMove alphaBeta(
       Game game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
 
-    if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) {
+    if (solver.isSearchStopped()) {
       return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
@@ -62,7 +66,9 @@ public class AlphaBeta implements SearchAlgorithm {
         new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     for (Move move : moves) {
-      if (solver.getTimer() != null && solver.getTimer().getTimeRemaining() <= 0) break;
+      if (solver.isSearchStopped()) {
+        break;
+      }
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
@@ -79,7 +85,9 @@ public class AlphaBeta implements SearchAlgorithm {
           }
           beta = Math.min(beta, bestMove.score());
         }
-        if (alpha >= beta) break;
+        if (alpha >= beta) {
+          break;
+        }
       } catch (IllegalMoveException e) {
         // Skipping illegal move
       }

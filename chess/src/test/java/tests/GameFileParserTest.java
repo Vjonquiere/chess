@@ -21,6 +21,7 @@ import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
+import pdp.utils.OptionType;
 import pdp.utils.Position;
 
 public class GameFileParserTest {
@@ -48,9 +49,15 @@ public class GameFileParserTest {
   @Test
   public void parseDefaultGameFile() {
     URL filePath = classLoader.getResource("gameBoards/defaultGame");
+    HashMap<OptionType, String> options = new HashMap<>();
+    options.put(OptionType.LOAD, filePath.getPath());
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     assertEquals(new BitboardRepresentation(), board.board());
     assertTrue(board.isWhiteTurn());
+    Game game = Game.initialize(false, false, null, null, null, board, options);
+    game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(false);
+    game.playMove(Move.fromString("e2-e4"));
   }
 
   @Test
@@ -61,7 +68,7 @@ public class GameFileParserTest {
     assertFalse(board.isWhiteTurn());
     Game game = Game.initialize(false, false, null, null, null, board, new HashMap<>());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
-    assertEquals(game.getBoard().board, board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertThrows(
         IllegalMoveException.class,
         () -> {
@@ -144,9 +151,46 @@ public class GameFileParserTest {
   }
 
   @Test
-  public void parseCommentFile() {
+  public void parseCommentFileAndOverwriteDifferentMoveEndHistory() {
     URL filePath = classLoader.getResource("gameBoards/commentsBoard");
-    parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    HashMap<OptionType, String> options = new HashMap<>();
+    options.put(OptionType.LOAD, filePath.getPath());
+    FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    Game game = Game.initialize(false, false, null, null, null, board, options);
+    game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(true);
+    Move move = Move.fromString("g4-f6");
+    game.playMove(move);
+  }
+
+  @Test
+  public void parseCommentFileAndOverwriteDifferentMoveAfterUndo() {
+    URL filePath = classLoader.getResource("gameBoards/commentsBoardCopy2");
+    HashMap<OptionType, String> options = new HashMap<>();
+    options.put(OptionType.LOAD, filePath.getPath());
+    FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    Game game = Game.initialize(false, false, null, null, null, board, options);
+    game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(true);
+    Move move = Move.fromString("g4-f6");
+    game.playMove(move);
+    game.previousState();
+    game.playMove(Move.fromString("g4-e5"));
+  }
+
+  @Test
+  public void parseCommentFileAndOverwriteSameMove() {
+    URL filePath = classLoader.getResource("gameBoards/commentsBoardCopy");
+    HashMap<OptionType, String> options = new HashMap<>();
+    options.put(OptionType.LOAD, filePath.getPath());
+    FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
+    Game game = Game.initialize(false, false, null, null, null, board, options);
+    game.setLoadedFromFile();
+    game.setLoadingFileHasHistory(true);
+    Move move = Move.fromString("g4-f6");
+    game.playMove(move);
+    game.previousState();
+    game.playMove(move);
   }
 
   @Test
@@ -185,7 +229,7 @@ public class GameFileParserTest {
             new Position(7, 2),
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
-    assertEquals(game.getBoard().board, board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
@@ -227,7 +271,7 @@ public class GameFileParserTest {
             new Position(7, 2),
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
-    assertEquals(game.getBoard().board, board.board());
+    assertEquals(game.getBoard().getBoardRep(), board.board());
     assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
@@ -319,7 +363,7 @@ public class GameFileParserTest {
     Game game = Game.initialize(false, false, null, null, null, fb, new HashMap<>());
 
     // Checking params are given to the game
-    assertNull(game.getBoard().enPassantPos);
+    assertNull(game.getBoard().getEnPassantPos());
     assertEquals(49, game.getBoard().getNbMovesWithNoCaptureOrPawn());
     assertEquals(140, game.getGameState().getFullTurn());
 
@@ -350,7 +394,7 @@ public class GameFileParserTest {
     // Checking params are given to the game
     assertEquals(0, game.getBoard().getNbMovesWithNoCaptureOrPawn());
     assertEquals(141, game.getGameState().getFullTurn());
-    assertEquals(new Position(0, 2), game.getBoard().enPassantPos);
+    assertEquals(new Position(0, 2), game.getBoard().getEnPassantPos());
     assertFalse(Game.getInstance().isOver());
   }
 }

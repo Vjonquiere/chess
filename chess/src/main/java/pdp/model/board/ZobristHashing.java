@@ -58,23 +58,23 @@ public class ZobristHashing {
    * @return An integer (0 to 15) representing castling rights, or -1 if no castling is possible.
    */
   private int translateCastling(Board board) {
-    if (!board.whiteShortCastle
-        && !board.whiteLongCastle
-        && !board.blackShortCastle
-        && !board.blackLongCastle) {
+    if (!board.isWhiteShortCastle()
+        && !board.isWhiteLongCastle()
+        && !board.isBlackShortCastle()
+        && !board.isBlackLongCastle()) {
       return -1;
     }
     int castlingRights = 0;
-    if (board.whiteShortCastle) {
+    if (board.isWhiteShortCastle()) {
       castlingRights |= 1;
     }
-    if (board.whiteLongCastle) {
+    if (board.isWhiteLongCastle()) {
       castlingRights |= 2;
     }
-    if (board.blackShortCastle) {
+    if (board.isBlackShortCastle()) {
       castlingRights |= 4;
     }
-    if (board.blackLongCastle) {
+    if (board.isBlackLongCastle()) {
       castlingRights |= 8;
     }
     return castlingRights;
@@ -88,8 +88,9 @@ public class ZobristHashing {
    */
   private long generatePieceHash(Board board) {
     long hash = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardsRepresentation))
+    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardsRepresentation)) {
       throw new RuntimeException("Only available for bitboards");
+    }
     Bitboard[] bitboards = bitboardsRepresentation.getBitboards();
     for (int i = 0; i < PIECES_TYPES; i++) {
       long bitboardValue = bitboards[i].bitboard;
@@ -112,17 +113,17 @@ public class ZobristHashing {
    * @return updated hash
    */
   private long updatePieceHash(long currHash, Board board, Move move) {
-    int from = move.source.getX() + move.source.getY() * board.getBoardRep().getNbRows();
-    int to = move.dest.getX() + move.dest.getY() * board.getBoardRep().getNbCols();
-    ColoredPiece capturedPiece = move.takenPiece;
-
     if (!(board.getBoardRep() instanceof BitboardRepresentation))
       throw new RuntimeException("Only available for bitboards");
+
+    int from = move.source.getX() + move.source.getY() * board.getBoardRep().getNbRows();
+    int to = move.dest.getX() + move.dest.getY() * board.getBoardRep().getNbCols();
 
     // Remove piece from its source and add it to the destination
     currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
     currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
 
+    ColoredPiece capturedPiece = move.takenPiece;
     // delete the captured piece
     if (capturedPiece != null) {
       currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
@@ -143,8 +144,8 @@ public class ZobristHashing {
       hash ^= castling[prevCastlingIndex];
     }
 
-    if (board.enPassantPos != null) {
-      prevEnPassantFile = board.enPassantPos.getX();
+    if (board.getEnPassantPos() != null) {
+      prevEnPassantFile = board.getEnPassantPos().getX();
       hash ^= enPassant[prevEnPassantFile];
     }
     if (board.isWhite) {
@@ -171,8 +172,8 @@ public class ZobristHashing {
       prevEnPassantFile = -1;
     }
     // if en passant is possible
-    if (board.enPassantPos != null) {
-      prevEnPassantFile = board.enPassantPos.getX();
+    if (board.getEnPassantPos() != null) {
+      prevEnPassantFile = board.getEnPassantPos().getX();
       currHash ^= enPassant[prevEnPassantFile];
     }
 

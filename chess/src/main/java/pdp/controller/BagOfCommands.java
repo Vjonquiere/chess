@@ -15,8 +15,8 @@ public class BagOfCommands {
   private boolean isRunning;
 
   /**
-   * private constructor needed for design pattern singleton Nothing done inside because every field
-   * is initialized outside
+   * Private constructor needed for design pattern singleton Nothing done inside because every field
+   * is initialized outside.
    */
   private BagOfCommands() {
     Logging.configureLogging(LOGGER);
@@ -74,6 +74,9 @@ public class BagOfCommands {
    */
   public void setModel(Game model) {
     this.model = model;
+    if (this.controller != null) {
+      this.controller.setModel(model);
+    }
   }
 
   /**

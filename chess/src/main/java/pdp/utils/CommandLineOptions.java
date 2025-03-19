@@ -17,16 +17,16 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class CLIOptions {
-  private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
+public class CommandLineOptions {
+  private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
   // Not final for test purposes
   private static String DEFAULT_CONFIG_FILE = "default.chessrc";
 
-  private CLIOptions() {}
+  private CommandLineOptions() {}
 
   /**
-   * Parses the given command line arguments..
+   * Parses the given command line arguments.
    *
    * <p>Returns a map of the activated options, with the option name as the key and the option value
    * as the value.
@@ -50,7 +50,9 @@ public class CLIOptions {
       String configFile = cmd.getOptionValue(OptionType.CONFIG.getLong(), (String) null);
       defaultArgs = loadDefaultArgs(configFile, activatedOptions);
       handleLoggingOptions(cmd, defaultArgs);
-      if (handleImmediateExitOptions(cmd, options, runtime)) return null;
+      if (handleImmediateExitOptions(cmd, options, runtime)) {
+        return null;
+      }
       processOptions(cmd, defaultArgs, activatedOptions);
 
       if (!cmd.getArgList().isEmpty()) {
@@ -100,7 +102,8 @@ public class CLIOptions {
     }
     if (file == null) {
       try {
-        inputStream = CLIOptions.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE);
+        inputStream =
+            CommandLineOptions.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE);
         activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
         if (inputStream == null) {
           throw new FileNotFoundException("config.chessrc not found in classpath!");
@@ -166,7 +169,7 @@ public class CLIOptions {
     if (cmd.hasOption(OptionType.VERSION.getLong())) {
       DEBUG(LOGGER, "Version option activated");
       Properties properties = new Properties();
-      properties.load(CLIOptions.class.getClassLoader().getResourceAsStream(".properties"));
+      properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
       System.out.println("Version: " + properties.getProperty("version"));
       runtime.exit(0);
       return true;
@@ -243,7 +246,7 @@ public class CLIOptions {
       activatedOptions.put(OptionType.AI, "W");
     }
 
-    validateAIOptions(activatedOptions);
+    validateAiOptions(activatedOptions);
   }
 
   /**
@@ -252,10 +255,9 @@ public class CLIOptions {
    * <p>This method checks if the AI option is present in the activated options map. If not,
    * AI-related options (AI_MODE, AI_DEPTH, AI_HEURISTIC, AI_TIME) can't be used.
    *
-   * @param cmd The parsed command line containing user-provided options.
    * @param activatedOptions The map containing the currently activated options.
    */
-  public static void validateAIOptions(HashMap<OptionType, String> activatedOptions) {
+  public static void validateAiOptions(HashMap<OptionType, String> activatedOptions) {
     if (!activatedOptions.containsKey(OptionType.AI)) {
       for (OptionType aiOption :
           new OptionType[] {

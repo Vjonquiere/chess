@@ -16,18 +16,18 @@ import pdp.model.Game;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
-import pdp.model.ai.algorithms.MCTS;
+import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
-import pdp.utils.CLIOptions;
+import pdp.utils.CommandLineOptions;
 import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
 
 public abstract class GameInitializer {
 
-  private static final Logger LOGGER = Logger.getLogger(CLIOptions.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
   // TODO Internationalization
   /**
@@ -38,40 +38,50 @@ public abstract class GameInitializer {
    */
   public static Game initialize(HashMap<OptionType, String> options) {
 
-    CLIOptions.validateAIOptions(options);
+    CommandLineOptions.validateAiOptions(options);
 
     DEBUG(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
+    Integer blitzTime = 30 * 60;
     if (options.containsKey(OptionType.BLITZ)) {
-      if (options.containsKey(OptionType.TIME)) {
-        timer = new Timer(Long.parseLong(options.get(OptionType.TIME)) * 60 * 1000);
-      } else {
-        timer = new Timer((long) 30 * 60 * 1000);
+      if (!options.containsKey(OptionType.TIME)) {
+        options.put(OptionType.TIME, "30");
       }
+      int time;
+      try {
+        time = Integer.parseInt(options.get(OptionType.TIME));
+      } catch (Exception e) {
+        System.err.println("Not an int for the blitz time");
+        System.err.println("Defaulting to a 30 minutes timer");
+        time = 30;
+      }
+
+      blitzTime = time * 60;
+      timer = new Timer(blitzTime * 1000L);
     }
 
-    boolean isWhiteAI = false;
-    boolean isBlackAI = false;
+    boolean isWhiteAi = false;
+    boolean isBlackAi = false;
     Solver solverWhite = null;
     Solver solverBlack = null;
 
     if (options.containsKey(OptionType.AI)) {
       switch (options.get(OptionType.AI)) {
         case "W":
-          isWhiteAI = true;
+          isWhiteAi = true;
           break;
         case "B":
-          isBlackAI = true;
+          isBlackAi = true;
           break;
         case "A":
-          isWhiteAI = true;
-          isBlackAI = true;
+          isWhiteAi = true;
+          isBlackAi = true;
           break;
         default:
           System.err.println("Unknown AI option: " + options.get(OptionType.AI));
           System.err.println("Defaulting to AI playing White");
-          isWhiteAI = true;
+          isWhiteAi = true;
           break;
       }
 
@@ -124,7 +134,7 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_DEPTH_W)
-          && !(solverWhite.getAlgorithm() instanceof MCTS)) {
+          && !(solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch)) {
         try {
           int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_W));
           solverWhite.setDepth(depth);
@@ -135,7 +145,7 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_DEPTH_B)
-          && !(solverBlack.getAlgorithm() instanceof MCTS)) {
+          && !(solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch)) {
         try {
           int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_B));
           solverBlack.setDepth(depth);
@@ -146,50 +156,48 @@ public abstract class GameInitializer {
       }
 
       if (options.containsKey(OptionType.AI_SIMULATION_W)
-          && solverWhite.getAlgorithm() instanceof MCTS) {
+          && solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch) {
         try {
           int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
-          solverWhite.setMCTSAlgorithm(simulations);
+          solverWhite.setMonteCarloAlgorithm(simulations);
         } catch (Exception e) {
           System.err.println("Not an integer for the simulations of AI");
           System.err.println(
-              "Defaulting to depth " + ((MCTS) solverWhite.getAlgorithm()).getSimulationLimit());
+              "Defaulting to depth "
+                  + ((MonteCarloTreeSearch) solverWhite.getAlgorithm()).getSimulationLimit());
         }
       }
 
       if (options.containsKey(OptionType.AI_SIMULATION_B)
-          && solverBlack.getAlgorithm() instanceof MCTS) {
+          && solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch) {
         try {
           int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
-          solverBlack.setMCTSAlgorithm(simulations);
+          solverBlack.setMonteCarloAlgorithm(simulations);
         } catch (Exception e) {
           System.err.println("Not an integer for the simulations of AI");
           System.err.println(
               "Defaulting to simulations "
-                  + ((MCTS) solverBlack.getAlgorithm()).getSimulationLimit());
+                  + ((MonteCarloTreeSearch) solverBlack.getAlgorithm()).getSimulationLimit());
         }
       }
 
       if (options.containsKey(OptionType.AI_TIME)) {
         try {
-          long time = Long.parseLong(options.get(OptionType.AI_TIME));
+          int time = Integer.parseInt(options.get(OptionType.AI_TIME));
+          if (options.containsKey(OptionType.BLITZ)) {
+            time = Integer.min(time, blitzTime);
+          }
           solverWhite.setTime(time);
           solverBlack.setTime(time);
         } catch (Exception e) {
-          System.err.println("Not a long for the time of AI (in seconds)");
+          System.err.println("Not an int for the time of AI (in seconds)");
           System.err.println("Defaulting to a 5 seconds timer");
+          solverWhite.setTime(5);
+          solverBlack.setTime(5);
         }
-      }
-      if (options.containsKey(OptionType.BLITZ)) {
-        // If blitz, take the minimum between the blitz time and AI time
-        long time =
-            Long.min(
-                Long.min(
-                    solverWhite.getTimer().getTimeRemaining(),
-                    solverBlack.getTimer().getTimeRemaining()),
-                timer.getTimeRemaining() - 100);
-        solverWhite.setTime(time / 1000);
-        solverBlack.setTime(time / 1000);
+      } else if (options.containsKey(OptionType.BLITZ)) {
+        solverWhite.setTime(blitzTime);
+        solverBlack.setTime(blitzTime);
       }
     }
 
@@ -207,7 +215,9 @@ public abstract class GameInitializer {
               parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
           model =
               Game.initialize(
-                  isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, board, options);
+                  isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
+          model.setLoadedFromFile();
+          model.setLoadingFileHasHistory(false);
         } else {
 
           List<Move> moves = new ArrayList<>();
@@ -218,7 +228,9 @@ public abstract class GameInitializer {
 
           model =
               Game.fromHistory(
-                  moves, isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, options);
+                  moves, isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
+          model.setLoadedFromFile();
+          model.setLoadingFileHasHistory(true);
         }
 
       } catch (IOException
@@ -228,10 +240,10 @@ public abstract class GameInitializer {
         System.err.println(
             "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
         System.err.println("Using the default game start");
-        model = Game.initialize(isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, options);
+        model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
       }
     } else {
-      model = Game.initialize(isWhiteAI, isBlackAI, solverWhite, solverBlack, timer, options);
+      model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
     }
 
     return model;

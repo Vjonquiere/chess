@@ -35,16 +35,16 @@ public class KingOppositionHeuristic implements Heuristic {
     Position whiteKing = bitboard.getKing(true).get(0);
     Position blackKing = bitboard.getKing(false).get(0);
 
-    int xDiff = Math.abs(whiteKing.getX() - blackKing.getX());
-    int yDiff = Math.abs(whiteKing.getY() - blackKing.getY());
+    int diffX = Math.abs(whiteKing.getX() - blackKing.getX());
+    int diffY = Math.abs(whiteKing.getY() - blackKing.getY());
 
     // If kings are directly opposite with one square between them
-    if ((xDiff == 2 && yDiff == 0) || (yDiff == 2 && xDiff == 0)) {
+    if ((diffX == 2 && diffY == 0) || (diffY == 2 && diffX == 0)) {
       // Strong opposition so more drawish
       return -10;
     }
     // If kings are diagonally close
-    if (xDiff <= 2 && yDiff <= 2) {
+    if (diffX <= 2 && diffY <= 2) {
       // Marginally drawish cuz slight opposition
       return -5;
     }
