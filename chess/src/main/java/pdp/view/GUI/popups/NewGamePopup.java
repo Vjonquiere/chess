@@ -219,10 +219,7 @@ public class NewGamePopup {
     popupStage.setTitle(TextGetter.getText("newGame.options"));
 
     VBox layout = new VBox(10);
-    layout.setStyle(
-        "-fx-background-color: "
-            + GUIView.theme.getBackground()
-            + "; -fx-padding: 10; -fx-alignment: center-left; -fx-text-fill: black;");
+    layout.setId("newGamePopUp");
 
     CheckBox blitzCheckBox = new CheckBox("Blitz");
     blitzCheckBox.setId("blitzCheckBox");
@@ -363,7 +360,9 @@ public class NewGamePopup {
 
     VBox loadContainer = new VBox(5);
     loadContainer.getChildren().add(loadLabel);
-    loadContainer.getChildren().add(new HBox(5, loadTextField, browseButton));
+    HBox centerContainer = new HBox(5, loadTextField, browseButton);
+    centerContainer.setAlignment(Pos.CENTER_LEFT);
+    loadContainer.getChildren().add(centerContainer);
 
     layout.getChildren().add(loadContainer);
     layout.getChildren().add(new Separator());
@@ -385,11 +384,10 @@ public class NewGamePopup {
     scrollPane.setContent(layout);
     scrollPane.setFitToWidth(true);
     scrollPane.setFitToHeight(true);
-    scrollPane
-        .getContent()
-        .setStyle("-fx-background-color: " + GUIView.theme.getBackground() + ";");
 
     Scene scene = new Scene(scrollPane, 400, 600);
+    GUIView.applyCSS(scene);
+    layout.setStyle("; -fx-padding: 10;");
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

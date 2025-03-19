@@ -11,6 +11,7 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.commands.CancelMoveCommand;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
+import pdp.view.GUIView;
 
 public class UndoPopUp extends VBox {
   public UndoPopUp() {
@@ -46,6 +47,7 @@ public class UndoPopUp extends VBox {
     layout.setStyle("-fx-padding: 20;");
 
     Scene scene = new Scene(layout, 300, 150);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

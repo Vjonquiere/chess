@@ -13,7 +13,6 @@ import pdp.utils.TextGetter;
 import pdp.view.GUI.CustomButton;
 import pdp.view.GUI.popups.RedoPopUp;
 import pdp.view.GUI.popups.UndoPopUp;
-import pdp.view.GUIView;
 
 public class ButtonsPanel extends GridPane {
   private Button drawButton;
@@ -22,21 +21,7 @@ public class ButtonsPanel extends GridPane {
   private Button resignButton;
   private Button undrawButton;
   private Button restartButton;
-  String buttonStyle =
-      "-fx-background-color: "
-          + GUIView.theme.getSecondary()
-          + ";"
-          + "-fx-text-fill: "
-          + GUIView.theme.getPrimary()
-          + ";"
-          + "-fx-border-color: "
-          + GUIView.theme.getPrimary()
-          + ";"
-          + "-fx-font-size: 18px;"
-          + "-fx-font-weight: bold;"
-          + "-fx-padding: 15;"
-          + "-fx-background-radius: 20;"
-          + "-fx-border-radius: 20;";
+  private int buttonMinWidth = 100;
 
   public ButtonsPanel() {
     setPadding(new Insets(10));
@@ -64,7 +49,7 @@ public class ButtonsPanel extends GridPane {
   }
 
   private void initUndoButton() {
-    undoButton = new CustomButton(TextGetter.getText("undo"));
+    undoButton = new CustomButton(TextGetter.getText("undo"), buttonMinWidth);
     undoButton.setOnAction(
         event -> {
           undoCommand("");
@@ -73,7 +58,7 @@ public class ButtonsPanel extends GridPane {
   }
 
   private void initRedoButton() {
-    redoButton = new CustomButton(TextGetter.getText("redo"));
+    redoButton = new CustomButton(TextGetter.getText("redo"), buttonMinWidth);
     redoButton.setOnAction(
         event -> {
           redoCommand("");
@@ -82,22 +67,22 @@ public class ButtonsPanel extends GridPane {
   }
 
   private void initDrawButton() {
-    drawButton = new CustomButton(TextGetter.getText("draw"));
+    drawButton = new CustomButton(TextGetter.getText("draw"), buttonMinWidth);
     // TODO: add action to button
   }
 
   private void initUndrawButton() {
-    undrawButton = new CustomButton(TextGetter.getText("undraw"));
+    undrawButton = new CustomButton(TextGetter.getText("undraw"), buttonMinWidth);
     // TODO: add action to button
   }
 
   private void initResignButton() {
-    resignButton = new CustomButton(TextGetter.getText("resign"));
+    resignButton = new CustomButton(TextGetter.getText("resign"), buttonMinWidth);
     // TODO: add action to button
   }
 
   private void initRestartButton() {
-    restartButton = new CustomButton(TextGetter.getText("restart"));
+    restartButton = new CustomButton(TextGetter.getText("restart"), buttonMinWidth);
     restartButton.setOnAction(
         event -> {
           restartCommand("");

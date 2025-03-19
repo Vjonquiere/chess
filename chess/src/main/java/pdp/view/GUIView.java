@@ -4,8 +4,9 @@ import static pdp.utils.Logging.DEBUG;
 import static pdp.view.GUI.themes.ColorTheme.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -13,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pdp.events.EventType;
 import pdp.model.Game;
+import pdp.model.parsers.BoardFileParser;
 import pdp.utils.Logging;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.ChessMenu;
@@ -37,7 +39,39 @@ public class GUIView implements View {
     Logging.configureLogging(LOGGER);
   }
 
-  public void applyCSS(String cssContent) {
+  public static void applyCSS(Scene scene) {
+    String text;
+    String path = "";
+    try {
+      // TODO: allow user to give his css file
+      text = new BoardFileParser().readFile(path);
+    } catch (FileNotFoundException e) {
+      try {
+        URL filePath = GUIView.class.getClassLoader().getResource("styles/sample.css");
+        text = new BoardFileParser().readFile(filePath.getPath());
+        text = text.replace("#000001", theme.getPrimary());
+        text = text.replace("#000002", theme.getSecondary());
+        text = text.replace("#000003", theme.getTertiary());
+        text = text.replace("#000004", theme.getAccent());
+        text = text.replace("#000005", theme.getBackground());
+        text = text.replace("#000006", theme.getBackground2());
+        text = text.replace("#000007", theme.getText());
+        text = text.replace("#000008", theme.getTextInverted());
+        File tempFile = File.createTempFile("theme-", ".css");
+        tempFile.deleteOnExit();
+
+        try (FileWriter writer = new FileWriter(tempFile)) {
+          writer.write(text);
+        }
+
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(tempFile.toURI().toString());
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
+
+    /*
     try {
       File tempFile = File.createTempFile("theme-", ".css");
       tempFile.deleteOnExit();
@@ -51,10 +85,13 @@ public class GUIView implements View {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+     */
+
   }
 
   public void updateTheme() {
-    applyCSS(theme.getCSSStyle());
+    applyCSS(scene);
     onGameEvent(EventType.GAME_STARTED);
   }
 
@@ -76,7 +113,7 @@ public class GUIView implements View {
     stage.setTitle(TextGetter.getText("title"));
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);
-    applyCSS(theme.getCSSStyle());
+    applyCSS(scene);
     stage.setScene(scene);
     if (board != null) board.setStage(stage);
     this.stage = stage;

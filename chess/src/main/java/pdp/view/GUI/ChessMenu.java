@@ -101,6 +101,7 @@ public class ChessMenu extends VBox {
     dialog.setHeaderText(null);
     dialog.setTitle(TextGetter.getText("fileSaver.title"));
     dialog.setContentText(TextGetter.getText("fileSaver.name"));
+    GUIView.applyCSS(dialog.getDialogPane().getScene());
 
     Optional<String> result = dialog.showAndWait();
     return result.orElse(null);
@@ -154,8 +155,8 @@ public class ChessMenu extends VBox {
     NewGamePopup.show(Game.getInstance().getOptions());
   }
 
-  private void openThemePopup(GUIView view) {
-    ThemePopUp.show(view);
+  private void openThemePopup() {
+    ThemePopUp.show();
   }
 
   private Menu createThemeMenuItem() {
@@ -170,6 +171,12 @@ public class ChessMenu extends VBox {
           });
       themes.getItems().add(theme);
     }
+    MenuItem customize = new MenuItem("Customize");
+    customize.setOnAction(
+        e -> {
+          openThemePopup();
+        });
+    themes.getItems().add(customize);
     return themes;
   }
 
