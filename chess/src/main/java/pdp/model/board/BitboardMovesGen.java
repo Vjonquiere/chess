@@ -643,7 +643,6 @@ public class BitboardMovesGen {
         if (bitboardRepresentation
             .getPieceAt(pos.getX() - 1, pawnY)
             .equals(new ColoredPiece(Piece.PAWN, player))) {
-          System.out.println("Adding en passant");
           specialMoves.add(
               new Move(
                   new Position(pos.getX() - 1, pawnY),
@@ -660,7 +659,6 @@ public class BitboardMovesGen {
         if (bitboardRepresentation
             .getPieceAt(pos.getX() + 1, pawnY)
             .equals(new ColoredPiece(Piece.PAWN, player))) {
-          System.out.println("Adding en passant");
           specialMoves.add(
               new Move(
                   new Position(pos.getX() + 1, pawnY),

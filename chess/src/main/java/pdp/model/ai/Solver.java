@@ -25,6 +25,7 @@ import pdp.model.ai.heuristics.PawnChainHeuristic;
 import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
+import pdp.model.ai.heuristics.StandardLightHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
@@ -37,14 +38,13 @@ public class Solver {
   private final ZobristHashing zobristHashing = new ZobristHashing();
   private final HashMap<Long, Integer> evaluatedBoards;
 
-  SearchAlgorithm algorithm;
-  Heuristic heuristic;
-  int depth = 4;
-  Timer timer;
-  long time;
-  boolean isSearchStopped = false;
-  boolean isMoveToPlay = true;
-  int nbThreads = 4;
+  private SearchAlgorithm algorithm;
+  private Heuristic heuristic;
+  private int depth = 4;
+  private Timer timer;
+  private long time;
+  private boolean isSearchStopped = false;
+  private boolean isMoveToPlay = true;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -101,6 +101,7 @@ public class Solver {
       case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
       case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
       case STANDARD -> this.heuristic = new StandardHeuristic();
+      case STANDARD_LIGHT -> this.heuristic = new StandardLightHeuristic();
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }

@@ -153,6 +153,8 @@ public abstract class GameAbstract extends Subject {
       gameState.getBoard().makeMove(move);
     }
 
+    gameState.getBoard().setLastMoveDoublePush(false);
+    gameState.getBoard().setEnPassantPos(null);
     // Check double pawn push
     if (!isSpecialMove
         && gameState.getBoard().getBoardRep().isDoublePushPossible(move, gameState.isWhiteTurn())) {
