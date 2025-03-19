@@ -155,8 +155,8 @@ public class ChessMenu extends VBox {
     NewGamePopup.show(Game.getInstance().getOptions());
   }
 
-  private void openThemePopup(GUIView view) {
-    ThemePopUp.show(view);
+  private void openThemePopup() {
+    ThemePopUp.show();
   }
 
   private Menu createThemeMenuItem() {
@@ -171,6 +171,12 @@ public class ChessMenu extends VBox {
           });
       themes.getItems().add(theme);
     }
+    MenuItem customize = new MenuItem("Customize");
+    customize.setOnAction(
+        e -> {
+          openThemePopup();
+        });
+    themes.getItems().add(customize);
     return themes;
   }
 
