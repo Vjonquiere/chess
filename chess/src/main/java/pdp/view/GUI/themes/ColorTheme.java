@@ -3,7 +3,7 @@ package pdp.view.GUI.themes;
 import pdp.view.GUIView;
 
 public enum ColorTheme {
-  BLUE("#16697A", "#82C0CC", "#489FB5", "#FFA62B", "#EDE7E3", "#F1E8E1", "black", "white"),
+  BLUE("#16697A", "#82C0CC", "#489FB5", "#FFA62B", "#EDE7E3", "#E0D3C9", "black", "white"),
   PURPLE("#5E548E", "#BE95C4", "#231942", "#9F86C0", "#F8E6F0", "#E8C8DA", "#231942", "white"),
   SIMPLE("#6D6FD9", "#DAE0F2", "#272727", "#F9CFF2", "#EDE7E3", "#DAE0F2", "black", "white"),
   CUSTOM("#415a77", "#778da9", "#0d1b2a", "#1d3557", "#e0e1dd", "#e0e1dd", "white", "white");

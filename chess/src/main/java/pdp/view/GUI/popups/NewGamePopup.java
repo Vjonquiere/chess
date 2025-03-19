@@ -219,10 +219,14 @@ public class NewGamePopup {
     popupStage.setTitle(TextGetter.getText("newGame.options"));
 
     VBox layout = new VBox(10);
+    layout.setId("newGamePopUp");
+    /*
     layout.setStyle(
         "-fx-background-color: "
             + GUIView.theme.getBackground()
             + "; -fx-padding: 10; -fx-alignment: center-left; -fx-text-fill: black;");
+
+     */
 
     CheckBox blitzCheckBox = new CheckBox("Blitz");
     blitzCheckBox.setId("blitzCheckBox");

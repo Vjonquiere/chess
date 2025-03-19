@@ -1,4 +1,4 @@
-.root {
+.root, .dialog-pane {
     -fx-background-color: #000005; /* Background color for the whole application */
     -fx-font-family: "Arial";
     -fx-font-size: 16px;
@@ -20,17 +20,16 @@
 }
 
 .list-cell:selected {
-    -fx-background-color: #000003;
+    -fx-background-color: #000001;
     -fx-text-fill: #000008;
 }
 
 .menu-bar {
-    -fx-background-color: #000004;
-    -fx-border-color: #000003;
+    -fx-background-color: #000005;
 }
 
 .menu-item, .menu, .context-menu {
-    -fx-background-color: #000004;
+    -fx-background-color: #000005;
 }
 
 .menu .label {
@@ -41,7 +40,7 @@
     -fx-background-color: #000001;
 }
 
-.button:hover {
+.button:hover, dialog-pane .button-bar .button:hover {
     -fx-background-color: #000001;
     -fx-text-fill: #000002;
     -fx-border-color: #000002;
@@ -52,7 +51,7 @@
     -fx-border-radius: 20;
 }
 
-.button {
+.button, dialog-pane .button-bar .button {
     -fx-background-color: #000002;
     -fx-text-fill: #000001;
     -fx-border-color: #000001;
@@ -84,20 +83,25 @@
 }
 
 .check-box, .radio-button {
+    -fx-background-color: #000005;
     -fx-text-fill:  #000007;
 }
-.check-box:selected, .radio-button:selected {
-    -fx-text-fill:  #000007;
+.check-box:selected .mark, .radio-button:selected {
+    -fx-background-color: #000001;
+}
+
+.check-box:focused, .radio-button:focused {
+    -fx-shadow-highlight-color : #000001;
 }
 
 .slider .track {
     -fx-background-color: #ddd;
 }
 .slider .thumb {
-    -fx-background-color: #000004;
+    -fx-background-color: #000001;
 }
 .slider .thumb:hover {
-    -fx-background-color: #000003;
+    -fx-background-color: #000004;
 }
 
 .scroll-pane {
@@ -105,4 +109,33 @@
 }
 .scroll-pane .viewport {
     -fx-background-color: white;
+}
+
+.scroll-pane {
+    -fx-background-color: black;
+}
+
+.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color:transparent;
+}
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0em;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #000001;
+    -fx-background-radius: 3em;
+}
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
 }

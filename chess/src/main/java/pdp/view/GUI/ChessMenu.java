@@ -101,6 +101,7 @@ public class ChessMenu extends VBox {
     dialog.setHeaderText(null);
     dialog.setTitle(TextGetter.getText("fileSaver.title"));
     dialog.setContentText(TextGetter.getText("fileSaver.name"));
+    GUIView.applyCSS(dialog.getDialogPane().getScene());
 
     Optional<String> result = dialog.showAndWait();
     return result.orElse(null);
