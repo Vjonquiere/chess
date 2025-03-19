@@ -4,6 +4,7 @@ import static pdp.utils.Logging.DEBUG;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -697,9 +698,8 @@ public class Game extends Subject {
       if (nextState == null) {
         // End of history already, so add new move and save
         this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
-        saveGame(getLoadingFile());
-        DEBUG(
-            LOGGER, "Move differs from history. Overwriting history for file :" + getLoadingFile());
+        String newFilePath = saveGameToNewFile(getLoadingFile());
+        DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
       } else {
         // Check if move we want to play is the same as the next one. If not, overwrite history and
         // save
@@ -707,10 +707,8 @@ public class Game extends Subject {
           // Truncate history
           this.history.setCurrentMove(null);
           this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
-          saveGame(getLoadingFile());
-          DEBUG(
-              LOGGER,
-              "Move differs from history. Overwriting history for file :" + getLoadingFile());
+          String newFilePath = saveGameToNewFile(getLoadingFile());
+          DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
         } else {
           // If same move, just forward by one in the history
           this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
@@ -722,7 +720,8 @@ public class Game extends Subject {
     } else {
       // If no history just add the move
       this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
-      saveGame(getLoadingFile());
+      String newFilePath = saveGameToNewFile(getLoadingFile());
+      DEBUG(LOGGER, "Writing history and game state to file :" + newFilePath);
     }
   }
 
@@ -762,6 +761,63 @@ public class Game extends Subject {
     }
     DEBUG(LOGGER, "Game saved to " + path);
     this.notifyObservers(EventType.GAME_SAVED);
+  }
+
+  /**
+   * Saves the current game state to a new file.
+   *
+   * <p>The file in parameter contains the current position of the board followed by the move
+   * history of the game in standard algebraic notation.
+   *
+   * @param path The path of the original file.
+   * @throws FailedSaveException If the new file cannot be written to.
+   */
+  public String saveGameToNewFile(String path) throws FailedSaveException {
+    boolean[] castlingRights = getBoard().getCastlingRights();
+    String board =
+        BoardSaver.saveBoard(
+            new FileBoard(
+                this.getBoard().getBoardRep(),
+                this.getGameState().isWhiteTurn(),
+                new FenHeader(
+                    castlingRights[0],
+                    castlingRights[1],
+                    castlingRights[2],
+                    castlingRights[3],
+                    getBoard().getEnPassantPos(),
+                    getBoard().getNbMovesWithNoCaptureOrPawn() * 2,
+                    getGameState().getFullTurn())));
+    String gameStr = this.history.toAlgebraicString();
+    String game = board + "\n" + gameStr;
+
+    // Save to new file and leave the original one as it is
+    File file = new File(path);
+    String newPath = path;
+    int counter = 1;
+
+    // Check if a file with that name already exists
+    while (file.exists()) {
+      int dotIndex = path.lastIndexOf('.');
+      if (dotIndex != -1) {
+        newPath = path.substring(0, dotIndex) + "_" + counter + path.substring(dotIndex);
+      } else {
+        newPath = path + "_" + counter;
+      }
+      file = new File(newPath);
+      counter++;
+    }
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(newPath))) {
+      writer.write(game);
+      writer.close();
+    } catch (IOException e) {
+      DEBUG(LOGGER, "Error writing to new file: " + e.getMessage());
+      throw new FailedSaveException(newPath);
+    }
+
+    DEBUG(LOGGER, "Game saved to " + newPath);
+    this.notifyObservers(EventType.GAME_SAVED);
+    return newPath;
   }
 
   /**

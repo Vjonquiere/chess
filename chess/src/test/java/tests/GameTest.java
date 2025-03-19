@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.GameState;
@@ -618,6 +619,129 @@ public class GameTest {
     assertTrue(content.contains(game.getHistory().toAlgebraicString()));
 
     Files.deleteIfExists(tempFile);
+  }
+
+  @Test
+  public void testSaveGameToNewFile() throws IOException {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    Path tempDir = Files.createTempDirectory("game-save-test");
+    String tempFilePath = tempDir.resolve("game.txt").toString();
+
+    game.saveGameToNewFile(tempFilePath);
+
+    // Find the actual saved file since saveGameToNewFile() might append numbers
+    Path savedFile = findLatestSavedFile(tempDir, "game.txt");
+    assertNotNull(savedFile, "Saved file was not found!");
+
+    String content = Files.readString(savedFile);
+
+    assertNotNull(content);
+    assertFalse(content.isEmpty());
+
+    String board =
+        BoardSaver.saveBoard(
+            new FileBoard(
+                game.getBoard().getBoardRep(),
+                game.getBoard().getPlayer(),
+                new FenHeader(true, true, true, true, null, 0, 0)));
+
+    assertTrue(content.contains(board));
+
+    // Cleanup
+    Files.walk(tempDir).sorted((a, b) -> b.compareTo(a)).forEach(p -> p.toFile().delete());
+  }
+
+  @Test
+  public void testSaveGameToNewFileWithHistory() throws IOException, IllegalMoveException {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+
+    Path tempDir = Files.createTempDirectory("game-save-test");
+    String tempFilePath = tempDir.resolve("game.txt").toString();
+    game.saveGame(tempFilePath);
+
+    // Find the actual saved file
+    Path savedFile = findLatestSavedFile(tempDir, "game.txt");
+    assertNotNull(savedFile, "Saved file was not found!");
+
+    String content = Files.readString(savedFile);
+
+    String board =
+        BoardSaver.saveBoard(
+            new FileBoard(
+                game.getBoard().getBoardRep(),
+                game.getBoard().getPlayer(),
+                new FenHeader(true, true, true, true, new Position(4, 2), 0, 1)));
+
+    assertTrue(content.contains(board));
+
+    assertTrue(content.contains(game.getHistory().toAlgebraicString()));
+
+    // Cleanup
+    Files.walk(tempDir).sorted((a, b) -> b.compareTo(a)).forEach(p -> p.toFile().delete());
+  }
+
+  /**
+   * Finds the latest saved file with the given prefix in the given directory.
+   *
+   * @param directory The directory where the file should be located.
+   * @param baseFileName The base file name before numbering (e.g., "game.txt").
+   * @return The latest saved file or null if not found.
+   */
+  private Path findLatestSavedFile(Path directory, String baseFileName) throws IOException {
+    return Files.list(directory)
+        .filter(path -> path.getFileName().toString().startsWith(baseFileName.replace(".txt", "")))
+        .max((p1, p2) -> p1.getFileName().toString().compareTo(p2.getFileName().toString()))
+        .orElse(null);
+  }
+
+  @Test
+  public void testSaveGameToNewFileToUnwritableLocation() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    // Use an invalid directory (Linux: /root/, Windows: C:\InvalidPath\)
+    String invalidPath = "/root/game-save-test.txt"; // Adjust path based on OS
+
+    assertThrows(FailedSaveException.class, () -> game.saveGameToNewFile(invalidPath));
+  }
+
+  @Test
+  public void testSaveGameToUnwritableLocation() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    // Use an invalid directory (Linux: /root/, Windows: C:\InvalidPath\)
+    String invalidPath = "/root/game-save-test.txt"; // Adjust path based on OS
+
+    assertThrows(FailedSaveException.class, () -> game.saveGame(invalidPath));
+  }
+
+  @Test
+  public void testSaveGameToNewFileWithFileExtensionHandling() throws IOException {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    Path tempDir = Files.createTempDirectory("game-save-test");
+    String baseFileName = "game.txt";
+    String tempFilePath = tempDir.resolve(baseFileName).toString();
+
+    // First save: should create "game.txt"
+    game.saveGameToNewFile(tempFilePath);
+
+    // Second save: should create "game_1.txt"
+    game.saveGameToNewFile(tempFilePath);
+
+    // Third save: should create "game_2.txt"
+    game.saveGameToNewFile(tempFilePath);
+
+    // Check that the correct files exist
+    assertTrue(Files.exists(tempDir.resolve("game.txt")));
+    assertTrue(Files.exists(tempDir.resolve("game_1.txt")));
+    assertTrue(Files.exists(tempDir.resolve("game_2.txt")));
+
+    // Cleanup
+    Files.walk(tempDir).sorted((a, b) -> b.compareTo(a)).forEach(p -> p.toFile().delete());
   }
 
   @Test
