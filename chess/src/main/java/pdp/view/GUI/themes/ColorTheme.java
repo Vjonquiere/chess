@@ -1,11 +1,11 @@
 package pdp.view.GUI.themes;
 
 public enum ColorTheme {
-  BLUE("#16697A", "#82C0CC", "#489FB5", "#FFA62B", "#EDE7E3", "#E0D3C9", "black", "white"),
-  PURPLE("#5E548E", "#BE95C4", "#231942", "#9F86C0", "#F8E6F0", "#E8C8DA", "#231942", "white"),
-  SIMPLE("#6D6FD9", "#DAE0F2", "#272727", "#F9CFF2", "#EDE7E3", "#DAE0F2", "black", "white"),
-  GREY("#415a77", "#778da9", "#0d1b2a", "#1d3557", "#e0e1dd", "#F2F4F3", "black", "white"),
-  CUSTOM("#5B5F97", "#B8B8D1", "#FF6B6C", "#FFC145", "#FFFFFB", "#FFFFF0", "black", "white");
+  BLUE("#16697A", "#82C0CC", "#489FB5", "#FFA62B", "#EDE7E3", "#E0D3C9", "#000000", "#FFFFFF"),
+  PURPLE("#5E548E", "#BE95C4", "#231942", "#9F86C0", "#F8E6F0", "#E8C8DA", "#231942", "#FFFFFF"),
+  SIMPLE("#6D6FD9", "#DAE0F2", "#272727", "#F9CFF2", "#EDE7E3", "#DAE0F2", "#000000", "#FFFFFF"),
+  GREY("#415a77", "#778da9", "#0d1b2a", "#1d3557", "#e0e1dd", "#F2F4F3", "#000000", "#FFFFFF"),
+  CUSTOM("#5B5F97", "#B8B8D1", "#FF6B6C", "#FFC145", "#FFFFFB", "#FFFFF0", "#000000", "#FFFFFF");
   private String primary;
   private String secondary;
   private String tertiary;

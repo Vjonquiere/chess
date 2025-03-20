@@ -21,7 +21,7 @@ public class ThemePopUp {
     popupStage.setTitle(TextGetter.getText("theme.title"));
 
     VBox layout = new VBox(10);
-    layout.setId("root");
+    layout.setId("vbox");
     Label primary = new Label(TextGetter.getText("theme.primary"));
     ColorPicker cp_primary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getPrimary()));
     cp_primary.setId("primary");
@@ -68,7 +68,7 @@ public class ThemePopUp {
 
     HBox buttonBox = new HBox();
     Button saveButton = new Button(TextGetter.getText("save"));
-    saveButton.setId("saveButton");
+    saveButton.setId("saveButtonThemes");
     saveButton.setOnAction(
         e -> {
           try {
@@ -88,7 +88,7 @@ public class ThemePopUp {
         });
 
     Button cancelButton = new Button(TextGetter.getText("cancel"));
-    cancelButton.setId("cancelButton");
+    cancelButton.setId("cancelButtonThemes");
     cancelButton.setOnAction(
         e -> {
           popupStage.close();
@@ -106,7 +106,7 @@ public class ThemePopUp {
     popupStage.showAndWait();
   }
 
-  private static String toHexString(Color color) {
+  public static String toHexString(Color color) {
     return String.format(
         "#%02X%02X%02X",
         (int) (color.getRed() * 255),
