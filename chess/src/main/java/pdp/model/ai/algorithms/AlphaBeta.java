@@ -3,6 +3,10 @@ package pdp.model.ai.algorithms;
 import static pdp.utils.Logging.DEBUG;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
@@ -36,12 +40,26 @@ public class AlphaBeta implements SearchAlgorithm {
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
     GameAi aiGame = GameAi.fromGame(game);
+    ExecutorService executor =
+        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    List<Future<AIMove>> futures = new CopyOnWriteArrayList<>();
 
-    // Heuristically order moves (e.g., capture moves first)
-    // rootMoves.sort((m1, m2) -> ...);
+    futures.add(
+        executor.submit(
+            () -> {
+              GameAi gameCopy = aiGame.copy();
+              return alphaBeta(
+                  gameCopy, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+            }));
 
-    AIMove bestMove =
-        alphaBeta(aiGame, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+    AIMove bestMove = null;
+    try {
+      bestMove = futures.get(0).get();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    executor.shutdown();
 
     DEBUG(LOGGER, "Best move: " + bestMove);
     return bestMove;
