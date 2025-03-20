@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.model.Game;
+import pdp.model.GameAi;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
@@ -121,8 +122,14 @@ public class Board extends GridPane {
     reachableSquares = new ArrayList<>();
     List<Move> moves = Game.getInstance().getBoard().getBoardRep().getAvailableMoves(x, y, false);
     for (Move move : moves) {
-      pieces.get(move.dest).setReachable(true, move.isTake);
-      reachableSquares.add(move.dest);
+      GameAi g = GameAi.fromGame(Game.getInstance());
+      try {
+        g.playMove(move);
+        pieces.get(move.dest).setReachable(true, move.isTake);
+        reachableSquares.add(move.dest);
+      } catch (Exception e) {
+        // e.printStackTrace();
+      }
     }
   }
 
