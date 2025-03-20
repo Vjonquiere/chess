@@ -27,6 +27,10 @@ import pdp.view.GUI.themes.ColorTheme;
 import pdp.view.GUIView;
 
 public class ChessMenu extends VBox {
+  /**
+   * Creates the menu of out application. Composed of different menus : File, Game, About and
+   * Options.
+   */
   public ChessMenu() {
     MenuBar menuBar = new MenuBar();
     menuBar.setId("menuBar");
@@ -37,6 +41,12 @@ public class ChessMenu extends VBox {
     this.getChildren().add(menuBar);
   }
 
+  /**
+   * Creates the File menu. Composed of the following items : New game, Save Game, Load Game, Help,
+   * Settings and Quit.
+   *
+   * @return Menu File
+   */
   private Menu createFileMenu() {
     Menu fileMenu = new Menu(TextGetter.getText("file"));
     fileMenu.setId("filemenu");
@@ -115,6 +125,11 @@ public class ChessMenu extends VBox {
     return result.orElse(null);
   }
 
+  /**
+   * Creates the Game menu. Composed of the following items : Start, Undo, Redo, Restart.
+   *
+   * @return Menu Game
+   */
   private Menu createGameMenu() {
     Menu gameMenu = new Menu(TextGetter.getText("game"));
     MenuItem start = new MenuItem(TextGetter.getText("start"));
@@ -151,20 +166,33 @@ public class ChessMenu extends VBox {
     return aboutMenu;
   }
 
+  /**
+   * Creates the Options menu. Composed of the following items : Themes and Language.
+   *
+   * @return Menu Options
+   */
   private Menu createOptionsMenu() {
     Menu optionsMenu = new Menu(TextGetter.getText("options"));
     optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu());
     return optionsMenu;
   }
 
+  /** Launches a popup to customize a new game. */
   private void openNewGamePopup() {
     NewGamePopup.show(Game.getInstance().getOptions());
   }
 
+  /** Launches a popup to customize the application's theme. */
   private void openThemePopup() {
     ThemePopUp.show();
   }
 
+  /**
+   * Creates the Theme menu. Composed of the different themes present in the ColorTheme Enum and of
+   * a Customize item that launches a popup to choose your own theme.
+   *
+   * @return Menu Game
+   */
   private Menu createThemeMenuItem() {
     Menu themes = new Menu(TextGetter.getText("theme"), null);
 
@@ -186,6 +214,12 @@ public class ChessMenu extends VBox {
     return themes;
   }
 
+  /**
+   * Creates the Language Menu. Composed of the following languages : English and French.
+   * Automatically updates the whole application.
+   *
+   * @return Menu Game
+   */
   private Menu createLangMenu() {
     Menu lang = new Menu(TextGetter.getText("language"), null);
     lang.setId("language");

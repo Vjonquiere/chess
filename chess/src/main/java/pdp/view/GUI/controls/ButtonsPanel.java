@@ -10,7 +10,6 @@ import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
-import pdp.view.GUI.CustomButton;
 import pdp.view.GUI.popups.RedoPopUp;
 import pdp.view.GUI.popups.UndoPopUp;
 
@@ -21,14 +20,23 @@ public class ButtonsPanel extends GridPane {
   private Button resignButton;
   private Button undrawButton;
   private Button restartButton;
-  private int buttonMinWidth = 100;
 
+  /**
+   * Creates the buttons panel to simplify the user experience. Allows the user to ask for draw
+   * proposal and remove it, resign, restart, undo and redo a move.
+   */
   public ButtonsPanel() {
     setPadding(new Insets(10));
     setHgap(10);
     setVgap(10);
     setAlignment(Pos.CENTER);
-    initButtons();
+
+    initResignButton();
+    initDrawButton();
+    initUndrawButton();
+    initRedoButton();
+    initUndoButton();
+    initRestartButton();
 
     add(drawButton, 0, 0);
     add(undoButton, 1, 0);
@@ -39,17 +47,10 @@ public class ButtonsPanel extends GridPane {
     add(restartButton, 2, 1);
   }
 
-  private void initButtons() {
-    initResignButton();
-    initDrawButton();
-    initUndrawButton();
-    initRedoButton();
-    initUndoButton();
-    initRestartButton();
-  }
-
+  /** Initializes the undo button. */
   private void initUndoButton() {
-    undoButton = new CustomButton(TextGetter.getText("undo"), buttonMinWidth);
+    undoButton = new Button(TextGetter.getText("undo"));
+    undoButton.setMinWidth(100);
     undoButton.setOnAction(
         event -> {
           undoCommand("");
@@ -57,8 +58,10 @@ public class ButtonsPanel extends GridPane {
         });
   }
 
+  /** Initializes the redo button. */
   private void initRedoButton() {
-    redoButton = new CustomButton(TextGetter.getText("redo"), buttonMinWidth);
+    redoButton = new Button(TextGetter.getText("redo"));
+    redoButton.setMinWidth(100);
     redoButton.setOnAction(
         event -> {
           redoCommand("");
@@ -66,23 +69,31 @@ public class ButtonsPanel extends GridPane {
         });
   }
 
+  /** Initializes the draw button. */
   private void initDrawButton() {
-    drawButton = new CustomButton(TextGetter.getText("draw"), buttonMinWidth);
+    drawButton = new Button(TextGetter.getText("draw"));
+    drawButton.setMinWidth(100);
     // TODO: add action to button
   }
 
+  /** Initializes the undraw button. */
   private void initUndrawButton() {
-    undrawButton = new CustomButton(TextGetter.getText("undraw"), buttonMinWidth);
+    undrawButton = new Button(TextGetter.getText("undraw"));
+    undrawButton.setMinWidth(100);
     // TODO: add action to button
   }
 
+  /** Initializes the resign button. */
   private void initResignButton() {
-    resignButton = new CustomButton(TextGetter.getText("resign"), buttonMinWidth);
+    resignButton = new Button(TextGetter.getText("resign"));
+    resignButton.setMinWidth(100);
     // TODO: add action to button
   }
 
+  /** Initializes the restart button. */
   private void initRestartButton() {
-    restartButton = new CustomButton(TextGetter.getText("restart"), buttonMinWidth);
+    restartButton = new Button(TextGetter.getText("restart"));
+    restartButton.setMinWidth(100);
     restartButton.setOnAction(
         event -> {
           restartCommand("");
