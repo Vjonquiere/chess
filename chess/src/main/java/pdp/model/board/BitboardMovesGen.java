@@ -14,11 +14,10 @@ import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class BitboardMovesGen {
-  private BitboardRepresentation bitboardRepresentation;
   private static final Logger LOGGER = Logger.getLogger(BitboardMovesGen.class.getName());
 
-  public BitboardMovesGen(BitboardRepresentation bitboardRepresentation) {
-    this.bitboardRepresentation = bitboardRepresentation;
+  private BitboardMovesGen() {
+    throw new UnsupportedOperationException("Cannot instantiate utility class");
   }
 
   static {
@@ -35,7 +34,7 @@ public class BitboardMovesGen {
    * @param moveFunction The function that make the direction to follow (ex: right)
    * @return A bitboard containing all the squares reachable for a given direction
    */
-  protected Bitboard getMultipleMovesFromDirection(
+  public static Bitboard getMultipleMovesFromDirection(
       Bitboard piece,
       Bitboard unreachableSquares,
       Bitboard enemies,
@@ -58,7 +57,7 @@ public class BitboardMovesGen {
    * @param enemies A bitboard containing all the enemies pieces
    * @return A bitboard containing the possible inline moves
    */
-  protected Bitboard getInlineMoves(
+  public static Bitboard getInlineMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -90,7 +89,7 @@ public class BitboardMovesGen {
    * @param enemies A bitboard containing all the enemies pieces
    * @return A bitboard containing the possible diagonal moves
    */
-  protected Bitboard getDiagonalMoves(
+  public static Bitboard getDiagonalMoves(
       Position square, Bitboard unreachableSquares, Bitboard enemies) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -120,17 +119,21 @@ public class BitboardMovesGen {
    * @param source The initial position of the piece
    * @return A list of possible moves from a move bitboard
    */
-  protected List<Move> bitboardToMoves(
-      Bitboard moveBitboard, Bitboard enemies, Position source, ColoredPiece piece) {
+  public static List<Move> bitboardToMoves(
+      Bitboard moveBitboard,
+      Bitboard enemies,
+      Position source,
+      ColoredPiece piece,
+      BitboardRepresentation bitboardRepresentation) {
     List<Move> moves = new ArrayList<>();
     for (Integer i : moveBitboard.getSetBits()) {
       if (enemies.getBit(i)) { // move is capture
-        for (int j = 0; j < this.bitboardRepresentation.getBitboards().length; j++) {
+        for (int j = 0; j < bitboardRepresentation.getBitboards().length; j++) {
           if (enemies.getBit(i)) {
             moves.add(
                 new Move(
                     source,
-                    this.bitboardRepresentation.squareToPosition(i),
+                    bitboardRepresentation.squareToPosition(i),
                     piece,
                     true,
                     BitboardRepresentation.pieces.getFromKey(j)));
@@ -139,7 +142,7 @@ public class BitboardMovesGen {
         }
 
       } else {
-        moves.add(new Move(source, this.bitboardRepresentation.squareToPosition(i), piece, false));
+        moves.add(new Move(source, bitboardRepresentation.squareToPosition(i), piece, false));
       }
       // TODO: save the captured piece
       // enemies.getBit(i) ? true : false -> capture ?
@@ -155,8 +158,12 @@ public class BitboardMovesGen {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  protected List<Move> getKingMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
+  public static List<Move> getKingMoves(
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      ColoredPiece piece,
+      BitboardRepresentation bitboardRepresentation) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -171,10 +178,10 @@ public class BitboardMovesGen {
             .or(position.moveDownLeft())
             .or(position.moveDownRight());
     move = move.xor(move.and(unreachableSquares));
-    return bitboardToMoves(move, enemies, square, piece);
+    return bitboardToMoves(move, enemies, square, piece, bitboardRepresentation);
   }
 
-  protected Bitboard getKingMoveBitboard(
+  public static Bitboard getKingMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -201,8 +208,12 @@ public class BitboardMovesGen {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  protected List<Move> getKnightMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
+  public static List<Move> getKnightMoves(
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      ColoredPiece piece,
+      BitboardRepresentation bitboardRepresentation) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -219,10 +230,10 @@ public class BitboardMovesGen {
             .or(position.moveRight().moveDownRight())
             .or(position.moveRight().moveUpRight());
     move = move.xor(move.and(unreachableSquares));
-    return bitboardToMoves(move, enemies, square, piece);
+    return bitboardToMoves(move, enemies, square, piece, bitboardRepresentation);
   }
 
-  protected Bitboard getKnightMoveBitboard(
+  public static Bitboard getKnightMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
@@ -251,8 +262,12 @@ public class BitboardMovesGen {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  protected List<Move> getPawnMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
+  public static List<Move> getPawnMoves(
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      boolean white,
+      BitboardRepresentation bitboardRepresentation) {
     Bitboard position = new Bitboard();
     Bitboard attackRight;
     Bitboard attackLeft;
@@ -274,16 +289,21 @@ public class BitboardMovesGen {
         position.or(attackRight).or(attackLeft),
         enemies,
         square,
-        new ColoredPiece(Piece.PAWN, white ? Color.WHITE : Color.BLACK));
+        new ColoredPiece(Piece.PAWN, white ? Color.WHITE : Color.BLACK),
+        bitboardRepresentation);
   }
 
-  protected Bitboard getPawnMoveBitboard(
+  public static Bitboard getPawnMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
     Bitboard position = new Bitboard();
     Bitboard attackRight;
     Bitboard attackLeft;
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
+
+    if (white && square.getY() == 6 || !white && square.getY() == 1) {
+      return new Bitboard(0L);
+    }
 
     if (white) {
       attackRight = position.moveUpRight().and(enemies);
@@ -307,14 +327,19 @@ public class BitboardMovesGen {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  protected List<Move> getQueenMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
+  public static List<Move> getQueenMoves(
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      ColoredPiece piece,
+      BitboardRepresentation bitboardRepresentation) {
     return bitboardToMoves(
         getInlineMoves(square, unreachableSquares, enemies)
             .or(getDiagonalMoves(square, unreachableSquares, enemies)),
         enemies,
         square,
-        piece);
+        piece,
+        bitboardRepresentation);
   }
 
   /**
@@ -325,10 +350,18 @@ public class BitboardMovesGen {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  protected List<Move> getBishopMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
+  public static List<Move> getBishopMoves(
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      ColoredPiece piece,
+      BitboardRepresentation bitboardRepresentation) {
     return bitboardToMoves(
-        getDiagonalMoves(square, unreachableSquares, enemies), enemies, square, piece);
+        getDiagonalMoves(square, unreachableSquares, enemies),
+        enemies,
+        square,
+        piece,
+        bitboardRepresentation);
   }
 
   /**
@@ -339,10 +372,18 @@ public class BitboardMovesGen {
    * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
-  protected List<Move> getRookMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
+  public static List<Move> getRookMoves(
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      ColoredPiece piece,
+      BitboardRepresentation bitboardRepresentation) {
     return bitboardToMoves(
-        getInlineMoves(square, unreachableSquares, enemies), enemies, square, piece);
+        getInlineMoves(square, unreachableSquares, enemies),
+        enemies,
+        square,
+        piece,
+        bitboardRepresentation);
   }
 
   /**
@@ -355,13 +396,14 @@ public class BitboardMovesGen {
    *     check/checkmate)
    * @return The list of possible moves (without special cases)
    */
-  public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
-    ColoredPiece piece = this.bitboardRepresentation.getPieceAt(x, y);
-    Position enemyKing = this.bitboardRepresentation.getKing(piece.color != Color.WHITE).get(0);
+  public static List<Move> getAvailableMoves(
+      int x, int y, boolean kingReachable, BitboardRepresentation bitboardRepresentation) {
+    ColoredPiece piece = bitboardRepresentation.getPieceAt(x, y);
+    Position enemyKing = bitboardRepresentation.getKing(piece.color != Color.WHITE).get(0);
     Bitboard unreachableSquares =
         piece.color == Color.WHITE
-            ? this.bitboardRepresentation.getWhiteBoard()
-            : this.bitboardRepresentation.getBlackBoard();
+            ? bitboardRepresentation.getWhiteBoard()
+            : bitboardRepresentation.getBlackBoard();
     unreachableSquares.clearBit(x % 8 + y * 8); // remove piece position from reachable positions
     if (!kingReachable) {
       unreachableSquares.setBit(
@@ -369,8 +411,8 @@ public class BitboardMovesGen {
     }
     Bitboard enemies =
         piece.color == Color.WHITE
-            ? this.bitboardRepresentation.getBlackBoard()
-            : this.bitboardRepresentation.getWhiteBoard();
+            ? bitboardRepresentation.getBlackBoard()
+            : bitboardRepresentation.getWhiteBoard();
     VERBOSE(
         LOGGER,
         "Generating moves for "
@@ -385,15 +427,27 @@ public class BitboardMovesGen {
             + kingReachable
             + ")");
     return switch (piece.piece) {
-      case KING -> getKingMoves(new Position(x, y), unreachableSquares, enemies, piece);
-      case QUEEN -> getQueenMoves(new Position(x, y), unreachableSquares, enemies, piece);
-      case BISHOP -> getBishopMoves(new Position(x, y), unreachableSquares, enemies, piece);
-      case ROOK -> getRookMoves(new Position(x, y), unreachableSquares, enemies, piece);
-      case KNIGHT -> getKnightMoves(new Position(x, y), unreachableSquares, enemies, piece);
+      case KING ->
+          getKingMoves(
+              new Position(x, y), unreachableSquares, enemies, piece, bitboardRepresentation);
+      case QUEEN ->
+          getQueenMoves(
+              new Position(x, y), unreachableSquares, enemies, piece, bitboardRepresentation);
+      case BISHOP ->
+          getBishopMoves(
+              new Position(x, y), unreachableSquares, enemies, piece, bitboardRepresentation);
+      case ROOK ->
+          getRookMoves(
+              new Position(x, y), unreachableSquares, enemies, piece, bitboardRepresentation);
+      case KNIGHT ->
+          getKnightMoves(
+              new Position(x, y), unreachableSquares, enemies, piece, bitboardRepresentation);
       case PAWN ->
           piece.color == Color.WHITE
-              ? getPawnMoves(new Position(x, y), unreachableSquares, enemies, true)
-              : getPawnMoves(new Position(x, y), unreachableSquares, enemies, false);
+              ? getPawnMoves(
+                  new Position(x, y), unreachableSquares, enemies, true, bitboardRepresentation)
+              : getPawnMoves(
+                  new Position(x, y), unreachableSquares, enemies, false, bitboardRepresentation);
       default -> new ArrayList<>();
     };
   }
@@ -408,21 +462,22 @@ public class BitboardMovesGen {
    *     check/checkmate)
    * @return The bitboard containing all the reachable positions
    */
-  public Bitboard getMoveBitboard(int x, int y, boolean kingReachable) {
-    ColoredPiece piece = this.bitboardRepresentation.getPieceAt(x, y);
-    int enemyKing = this.bitboardRepresentation.getKingOpti(piece.color != Color.WHITE);
+  public static Bitboard getMoveBitboard(
+      int x, int y, boolean kingReachable, BitboardRepresentation bitboardRepresentation) {
+    ColoredPiece piece = bitboardRepresentation.getPieceAt(x, y);
+    int enemyKing = bitboardRepresentation.getKingOpti(piece.color != Color.WHITE);
     Bitboard unreachableSquares =
         piece.color == Color.WHITE
-            ? this.bitboardRepresentation.getWhiteBoard()
-            : this.bitboardRepresentation.getBlackBoard();
+            ? bitboardRepresentation.getWhiteBoard()
+            : bitboardRepresentation.getBlackBoard();
     unreachableSquares.clearBit(x % 8 + y * 8); // remove piece position from reachable positions
     if (!kingReachable) {
       unreachableSquares.setBit(enemyKing); // Put enemyKing to unreachable positions
     }
     Bitboard enemies =
         piece.color == Color.WHITE
-            ? this.bitboardRepresentation.getBlackBoard()
-            : this.bitboardRepresentation.getWhiteBoard();
+            ? bitboardRepresentation.getBlackBoard()
+            : bitboardRepresentation.getWhiteBoard();
     VERBOSE(
         LOGGER,
         "Generating moves for "
@@ -459,16 +514,17 @@ public class BitboardMovesGen {
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The list of possible moves (without special cases)
    */
-  public List<Move> getAllAvailableMoves(boolean isWhite) {
+  public static List<Move> getAllAvailableMoves(
+      boolean isWhite, BitboardRepresentation bitboardRepresentation) {
     DEBUG(LOGGER, "Getting all available moves for a player");
     Bitboard pieces =
-        isWhite
-            ? this.bitboardRepresentation.getWhiteBoard()
-            : this.bitboardRepresentation.getBlackBoard();
+        isWhite ? bitboardRepresentation.getWhiteBoard() : bitboardRepresentation.getBlackBoard();
     List<Move> moves = new ArrayList<>();
     for (Integer i : pieces.getSetBits()) {
-      Position piecePosition = this.bitboardRepresentation.squareToPosition(i);
-      moves.addAll(getAvailableMoves(piecePosition.getX(), piecePosition.getY(), false));
+      Position piecePosition = bitboardRepresentation.squareToPosition(i);
+      moves.addAll(
+          getAvailableMoves(
+              piecePosition.getX(), piecePosition.getY(), false, bitboardRepresentation));
     }
     return moves;
   }
@@ -480,14 +536,13 @@ public class BitboardMovesGen {
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The bitboard containing all possible moves (without special cases)
    */
-  public Bitboard getColorMoveBitboard(boolean isWhite) {
+  public static Bitboard getColorMoveBitboard(
+      boolean isWhite, BitboardRepresentation bitboardRepresentation) {
     Bitboard pieces =
-        isWhite
-            ? this.bitboardRepresentation.getWhiteBoard()
-            : this.bitboardRepresentation.getBlackBoard();
+        isWhite ? bitboardRepresentation.getWhiteBoard() : bitboardRepresentation.getBlackBoard();
     Bitboard attacked = new Bitboard();
     for (Integer i : pieces.getSetBits()) {
-      attacked = attacked.or(getMoveBitboard(i % 8, i / 8, true));
+      attacked = attacked.or(getMoveBitboard(i % 8, i / 8, true, bitboardRepresentation));
     }
     return attacked;
   }
@@ -498,42 +553,45 @@ public class BitboardMovesGen {
    * @param white true if we want the moves of the white king, false otherwise
    * @return the list of moves for the corresponding king
    */
-  public List<Move> retrieveKingMoves(boolean white) {
+  public static List<Move> retrieveKingMoves(
+      boolean white, BitboardRepresentation bitboardRepresentation) {
     if (white) {
-      Position whiteKingPos = this.bitboardRepresentation.getKing(true).get(0);
+      Position whiteKingPos = bitboardRepresentation.getKing(true).get(0);
       ColoredPiece whiteKing =
-          this.bitboardRepresentation.getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
+          bitboardRepresentation.getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
       Bitboard unreachableSquaresWhite =
           whiteKing.color == Color.WHITE
-              ? this.bitboardRepresentation.getWhiteBoard()
-              : this.bitboardRepresentation.getBlackBoard();
+              ? bitboardRepresentation.getWhiteBoard()
+              : bitboardRepresentation.getBlackBoard();
       unreachableSquaresWhite.clearBit(whiteKingPos.getX() % 8 + whiteKingPos.getY() * 8);
       List<Move> whiteKingMoves =
           getKingMoves(
               whiteKingPos,
               unreachableSquaresWhite,
-              this.bitboardRepresentation.getBlackBoard(),
-              whiteKing);
+              bitboardRepresentation.getBlackBoard(),
+              whiteKing,
+              bitboardRepresentation);
 
       return whiteKingMoves;
     } else {
-      Position blackKingPos = this.bitboardRepresentation.getKing(false).get(0);
+      Position blackKingPos = bitboardRepresentation.getKing(false).get(0);
 
       ColoredPiece blackKing =
-          this.bitboardRepresentation.getPieceAt(blackKingPos.getX(), blackKingPos.getY());
+          bitboardRepresentation.getPieceAt(blackKingPos.getX(), blackKingPos.getY());
 
       Bitboard unreachableSquaresBlack =
           blackKing.color == Color.WHITE
-              ? this.bitboardRepresentation.getWhiteBoard()
-              : this.bitboardRepresentation.getBlackBoard();
+              ? bitboardRepresentation.getWhiteBoard()
+              : bitboardRepresentation.getBlackBoard();
       unreachableSquaresBlack.clearBit(blackKingPos.getX() % 8 + blackKingPos.getY() * 8);
 
       List<Move> blackKingMoves =
           getKingMoves(
               blackKingPos,
               unreachableSquaresBlack,
-              this.bitboardRepresentation.getWhiteBoard(),
-              blackKing);
+              bitboardRepresentation.getWhiteBoard(),
+              blackKing,
+              bitboardRepresentation);
 
       return blackKingMoves;
     }
@@ -545,24 +603,266 @@ public class BitboardMovesGen {
    * @param white true if we want the moves of the white bishops, false otherwise
    * @return the list of moves for the corresponding bishops
    */
-  public List<Move> retrieveBishopMoves(boolean white) {
-    List<Position> bishops = this.bitboardRepresentation.getBishops(white);
+  public static List<Move> retrieveBishopMoves(
+      boolean white, BitboardRepresentation bitboardRepresentation) {
+    List<Position> bishops = bitboardRepresentation.getBishops(white);
     Bitboard friendlyPieces =
-        white
-            ? this.bitboardRepresentation.getWhiteBoard()
-            : this.bitboardRepresentation.getBlackBoard();
+        white ? bitboardRepresentation.getWhiteBoard() : bitboardRepresentation.getBlackBoard();
     Bitboard enemyPieces =
-        white
-            ? this.bitboardRepresentation.getBlackBoard()
-            : this.bitboardRepresentation.getWhiteBoard();
+        white ? bitboardRepresentation.getBlackBoard() : bitboardRepresentation.getWhiteBoard();
     List<Move> bishopMoves = new ArrayList<>();
 
     for (Position bishopPos : bishops) {
-      ColoredPiece bishop =
-          this.bitboardRepresentation.getPieceAt(bishopPos.getX(), bishopPos.getY());
-      bishopMoves.addAll(getBishopMoves(bishopPos, friendlyPieces, enemyPieces, bishop));
+      ColoredPiece bishop = bitboardRepresentation.getPieceAt(bishopPos.getX(), bishopPos.getY());
+      bishopMoves.addAll(
+          getBishopMoves(bishopPos, friendlyPieces, enemyPieces, bishop, bitboardRepresentation));
     }
 
     return bishopMoves;
+  }
+
+  public static List<Move> getSpecialMoves(
+      boolean white,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    Color player = white ? Color.WHITE : Color.BLACK;
+    Color opponent = !white ? Color.WHITE : Color.BLACK;
+    List<Move> specialMoves = new ArrayList<>();
+    if (enPassantPos != null && isLastMoveDoublePush) {
+      Position pos = enPassantPos;
+      int pawnY = pos.getY() + (white ? -1 : 1);
+      Position capturedPos = new Position(pos.getX(), pawnY);
+
+      // left
+      if (pos.getX() > 0) {
+        if (bitboardRepresentation
+            .getPieceAt(pos.getX() - 1, pawnY)
+            .equals(new ColoredPiece(Piece.PAWN, player))) {
+          specialMoves.add(
+              new Move(
+                  new Position(pos.getX() - 1, pawnY),
+                  pos,
+                  new ColoredPiece(Piece.PAWN, player),
+                  true,
+                  new ColoredPiece(Piece.PAWN, opponent),
+                  capturedPos));
+        }
+      }
+
+      // right
+      if (pos.getX() < bitboardRepresentation.getNbCols() - 1) {
+        if (bitboardRepresentation
+            .getPieceAt(pos.getX() + 1, pawnY)
+            .equals(new ColoredPiece(Piece.PAWN, player))) {
+          specialMoves.add(
+              new Move(
+                  new Position(pos.getX() + 1, pawnY),
+                  pos,
+                  new ColoredPiece(Piece.PAWN, player),
+                  true,
+                  new ColoredPiece(Piece.PAWN, opponent),
+                  capturedPos));
+        }
+      }
+    }
+
+    if (isWhiteLongCastle && white) {
+      if (!bitboardRepresentation.isAttacked(2, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(4, 0, Color.BLACK)
+          && bitboardRepresentation
+              .getPieceAt(1, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(2, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(3, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(
+            new Move(
+                new Position(4, 0),
+                new Position(2, 0),
+                new ColoredPiece(Piece.KING, Color.WHITE),
+                false));
+      }
+    }
+
+    if (isWhiteShortCastle && white) {
+      if (!bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(6, 0, Color.BLACK)
+          && !bitboardRepresentation.isAttacked(4, 0, Color.BLACK)
+          && bitboardRepresentation
+              .getPieceAt(5, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(6, 0)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(
+            new Move(
+                new Position(4, 0),
+                new Position(6, 0),
+                new ColoredPiece(Piece.KING, Color.WHITE),
+                false));
+      }
+    }
+
+    if (isBlackLongCastle && !white) {
+      if (!bitboardRepresentation.isAttacked(2, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(4, 7, Color.WHITE)
+          && bitboardRepresentation
+              .getPieceAt(1, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(2, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(3, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(
+            new Move(
+                new Position(4, 7),
+                new Position(2, 7),
+                new ColoredPiece(Piece.KING, Color.BLACK),
+                false));
+      }
+    }
+
+    if (isBlackShortCastle && !white) {
+      if (!bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(6, 7, Color.WHITE)
+          && !bitboardRepresentation.isAttacked(4, 7, Color.WHITE)
+          && bitboardRepresentation
+              .getPieceAt(5, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(6, 7)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+        specialMoves.add(
+            new Move(
+                new Position(4, 7),
+                new Position(6, 7),
+                new ColoredPiece(Piece.KING, Color.BLACK),
+                false));
+      }
+    }
+
+    for (Position pos : bitboardRepresentation.getPawns(white)) {
+      if (pos.getY() == 1
+          && bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() + 2)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() + 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && white) {
+        specialMoves.add(
+            new Move(
+                pos,
+                new Position(pos.getX(), pos.getY() + 2),
+                new ColoredPiece(Piece.PAWN, player),
+                false));
+      }
+      if (pos.getY() == 6 && white) {
+        if (bitboardRepresentation
+            .getPieceAt(pos.getX(), pos.getY() + 1)
+            .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() + 1), Piece.BISHOP));
+        }
+        if (pos.getX() < bitboardRepresentation.getNbCols() - 1
+            && bitboardRepresentation.getPieceAt(pos.getX() + 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() + 1), Piece.BISHOP));
+        }
+        if (pos.getX() > 0
+            && bitboardRepresentation.getPieceAt(pos.getX() - 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() + 1), Piece.BISHOP));
+        }
+      }
+      if (pos.getY() == 6
+          && bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() - 2)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(pos.getX(), pos.getY() - 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && !white) {
+        specialMoves.add(
+            new Move(
+                pos,
+                new Position(pos.getX(), pos.getY() - 2),
+                new ColoredPiece(Piece.PAWN, player),
+                false));
+      }
+
+      if (pos.getY() == 1 && !white) {
+        if (bitboardRepresentation
+            .getPieceAt(pos.getX(), pos.getY() - 1)
+            .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX(), pos.getY() - 1), Piece.BISHOP));
+        }
+        if (pos.getX() < bitboardRepresentation.getNbCols() - 1
+            && bitboardRepresentation.getPieceAt(pos.getX() + 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() + 1, pos.getY() - 1), Piece.BISHOP));
+        }
+        if (pos.getX() > 0
+            && bitboardRepresentation.getPieceAt(pos.getX() - 1, pos.getY() + 1).color
+                == opponent) {
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.QUEEN));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.KNIGHT));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.ROOK));
+          specialMoves.add(
+              new PromoteMove(pos, new Position(pos.getX() - 1, pos.getY() - 1), Piece.BISHOP));
+        }
+      }
+    }
+
+    return specialMoves;
   }
 }

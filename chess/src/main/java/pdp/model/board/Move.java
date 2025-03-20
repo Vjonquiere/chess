@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.MoveParsingException;
-import pdp.model.Game;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Logging;
@@ -16,6 +15,7 @@ public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
   public Position source;
   public Position dest;
+  public Position takeDest;
   public ColoredPiece piece;
   public ColoredPiece takenPiece;
   public boolean isTake = false;
@@ -50,6 +50,7 @@ public class Move {
     this.dest = dest;
     this.piece = piece;
     this.isTake = isTake;
+    this.takeDest = dest;
   }
 
   /**
@@ -71,6 +72,22 @@ public class Move {
     this.piece = piece;
     this.isTake = isTake;
     this.takenPiece = takenPiece;
+    this.takeDest = dest;
+  }
+
+  public Move(
+      Position source,
+      Position dest,
+      ColoredPiece piece,
+      boolean isTake,
+      ColoredPiece takenPiece,
+      Position takeDest) {
+    this.source = source;
+    this.dest = dest;
+    this.piece = piece;
+    this.isTake = isTake;
+    this.takenPiece = takenPiece;
+    this.takeDest = takeDest;
   }
 
   /**
@@ -104,6 +121,7 @@ public class Move {
     this.takenPiece = takenPiece;
     this.isCheck = isCheck;
     this.isCheckMate = isCheckMate;
+    this.takeDest = dest;
   }
 
   /**
@@ -113,20 +131,39 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(String stringMove) throws MoveParsingException {
+  public static Move fromString(String stringMove, boolean isWhiteTurn)
+      throws MoveParsingException {
 
     if (stringMove.equalsIgnoreCase("o-o-o")) {
-      if (Game.getInstance().getGameState().isWhiteTurn()) {
+      if (isWhiteTurn) {
         stringMove = "e1-c1";
       } else {
         stringMove = "e8-c8";
       }
     } else if (stringMove.equalsIgnoreCase("o-o")) {
-      if (Game.getInstance().getGameState().isWhiteTurn()) {
+      if (isWhiteTurn) {
         stringMove = "e1-g1";
       } else {
         stringMove = "e8-g8";
       }
+    }
+
+    return fromString(stringMove);
+  }
+
+  /**
+   * Parses a string representation of a move and converts it into a {@code Move} object Warning:
+   * Can't handle castling as o-o-o or o-o
+   *
+   * @param stringMove The move in string format ("e2-e4")
+   * @return A {@code Move} object representing the parsed move
+   * @throws MoveParsingException If the string format is invalid
+   */
+  public static Move fromString(String stringMove) throws MoveParsingException {
+
+    if (stringMove.equalsIgnoreCase("o-o-o") || stringMove.equalsIgnoreCase("o-o")) {
+      throw new MoveParsingException(
+          "Castling notation ('o-o' or 'o-o-o') is not supported in this method.");
     }
 
     String[] parts = stringMove.split("-");
@@ -257,6 +294,14 @@ public class Move {
     return dest;
   }
 
+  public Position getTakeDest() {
+    return this.takeDest;
+  }
+
+  public void setTakeDest(Position takeDest) {
+    this.takeDest = takeDest;
+  }
+
   /**
    * Retrieves the piece involved in the move.
    *
@@ -264,6 +309,15 @@ public class Move {
    */
   public ColoredPiece getPiece() {
     return piece;
+  }
+
+  /**
+   * Retrieves the piece taken.
+   *
+   * @return The ColoredPiece taken.
+   */
+  public ColoredPiece getPieceTaken() {
+    return takenPiece;
   }
 
   /**

@@ -3,16 +3,12 @@ package pdp.controller.commands;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
-import pdp.exceptions.CommandNotAvailableNowException;
+import pdp.events.EventType;
 import pdp.model.Game;
-import pdp.model.board.Move;
 
-public class PlayMoveCommand implements Command {
-  private String move;
+public class ChangeLang implements Command {
 
-  public PlayMoveCommand(String move) {
-    this.move = move;
-  }
+  public ChangeLang() {}
 
   /**
    * Executes the move on the game model.
@@ -22,11 +18,8 @@ public class PlayMoveCommand implements Command {
    */
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
-    if (model.getGameState().isGameOver()) {
-      return Optional.of(new CommandNotAvailableNowException());
-    }
     try {
-      model.playMove(Move.fromString(this.move, Game.getInstance().getGameState().isWhiteTurn()));
+      Game.getInstance().notifyObservers(EventType.UPDATE_LANG);
       return Optional.empty();
     } catch (Exception e) {
       System.out.println(e.getMessage());

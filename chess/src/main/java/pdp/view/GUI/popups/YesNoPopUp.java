@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.Command;
 import pdp.utils.TextGetter;
+import pdp.view.GUIView;
 
 public class YesNoPopUp extends VBox {
 
@@ -62,6 +63,7 @@ public class YesNoPopUp extends VBox {
     layout.setStyle("-fx-padding: 20;");
 
     Scene scene = new Scene(layout, 300, 150);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

@@ -20,6 +20,10 @@ public class History {
     this.currentMove = null;
   }
 
+  public void clear() {
+    this.currentMove = null;
+  }
+
   /**
    * Retrieves the current move node in the history.
    *

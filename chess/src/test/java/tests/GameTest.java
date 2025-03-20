@@ -23,8 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameState;
 import pdp.model.ai.AlgorithmType;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.BitboardRepresentation;
@@ -213,12 +215,12 @@ public class GameTest {
   public void noThreefoldRepetitionOnIllegalSpecialTest() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     try {
-      game.playMove(Move.fromString("o-o-o"));
+      game.playMove(Move.fromString("e1-c1"));
     } catch (IllegalMoveException e) {
 
     }
     try {
-      game.playMove(Move.fromString("o-o-o"));
+      game.playMove(Move.fromString("e1-g1"));
     } catch (IllegalMoveException e) {
 
     }
@@ -673,6 +675,8 @@ public class GameTest {
     URL filePath = classLoader.getResource("gameBoards/fenVersions/endGame");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Solver s = new Solver();
+    s.setHeuristic(HeuristicType.STANDARD);
+    s.setEndgameHeuristic(HeuristicType.ENDGAME);
     Game game = Game.initialize(true, false, s, s, null, board, new HashMap<>());
     game.startAI();
     assertTrue(s.getHeuristic() instanceof EndGameHeuristic);
@@ -686,7 +690,7 @@ public class GameTest {
 
     when(mockGameState.isWhiteTurn()).thenReturn(true);
 
-    Field field = Game.class.getDeclaredField("gameState");
+    Field field = GameAbstract.class.getDeclaredField("gameState");
     field.setAccessible(true);
     field.set(game, mockGameState);
 
@@ -704,7 +708,7 @@ public class GameTest {
 
     when(mockGameState.isWhiteTurn()).thenReturn(false);
 
-    Field field = Game.class.getDeclaredField("gameState");
+    Field field = GameAbstract.class.getDeclaredField("gameState");
     field.setAccessible(true);
     field.set(game, mockGameState);
 
