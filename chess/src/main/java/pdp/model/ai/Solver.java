@@ -190,7 +190,9 @@ public class Solver {
     }
     isSearchStopped = false;
     isMoveToPlay = true;
+    game.setAIPlayedItsLastMove(false);
     AIMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
+    game.setAIPlayedItsLastMove(true);
     if (timer != null) {
       timer.stop();
     }

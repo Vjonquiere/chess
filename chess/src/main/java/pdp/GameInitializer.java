@@ -203,25 +203,15 @@ public abstract class GameInitializer {
 
     Game model = null;
 
-    if (options.containsKey(OptionType.LOAD)) {
-      InputStream inputStream = null;
-      try {
-        inputStream = new FileInputStream(options.get(OptionType.LOAD));
-
-        List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
-        if (moveStrings.isEmpty()) {
-          BoardFileParser parser = new BoardFileParser();
-          FileBoard board =
-              parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
-          model =
-              Game.initialize(
-                  isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
-          model.setLoadedFromFile();
-          model.setLoadingFileHasHistory(false);
-        } else {
-
+    if (options.containsKey(OptionType.CONTEST)) {
+      String contestFile = options.get(OptionType.CONTEST);
+      if (contestFile == null || contestFile.isEmpty()) {
+        System.err.println("Error: --contest option requires a valid file path.");
+      } else {
+        try {
+          InputStream inputStream = new FileInputStream(contestFile);
+          List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
           List<Move> moves = new ArrayList<>();
-
           for (String move : moveStrings) {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
@@ -229,21 +219,93 @@ public abstract class GameInitializer {
           model =
               Game.fromHistory(
                   moves, isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
+
+          // Init solver according to the current player
+          Solver solver = null;
+          if (model.getGameState().isWhiteTurn()) {
+            Solver whiteSolver = new Solver();
+            whiteSolver.setAlgorithm(AlgorithmType.ALPHA_BETA);
+            whiteSolver.setHeuristic(HeuristicType.STANDARD);
+            whiteSolver.setDepth(4);
+            model.setWhiteSolver(whiteSolver);
+            model.setWhiteAI(true);
+            model.setBlackAI(false);
+            solver = whiteSolver;
+          } else {
+            new Solver();
+            Solver blackSolver = new Solver();
+            blackSolver.setAlgorithm(AlgorithmType.ALPHA_BETA);
+            blackSolver.setHeuristic(HeuristicType.STANDARD);
+            blackSolver.setDepth(4);
+            model.setBlackSolver(blackSolver);
+            model.setBlackAI(true);
+            model.setWhiteAI(false);
+            solver = blackSolver;
+          }
+          
           model.setLoadedFromFile();
           model.setLoadingFileHasHistory(true);
-        }
+          model.setContestModeOnOrOff(true);
+          DEBUG(LOGGER, "Game was init with contest mode");
 
-      } catch (IOException
-          | IllegalMoveException
-          | InvalidPositionException
-          | MoveParsingException e) {
-        System.err.println(
-            "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
-        System.err.println("Using the default game start");
+          solver.playAIMove(model);
+          DEBUG(LOGGER, "AI move played and recorded in: " + contestFile);
+        } catch (IOException
+            | IllegalMoveException
+            | InvalidPositionException
+            | MoveParsingException e) {
+          System.err.println("Error loading contest file: " + e.getMessage());
+          System.err.println("Starting a new game instead.");
+          model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
+        }
+      }
+    }
+
+    if (model == null) {
+      if (options.containsKey(OptionType.LOAD)) {
+        InputStream inputStream = null;
+        try {
+          inputStream = new FileInputStream(options.get(OptionType.LOAD));
+
+          List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
+          if (moveStrings.isEmpty()) {
+            BoardFileParser parser = new BoardFileParser();
+            FileBoard board =
+                parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
+            model =
+                Game.initialize(
+                    isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
+            model.setLoadedFromFile();
+            model.setLoadingFileHasHistory(false);
+            model.setContestModeOnOrOff(false);
+          } else {
+
+            List<Move> moves = new ArrayList<>();
+
+            for (String move : moveStrings) {
+              moves.add(Move.fromString(move.replace("x", "-")));
+            }
+
+            model =
+                Game.fromHistory(
+                    moves, isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
+            model.setLoadedFromFile();
+            model.setLoadingFileHasHistory(true);
+            model.setContestModeOnOrOff(false);
+          }
+
+        } catch (IOException
+            | IllegalMoveException
+            | InvalidPositionException
+            | MoveParsingException e) {
+          System.err.println(
+              "Error while parsing file: " + e.getMessage()); // TODO use Internationalization
+          System.err.println("Using the default game start");
+          model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
+        }
+      } else {
         model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
       }
-    } else {
-      model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
     }
 
     return model;

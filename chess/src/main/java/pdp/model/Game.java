@@ -58,6 +58,8 @@ public class Game extends Subject {
   private boolean explorationAI;
   private boolean loadedFromFile;
   private boolean loadingFileHasHistory;
+  private boolean contestModeOn;
+  private boolean AIPlayedItsLastMove;
   private History history;
   private HashMap<Long, Integer> stateCount;
   private HashMap<OptionType, String> options;
@@ -86,6 +88,7 @@ public class Game extends Subject {
     this.explorationAI = false;
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
+    this.AIPlayedItsLastMove = false;
     this.history = history;
     this.history.addMove(
         new HistoryState(
@@ -195,6 +198,24 @@ public class Game extends Subject {
   }
 
   /**
+   * Assigns boolean value to isWhiteAI field. Method used in GameInitializer.
+   * 
+   * @param ai true if white is AI. false otherwise.
+   */
+  public void setWhiteAI(boolean ai) {
+    this.isWhiteAI = ai;
+  }
+
+  /**
+   * Assigns boolean value to isBlakAI field. Method used in GameInitializer.
+   * 
+   * @param ai true if black is AI. false otherwise.
+   */
+  public void setBlackAI(boolean ai) {
+    this.isBlackAI = ai;
+  }
+
+  /**
    * Gets the solver used by the White AI.
    *
    * @return the {@link Solver} instance used for White AI decision-making.
@@ -210,6 +231,24 @@ public class Game extends Subject {
    */
   public Solver getBlackSolver() {
     return solverBlack;
+  }
+
+  /**
+   * Assigns solver for white. Method used in GameInitializer.
+   * 
+   * @param solver The new solver to assign to white.
+   */
+  public void setWhiteSolver(Solver solver) {
+    this.solverWhite = solver;
+  }
+
+  /**
+   * Assigns solver for black. Method used in GameInitializer.
+   * 
+   * @param solver The new solver to assign to black.
+   */
+  public void setBlackSolver(Solver solver) {
+    this.solverBlack = solver;
   }
 
   /**
@@ -239,17 +278,24 @@ public class Game extends Subject {
   }
 
   /**
-   * @return true if the game was loaded from a file, false otherwise
+   * @return true if the game was loaded from a file, false otherwise.
    */
   public boolean isLoadedFromFile() {
     return this.loadedFromFile;
   }
 
   /**
-   * @return the path of the file that generated the game
+   * @return the path of the file that generated the game for LOAD mode.
    */
   public String getLoadingFile() {
     return options.get(OptionType.LOAD);
+  }
+
+  /**
+   * @return the path of the file that generated the game for CONTEST mode.
+   */
+  public String getContestFile() {
+    return options.get(OptionType.CONTEST);
   }
 
   /**
@@ -260,12 +306,46 @@ public class Game extends Subject {
   }
 
   /**
-   * Method used in checkAndOverwriteHistory() to know how to handle new moves
+   * Method used in checkAndOverwriteHistory() to know how to handle new moves.
    *
    * @param fileHasHistory boolean value used to set private boolean loadingFileHasHistory.
    */
   public void setLoadingFileHasHistory(boolean fileHasHistory) {
     this.loadingFileHasHistory = fileHasHistory;
+  }
+
+  /**
+   * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
+   * file with contest mode on.
+   *
+   * @param mode boolean to indicate if contest mode is on or off.
+   */
+  public void setContestModeOnOrOff(boolean mode) {
+    this.contestModeOn = mode;
+  }
+
+  /**
+   * @return true if the game was loaded from a file with contest mode enabled. false otherwise.
+   */
+  public boolean isContestModeOn() {
+    return this.contestModeOn;
+  }
+
+  /**
+   * Used in updateGameStateAfterMove() method to know how to handle game save.
+   * 
+   * @return true if AI finished computing moves. false otherwise.
+   */
+  public boolean AIPlayedItsLastMove() {
+    return this.AIPlayedItsLastMove;
+  }
+
+  /**
+   * Method used in Solver.playAIMove(this) to indicate when AI finished computing.
+   * Used to know when the game can be saved when loading or contest mode.
+   */
+  public void setAIPlayedItsLastMove(boolean lastMove) {
+    this.AIPlayedItsLastMove = lastMove;
   }
 
   /**
@@ -640,7 +720,15 @@ public class Game extends Subject {
     if (!isLoadedFromFile()) {
       this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
     } else {
-      checkAndOverwriteHistory(move);
+      if (!AIPlayedItsLastMove()) {
+        if (isBlackAI() || isWhiteAI()) {
+          this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+        } else {
+          checkAndOverwriteHistory(move);
+        }
+      } else {
+        checkAndOverwriteHistory(move);
+      }
     }
 
     if (!explorationAI) {
@@ -698,17 +786,31 @@ public class Game extends Subject {
       if (nextState == null) {
         // End of history already, so add new move and save
         this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
-        String newFilePath = saveGameToNewFile(getLoadingFile());
-        DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+        if (isContestModeOn()) {
+          saveGame(getContestFile());
+          DEBUG(
+            LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
+        } else {
+          String newFilePath = saveGameToNewFile(getLoadingFile());
+          DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+        }
       } else {
         // Check if move we want to play is the same as the next one. If not, overwrite history and
         // save
         if (!move.equals(nextState.getMove())) {
-          // Truncate history
-          this.history.setCurrentMove(null);
-          this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
-          String newFilePath = saveGameToNewFile(getLoadingFile());
-          DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+          if (isContestModeOn()) {
+            this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+            saveGame(getContestFile());
+            DEBUG(
+              LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
+          } else {
+            // Truncate history 
+            this.history.setCurrentMove(null);
+            this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+            String newFilePath = saveGameToNewFile(getLoadingFile());
+            DEBUG(
+                LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+          }
         } else {
           // If same move, just forward by one in the history
           this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
@@ -720,8 +822,15 @@ public class Game extends Subject {
     } else {
       // If no history just add the move
       this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
-      String newFilePath = saveGameToNewFile(getLoadingFile());
-      DEBUG(LOGGER, "Writing history and game state to file :" + newFilePath);
+      if (isContestModeOn()) {
+        System.err.println("LOADING FILE : " + getContestFile());
+        saveGame(getContestFile());
+        DEBUG(
+            LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
+      } else {
+        String newFilePath = saveGameToNewFile(getLoadingFile());
+        DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+      }
     }
   }
 
@@ -755,6 +864,7 @@ public class Game extends Subject {
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(game);
+      writer.close();
     } catch (IOException e) {
       DEBUG(LOGGER, "Error writing to file: " + e.getMessage());
       throw new FailedSaveException(path);

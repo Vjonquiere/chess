@@ -18,10 +18,6 @@ public class Main {
     System.out.println(TextGetter.getText("title"));
     System.out.println("options: " + options.toString());
 
-    if (options.containsKey(OptionType.CONTEST)) {
-      throw new UnsupportedOperationException("Contest mode not implemented");
-    }
-
     GameController controller = GameControllerInit.initialize(options);
     Thread viewThread = controller.getView().start();
 
