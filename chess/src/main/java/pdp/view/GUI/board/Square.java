@@ -13,6 +13,7 @@ public class Square extends StackPane {
   Color baseColor;
   Canvas sq;
   Canvas reachableSq;
+  Canvas hintSq;
   ColoredPiece currentPiece;
   ImageView pieceImage;
 
@@ -30,6 +31,7 @@ public class Square extends StackPane {
     currentPiece = piece;
     sq = new Canvas(100, 100);
     reachableSq = new Canvas(100, 100);
+    hintSq = new Canvas(100, 100);
     GraphicsContext gc = sq.getGraphicsContext2D();
     gc.setFill(baseColor);
     gc.fillRect(0, 0, 100, 100);
@@ -93,6 +95,15 @@ public class Square extends StackPane {
       gc.fillOval(10, 10, 80, 80);
       gc.setFill(baseColor);
       gc.fillOval(15, 15, 70, 70);
+    }
+  }
+
+  public void setHint(boolean hint) {
+    GraphicsContext gc = hintSq.getGraphicsContext2D();
+    gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
+    if (hint) {
+      gc.setFill(Color.web(GUIView.theme.getTertiary()));
+      gc.fillOval(37.5, 37.5, 25, 25);
     }
   }
 }

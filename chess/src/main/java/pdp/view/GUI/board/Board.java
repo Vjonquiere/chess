@@ -23,6 +23,7 @@ public class Board extends GridPane {
   private Position from;
   private final Map<Position, Square> pieces = new HashMap<>();
   private List<Position> reachableSquares;
+  private List<Position> hintSquares;
   private Stage stage;
 
   public Board(Game game, Stage stage) {
@@ -63,6 +64,7 @@ public class Board extends GridPane {
 
   /** Update the pieces sprites of all squares */
   public void updateBoard() {
+    cleanHintSquares();
     board = Game.getInstance().getBoard().getBoardRep();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
@@ -168,5 +170,17 @@ public class Board extends GridPane {
    * @param from The starting position.
    * @param to The destination position.
    */
-  public void setHintSquares(Position from, Position to) {}
+  public void setHintSquares(Position from, Position to) {
+    hintSquares.add(from);
+    hintSquares.add(to);
+    pieces.get(from).setHint(true);
+    pieces.get(to).setHint(true);
+  }
+
+  private void cleanHintSquares() {
+    for (Position sq : hintSquares) {
+      pieces.get(sq).setHint(false);
+      hintSquares.remove(sq);
+    }
+  }
 }
