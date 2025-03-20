@@ -71,8 +71,7 @@ The following are required to run the project:
 From the local `chess` or Docker `app` folder :
 - `mvn clean test` to install dependencies and run tests
 
-The tests are by default ran in headless mode. To disable the headless run, you can use :
-- `mvn test -Dtestfx.headless=false -Dprism.order=j2d -Dglass.platform=default -Dmonocle.platform=default`
+The tests are by default ran in headless mode.
 
 ### Run the Application
 From the local `chess` or Docker `app` folder :
