@@ -62,4 +62,18 @@ public class HistoryPanel extends VBox {
 
     this.list.setItems(items);
   }
+
+  public void removeLastMove() {
+    // Récupérer l'ObservableList actuelle des éléments dans la ListView
+    ObservableList<String> currentItems = this.list.getItems();
+
+    // Vérifier si la liste n'est pas vide
+    if (!currentItems.isEmpty()) {
+      // Supprimer le dernier élément
+      currentItems.remove(currentItems.size() - 1);
+
+      // Mettre à jour la ListView avec la liste modifiée
+      this.list.setItems(currentItems);
+    }
+  }
 }
