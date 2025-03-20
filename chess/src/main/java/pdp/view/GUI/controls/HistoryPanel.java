@@ -1,24 +1,69 @@
 package pdp.view.GUI.controls;
 
+import java.util.Stack;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
+import pdp.model.Game;
+import pdp.model.history.History;
+import pdp.model.history.HistoryNode;
 import pdp.utils.TextGetter;
 
 public class HistoryPanel extends VBox {
 
+  private ListView<String> list = new ListView<String>();
+
   public HistoryPanel() {
-    ListView<String> list = new ListView<String>();
-    // TODO: add history (just an example for now)
-    ObservableList<String> items =
-        FXCollections.observableArrayList(
-            "Move1", "Move2", "Move3", "Move4", "Move5", "Move6", "Move7", "Move8", "Move9",
-            "Move10", "Move11", "Move12", "Move13", "Move14", "Move15", "Move16", "Move17",
-            "Move18", "Move19", "Move20");
+
+    ObservableList<String> items = FXCollections.observableArrayList();
+
+    ObservableList<String> currentItems = this.list.getItems();
+    items.addAll(currentItems);
+
+    History history = Game.getInstance().getHistory();
+
+    HistoryNode currentNode = history.getCurrentMove().orElse(null);
+    while (currentNode != null) {
+      if (currentNode.getPrevious().orElse(null) == null) {
+        break;
+      }
+      currentNode = currentNode.getPrevious().orElse(null);
+    }
+
+    currentNode = currentNode.getNext().orElse(null);
+
+    while (currentNode != null) {
+      items.add(currentNode.getState().toString());
+      currentNode = currentNode.getNext().orElse(null);
+    }
+
     list.setItems(items);
     super.getChildren().add(new Label(TextGetter.getText("gameHistory")));
     super.getChildren().add(list);
+  }
+
+  public void updateHistoryPanel() {
+
+    ObservableList<String> items = FXCollections.observableArrayList();
+
+    History history = Game.getInstance().getHistory();
+
+    HistoryNode currentNode = history.getCurrentMove().orElse(null);
+
+    Stack<HistoryNode> stack = new Stack<>();
+
+    while (currentNode != null) {
+      stack.push(currentNode);
+      currentNode = currentNode.getPrevious().orElse(null); // Utilisation du getter
+    }
+
+    HistoryNode node = stack.pop();
+    while (!stack.isEmpty()) {
+      node = stack.pop();
+      items.add(node.getState().toString());
+    }
+    list.setItems(items);
   }
 }

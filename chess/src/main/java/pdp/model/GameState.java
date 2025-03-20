@@ -2,6 +2,8 @@ package pdp.model;
 
 import static pdp.utils.Logging.DEBUG;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
@@ -30,6 +32,7 @@ public class GameState extends Subject {
   private int fullTurnNumber;
   private long zobristHashing;
   private long simplifiedZobristHashing;
+  private List<Integer> hintIntegers = new ArrayList<>();
 
   static {
     Logging.configureLogging(LOGGER);
@@ -119,6 +122,10 @@ public class GameState extends Subject {
     return this.redoRequestTurnNumber;
   }
 
+  public List<Integer> getHintIntegers() {
+    return this.hintIntegers;
+  }
+
   /**
    * Requests to undo the last move by recording the current turn number. Notifies observers about
    * the undo proposal based on the player's turn.
@@ -166,6 +173,11 @@ public class GameState extends Subject {
     this.zobristHashing = zobristHashing;
   }
     */
+
+  public void setHintIntegers(List<Integer> newHintIntegers) {
+    this.hintIntegers = newHintIntegers;
+    notifyObservers(EventType.MOVE_HINT);
+  }
 
   public void setSimplifiedZobristHashing(long simplifiedZobristHashing) {
     this.simplifiedZobristHashing = simplifiedZobristHashing;
