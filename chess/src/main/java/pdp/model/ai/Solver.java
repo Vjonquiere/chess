@@ -25,6 +25,7 @@ import pdp.model.ai.heuristics.PawnChainHeuristic;
 import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
+import pdp.model.ai.heuristics.StandardLightHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
