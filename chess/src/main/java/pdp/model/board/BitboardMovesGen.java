@@ -301,9 +301,11 @@ public class BitboardMovesGen {
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
 
+    /*
     if (white && square.getY() == 6 || !white && square.getY() == 1) {
       return new Bitboard(0L);
     }
+    */
 
     if (white) {
       attackRight = position.moveUpRight().and(enemies);
