@@ -24,7 +24,7 @@ def play_game(ai_color="white"):
         else:
             print("Stockfish")
 
-            result = engine.play(board, chess.engine.Limit(time=0.5))
+            result = engine.play(board, chess.engine.Limit(time=1))
             ai_move = result.move
 
         if ai_move not in board.legal_moves:
@@ -34,6 +34,7 @@ def play_game(ai_color="white"):
         board.push(ai_move)
 
     engine.quit()
+    engine2.quit()
     return board.result()
 
 
