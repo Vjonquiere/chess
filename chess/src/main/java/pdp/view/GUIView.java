@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -16,6 +17,7 @@ import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.parsers.BoardFileParser;
 import pdp.utils.Logging;
+import pdp.utils.Position;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.ChessMenu;
 import pdp.view.GUI.ControlPanel;
@@ -288,6 +290,14 @@ public class GUIView implements View {
                 break;
               case UPDATE_LANG:
                 updateLanguage();
+                break;
+              case MOVE_HINT:
+                if (board != null) {
+                  List<Integer> hintIntegers = Game.getInstance().getGameState().getHintIntegers();
+                  board.setHintSquares(
+                      new Position(hintIntegers.get(0), hintIntegers.get(1)),
+                      new Position(hintIntegers.get(2), hintIntegers.get(3)));
+                }
                 break;
               default:
                 DEBUG(LOGGER, "Received unknown game event: " + event);

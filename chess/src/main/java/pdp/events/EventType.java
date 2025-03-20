@@ -32,5 +32,6 @@ public enum EventType {
   AI_PLAYING,
   AI_NOT_ENOUGH_TIME,
   UPDATE_THEME,
-  UPDATE_LANG
+  UPDATE_LANG,
+  MOVE_HINT
 }

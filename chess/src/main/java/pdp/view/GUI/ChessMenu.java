@@ -143,10 +143,7 @@ public class ChessMenu extends VBox {
 
     hint.setOnAction(
         e -> {
-          /* Solver hintSolver = new Solver();
-          Move hintMove = hintSolver.getAlgorithm().findBestMove(Game.getInstance(), 2, Game.getInstance().getGameState().isWhiteTurn()).move();
-          System.out.println("best move hint : " + hintMove.getSource()+ " " + hintMove.getDest()); */
-          new YesNoPopUp("hintInstructionsGui", null, null);
+          new YesNoPopUp("hintInstructionsGui", new AskHintComand(), null);
         });
     gameMenu.getItems().add(start);
     gameMenu.getItems().add(undo);
