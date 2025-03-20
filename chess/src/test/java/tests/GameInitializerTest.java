@@ -14,7 +14,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.GameControllerInit;
+import pdp.GameInitializer;
 import pdp.controller.GameController;
+import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.heuristics.MobilityHeuristic;
@@ -403,5 +405,107 @@ class GameInitializerTest {
     GameController controller = GameControllerInit.initialize(options);
     assertEquals(controller.getModel().getBoard().getBoardRep(), board.board());
     assertEquals(controller.getModel().getGameState().isWhiteTurn(), board.isWhiteTurn());
+  }
+
+  @Test
+  void testGameInitializationContestModeIncorrectFile() {
+    options.put(OptionType.CONTEST, "invalid_file_path.txt");
+    Game game = GameInitializer.initialize(options);
+
+    assertTrue(outputStream.toString().contains("Error loading contest file"));
+    assertTrue(outputStream.toString().contains("Starting a new game instead."));
+    assertNotNull(game);
+    assertFalse(game.isContestModeOn());
+  }
+
+  @Test
+  void testGameInitializationContestModeMissingFilePath() {
+    options.put(OptionType.CONTEST, "");
+    Game game = GameInitializer.initialize(options);
+
+    assertTrue(
+        outputStream.toString().contains("Error: --contest option requires a valid file path."));
+    assertNotNull(game);
+    assertFalse(game.isContestModeOn());
+  }
+
+  @Test
+  void testGameInitializationContestModeValidFileWhiteTurn() throws Exception {
+    tempFile = Files.createTempFile("moveHistory", ".txt");
+    String text =
+        "B\n"
+            + //
+            "r _ b q k b _ r \n"
+            + //
+            "p p p p _ Q p p \n"
+            + //
+            "_ _ n _ _ n _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ B _ P _ _ _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K _ N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-h5 B b8-c6\n"
+            + //
+            "3. W f1-c4 B g8-f6\n"
+            + //
+            "4. W h5xf7";
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isContestModeOn());
+  }
+
+  @Test
+  void testGameInitializationContestModeValidFileBlackTurn() throws Exception {
+    tempFile = Files.createTempFile("moveHistory", ".txt");
+    String text =
+        "B\n"
+            + //
+            "r _ b q k b _ r \n"
+            + //
+            "p p p p _ Q p p \n"
+            + //
+            "_ _ n _ _ n _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ B _ P _ _ _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K _ N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-h5 B b8-c6\n"
+            + //
+            "3. W f1-c4 B g8-f6\n";
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isContestModeOn());
   }
 }
