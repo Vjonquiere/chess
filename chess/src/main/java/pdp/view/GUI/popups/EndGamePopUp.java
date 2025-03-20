@@ -82,6 +82,7 @@ public class EndGamePopUp {
     newGameButton.setId("newGameButton");
     newGameButton.setOnAction(
         e -> {
+          popupStage.close();
           NewGamePopup.show(Game.getInstance().getOptions());
         });
 
