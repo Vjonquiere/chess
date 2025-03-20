@@ -133,6 +133,30 @@ public abstract class GameInitializer {
         }
       }
 
+      if (options.containsKey(OptionType.AI_ENDGAME_W)) {
+        System.out.println(options);
+        try {
+          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_W));
+          solverWhite.setEndgameHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_W));
+          System.err.println("Defaulting to Endgame Heuristic STANDARD");
+          solverWhite.setEndgameHeuristic(HeuristicType.ENDGAME);
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_ENDGAME_B)) {
+        System.out.println(options);
+        try {
+          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_B));
+          solverBlack.setEndgameHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_B));
+          System.err.println("Defaulting to Endgame Heuristic STANDARD");
+          solverBlack.setEndgameHeuristic(HeuristicType.ENDGAME);
+        }
+      }
+
       if (options.containsKey(OptionType.AI_DEPTH_W)
           && !(solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch)) {
         try {
@@ -222,8 +246,10 @@ public abstract class GameInitializer {
 
           List<Move> moves = new ArrayList<>();
 
+          boolean isWhite = true;
           for (String move : moveStrings) {
-            moves.add(Move.fromString(move.replace("x", "-")));
+            moves.add(Move.fromString(move.replace("x", "-"), isWhite));
+            isWhite = !isWhite;
           }
 
           model =

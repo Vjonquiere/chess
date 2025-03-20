@@ -13,6 +13,7 @@ public enum HeuristicType {
   SHANNON,
   BAD_PAWNS,
   STANDARD,
+  STANDARD_LIGHT,
   GAME_STATUS,
   ENDGAME;
 }

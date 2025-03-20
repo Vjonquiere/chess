@@ -24,6 +24,7 @@ public class ButtonsPanel extends GridPane {
   private Button resignButton;
   private Button undrawButton;
   private Button restartButton;
+  private int buttonMinWidth = 100;
   String buttonStyle =
       "-fx-background-color: "
           + GUIView.theme.getSecondary()
@@ -71,7 +72,7 @@ public class ButtonsPanel extends GridPane {
    * the move is undone if the player accepts.
    */
   private void initUndoButton() {
-    undoButton = new CustomButton(TextGetter.getText("undo"));
+    undoButton = new CustomButton(TextGetter.getText("undo"), buttonMinWidth);
     undoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
@@ -89,7 +90,7 @@ public class ButtonsPanel extends GridPane {
    * and the move is redone if the player accepts.
    */
   private void initRedoButton() {
-    redoButton = new CustomButton(TextGetter.getText("redo"));
+    redoButton = new CustomButton(TextGetter.getText("redo"), buttonMinWidth);
     redoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
@@ -107,7 +108,7 @@ public class ButtonsPanel extends GridPane {
    * sending it.
    */
   private void initDrawButton() {
-    drawButton = new CustomButton(TextGetter.getText("draw"));
+    drawButton = new CustomButton(TextGetter.getText("draw"), buttonMinWidth);
     drawButton.setOnAction(
         event -> {
           new YesNoPopUp(
@@ -123,7 +124,7 @@ public class ButtonsPanel extends GridPane {
    * cancellation.
    */
   private void initUndrawButton() {
-    undrawButton = new CustomButton(TextGetter.getText("undraw"));
+    undrawButton = new CustomButton(TextGetter.getText("undraw"), buttonMinWidth);
     undrawButton.setOnAction(
         event -> {
           new YesNoPopUp(
@@ -139,7 +140,7 @@ public class ButtonsPanel extends GridPane {
    * resignation before ending the game.
    */
   private void initResignButton() {
-    resignButton = new CustomButton(TextGetter.getText("resign"));
+    resignButton = new CustomButton(TextGetter.getText("resign"), buttonMinWidth);
     resignButton.setOnAction(
         event -> {
           new YesNoPopUp(
@@ -155,7 +156,7 @@ public class ButtonsPanel extends GridPane {
    * the game is reset.
    */
   private void initRestartButton() {
-    restartButton = new CustomButton(TextGetter.getText("restart"));
+    restartButton = new CustomButton(TextGetter.getText("restart"), buttonMinWidth);
     restartButton.setOnAction(
         event -> {
           // BagOfCommands.getInstance().addCommand(new RestartCommand());

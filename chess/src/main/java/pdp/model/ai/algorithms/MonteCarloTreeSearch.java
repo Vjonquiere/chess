@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import pdp.model.Game;
+import pdp.model.GameAi;
 import pdp.model.GameState;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
@@ -45,19 +46,20 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
-    GameState gameStateCopy = game.getGameState().getCopy();
+    GameAi aiGame = GameAi.fromGame(game);
+    GameState gameStateCopy = aiGame.getGameState().getCopy();
     // Give the root a copy of the game state to work on new ones
     TreeNodeMonteCarlo root = new TreeNodeMonteCarlo(gameStateCopy, null, null);
 
     // Run MonteCarloTreeSearch for a fixed number of simulations
     for (int i = 0; i < simulationLimit; i++) {
       TreeNodeMonteCarlo selectedNode = select(root);
-      TreeNodeMonteCarlo expandedNode = expand(game, selectedNode);
-      int simulationResult = simulate(game, expandedNode);
-      backpropagate(game, expandedNode, simulationResult);
+      TreeNodeMonteCarlo expandedNode = expand(aiGame, selectedNode);
+      int simulationResult = simulate(aiGame, expandedNode);
+      backpropagate(aiGame, expandedNode, simulationResult);
     }
 
-    AIMove move = getBestMove(game, root);
+    AIMove move = getBestMove(aiGame, root);
 
     return move;
   }
@@ -107,7 +109,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param node the current node in the algorithm
    * @return the expanded node
    */
-  private TreeNodeMonteCarlo expand(Game game, TreeNodeMonteCarlo node) {
+  private TreeNodeMonteCarlo expand(GameAi game, TreeNodeMonteCarlo node) {
     if (solver.isSearchStopped()) {
       return node;
     }
@@ -152,7 +154,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param node the current node in the algorithm
    * @return the evaluation of the simulated sequence of moves from current node
    */
-  private int simulate(Game game, TreeNodeMonteCarlo node) {
+  private int simulate(GameAi game, TreeNodeMonteCarlo node) {
     if (solver.isSearchStopped()) {
       TreeNodeMonteCarlo parentNode = node.getParentNode();
       if (parentNode == null) {
@@ -235,7 +237,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param node the current tree node in the algorithm
    * @param result the obtained result after simulation
    */
-  private void backpropagate(Game game, TreeNodeMonteCarlo node, int result) {
+  private void backpropagate(GameAi game, TreeNodeMonteCarlo node, int result) {
     while (node != null) {
       node.incrementNbVisits();
       node.incrementNbWinsBy(result);
@@ -253,7 +255,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param root the root node in the tree representing the initial game state
    * @return the best computed move based on winrate of the move
    */
-  private AIMove getBestMove(Game game, TreeNodeMonteCarlo root) {
+  private AIMove getBestMove(GameAi game, TreeNodeMonteCarlo root) {
     if (root.getChildrenNodes().isEmpty()) {
       return new AIMove(null, 0);
     }
