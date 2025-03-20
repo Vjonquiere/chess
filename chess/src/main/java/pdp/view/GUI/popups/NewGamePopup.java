@@ -26,6 +26,7 @@ public class NewGamePopup {
 
     OptionType modeType = isWhite ? OptionType.AI_MODE_W : OptionType.AI_MODE_B;
     OptionType heuristicType = isWhite ? OptionType.AI_HEURISTIC_W : OptionType.AI_HEURISTIC_B;
+    OptionType egHeuristicType = isWhite ? OptionType.AI_ENDGAME_W : OptionType.AI_ENDGAME_B;
     OptionType depthType = isWhite ? OptionType.AI_DEPTH_W : OptionType.AI_DEPTH_B;
     OptionType simulationsType = isWhite ? OptionType.AI_SIMULATION_W : OptionType.AI_SIMULATION_B;
 
@@ -93,6 +94,31 @@ public class NewGamePopup {
         options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
 
     heuristicContainer.getChildren().add(heuristicDropdown);
+
+    heuristicContainer
+        .getChildren()
+        .add(new Label(TextGetter.getText("aiEndgameHeuristicLabel", colorText)));
+    ComboBox<String> endgameHeuristicDropdown = new ComboBox<>();
+
+    endgameHeuristicDropdown.setId(colorTag + "EndgameHeuristicDropdown");
+
+    for (HeuristicType type : HeuristicType.values()) {
+      endgameHeuristicDropdown.getItems().add(type.toString());
+    }
+
+    if (options.containsKey(egHeuristicType)) {
+      endgameHeuristicDropdown.setValue(options.get(egHeuristicType));
+    }
+
+    endgameHeuristicDropdown
+        .valueProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              options.put(egHeuristicType, newVal);
+            });
+
+    heuristicContainer.getChildren().add(endgameHeuristicDropdown);
+
     aiContainer.getChildren().add(heuristicContainer);
 
     depthContainer.setId(colorTag + "DepthContainer");

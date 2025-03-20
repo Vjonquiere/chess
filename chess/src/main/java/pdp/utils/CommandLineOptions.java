@@ -295,13 +295,13 @@ public class CommandLineOptions {
       activatedOptions.remove(OptionType.AI_MODE);
 
       if (!activatedOptions.containsKey(OptionType.AI_ENDGAME)) {
-        activatedOptions.put(OptionType.AI_MODE, "ENDGAME");
+        activatedOptions.put(OptionType.AI_ENDGAME, "ENDGAME");
       }
       if (!activatedOptions.containsKey(OptionType.AI_ENDGAME_W)) {
-        activatedOptions.put(OptionType.AI_ENDGAME_W, activatedOptions.get(OptionType.AI_MODE));
+        activatedOptions.put(OptionType.AI_ENDGAME_W, activatedOptions.get(OptionType.AI_ENDGAME));
       }
       if (!activatedOptions.containsKey(OptionType.AI_ENDGAME_B)) {
-        activatedOptions.put(OptionType.AI_ENDGAME_B, activatedOptions.get(OptionType.AI_MODE));
+        activatedOptions.put(OptionType.AI_ENDGAME_B, activatedOptions.get(OptionType.AI_ENDGAME));
       }
 
       activatedOptions.remove(OptionType.AI_ENDGAME);
