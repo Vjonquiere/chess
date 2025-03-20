@@ -37,6 +37,7 @@ public class Square extends StackPane {
     gc.fillRect(0, 0, 100, 100);
     super.getChildren().add(sq);
     super.getChildren().add(reachableSq);
+    super.getChildren().add(hintSq);
     if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
       pieceImage = new PieceImage(piece);
       super.getChildren().add(pieceImage);
@@ -103,7 +104,7 @@ public class Square extends StackPane {
     gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
     if (hint) {
       gc.setFill(Color.web(GUIView.theme.getTertiary()));
-      gc.fillOval(37.5, 37.5, 25, 25);
+      gc.fillRect(10, 10, 80, 80);
     }
   }
 }
