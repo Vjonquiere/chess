@@ -271,7 +271,10 @@ public class CommandLineOptions {
             OptionType.AI_HEURISTIC_B,
             OptionType.AI_MODE_W,
             OptionType.AI_MODE_B,
-            OptionType.AI_SIMULATION
+            OptionType.AI_SIMULATION,
+            OptionType.AI_ENDGAME,
+            OptionType.AI_ENDGAME_W,
+            OptionType.AI_ENDGAME_B
           }) {
         if (activatedOptions.containsKey(aiOption)) {
           System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
@@ -290,6 +293,18 @@ public class CommandLineOptions {
       }
 
       activatedOptions.remove(OptionType.AI_MODE);
+
+      if (!activatedOptions.containsKey(OptionType.AI_ENDGAME)) {
+        activatedOptions.put(OptionType.AI_ENDGAME, "ENDGAME");
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_ENDGAME_W)) {
+        activatedOptions.put(OptionType.AI_ENDGAME_W, activatedOptions.get(OptionType.AI_ENDGAME));
+      }
+      if (!activatedOptions.containsKey(OptionType.AI_ENDGAME_B)) {
+        activatedOptions.put(OptionType.AI_ENDGAME_B, activatedOptions.get(OptionType.AI_ENDGAME));
+      }
+
+      activatedOptions.remove(OptionType.AI_ENDGAME);
 
       if (!activatedOptions.containsKey(OptionType.AI_DEPTH)) {
         activatedOptions.put(OptionType.AI_DEPTH, "4");

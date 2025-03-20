@@ -424,6 +424,7 @@ public enum OptionType {
               "Choose the heuristic for the artificial players.\n"
                   + "Choose between these heuristic (case sensitive)\n"
                   + "- STANDARD : Aggregates multiple heuristics to evaluate the board during the start and middle game.\n"
+                  + "- STANDARD_LIGHT : A lighter version of the STANDARD heuristic, taking less parameters into account.\n"
                   + "- SHANNON : Basic Heuristic from Shannon.\n"
                   + "- ENDGAME : Aggregates multiple heuristics to evaluate the board state during the endgame phase of the match.\n"
                   + "- BAD_PAWNS : Computes a score according to the potential weaknesses in the observed pawn structures.\n"
@@ -480,6 +481,69 @@ public enum OptionType {
           .hasArg(true)
           .argName("HEURISTIC")
           .desc("Choose the heuristic for the artificial black player.\n")
+          .build();
+    }
+  },
+  AI_ENDGAME {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-endgame";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the endgame of the artificial players.\n")
+          .build();
+    }
+  },
+  AI_ENDGAME_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-endgame-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the endgame of the white artificial player.\n")
+          .build();
+    }
+  },
+  AI_ENDGAME_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-endgame-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(true)
+          .argName("HEURISTIC")
+          .desc("Choose the heuristic for the endgame of the black artificial player.\n")
           .build();
     }
   },

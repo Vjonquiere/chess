@@ -26,6 +26,7 @@ import pdp.model.Game;
 import pdp.model.GameAbstract;
 import pdp.model.GameState;
 import pdp.model.ai.AlgorithmType;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.BitboardRepresentation;
@@ -674,6 +675,8 @@ public class GameTest {
     URL filePath = classLoader.getResource("gameBoards/fenVersions/endGame");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Solver s = new Solver();
+    s.setHeuristic(HeuristicType.STANDARD);
+    s.setEndgameHeuristic(HeuristicType.ENDGAME);
     Game game = Game.initialize(true, false, s, s, null, board, new HashMap<>());
     game.startAI();
     assertTrue(s.getHeuristic() instanceof EndGameHeuristic);

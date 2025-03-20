@@ -22,7 +22,6 @@ import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
-import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.board.Move;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
@@ -438,13 +437,13 @@ public class Game extends GameAbstract {
       if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
         if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getHeuristic() instanceof EndGameHeuristic)) {
+            && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getEndgameHeurisic())) {
           this.solverWhite.setHeuristic(HeuristicType.ENDGAME);
         }
       }
       if (this.solverBlack != null) {
         if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getHeuristic() instanceof EndGameHeuristic)) {
+            && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getEndgameHeurisic())) {
           this.solverBlack.setHeuristic(HeuristicType.ENDGAME);
         }
       }
