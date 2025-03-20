@@ -188,6 +188,7 @@ public class ChessMenu extends VBox {
 
   private Menu createLangMenu() {
     Menu lang = new Menu(TextGetter.getText("language"), null);
+    lang.setId("language");
     MenuItem english = new MenuItem(TextGetter.getText("english"));
     english.setOnAction(
         e -> {
@@ -195,6 +196,7 @@ public class ChessMenu extends VBox {
           BagOfCommands.getInstance().addCommand(new ChangeLang());
         });
     MenuItem french = new MenuItem(TextGetter.getText("french"));
+    french.setId("french");
     french.setOnAction(
         e -> {
           TextGetter.setLocale("fr");
