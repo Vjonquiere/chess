@@ -242,7 +242,7 @@ public abstract class GameInitializer {
             model.setWhiteAI(false);
             solver = blackSolver;
           }
-          
+
           model.setLoadedFromFile();
           model.setLoadingFileHasHistory(true);
           model.setContestModeOnOrOff(true);

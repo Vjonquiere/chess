@@ -361,7 +361,6 @@ public class CommandLineOptions {
    */
   private static boolean isFeatureImplemented(OptionType option) {
     return switch (option) {
-        // case CONTEST -> false;
       default -> true;
     };
   }
