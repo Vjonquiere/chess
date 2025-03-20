@@ -260,7 +260,6 @@ public class CommandLineOptionsTest {
     // Test ambiguous option (several options starting the same) (error)
     Runtime mockRuntime = mock(Runtime.class);
     CommandLineOptions.parseOptions(new String[] {"--ai-"}, mockRuntime);
-    assertEquals(outputStream.toString(), "");
     assertTrue(outputStream.toString().contains(expectedAmbiguous));
     for (String s : expectedHelp) {
       assertTrue(outputStream.toString().contains(s));
