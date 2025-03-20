@@ -155,7 +155,7 @@ public class GUIView implements View {
                 if (menu != null) {
                   root.getChildren().remove(menu);
                 }
-                menu = new ChessMenu(this);
+                menu = new ChessMenu();
                 root.setTop(menu);
 
                 break;
