@@ -1,9 +1,7 @@
 package pdp.view.GUI.board;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
@@ -23,7 +21,7 @@ public class Board extends GridPane {
   private Position from;
   private final Map<Position, Square> pieces = new HashMap<>();
   private List<Position> reachableSquares;
-  private List<Position> hintSquares;
+  private final List<Position> hintSquares = new LinkedList<>();
   private Stage stage;
 
   public Board(Game game, Stage stage) {
@@ -178,6 +176,7 @@ public class Board extends GridPane {
   }
 
   private void cleanHintSquares() {
+    if (hintSquares.isEmpty()) return;
     for (Position sq : hintSquares) {
       pieces.get(sq).setHint(false);
       hintSquares.remove(sq);
