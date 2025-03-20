@@ -1,7 +1,6 @@
 package pdp.view.GUI.board;
 
 import java.util.*;
-
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
