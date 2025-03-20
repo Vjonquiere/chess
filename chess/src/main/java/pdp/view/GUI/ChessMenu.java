@@ -116,6 +116,7 @@ public class ChessMenu extends VBox {
     MenuItem undo = new MenuItem(TextGetter.getText("undo"));
     MenuItem redo = new MenuItem(TextGetter.getText("redo"));
     MenuItem restart = new MenuItem(TextGetter.getText("restart"));
+    MenuItem hint = new MenuItem(TextGetter.getText("hint"));
     start.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new StartGameCommand());
@@ -143,10 +144,19 @@ public class ChessMenu extends VBox {
           BagOfCommands.getInstance().addCommand(new RestartCommand());
           new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
         });
+
+    hint.setOnAction(
+        e -> {
+          /* Solver hintSolver = new Solver();
+          Move hintMove = hintSolver.getAlgorithm().findBestMove(Game.getInstance(), 2, Game.getInstance().getGameState().isWhiteTurn()).move();
+          System.out.println("best move hint : " + hintMove.getSource()+ " " + hintMove.getDest()); */
+          new YesNoPopUp("hintInstructionsGui", null, null);
+        });
     gameMenu.getItems().add(start);
     gameMenu.getItems().add(undo);
     gameMenu.getItems().add(redo);
     gameMenu.getItems().add(restart);
+    gameMenu.getItems().add(hint);
     return gameMenu;
   }
 

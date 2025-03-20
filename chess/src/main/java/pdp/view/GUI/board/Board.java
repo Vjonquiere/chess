@@ -161,4 +161,12 @@ public class Board extends GridPane {
   public void setStage(Stage stage) {
     this.stage = stage;
   }
+
+  /**
+   * Sets hint squares by highlighting the start and destination positions.
+   *
+   * @param from The starting position.
+   * @param to The destination position.
+   */
+  public void setHintSquares(Position from, Position to) {}
 }
