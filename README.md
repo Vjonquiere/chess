@@ -71,6 +71,8 @@ The following are required to run the project:
 From the local `chess` or Docker `app` folder :
 - `mvn clean test` to install dependencies and run tests
 
+The tests are by default ran in headless mode.
+
 ### Run the Application
 From the local `chess` or Docker `app` folder :
 - `mvn javafx:run -Djavafx.args="args"` to run the app with given args
