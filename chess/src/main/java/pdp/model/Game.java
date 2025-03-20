@@ -683,7 +683,7 @@ public class Game extends GameAbstract {
     char[][] board = super.getGameState().getBoard().getAsciiRepresentation();
     StringBuilder sb = new StringBuilder();
 
-    Timer timer = super.getGameState().getMoveTimer();
+    Timer timer = this.getTimer(!super.getGameState().isWhiteTurn());
     if (timer != null) {
       sb.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
     }
