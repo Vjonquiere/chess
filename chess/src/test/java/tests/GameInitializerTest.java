@@ -19,6 +19,7 @@ import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.Minimax;
+import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.heuristics.MobilityHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.board.Move;
@@ -507,5 +508,63 @@ class GameInitializerTest {
 
     assertNotNull(game);
     assertTrue(game.isContestModeOn());
+  }
+
+  @Test
+  void testMonteCarloSimulationWhiteAI_ValidSimulations() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_MODE, "MCTS");
+    options.put(OptionType.AI_SIMULATION, "100");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isWhiteAI());
+    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+    assertEquals(
+        100, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
+  }
+
+  @Test
+  void testMonteCarloSimulationBlackAI_ValidSimulations() {
+    options.put(OptionType.AI, "B");
+    options.put(OptionType.AI_MODE, "MCTS");
+    options.put(OptionType.AI_SIMULATION_B, "200");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isBlackAI());
+    assertTrue(game.getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+    assertEquals(
+        200, ((MonteCarloTreeSearch) game.getBlackSolver().getAlgorithm()).getSimulationLimit());
+  }
+
+  @Test
+  void testMonteCarloSimulationWhiteAI_InvalidSimulations() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_MODE, "MCTS");
+    options.put(OptionType.AI_SIMULATION_W, "not_a_number");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isWhiteAI());
+    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+    assertTrue(outputStream.toString().contains("Not an integer for the simulations of AI"));
+  }
+
+  @Test
+  void testMonteCarloSimulationBlackAI_InvalidSimulations() {
+    options.put(OptionType.AI, "B");
+    options.put(OptionType.AI_MODE, "MCTS");
+    options.put(OptionType.AI_SIMULATION_B, "not_a_number");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isBlackAI());
+    assertTrue(game.getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+    assertTrue(outputStream.toString().contains("Not an integer for the simulations of AI"));
   }
 }
