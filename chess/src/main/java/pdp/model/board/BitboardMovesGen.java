@@ -13,9 +13,11 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
-public class BitboardMovesGen {
+/** Utility class to remove complexity for BitboardRepresentation. */
+public final class BitboardMovesGen {
   private static final Logger LOGGER = Logger.getLogger(BitboardMovesGen.class.getName());
 
+  /** Private constructor to avoid instantiation. */
   private BitboardMovesGen() {
     throw new UnsupportedOperationException("Cannot instantiate utility class");
   }
@@ -181,6 +183,14 @@ public class BitboardMovesGen {
     return bitboardToMoves(move, enemies, square, piece, bitboardRepresentation);
   }
 
+  /**
+   * Generate a bitboard with possible moves from a given position for a king piece.
+   *
+   * @param square Position of the piece
+   * @param unreachableSquares unreachable squares bitboard
+   * @param enemies Enemies occupation bitboard
+   * @return The list of possible moves
+   */
   public static Bitboard getKingMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
     Bitboard position = new Bitboard();

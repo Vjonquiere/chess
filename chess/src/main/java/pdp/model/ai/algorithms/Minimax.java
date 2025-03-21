@@ -7,9 +7,15 @@ import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 
+/** Algorithm of artificial intelligence Minimax. */
 public class Minimax implements SearchAlgorithm {
   Solver solver;
 
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
   public Minimax(Solver solver) {
     this.solver = solver;
   }

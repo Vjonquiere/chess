@@ -8,10 +8,12 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
-public class BitboardStatusCheck {
+/** Utility class to remove complexity for BitboardRepresentation. */
+public final class BitboardStatusCheck {
   private static final Logger LOGGER = Logger.getLogger(BitboardStatusCheck.class.getName());
 
-  private BitboardStatusCheck(BitboardRepresentation bitboardRepresentation) {
+  /** Private constructor to avoid instantiation. */
+  private BitboardStatusCheck() {
     throw new UnsupportedOperationException("Cannot instantiate utility class");
   }
 
@@ -20,13 +22,13 @@ public class BitboardStatusCheck {
   }
 
   /**
-   * Checks if queens are off the board. Method used to detect endgames
+   * Checks if queens are off the board. Method used to detect endgames.
    *
    * @return true if queens are off the board. false otherwise
    */
   public static boolean queensOffTheBoard(BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation.getQueens(true).size() == 0
-        && bitboardRepresentation.getQueens(false).size() == 0;
+    return bitboardRepresentation.getQueens(true).isEmpty()
+        && bitboardRepresentation.getQueens(false).isEmpty();
   }
 
   /**
@@ -61,7 +63,7 @@ public class BitboardStatusCheck {
   }
 
   /**
-   * Checks if the kings on the board are active. Method used to detect endgames
+   * Checks if the kings on the board are active. Method used to detect endgames.
    *
    * @return true if kings are somewhat active. false otherwise
    */
@@ -107,7 +109,7 @@ public class BitboardStatusCheck {
 
   /**
    * Checks if castle (long or short in parameter) for one side is possible or not. No need to fetch
-   * king position because if king has moved, then boolean attributes for castling rights are false
+   * king position because if king has moved, then boolean attributes for castling rights are false.
    *
    * @param color the color of the player we want to test castle for
    * @param shortCastle boolean value to indicate if we're looking for the short castle right or
@@ -218,7 +220,7 @@ public class BitboardStatusCheck {
   /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
-   * @return true if we're in an endgame (according to the chosen criterias)
+   * @return true if we're in an endgame (according to the chosen criteria)
    */
   public static boolean isEndGamePhase(
       int fullTurn, boolean white, BitboardRepresentation bitboardRepresentation) {
@@ -250,15 +252,8 @@ public class BitboardStatusCheck {
     int nbMovesWhite;
     int nbMovesBlack;
 
-    if (bitboardRepresentation instanceof BitboardRepresentation) {
-      nbMovesWhite =
-          ((BitboardRepresentation) bitboardRepresentation).getColorMoveBitboard(true).bitCount();
-      nbMovesBlack =
-          ((BitboardRepresentation) bitboardRepresentation).getColorMoveBitboard(false).bitCount();
-    } else {
-      nbMovesWhite = bitboardRepresentation.getAllAvailableMoves(true).size();
-      nbMovesBlack = bitboardRepresentation.getAllAvailableMoves(false).size();
-    }
+    nbMovesWhite = bitboardRepresentation.getColorMoveBitboard(true).bitCount();
+    nbMovesBlack = bitboardRepresentation.getColorMoveBitboard(false).bitCount();
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }

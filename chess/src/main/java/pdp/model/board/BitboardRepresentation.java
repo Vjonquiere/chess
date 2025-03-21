@@ -13,6 +13,7 @@ import pdp.utils.BiDirectionalMap;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Implementation of BoardRepresentation using bitboards. */
 public class BitboardRepresentation implements BoardRepresentation {
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;

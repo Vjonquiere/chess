@@ -1,5 +1,6 @@
 package pdp.model.ai;
 
+/** Enum corresponding to the different types of heuristics available. */
 public enum HeuristicType {
   MATERIAL,
   KING_SAFETY,

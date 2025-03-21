@@ -34,6 +34,7 @@ import pdp.model.piece.Color;
 import pdp.utils.Logging;
 import pdp.utils.Timer;
 
+/** Solver corresponding to an AI player. */
 public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
@@ -54,6 +55,7 @@ public class Solver {
     Logging.configureLogging(LOGGER);
   }
 
+  /** Initializes the solver with the default heuristic and algorithm. */
   public Solver() {
     evaluatedBoards = new HashMap<>();
     this.algorithm = new AlphaBeta(this);
@@ -61,7 +63,7 @@ public class Solver {
   }
 
   /**
-   * Set the algorithm to be used.;
+   * Set the algorithm to be used.
    *
    * @param algorithm The algorithm to use.
    */
@@ -140,14 +142,29 @@ public class Solver {
     debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
+  /**
+   * Sets the field endgame heuristic to the one in the parameters.
+   *
+   * @param heuristic endgame heuristic to set
+   */
   public void setEndgameHeuristic(HeuristicType heuristic) {
     this.endgameHeuristic = heuristic;
   }
 
+  /**
+   * Retrieves the endgame heuristic.
+   *
+   * @return current endgame heuristic
+   */
   public HeuristicType getEndgameHeuristic() {
     return this.endgameHeuristic;
   }
 
+  /**
+   * Retrieves the current heuristic.
+   *
+   * @return current heuristic
+   */
   public HeuristicType getCurrentHeuristic() {
     return this.currentHeuristic;
   }
@@ -207,19 +224,39 @@ public class Solver {
     debug(LOGGER, "Time set to " + this.time);
   }
 
+  /**
+   * Retrieves the timer of the solver.
+   *
+   * @return timer of the solver
+   */
   public Timer getTimer() {
     return timer;
   }
 
+  /**
+   * Retrieves the time by default of the timer.
+   *
+   * @return time set for the timer
+   */
   public long getTime() {
     return time;
   }
 
+  /**
+   * Stops the search of the best move and sets the field isMoveToPlay to the boolean in parameter.
+   *
+   * @param playMove boolean
+   */
   public void stopSearch(boolean playMove) {
     isSearchStopped = true;
     isMoveToPlay = playMove;
   }
 
+  /**
+   * Indicates whether the search of AI move is over or not.
+   *
+   * @return true if the search is stopped, false otherwise
+   */
   public boolean isSearchStopped() {
     return isSearchStopped;
   }
@@ -259,6 +296,12 @@ public class Solver {
     }
   }
 
+  /**
+   * Retrieves the best move for the given game.
+   *
+   * @param game Game to find the best move in
+   * @return best move according to the game in parameter
+   */
   public Move getBestMove(Game game) {
     game.setExploration(true);
     if (timer != null) {

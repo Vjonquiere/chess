@@ -13,9 +13,10 @@ import pdp.utils.Logging;
 import pdp.utils.Position;
 
 /** Specification of the BitboardRepresentation. All methods are static because it is a util. */
-public class BitboardRules {
+public final class BitboardRules {
   private static final Logger LOGGER = Logger.getLogger(BitboardRules.class.getName());
 
+  /** Private constructor to avoid instantiation. */
   private BitboardRules() {
     throw new UnsupportedOperationException("Cannot instantiate utility class");
   }

@@ -89,6 +89,11 @@ public final class BagOfCommands {
     this.controller = controller;
   }
 
+  /**
+   * Indicates whether the bag of commands is running.
+   *
+   * @return isRunning field
+   */
   public boolean isRunning() {
     return this.isRunning;
   }
