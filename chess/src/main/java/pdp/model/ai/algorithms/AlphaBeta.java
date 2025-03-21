@@ -80,19 +80,20 @@ public class AlphaBeta implements SearchAlgorithm {
                   return new AIMove(promoteMove, result.score());
                 } catch (IllegalMoveException e) {
                   e.printStackTrace();
-                  return new AIMove(null, Integer.MIN_VALUE);
+                  return new AIMove(null, player ? Integer.MIN_VALUE : Integer.MAX_VALUE);
                 }
               }));
     }
 
-    AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
+    AIMove bestMove = new AIMove(null, player ? Integer.MIN_VALUE : Integer.MAX_VALUE);
 
     try {
       for (Future<AIMove> future : futures) {
         AIMove candidateMove = future.get();
         if (candidateMove.move() != null) {
           if ((player && candidateMove.score() > bestMove.score())
-              || (!player && candidateMove.score() < bestMove.score())) {
+              || (!player && candidateMove.score() < bestMove.score())
+              || bestMove.move() == null) {
             bestMove = candidateMove;
           }
         }
@@ -102,6 +103,7 @@ public class AlphaBeta implements SearchAlgorithm {
     }
 
     executor.shutdown();
+    System.out.println("Best move : " + bestMove);
     DEBUG(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
@@ -149,7 +151,6 @@ public class AlphaBeta implements SearchAlgorithm {
         break;
       }
       try {
-
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);

@@ -220,6 +220,7 @@ public class Solver {
       try {
         game.playMove(bestMove.move());
       } catch (Exception e) {
+        e.printStackTrace();
         game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
         System.err.println(e.getMessage());
         if (game.getGameState().isWhiteTurn()) {
