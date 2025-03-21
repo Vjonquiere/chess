@@ -6,6 +6,10 @@ import pdp.controller.GameController;
 import pdp.events.EventType;
 import pdp.model.Game;
 
+/**
+ * Part of Command Design pattern. Creates a command to update the Application due to a language
+ * change.
+ */
 public class ChangeLang implements Command {
 
   public ChangeLang() {}

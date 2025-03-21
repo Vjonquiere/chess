@@ -6,12 +6,14 @@ import pdp.controller.GameController;
 import pdp.events.EventType;
 import pdp.model.Game;
 
+/**
+ * Part of Command Design pattern. Creates a command to update the view (GUI) after a change of
+ * theme.
+ */
 public class ChangeTheme implements Command {
 
-  public ChangeTheme() {}
-
   /**
-   * Executes the move on the game model.
+   * Change the theme in the GUI.
    *
    * @param model The game model on which the move is to be executed.
    * @param controller The game controller managing game commands.

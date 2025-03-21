@@ -5,6 +5,9 @@ import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.model.Game;
 
+/**
+ * Part of Command Design pattern. Creates a command to replay the last move. Corresponds to a redo.
+ */
 public class RestoreMoveCommand implements Command {
   /**
    * Reverts the last cancelled move in the game model if possible.

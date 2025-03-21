@@ -8,7 +8,7 @@ import pdp.utils.Logging;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 
-/** Base of the application */
+/** Base of the application. */
 public class Main {
   private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 

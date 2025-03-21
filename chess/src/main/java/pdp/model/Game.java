@@ -40,7 +40,7 @@ import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 
 /** Model of our MVC architecture. Uses the Singleton design pattern. */
-public class Game extends GameAbstract {
+public final class Game extends GameAbstract {
   public static int nFoldRepetition = 3;
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;

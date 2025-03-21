@@ -169,7 +169,7 @@ public class ChessMenu extends VBox {
 
     hint.setOnAction(
         e -> {
-          new YesNoPopUp("hintInstructionsGui", new AskHintComand(), null);
+          new YesNoPopUp("hintInstructionsGui", new AskHintCommand(), null);
         });
     gameMenu.getItems().add(start);
     gameMenu.getItems().add(undo);

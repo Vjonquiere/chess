@@ -7,7 +7,7 @@ import pdp.model.Game;
 import pdp.utils.Logging;
 
 /** Variation of the design pattern command to execute several commands at once. */
-public class BagOfCommands {
+public final class BagOfCommands {
   private static final Logger LOGGER = Logger.getLogger(BagOfCommands.class.getName());
   private static BagOfCommands instance;
   private ConcurrentLinkedQueue<Command> commands = new ConcurrentLinkedQueue<>();
@@ -94,7 +94,7 @@ public class BagOfCommands {
   }
 
   /**
-   * Gets the single instance of BagOfCommands and creats it if it doesn't exist.
+   * Gets the single instance of BagOfCommands and creates it if it doesn't exist.
    *
    * @return The single instance of BagOfCommands.
    */

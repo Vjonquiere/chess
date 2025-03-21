@@ -10,9 +10,10 @@ import pdp.model.Game;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 
-public class AskHintComand implements Command {
+/** Part of Command Design pattern. Creates a command to give a hint to the player. */
+public class AskHintCommand implements Command {
   /**
-   * Cancels the last move in the game.
+   * Ask for a hint to an AI.
    *
    * @param model The game model on which the command is executed.
    * @param controller The game controller managing game commands.
