@@ -486,13 +486,15 @@ public class Game extends GameAbstract {
       if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
         if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getEndgameHeurisic())) {
+            && !(this.solverWhite.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
           this.solverWhite.setHeuristic(HeuristicType.ENDGAME);
         }
       }
       if (this.solverBlack != null) {
         if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getEndgameHeurisic())) {
+            && !(this.solverBlack.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
           this.solverBlack.setHeuristic(HeuristicType.ENDGAME);
         }
       }

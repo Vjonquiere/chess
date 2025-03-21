@@ -142,7 +142,7 @@ public class NewGamePopupTest extends ApplicationTest {
 
   @Test
   @Tag("gui")
-  public void testBlackeDepthSlider() {
+  public void testBlackDepthSlider() {
 
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
     assertTrue(scrollUntilVisible("#aiDropdown"));

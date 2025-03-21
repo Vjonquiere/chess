@@ -137,18 +137,18 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
-    DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
+    debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
   public void setEndgameHeuristic(HeuristicType heuristic) {
     this.endgameHeuristic = heuristic;
   }
 
-  public HeuristicType getEndgameHeurisic() {
+  public HeuristicType getEndgameHeuristic() {
     return this.endgameHeuristic;
   }
 
-  public HeuristicType getCurrentHeurisic() {
+  public HeuristicType getCurrentHeuristic() {
     return this.currentHeuristic;
   }
 
@@ -264,12 +264,12 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
-    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    AiMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
     if (timer != null) {
       timer.stop();
     }
 
-    DEBUG(LOGGER, "Best move " + bestMove);
+    debug(LOGGER, "Best move " + bestMove);
     game.setExploration(false);
     return bestMove.move();
   }

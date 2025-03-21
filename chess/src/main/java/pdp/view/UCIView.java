@@ -1,6 +1,6 @@
 package pdp.view;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -158,7 +158,7 @@ public class UCIView implements View {
   }
 
   private void goCommand(String args) {
-    DEBUG(LOGGER, "Searching for best move");
+    debug(LOGGER, "Searching for best move");
     Move move = solver.getBestMove(Game.getInstance());
     if (move == null) {
       System.err.println(Game.getInstance().getGameRepresentation());
