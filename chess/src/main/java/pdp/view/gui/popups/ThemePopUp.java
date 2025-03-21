@@ -99,7 +99,7 @@ public class ThemePopUp {
     layout.getChildren().add(buttonBox);
 
     Scene scene = new Scene(layout, 400, 700);
-    GuiView.applyCSS(scene);
+    GuiView.applyCss(scene);
     layout.setStyle("; -fx-padding: 10; -fx-alignment: center;");
     popupStage.setScene(scene);
     popupStage.setResizable(false);

@@ -417,7 +417,7 @@ public class NewGamePopup {
     scrollPane.setFitToHeight(true);
 
     Scene scene = new Scene(scrollPane, 400, 600);
-    GuiView.applyCSS(scene);
+    GuiView.applyCss(scene);
     layout.setStyle("; -fx-padding: 10;");
     popupStage.setScene(scene);
     popupStage.showAndWait();

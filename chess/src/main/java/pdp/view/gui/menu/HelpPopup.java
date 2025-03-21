@@ -24,7 +24,7 @@ public class HelpPopup extends VBox {
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
     Scene scene = new Scene(layout);
-    GuiView.applyCSS(scene);
+    GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

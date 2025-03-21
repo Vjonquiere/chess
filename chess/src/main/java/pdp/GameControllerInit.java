@@ -7,7 +7,7 @@ import pdp.model.Game;
 import pdp.utils.OptionType;
 import pdp.view.CliView;
 import pdp.view.GuiView;
-import pdp.view.UCIView;
+import pdp.view.UciView;
 import pdp.view.View;
 
 /** Utility class for initializing a {@link GameController} instance. */
@@ -27,7 +27,7 @@ public abstract class GameControllerInit {
     if (options.containsKey(OptionType.GUI)) {
       view = new GuiView();
     } else if (options.containsKey(OptionType.UCI)) {
-      view = new UCIView();
+      view = new UciView();
     } else {
       view = new CliView();
     }

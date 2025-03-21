@@ -17,17 +17,23 @@ import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
-public class UCIView implements View {
+/** View used to communicate with other chess engines. */
+public class UciView implements View {
   private boolean running = false;
   private final Map<String, CommandEntry> commands = new HashMap<>();
-  private static final Logger LOGGER = Logger.getLogger(UCIView.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(UciView.class.getName());
   private final Solver solver = new Solver();
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
-  public UCIView() {
+  /**
+   * Initializes the view by settings the commands and parametrizing the game with the correct fifty
+   * move rule and threefold repetition. The other chess engine use a 5-fold repetition and a 75
+   * move rule, we adapt our game the same way.
+   */
+  public UciView() {
     commands.put("uci", new CommandEntry(this::uciCommand, "uci"));
     commands.put("ucinewgame", new CommandEntry(this::uciNewGameCommand, "uci new game"));
     commands.put("position", new CommandEntry(this::positionCommand, "position"));

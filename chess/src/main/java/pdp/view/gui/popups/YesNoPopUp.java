@@ -63,7 +63,7 @@ public class YesNoPopUp extends VBox {
     layout.setStyle("-fx-padding: 20;");
 
     Scene scene = new Scene(layout, 300, 150);
-    GuiView.applyCSS(scene);
+    GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

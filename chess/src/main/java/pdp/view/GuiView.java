@@ -26,6 +26,7 @@ import pdp.view.gui.board.Board;
 import pdp.view.gui.popups.EndGamePopUp;
 import pdp.view.gui.themes.ColorTheme;
 
+/** Base of our graphical interface. */
 public class GuiView implements View {
   private static final Logger LOGGER = Logger.getLogger(GuiView.class.getName());
   private BorderPane root;
@@ -41,7 +42,13 @@ public class GuiView implements View {
     Logging.configureLogging(LOGGER);
   }
 
-  public static void applyCSS(Scene scene) {
+  /**
+   * Takes the CSS in resources, transforms it with the color theme of the app and applies it to the
+   * scene.
+   *
+   * @param scene scene to apply the CSS over
+   */
+  public static void applyCss(Scene scene) {
     String text;
     String path = "";
     try {
@@ -75,7 +82,7 @@ public class GuiView implements View {
   }
 
   public void updateTheme() {
-    applyCSS(scene);
+    applyCss(scene);
     onGameEvent(EventType.GAME_STARTED);
   }
 
@@ -97,7 +104,7 @@ public class GuiView implements View {
     stage.setTitle(TextGetter.getText("title"));
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);
-    applyCSS(scene);
+    applyCss(scene);
     stage.setScene(scene);
     if (board != null) {
       board.setStage(stage);
@@ -125,7 +132,7 @@ public class GuiView implements View {
   /**
    * Handle game events to keep view updated (JavaFx version).
    *
-   * @param event
+   * @param event Notification sent by the model
    */
   @Override
   public void onGameEvent(EventType event) {

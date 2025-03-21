@@ -25,7 +25,9 @@ import pdp.view.gui.popups.ThemePopUp;
 import pdp.view.gui.popups.YesNoPopUp;
 import pdp.view.gui.themes.ColorTheme;
 
+/** Menu of the application. */
 public class ChessMenu extends VBox {
+  /** Initializes the menu by adding the File menu, Game menu, About menu and Options menu. */
   public ChessMenu() {
     MenuBar menuBar = new MenuBar();
     menuBar.setId("menuBar");
@@ -78,7 +80,7 @@ public class ChessMenu extends VBox {
   }
 
   /**
-   * Create a file chooser to pick a file to load
+   * Create a file chooser to pick a file to load.
    *
    * @return The file corresponding to the path
    */
@@ -98,7 +100,7 @@ public class ChessMenu extends VBox {
   }
 
   /**
-   * Create a popup dialog to get the user input for the path of the file
+   * Create a popup dialog to get the user input for the path of the file.
    *
    * @return The path given by the user
    */
@@ -108,7 +110,7 @@ public class ChessMenu extends VBox {
     dialog.setHeaderText(null);
     dialog.setTitle(TextGetter.getText("fileSaver.title"));
     dialog.setContentText(TextGetter.getText("fileSaver.name"));
-    GuiView.applyCSS(dialog.getDialogPane().getScene());
+    GuiView.applyCss(dialog.getDialogPane().getScene());
 
     Optional<String> result = dialog.showAndWait();
     return result.orElse(null);
