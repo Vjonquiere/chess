@@ -22,6 +22,12 @@ public class ControlPanel extends VBox {
           + "-fx-padding: 5;\n"
           + "-fx-border-style: solid;\n";
 
+  /**
+   * Creates the panel on the right of the game with information about the current game, the
+   * player's turn and timers, the history and buttons.
+   *
+   * @param stage BorderPane to resize the panel
+   */
   public ControlPanel(BorderPane stage) {
     initPlayerPanel();
     initHistoryPanel();
@@ -33,16 +39,25 @@ public class ControlPanel extends VBox {
     super.setPadding(new Insets(10));
   }
 
+  /**
+   * Initialises the players panel. Contains the timers if blitz is on, the type of player (AI or
+   * human) and the current player.
+   */
   private void initPlayerPanel() {
     playerPanel = new PlayerPanel();
     playerPanel.setStyle(borderStyle);
   }
 
+  /**
+   * Initializes the buttons panel. Contains buttons to restart, resign, undo and redo moves, draw
+   * or undraw.
+   */
   private void initButtonsPanel() {
     buttonsPanel = new ButtonsPanel();
     buttonsPanel.setStyle(borderStyle);
   }
 
+  /** Initializes the history panel. Composed of the different moves played during the game. */
   private void initHistoryPanel() {
     historyPanel = new HistoryPanel();
     historyPanel.setStyle(borderStyle);
@@ -52,6 +67,11 @@ public class ControlPanel extends VBox {
     return this.historyPanel;
   }
 
+  /**
+   * Updates the player panel with the current player.
+   *
+   * @param type
+   */
   public void update(EventType type) {
     playerPanel.switchCurrentPlayer();
   }

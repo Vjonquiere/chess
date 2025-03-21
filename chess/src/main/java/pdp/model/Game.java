@@ -39,8 +39,9 @@ import pdp.utils.Position;
 import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 
+/** Model of our MVC architecture. Uses the Singleton design pattern. */
 public class Game extends GameAbstract {
-  public static int THREE_FOLD_REPETITION = 3;
+  public static int nFoldRepetition = 3;
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;
   private Solver solverWhite;
@@ -60,6 +61,17 @@ public class Game extends GameAbstract {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Private constructor for design pattern singleton.
+   *
+   * @param isWhiteAi true if the white player is an AI, false otherwise.
+   * @param isBlackAi true if the black player is an AI, false otherwise.
+   * @param solverWhite solver of the white AI player.
+   * @param solverBlack solver of the white AI player.
+   * @param gameState Game state of the game
+   * @param history History of the game
+   * @param options Options given in arguments or by default
+   */
   private Game(
       boolean isWhiteAi,
       boolean isBlackAi,
@@ -109,10 +121,21 @@ public class Game extends GameAbstract {
     debug(LOGGER, "Game created");
   }
 
+  /**
+   * Retrieves the options of the game.
+   *
+   * @return map of options and values
+   */
   public HashMap<OptionType, String> getOptions() {
     return options;
   }
 
+  /**
+   * Retrieves the timer of the player of the color given in parameters.
+   *
+   * @param isWhite true if the player is white, false for black player
+   * @return timer of a player
+   */
   public Timer getTimer(boolean isWhite) {
     if (isWhite && this.isWhiteAi) {
       return this.solverWhite.getTimer();
@@ -123,6 +146,11 @@ public class Game extends GameAbstract {
     return super.getGameState().getMoveTimer();
   }
 
+  /**
+   * Returns a boolean corresponding to whether the current player is an AI.
+   *
+   * @return true if the current player is an AI
+   */
   public boolean isCurrentPlayerAi() {
     boolean player = super.getGameState().isWhiteTurn();
     if (player && this.isWhiteAi) {
@@ -134,6 +162,11 @@ public class Game extends GameAbstract {
     return false;
   }
 
+  /**
+   * Sets the value of the field isInitializing.
+   *
+   * @param isInit boolean to indicate if the game is initializing
+   */
   public void setInitializing(boolean isInit) {
     this.isInitializing = isInit;
   }
@@ -201,6 +234,8 @@ public class Game extends GameAbstract {
   }
 
   /**
+   * Indicates whether the game was loaded from a file or not.
+   *
    * @return true if the game was loaded from a file, false otherwise
    */
   public boolean isLoadedFromFile() {
@@ -208,6 +243,8 @@ public class Game extends GameAbstract {
   }
 
   /**
+   * Retrieves the file the game was loaded from.
+   *
    * @return the path of the file that generated the game
    */
   public String getLoadingFile() {
@@ -215,6 +252,8 @@ public class Game extends GameAbstract {
   }
 
   /**
+   * Indicates whether the file loaded had a history.
+   *
    * @return true if the file that was used to load the game has a history. false otherwise.
    */
   public boolean loadingFileHasHistory() {
@@ -222,7 +261,7 @@ public class Game extends GameAbstract {
   }
 
   /**
-   * Method used in checkAndOverwriteHistory() to know how to handle new moves
+   * Method used in checkAndOverwriteHistory() to know how to handle new moves.
    *
    * @param fileHasHistory boolean value used to set private boolean loadingFileHasHistory.
    */
@@ -277,7 +316,7 @@ public class Game extends GameAbstract {
    * @param isBlackAi Whether the black player is an AI.
    * @param solverWhite The solver to use for White AI moves.
    * @param solverBlack The solver to use for Black AI moves.
-   * @param options
+   * @param options Options given in command line or by default.
    * @return The newly created instance of Game.
    */
   public static Game initialize(
@@ -317,7 +356,7 @@ public class Game extends GameAbstract {
    * @param solverWhite The solver to use for White AI moves.
    * @param solverBlack The solver to use for Black AI moves.
    * @param board The board state to use
-   * @param options
+   * @param options Options given in command line or by default.
    * @return The newly created instance of Game.
    */
   public static Game initialize(
@@ -683,7 +722,7 @@ public class Game extends GameAbstract {
    * @param solverWhite The solver to use for White AI moves.
    * @param solverBlack The solver to use for Black AI moves.
    * @param timer The timer to use for the game.
-   * @param options
+   * @param options Options given in command line or by default.
    * @return A new Game object with the given moves played.
    * @throws IllegalMoveException If any of the given moves are illegal.
    */

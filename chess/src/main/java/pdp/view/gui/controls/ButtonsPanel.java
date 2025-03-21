@@ -13,8 +13,6 @@ import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SurrenderCommand;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
-import pdp.view.GuiView;
-import pdp.view.gui.CustomButton;
 import pdp.view.gui.popups.YesNoPopUp;
 
 public class ButtonsPanel extends GridPane {
@@ -24,29 +22,23 @@ public class ButtonsPanel extends GridPane {
   private Button resignButton;
   private Button undrawButton;
   private Button restartButton;
-  private int buttonMinWidth = 100;
-  String buttonStyle =
-      "-fx-background-color: "
-          + GuiView.theme.getSecondary()
-          + ";"
-          + "-fx-text-fill: "
-          + GuiView.theme.getPrimary()
-          + ";"
-          + "-fx-border-color: "
-          + GuiView.theme.getPrimary()
-          + ";"
-          + "-fx-font-size: 18px;"
-          + "-fx-font-weight: bold;"
-          + "-fx-padding: 15;"
-          + "-fx-background-radius: 20;"
-          + "-fx-border-radius: 20;";
 
+  /**
+   * Creates the buttons panel to simplify the user experience. Allows the user to ask for draw
+   * proposal and remove it, resign, restart, undo and redo a move.
+   */
   public ButtonsPanel() {
     setPadding(new Insets(10));
     setHgap(10);
     setVgap(10);
     setAlignment(Pos.CENTER);
-    initButtons();
+
+    initResignButton();
+    initDrawButton();
+    initUndrawButton();
+    initRedoButton();
+    initUndoButton();
+    initRestartButton();
 
     add(drawButton, 0, 0);
     add(undoButton, 1, 0);
@@ -57,22 +49,14 @@ public class ButtonsPanel extends GridPane {
     add(restartButton, 2, 1);
   }
 
-  private void initButtons() {
-    initResignButton();
-    initDrawButton();
-    initUndrawButton();
-    initRedoButton();
-    initUndoButton();
-    initRestartButton();
-  }
-
   /**
    * Initializes the undo button and sets its action. When clicked, the button allows the player to
    * undo the last move. If neither player is controlled by AI, a confirmation popup appears, and
    * the move is undone if the player accepts.
    */
   private void initUndoButton() {
-    undoButton = new CustomButton(TextGetter.getText("undo"), buttonMinWidth);
+    undoButton = new Button(TextGetter.getText("undo"));
+    undoButton.setMinWidth(100);
     undoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
@@ -91,7 +75,8 @@ public class ButtonsPanel extends GridPane {
    * and the move is redone if the player accepts.
    */
   private void initRedoButton() {
-    redoButton = new CustomButton(TextGetter.getText("redo"), buttonMinWidth);
+    redoButton = new Button(TextGetter.getText("redo"));
+    redoButton.setMinWidth(100);
     redoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
@@ -110,7 +95,8 @@ public class ButtonsPanel extends GridPane {
    * sending it.
    */
   private void initDrawButton() {
-    drawButton = new CustomButton(TextGetter.getText("draw"), buttonMinWidth);
+    drawButton = new Button(TextGetter.getText("draw"));
+    drawButton.setMinWidth(100);
     drawButton.setOnAction(
         event -> {
           new YesNoPopUp(
@@ -126,7 +112,8 @@ public class ButtonsPanel extends GridPane {
    * cancellation.
    */
   private void initUndrawButton() {
-    undrawButton = new CustomButton(TextGetter.getText("undraw"), buttonMinWidth);
+    undrawButton = new Button(TextGetter.getText("undraw"));
+    undrawButton.setMinWidth(100);
     undrawButton.setOnAction(
         event -> {
           new YesNoPopUp(
@@ -142,7 +129,8 @@ public class ButtonsPanel extends GridPane {
    * resignation before ending the game.
    */
   private void initResignButton() {
-    resignButton = new CustomButton(TextGetter.getText("resign"), buttonMinWidth);
+    resignButton = new Button(TextGetter.getText("resign"));
+    resignButton.setMinWidth(100);
     resignButton.setOnAction(
         event -> {
           new YesNoPopUp(
@@ -158,7 +146,8 @@ public class ButtonsPanel extends GridPane {
    * the game is reset.
    */
   private void initRestartButton() {
-    restartButton = new CustomButton(TextGetter.getText("restart"), buttonMinWidth);
+    restartButton = new Button(TextGetter.getText("restart"));
+    restartButton.setMinWidth(100);
     restartButton.setOnAction(
         event -> {
           // BagOfCommands.getInstance().addCommand(new RestartCommand());

@@ -40,8 +40,8 @@ public class UciView implements View {
     commands.put("go", new CommandEntry(this::goCommand, "go"));
     commands.put("isready", new CommandEntry(this::isReadyCommand, "isReady"));
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
-    Game.THREE_FOLD_REPETITION = 5;
-    GameState.FIFTY_MOVE_RULE = 75;
+    Game.nFoldRepetition = 5;
+    GameState.nMoveRule = 75;
   }
 
   /**

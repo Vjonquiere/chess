@@ -15,7 +15,7 @@ import pdp.utils.Timer;
 
 public class GameState extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
-  public static int FIFTY_MOVE_RULE = 50;
+  public static int nMoveRule = 50;
   private Board board;
   private Timer moveTimer;
   private boolean isWhiteTurn;
@@ -325,7 +325,7 @@ public class GameState extends Subject {
    * @return true if fifty move rule is observed
    */
   public boolean isFiftyMoveRule() {
-    return this.board.getNbMovesWithNoCaptureOrPawn() >= FIFTY_MOVE_RULE;
+    return this.board.getNbMovesWithNoCaptureOrPawn() >= nMoveRule;
   }
 
   /** Fifty move rule is observed so change game status to 'Over', it's a draw. */

@@ -16,6 +16,12 @@ import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
 public class EndGamePopUp {
+  /**
+   * Displays a popup with information about the end of game. Contains the cause of ending and
+   * several buttons to analyse, restart quit or start a new game.
+   *
+   * @param event Notification corresponding to the way the game ended
+   */
   public static void show(EventType event) {
     Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);

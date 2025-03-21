@@ -15,6 +15,11 @@ import pdp.view.GuiView;
 import pdp.view.gui.themes.ColorTheme;
 
 public class ThemePopUp {
+
+  /**
+   * Creates and launches the Theme popup. Allows the user to choose different colors to customize
+   * the application's theme.
+   */
   public static void show() {
     Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -106,6 +111,12 @@ public class ThemePopUp {
     popupStage.showAndWait();
   }
 
+  /**
+   * Converts the Colors to a string on the hexadecimal format to be compatible with the Enum.
+   *
+   * @param color Color of the color picker.
+   * @return String corresponding to the translation of a color to hexadecimal string.
+   */
   public static String toHexString(Color color) {
     return String.format(
         "#%02X%02X%02X",
