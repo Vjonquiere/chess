@@ -19,7 +19,7 @@ import pdp.view.GuiView;
 
 public class NewGamePopup {
 
-  private static VBox makeAIBox(boolean isWhite, HashMap<OptionType, String> options) {
+  private static VBox makeAiBox(boolean isWhite, HashMap<OptionType, String> options) {
 
     String colorTag = isWhite ? "white" : "black";
     String colorText = TextGetter.getText(colorTag);
@@ -190,7 +190,7 @@ public class NewGamePopup {
     return aiContainer;
   }
 
-  private static VBox makeAITimeBox(HashMap<OptionType, String> options) {
+  private static VBox makeAiTimeBox(HashMap<OptionType, String> options) {
 
     VBox aiTimeFull = new VBox();
 
@@ -317,7 +317,7 @@ public class NewGamePopup {
     layout.getChildren().add(new Label(TextGetter.getText("newGame.aiPlayers")));
     layout.getChildren().add(aiDropdown);
 
-    VBox aiWhiteContainer = makeAIBox(true, options);
+    VBox aiWhiteContainer = makeAiBox(true, options);
     layout.getChildren().add(aiWhiteContainer);
     aiWhiteContainer.setVisible(
         aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("W"));
@@ -325,7 +325,7 @@ public class NewGamePopup {
         aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("W"));
     aiWhiteContainer.setId("aiWhiteContainer");
 
-    VBox aiBlackContainer = makeAIBox(false, options);
+    VBox aiBlackContainer = makeAiBox(false, options);
     layout.getChildren().add(aiBlackContainer);
     aiBlackContainer.setVisible(
         aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("B"));
@@ -333,7 +333,7 @@ public class NewGamePopup {
         aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("B"));
     aiBlackContainer.setId("aiBlackContainer");
 
-    VBox aiTimeContainer = makeAITimeBox(options);
+    VBox aiTimeContainer = makeAiTimeBox(options);
     layout.getChildren().add(aiTimeContainer);
     aiTimeContainer.setVisible(!aiDropdown.getValue().equals("None"));
     aiTimeContainer.setManaged(!aiDropdown.getValue().equals("None"));

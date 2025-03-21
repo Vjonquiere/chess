@@ -1,6 +1,6 @@
 package pdp.model;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
@@ -105,7 +105,7 @@ public class Game extends GameAbstract {
       }
     }
 
-    DEBUG(LOGGER, "Game created");
+    debug(LOGGER, "Game created");
   }
 
   public HashMap<OptionType, String> getOptions() {
@@ -247,7 +247,7 @@ public class Game extends GameAbstract {
    */
   @Override
   public void addObserver(EventObserver observer) {
-    DEBUG(LOGGER, "An observer have been attached to Game");
+    debug(LOGGER, "An observer have been attached to Game");
     super.addObserver(observer);
     if (super.getGameState() != null) {
       super.getGameState().addObserver(observer);
@@ -262,7 +262,7 @@ public class Game extends GameAbstract {
    */
   @Override
   public void addErrorObserver(EventObserver observer) {
-    DEBUG(LOGGER, "An error observer have been attached to Game");
+    debug(LOGGER, "An error observer have been attached to Game");
     super.addErrorObserver(observer);
     if (super.getGameState() != null) {
       super.getGameState().addErrorObserver(observer);
@@ -286,7 +286,7 @@ public class Game extends GameAbstract {
       Solver solverBlack,
       Timer timer,
       HashMap<OptionType, String> options) {
-    DEBUG(LOGGER, "Initializing Game...");
+    debug(LOGGER, "Initializing Game...");
     instance =
         new Game(
             isWhiteAi,
@@ -303,7 +303,7 @@ public class Game extends GameAbstract {
         timer.start();
       }
     }
-    DEBUG(LOGGER, "Game initialized!");
+    debug(LOGGER, "Game initialized!");
     instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
@@ -327,7 +327,7 @@ public class Game extends GameAbstract {
       Timer timer,
       FileBoard board,
       HashMap<OptionType, String> options) {
-    DEBUG(LOGGER, "Initializing Game from given board...");
+    debug(LOGGER, "Initializing Game from given board...");
     instance =
         new Game(
             isWhiteAi,
@@ -388,13 +388,13 @@ public class Game extends GameAbstract {
         timer.start();
       }
     }
-    DEBUG(LOGGER, "Game initialized!");
+    debug(LOGGER, "Game initialized!");
     instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
   public void outOfTimeCallback() {
-    DEBUG(LOGGER, "outOfTimeCallback called");
+    debug(LOGGER, "outOfTimeCallback called");
     super.getGameState().playerOutOfTime(super.getGameState().isWhiteTurn());
   }
 
@@ -408,7 +408,7 @@ public class Game extends GameAbstract {
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
     Position sourcePosition = new Position(move.source.getX(), move.source.getY());
     Position destPosition = new Position(move.dest.getX(), move.dest.getY());
-    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+    debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
       throw new IllegalMoveException(move.toString());
@@ -472,7 +472,7 @@ public class Game extends GameAbstract {
               super.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
     }
 
-    DEBUG(LOGGER, "Checking threefold repetition...");
+    debug(LOGGER, "Checking threefold repetition...");
     boolean threefoldRepetition =
         super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
 
@@ -480,7 +480,7 @@ public class Game extends GameAbstract {
       super.getGameState().activateThreefold();
     }
 
-    DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
+    debug(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase()) {
       if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
@@ -496,7 +496,7 @@ public class Game extends GameAbstract {
         }
       }
     }
-    DEBUG(LOGGER, "Checking game status...");
+    debug(LOGGER, "Checking game status...");
     super.getGameState().checkGameStatus();
 
     // Check for history overwrite
@@ -563,7 +563,7 @@ public class Game extends GameAbstract {
         // End of history already, so add new move and save
         this.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
         saveGame(getLoadingFile());
-        DEBUG(
+        debug(
             LOGGER, "Move differs from history. Overwriting history for file :" + getLoadingFile());
       } else {
         // Check if move we want to play is the same as the next one. If not, overwrite history and
@@ -573,7 +573,7 @@ public class Game extends GameAbstract {
           super.getHistory().setCurrentMove(null);
           super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
           saveGame(getLoadingFile());
-          DEBUG(
+          debug(
               LOGGER,
               "Move differs from history. Overwriting history for file :" + getLoadingFile());
         } else {
@@ -623,10 +623,10 @@ public class Game extends GameAbstract {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(game);
     } catch (IOException e) {
-      DEBUG(LOGGER, "Error writing to file: " + e.getMessage());
+      debug(LOGGER, "Error writing to file: " + e.getMessage());
       throw new FailedSaveException(path);
     }
-    DEBUG(LOGGER, "Game saved to " + path);
+    debug(LOGGER, "Game saved to " + path);
     this.notifyObservers(EventType.GAME_SAVED);
   }
 
@@ -644,7 +644,7 @@ public class Game extends GameAbstract {
 
     System.out.println(this.getStateCount());
 
-    DEBUG(LOGGER, "Restarting game");
+    debug(LOGGER, "Restarting game");
 
     super.getGameState().updateFrom(new GameState(super.getGameState().getMoveTimer()));
     super.getHistory().clear();
@@ -666,7 +666,7 @@ public class Game extends GameAbstract {
 
     this.startAi();
 
-    DEBUG(LOGGER, "Game restarted");
+    debug(LOGGER, "Game restarted");
   }
 
   /**

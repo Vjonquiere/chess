@@ -1,7 +1,7 @@
 package pdp.model.parsers;
 
-import static pdp.utils.Logging.DEBUG;
-import static pdp.utils.Logging.VERBOSE;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.verbose;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,7 +34,7 @@ public class BoardFileParser {
    * @throws FileNotFoundException if the path is not valid
    */
   public String readFile(String path) throws FileNotFoundException {
-    DEBUG(LOGGER, "Loading file: " + path);
+    debug(LOGGER, "Loading file: " + path);
     StringBuilder fileContent = new StringBuilder();
     File myObj = new File(path);
     Scanner myReader = new Scanner(myObj);
@@ -43,7 +43,7 @@ public class BoardFileParser {
       fileContent.append("\n");
     }
     myReader.close();
-    VERBOSE(LOGGER, "File content: " + fileContent);
+    verbose(LOGGER, "File content: " + fileContent);
     return fileContent.toString();
   }
 
@@ -66,20 +66,20 @@ public class BoardFileParser {
     }
     content = content.split("\\d+\\.")[0].trim(); // Removing history if present
     try {
-      DEBUG(LOGGER, "Converting file to charStream...");
+      debug(LOGGER, "Converting file to charStream...");
       CharStream charStream = CharStreams.fromString(content);
-      DEBUG(LOGGER, "Lexing...");
+      debug(LOGGER, "Lexing...");
       BoardLoaderLexer lexer = new BoardLoaderLexer(charStream);
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      DEBUG(LOGGER, "Parsing...");
+      debug(LOGGER, "Parsing...");
       BoardLoaderParser parser = new BoardLoaderParser(tokens);
       parser.setErrorHandler(new BailErrorStrategy()); // force parser to throw error
       ParseTree tree = parser.board();
-      DEBUG(LOGGER, "Building board...");
+      debug(LOGGER, "Building board...");
       ParseTreeWalker walker = new ParseTreeWalker();
       BoardLoaderListener listener = new BoardLoaderListener();
       walker.walk(listener, tree);
-      DEBUG(LOGGER, "Board built successfully");
+      debug(LOGGER, "Board built successfully");
       FileBoard result = listener.getResult();
       if (result.board().getKing(true).size() != 1
           || result.board().getKing(false).size() != 1

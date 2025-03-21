@@ -23,48 +23,48 @@ public class ThemePopUp {
     VBox layout = new VBox(10);
     layout.setId("vbox");
     Label primary = new Label(TextGetter.getText("theme.primary"));
-    ColorPicker cp_primary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getPrimary()));
-    cp_primary.setId("primary");
+    ColorPicker cpPrimary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getPrimary()));
+    cpPrimary.setId("primary");
     Label secondary = new Label(TextGetter.getText("theme.secondary"));
-    ColorPicker cp_secondary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getSecondary()));
-    cp_secondary.setId("secondary");
+    ColorPicker cpSecondary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getSecondary()));
+    cpSecondary.setId("secondary");
     Label tertiary = new Label(TextGetter.getText("theme.tertiary"));
-    ColorPicker cp_tertiary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTertiary()));
-    cp_tertiary.setId("tertiary");
+    ColorPicker cpTertiary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTertiary()));
+    cpTertiary.setId("tertiary");
     Label accent = new Label(TextGetter.getText("theme.accent"));
-    ColorPicker cp_accent = new ColorPicker(Color.web(ColorTheme.CUSTOM.getAccent()));
-    cp_accent.setId("accent");
+    ColorPicker cpAccent = new ColorPicker(Color.web(ColorTheme.CUSTOM.getAccent()));
+    cpAccent.setId("accent");
     Label background = new Label(TextGetter.getText("theme.background"));
-    ColorPicker cp_background = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground()));
-    cp_background.setId("background");
+    ColorPicker cpBackground = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground()));
+    cpBackground.setId("background");
     Label background2 = new Label(TextGetter.getText("theme.background2"));
-    ColorPicker cp_background2 = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground2()));
-    cp_background2.setId("background2");
+    ColorPicker cpBackground2 = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground2()));
+    cpBackground2.setId("background2");
     Label text = new Label(TextGetter.getText("theme.text"));
-    ColorPicker cp_text = new ColorPicker(Color.web(ColorTheme.CUSTOM.getText()));
-    cp_text.setId("text");
+    ColorPicker cpText = new ColorPicker(Color.web(ColorTheme.CUSTOM.getText()));
+    cpText.setId("text");
     Label textInverted = new Label(TextGetter.getText("theme.textInverted"));
-    ColorPicker cp_textInverted = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTextInverted()));
-    cp_textInverted.setId("textInverted");
+    ColorPicker cpTextInverted = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTextInverted()));
+    cpTextInverted.setId("textInverted");
     layout
         .getChildren()
         .addAll(
             primary,
-            cp_primary,
+            cpPrimary,
             secondary,
-            cp_secondary,
+            cpSecondary,
             tertiary,
-            cp_tertiary,
+            cpTertiary,
             accent,
-            cp_accent,
+            cpAccent,
             background,
-            cp_background,
+            cpBackground,
             background2,
-            cp_background2,
+            cpBackground2,
             text,
-            cp_text,
+            cpText,
             textInverted,
-            cp_textInverted);
+            cpTextInverted);
 
     HBox buttonBox = new HBox();
     Button saveButton = new Button(TextGetter.getText("save"));
@@ -73,14 +73,14 @@ public class ThemePopUp {
         e -> {
           try {
             ColorTheme.setCustom(
-                toHexString(cp_primary.getValue()),
-                toHexString(cp_secondary.getValue()),
-                toHexString(cp_tertiary.getValue()),
-                toHexString(cp_accent.getValue()),
-                toHexString(cp_background.getValue()),
-                toHexString(cp_background2.getValue()),
-                toHexString(cp_text.getValue()),
-                toHexString(cp_textInverted.getValue()));
+                toHexString(cpPrimary.getValue()),
+                toHexString(cpSecondary.getValue()),
+                toHexString(cpTertiary.getValue()),
+                toHexString(cpAccent.getValue()),
+                toHexString(cpBackground.getValue()),
+                toHexString(cpBackground2.getValue()),
+                toHexString(cpText.getValue()),
+                toHexString(cpTextInverted.getValue()));
             GuiView.theme = ColorTheme.CUSTOM;
             BagOfCommands.getInstance().addCommand(new ChangeTheme());
           } catch (IllegalArgumentException ex) {

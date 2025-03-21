@@ -1,6 +1,6 @@
 package pdp.events;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public abstract class Subject {
    * @param event The type of event that occurred.
    */
   public void notifyObserver(EventObserver observer, EventType event) {
-    DEBUG(LOGGER, "Notifying observer " + observer + " with event " + event);
+    debug(LOGGER, "Notifying observer " + observer + " with event " + event);
     observer.onGameEvent(event);
   }
 
@@ -70,7 +70,7 @@ public abstract class Subject {
    * @param event The type of event that occurred.
    */
   public void notifyObservers(EventType event) {
-    DEBUG(LOGGER, "Notifying observers with event " + event);
+    debug(LOGGER, "Notifying observers with event " + event);
     if (!Game.getInstance().isAiExploring()) {
       for (EventObserver observer : observers) {
         notifyObserver(observer, event);

@@ -20,7 +20,7 @@ public class PlayerInfos extends HBox {
   Label timerLabel = new Label();
   Timeline timeline;
 
-  public PlayerInfos(String name, boolean isAI, boolean isWhite) {
+  public PlayerInfos(String name, boolean isAi, boolean isWhite) {
     this.setAlignment(Pos.CENTER_LEFT);
     currentPlayer = new Canvas(20, 20);
     Timer timer = Game.getInstance().getTimer(isWhite);
@@ -28,13 +28,13 @@ public class PlayerInfos extends HBox {
       timerLabel.setText(timer.getTimeRemainingString());
       updateTimer(isWhite);
     }
-    this.getChildren().addAll(getPlayerIcon(isAI), new Label(name), timerLabel, currentPlayer);
+    this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
     this.setSpacing(10);
   }
 
-  public ImageView getPlayerIcon(boolean isAI) {
+  public ImageView getPlayerIcon(boolean isAi) {
     ImageView imageView = new ImageView();
-    String fileName = isAI ? "ai" : "player";
+    String fileName = isAi ? "ai" : "player";
     String path = "/assets/icons/" + fileName + ".png";
     Image image = new Image(getClass().getResourceAsStream(path));
     imageView.setImage(image);
@@ -60,11 +60,15 @@ public class PlayerInfos extends HBox {
   public void setCurrentPlayer(boolean isCurrent) {
     GraphicsContext gc = currentPlayer.getGraphicsContext2D();
     gc.clearRect(0, 0, currentPlayer.getWidth(), currentPlayer.getHeight());
-    if (timeline != null) timeline.stop();
+    if (timeline != null) {
+      timeline.stop();
+    }
     if (isCurrent) {
       gc.setFill(Color.web(GuiView.theme.getAccent()));
       gc.fillOval(0, 0, 20, 20);
-      if (timeline != null) timeline.play();
+      if (timeline != null) {
+        timeline.play();
+      }
     }
   }
 }

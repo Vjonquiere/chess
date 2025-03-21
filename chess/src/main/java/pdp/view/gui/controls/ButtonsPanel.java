@@ -76,11 +76,12 @@ public class ButtonsPanel extends GridPane {
     undoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi())
+          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "undoInstructionsGui",
                 new CancelMoveCommand(),
                 () -> Game.getInstance().getGameState().undoRequestReset());
+          }
         });
   }
 
@@ -94,11 +95,12 @@ public class ButtonsPanel extends GridPane {
     redoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi())
+          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "redoInstructionsGui",
                 new RestoreMoveCommand(),
                 () -> Game.getInstance().getGameState().redoRequestReset());
+          }
         });
   }
 

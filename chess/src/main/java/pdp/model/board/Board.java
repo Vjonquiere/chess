@@ -30,18 +30,18 @@ public class Board {
   public Board() {
     this.setBoard(new BitboardRepresentation());
     this.isWhite = true;
-    this.setEnPassantPos(null);
-    this.setWhiteShortCastle(true);
-    this.setBlackShortCastle(true);
-    this.setWhiteLongCastle(true);
-    this.setBlackLongCastle(true);
-    this.setLastMoveDoublePush(false);
-    this.setEnPassantTake(false);
+    this.enPassantPos = null;
+    this.whiteShortCastle = true;
+    this.blackShortCastle = true;
+    this.whiteLongCastle = true;
+    this.blackLongCastle = true;
+    this.isLastMoveDoublePush = false;
+    this.isEnPassantTake = false;
     this.nbMovesWithNoCaptureOrPawn = 0;
   }
 
   /**
-   * Create a board from a given board state (support FileBoard header)
+   * Create a board from a given board state (support FileBoard header).
    *
    * @param board The board state to use
    */

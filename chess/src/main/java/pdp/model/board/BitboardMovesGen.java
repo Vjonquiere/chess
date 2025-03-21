@@ -1,7 +1,7 @@
 package pdp.model.board;
 
-import static pdp.utils.Logging.DEBUG;
-import static pdp.utils.Logging.VERBOSE;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.verbose;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -415,7 +415,7 @@ public class BitboardMovesGen {
         piece.color == Color.WHITE
             ? bitboardRepresentation.getBlackBoard()
             : bitboardRepresentation.getWhiteBoard();
-    VERBOSE(
+    verbose(
         LOGGER,
         "Generating moves for "
             + piece.color
@@ -480,7 +480,7 @@ public class BitboardMovesGen {
         piece.color == Color.WHITE
             ? bitboardRepresentation.getBlackBoard()
             : bitboardRepresentation.getWhiteBoard();
-    VERBOSE(
+    verbose(
         LOGGER,
         "Generating moves for "
             + piece.color
@@ -518,7 +518,7 @@ public class BitboardMovesGen {
    */
   public static List<Move> getAllAvailableMoves(
       boolean isWhite, BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Getting all available moves for a player");
+    debug(LOGGER, "Getting all available moves for a player");
     Bitboard pieces =
         isWhite ? bitboardRepresentation.getWhiteBoard() : bitboardRepresentation.getBlackBoard();
     List<Move> moves = new ArrayList<>();

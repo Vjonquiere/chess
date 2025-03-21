@@ -1,6 +1,6 @@
 package pdp.model.board;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class BitboardRules {
    */
   public static boolean isCheckAfterMove(
       Color color, Move move, BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Checking if " + color + " is check after move (" + move + ")");
+    debug(LOGGER, "Checking if " + color + " is check after move (" + move + ")");
     ColoredPiece removedPiece = null;
     if (move.getTakeDest() == null) {
       move.setTakeDest(move.dest);
@@ -80,7 +80,7 @@ public class BitboardRules {
           move.getTakeDest().getX(), move.getTakeDest().getY(), removedPiece);
     }
     if (isCheckAfterMove) {
-      DEBUG(LOGGER, color.toString() + "will be checked after move");
+      debug(LOGGER, color.toString() + "will be checked after move");
     }
     return isCheckAfterMove;
   }
@@ -93,7 +93,7 @@ public class BitboardRules {
    * @return True if the given color is in checkMate, False else
    */
   public static boolean isCheckMate(Color color, BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Checking if " + color + " is check mate");
+    debug(LOGGER, "Checking if " + color + " is check mate");
     if (!isCheck(color, bitboardRepresentation)) {
       return false;
     }
@@ -126,12 +126,12 @@ public class BitboardRules {
               move.getTakeDest().getX(), move.getTakeDest().getY(), removedPiece);
         }
         if (!isStillCheck) {
-          DEBUG(LOGGER, color.toString() + " is not check mate");
+          debug(LOGGER, color.toString() + " is not check mate");
           return false;
         }
       }
     }
-    DEBUG(LOGGER, color.toString() + " is check mate ");
+    debug(LOGGER, color.toString() + " is check mate ");
     return true;
   }
 
@@ -172,7 +172,7 @@ public class BitboardRules {
               move.getDest().getX(), move.getDest().getY(), removedPiece);
         }
         if (!isStillCheck) {
-          DEBUG(LOGGER, color.toString() + " is not stalemate");
+          debug(LOGGER, color.toString() + " is not stalemate");
           return false;
         }
       }
@@ -192,7 +192,7 @@ public class BitboardRules {
    */
   public static boolean isDrawByInsufficientMaterial(
       BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Checking is draw by insufficient material");
+    debug(LOGGER, "Checking is draw by insufficient material");
     List<Position> posWhiteKing = bitboardRepresentation.getKing(true);
     List<Position> posBlackKing = bitboardRepresentation.getKing(false);
     if (posWhiteKing.isEmpty() || posBlackKing.isEmpty()) {
@@ -277,7 +277,7 @@ public class BitboardRules {
    */
   public static boolean isPawnPromoting(
       int x, int y, boolean white, BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Checking is pawn promoting");
+    debug(LOGGER, "Checking is pawn promoting");
     if (white && y != 7) {
       return false;
     } else if (!white && y != 0) {
@@ -305,7 +305,7 @@ public class BitboardRules {
    */
   public static void promotePawn(
       int x, int y, boolean white, Piece newPiece, BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
+    debug(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
     ColoredPiece pieceAtPosition = bitboardRepresentation.getPieceAt(x, y);
     if (pieceAtPosition.piece != Piece.PAWN
         || pieceAtPosition.color != (white ? Color.WHITE : Color.BLACK)) {
@@ -349,7 +349,7 @@ public class BitboardRules {
    */
   public static boolean isDoublePushPossible(
       Move move, boolean white, BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Checking is double push possible");
+    debug(LOGGER, "Checking is double push possible");
     ColoredPiece piece = bitboardRepresentation.getPieceAt(move.source.getX(), move.source.getY());
     if (white
         && piece.piece == Piece.PAWN
@@ -386,7 +386,7 @@ public class BitboardRules {
    */
   public static boolean isEnPassant(
       int x, int y, Move move, boolean white, BitboardRepresentation bitboardRepresentation) {
-    DEBUG(LOGGER, "Checking is en passant");
+    debug(LOGGER, "Checking is en passant");
     ColoredPiece piece = bitboardRepresentation.getPieceAt(move.source.getX(), move.source.getY());
     if (white
         && piece.piece == Piece.PAWN
@@ -614,7 +614,7 @@ public class BitboardRules {
 
     if ((pieceAtSource.color == Color.WHITE && !white)
         || (pieceAtSource.color == Color.BLACK && white)) {
-      DEBUG(LOGGER, "Not a " + pieceAtSource.color + " piece at " + sourcePosition);
+      debug(LOGGER, "Not a " + pieceAtSource.color + " piece at " + sourcePosition);
       return false;
     }
     return true;

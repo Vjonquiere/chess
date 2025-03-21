@@ -39,13 +39,13 @@ public class LoggingTest {
 
   @Test
   public void testDebugDefault() {
-    Logging.DEBUG(logger, "This is a debug message.");
+    Logging.debug(logger, "This is a debug message.");
     assertFalse(outContent.toString().contains("This is a debug message."));
   }
 
   @Test
   public void testVerboseDefault() {
-    Logging.VERBOSE(logger, "This is a verbose message.");
+    Logging.verbose(logger, "This is a verbose message.");
     assertFalse(outContent.toString().contains("This is a verbose message."));
   }
 
@@ -54,7 +54,7 @@ public class LoggingTest {
     Logging.setDebug(true);
     Logging.configureLogging(logger);
 
-    Logging.DEBUG(logger, "Debug is enabled");
+    Logging.debug(logger, "Debug is enabled");
     assertTrue(outContent.toString().contains("Debug is enabled"));
   }
 
@@ -63,7 +63,7 @@ public class LoggingTest {
     Logging.setVerbose(true);
     Logging.configureLogging(logger);
 
-    Logging.VERBOSE(logger, "Verbose is enabled");
+    Logging.verbose(logger, "Verbose is enabled");
     assertTrue(outContent.toString().contains("Verbose is enabled"));
   }
 }

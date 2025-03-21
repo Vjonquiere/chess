@@ -1,6 +1,6 @@
 package pdp.model;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -49,13 +49,13 @@ public abstract class GameAbstract extends Subject {
    * @return true if the state has been seen 3 times, false otherwise
    */
   protected boolean addStateToCount(long simplifiedZobristHashing) {
-    DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
+    debug(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
     if (this.stateCount.containsKey(simplifiedZobristHashing)) {
       this.stateCount.put(
           simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
 
       if (this.stateCount.get(simplifiedZobristHashing) == 3) {
-        DEBUG(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
+        debug(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
         return true;
       }
       return false;
@@ -95,12 +95,12 @@ public abstract class GameAbstract extends Subject {
   protected void processClassicalMove(GameState gameState, Move move) throws IllegalMoveException {
     Color currentColor = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
     if (gameState.getBoard().getBoardRep().isCheckAfterMove(currentColor, move)) {
-      DEBUG(LOGGER, "Move puts the king in check: " + move);
+      debug(LOGGER, "Move puts the king in check: " + move);
       throw new IllegalMoveException(move.toString());
     }
 
     gameState.getBoard().makeMove(move);
-    DEBUG(LOGGER, "Move played!");
+    debug(LOGGER, "Move played!");
   }
 
   /**
@@ -142,7 +142,7 @@ public abstract class GameAbstract extends Subject {
           .getBoard()
           .getBoardRep()
           .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
-        DEBUG(LOGGER, "En passant puts the king in check!");
+        debug(LOGGER, "En passant puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
       isSpecialMove = true;
@@ -162,7 +162,7 @@ public abstract class GameAbstract extends Subject {
           .getBoard()
           .getBoardRep()
           .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
-        DEBUG(LOGGER, "Double push puts the king in check!");
+        debug(LOGGER, "Double push puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
       isSpecialMove = true;
@@ -178,7 +178,7 @@ public abstract class GameAbstract extends Subject {
     }
 
     if (!isSpecialMove) {
-      DEBUG(LOGGER, "Move was not a special move!");
+      debug(LOGGER, "Move was not a special move!");
       throw new IllegalMoveException(move.toString());
     }
   }
@@ -266,7 +266,7 @@ public abstract class GameAbstract extends Subject {
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(previousNode.get());
-    DEBUG(LOGGER, "Move undo : change state and update Zobrist for threefold");
+    debug(LOGGER, "Move undo : change state and update Zobrist for threefold");
     this.notifyObservers(EventType.MOVE_UNDO);
   }
 
@@ -295,7 +295,7 @@ public abstract class GameAbstract extends Subject {
     this.history.setCurrentMove(nextNode.get());
     long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
     stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
-    DEBUG(LOGGER, "Move redo : change state and update Zobrist for threefold");
+    debug(LOGGER, "Move redo : change state and update Zobrist for threefold");
     this.notifyObservers(EventType.MOVE_REDO);
   }
 

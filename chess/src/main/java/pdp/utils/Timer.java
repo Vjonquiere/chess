@@ -1,6 +1,6 @@
 package pdp.utils;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.logging.Logger;
 
@@ -70,7 +70,7 @@ public class Timer implements Runnable {
   public synchronized void stop() {
     this.running = false;
     this.remaining -= System.currentTimeMillis() - this.startTime;
-    DEBUG(LOGGER, "Remaining time at stop: " + this.remaining);
+    debug(LOGGER, "Remaining time at stop: " + this.remaining);
     if (this.thread != null) {
       this.thread.interrupt();
     }

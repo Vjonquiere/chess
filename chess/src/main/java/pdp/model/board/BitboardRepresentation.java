@@ -1,6 +1,6 @@
 package pdp.model.board;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.List;
 import java.util.function.Function;
@@ -190,7 +190,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void promotePawn(int x, int y, boolean white, Piece newPiece) {
-    DEBUG(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
+    debug(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
     ColoredPiece pieceAtPosition = getPieceAt(x, y);
     if (pieceAtPosition.piece != Piece.PAWN
         || pieceAtPosition.color != (white ? Color.WHITE : Color.BLACK)) {
@@ -241,7 +241,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public void deletePieceAt(int x, int y) {
     ColoredPiece piece = getPieceAt(x, y);
     board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
-    DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
+    debug(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
   /**
@@ -254,7 +254,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected void addPieceAt(int x, int y, ColoredPiece piece) {
     board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
-    DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
+    debug(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
   }
 
   /**

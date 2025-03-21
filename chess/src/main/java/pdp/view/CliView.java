@@ -1,6 +1,6 @@
 package pdp.view;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -186,7 +186,7 @@ public class CliView implements View {
           System.out.println(Game.getInstance().getGameRepresentation());
           break;
         default:
-          DEBUG(LOGGER, "Received unknown game event: " + event);
+          debug(LOGGER, "Received unknown game event: " + event);
           break;
       }
       Game.getInstance().workingView.signal();

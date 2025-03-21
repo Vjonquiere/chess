@@ -1,6 +1,6 @@
 package pdp.model;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ public class GameAi extends GameAbstract {
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
     Position sourcePosition = new Position(move.source.getX(), move.source.getY());
     Position destPosition = new Position(move.dest.getX(), move.dest.getY());
-    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+    debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
       throw new IllegalMoveException(move.toString());
@@ -90,7 +90,7 @@ public class GameAi extends GameAbstract {
               super.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
     }
 
-    DEBUG(LOGGER, "Checking threefold repetition...");
+    debug(LOGGER, "Checking threefold repetition...");
     boolean threefoldRepetition =
         super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
 
@@ -98,7 +98,7 @@ public class GameAi extends GameAbstract {
       super.getGameState().activateThreefold();
     }
 
-    DEBUG(LOGGER, "Checking game status...");
+    debug(LOGGER, "Checking game status...");
     super.getGameState().checkGameStatus();
 
     super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
@@ -116,7 +116,7 @@ public class GameAi extends GameAbstract {
 
     Position sourcePosition = new Position(move.source.getX(), move.source.getY());
     Position destPosition = new Position(move.dest.getX(), move.dest.getY());
-    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+    debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!validatePieceOwnership(gameState, sourcePosition)) {
       throw new IllegalMoveException(move.toString());
@@ -156,7 +156,7 @@ public class GameAi extends GameAbstract {
     gameState.switchPlayerTurn();
     gameState.getBoard().setPlayer(gameState.isWhiteTurn());
 
-    DEBUG(LOGGER, "Checking game status...");
+    debug(LOGGER, "Checking game status...");
     gameState.checkGameStatus();
   }
 

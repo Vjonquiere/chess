@@ -12,7 +12,7 @@ public class GuiLauncher extends Application {
    *
    * @param view the GuiView managing the graphical interface
    */
-  public static void launchGUI(GuiView view) {
+  public static void launchGui(GuiView view) {
     guiView = view;
     Application.launch();
   }

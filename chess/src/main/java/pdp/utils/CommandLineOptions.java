@@ -1,6 +1,6 @@
 package pdp.utils;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -58,7 +58,7 @@ public class CommandLineOptions {
       if (!cmd.getArgList().isEmpty()) {
         String loadFile = cmd.getArgList().get(0);
         activatedOptions.put(OptionType.LOAD, loadFile);
-        DEBUG(LOGGER, "Load file set to: " + loadFile);
+        debug(LOGGER, "Load file set to: " + loadFile);
       }
     } catch (ParseException exp) {
       System.out.println("Parsing failed.  Reason: " + exp.getMessage());
@@ -140,12 +140,12 @@ public class CommandLineOptions {
     if (cmd.hasOption(OptionType.DEBUG.getLong()) || "true".equals(defaultArgs.get("debug"))) {
       Logging.setDebug(true);
       Logging.configureLogging(LOGGER);
-      DEBUG(LOGGER, "Debug mode activated");
+      debug(LOGGER, "Debug mode activated");
     }
     if (cmd.hasOption(OptionType.VERBOSE.getLong()) || "true".equals(defaultArgs.get("verbose"))) {
       Logging.setVerbose(true);
       Logging.configureLogging(LOGGER);
-      DEBUG(LOGGER, "Verbose mode activated");
+      debug(LOGGER, "Verbose mode activated");
     }
   }
 
@@ -161,13 +161,13 @@ public class CommandLineOptions {
   private static boolean handleImmediateExitOptions(
       CommandLine cmd, Options options, Runtime runtime) throws IOException {
     if (cmd.hasOption(OptionType.HELP.getLong())) {
-      DEBUG(LOGGER, "Help option activated");
+      debug(LOGGER, "Help option activated");
       new HelpFormatter().printHelp("chess", options);
       runtime.exit(0);
       return true;
     }
     if (cmd.hasOption(OptionType.VERSION.getLong())) {
-      DEBUG(LOGGER, "Version option activated");
+      debug(LOGGER, "Version option activated");
       Properties properties = new Properties();
       properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
       System.out.println("Version: " + properties.getProperty("version"));
@@ -209,14 +209,14 @@ public class CommandLineOptions {
                 ? cmd.getOptionValue(option.getLong(), "")
                 : defaultArgs.get(option.getLong());
         activatedOptions.put(option, value != null ? value : "");
-        DEBUG(LOGGER, option.getLong() + " option activated");
+        debug(LOGGER, option.getLong() + " option activated");
 
         if (option == OptionType.LANG) {
           if (value.equals("en")) {
-            DEBUG(LOGGER, "Language = English (already set by default)");
+            debug(LOGGER, "Language = English (already set by default)");
             // TODO: de-comment when french file finished
           } else if (value.equals("fr")) {
-            DEBUG(LOGGER, "Language = French");
+            debug(LOGGER, "Language = French");
             TextGetter.setLocale("fr");
           } else {
             System.err.println(

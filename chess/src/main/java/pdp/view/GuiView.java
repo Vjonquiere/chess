@@ -1,6 +1,6 @@
 package pdp.view;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 import static pdp.view.gui.themes.ColorTheme.*;
 
 import java.io.File;
@@ -99,7 +99,9 @@ public class GuiView implements View {
     scene = new Scene(root, 1200, 820);
     applyCSS(scene);
     stage.setScene(scene);
-    if (board != null) board.setStage(stage);
+    if (board != null) {
+      board.setStage(stage);
+    }
     this.stage = stage;
   }
 
@@ -115,7 +117,7 @@ public class GuiView implements View {
    */
   @Override
   public Thread start() {
-    Thread guiThread = new Thread(() -> GuiLauncher.launchGUI(this));
+    Thread guiThread = new Thread(() -> GuiLauncher.launchGui(this));
     guiThread.start();
     return guiThread;
   }
@@ -127,16 +129,16 @@ public class GuiView implements View {
    */
   @Override
   public void onGameEvent(EventType event) {
-    DEBUG(LOGGER, "View received event " + event);
+    debug(LOGGER, "View received event " + event);
     if (!Platform.isFxApplicationThread() && !isInit()) {
-      DEBUG(LOGGER, "Init GUI thread");
+      debug(LOGGER, "Init GUI thread");
       setInit(true);
       Platform.startup(() -> Platform.runLater(() -> this.onGameEvent(event)));
     }
     Platform.runLater(
         () -> {
           Game.getInstance().viewLock.lock();
-          DEBUG(LOGGER, "View handling event " + event);
+          debug(LOGGER, "View handling event " + event);
           try {
             switch (event) {
               case GAME_STARTED:
@@ -147,7 +149,7 @@ public class GuiView implements View {
                 board = new Board(Game.getInstance(), stage);
                 root.setLeft(board);
                 System.out.println("GUI board displayed"); // TODO: Add in resource bundle
-                DEBUG(LOGGER, "Board view initialized");
+                debug(LOGGER, "Board view initialized");
                 if (controlPanel != null) {
                   root.getChildren().remove(controlPanel);
                 }
@@ -300,7 +302,7 @@ public class GuiView implements View {
                 }
                 break;
               default:
-                DEBUG(LOGGER, "Received unknown game event: " + event);
+                debug(LOGGER, "Received unknown game event: " + event);
                 break;
             }
             Game.getInstance().workingView.signal();

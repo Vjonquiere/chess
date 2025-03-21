@@ -1,6 +1,6 @@
 package pdp.model.ai.algorithms;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -61,7 +61,7 @@ public class AlphaBeta implements SearchAlgorithm {
 
     executor.shutdown();
 
-    DEBUG(LOGGER, "Best move: " + bestMove);
+    debug(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
 

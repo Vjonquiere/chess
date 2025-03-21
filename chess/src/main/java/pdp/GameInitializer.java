@@ -1,6 +1,6 @@
 package pdp;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public abstract class GameInitializer {
 
     CommandLineOptions.validateAiOptions(options);
 
-    DEBUG(LOGGER, "Initializing game with options: " + options);
+    debug(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
     Integer blitzTime = 30 * 60;

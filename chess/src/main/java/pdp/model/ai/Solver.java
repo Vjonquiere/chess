@@ -1,6 +1,6 @@
 package pdp.model.ai;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -70,7 +70,7 @@ public class Solver {
       case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
-    DEBUG(LOGGER, "Algorithm set to " + algorithm);
+    debug(LOGGER, "Algorithm set to " + algorithm);
   }
 
   /**
@@ -109,7 +109,7 @@ public class Solver {
     }
     this.currentHeuristic = heuristic;
     this.evaluatedBoards = new HashMap<>();
-    DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
+    debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
   public void setEndgameHeuristic(HeuristicType heuristic) {
@@ -160,7 +160,7 @@ public class Solver {
     if (depth <= 0) {
       throw new IllegalArgumentException("Depth must be greater than 0");
     }
-    DEBUG(LOGGER, "Depth set to " + depth);
+    debug(LOGGER, "Depth set to " + depth);
     this.depth = depth;
   }
 
@@ -176,7 +176,7 @@ public class Solver {
     this.time = time * 1000;
     timer = new Timer(this.time);
     timer.setCallback(() -> this.stopSearch(true));
-    DEBUG(LOGGER, "Time set to " + this.time);
+    debug(LOGGER, "Time set to " + this.time);
   }
 
   public Timer getTimer() {
@@ -213,7 +213,7 @@ public class Solver {
       timer.stop();
     }
 
-    DEBUG(LOGGER, "Best move " + bestMove);
+    debug(LOGGER, "Best move " + bestMove);
     game.setExploration(false);
 
     if (isMoveToPlay) {
