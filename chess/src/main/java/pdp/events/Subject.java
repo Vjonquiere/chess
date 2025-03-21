@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import pdp.model.Game;
 import pdp.utils.Logging;
 
+/** Part of design pattern observer. */
 public abstract class Subject {
   private static final Logger LOGGER = Logger.getLogger(Subject.class.getName());
   List<EventObserver> observers = new ArrayList<>();

@@ -1,5 +1,6 @@
 package pdp.events;
 
+/** Enum containing all types of events that can be encountered in the application. */
 public enum EventType {
   GAME_STARTED,
   GAME_RESTART,
