@@ -201,14 +201,14 @@ public class Solver {
    *
    * @param game current game
    */
-  public void playAIMove(Game game) {
+  public void playAiMove(Game game) {
     game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
     isSearchStopped = false;
     isMoveToPlay = true;
-    AIMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
+    AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
     if (timer != null) {
       timer.stop();
     }

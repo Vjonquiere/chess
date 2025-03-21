@@ -623,10 +623,10 @@ public class GameTest {
   }
 
   @Test
-  public void startAITest() {
+  public void startAiTest() {
     Solver s = new Solver();
     Game game = Game.initialize(true, false, s, s, null, new HashMap<>());
-    game.startAI();
+    game.startAi();
     // AI white and white's turn
     assertNotEquals(
         game.getGameState().isWhiteTurn(),
@@ -639,11 +639,11 @@ public class GameTest {
             .getBoardRep());
     BitboardRepresentation bitboard = (BitboardRepresentation) game.getBoard().getBoardRep();
     // Ai white and Black's turn
-    game.startAI();
+    game.startAi();
     assertEquals(game.getGameState().getBoard().getBoardRep(), bitboard);
 
     game = Game.initialize(false, true, s, s, null, new HashMap<>());
-    game.startAI();
+    game.startAi();
     // AI black and white's turn
     assertEquals(
         game.getGameState().isWhiteTurn(),
@@ -663,7 +663,7 @@ public class GameTest {
     s.setAlgorithm(AlgorithmType.ALPHA_BETA);
     Game game = Game.initialize(true, true, s, s, null, new HashMap<>());
 
-    game.startAI();
+    game.startAi();
 
     assertTrue(game.isOver());
   }
@@ -678,7 +678,7 @@ public class GameTest {
     s.setHeuristic(HeuristicType.STANDARD);
     s.setEndgameHeuristic(HeuristicType.ENDGAME);
     Game game = Game.initialize(true, false, s, s, null, board, new HashMap<>());
-    game.startAI();
+    game.startAi();
     assertTrue(s.getHeuristic() instanceof EndGameHeuristic);
   }
 

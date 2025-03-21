@@ -1,4 +1,4 @@
-package pdp.view.GUI.popups;
+package pdp.view.gui.popups;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,7 +13,7 @@ import pdp.controller.commands.RestartCommand;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
 public class EndGamePopUp {
   public static void show(EventType event) {
@@ -24,7 +24,7 @@ public class EndGamePopUp {
     VBox layout = new VBox(10);
     layout.setStyle(
         "-fx-background-color: "
-            + GUIView.theme.getBackground()
+            + GuiView.theme.getBackground()
             + "; -fx-padding: 10; -fx-text-fill: black;");
 
     Label gameOverLabel = new Label(TextGetter.getText("gameOver"));
@@ -106,7 +106,7 @@ public class EndGamePopUp {
     layout.setAlignment(Pos.CENTER);
 
     Scene scene = new Scene(layout, 600, 300);
-    GUIView.applyCSS(scene);
+    GuiView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

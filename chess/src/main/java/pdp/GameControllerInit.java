@@ -5,8 +5,8 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.utils.OptionType;
-import pdp.view.CLIView;
-import pdp.view.GUIView;
+import pdp.view.CliView;
+import pdp.view.GuiView;
 import pdp.view.View;
 
 /** Utility class for initializing a {@link GameController} instance. */
@@ -23,9 +23,9 @@ public abstract class GameControllerInit {
 
     View view;
     if (options.containsKey(OptionType.GUI)) {
-      view = new GUIView();
+      view = new GuiView();
     } else {
-      view = new CLIView();
+      view = new CliView();
     }
     BagOfCommands bagOfCommands = BagOfCommands.getInstance();
     return new GameController(model, view, bagOfCommands);

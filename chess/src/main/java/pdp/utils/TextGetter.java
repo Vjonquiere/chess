@@ -30,6 +30,10 @@ public class TextGetter {
     messages = ResourceBundle.getBundle("chessResources", locale);
   }
 
+  public static Locale getLocale() {
+    return locale;
+  }
+
   /**
    * Gets the string corresponding to the key in the correct language.
    *
@@ -38,10 +42,6 @@ public class TextGetter {
    */
   public static String getText(String key) {
     return messages.getString(key);
-  }
-
-  public static Locale getLocale() {
-    return locale;
   }
 
   /**

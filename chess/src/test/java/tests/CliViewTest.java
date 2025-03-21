@@ -35,11 +35,11 @@ import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.utils.Timer;
-import pdp.view.CLIView;
+import pdp.view.CliView;
 
-public class CLIViewTest {
+public class CliViewTest {
 
-  private CLIView view;
+  private CliView view;
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
@@ -74,9 +74,9 @@ public class CLIViewTest {
     mockBagOfCommands = mock(BagOfCommands.class);
     BagOfCommands.setInstance(mockBagOfCommands);
 
-    view = new CLIView();
+    view = new CliView();
 
-    handleUserInputMethod = CLIView.class.getDeclaredMethod("handleUserInput", String.class);
+    handleUserInputMethod = CliView.class.getDeclaredMethod("handleUserInput", String.class);
     handleUserInputMethod.setAccessible(true); // Allows access to private method
   }
 

@@ -1,4 +1,4 @@
-package pdp.view.GUI;
+package pdp.view.gui;
 
 import javafx.scene.control.Button;
 

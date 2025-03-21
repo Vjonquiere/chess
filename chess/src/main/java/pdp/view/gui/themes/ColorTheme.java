@@ -1,4 +1,4 @@
-package pdp.view.GUI.themes;
+package pdp.view.gui.themes;
 
 public enum ColorTheme {
   BLUE("#16697A", "#82C0CC", "#489FB5", "#FFA62B", "#EDE7E3", "#E0D3C9", "#000000", "#FFFFFF"),

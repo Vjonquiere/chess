@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.GameAi;
-import pdp.model.ai.AIMove;
+import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Board;
 import pdp.model.board.Move;
@@ -38,11 +38,11 @@ public class AlphaBeta implements SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AIMove findBestMove(Game game, int depth, boolean player) {
+  public AiMove findBestMove(Game game, int depth, boolean player) {
     GameAi aiGame = GameAi.fromGame(game);
     ExecutorService executor =
         Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    List<Future<AIMove>> futures = new CopyOnWriteArrayList<>();
+    List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
     futures.add(
         executor.submit(
@@ -52,7 +52,7 @@ public class AlphaBeta implements SearchAlgorithm {
                   gameCopy, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
             }));
 
-    AIMove bestMove = null;
+    AiMove bestMove = null;
     try {
       bestMove = futures.get(0).get();
     } catch (Exception e) {
@@ -79,17 +79,17 @@ public class AlphaBeta implements SearchAlgorithm {
    * @param originalPlayer The player at root
    * @return The best move with its evaluated score.
    */
-  private AIMove alphaBeta(
+  private AiMove alphaBeta(
       GameAi game, int depth, boolean currentPlayer, int alpha, int beta, boolean originalPlayer) {
     if (solver.isSearchStopped()) {
-      return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+      return new AiMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
       int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
-      return new AIMove(null, evaluation);
+      return new AiMove(null, evaluation);
     }
-    AIMove bestMove =
-        new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+    AiMove bestMove =
+        new AiMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     Board board = game.getBoard();
     moves.addAll(
@@ -111,16 +111,16 @@ public class AlphaBeta implements SearchAlgorithm {
 
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
+        AiMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
         game.previousState();
         if (currentPlayer == originalPlayer) { // Maximizing
           if (currMove.score() > bestMove.score()) {
-            bestMove = new AIMove(move, currMove.score());
+            bestMove = new AiMove(move, currMove.score());
           }
           alpha = Math.max(alpha, bestMove.score());
         } else { // Minimizing
           if (currMove.score() < bestMove.score()) {
-            bestMove = new AIMove(move, currMove.score());
+            bestMove = new AiMove(move, currMove.score());
           }
           beta = Math.min(beta, bestMove.score());
         }

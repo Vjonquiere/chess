@@ -30,8 +30,12 @@ public class Position {
   }
 
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null || getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
     Position position = (Position) obj;
     return x == position.getX() && y == position.getY();
   }

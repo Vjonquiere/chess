@@ -21,8 +21,8 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.OptionType;
-import pdp.view.GUI.board.Board;
-import pdp.view.GUI.board.Square;
+import pdp.view.gui.board.Board;
+import pdp.view.gui.board.Square;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BoardTest extends ApplicationTest {

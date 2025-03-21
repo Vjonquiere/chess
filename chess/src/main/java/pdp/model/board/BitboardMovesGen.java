@@ -26,7 +26,7 @@ public class BitboardMovesGen {
 
   /**
    * Iterate on the given direction to generate the possible movement from a given position
-   * depending on allies and enemies
+   * depending on allies and enemies.
    *
    * @param piece Bitboard where only the position of the piece you want to move is set to 1
    * @param unreachableSquares A bitboard containing all the unreachable squares
@@ -50,7 +50,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Generate the bitboard containing the reachable positions for up, down, left, right directions
+   * Generate the bitboard containing the reachable positions for up, down, left, right directions.
    *
    * @param square The position of the piece that want to move
    * @param unreachableSquares A bitboard containing all the unreachable squares
@@ -82,7 +82,7 @@ public class BitboardMovesGen {
 
   /**
    * Generate the bitboard containing the reachable positions for up left, down left, up right, down
-   * right directions
+   * right directions.
    *
    * @param square The position of the piece that want to move
    * @param unreachableSquares A bitboard containing all the unreachable squares
@@ -112,7 +112,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Convert a move bitboard to a list of possible moves. It also set if a move is a capture or not
+   * Convert a move bitboard to a list of possible moves. It also set if a move is a capture or not.
    *
    * @param moveBitboard The bitboard to transform
    * @param enemies A bitboard containing the enemies
@@ -151,7 +151,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a king piece
+   * Generate the list of possible moves from a given position for a king piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -201,7 +201,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a knight piece
+   * Generate the list of possible moves from a given position for a knight piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -255,7 +255,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a pawn piece
+   * Generate the list of possible moves from a given position for a pawn piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -322,7 +322,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a queen piece
+   * Generate the list of possible moves from a given position for a queen piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -345,7 +345,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a bishop piece
+   * Generate the list of possible moves from a given position for a bishop piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -367,7 +367,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a rook piece
+   * Generate the list of possible moves from a given position for a rook piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -390,7 +390,7 @@ public class BitboardMovesGen {
 
   /**
    * Generate the possible moves from a position depending on the piece type. This function do not
-   * apply special rules (castling, pinned, ...)
+   * apply special rules (castling, pinned, ...).
    *
    * @param x The board column
    * @param y The board row
@@ -456,7 +456,7 @@ public class BitboardMovesGen {
 
   /**
    * Equivalent to getAvailableMoves but do not generate the move list from the bitboard. Used in
-   * check verification optimisation
+   * check verification optimisation.
    *
    * @param x The board column
    * @param y The board row
@@ -511,7 +511,7 @@ public class BitboardMovesGen {
 
   /**
    * Generate the possible moves for a player. This function do not apply special rules (castling,
-   * pinned, ...)
+   * pinned, ...).
    *
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The list of possible moves (without special cases)
@@ -533,7 +533,7 @@ public class BitboardMovesGen {
 
   /**
    * Generate the possible moves for a player. This function do not apply special rules (castling,
-   * pinned, ...). Optimised for AI
+   * pinned, ...). Optimised for AI.
    *
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The bitboard containing all possible moves (without special cases)
@@ -550,7 +550,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Returns the list of available moves for the king of either white or black
+   * Returns the list of available moves for the king of either white or black.
    *
    * @param white true if we want the moves of the white king, false otherwise
    * @return the list of moves for the corresponding king
@@ -600,7 +600,7 @@ public class BitboardMovesGen {
   }
 
   /**
-   * Returns the list of available for the bishops of either white or black
+   * Returns the list of available for the bishops of either white or black.
    *
    * @param white true if we want the moves of the white bishops, false otherwise
    * @return the list of moves for the corresponding bishops

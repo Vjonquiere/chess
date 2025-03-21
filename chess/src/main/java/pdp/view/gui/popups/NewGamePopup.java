@@ -1,4 +1,4 @@
-package pdp.view.GUI.popups;
+package pdp.view.gui.popups;
 
 import java.io.File;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
 public class NewGamePopup {
 
@@ -417,7 +417,7 @@ public class NewGamePopup {
     scrollPane.setFitToHeight(true);
 
     Scene scene = new Scene(scrollPane, 400, 600);
-    GUIView.applyCSS(scene);
+    GuiView.applyCSS(scene);
     layout.setStyle("; -fx-padding: 10;");
     popupStage.setScene(scene);
     popupStage.showAndWait();

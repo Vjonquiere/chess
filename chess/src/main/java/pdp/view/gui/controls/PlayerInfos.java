@@ -1,4 +1,4 @@
-package pdp.view.GUI.controls;
+package pdp.view.gui.controls;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import pdp.model.Game;
 import pdp.utils.Timer;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
 public class PlayerInfos extends HBox {
   Canvas currentPlayer;
@@ -62,7 +62,7 @@ public class PlayerInfos extends HBox {
     gc.clearRect(0, 0, currentPlayer.getWidth(), currentPlayer.getHeight());
     if (timeline != null) timeline.stop();
     if (isCurrent) {
-      gc.setFill(Color.web(GUIView.theme.getAccent()));
+      gc.setFill(Color.web(GuiView.theme.getAccent()));
       gc.fillOval(0, 0, 20, 20);
       if (timeline != null) timeline.play();
     }

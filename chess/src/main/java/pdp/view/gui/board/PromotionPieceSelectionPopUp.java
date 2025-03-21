@@ -1,4 +1,4 @@
-package pdp.view.GUI.board;
+package pdp.view.gui.board;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +18,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
 public class PromotionPieceSelectionPopUp extends VBox {
 
@@ -75,9 +75,9 @@ public class PromotionPieceSelectionPopUp extends VBox {
     layout.setAlignment(Pos.CENTER);
     layout.setStyle(
         "-fx-padding: 15; -fx-border-color: "
-            + GUIView.theme.getPrimary()
+            + GuiView.theme.getPrimary()
             + "; -fx-border-width: 5; -fx-background-radius: 10;-fx-background-color: "
-            + GUIView.theme.getBackground()
+            + GuiView.theme.getBackground()
             + ";");
     Scene scene = new Scene(layout, 500, 150);
     popupStage.setScene(scene);
@@ -91,25 +91,25 @@ public class PromotionPieceSelectionPopUp extends VBox {
     result.setAlignment(Pos.CENTER);
     result.setStyle(
         "-fx-padding: 15; -fx-background-color: "
-            + GUIView.theme.getSecondary()
+            + GuiView.theme.getSecondary()
             + "; -fx-border-color: "
-            + GUIView.theme.getPrimary()
+            + GuiView.theme.getPrimary()
             + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;");
     result.setOnMouseEntered(
         e ->
             result.setStyle(
                 "-fx-padding: 15; -fx-background-color: "
-                    + GUIView.theme.getPrimary()
+                    + GuiView.theme.getPrimary()
                     + "; -fx-border-color: "
-                    + GUIView.theme.getSecondary()
+                    + GuiView.theme.getSecondary()
                     + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
     result.setOnMouseExited(
         e ->
             result.setStyle(
                 "-fx-padding: 15; -fx-background-color: "
-                    + GUIView.theme.getSecondary()
+                    + GuiView.theme.getSecondary()
                     + "; -fx-border-color: "
-                    + GUIView.theme.getPrimary()
+                    + GuiView.theme.getPrimary()
                     + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
     return result;
   }

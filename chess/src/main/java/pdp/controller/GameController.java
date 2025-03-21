@@ -5,12 +5,20 @@ import pdp.model.Game;
 import pdp.utils.Logging;
 import pdp.view.View;
 
+/** Controller of our MVC architecture. */
 public class GameController {
   private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
   private Game model;
   private View view;
   private BagOfCommands bagOfCommands;
 
+  /**
+   * Initializes the private fields corresponding to the model, the view and the bag of commands.
+   *
+   * @param model Game, our model for MVC
+   * @param view View, our view for MVC
+   * @param bagOfCommands Singleton for Command Design pattern
+   */
   public GameController(Game model, View view, BagOfCommands bagOfCommands) {
     Logging.configureLogging(LOGGER);
     this.setView(view);

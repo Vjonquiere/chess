@@ -9,7 +9,7 @@ public class StartGameCommand implements Command {
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
     try {
-      model.startAI();
+      model.startAi();
       return Optional.empty();
     } catch (Exception e) {
       return Optional.of(e);

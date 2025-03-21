@@ -71,7 +71,7 @@ public abstract class Subject {
    */
   public void notifyObservers(EventType event) {
     DEBUG(LOGGER, "Notifying observers with event " + event);
-    if (!Game.getInstance().isAIExploring()) {
+    if (!Game.getInstance().isAiExploring()) {
       for (EventObserver observer : observers) {
         notifyObserver(observer, event);
       }
@@ -84,7 +84,7 @@ public abstract class Subject {
    * @param e The exception that occurred.
    */
   public void notifyErrorObservers(Exception e) {
-    if (!Game.getInstance().isAIExploring()) {
+    if (!Game.getInstance().isAiExploring()) {
       for (EventObserver observer : errorObservers) {
         observer.onErrorEvent(e);
       }

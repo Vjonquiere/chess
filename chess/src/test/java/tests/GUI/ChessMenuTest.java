@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.testfx.framework.junit5.ApplicationTest;
-import pdp.view.GUI.ChessMenu;
+import pdp.view.gui.ChessMenu;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ChessMenuTest extends ApplicationTest {

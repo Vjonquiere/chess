@@ -1,4 +1,4 @@
-package pdp.view.GUI.menu;
+package pdp.view.gui.menu;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.utils.TextGetter;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
 public class HelpPopup extends VBox {
   public HelpPopup() {
@@ -24,7 +24,7 @@ public class HelpPopup extends VBox {
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
     Scene scene = new Scene(layout);
-    GUIView.applyCSS(scene);
+    GuiView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

@@ -1,4 +1,4 @@
-package pdp.view.GUI.menu;
+package pdp.view.gui.menu;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -14,7 +14,7 @@ import pdp.model.parsers.BoardFileParser;
 import pdp.model.savers.ConfigFileSaver;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
 public class SettingsEditorPopup extends VBox {
   public SettingsEditorPopup() {
@@ -51,7 +51,7 @@ public class SettingsEditorPopup extends VBox {
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
     Scene scene = new Scene(layout);
-    GUIView.applyCSS(scene);
+    GuiView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

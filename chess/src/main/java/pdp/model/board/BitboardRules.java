@@ -12,6 +12,7 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Specification of the BitboardRepresentation. All methods are static because it is a util. */
 public class BitboardRules {
   private static final Logger LOGGER = Logger.getLogger(BitboardRules.class.getName());
 
@@ -24,7 +25,7 @@ public class BitboardRules {
   }
 
   /**
-   * Get if the given square (x,y format) can be attacked by a piece of the given color
+   * Get if the given square (x,y format) can be attacked by a piece of the given color.
    *
    * @param x X coordinate of the Position
    * @param y Y coordinate of the Position
@@ -41,7 +42,7 @@ public class BitboardRules {
   }
 
   /**
-   * Get the check state for the given color
+   * Get the check state for the given color.
    *
    * @param color The piece color you want to know check status
    * @return True if the given color is in check, False else
@@ -53,7 +54,7 @@ public class BitboardRules {
   }
 
   /**
-   * Get the check state after move for the given color
+   * Get the check state after move for the given color.
    *
    * @param color The piece color you want to know check status
    * @param move The move you want to check if it puts the king in check
@@ -86,7 +87,7 @@ public class BitboardRules {
 
   /**
    * Get the checkMate state for the given color (can be resources/time-consuming if there are many
-   * pieces remaining on the board)
+   * pieces remaining on the board).
    *
    * @param color The piece color you want to know checkMate status
    * @return True if the given color is in checkMate, False else
@@ -135,7 +136,7 @@ public class BitboardRules {
   }
 
   /**
-   * Checks the StaleMate state for the given color
+   * Checks the StaleMate state for the given color.
    *
    * @param color The color you want to check StaleMate for
    * @param colorTurnToPlay Player's turn to know if player who potentially moves in check has to
@@ -185,7 +186,7 @@ public class BitboardRules {
   /**
    * Checks if draw by insufficient material is observed (both colors each case) Cases: King vs King
    * King and Bishop vs King King and Knight vs King King and Bishop vs King and Bishop (same
-   * colored Bishops)
+   * colored Bishops).
    *
    * @return true if a draw by insufficient material is observed
    */
@@ -267,7 +268,7 @@ public class BitboardRules {
   }
 
   /**
-   * Checks if a pawn at Position(x,y) checks for promotion
+   * Checks if a pawn at Position(x,y) checks for promotion.
    *
    * @param x The x-coordinate (file) of the pawn
    * @param y The y-coordinate (rank) of the pawn
@@ -340,7 +341,7 @@ public class BitboardRules {
 
   /**
    * Checks if a given move is a double pawn push A double push occurs when a pawn moves forward by
-   * two squares from its starting position
+   * two squares from its starting position.
    *
    * @param move The move to check
    * @param white {true} if pawn is white, {false} if pawn is black
@@ -375,7 +376,7 @@ public class BitboardRules {
   }
 
   /**
-   * Checks if a given move is an en passant
+   * Checks if a given move is an en passant.
    *
    * @param x The x-coordinate of the square where an en passant capture can occur
    * @param y The y-coordinate of the square where an en passant capture can occur
@@ -416,7 +417,7 @@ public class BitboardRules {
 
   /**
    * Method that verifies of a player has enough material to mate. Used for rule loss on time but
-   * enemy does not have enough material to mate
+   * enemy does not have enough material to mate.
    *
    * @param white color of the player we check the material for
    * @return true if {white} has enouhg material to mate. false otherwise
@@ -471,6 +472,8 @@ public class BitboardRules {
   }
 
   /**
+   * Retrieves the list of current positions of white pieces.
+   *
    * @return the list containing the list of current positions for the white pieces
    */
   public static List<List<Position>> retrieveWhitePiecesPos(
@@ -495,6 +498,8 @@ public class BitboardRules {
   }
 
   /**
+   * Retrieves the current positions of black pieces.
+   *
    * @return the list containing the list of current positions for the black pieces
    */
   public static List<List<Position>> retrieveBlackPiecesPos(
@@ -519,6 +524,8 @@ public class BitboardRules {
   }
 
   /**
+   * Retrieves the positions of white pieces at game start.
+   *
    * @return the list containing the list of initial positions for the white pieces
    */
   public static List<List<Position>> retrieveInitialWhitePiecesPos() {
@@ -546,6 +553,8 @@ public class BitboardRules {
   }
 
   /**
+   * Retrieves the positions of black pieces at game start.
+   *
    * @return the list containing the list of initial positions for the black pieces
    */
   public static List<List<Position>> retrieveInitialBlackPiecesPos() {

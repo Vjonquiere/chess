@@ -1,4 +1,4 @@
-package pdp.view.GUI.controls;
+package pdp.view.gui.controls;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,9 +13,9 @@ import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SurrenderCommand;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
-import pdp.view.GUI.CustomButton;
-import pdp.view.GUI.popups.YesNoPopUp;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
+import pdp.view.gui.CustomButton;
+import pdp.view.gui.popups.YesNoPopUp;
 
 public class ButtonsPanel extends GridPane {
   private Button drawButton;
@@ -27,13 +27,13 @@ public class ButtonsPanel extends GridPane {
   private int buttonMinWidth = 100;
   String buttonStyle =
       "-fx-background-color: "
-          + GUIView.theme.getSecondary()
+          + GuiView.theme.getSecondary()
           + ";"
           + "-fx-text-fill: "
-          + GUIView.theme.getPrimary()
+          + GuiView.theme.getPrimary()
           + ";"
           + "-fx-border-color: "
-          + GUIView.theme.getPrimary()
+          + GuiView.theme.getPrimary()
           + ";"
           + "-fx-font-size: 18px;"
           + "-fx-font-weight: bold;"
@@ -76,7 +76,7 @@ public class ButtonsPanel extends GridPane {
     undoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi())
             new YesNoPopUp(
                 "undoInstructionsGui",
                 new CancelMoveCommand(),
@@ -94,7 +94,7 @@ public class ButtonsPanel extends GridPane {
     redoButton.setOnAction(
         event -> {
           BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi())
             new YesNoPopUp(
                 "redoInstructionsGui",
                 new RestoreMoveCommand(),

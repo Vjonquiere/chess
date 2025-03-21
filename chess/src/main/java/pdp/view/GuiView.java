@@ -1,7 +1,7 @@
 package pdp.view;
 
 import static pdp.utils.Logging.DEBUG;
-import static pdp.view.GUI.themes.ColorTheme.*;
+import static pdp.view.gui.themes.ColorTheme.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,15 +19,15 @@ import pdp.model.parsers.BoardFileParser;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
-import pdp.view.GUI.ChessMenu;
-import pdp.view.GUI.ControlPanel;
-import pdp.view.GUI.GUILauncher;
-import pdp.view.GUI.board.Board;
-import pdp.view.GUI.popups.EndGamePopUp;
-import pdp.view.GUI.themes.ColorTheme;
+import pdp.view.gui.ChessMenu;
+import pdp.view.gui.ControlPanel;
+import pdp.view.gui.GuiLauncher;
+import pdp.view.gui.board.Board;
+import pdp.view.gui.popups.EndGamePopUp;
+import pdp.view.gui.themes.ColorTheme;
 
-public class GUIView implements View {
-  private static final Logger LOGGER = Logger.getLogger(GUIView.class.getName());
+public class GuiView implements View {
+  private static final Logger LOGGER = Logger.getLogger(GuiView.class.getName());
   private BorderPane root;
   private Stage stage;
   private Scene scene;
@@ -49,7 +49,7 @@ public class GUIView implements View {
       text = new BoardFileParser().readFile(path);
     } catch (FileNotFoundException e) {
       try {
-        URL filePath = GUIView.class.getClassLoader().getResource("styles/sample.css");
+        URL filePath = GuiView.class.getClassLoader().getResource("styles/sample.css");
         text = new BoardFileParser().readFile(filePath.getPath());
         text = text.replace("#000001", theme.getPrimary());
         text = text.replace("#000002", theme.getSecondary());
@@ -83,7 +83,7 @@ public class GUIView implements View {
     onGameEvent(EventType.GAME_STARTED);
   }
 
-  public GUIView() {
+  public GuiView() {
     root = new BorderPane();
   }
 
@@ -115,7 +115,7 @@ public class GUIView implements View {
    */
   @Override
   public Thread start() {
-    Thread guiThread = new Thread(() -> GUILauncher.launchGUI(this));
+    Thread guiThread = new Thread(() -> GuiLauncher.launchGUI(this));
     guiThread.start();
     return guiThread;
   }

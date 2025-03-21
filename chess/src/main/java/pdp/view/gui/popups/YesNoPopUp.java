@@ -1,4 +1,4 @@
-package pdp.view.GUI.popups;
+package pdp.view.gui.popups;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.Command;
 import pdp.utils.TextGetter;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
 public class YesNoPopUp extends VBox {
 
@@ -63,7 +63,7 @@ public class YesNoPopUp extends VBox {
     layout.setStyle("-fx-padding: 20;");
 
     Scene scene = new Scene(layout, 300, 150);
-    GUIView.applyCSS(scene);
+    GuiView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

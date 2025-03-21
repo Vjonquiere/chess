@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import pdp.model.Game;
 import pdp.utils.Logging;
 
+/** Variation of the design pattern command to execute several commands at once. */
 public class BagOfCommands {
   private static final Logger LOGGER = Logger.getLogger(BagOfCommands.class.getName());
   private static BagOfCommands instance;

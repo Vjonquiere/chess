@@ -1,4 +1,4 @@
-package pdp.view.GUI.controls;
+package pdp.view.gui.controls;
 
 import java.util.Stack;
 import javafx.collections.FXCollections;

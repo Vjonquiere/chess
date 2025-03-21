@@ -113,8 +113,9 @@ public class ZobristHashing {
    * @return updated hash
    */
   private long updatePieceHash(long currHash, Board board, Move move) {
-    if (!(board.getBoardRep() instanceof BitboardRepresentation))
+    if (!(board.getBoardRep() instanceof BitboardRepresentation)) {
       throw new RuntimeException("Only available for bitboards");
+    }
 
     int from = move.source.getX() + move.source.getY() * board.getBoardRep().getNbRows();
     int to = move.dest.getX() + move.dest.getY() * board.getBoardRep().getNbCols();

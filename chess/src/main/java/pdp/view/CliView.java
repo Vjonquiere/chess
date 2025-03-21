@@ -22,12 +22,12 @@ import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 
-public class CLIView implements View {
+public class CliView implements View {
   private boolean running = false;
   private final Map<String, CommandEntry> commands = new HashMap<>();
-  private static final Logger LOGGER = Logger.getLogger(CLIView.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(CliView.class.getName());
 
-  public CLIView() {
+  public CliView() {
     commands.put(
         "move", new CommandEntry(this::moveCommand, TextGetter.getText("moveHelpDescription")));
     commands.put(

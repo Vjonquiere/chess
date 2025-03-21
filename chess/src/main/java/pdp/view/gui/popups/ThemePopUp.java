@@ -1,4 +1,4 @@
-package pdp.view.GUI.popups;
+package pdp.view.gui.popups;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,8 +11,8 @@ import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.ChangeTheme;
 import pdp.utils.TextGetter;
-import pdp.view.GUI.themes.ColorTheme;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
+import pdp.view.gui.themes.ColorTheme;
 
 public class ThemePopUp {
   public static void show() {
@@ -81,7 +81,7 @@ public class ThemePopUp {
                 toHexString(cp_background2.getValue()),
                 toHexString(cp_text.getValue()),
                 toHexString(cp_textInverted.getValue()));
-            GUIView.theme = ColorTheme.CUSTOM;
+            GuiView.theme = ColorTheme.CUSTOM;
             BagOfCommands.getInstance().addCommand(new ChangeTheme());
           } catch (IllegalArgumentException ex) {
           }
@@ -99,7 +99,7 @@ public class ThemePopUp {
     layout.getChildren().add(buttonBox);
 
     Scene scene = new Scene(layout, 400, 700);
-    GUIView.applyCSS(scene);
+    GuiView.applyCSS(scene);
     layout.setStyle("; -fx-padding: 10; -fx-alignment: center;");
     popupStage.setScene(scene);
     popupStage.setResizable(false);

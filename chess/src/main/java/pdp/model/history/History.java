@@ -59,8 +59,9 @@ public class History {
     DEBUG(LOGGER, state.isWhite() + " " + String.valueOf(state.getFullTurn()));
 
     this.currentMove = new HistoryNode(state, this.currentMove);
-    if (this.currentMove.getPrevious() != null)
+    if (this.currentMove.getPrevious() != null) {
       this.currentMove.getPrevious().ifPresent(prev -> prev.setNext(this.currentMove));
+    }
   }
 
   /**

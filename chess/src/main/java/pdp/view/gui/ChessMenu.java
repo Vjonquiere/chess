@@ -1,4 +1,4 @@
-package pdp.view.GUI;
+package pdp.view.gui;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,13 +17,13 @@ import pdp.controller.commands.*;
 import pdp.model.Game;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
-import pdp.view.GUI.menu.HelpPopup;
-import pdp.view.GUI.menu.SettingsEditorPopup;
-import pdp.view.GUI.popups.NewGamePopup;
-import pdp.view.GUI.popups.ThemePopUp;
-import pdp.view.GUI.popups.YesNoPopUp;
-import pdp.view.GUI.themes.ColorTheme;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
+import pdp.view.gui.menu.HelpPopup;
+import pdp.view.gui.menu.SettingsEditorPopup;
+import pdp.view.gui.popups.NewGamePopup;
+import pdp.view.gui.popups.ThemePopUp;
+import pdp.view.gui.popups.YesNoPopUp;
+import pdp.view.gui.themes.ColorTheme;
 
 public class ChessMenu extends VBox {
   public ChessMenu() {
@@ -108,7 +108,7 @@ public class ChessMenu extends VBox {
     dialog.setHeaderText(null);
     dialog.setTitle(TextGetter.getText("fileSaver.title"));
     dialog.setContentText(TextGetter.getText("fileSaver.name"));
-    GUIView.applyCSS(dialog.getDialogPane().getScene());
+    GuiView.applyCSS(dialog.getDialogPane().getScene());
 
     Optional<String> result = dialog.showAndWait();
     return result.orElse(null);
@@ -128,20 +128,22 @@ public class ChessMenu extends VBox {
     undo.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "undoInstructionsGui",
                 new CancelMoveCommand(),
                 () -> Game.getInstance().getGameState().undoRequestReset());
+          }
         });
     redo.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-          if (!Game.getInstance().isWhiteAI() && !Game.getInstance().isBlackAI())
+          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "redoInstructionsGui",
                 new RestoreMoveCommand(),
                 () -> Game.getInstance().getGameState().redoRequestReset());
+          }
         });
     restart.setOnAction(
         e -> {
@@ -187,7 +189,7 @@ public class ChessMenu extends VBox {
       MenuItem theme = new MenuItem(c.name());
       theme.setOnAction(
           e -> {
-            GUIView.theme = c;
+            GuiView.theme = c;
             BagOfCommands.getInstance().addCommand(new ChangeTheme());
           });
       themes.getItems().add(theme);

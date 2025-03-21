@@ -44,24 +44,24 @@ public class Game extends GameAbstract {
   private static Game instance;
   private Solver solverWhite;
   private Solver solverBlack;
-  private boolean isWhiteAI;
-  private boolean isBlackAI;
-  private boolean explorationAI;
+  private boolean isWhiteAi;
+  private boolean isBlackAi;
+  private boolean explorationAi;
   private boolean isInitializing;
   private boolean loadedFromFile;
   private boolean loadingFileHasHistory;
   private HashMap<OptionType, String> options;
   public final Lock viewLock = new ReentrantLock();
   public final Condition workingView = viewLock.newCondition();
-  private final boolean VIEW_ON_OTHER_THREAD;
+  private final boolean viewOnOtherThread;
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
   private Game(
-      boolean isWhiteAI,
-      boolean isBlackAI,
+      boolean isWhiteAi,
+      boolean isBlackAi,
       Solver solverWhite,
       Solver solverBlack,
       GameState gameState,
@@ -81,10 +81,10 @@ public class Game extends GameAbstract {
                 new Move(new Position(-1, -1), new Position(-1, -1)),
                 this.getGameState().getCopy()));
     this.options = options;
-    this.VIEW_ON_OTHER_THREAD = options.containsKey(GUI);
-    this.isWhiteAI = isWhiteAI;
-    this.isBlackAI = isBlackAI;
-    this.explorationAI = false;
+    this.viewOnOtherThread = options.containsKey(GUI);
+    this.isWhiteAi = isWhiteAi;
+    this.isBlackAi = isBlackAi;
+    this.explorationAi = false;
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
 
@@ -113,21 +113,21 @@ public class Game extends GameAbstract {
   }
 
   public Timer getTimer(boolean isWhite) {
-    if (isWhite && this.isWhiteAI) {
+    if (isWhite && this.isWhiteAi) {
       return this.solverWhite.getTimer();
     }
-    if (!isWhite && this.isBlackAI) {
+    if (!isWhite && this.isBlackAi) {
       return this.solverBlack.getTimer();
     }
     return super.getGameState().getMoveTimer();
   }
 
-  public boolean isCurrentPlayerAI() {
+  public boolean isCurrentPlayerAi() {
     boolean player = super.getGameState().isWhiteTurn();
-    if (player && this.isWhiteAI) {
+    if (player && this.isWhiteAi) {
       return true;
     }
-    if (!player && this.isBlackAI) {
+    if (!player && this.isBlackAi) {
       return true;
     }
     return false;
@@ -142,8 +142,8 @@ public class Game extends GameAbstract {
    *
    * @return true if the White player is an AI, false otherwise.
    */
-  public boolean isWhiteAI() {
-    return isWhiteAI;
+  public boolean isWhiteAi() {
+    return isWhiteAi;
   }
 
   /**
@@ -151,8 +151,8 @@ public class Game extends GameAbstract {
    *
    * @return true if the Black player is an AI, false otherwise.
    */
-  public boolean isBlackAI() {
-    return isBlackAI;
+  public boolean isBlackAi() {
+    return isBlackAi;
   }
 
   /**
@@ -179,7 +179,7 @@ public class Game extends GameAbstract {
    * @param exploration boolean corresponding to the new rights of explorationAI.
    */
   public void setExploration(boolean exploration) {
-    this.explorationAI = exploration;
+    this.explorationAi = exploration;
   }
 
   /**
@@ -187,8 +187,8 @@ public class Game extends GameAbstract {
    *
    * @return True if it is exploring, False otherwise
    */
-  public boolean isAIExploring() {
-    return this.explorationAI;
+  public boolean isAiExploring() {
+    return this.explorationAi;
   }
 
   /**
@@ -233,10 +233,10 @@ public class Game extends GameAbstract {
    * Plays the first AI move if White AI is activated. The other calls to AI will be done in {@link
    * Game#updateGameStateAfterMove}
    */
-  public void startAI() {
-    if (isWhiteAI && this.getGameState().isWhiteTurn()) {
+  public void startAi() {
+    if (isWhiteAi && this.getGameState().isWhiteTurn()) {
       this.notifyObservers(EventType.AI_PLAYING);
-      solverWhite.playAIMove(this);
+      solverWhite.playAiMove(this);
     }
   }
 
@@ -272,16 +272,16 @@ public class Game extends GameAbstract {
   /**
    * Creates a new instance of the Game class and stores it in the instance variable.
    *
-   * @param isWhiteAI Whether the white player is an AI.
-   * @param isBlackAI Whether the black player is an AI.
+   * @param isWhiteAi Whether the white player is an AI.
+   * @param isBlackAi Whether the black player is an AI.
    * @param solverWhite The solver to use for White AI moves.
    * @param solverBlack The solver to use for Black AI moves.
    * @param options
    * @return The newly created instance of Game.
    */
   public static Game initialize(
-      boolean isWhiteAI,
-      boolean isBlackAI,
+      boolean isWhiteAi,
+      boolean isBlackAi,
       Solver solverWhite,
       Solver solverBlack,
       Timer timer,
@@ -289,8 +289,8 @@ public class Game extends GameAbstract {
     DEBUG(LOGGER, "Initializing Game...");
     instance =
         new Game(
-            isWhiteAI,
-            isBlackAI,
+            isWhiteAi,
+            isBlackAi,
             solverWhite,
             solverBlack,
             new GameState(timer),
@@ -299,7 +299,7 @@ public class Game extends GameAbstract {
     BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      if (!instance.isCurrentPlayerAI()) {
+      if (!instance.isCurrentPlayerAi()) {
         timer.start();
       }
     }
@@ -311,8 +311,8 @@ public class Game extends GameAbstract {
   /**
    * Creates a new instance of the Game class and stores it in the instance variable.
    *
-   * @param isWhiteAI Whether the white player is an AI.
-   * @param isBlackAI Whether the black player is an AI.
+   * @param isWhiteAi Whether the white player is an AI.
+   * @param isBlackAi Whether the black player is an AI.
    * @param solverWhite The solver to use for White AI moves.
    * @param solverBlack The solver to use for Black AI moves.
    * @param board The board state to use
@@ -320,8 +320,8 @@ public class Game extends GameAbstract {
    * @return The newly created instance of Game.
    */
   public static Game initialize(
-      boolean isWhiteAI,
-      boolean isBlackAI,
+      boolean isWhiteAi,
+      boolean isBlackAi,
       Solver solverWhite,
       Solver solverBlack,
       Timer timer,
@@ -330,8 +330,8 @@ public class Game extends GameAbstract {
     DEBUG(LOGGER, "Initializing Game from given board...");
     instance =
         new Game(
-            isWhiteAI,
-            isBlackAI,
+            isWhiteAi,
+            isBlackAi,
             solverWhite,
             solverBlack,
             new GameState(board, timer),
@@ -384,7 +384,7 @@ public class Game extends GameAbstract {
     BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      if (!instance.isCurrentPlayerAI()) {
+      if (!instance.isCurrentPlayerAi()) {
         timer.start();
       }
     }
@@ -447,8 +447,8 @@ public class Game extends GameAbstract {
   private void updateGameStateAfterMove(Move move, boolean isSpecialMove) {
 
     if (super.getGameState().getMoveTimer() != null
-        && !this.isCurrentPlayerAI()
-        && !explorationAI
+        && !this.isCurrentPlayerAi()
+        && !explorationAi
         && !isInitializing
         && !super.getGameState().isGameOver()) {
       super.getGameState().getMoveTimer().stop();
@@ -506,23 +506,23 @@ public class Game extends GameAbstract {
       checkAndOverwriteHistory(move);
     }
 
-    if (!explorationAI && !isInitializing) {
+    if (!explorationAi && !isInitializing) {
       this.notifyObservers(EventType.MOVE_PLAYED);
     }
     if (super.getGameState().getMoveTimer() != null
-        && !this.isCurrentPlayerAI()
-        && !explorationAI
+        && !this.isCurrentPlayerAi()
+        && !explorationAi
         && !super.getGameState().isGameOver()) {
       super.getGameState().getMoveTimer().start();
     }
 
-    if (!explorationAI
+    if (!explorationAi
         && !isInitializing
         && !isOver()
-        && ((super.getGameState().isWhiteTurn() && isWhiteAI)
-            || (!super.getGameState().isWhiteTurn() && isBlackAI))) {
+        && ((super.getGameState().isWhiteTurn() && isWhiteAi)
+            || (!super.getGameState().isWhiteTurn() && isBlackAi))) {
 
-      if (VIEW_ON_OTHER_THREAD) {
+      if (viewOnOtherThread) {
         viewLock.lock();
         this.notifyObservers(EventType.AI_PLAYING);
         try {
@@ -537,9 +537,9 @@ public class Game extends GameAbstract {
         this.notifyObservers(EventType.AI_PLAYING);
       }
       if (super.getGameState().isWhiteTurn()) {
-        solverWhite.playAIMove(this);
+        solverWhite.playAiMove(this);
       } else {
-        solverBlack.playAIMove(this);
+        solverBlack.playAiMove(this);
       }
     }
   }
@@ -664,7 +664,7 @@ public class Game extends GameAbstract {
 
     this.notifyObservers(EventType.GAME_RESTART);
 
-    this.startAI();
+    this.startAi();
 
     DEBUG(LOGGER, "Game restarted");
   }
@@ -675,8 +675,8 @@ public class Game extends GameAbstract {
    * <p>The new game is initialized with the given AI settings, solver, and starting position.
    *
    * @param moves The moves to play in sequence.
-   * @param isWhiteAI Whether the white player is an AI.
-   * @param isBlackAI Whether the black player is an AI.
+   * @param isWhiteAi Whether the white player is an AI.
+   * @param isBlackAi Whether the black player is an AI.
    * @param solverWhite The solver to use for White AI moves.
    * @param solverBlack The solver to use for Black AI moves.
    * @param timer The timer to use for the game.
@@ -686,8 +686,8 @@ public class Game extends GameAbstract {
    */
   public static Game fromHistory(
       List<Move> moves,
-      boolean isWhiteAI,
-      boolean isBlackAI,
+      boolean isWhiteAi,
+      boolean isBlackAi,
       Solver solverWhite,
       Solver solverBlack,
       Timer timer,
@@ -695,8 +695,8 @@ public class Game extends GameAbstract {
       throws IllegalMoveException {
     instance =
         new Game(
-            isWhiteAI,
-            isBlackAI,
+            isWhiteAi,
+            isBlackAi,
             solverWhite,
             solverBlack,
             new GameState(timer),
@@ -710,7 +710,7 @@ public class Game extends GameAbstract {
 
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      if (!instance.isCurrentPlayerAI()) {
+      if (!instance.isCurrentPlayerAi()) {
         timer.start();
       }
     }

@@ -1,18 +1,18 @@
-package pdp.view.GUI;
+package pdp.view.gui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
 
-public class GUILauncher extends Application {
-  private static GUIView guiView;
+public class GuiLauncher extends Application {
+  private static GuiView guiView;
 
   /**
    * Launches the JavaFx application.
    *
-   * @param view the GUIView managing the graphical interface
+   * @param view the GuiView managing the graphical interface
    */
-  public static void launchGUI(GUIView view) {
+  public static void launchGUI(GuiView view) {
     guiView = view;
     Application.launch();
   }

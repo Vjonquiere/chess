@@ -1,4 +1,4 @@
-package pdp.view.GUI.board;
+package pdp.view.gui.board;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

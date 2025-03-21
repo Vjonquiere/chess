@@ -25,6 +25,7 @@ import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
 
+/** Initializes the game (model) with either the options given in the method initialize. */
 public abstract class GameInitializer {
 
   private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());

@@ -1,4 +1,4 @@
-package pdp.view.GUI.board;
+package pdp.view.gui.board;
 
 import java.util.*;
 import javafx.scene.layout.GridPane;
@@ -32,7 +32,7 @@ public class Board extends GridPane {
     buildBoard();
   }
 
-  /** Build the board for the first time. Init all squares and setup them */
+  /** Build the board for the first time. Init all squares and setup them. */
   public void buildBoard() {
     super.getChildren().clear();
     for (int x = 0; x < boardColumns; x++) {
@@ -61,7 +61,7 @@ public class Board extends GridPane {
     }
   }
 
-  /** Update the pieces sprites of all squares */
+  /** Update the pieces sprites of all squares. */
   public void updateBoard() {
     cleanHintSquares();
     board = Game.getInstance().getBoard().getBoardRep();
@@ -74,7 +74,7 @@ public class Board extends GridPane {
   }
 
   /**
-   * Define the selected square (color + command)
+   * Define the selected square (color + command).
    *
    * @param x x coordinate of the selected square
    * @param y y coordinate of the selected square
@@ -84,7 +84,9 @@ public class Board extends GridPane {
     Color squareColor = Game.getInstance().getBoard().getBoardRep().getPieceAt(x, y).color;
     if (from == null) {
       if ((isWhiteTurn && squareColor != Color.WHITE)
-          || (!isWhiteTurn && squareColor != Color.BLACK)) return;
+          || (!isWhiteTurn && squareColor != Color.BLACK)) {
+        return;
+      }
       from = new Position(x, y);
       pieces.get(from).setSelected(true);
       clearReachableSquares();
@@ -101,7 +103,9 @@ public class Board extends GridPane {
       }
       try {
         String move = Move.positionToString(from) + "-" + Move.positionToString(new Position(x, y));
-        if (processPawnPromoting(x, y)) return;
+        if (processPawnPromoting(x, y)) {
+          return;
+        }
         BagOfCommands.getInstance().addCommand(new PlayMoveCommand(move));
         clearReachableSquares();
         from = null;
@@ -113,7 +117,7 @@ public class Board extends GridPane {
   }
 
   /**
-   * Update the given square to display a capture possibility
+   * Update the given square to display a capture possibility.
    *
    * @param x The x coordinate of the square
    * @param y The y coordinate of the square
@@ -150,7 +154,7 @@ public class Board extends GridPane {
     }
   }
 
-  /** Update the squares that can be captured to their initial states */
+  /** Update the squares that can be captured to their initial states. */
   public void clearReachableSquares() {
     if (reachableSquares != null) {
       for (Position p : reachableSquares) {
@@ -161,7 +165,7 @@ public class Board extends GridPane {
   }
 
   /**
-   * Get the move with command creation ready format
+   * Get the move with command creation ready format.
    *
    * @param x The destination x coordinate
    * @param y The destination y coordinate
@@ -199,7 +203,9 @@ public class Board extends GridPane {
   }
 
   private void cleanHintSquares() {
-    if (hintSquares.isEmpty()) return;
+    if (hintSquares.isEmpty()) {
+      return;
+    }
     for (Position sq : hintSquares) {
       pieces.get(sq).setHint(false);
       hintSquares.remove(sq);

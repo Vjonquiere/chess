@@ -1,13 +1,13 @@
-package pdp.view.GUI;
+package pdp.view.gui;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import pdp.events.EventType;
-import pdp.view.GUI.controls.ButtonsPanel;
-import pdp.view.GUI.controls.HistoryPanel;
-import pdp.view.GUI.controls.PlayerPanel;
-import pdp.view.GUIView;
+import pdp.view.GuiView;
+import pdp.view.gui.controls.ButtonsPanel;
+import pdp.view.gui.controls.HistoryPanel;
+import pdp.view.gui.controls.PlayerPanel;
 
 public class ControlPanel extends VBox {
   private PlayerPanel playerPanel;
@@ -15,7 +15,7 @@ public class ControlPanel extends VBox {
   private ButtonsPanel buttonsPanel;
   String borderStyle =
       "-fx-border-color: "
-          + GUIView.theme.getPrimary()
+          + GuiView.theme.getPrimary()
           + ";\n"
           + "-fx-border-width: 2;\n"
           + "-fx-border-radius: 10;\n"
