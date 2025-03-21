@@ -57,7 +57,7 @@ public class AlphaBeta implements SearchAlgorithm {
                 board.isWhiteLongCastle(),
                 board.isWhiteShortCastle(),
                 board.isBlackLongCastle(),
-                board.isWhiteLongCastle()));
+                board.isBlackLongCastle()));
 
     for (Move move : moves) {
       futures.add(
@@ -66,7 +66,6 @@ public class AlphaBeta implements SearchAlgorithm {
                 GameAi gameCopy = aiGame.copy();
                 try {
                   Move promoteMove = AlgorithmHelpers.promoteMove(move);
-                  System.out.println("promoteMove " + promoteMove);
                   gameCopy.playMove(promoteMove);
                   AIMove result =
                       alphaBeta(
@@ -76,10 +75,8 @@ public class AlphaBeta implements SearchAlgorithm {
                           Integer.MIN_VALUE,
                           Integer.MAX_VALUE,
                           player);
-                  System.out.println("result : " + result);
                   return new AIMove(promoteMove, result.score());
                 } catch (IllegalMoveException e) {
-                  e.printStackTrace();
                   return new AIMove(null, player ? Integer.MIN_VALUE : Integer.MAX_VALUE);
                 }
               }));
@@ -91,10 +88,14 @@ public class AlphaBeta implements SearchAlgorithm {
       for (Future<AIMove> future : futures) {
         AIMove candidateMove = future.get();
         if (candidateMove.move() != null) {
-          if ((player && candidateMove.score() > bestMove.score())
-              || (!player && candidateMove.score() < bestMove.score())
-              || bestMove.move() == null) {
-            bestMove = candidateMove;
+          if (player) { // Maximizing player
+            if (candidateMove.score() > bestMove.score() || bestMove.move() == null) {
+              bestMove = candidateMove;
+            }
+          } else { // Minimizing player
+            if (candidateMove.score() < bestMove.score() || bestMove.move() == null) {
+              bestMove = candidateMove;
+            }
           }
         }
       }
@@ -103,7 +104,6 @@ public class AlphaBeta implements SearchAlgorithm {
     }
 
     executor.shutdown();
-    System.out.println("Best move : " + bestMove);
     DEBUG(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
@@ -131,6 +131,7 @@ public class AlphaBeta implements SearchAlgorithm {
       int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AIMove(null, evaluation);
     }
+
     AIMove bestMove =
         new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
@@ -145,7 +146,8 @@ public class AlphaBeta implements SearchAlgorithm {
                 board.isWhiteLongCastle(),
                 board.isWhiteShortCastle(),
                 board.isBlackLongCastle(),
-                board.isWhiteLongCastle()));
+                board.isBlackLongCastle())); // Fixed parameter
+
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
@@ -155,17 +157,19 @@ public class AlphaBeta implements SearchAlgorithm {
         game.playMove(move);
         AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
         game.previousState();
+
         if (currentPlayer == originalPlayer) { // Maximizing
-          if (currMove.score() > bestMove.score()) {
+          if (currMove.score() > bestMove.score() || bestMove.move() == null) {
             bestMove = new AIMove(move, currMove.score());
           }
           alpha = Math.max(alpha, bestMove.score());
         } else { // Minimizing
-          if (currMove.score() < bestMove.score()) {
+          if (currMove.score() < bestMove.score() || bestMove.move() == null) {
             bestMove = new AIMove(move, currMove.score());
           }
           beta = Math.min(beta, bestMove.score());
         }
+
         if (alpha >= beta) {
           break;
         }
