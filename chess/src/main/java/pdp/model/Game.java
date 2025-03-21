@@ -40,7 +40,6 @@ import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 
 public class Game extends GameAbstract {
-  public static int THREE_FOLD_REPETITION = 3;
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private static Game instance;
   private Solver solverWhite;

@@ -18,7 +18,6 @@ public abstract class GameControllerInit {
   public static GameController initialize(HashMap<OptionType, String> options) {
 
     Game model = GameInitializer.initialize(options);
-    System.out.println(model);
 
     View view;
     if (options.containsKey(OptionType.GUI)) {

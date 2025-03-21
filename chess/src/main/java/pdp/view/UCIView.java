@@ -12,7 +12,9 @@ import pdp.controller.commands.*;
 import pdp.events.EventType;
 import pdp.exceptions.*;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameState;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
@@ -34,8 +36,9 @@ public class UCIView implements View {
     commands.put("go", new CommandEntry(this::goCommand, "go"));
     commands.put("isready", new CommandEntry(this::isReadyCommand, "isReady"));
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
-    Game.THREE_FOLD_REPETITION = 5;
+    GameAbstract.THREE_FOLD_REPETITION = 5;
     GameState.FIFTY_MOVE_RULE = 75;
+    solver.setEndgameHeuristic(HeuristicType.STANDARD);
   }
 
   /**
@@ -56,7 +59,15 @@ public class UCIView implements View {
    * @param event The type of event that occurred.
    */
   @Override
-  public void onGameEvent(EventType event) {}
+  public void onGameEvent(EventType event) {
+    switch (event) {
+      case WIN_BLACK -> System.out.println("Black won!");
+      case WIN_WHITE -> System.out.println("White won!");
+      case THREEFOLD_REPETITION ->
+          System.out.println(Game.THREE_FOLD_REPETITION + " fold repetition!");
+      case FIFTY_MOVE_RULE -> System.out.println(GameState.FIFTY_MOVE_RULE + " move rule!");
+    }
+  }
 
   /**
    * Prints the error message for an exception related to user input.
@@ -77,6 +88,7 @@ public class UCIView implements View {
         || e instanceof FailedRedoException) {
       System.out.println(e.getMessage());
     } else {
+      System.out.println(Game.getInstance().getGameRepresentation());
       System.err.println(e);
       e.printStackTrace();
       running = false;
