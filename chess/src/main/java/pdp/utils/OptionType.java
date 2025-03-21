@@ -122,22 +122,6 @@ public enum OptionType {
           this.getShort(), this.getLong(), false, "Displays the game with a  graphical interface.");
     }
   },
-  AI_TRAINING {
-    @Override
-    public String getShort() {
-      return null;
-    }
-
-    @Override
-    public String getLong() {
-      return "ai-training";
-    }
-
-    @Override
-    public Option getOption() {
-      return new Option(this.getShort(), this.getLong(), false, "Lock display to ai training.");
-    }
-  },
   TIME {
     @Override
     public String getShort() {

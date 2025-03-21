@@ -22,8 +22,6 @@ public abstract class GameControllerInit {
     View view;
     if (options.containsKey(OptionType.GUI)) {
       view = new GUIView();
-    } else if (options.containsKey(OptionType.AI_TRAINING)) {
-      view = new AIView();
     } else if (options.containsKey(OptionType.UCI)) {
       view = new UCIView();
     } else {

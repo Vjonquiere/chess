@@ -20,7 +20,6 @@ import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
-import pdp.model.parsers.FENparser;
 import pdp.model.parsers.FileBoard;
 import pdp.utils.CommandLineOptions;
 import pdp.utils.MoveHistoryParser;
@@ -243,15 +242,7 @@ public abstract class GameInitializer {
         inputStream = new FileInputStream(options.get(OptionType.LOAD));
 
         List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
-        if (options.containsKey(OptionType.CONTEST)) {
-          BoardFileParser parser = new BoardFileParser();
-
-          FileBoard board =
-              FENparser.loadBoardFromFen(parser.readFile(options.get(OptionType.LOAD)));
-          model =
-              Game.initialize(
-                  isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
-        } else if (moveStrings.isEmpty()) {
+        if (moveStrings.isEmpty()) {
           BoardFileParser parser = new BoardFileParser();
           FileBoard board =
               parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());

@@ -274,7 +274,6 @@ public class CommandLineOptions {
             OptionType.AI_SIMULATION,
             OptionType.AI_WEIGHT_W,
             OptionType.AI_WEIGHT_B,
-            OptionType.AI_TRAINING
           }) {
         if (activatedOptions.containsKey(aiOption)) {
           System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
