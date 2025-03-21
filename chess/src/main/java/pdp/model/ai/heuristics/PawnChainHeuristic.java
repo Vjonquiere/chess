@@ -15,7 +15,7 @@ public class PawnChainHeuristic implements Heuristic {
    * @return a score depending on the solidity of the pawn chains
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += evaluatePawnChains(board, true) - evaluatePawnChains(board, false);
     return isWhite ? score : -score;

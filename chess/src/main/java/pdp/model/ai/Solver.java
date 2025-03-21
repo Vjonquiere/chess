@@ -2,6 +2,7 @@ package pdp.model.ai;
 
 import static pdp.utils.Logging.debug;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.events.EventType;
@@ -27,6 +28,7 @@ import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.ai.heuristics.StandardLightHeuristic;
 import pdp.model.board.Board;
+import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
@@ -36,7 +38,7 @@ public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private final ZobristHashing zobristHashing = new ZobristHashing();
-  private HashMap<Long, Integer> evaluatedBoards;
+  private HashMap<Long, Float> evaluatedBoards;
 
   private SearchAlgorithm algorithm;
   private Heuristic heuristic;
@@ -110,6 +112,32 @@ public class Solver {
     this.currentHeuristic = heuristic;
     this.evaluatedBoards = new HashMap<>();
     debug(LOGGER, "Heuristic set to: " + this.heuristic);
+  }
+
+  /**
+   * Set the heuristic to be used.
+   *
+   * @param heuristic The heuristic to use.
+   */
+  public void setHeuristic(HeuristicType heuristic, ArrayList<Float> weight) {
+    switch (heuristic) {
+      case MATERIAL -> this.heuristic = new MaterialHeuristic();
+      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
+      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
+      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
+      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
+      case MOBILITY -> this.heuristic = new MobilityHeuristic();
+      case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
+      case SHANNON -> this.heuristic = new ShannonBasic();
+      case GAME_STATUS -> this.heuristic = new GameStatus();
+      case KING_ACTIVITY -> this.heuristic = new KingActivityHeuristic();
+      case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
+      case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
+      case STANDARD -> this.heuristic = new StandardHeuristic(weight);
+      case ENDGAME -> this.heuristic = new EndGameHeuristic();
+      default -> throw new IllegalArgumentException("No heuristic is set");
+    }
+    DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
   public void setEndgameHeuristic(HeuristicType heuristic) {
@@ -231,6 +259,21 @@ public class Solver {
     }
   }
 
+  public Move getBestMove(Game game) {
+    game.setExploration(true);
+    if (timer != null) {
+      timer.start();
+    }
+    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    if (timer != null) {
+      timer.stop();
+    }
+
+    DEBUG(LOGGER, "Best move " + bestMove);
+    game.setExploration(false);
+    return bestMove.move();
+  }
+
   /**
    * Evaluates the board based on the chosen heuristic. Use Zobrist Hashing to avoid recalculating
    * scores.
@@ -239,13 +282,13 @@ public class Solver {
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public int evaluateBoard(Board board, boolean isWhite) {
+  public float evaluateBoard(Board board, boolean isWhite) {
     if (board == null) {
       throw new IllegalArgumentException("Board is null");
     }
 
     long hash = zobristHashing.generateHashFromBitboards(board);
-    int score;
+    float score;
     if (evaluatedBoards.containsKey(hash)) {
       score = evaluatedBoards.get(hash);
     } else {

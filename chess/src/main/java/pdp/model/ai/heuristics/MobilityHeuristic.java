@@ -14,7 +14,7 @@ public class MobilityHeuristic implements Heuristic {
    * @return score of the board
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
       score +=

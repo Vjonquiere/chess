@@ -22,7 +22,7 @@ public class GameStatus implements Heuristic {
    * @return score of the board
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     Color player1 = isWhite ? Color.WHITE : Color.BLACK;
     Color player2 = isWhite ? Color.BLACK : Color.WHITE;

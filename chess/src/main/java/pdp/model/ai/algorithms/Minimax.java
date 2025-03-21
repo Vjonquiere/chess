@@ -45,7 +45,7 @@ public class Minimax implements SearchAlgorithm {
       return new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 
