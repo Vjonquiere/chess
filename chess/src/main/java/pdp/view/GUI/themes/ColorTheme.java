@@ -1,13 +1,11 @@
 package pdp.view.GUI.themes;
 
-import pdp.view.GUIView;
-
 public enum ColorTheme {
-  BLUE("#489FB5", "#82C0CC", "#16697A", "#FFA62B", "#EDE7E3", "#F1E8E1", "black", "white"),
-  PURPLE("#5E548E", "#BE95C4", "#231942", "#9F86C0", "#F8E6F0", "#E8C8DA", "#231942", "white"),
-  SIMPLE("#6D6FD9", "#DAE0F2", "#272727", "#F9CFF2", "#EDE7E3", "#DAE0F2", "black", "white"),
-  CUSTOM("#415a77", "#778da9", "#0d1b2a", "#1d3557", "#e0e1dd", "#e0e1dd", "white", "white");
-
+  BLUE("#16697A", "#82C0CC", "#489FB5", "#FFA62B", "#EDE7E3", "#E0D3C9", "#000000", "#FFFFFF"),
+  PURPLE("#5E548E", "#BE95C4", "#231942", "#9F86C0", "#F8E6F0", "#E8C8DA", "#231942", "#FFFFFF"),
+  SIMPLE("#6D6FD9", "#DAE0F2", "#272727", "#F9CFF2", "#EDE7E3", "#DAE0F2", "#000000", "#FFFFFF"),
+  GREY("#415a77", "#778da9", "#0d1b2a", "#1d3557", "#e0e1dd", "#F2F4F3", "#000000", "#FFFFFF"),
+  CUSTOM("#5B5F97", "#B8B8D1", "#FF6B6C", "#FFC145", "#FFFFFB", "#FFFFF0", "#000000", "#FFFFFF");
   private String primary;
   private String secondary;
   private String tertiary;
@@ -68,9 +66,10 @@ public enum ColorTheme {
     return textInverted;
   }
 
-  public void setCustom(
+  public static void setCustom(
       String primary,
       String secondary,
+      String tertiary,
       String accent,
       String background,
       String background2,
@@ -84,62 +83,5 @@ public enum ColorTheme {
     CUSTOM.background2 = background2;
     CUSTOM.text = text;
     CUSTOM.textInverted = textInverted;
-  }
-
-  public String getCSSStyle() {
-    return ".list-view {\n"
-        + "    -fx-background-color: transparent;\n"
-        + "}\n"
-        + "\n"
-        + ".list-cell:even  {\n"
-        + "    -fx-background-color: "
-        + GUIView.theme.getBackground2()
-        + ";\n"
-        + "    -fx-text-fill: "
-        + GUIView.theme.getText()
-        + ";\n"
-        + "}\n"
-        + "\n"
-        + ".list-cell:odd{\n"
-        + "    -fx-background-color: "
-        + GUIView.theme.getBackground()
-        + ";\n"
-        + "    -fx-text-fill: "
-        + GUIView.theme.getText()
-        + ";\n"
-        + "}\n"
-        + "\n"
-        + ".list-cell:selected  {\n"
-        + "    -fx-background-color: "
-        + GUIView.theme.getSecondary()
-        + ";\n"
-        + "    -fx-text-fill: "
-        + GUIView.theme.getPrimary()
-        + ";\n"
-        + "}\n"
-        + "\n"
-        + ".menu-bar{\n"
-        + "    -fx-background-color: "
-        + GUIView.theme.getAccent()
-        + ";\n"
-        + "    -fx-border-color: "
-        + GUIView.theme.getTertiary()
-        + ";\n"
-        + "}\n"
-        + " .menu-item, .menu, .context-menu {\n"
-        + "    -fx-background-color: "
-        + GUIView.theme.getAccent()
-        + ";\n"
-        + "}\n"
-        + ".menu .label {\n"
-        + "    -fx-text-fill: "
-        + GUIView.theme.getText()
-        + ";\n"
-        + "}\n"
-        + ".menu-item:hover, .menu:hover {\n"
-        + "    -fx-background-color: "
-        + GUIView.theme.getPrimary()
-        + ";\n"
-        + "}\n";
   }
 }

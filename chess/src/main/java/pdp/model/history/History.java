@@ -20,6 +20,10 @@ public class History {
     this.currentMove = null;
   }
 
+  public void clear() {
+    this.currentMove = null;
+  }
+
   /**
    * Retrieves the current move node in the history.
    *
@@ -72,18 +76,18 @@ public class History {
 
     while (current != null) {
       stack.push(current);
-      current = current.previous;
+      current = current.getPrevious().orElse(null); // Utilisation de getPrevious()
     }
 
     while (!stack.isEmpty()) {
       HistoryNode node = stack.pop();
-      if (node != null) {
-        sb.append(node.state.toString());
-        if (node.state.isWhite()) {
-          sb.append("\n");
-        }
+      sb.append(node.getState().toString());
+
+      if (node.getState().isWhite()) {
+        sb.append("\n");
       }
     }
+
     return sb.toString().trim();
   }
 
@@ -92,6 +96,7 @@ public class History {
    *
    * @return A string representing the history of moves.
    */
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     HistoryNode current = currentMove;
@@ -99,22 +104,22 @@ public class History {
 
     while (current != null) {
       stack.push(current);
-      current = current.previous;
+      current = current.getPrevious().orElse(null); // Utilisation du getter
     }
 
     while (!stack.isEmpty()) {
       HistoryNode node = stack.pop();
-      if (node != null) {
-        sb.append(node.state.toString());
-        if (node.state.isWhite()) {
-          sb.append("\n");
-        }
+      sb.append(node.getState().toString());
+
+      if (node.getState().isWhite()) {
+        sb.append("\n");
       }
     }
+
     return sb.toString().trim();
   }
 
   public String toUniString() {
-    return currentMove == null ? "" : currentMove.state.getMove().toUciString();
+    return currentMove == null ? "" : currentMove.getState().getMove().toUciString();
   }
 }

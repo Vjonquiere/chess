@@ -26,9 +26,11 @@ import pdp.model.ai.heuristics.PawnChainHeuristic;
 import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
+import pdp.model.ai.heuristics.StandardLightHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
+import pdp.model.piece.Color;
 import pdp.utils.Logging;
 import pdp.utils.Timer;
 
@@ -36,13 +38,17 @@ public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private final ZobristHashing zobristHashing = new ZobristHashing();
-  private final HashMap<Long, Float> evaluatedBoards;
+  private HashMap<Long, Float> evaluatedBoards;
 
-  SearchAlgorithm algorithm;
-  Heuristic heuristic;
-  int depth = 4;
-  Timer timer;
-  long time;
+  private SearchAlgorithm algorithm;
+  private Heuristic heuristic;
+  private HeuristicType currentHeuristic;
+  private HeuristicType endgameHeuristic;
+  private int depth = 4;
+  private Timer timer;
+  private long time;
+  private boolean isSearchStopped = false;
+  private boolean isMoveToPlay = true;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -71,7 +77,7 @@ public class Solver {
 
   /**
    * Assigns a value (typed by the user in CLI) to the simulation limit for MonteCarloTreeSearch.
-   * Method used in GameInitializer. StandardHeuristic
+   * Method used in GameInitializer.
    *
    * @param numberSimulations the number of MonteCarloTreeSearch simulations wanted by the user
    */
@@ -99,9 +105,12 @@ public class Solver {
       case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
       case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
       case STANDARD -> this.heuristic = new StandardHeuristic();
+      case STANDARD_LIGHT -> this.heuristic = new StandardLightHeuristic();
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    this.currentHeuristic = heuristic;
+    this.evaluatedBoards = new HashMap<>();
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
@@ -129,6 +138,18 @@ public class Solver {
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
+  }
+
+  public void setEndgameHeuristic(HeuristicType heuristic) {
+    this.endgameHeuristic = heuristic;
+  }
+
+  public HeuristicType getEndgameHeurisic() {
+    return this.endgameHeuristic;
+  }
+
+  public HeuristicType getCurrentHeurisic() {
+    return this.currentHeuristic;
   }
 
   /**
@@ -182,6 +203,7 @@ public class Solver {
     }
     this.time = time * 1000;
     timer = new Timer(this.time);
+    timer.setCallback(() -> this.stopSearch(true));
     DEBUG(LOGGER, "Time set to " + this.time);
   }
 
@@ -191,6 +213,15 @@ public class Solver {
 
   public long getTime() {
     return time;
+  }
+
+  public void stopSearch(boolean playMove) {
+    isSearchStopped = true;
+    isMoveToPlay = playMove;
+  }
+
+  public boolean isSearchStopped() {
+    return isSearchStopped;
   }
 
   /**
@@ -203,22 +234,27 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
-    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    isSearchStopped = false;
+    isMoveToPlay = true;
+    AIMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
     if (timer != null) {
       timer.stop();
     }
 
     DEBUG(LOGGER, "Best move " + bestMove);
     game.setExploration(false);
-    try {
-      game.playMove(bestMove.move());
-    } catch (Exception e) {
-      game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
-      System.err.println(e.getMessage());
-      if (game.getBoard().isWhite) {
-        game.getGameState().whiteResigns();
-      } else {
-        game.getGameState().blackResigns();
+
+    if (isMoveToPlay) {
+      try {
+        game.playMove(bestMove.move());
+      } catch (Exception e) {
+        game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
+        System.err.println(e.getMessage());
+        if (game.getGameState().isWhiteTurn()) {
+          game.getGameState().whiteResigns();
+        } else {
+          game.getGameState().blackResigns();
+        }
       }
     }
   }
@@ -252,12 +288,22 @@ public class Solver {
     }
 
     long hash = zobristHashing.generateHashFromBitboards(board);
+    float score;
     if (evaluatedBoards.containsKey(hash)) {
-      return evaluatedBoards.get(hash);
+      score = evaluatedBoards.get(hash);
+    } else {
+      score = heuristic.evaluate(board, isWhite);
+      evaluatedBoards.put(hash, score);
     }
 
-    float score = heuristic.evaluate(board, isWhite);
-    evaluatedBoards.put(hash, score);
+    Color player = isWhite ? Color.WHITE : Color.BLACK;
+
+    if (Game.getInstance().getGameState().isThreefoldRepetition()
+        || board.getBoardRep().isStaleMate(player, player)
+        || board.getNbMovesWithNoCaptureOrPawn() >= 50) {
+      score = 0;
+    }
+
     return score;
   }
 }

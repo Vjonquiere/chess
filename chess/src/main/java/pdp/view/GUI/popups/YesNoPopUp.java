@@ -8,14 +8,23 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.RestoreMoveCommand;
-import pdp.model.Game;
+import pdp.controller.Command;
 import pdp.utils.TextGetter;
+import pdp.view.GUIView;
 
-public class RedoPopUp extends VBox {
-  public RedoPopUp() {
+public class YesNoPopUp extends VBox {
+
+  /**
+   * Creates a Yes/No confirmation popup with two buttons: accept and refuse.
+   *
+   * @param title The title of the popup window.
+   * @param command The command to be executed if the accept button is clicked. Can be null.
+   * @param action The action to be executed if the refuse button is clicked or the popup is closed.
+   *     Can be null.
+   */
+  public YesNoPopUp(String title, Command command, Runnable action) {
     Stage popupStage = new Stage();
-    popupStage.setTitle(TextGetter.getText("redoInstructionsGui"));
+    popupStage.setTitle(TextGetter.getText(title));
     popupStage.initModality(Modality.APPLICATION_MODAL);
 
     Button acceptButton = new Button(TextGetter.getText("accept"));
@@ -24,19 +33,26 @@ public class RedoPopUp extends VBox {
 
     acceptButton.setOnAction(
         e -> {
-          BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+          if (command != null) {
+            BagOfCommands.getInstance().addCommand(command);
+          }
           popupStage.close();
         });
 
     refuseButton.setOnAction(
         e -> {
-          Game.getInstance().getGameState().redoRequestReset();
+          if (action != null) {
+            action.run();
+          }
           popupStage.close();
         });
 
     popupStage.setOnCloseRequest(
         event -> {
-          Game.getInstance().getGameState().redoRequestReset();
+          if (action != null) {
+            action.run();
+          }
+          popupStage.close();
         });
 
     HBox buttonContainer = new HBox(10, acceptButton, refuseButton);
@@ -47,6 +63,7 @@ public class RedoPopUp extends VBox {
     layout.setStyle("-fx-padding: 20;");
 
     Scene scene = new Scene(layout, 300, 150);
+    GUIView.applyCSS(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
   }

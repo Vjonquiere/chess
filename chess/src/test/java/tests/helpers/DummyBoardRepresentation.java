@@ -126,6 +126,38 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   }
 
   @Override
+  public void applyShortCastle(Color color) {}
+
+  @Override
+  public void applyLongCastle(Color color) {}
+
+  @Override
+  public boolean canCastle(
+      Color color,
+      boolean shortCastle,
+      boolean whiteShortCastle,
+      boolean whiteLongCastle,
+      boolean blackShortCastle,
+      boolean blackLongCastle) {
+    return false;
+  }
+
+  @Override
+  public boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
+    return false;
+  }
+
+  @Override
+  public boolean isEndGamePhase(int fullTurn, boolean white) {
+    return false;
+  }
+
+  @Override
+  public boolean validatePieceOwnership(boolean white, Position sourcePosition) {
+    return false;
+  }
+
+  @Override
   public boolean areKingsActive() {
     return false;
   }
@@ -178,5 +210,17 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   @Override
   public BoardRepresentation getCopy() {
     return new DummyBoardRepresentation();
+  }
+
+  @Override
+  public List<Move> getSpecialMoves(
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return new ArrayList<>();
   }
 }

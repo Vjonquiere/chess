@@ -4,8 +4,10 @@ import static pdp.utils.Logging.DEBUG;
 import static pdp.view.GUI.themes.ColorTheme.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -13,7 +15,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pdp.events.EventType;
 import pdp.model.Game;
+import pdp.model.parsers.BoardFileParser;
 import pdp.utils.Logging;
+import pdp.utils.Position;
 import pdp.utils.TextGetter;
 import pdp.view.GUI.ChessMenu;
 import pdp.view.GUI.ControlPanel;
@@ -31,30 +35,51 @@ public class GUIView implements View {
   private ControlPanel controlPanel;
   private ChessMenu menu;
   public static ColorTheme theme = SIMPLE;
-  boolean init = false;
+  private boolean init = false;
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
-  public void applyCSS(String cssContent) {
+  public static void applyCSS(Scene scene) {
+    String text;
+    String path = "";
     try {
-      File tempFile = File.createTempFile("theme-", ".css");
-      tempFile.deleteOnExit();
+      // TODO: allow user to give his css file
+      text = new BoardFileParser().readFile(path);
+    } catch (FileNotFoundException e) {
+      try {
+        URL filePath = GUIView.class.getClassLoader().getResource("styles/sample.css");
+        text = new BoardFileParser().readFile(filePath.getPath());
+        text = text.replace("#000001", theme.getPrimary());
+        text = text.replace("#000002", theme.getSecondary());
+        text = text.replace("#000003", theme.getTertiary());
+        text = text.replace("#000004", theme.getAccent());
+        text = text.replace("#000005", theme.getBackground());
+        text = text.replace("#000006", theme.getBackground2());
+        text = text.replace("#000007", theme.getText());
+        text = text.replace("#000008", theme.getTextInverted());
+        File tempFile = File.createTempFile("theme-", ".css");
+        tempFile.deleteOnExit();
 
-      try (FileWriter writer = new FileWriter(tempFile)) {
-        writer.write(cssContent);
+        try (FileWriter writer = new FileWriter(tempFile)) {
+          writer.write(text);
+        }
+
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(tempFile.toURI().toString());
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-
-      scene.getStylesheets().clear();
-      scene.getStylesheets().add(tempFile.toURI().toString());
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
 
   public void updateTheme() {
-    applyCSS(theme.getCSSStyle());
+    applyCSS(scene);
+    onGameEvent(EventType.GAME_STARTED);
+  }
+
+  public void updateLanguage() {
     onGameEvent(EventType.GAME_STARTED);
   }
 
@@ -72,7 +97,7 @@ public class GUIView implements View {
     stage.setTitle(TextGetter.getText("title"));
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);
-    applyCSS(theme.getCSSStyle());
+    applyCSS(scene);
     stage.setScene(scene);
     if (board != null) board.setStage(stage);
     this.stage = stage;
@@ -103,9 +128,9 @@ public class GUIView implements View {
   @Override
   public void onGameEvent(EventType event) {
     DEBUG(LOGGER, "View received event " + event);
-    if (!Platform.isFxApplicationThread() && !init) {
+    if (!Platform.isFxApplicationThread() && !isInit()) {
       DEBUG(LOGGER, "Init GUI thread");
-      init = true;
+      setInit(true);
       Platform.startup(() -> Platform.runLater(() -> this.onGameEvent(event)));
     }
     Platform.runLater(
@@ -132,7 +157,7 @@ public class GUIView implements View {
                 if (menu != null) {
                   root.getChildren().remove(menu);
                 }
-                menu = new ChessMenu(this);
+                menu = new ChessMenu();
                 root.setTop(menu);
 
                 break;
@@ -142,6 +167,9 @@ public class GUIView implements View {
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
+                  if (controlPanel.getHistoryPanel() != null) {
+                    controlPanel.getHistoryPanel().updateHistoryPanel();
+                  }
                 }
                 break;
               case DRAW_ACCEPTED,
@@ -181,11 +209,6 @@ public class GUIView implements View {
                 System.out.println(
                     TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
                 break;
-                /*
-                case DRAW_ACCEPTED:
-                  System.out.println(TextGetter.getText("drawAccepted"));
-                  break;
-                   */
               case GAME_SAVED:
                 System.out.println(TextGetter.getText("gameSaved"));
                 break;
@@ -196,6 +219,9 @@ public class GUIView implements View {
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
+                  if (controlPanel.getHistoryPanel() != null) {
+                    controlPanel.getHistoryPanel().updateHistoryPanel();
+                  }
                 }
                 break;
               case WHITE_UNDO_PROPOSAL:
@@ -227,6 +253,9 @@ public class GUIView implements View {
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
+                  if (controlPanel.getHistoryPanel() != null) {
+                    controlPanel.getHistoryPanel().updateHistoryPanel();
+                  }
                 }
                 break;
               case WHITE_REDO_PROPOSAL:
@@ -239,42 +268,6 @@ public class GUIView implements View {
                 System.out.println(
                     TextGetter.getText("redoInstructions", TextGetter.getText("white")));
                 break;
-                /*
-                case OUT_OF_TIME_WHITE:
-                  System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
-                  break;
-                case OUT_OF_TIME_BLACK:
-                  System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
-                  break;
-                case THREEFOLD_REPETITION:
-                  System.out.println(TextGetter.getText("threeFoldRepetition"));
-                  break;
-                case INSUFFICIENT_MATERIAL:
-                  System.out.println(TextGetter.getText("insufficientMaterial"));
-                  break;
-                case FIFTY_MOVE_RULE:
-                  System.out.println(TextGetter.getText("fiftyMoveRule"));
-                  break;
-                case WHITE_RESIGNS:
-                  System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
-                  break;
-                case BLACK_RESIGNS:
-                  System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
-                  break;
-                case CHECKMATE_WHITE:
-                  System.out.println(
-                      TextGetter.getText(
-                          "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
-                  break;
-                case CHECKMATE_BLACK:
-                  System.out.println(
-                      TextGetter.getText(
-                          "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
-                  break;
-                case STALEMATE:
-                  System.out.println(TextGetter.getText("stalemate"));
-                  break;
-                   */
               case AI_PLAYING:
                 System.out.println(TextGetter.getText("ai_playing"));
                 break;
@@ -287,10 +280,25 @@ public class GUIView implements View {
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
+                  if (controlPanel.getHistoryPanel() != null) {
+                    controlPanel.getHistoryPanel().updateHistoryPanel();
+                  }
                 }
                 break;
               case UPDATE_THEME:
                 updateTheme();
+                break;
+              case UPDATE_LANG:
+                updateLanguage();
+                break;
+              case MOVE_HINT:
+                if (board != null) {
+                  List<Integer> hintIntegers = Game.getInstance().getGameState().getHintIntegers();
+                  board.setHintSquares(
+                      new Position(hintIntegers.get(0), hintIntegers.get(1)),
+                      new Position(hintIntegers.get(2), hintIntegers.get(3)));
+                }
+                break;
               default:
                 DEBUG(LOGGER, "Received unknown game event: " + event);
                 break;
@@ -310,5 +318,13 @@ public class GUIView implements View {
         "Method not implemented in " + this.getClass().getName());
 
      */
+  }
+
+  public boolean isInit() {
+    return init;
+  }
+
+  public void setInit(boolean init) {
+    this.init = init;
   }
 }

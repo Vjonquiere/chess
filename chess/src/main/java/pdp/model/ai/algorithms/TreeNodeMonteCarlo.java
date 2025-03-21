@@ -141,7 +141,7 @@ public class TreeNodeMonteCarlo {
    * @return true if a node is fully explored, false otherwise
    */
   public boolean isFullyExpanded() {
-    boolean isWhite = state.getBoard().isWhite;
+    boolean isWhite = state.isWhiteTurn();
     return state.getBoard().getBoardRep().getAllAvailableMoves(isWhite).size() == children.size();
   }
 }

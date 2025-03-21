@@ -2,6 +2,7 @@ package pdp.view.GUI.controls;
 
 import javafx.scene.layout.VBox;
 import pdp.model.Game;
+import pdp.utils.TextGetter;
 
 public class PlayerPanel extends VBox {
   PlayerInfos whitePlayer;
@@ -9,8 +10,10 @@ public class PlayerPanel extends VBox {
 
   public PlayerPanel() {
     setSpacing(5);
-    whitePlayer = new PlayerInfos("white player", Game.getInstance().isWhiteAI());
-    blackPlayer = new PlayerInfos("black player", Game.getInstance().isBlackAI());
+    whitePlayer =
+        new PlayerInfos(TextGetter.getText("whitePlayer"), Game.getInstance().isWhiteAI(), true);
+    blackPlayer =
+        new PlayerInfos(TextGetter.getText("blackPlayer"), Game.getInstance().isBlackAI(), false);
     this.getChildren().addAll(whitePlayer, blackPlayer);
   }
 

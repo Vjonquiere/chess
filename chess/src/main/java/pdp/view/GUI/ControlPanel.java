@@ -7,13 +7,11 @@ import pdp.events.EventType;
 import pdp.view.GUI.controls.ButtonsPanel;
 import pdp.view.GUI.controls.HistoryPanel;
 import pdp.view.GUI.controls.PlayerPanel;
-import pdp.view.GUI.controls.TimersPanel;
 import pdp.view.GUIView;
 
 public class ControlPanel extends VBox {
-  private VBox timerPanel;
   private PlayerPanel playerPanel;
-  private VBox historyPanel;
+  private HistoryPanel historyPanel;
   private ButtonsPanel buttonsPanel;
   String borderStyle =
       "-fx-border-color: "
@@ -25,20 +23,14 @@ public class ControlPanel extends VBox {
           + "-fx-border-style: solid;\n";
 
   public ControlPanel(BorderPane stage) {
-    initTimerPanel();
     initPlayerPanel();
     initHistoryPanel();
     initButtonsPanel();
-    super.getChildren().addAll(timerPanel, playerPanel, historyPanel, buttonsPanel);
+    super.getChildren().addAll(playerPanel, historyPanel, buttonsPanel);
     // TODO: really fix the width to 1/3 (does not work for now)
     super.setWidth(stage.getWidth() / 3);
     super.setSpacing(10);
     super.setPadding(new Insets(10));
-  }
-
-  private void initTimerPanel() {
-    timerPanel = new TimersPanel();
-    timerPanel.setStyle(borderStyle);
   }
 
   private void initPlayerPanel() {
@@ -54,6 +46,10 @@ public class ControlPanel extends VBox {
   private void initHistoryPanel() {
     historyPanel = new HistoryPanel();
     historyPanel.setStyle(borderStyle);
+  }
+
+  public HistoryPanel getHistoryPanel() {
+    return this.historyPanel;
   }
 
   public void update(EventType type) {

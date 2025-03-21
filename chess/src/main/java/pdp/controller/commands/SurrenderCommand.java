@@ -8,10 +8,10 @@ import pdp.model.Game;
 
 public class SurrenderCommand implements Command {
 
-  boolean isWhite;
+  private boolean isWhite;
 
   public SurrenderCommand(boolean isWhite) {
-    this.isWhite = isWhite;
+    this.setWhite(isWhite);
   }
 
   /**
@@ -27,11 +27,19 @@ public class SurrenderCommand implements Command {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }
-    if (isWhite) {
+    if (isWhite()) {
       model.getGameState().whiteResigns();
     } else {
       model.getGameState().blackResigns();
     }
     return Optional.empty();
+  }
+
+  public boolean isWhite() {
+    return isWhite;
+  }
+
+  public void setWhite(boolean white) {
+    isWhite = white;
   }
 }

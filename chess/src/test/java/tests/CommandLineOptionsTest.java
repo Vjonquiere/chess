@@ -41,6 +41,12 @@ public class CommandLineOptionsTest {
     "                                      algorithm for the black player",
     "    --ai-depth-w <DEPTH>              Specify the depth of the AI",
     "                                      algorithm for the white player",
+    "    --ai-endgame <HEURISTIC>          Choose the heuristic for the endgame",
+    "                                      of the artificial players.",
+    "    --ai-endgame-b <HEURISTIC>        Choose the heuristic for the endgame",
+    "                                      of the black artificial player.",
+    "    --ai-endgame-w <HEURISTIC>        Choose the heuristic for the endgame",
+    "                                      of the white artificial player.",
     "    --ai-heuristic <HEURISTIC>        Choose the heuristic for the",
     "                                      artificial players.",
     "                                      Choose between these heuristic (case",
@@ -48,6 +54,9 @@ public class CommandLineOptionsTest {
     "                                      - STANDARD : Aggregates multiple",
     "                                      heuristics to evaluate the board",
     "                                      during the start and middle game.",
+    "                                      - STANDARD_LIGHT : A lighter version",
+    "                                      of the STANDARD heuristic, taking",
+    "                                      less parameters into account.",
     "                                      - SHANNON : Basic Heuristic from",
     "                                      Shannon.",
     "                                      - ENDGAME : Aggregates multiple",
@@ -246,7 +255,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testAmbiguous() throws Exception {
     String expectedAmbiguous =
-        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-mode-w', 'ai-mode-b', 'ai-simulation', 'ai-simulation-w', 'ai-simulation-b', 'ai-depth', 'ai-depth-w', 'ai-depth-b', 'ai-heuristic', 'ai-heuristic-w', 'ai-heuristic-b', 'ai-time', 'ai-weight-w', 'ai-weight-b')";
+        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-mode-w', 'ai-mode-b', 'ai-simulation', 'ai-simulation-w', 'ai-simulation-b', 'ai-depth', 'ai-depth-w', 'ai-depth-b', 'ai-heuristic', 'ai-heuristic-w', 'ai-heuristic-b', 'ai-endgame', 'ai-endgame-w', 'ai-endgame-b', 'ai-time', 'ai-weight-w', 'ai-weight-b')";
 
     // Test ambiguous option (several options starting the same) (error)
     Runtime mockRuntime = mock(Runtime.class);
@@ -376,6 +385,8 @@ public class CommandLineOptionsTest {
     expectedMap.put(OptionType.AI_HEURISTIC_W, "test2");
     expectedMap.put(OptionType.AI_SIMULATION_W, "150");
     expectedMap.put(OptionType.AI_SIMULATION_B, "200");
+    expectedMap.put(OptionType.AI_ENDGAME_B, "ENDGAME");
+    expectedMap.put(OptionType.AI_ENDGAME_W, "STANDARD");
 
     Runtime mockRuntime = mock(Runtime.class);
     Map<OptionType, String> output =
@@ -392,7 +403,8 @@ public class CommandLineOptionsTest {
               "--contest=myfile.chessrc",
               "--ai-simulation=500",
               "--ai-simulation-w=150",
-              "--ai-simulation-b=200"
+              "--ai-simulation-b=200",
+              "--ai-endgame-w=STANDARD"
             },
             mockRuntime);
 

@@ -380,12 +380,10 @@ public class CLIView implements View {
   }
 
   private void timeCommand(String args) {
-    Timer timer = Game.getInstance().getGameState().getMoveTimer();
+    Timer timer = Game.getInstance().getTimer(Game.getInstance().getGameState().isWhiteTurn());
     if (timer != null) {
       System.out.println(
-          TextGetter.getText(
-              "timeRemainingCurrent",
-              Game.getInstance().getGameState().getMoveTimer().getTimeRemainingString()));
+          TextGetter.getText("timeRemainingCurrent", timer.getTimeRemainingString()));
     } else {
       System.out.println(TextGetter.getText("noTimer"));
     }
