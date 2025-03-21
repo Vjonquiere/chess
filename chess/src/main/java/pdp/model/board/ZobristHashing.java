@@ -1,6 +1,6 @@
 package pdp.model.board;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import pdp.model.piece.ColoredPiece;
 
 public class ZobristHashing {
@@ -10,43 +10,37 @@ public class ZobristHashing {
   private static final int CASTLING = 16;
   private static final int EN_PASSANT = 8;
 
-  private final long[][] pieces = new long[PIECES_TYPES][BOARD_SQUARES];
-  // 16 combinations of castling rights
-  private final long[] castling = new long[CASTLING];
-  // 8 en passant possible (1 per column)
-  private final long[] enPassant = new long[EN_PASSANT];
-  private long sideToMove;
+  private static final long[][] pieces = new long[PIECES_TYPES][BOARD_SQUARES];
+  private static final long[] castling = new long[CASTLING];
+  private static final long[] enPassant = new long[EN_PASSANT];
+
+  private static final long sideToMove;
 
   private int prevCastlingIndex;
   private int prevEnPassantFile = -1;
-  private final Random random = new Random();
 
-  /** Constructor to initialize the components to the future hash. */
-  public ZobristHashing() {
-    initializeHash();
-  }
-
-  /**
-   * Initialize all arrays with random long corresponding to the pieces, castling rights, en passant
-   * moves and size to move.
-   */
-  private void initializeHash() {
-
+  static {
+    // Initialize static tables once using ThreadLocalRandom
     for (int i = 0; i < PIECES_TYPES; i++) {
       for (int j = 0; j < BOARD_SQUARES; j++) {
-        pieces[i][j] = random.nextLong();
+        pieces[i][j] = ThreadLocalRandom.current().nextLong();
       }
     }
-
     for (int i = 0; i < CASTLING; i++) {
-      castling[i] = random.nextLong();
+      castling[i] = ThreadLocalRandom.current().nextLong();
     }
-
     for (int i = 0; i < EN_PASSANT; i++) {
-      enPassant[i] = random.nextLong();
+      enPassant[i] = ThreadLocalRandom.current().nextLong();
     }
+    sideToMove = ThreadLocalRandom.current().nextLong();
+  }
 
-    sideToMove = random.nextLong();
+  /** Constructor to initialize the components to the future hash. */
+  public ZobristHashing() {}
+
+  public ZobristHashing(ZobristHashing parent) {
+    this.prevCastlingIndex = parent.prevCastlingIndex;
+    this.prevEnPassantFile = parent.prevEnPassantFile;
   }
 
   /**

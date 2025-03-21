@@ -40,27 +40,68 @@ public class AlphaBeta implements SearchAlgorithm {
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
     GameAi aiGame = GameAi.fromGame(game);
-    ExecutorService executor =
-        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    int nbThreads = 1; // Runtime.getRuntime().availableProcessors() / 2;
+    ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
     List<Future<AIMove>> futures = new CopyOnWriteArrayList<>();
 
-    futures.add(
-        executor.submit(
-            () -> {
-              GameAi gameCopy = aiGame.copy();
-              return alphaBeta(
-                  gameCopy, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
-            }));
+    List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
+    Board board = aiGame.getBoard();
+    moves.addAll(
+        aiGame
+            .getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                player,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isWhiteLongCastle()));
 
-    AIMove bestMove = null;
+    for (Move move : moves) {
+      futures.add(
+          executor.submit(
+              () -> {
+                GameAi gameCopy = aiGame.copy();
+                try {
+                  Move promoteMove = AlgorithmHelpers.promoteMove(move);
+                  System.out.println("promoteMove " + promoteMove);
+                  gameCopy.playMove(promoteMove);
+                  AIMove result =
+                      alphaBeta(
+                          gameCopy,
+                          depth - 1,
+                          !player,
+                          Integer.MIN_VALUE,
+                          Integer.MAX_VALUE,
+                          player);
+                  System.out.println("result : " + result);
+                  return new AIMove(promoteMove, result.score());
+                } catch (IllegalMoveException e) {
+                  e.printStackTrace();
+                  return new AIMove(null, Integer.MIN_VALUE);
+                }
+              }));
+    }
+
+    AIMove bestMove = new AIMove(null, Integer.MIN_VALUE);
+
     try {
-      bestMove = futures.get(0).get();
+      for (Future<AIMove> future : futures) {
+        AIMove candidateMove = future.get();
+        if (candidateMove.move() != null) {
+          if ((player && candidateMove.score() > bestMove.score())
+              || (!player && candidateMove.score() < bestMove.score())) {
+            bestMove = candidateMove;
+          }
+        }
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
 
     executor.shutdown();
-
     DEBUG(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
