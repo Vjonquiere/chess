@@ -12,6 +12,7 @@ import pdp.controller.commands.*;
 import pdp.events.EventType;
 import pdp.exceptions.*;
 import pdp.model.Game;
+import pdp.model.GameState;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
@@ -33,6 +34,8 @@ public class UCIView implements View {
     commands.put("go", new CommandEntry(this::goCommand, "go"));
     commands.put("isready", new CommandEntry(this::isReadyCommand, "isReady"));
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
+    Game.THREE_FOLD_REPETITION = 5;
+    GameState.FIFTY_MOVE_RULE = 75;
   }
 
   /**
@@ -156,7 +159,11 @@ public class UCIView implements View {
 
   private void goCommand(String args) {
     DEBUG(LOGGER, "Searching for best move");
-    System.out.println("bestmove " + solver.getBestMove(Game.getInstance()).toUciString());
+    Move move = solver.getBestMove(Game.getInstance());
+    if (move == null) {
+      System.err.println(Game.getInstance().getGameRepresentation());
+    }
+    System.out.println("bestmove " + move.toUciString());
   }
 
   private void isReadyCommand(String args) {
