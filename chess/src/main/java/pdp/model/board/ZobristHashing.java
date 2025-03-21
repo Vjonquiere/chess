@@ -83,12 +83,12 @@ public class ZobristHashing {
   /**
    * Generate the hash corresponding to the pieces of the current board.
    *
-   * @param board Current board
+   * @param boardRep Current board representation
    * @return hash corresponding to the board given in parameters
    */
-  private long generatePieceHash(Board board) {
+  private long generatePieceHash(BoardRepresentation boardRep) {
     long hash = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardsRepresentation)) {
+    if (!(boardRep instanceof BitboardRepresentation bitboardsRepresentation)) {
       throw new RuntimeException("Only available for bitboards");
     }
     Bitboard[] bitboards = bitboardsRepresentation.getBitboards();
@@ -138,7 +138,7 @@ public class ZobristHashing {
    * @return hash corresponding to the board given in parameters
    */
   public long generateHashFromBitboards(Board board) {
-    long hash = generatePieceHash(board);
+    long hash = generatePieceHash(board.getBoardRep());
     prevCastlingIndex = translateCastling(board);
     if (prevCastlingIndex != -1) {
       hash ^= castling[prevCastlingIndex];
@@ -199,7 +199,11 @@ public class ZobristHashing {
    * @return hash corresponding to the board given in parameters
    */
   public long generateSimplifiedHashFromBitboards(Board board) {
-    return generatePieceHash(board);
+    return generatePieceHash(board.getBoardRep());
+  }
+
+  public long generateSimplifiedHashFromBitboards(BoardRepresentation boardRep) {
+    return generatePieceHash(boardRep);
   }
 
   /**

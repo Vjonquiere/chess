@@ -14,11 +14,14 @@ import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
+  private static final int cacheSize = 10000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
   protected final int nbCols = 8;
   protected final int nbRows = 8;
   public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
+  private static BitboardCache cache;
+  private static ZobristHashing zobristHashing = new ZobristHashing();
 
   static {
     Logging.configureLogging(LOGGER);
@@ -34,6 +37,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     pieces.put(9, new ColoredPiece(Piece.ROOK, Color.BLACK));
     pieces.put(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK));
     pieces.put(11, new ColoredPiece(Piece.PAWN, Color.BLACK));
+
+    zobristHashing = new ZobristHashing();
+
+    cache = new BitboardCache(cacheSize);
   }
 
   /*
@@ -141,13 +148,25 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
+
+    long currentZobrist = zobristHashing.generateSimplifiedHashFromBitboards(this);
+
+    ColoredPiece piece = cache.getOrCreate(currentZobrist).getPieceAt(x, y);
+    if (piece != null) {
+      return piece;
+    }
+
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) {
-        return pieces.getFromKey(index);
+        piece = pieces.getFromKey(index);
+        cache.getOrCreate(currentZobrist).setPieceAt(x, y, piece);
+        return piece;
       }
     }
-    return new ColoredPiece(Piece.EMPTY, Color.EMPTY);
+    piece = new ColoredPiece(Piece.EMPTY, Color.EMPTY);
+    cache.getOrCreate(currentZobrist).setPieceAt(x, y, piece);
+    return piece;
   }
 
   /**
@@ -625,7 +644,17 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isAttacked(int x, int y, Color by) {
-    return BitboardRules.isAttacked(x, y, by, this);
+
+    long currentZobrist = zobristHashing.generateSimplifiedHashFromBitboards(this);
+
+    Boolean isAttacked = cache.getOrCreate(currentZobrist).isAttacked(x, y, by);
+    if (isAttacked != null) {
+      return isAttacked;
+    }
+
+    isAttacked = BitboardRules.isAttacked(x, y, by, this);
+    cache.getOrCreate(currentZobrist).setAttacked(x, y, by, isAttacked);
+    return isAttacked;
   }
 
   /**

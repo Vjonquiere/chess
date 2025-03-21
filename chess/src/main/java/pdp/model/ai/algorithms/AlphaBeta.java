@@ -102,7 +102,7 @@ public class AlphaBeta implements SearchAlgorithm {
                 board.isWhiteLongCastle(),
                 board.isWhiteShortCastle(),
                 board.isBlackLongCastle(),
-                board.isWhiteLongCastle()));
+                board.isBlackShortCastle()));
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
