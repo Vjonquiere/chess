@@ -15,11 +15,13 @@ public class Main {
     HashMap<OptionType, String> options =
         CommandLineOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
-    System.out.println(TextGetter.getText("title"));
-    System.out.println("options: " + options.toString());
+    if (!options.containsKey(OptionType.UCI)) {
+      System.out.println(TextGetter.getText("title"));
+      System.out.println("options: " + options.toString());
+    }
 
     if (options.containsKey(OptionType.CONTEST)) {
-      throw new UnsupportedOperationException("Contest mode not implemented");
+      // throw new UnsupportedOperationException("Contest mode not implemented");
     }
 
     GameController controller = GameControllerInit.initialize(options);

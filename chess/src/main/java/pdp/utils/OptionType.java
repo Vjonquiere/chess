@@ -568,6 +568,48 @@ public enum OptionType {
           .build();
     }
   },
+  AI_WEIGHT_W {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-weight-w";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .argName("WEIGHT")
+          .hasArg(true)
+          .desc("Specify the Weight to use with the standard heuristic.")
+          .build();
+    }
+  },
+  AI_WEIGHT_B {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "ai-weight-b";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .argName("WEIGHT")
+          .hasArg(true)
+          .desc("Specify the Weight to use with the standard heuristic.")
+          .build();
+    }
+  },
   LOAD {
     @Override
     public String getShort() {
@@ -586,6 +628,26 @@ public enum OptionType {
           .argName("FILENAME")
           .hasArg(true)
           .desc("The name of the file from which to load the history")
+          .build();
+    }
+  },
+  UCI {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "uci";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(false)
+          .desc("Launch the engine in UCI mode")
           .build();
     }
   };

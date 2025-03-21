@@ -118,4 +118,8 @@ public class History {
 
     return sb.toString().trim();
   }
+
+  public String toUniString() {
+    return currentMove == null ? "" : currentMove.getState().getMove().toUciString();
+  }
 }

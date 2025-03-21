@@ -14,7 +14,7 @@ public class PromotionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += pawnsHaveProgressedScore(board, true) - pawnsHaveProgressedScore(board, false);
     score += pawnsAreCloseToPromotion(board, true) - pawnsAreCloseToPromotion(board, false);

@@ -255,7 +255,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testAmbiguous() throws Exception {
     String expectedAmbiguous =
-        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-mode-w', 'ai-mode-b', 'ai-simulation', 'ai-simulation-w', 'ai-simulation-b', 'ai-depth', 'ai-depth-w', 'ai-depth-b', 'ai-heuristic', 'ai-heuristic-w', 'ai-heuristic-b', 'ai-endgame', 'ai-endgame-w', 'ai-endgame-b', 'ai-time')";
+        "Parsing failed.  Reason: Ambiguous option: '--ai-'  (could be: 'ai-mode', 'ai-mode-w', 'ai-mode-b', 'ai-simulation', 'ai-simulation-w', 'ai-simulation-b', 'ai-depth', 'ai-depth-w', 'ai-depth-b', 'ai-heuristic', 'ai-heuristic-w', 'ai-heuristic-b', 'ai-endgame', 'ai-endgame-w', 'ai-endgame-b', 'ai-time', 'ai-weight-w', 'ai-weight-b')";
 
     // Test ambiguous option (several options starting the same) (error)
     Runtime mockRuntime = mock(Runtime.class);

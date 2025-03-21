@@ -5,9 +5,7 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.utils.OptionType;
-import pdp.view.CLIView;
-import pdp.view.GUIView;
-import pdp.view.View;
+import pdp.view.*;
 
 /** Utility class for initializing a {@link GameController} instance. */
 public abstract class GameControllerInit {
@@ -20,10 +18,13 @@ public abstract class GameControllerInit {
   public static GameController initialize(HashMap<OptionType, String> options) {
 
     Game model = GameInitializer.initialize(options);
+    System.out.println(model);
 
     View view;
     if (options.containsKey(OptionType.GUI)) {
       view = new GUIView();
+    } else if (options.containsKey(OptionType.UCI)) {
+      view = new UCIView();
     } else {
       view = new CLIView();
     }

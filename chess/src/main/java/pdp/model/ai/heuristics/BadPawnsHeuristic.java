@@ -21,7 +21,7 @@ public class BadPawnsHeuristic implements Heuristic {
    * @return a score based on how bad pawns are for the corresponding player
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += doubledPawns(board, true) - doubledPawns(board, false);
     score += isolatedPawns(board, true) - isolatedPawns(board, false);

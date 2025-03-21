@@ -49,7 +49,7 @@ public abstract class AbstractHeuristic implements Heuristic {
    * @return
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     for (WeightedHeuristic heuristic : heuristics) {
       score += heuristic.heuristic().evaluate(board, isWhite) * heuristic.weight();

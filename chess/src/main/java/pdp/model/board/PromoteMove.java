@@ -77,6 +77,10 @@ public class PromoteMove extends Move {
         + annotation;
   }
 
+  public String toUciString() {
+    return super.toUciString() + this.promPiece.getCharRepresentation(true);
+  }
+
   /**
    * Converts the move to a string representation of type "e7-e8=Q".
    *
