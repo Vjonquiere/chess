@@ -23,6 +23,7 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Class containing common methods for GameAI and Game. */
 public abstract class GameAbstract extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameAbstract.class.getName());
   private static ZobristHashing zobristHashing = new ZobristHashing();
@@ -34,6 +35,13 @@ public abstract class GameAbstract extends Subject {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Initializes the private fields of the Game abstract.
+   *
+   * @param gameState Current game state
+   * @param history History of the game
+   * @param stateCount Current state count
+   */
   public GameAbstract(GameState gameState, History history, HashMap<Long, Integer> stateCount) {
     this.gameState = gameState;
     this.history = history;
@@ -86,7 +94,7 @@ public abstract class GameAbstract extends Subject {
   }
 
   /**
-   * Handles classical moves
+   * Handles classical moves.
    *
    * @param gameState the game state for which we want the move to occur
    * @param move The move to be executed.
@@ -104,7 +112,7 @@ public abstract class GameAbstract extends Subject {
   }
 
   /**
-   * Handles special moves: castling, en passant, double pawn push
+   * Handles special moves: castling, en passant, double pawn push.
    *
    * @param gameState the game state for which we want the move to occur
    * @param move The move to be executed.
@@ -199,7 +207,7 @@ public abstract class GameAbstract extends Subject {
   }
 
   /**
-   * Checks if the given move is a promotion move and if is an instance of PromoteMove
+   * Checks if the given move is a promotion move and if is an instance of PromoteMove.
    *
    * @param move The move to be validated.
    * @throws InvalidPromoteFormatException If the move is a promotion move but not of PromoteMove

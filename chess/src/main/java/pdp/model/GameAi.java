@@ -14,7 +14,8 @@ import pdp.model.history.HistoryState;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
-public class GameAi extends GameAbstract {
+/** Specific implementation of game for AI players. */
+public final class GameAi extends GameAbstract {
   private static final Logger LOGGER = Logger.getLogger(GameAi.class.getName());
 
   static {
@@ -105,7 +106,7 @@ public class GameAi extends GameAbstract {
   }
 
   /**
-   * Tries to play the given move on the game for the game state in parameter
+   * Tries to play the given move on the game for the game state in parameter.
    *
    * @param gameState the game state for which we want the move to occur
    * @param move The move to be executed
@@ -160,6 +161,11 @@ public class GameAi extends GameAbstract {
     gameState.checkGameStatus();
   }
 
+  /**
+   * Retrieves a copy of the current GameAI.
+   *
+   * @return Instance of game AI
+   */
   public GameAi copy() {
     History history = new History();
     history.addMove(
@@ -169,6 +175,12 @@ public class GameAi extends GameAbstract {
         super.getGameState().getCopy(), history, new HashMap<>(super.getStateCount()));
   }
 
+  /**
+   * Creates a GameAI from a given Game.
+   *
+   * @param game game to transform into a GameAI
+   * @return a gameAI from the given game
+   */
   public static GameAi fromGame(Game game) {
     History history = new History();
     history.addMove(
