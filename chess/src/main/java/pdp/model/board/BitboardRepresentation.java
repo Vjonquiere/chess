@@ -14,7 +14,7 @@ import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public class BitboardRepresentation implements BoardRepresentation {
-  private static final int cacheSize = 10000;
+  private static final int cacheSize = 100000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
   protected final int nbCols = 8;

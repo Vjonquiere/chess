@@ -13,28 +13,35 @@ public class BitboardCache {
   }
 
   public CachedResult getOrCreate(long hash) {
-    return cache.computeIfAbsent(
-        hash,
-        k -> {
-          evictIfNecessary();
-          accessOrder.addLast(k);
-          return new CachedResult();
-        });
+    CachedResult result = cache.get(hash);
+    if (result != null) {
+      return result;
+    }
+
+    CachedResult newResult = new CachedResult();
+    CachedResult existing = cache.putIfAbsent(hash, newResult);
+    if (existing != null) {
+      return existing;
+    }
+
+    accessOrder.addLast(hash);
+    evictIfNecessary();
+
+    return newResult;
   }
 
   private void evictIfNecessary() {
-    if (cache.size() >= this.maxNb) {
-      int numToRemove = this.maxNb / 10 + 1;
-      synchronized (accessOrder) {
-        for (int i = 0; i < numToRemove; i++) {
-          Long oldestKey = accessOrder.pollFirst();
-          if (oldestKey != null) {
-            cache.remove(oldestKey);
-          } else {
-            break;
-          }
-        }
+    if (cache.size() <= maxNb) {
+      return;
+    }
+
+    int numToRemove = Math.max(1, maxNb / 10);
+    for (int i = 0; i < numToRemove; i++) {
+      Long oldestKey = accessOrder.pollFirst();
+      if (oldestKey == null) {
+        break;
       }
+      cache.remove(oldestKey);
     }
   }
 }

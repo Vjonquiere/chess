@@ -5,12 +5,12 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 
 public class CachedResult {
-  private boolean isCheckWhite;
-  private boolean isCheckMateWhite;
-  private boolean isCheckBlack;
-  private boolean isCheckMateBlack;
-  private boolean isStalemateWhite;
-  private boolean isStalemateBlack;
+  private Boolean isCheckWhite;
+  private Boolean isCheckMateWhite;
+  private Boolean isCheckBlack;
+  private Boolean isCheckMateBlack;
+  private Boolean isStalemateWhite;
+  private Boolean isStalemateBlack;
   private ConcurrentHashMap<Integer, ColoredPiece> pieces = new ConcurrentHashMap<>();
   private ConcurrentHashMap<Integer, Boolean> isAttackedByWhite = new ConcurrentHashMap<>();
   private ConcurrentHashMap<Integer, Boolean> isAttackedByBlack = new ConcurrentHashMap<>();
