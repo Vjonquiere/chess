@@ -90,12 +90,12 @@ public class SolverTest {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
-    int score1 = solver.evaluateBoard(game.getBoard(), true);
+    float score1 = solver.evaluateBoard(game.getBoard(), true);
     game.playMove(new Move(new Position(1, 0), new Position(2, 2)));
     game.playMove(new Move(new Position(1, 7), new Position(0, 5)));
     game.playMove(new Move(new Position(2, 2), new Position(1, 0)));
     game.playMove(new Move(new Position(0, 5), new Position(1, 7)));
-    int score2 = solver.evaluateBoard(game.getBoard(), true);
+    float score2 = solver.evaluateBoard(game.getBoard(), true);
 
     assertEquals(score1, score2);
   }

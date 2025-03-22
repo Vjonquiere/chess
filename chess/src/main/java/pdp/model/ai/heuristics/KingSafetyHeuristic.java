@@ -21,7 +21,7 @@ public class KingSafetyHeuristic implements Heuristic {
    * @return score according to the safety of the king
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += kingVulnerabilityScore(board, true) - kingVulnerabilityScore(board, false);
     score += kingProtectionScore(board, true) - kingProtectionScore(board, false);

@@ -24,6 +24,7 @@ import pdp.utils.Logging;
 import pdp.utils.Position;
 
 public abstract class GameAbstract extends Subject {
+  public static int THREE_FOLD_REPETITION = 3;
   private static final Logger LOGGER = Logger.getLogger(GameAbstract.class.getName());
   private ZobristHashing zobristHashing = new ZobristHashing();
   private GameState gameState;
@@ -65,7 +66,7 @@ public abstract class GameAbstract extends Subject {
       this.stateCount.put(
           simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
 
-      if (this.stateCount.get(simplifiedZobristHashing) == 3) {
+      if (this.stateCount.get(simplifiedZobristHashing) == THREE_FOLD_REPETITION) {
         DEBUG(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
         return true;
       }
