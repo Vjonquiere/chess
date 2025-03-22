@@ -40,7 +40,7 @@ public class AlphaBeta implements SearchAlgorithm {
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
     GameAi aiGame = GameAi.fromGame(game);
-    int nbThreads = 1; // Runtime.getRuntime().availableProcessors() / 2;
+    int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
     ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
     List<Future<AIMove>> futures = new CopyOnWriteArrayList<>();
 

@@ -3,7 +3,7 @@ package pdp.model.ai;
 import static pdp.utils.Logging.DEBUG;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
@@ -38,7 +38,7 @@ public class Solver {
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
   // Zobrist hashing to avoid recomputing the position evaluation for the same boards
   private final ZobristHashing zobristHashing = new ZobristHashing();
-  private HashMap<Long, Float> evaluatedBoards;
+  private ConcurrentHashMap<Long, Float> evaluatedBoards;
 
   private SearchAlgorithm algorithm;
   private Heuristic heuristic;
@@ -55,7 +55,7 @@ public class Solver {
   }
 
   public Solver() {
-    evaluatedBoards = new HashMap<>();
+    evaluatedBoards = new ConcurrentHashMap<>();
     this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
   }
@@ -110,7 +110,7 @@ public class Solver {
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     this.currentHeuristic = heuristic;
-    this.evaluatedBoards = new HashMap<>();
+    this.evaluatedBoards = new ConcurrentHashMap<>();
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
