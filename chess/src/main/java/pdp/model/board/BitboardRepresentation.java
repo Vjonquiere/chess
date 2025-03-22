@@ -22,6 +22,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
   private static BitboardCache cache;
   private static ZobristHashing zobristHashing = new ZobristHashing();
+  private long simpleHash;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -75,6 +76,8 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[9].setBit(63);
     board[10] = new Bitboard(4755801206503243776L); // BKi
     board[11] = new Bitboard(71776119061217280L);
+
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   @Deprecated
@@ -148,10 +151,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
-
-    long currentZobrist = zobristHashing.generateSimplifiedHashFromBitboards(this);
-
-    ColoredPiece piece = cache.getOrCreate(currentZobrist).getPieceAt(x, y);
+    System.out.println("Searching for piece at x " + x + " and y " + y);
+    ColoredPiece piece = cache.getOrCreate(simpleHash).getPieceAt(x, y);
+    System.out.println("Piece here : " + piece);
     if (piece != null) {
       return piece;
     }
@@ -160,12 +162,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) {
         piece = pieces.getFromKey(index);
-        cache.getOrCreate(currentZobrist).setPieceAt(x, y, piece);
+        System.out.println("Piece here 2: " + piece);
+        cache.getOrCreate(simpleHash).setPieceAt(x, y, piece);
         return piece;
       }
     }
     piece = new ColoredPiece(Piece.EMPTY, Color.EMPTY);
-    cache.getOrCreate(currentZobrist).setPieceAt(x, y, piece);
+    cache.getOrCreate(simpleHash).setPieceAt(x, y, piece);
+    System.out.println("Piece here 3: " + piece);
     return piece;
   }
 
@@ -193,6 +197,8 @@ public class BitboardRepresentation implements BoardRepresentation {
         };
     board[bitboardIndex].clearBit(fromIndex);
     board[bitboardIndex].setBit(toIndex);
+
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -237,10 +243,13 @@ public class BitboardRepresentation implements BoardRepresentation {
     // Change bits
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
+
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   public void setSquare(ColoredPiece piece, int squareIndex) {
     board[pieces.getFromValue(piece)].setBit(squareIndex);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   protected Bitboard[] getBitboards() {
@@ -255,7 +264,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   public void deletePieceAt(int x, int y) {
     ColoredPiece piece = getPieceAt(x, y);
+    System.out.println(piece);
     board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
     DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
@@ -269,6 +280,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected void addPieceAt(int x, int y, ColoredPiece piece) {
     board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
     DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
   }
 
@@ -645,15 +657,13 @@ public class BitboardRepresentation implements BoardRepresentation {
   @Override
   public boolean isAttacked(int x, int y, Color by) {
 
-    long currentZobrist = zobristHashing.generateSimplifiedHashFromBitboards(this);
-
-    Boolean isAttacked = cache.getOrCreate(currentZobrist).isAttacked(x, y, by);
+    Boolean isAttacked = cache.getOrCreate(simpleHash).isAttacked(x, y, by);
     if (isAttacked != null) {
       return isAttacked;
     }
 
     isAttacked = BitboardRules.isAttacked(x, y, by, this);
-    cache.getOrCreate(currentZobrist).setAttacked(x, y, by, isAttacked);
+    cache.getOrCreate(simpleHash).setAttacked(x, y, by, isAttacked);
     return isAttacked;
   }
 
@@ -665,7 +675,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheck(Color color) {
-    return BitboardRules.isCheck(color, this);
+
+    Boolean isCheck = cache.getOrCreate(simpleHash).isCheck(color);
+    if (isCheck != null) {
+      return isCheck;
+    }
+
+    isCheck = BitboardRules.isCheck(color, this);
+    cache.getOrCreate(simpleHash).setCheck(isCheck, color);
+
+    return isCheck;
   }
 
   /**
@@ -689,7 +708,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckMate(Color color) {
-    return BitboardRules.isCheckMate(color, this);
+
+    Boolean isCheckMate = cache.getOrCreate(simpleHash).isCheckMate(color);
+    if (isCheckMate != null) {
+      return isCheckMate;
+    }
+
+    isCheckMate = BitboardRules.isCheckMate(color, this);
+
+    cache.getOrCreate(simpleHash).setCheckMate(isCheckMate, color);
+    return isCheckMate;
   }
 
   /**
@@ -702,7 +730,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isStaleMate(Color color, Color colorTurnToPlay) {
-    return BitboardRules.isStaleMate(color, colorTurnToPlay, this);
+
+    Boolean isStaleMate = cache.getOrCreate(simpleHash).isStaleMate(color);
+    if (isStaleMate != null) {
+      return isStaleMate;
+    }
+
+    isStaleMate = BitboardRules.isStaleMate(color, colorTurnToPlay, this);
+
+    cache.getOrCreate(simpleHash).setStaleMate(isStaleMate, color);
+    return isStaleMate;
   }
 
   /**

@@ -9,6 +9,8 @@ public class CachedResult {
   private boolean isCheckMateWhite;
   private boolean isCheckBlack;
   private boolean isCheckMateBlack;
+  private boolean isStalemateWhite;
+  private boolean isStalemateBlack;
   private ConcurrentHashMap<Integer, ColoredPiece> pieces = new ConcurrentHashMap<>();
   private ConcurrentHashMap<Integer, Boolean> isAttackedByWhite = new ConcurrentHashMap<>();
   private ConcurrentHashMap<Integer, Boolean> isAttackedByBlack = new ConcurrentHashMap<>();
@@ -27,6 +29,18 @@ public class CachedResult {
 
   public Boolean isCheckMate(Color color) {
     return color == Color.WHITE ? isCheckMateWhite : isCheckMateBlack;
+  }
+
+  public Boolean isStaleMate(Color color) {
+    return color == Color.WHITE ? isStalemateWhite : isStalemateBlack;
+  }
+
+  public void setStaleMate(boolean staleMate, Color color) {
+    if (color == Color.WHITE) {
+      isStalemateWhite = staleMate;
+    } else {
+      isStalemateBlack = staleMate;
+    }
   }
 
   public void setCheckMate(boolean checkMate, Color color) {
