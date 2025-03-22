@@ -25,7 +25,6 @@ public class BitboardCache {
   private void evictIfNecessary() {
     if (cache.size() >= this.maxNb) {
       int numToRemove = this.maxNb / 10 + 1;
-      System.out.println("Evicting " + numToRemove + " entries");
       synchronized (accessOrder) {
         for (int i = 0; i < numToRemove; i++) {
           Long oldestKey = accessOrder.pollFirst();

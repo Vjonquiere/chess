@@ -139,6 +139,8 @@ public class BitboardRepresentation implements BoardRepresentation {
       copy.board[i] = this.board[i].getCopy();
     }
 
+    copy.simpleHash = this.simpleHash;
+
     return copy;
   }
 
@@ -151,9 +153,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
-    System.out.println("Searching for piece at x " + x + " and y " + y);
     ColoredPiece piece = cache.getOrCreate(simpleHash).getPieceAt(x, y);
-    System.out.println("Piece here : " + piece);
+
     if (piece != null) {
       return piece;
     }
@@ -162,14 +163,12 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) {
         piece = pieces.getFromKey(index);
-        System.out.println("Piece here 2: " + piece);
         cache.getOrCreate(simpleHash).setPieceAt(x, y, piece);
         return piece;
       }
     }
     piece = new ColoredPiece(Piece.EMPTY, Color.EMPTY);
     cache.getOrCreate(simpleHash).setPieceAt(x, y, piece);
-    System.out.println("Piece here 3: " + piece);
     return piece;
   }
 
@@ -264,15 +263,14 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   public void deletePieceAt(int x, int y) {
     ColoredPiece piece = getPieceAt(x, y);
-    System.out.println(piece);
     board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
     DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
   /**
-   * Add a new piece in the bitboard corresponding to the given piece at the coordinates x,y. ⚠️
-   * This method should be only used for undo/redo moves
+   * Add a new piece in the bitboard corresponding to the given piece at the coordinates x,y. This
+   * method should be only used for undo/redo moves
    *
    * @param x The board column
    * @param y The board row
@@ -656,7 +654,6 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isAttacked(int x, int y, Color by) {
-
     Boolean isAttacked = cache.getOrCreate(simpleHash).isAttacked(x, y, by);
     if (isAttacked != null) {
       return isAttacked;
@@ -675,7 +672,6 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheck(Color color) {
-
     Boolean isCheck = cache.getOrCreate(simpleHash).isCheck(color);
     if (isCheck != null) {
       return isCheck;
@@ -708,7 +704,6 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckMate(Color color) {
-
     Boolean isCheckMate = cache.getOrCreate(simpleHash).isCheckMate(color);
     if (isCheckMate != null) {
       return isCheckMate;
@@ -730,7 +725,6 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isStaleMate(Color color, Color colorTurnToPlay) {
-
     Boolean isStaleMate = cache.getOrCreate(simpleHash).isStaleMate(color);
     if (isStaleMate != null) {
       return isStaleMate;
