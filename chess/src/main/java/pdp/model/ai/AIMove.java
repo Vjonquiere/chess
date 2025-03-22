@@ -9,4 +9,4 @@ import pdp.model.board.Move;
  * @param move the move considered in the game
  * @param score evaluation obtained after playing this move in the game
  */
-public record AIMove(Move move, int score) {}
+public record AIMove(Move move, float score) {}
