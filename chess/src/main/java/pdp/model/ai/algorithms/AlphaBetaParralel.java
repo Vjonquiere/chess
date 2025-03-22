@@ -3,6 +3,10 @@ package pdp.model.ai.algorithms;
 import static pdp.utils.Logging.DEBUG;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
@@ -13,7 +17,7 @@ import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
-public class AlphaBeta implements SearchAlgorithm {
+public class AlphaBetaParralel implements SearchAlgorithm {
   Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
 
@@ -36,9 +40,59 @@ public class AlphaBeta implements SearchAlgorithm {
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
     GameAi aiGame = GameAi.fromGame(game);
+    int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
+    ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+    List<Future<AIMove>> futures = new CopyOnWriteArrayList<>();
 
-    AIMove bestMove = alphaBeta(aiGame, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
+    List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
+    Board board = aiGame.getBoard();
+    moves.addAll(
+        aiGame
+            .getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                player,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isBlackShortCastle()));
 
+    for (Move move : moves) {
+      futures.add(
+          executor.submit(
+              () -> {
+                GameAi gameCopy = aiGame.copy();
+                try {
+                  Move promoteMove = AlgorithmHelpers.promoteMove(move);
+                  gameCopy.playMove(promoteMove);
+                  AIMove result =
+                      alphaBeta(
+                          gameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
+                  return new AIMove(promoteMove, result.score());
+                } catch (IllegalMoveException e) {
+                  return new AIMove(null, -Float.MAX_VALUE);
+                }
+              }));
+    }
+
+    AIMove bestMove = new AIMove(null, -Float.MAX_VALUE);
+
+    try {
+      for (Future<AIMove> future : futures) {
+        AIMove candidateMove = future.get();
+        if (candidateMove.move() != null) {
+          if (candidateMove.score() > bestMove.score()) {
+            bestMove = candidateMove;
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    executor.shutdown();
     DEBUG(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
@@ -71,12 +125,13 @@ public class AlphaBeta implements SearchAlgorithm {
       float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AIMove(null, evaluation);
     }
+
     AIMove bestMove =
         new AIMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     Board board = game.getBoard();
     moves.addAll(
-        game.getBoard()
+        board
             .getBoardRep()
             .getSpecialMoves(
                 currentPlayer,
@@ -86,27 +141,30 @@ public class AlphaBeta implements SearchAlgorithm {
                 board.isWhiteShortCastle(),
                 board.isBlackLongCastle(),
                 board.isBlackShortCastle()));
+
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
       }
       try {
-
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
+
         game.previousState();
+
         if (currentPlayer == originalPlayer) { // Maximizing
-          if (currMove.score() > bestMove.score()) {
+          if (currMove.score() > bestMove.score() || bestMove.move() == null) {
             bestMove = new AIMove(move, currMove.score());
           }
           alpha = Math.max(alpha, bestMove.score());
         } else { // Minimizing
-          if (currMove.score() < bestMove.score()) {
+          if (currMove.score() < bestMove.score() || bestMove.move() == null) {
             bestMove = new AIMove(move, currMove.score());
           }
           beta = Math.min(beta, bestMove.score());
         }
+
         if (alpha >= beta) {
           break;
         }
@@ -114,6 +172,7 @@ public class AlphaBeta implements SearchAlgorithm {
         // Skipping illegal move
       }
     }
+
     return bestMove;
   }
 }

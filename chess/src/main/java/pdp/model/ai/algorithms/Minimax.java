@@ -52,6 +52,17 @@ public class Minimax implements SearchAlgorithm {
     boolean isMinimizing = (currentPlayer != originalPlayer);
     AIMove bestMove = new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    moves.addAll(
+        game.getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                currentPlayer,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isBlackShortCastle()));
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;

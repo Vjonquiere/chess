@@ -8,6 +8,7 @@ import pdp.model.GameAi;
 import pdp.model.GameState;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
 
@@ -118,11 +119,26 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
       return node;
     }
 
+    Board board = node.getBoard();
+
     List<Move> possibleMoves =
         node.getGameState()
             .getBoard()
             .getBoardRep()
             .getAllAvailableMoves(node.getGameState().isWhiteTurn());
+
+    possibleMoves.addAll(
+        board
+            .getBoardRep()
+            .getSpecialMoves(
+                board.getPlayer(),
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isBlackShortCastle()));
+
     for (Move move : possibleMoves) {
       if (solver.isSearchStopped()) {
         return node;
@@ -173,12 +189,20 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
         }
         return parentNode.getGameState().isWhiteTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
       }
+      Board board = simulationState.getBoard();
       List<Move> availableMoves =
-          simulationState
-              .getBoard()
+          board.getBoardRep().getAllAvailableMoves(simulationState.isWhiteTurn());
+      availableMoves.addAll(
+          board
               .getBoardRep()
-              .getAllAvailableMoves(simulationState.isWhiteTurn());
-
+              .getSpecialMoves(
+                  currentPlayer,
+                  board.getEnPassantPos(),
+                  board.isLastMoveDoublePush(),
+                  board.isWhiteLongCastle(),
+                  board.isWhiteShortCastle(),
+                  board.isBlackLongCastle(),
+                  board.isBlackShortCastle()));
       if (availableMoves.isEmpty()) {
         break;
       }
