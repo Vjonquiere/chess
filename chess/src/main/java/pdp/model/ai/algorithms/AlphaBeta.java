@@ -69,33 +69,22 @@ public class AlphaBeta implements SearchAlgorithm {
                   gameCopy.playMove(promoteMove);
                   AIMove result =
                       alphaBeta(
-                          gameCopy,
-                          depth - 1,
-                          !player,
-                          -Float.MAX_VALUE,
-                          Float.MAX_VALUE,
-                          player);
+                          gameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
                   return new AIMove(promoteMove, result.score());
                 } catch (IllegalMoveException e) {
-                  return new AIMove(null, player ? -Float.MAX_VALUE : Float.MAX_VALUE);
+                  return new AIMove(null, -Float.MAX_VALUE);
                 }
               }));
     }
 
-    AIMove bestMove = new AIMove(null, player ? -Float.MAX_VALUE : Float.MAX_VALUE);
+    AIMove bestMove = new AIMove(null, -Float.MAX_VALUE);
 
     try {
       for (Future<AIMove> future : futures) {
         AIMove candidateMove = future.get();
         if (candidateMove.move() != null) {
-          if (player) { // Maximizing player
-            if (candidateMove.score() > bestMove.score() || bestMove.move() == null) {
-              bestMove = candidateMove;
-            }
-          } else { // Minimizing player
-            if (candidateMove.score() < bestMove.score() || bestMove.move() == null) {
-              bestMove = candidateMove;
-            }
+          if (candidateMove.score() > bestMove.score()) {
+            bestMove = candidateMove;
           }
         }
       }
@@ -161,6 +150,7 @@ public class AlphaBeta implements SearchAlgorithm {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
+
         game.previousState();
 
         if (currentPlayer == originalPlayer) { // Maximizing
@@ -182,6 +172,7 @@ public class AlphaBeta implements SearchAlgorithm {
         // Skipping illegal move
       }
     }
+
     return bestMove;
   }
 }
