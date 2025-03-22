@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
-import pdp.model.ai.algorithms.AlphaBetaParralel;
+import pdp.model.ai.algorithms.AlphaBetaParallel;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.algorithms.SearchAlgorithm;
@@ -70,7 +70,7 @@ public class Solver {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
-      case ALPHA_BETA_PARALLEL -> this.algorithm = new AlphaBetaParralel(this);
+      case ALPHA_BETA_PARALLEL -> this.algorithm = new AlphaBetaParallel(this);
       case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }

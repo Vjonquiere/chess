@@ -17,7 +17,7 @@ import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
-public class AlphaBetaParralel implements SearchAlgorithm {
+public class AlphaBetaParallel implements SearchAlgorithm {
   Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
 
@@ -25,7 +25,7 @@ public class AlphaBetaParralel implements SearchAlgorithm {
     Logging.configureLogging(LOGGER);
   }
 
-  public AlphaBeta(Solver solver) {
+  public AlphaBetaParallel(Solver solver) {
     this.solver = solver;
   }
 

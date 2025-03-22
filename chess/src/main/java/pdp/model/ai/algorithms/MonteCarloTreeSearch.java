@@ -119,7 +119,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
       return node;
     }
 
-    Board board = node.getBoard();
+    Board board = node.getGameState().getBoard();
 
     List<Move> possibleMoves =
         node.getGameState()
@@ -196,7 +196,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
           board
               .getBoardRep()
               .getSpecialMoves(
-                  currentPlayer,
+                  board.getPlayer(),
                   board.getEnPassantPos(),
                   board.isLastMoveDoublePush(),
                   board.isWhiteLongCastle(),
