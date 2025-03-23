@@ -22,6 +22,8 @@ public class Board extends GridPane {
   private final Map<Position, Square> pieces = new HashMap<>();
   private List<Position> reachableSquares;
   private final List<Position> hintSquares = new LinkedList<>();
+  private final List<Position> moveSquares = new LinkedList<>();
+  private Position checkSquare;
   private Stage stage;
 
   public Board(Game game, Stage stage) {
@@ -64,6 +66,8 @@ public class Board extends GridPane {
   /** Update the pieces sprites of all squares */
   public void updateBoard() {
     cleanHintSquares();
+    clearCheckSquare();
+    clearLastMoveSquares();
     board = Game.getInstance().getBoard().getBoardRep();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
@@ -71,6 +75,17 @@ public class Board extends GridPane {
         pieces.get(new Position(x, boardRows - 1 - y)).updatePiece(piece);
       }
     }
+    Game g = Game.getInstance();
+    if (board.isCheck(g.getGameState().isWhiteTurn() ? Color.WHITE : Color.BLACK)) {
+      checkSquare = board.getKing(g.getGameState().isWhiteTurn()).get(0);
+      setCheckSquare(checkSquare);
+    }
+    g.getHistory()
+        .getCurrentMove()
+        .ifPresent(
+            (move) -> {
+              setLastMoveSquares(move.getState().getMove().source, move.getState().getMove().dest);
+            });
   }
 
   /**
@@ -203,6 +218,34 @@ public class Board extends GridPane {
     for (Position sq : hintSquares) {
       pieces.get(sq).setHint(false);
       hintSquares.remove(sq);
+    }
+  }
+
+  private void setCheckSquare(Position pos) {
+    checkSquare = pos;
+    pieces.get(checkSquare).setCheck(true);
+  }
+
+  private void clearCheckSquare() {
+    if (checkSquare == null) return;
+    pieces.get(checkSquare).setCheck(false);
+    checkSquare = null;
+  }
+
+  public void setLastMoveSquares(Position from, Position to) {
+    moveSquares.add(from);
+    moveSquares.add(to);
+    pieces.get(from).setLastMove(true);
+    pieces.get(to).setLastMove(true);
+  }
+
+  private void clearLastMoveSquares() {
+    if (moveSquares.isEmpty()) return;
+    while (!moveSquares.isEmpty()) {
+      pieces.get(moveSquares.get(0)).setLastMove(false);
+      moveSquares.remove(moveSquares.get(0));
+      // System.out.println(sq);
+
     }
   }
 }
