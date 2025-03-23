@@ -124,7 +124,7 @@ public class Square extends StackPane {
     GraphicsContext gc = hintSq.getGraphicsContext2D();
     gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
     if (isLastMove) {
-      gc.setFill(Color.web("#339966"));
+      gc.setFill(Color.rgb(51, 153, 102, 0.5));
       gc.fillRect(0, 0, 100, 100);
     }
   }

@@ -233,6 +233,7 @@ public class Board extends GridPane {
   }
 
   public void setLastMoveSquares(Position from, Position to) {
+    if (from.getY() == -1 || from.getX() == -1 || to.getY() == -1 || to.getX() == -1) return;
     moveSquares.add(from);
     moveSquares.add(to);
     pieces.get(from).setLastMove(true);
