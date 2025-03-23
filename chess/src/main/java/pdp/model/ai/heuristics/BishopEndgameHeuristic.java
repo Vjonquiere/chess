@@ -6,6 +6,7 @@ import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
+/** Heuristic based on the performance of bishops during the endgame phase. */
 public class BishopEndgameHeuristic implements Heuristic {
 
   /**
@@ -32,7 +33,7 @@ public class BishopEndgameHeuristic implements Heuristic {
   }
 
   /**
-   * Increase score for bishops that have more activity
+   * Increase score for bishops that have more activity.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
@@ -76,7 +77,7 @@ public class BishopEndgameHeuristic implements Heuristic {
   }
 
   /**
-   * Increases score having a bishop on the same color squares as the bishop's opponent
+   * Increases score having a bishop on the same color squares as the bishop's opponent.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
@@ -104,7 +105,7 @@ public class BishopEndgameHeuristic implements Heuristic {
   }
 
   /**
-   * Increase score for bishops that are centralized since they control more of the board
+   * Increase score for bishops that are centralized since they control more of the board.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
@@ -124,7 +125,7 @@ public class BishopEndgameHeuristic implements Heuristic {
   }
 
   /**
-   * Penalizes bishops that are stuck behind their own pawns (bad bishops)
+   * Penalizes bishops that are stuck behind their own pawns (bad bishops).
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise

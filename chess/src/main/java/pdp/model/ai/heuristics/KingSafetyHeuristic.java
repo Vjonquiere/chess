@@ -9,6 +9,10 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
+/**
+ * Heuristic based on the safety of the king (not in center, pieces around to protect him, checks
+ * available).
+ */
 public class KingSafetyHeuristic implements Heuristic {
 
   /**
@@ -30,10 +34,10 @@ public class KingSafetyHeuristic implements Heuristic {
   }
 
   /**
-   * Penalizes (or not) the king for being in the center (as it makes him more vulnerable)
+   * Penalizes (or not) the king for being in the center (as it makes him more vulnerable).
    *
    * @param board the board of the game
-   * @param isWhite true if white, fahislse otherwise
+   * @param isWhite true if white, false otherwise
    * @return a penalty score (negative) if the king is in the center, 0 otherwise
    */
   private int kingVulnerabilityScore(Board board, boolean isWhite) {
@@ -62,7 +66,7 @@ public class KingSafetyHeuristic implements Heuristic {
   }
 
   /**
-   * Assesses how well the king is protected by friendly pieces
+   * Assesses how well the king is protected by friendly pieces.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
@@ -102,7 +106,7 @@ public class KingSafetyHeuristic implements Heuristic {
   }
 
   /**
-   * Returns a positive or negative score according to the number of possible checks from the enemy
+   * Returns a positive or negative score according to the number of possible checks from the enemy.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise

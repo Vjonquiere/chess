@@ -3,6 +3,7 @@ package pdp.model.ai.heuristics;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
+/** Heuristic based on the number of pieces still on the board. */
 public class MaterialHeuristic implements Heuristic {
 
   /**

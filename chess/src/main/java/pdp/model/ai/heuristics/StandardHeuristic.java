@@ -2,6 +2,7 @@ package pdp.model.ai.heuristics;
 
 import java.util.ArrayList;
 
+/** Composite heuristic used in start and middle game. */
 public class StandardHeuristic extends AbstractHeuristic {
   /**
    * StandardHeuristic aggregates multiple heuristics to evaluate the board state during the start
@@ -18,6 +19,11 @@ public class StandardHeuristic extends AbstractHeuristic {
     // super.addHeuristic(new SpaceControlHeuristic());
   }
 
+  /**
+   * Composite heuristic with weights parametrized for the weight optimization.
+   *
+   * @param weight list of weights to add to the heuristics
+   */
   public StandardHeuristic(ArrayList<Float> weight) {
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), weight.get(0)));
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), weight.get(1)));

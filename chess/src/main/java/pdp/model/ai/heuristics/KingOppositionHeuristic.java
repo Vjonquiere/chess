@@ -4,6 +4,10 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/**
+ * Heuristic based on the balance of kings position. If they are in opposition , the endgame tends
+ * to lead to a draw.
+ */
 public class KingOppositionHeuristic implements Heuristic {
 
   /**

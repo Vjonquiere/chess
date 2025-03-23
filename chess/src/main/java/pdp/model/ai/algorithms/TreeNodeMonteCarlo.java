@@ -11,13 +11,20 @@ import pdp.model.board.Move;
  * the number of visits for this node.
  */
 public class TreeNodeMonteCarlo {
-  private GameState state;
-  private TreeNodeMonteCarlo parent;
+  private final GameState state;
+  private final TreeNodeMonteCarlo parent;
   private List<TreeNodeMonteCarlo> children;
   private int wins;
   private int nbVisits;
-  private Move startingMove;
+  private final Move startingMove;
 
+  /**
+   * Creates a node of the Monte Carlo Tree Search.
+   *
+   * @param state GameState of this node.
+   * @param parent parent node in the tree
+   * @param move move done from the parent to arrive to this node
+   */
   public TreeNodeMonteCarlo(GameState state, TreeNodeMonteCarlo parent, Move move) {
     this.state = state;
     this.parent = parent;
@@ -28,6 +35,8 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
+   * Retrieves the number of won games observed.
+   *
    * @return the number of wins that were observed
    */
   public int getNbWins() {
@@ -35,6 +44,8 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
+   * Retrieves the move leading to other game states.
+   *
    * @return the starting move that leads to other game states
    */
   public Move getStartingMove() {
@@ -42,7 +53,7 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * Increments the number of registered wins by {nbNewWins}
+   * Increments the number of registered wins by {nbNewWins}.
    *
    * @param nbNewWins the number of new wins
    */
@@ -51,25 +62,31 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * @return the number of times this node was visited
+   * Retrieves the number of times the node was visited.
+   *
+   * @return the number of times this node was visited.
    */
   public int getNbVisits() {
     return this.nbVisits;
   }
 
-  /** Increments the number of visits by 1 */
+  /** Increments the number of visits by 1. */
   public void incrementNbVisits() {
     this.nbVisits++;
   }
 
   /**
-   * @return the list of children nodes for the current node
+   * Retrieves the list of children nodes.
+   *
+   * @return the list of children nodes for the current node.
    */
   public List<TreeNodeMonteCarlo> getChildrenNodes() {
     return this.children;
   }
 
   /**
+   * Retrieves the parent node of this node.
+   *
    * @return the parent node of the current node
    */
   public TreeNodeMonteCarlo getParentNode() {
@@ -77,14 +94,16 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * @return the GameState representing the current node
+   * Retrieves the game state of the current node.
+   *
+   * @return the GameState representing the current node.
    */
   public GameState getGameState() {
     return this.state;
   }
 
   /**
-   * Calculate UCT (Upper Confidence Bound for Trees)
+   * Calculate UCT (Upper Confidence Bound for Trees).
    *
    * <p>UCT = w(i)/n(i) + c * sqrt(ln(t)/n(i))
    *
@@ -104,7 +123,7 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * Adds a child node to the current node (expand tree)
+   * Adds a child node to the current node (expand tree).
    *
    * @param child the child node wer want to add to the tree
    */
@@ -113,7 +132,7 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * Return the best child based on the UCT formula
+   * Return the best child based on the UCT formula.
    *
    * @param exploration the exploration parameter (c value in formula)
    * @return the best child node in the tree (current node is root)
@@ -136,7 +155,7 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * Tells if a node is fully explored
+   * Tells if a node is fully explored.
    *
    * @return true if a node is fully explored, false otherwise
    */

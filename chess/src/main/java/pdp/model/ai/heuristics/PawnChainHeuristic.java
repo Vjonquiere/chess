@@ -5,6 +5,7 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/** Heuristic based on the connection of pawns. The more connected the pawns are, the better. */
 public class PawnChainHeuristic implements Heuristic {
 
   /**

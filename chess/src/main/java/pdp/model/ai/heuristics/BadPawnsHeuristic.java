@@ -9,6 +9,10 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/**
+ * Heuristic based on the weakness of pawn structure. Takes into account the backward pawns, the
+ * isolated pawns and doubled pawns.
+ */
 public class BadPawnsHeuristic implements Heuristic {
 
   private static final int penaltyForBackwardsPawn = 4;
@@ -30,7 +34,7 @@ public class BadPawnsHeuristic implements Heuristic {
   }
 
   /**
-   * Counts the doubled pawns ( 2 or more pawns on the same column)
+   * Counts the doubled pawns ( 2 or more pawns on the same column).
    *
    * @param board Current board
    * @param isWhite true if the player is White, false if he is black

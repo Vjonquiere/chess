@@ -19,7 +19,7 @@ import pdp.utils.Logging;
 
 /** Algorithm of artificial intelligence Alpha beta pruning. */
 public class AlphaBeta implements SearchAlgorithm {
-  Solver solver;
+  private final Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
 
   static {

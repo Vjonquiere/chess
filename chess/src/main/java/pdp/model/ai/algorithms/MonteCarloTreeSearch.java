@@ -11,17 +11,36 @@ import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
 
+/** Algorithm of artificial intelligence Monte Carlo Tree search. */
 public class MonteCarloTreeSearch implements SearchAlgorithm {
-  Solver solver;
-  private static final double EXPLORATION_FACTOR = Math.sqrt(2); // c value
-  private final Random random = new Random(); // Randomizer for the moves
-  private final int simulationLimit; // Number of times to execute MonteCarloTreeSearch
+  private final Solver solver;
 
+  /** c value. */
+  private static final double EXPLORATION_FACTOR = Math.sqrt(2);
+
+  /** Randomizer for the moves. */
+  private final Random random = new Random();
+
+  /** Number of times to execute MonteCarloTreeSearch. */
+  private final int simulationLimit;
+
+  /**
+   * Creates an instance of the MonteCarloTreeSearch algorithm with a given solver and a set number
+   * of simulations (number of times to execute the MTCS).
+   *
+   * @param solver Solver to save into the field.
+   * @param nbIterations max number of simulations
+   */
   public MonteCarloTreeSearch(Solver solver, int nbIterations) {
     this.solver = solver;
     simulationLimit = nbIterations;
   }
 
+  /**
+   * Creates an instance of the MonteCarloTreeSearch algorithm with a given solver.
+   *
+   * @param solver Solver to save into the field.
+   */
   public MonteCarloTreeSearch(Solver solver) {
     this.solver = solver;
     simulationLimit = 100; // 100 by default

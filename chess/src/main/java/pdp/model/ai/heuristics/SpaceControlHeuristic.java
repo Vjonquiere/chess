@@ -5,11 +5,15 @@ import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
+/**
+ * Heuristic based on the amount of control of the board the players have. More control in the
+ * center is important.
+ */
 public class SpaceControlHeuristic implements Heuristic {
 
   /**
    * Gives a score based on how much control over the entire board the players have. Center is
-   * generally more important so it has more impact on the score
+   * generally more important, so it has more impact on the score.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise

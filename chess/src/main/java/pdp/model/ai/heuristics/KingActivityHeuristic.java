@@ -6,10 +6,11 @@ import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
+/** Heuristic based on the activity of the king. */
 public class KingActivityHeuristic implements Heuristic {
 
   /**
-   * Checks the activity of the king and returns a score accordingly King is close to the center ?
+   * Checks the activity of the king and returns a score accordingly. King is close to the center?
    * King has a lot of possible moves ?
    *
    * @param board board of the game
@@ -26,7 +27,7 @@ public class KingActivityHeuristic implements Heuristic {
   }
 
   /**
-   * Checks the location of the king and returns a score accordingly
+   * Checks the location of the king and returns a score accordingly.
    *
    * @param board board of the game
    * @param isWhite true if this is for white, false otherwise
@@ -68,7 +69,7 @@ public class KingActivityHeuristic implements Heuristic {
   }
 
   /**
-   * Checks the activity of the king and returns a score accordingly
+   * Checks the activity of the king and returns a score accordingly.
    *
    * @param board board of the game
    * @param isWhite true if this is for white, false otherwise
