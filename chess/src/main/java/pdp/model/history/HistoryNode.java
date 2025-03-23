@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
 
+/** Data structure used in History to represent a node. */
 public class HistoryNode {
   private static final Logger LOGGER = Logger.getLogger(HistoryNode.class.getName());
   private HistoryState state;

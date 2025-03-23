@@ -149,7 +149,7 @@ public class UciView implements View {
           Game.getInstance().getGameState().getMoveTimer(),
           Game.getInstance().getOptions());
       for (int i = 2; i < args2.length; i++) {
-        Game.getInstance().playMove(Move.fromUCIString(args2[i]));
+        Game.getInstance().playMove(Move.fromUciString(args2[i]));
       }
 
     } else if (args2.length == 1 && args2[0].equals("startpos")) {

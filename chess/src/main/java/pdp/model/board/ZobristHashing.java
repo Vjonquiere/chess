@@ -3,6 +3,7 @@ package pdp.model.board;
 import java.util.Random;
 import pdp.model.piece.ColoredPiece;
 
+/** Implementation of zobrist hashing to store hashes from boards. */
 public class ZobristHashing {
 
   private static final int PIECES_TYPES = 12;

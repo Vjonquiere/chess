@@ -2,6 +2,7 @@ package pdp.model.board;
 
 import java.util.ArrayList;
 
+/** Bitboard structure with all needed treatments. */
 public class Bitboard {
   long bitboard;
 

@@ -7,6 +7,7 @@ import java.util.Stack;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
 
+/** Data structure to represent a history. */
 public class History {
   private static final Logger LOGGER = Logger.getLogger(History.class.getName());
   private HistoryNode currentMove;

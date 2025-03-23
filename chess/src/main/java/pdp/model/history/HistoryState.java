@@ -5,6 +5,7 @@ import pdp.model.GameState;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
+/** Data structure use in History node to represent a game state. */
 public class HistoryState {
   private static final Logger LOGGER = Logger.getLogger(HistoryState.class.getName());
   private final GameState gameState;

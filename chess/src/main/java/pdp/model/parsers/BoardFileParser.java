@@ -19,6 +19,7 @@ import pdp.model.board.BitboardRepresentation;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
+/** Parser that produce board objects from given file format (support FEN header). */
 public class BoardFileParser {
   private static final Logger LOGGER = Logger.getLogger(BoardFileParser.class.getName());
 
@@ -27,7 +28,7 @@ public class BoardFileParser {
   }
 
   /**
-   * Get the string contained in the given file
+   * Get the string contained in the given file.
    *
    * @param path The path to the file
    * @return The content of the given file has a String

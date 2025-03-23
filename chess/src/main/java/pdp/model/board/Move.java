@@ -11,6 +11,7 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Move representation for all move types. */
 public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
   public Position source;
@@ -75,6 +76,17 @@ public class Move {
     this.takeDest = dest;
   }
 
+  /**
+   * Construct a new move from a specified source, dest with full piece take support.
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   * @param piece The being moved.
+   * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
+   *     otherwise).
+   * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
+   * @param takeDest The position of the taken piece.
+   */
   public Move(
       Position source,
       Position dest,
@@ -125,7 +137,7 @@ public class Move {
   }
 
   /**
-   * Parses a string representation of a move and converts it into a {@code Move} object
+   * Parses a string representation of a move and converts it into a {@code Move} object.
    *
    * @param stringMove The move in string format ("e2-e4")
    * @return A {@code Move} object representing the parsed move
@@ -153,7 +165,7 @@ public class Move {
 
   /**
    * Parses a string representation of a move and converts it into a {@code Move} object Warning:
-   * Can't handle castling as o-o-o or o-o
+   * Can't handle castling as o-o-o or o-o.
    *
    * @param stringMove The move in string format ("e2-e4")
    * @return A {@code Move} object representing the parsed move
@@ -182,13 +194,13 @@ public class Move {
   }
 
   /**
-   * Parses a string representation of a move and converts it into a {@code Move} object
+   * Parses a string representation of a move and converts it into a {@code Move} object.
    *
    * @param stringMove The move in string format ("e2-e4")
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromUCIString(String stringMove) throws MoveParsingException {
+  public static Move fromUciString(String stringMove) throws MoveParsingException {
     if (stringMove.length() == 5) {
       return new PromoteMove(
           stringToPosition(stringMove.substring(0, 2)),
@@ -203,7 +215,7 @@ public class Move {
   }
 
   /**
-   * Converts a string representation of a chess position into a {@code Position} object
+   * Converts a string representation of a chess position into a {@code Position} object.
    *
    * @param move The position in string format ("e4")
    * @return A {@code Position} object representing the parsed position
@@ -231,7 +243,7 @@ public class Move {
   /**
    * Converts a string representation of a chess piece to the corresponding Piece enum. The input
    * string should be a single character representing the piece (case-insensitive): - "p" for Pawn -
-   * "n" for Knight - "b" for Bishop - "r" for Rook - "q" for Queen - "k" for King
+   * "n" for Knight - "b" for Bishop - "r" for Rook - "q" for Queen - "k" for King.
    *
    * @param pieceStr A string representing a chess piece (e.g., "p", "n", "b", "r", "q", "k").
    * @return The corresponding Piece enum value.
@@ -257,7 +269,7 @@ public class Move {
   }
 
   /**
-   * Converts a {@code Position} object into its string representation in chess notation
+   * Converts a {@code Position} object into its string representation in chess notation.
    *
    * @param position The {@code Position} object to convert
    * @return A string representing the position ("e4")
@@ -270,7 +282,7 @@ public class Move {
   }
 
   /**
-   * Checks if the current move is a classical move by comparing it with a list of available moves
+   * Checks if the current move is a classical move by comparing it with a list of available moves.
    *
    * @param availableMoves The list of legal moves to check
    * @return The matching move if found
@@ -399,6 +411,11 @@ public class Move {
     return piece + sourceStr + separator + destinationStr + annotation;
   }
 
+  /**
+   * Convert a move to the UCI format.
+   *
+   * @return The string representing the move at UCI format
+   */
   public String toUciString() {
     String sourceStr = positionToString(this.source);
     String destinationStr = positionToString(this.dest);

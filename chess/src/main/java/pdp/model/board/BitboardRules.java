@@ -532,22 +532,17 @@ public final class BitboardRules {
   public static List<List<Position>> retrieveInitialWhitePiecesPos() {
     List<List<Position>> whiteInitPos = new ArrayList<>();
 
-    List<Position> kingPos = List.of(new Position(4, 0));
-    List<Position> queenPos = List.of(new Position(3, 0));
-    List<Position> rooksPos = List.of(new Position(0, 0), new Position(7, 0));
-    List<Position> bishopsPos = List.of(new Position(2, 0), new Position(5, 0));
-    List<Position> knightsPos = List.of(new Position(1, 0), new Position(6, 0));
+    whiteInitPos.add(List.of(new Position(4, 0)));
+    whiteInitPos.add(List.of(new Position(3, 0)));
+    whiteInitPos.add(List.of(new Position(0, 0), new Position(7, 0)));
+    whiteInitPos.add(List.of(new Position(2, 0), new Position(5, 0)));
+    whiteInitPos.add(List.of(new Position(1, 0), new Position(6, 0)));
     List<Position> pawnsPos = new ArrayList<>();
 
     for (int i = 0; i < 8; i++) {
       pawnsPos.add(new Position(i, 1));
     }
 
-    whiteInitPos.add(kingPos);
-    whiteInitPos.add(queenPos);
-    whiteInitPos.add(rooksPos);
-    whiteInitPos.add(bishopsPos);
-    whiteInitPos.add(knightsPos);
     whiteInitPos.add(pawnsPos);
 
     return whiteInitPos;
@@ -561,22 +556,15 @@ public final class BitboardRules {
   public static List<List<Position>> retrieveInitialBlackPiecesPos() {
     List<List<Position>> blackInitPos = new ArrayList<>();
 
-    List<Position> kingPos = List.of(new Position(4, 7));
-    List<Position> queenPos = List.of(new Position(3, 7));
-    List<Position> rooksPos = List.of(new Position(0, 7), new Position(7, 7));
-    List<Position> bishopsPos = List.of(new Position(2, 7), new Position(5, 7));
-    List<Position> knightsPos = List.of(new Position(1, 7), new Position(6, 7));
+    blackInitPos.add(List.of(new Position(4, 7)));
+    blackInitPos.add(List.of(new Position(3, 7)));
+    blackInitPos.add(List.of(new Position(0, 7), new Position(7, 7)));
+    blackInitPos.add(List.of(new Position(2, 7), new Position(5, 7)));
+    blackInitPos.add(List.of(new Position(1, 7), new Position(6, 7)));
     List<Position> pawnsPos = new ArrayList<>();
-
     for (int i = 0; i < 8; i++) {
       pawnsPos.add(new Position(i, 6));
     }
-
-    blackInitPos.add(kingPos);
-    blackInitPos.add(queenPos);
-    blackInitPos.add(rooksPos);
-    blackInitPos.add(bishopsPos);
-    blackInitPos.add(knightsPos);
     blackInitPos.add(pawnsPos);
 
     return blackInitPos;

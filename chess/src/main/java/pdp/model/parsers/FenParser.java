@@ -11,7 +11,8 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
-public class FENparser {
+/** File parser that produce boards from file at FEN format. */
+public class FenParser {
   private static final Map<String, ColoredPiece> pieces =
       Map.ofEntries(
           entry("K", new ColoredPiece(Piece.KING, Color.WHITE)),
@@ -84,6 +85,7 @@ public class FENparser {
         case 'Q' -> whiteQueenCastling = true;
         case 'k' -> blackKingCastling = true;
         case 'q' -> blackQueenCastling = true;
+        default -> throw new RuntimeException("Unknown castling right");
       }
     }
 

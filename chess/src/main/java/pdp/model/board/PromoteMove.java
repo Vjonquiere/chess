@@ -4,6 +4,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
+/** Special move representation for pawn promotion. */
 public class PromoteMove extends Move {
   private Piece promPiece;
 

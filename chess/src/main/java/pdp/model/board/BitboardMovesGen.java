@@ -243,8 +243,14 @@ public final class BitboardMovesGen {
     return bitboardToMoves(move, enemies, square, piece, bitboardRepresentation);
   }
 
-  public static Bitboard getKnightMoveBitboard(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
+  /**
+   * Generate the move bitboard from a given position for a knight piece.
+   *
+   * @param square Position of the piece
+   * @param unreachableSquares unreachable squares bitboard
+   * @return The list of possible moves
+   */
+  public static Bitboard getKnightMoveBitboard(Position square, Bitboard unreachableSquares) {
     Bitboard position = new Bitboard();
     int squareIndex = square.getX() % 8 + square.getY() * 8;
     position.setBit(squareIndex);
@@ -303,6 +309,14 @@ public final class BitboardMovesGen {
         bitboardRepresentation);
   }
 
+  /**
+   * Generate the move bitboard from a given position for a pawn piece.
+   *
+   * @param square Position of the piece
+   * @param unreachableSquares unreachable squares bitboard
+   * @param white The piece color
+   * @return The list of possible moves
+   */
   public static Bitboard getPawnMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
     Bitboard position = new Bitboard();
@@ -510,7 +524,7 @@ public final class BitboardMovesGen {
               .or(getDiagonalMoves(new Position(x, y), unreachableSquares, enemies));
       case BISHOP -> getDiagonalMoves(new Position(x, y), unreachableSquares, enemies);
       case ROOK -> getInlineMoves(new Position(x, y), unreachableSquares, enemies);
-      case KNIGHT -> getKnightMoveBitboard(new Position(x, y), unreachableSquares, enemies, piece);
+      case KNIGHT -> getKnightMoveBitboard(new Position(x, y), unreachableSquares);
       case PAWN ->
           piece.color == Color.WHITE
               ? getPawnMoveBitboard(new Position(x, y), unreachableSquares, enemies, true)
@@ -633,6 +647,19 @@ public final class BitboardMovesGen {
     return bishopMoves;
   }
 
+  /**
+   * Generate all special moves from given board status.
+   *
+   * @param white The side to generate the moves
+   * @param bitboardRepresentation The board
+   * @param enPassantPos The position of the possible enPassant
+   * @param isLastMoveDoublePush The last move double push status
+   * @param isWhiteLongCastle The white long castle possibility
+   * @param isWhiteShortCastle The white short castle possibility
+   * @param isBlackLongCastle The black long castle possibility
+   * @param isBlackShortCastle The black short castle possibility
+   * @return A list containing all possible special moves
+   */
   public static List<Move> getSpecialMoves(
       boolean white,
       BitboardRepresentation bitboardRepresentation,

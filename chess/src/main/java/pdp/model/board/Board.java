@@ -9,6 +9,7 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Board structure to be used in game states. */
 public class Board {
   private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
   private BoardRepresentation board;
@@ -84,7 +85,7 @@ public class Board {
   }
 
   /**
-   * Executes a given move on the board, handling captures, en passant, castling, pawn promotion,
+   * Executes a given move on the board, handling captures, en passant, castling, pawn promotion.
    *
    * @param move The move to be executed
    */
@@ -276,6 +277,11 @@ public class Board {
     }
   }
 
+  /**
+   * Get the castling rights of the board.
+   *
+   * @return An array that contains castling rights
+   */
   public boolean[] getCastlingRights() {
     return new boolean[] {
       isWhiteShortCastle(), isWhiteLongCastle(), isBlackShortCastle(), isBlackLongCastle()

@@ -224,12 +224,12 @@ public final class BitboardStatusCheck {
    */
   public static boolean isEndGamePhase(
       int fullTurn, boolean white, BitboardRepresentation bitboardRepresentation) {
-    int nbRequiredConditions = 4;
+    final int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 
-    int halfNbPieces = 16;
-    int nbPlayedMovesBeforeEndGame = 25;
-    int nbPossibleMoveInEndGame = 25;
+    final int halfNbPieces = 16;
+    final int nbPlayedMovesBeforeEndGame = 25;
+    final int nbPossibleMoveInEndGame = 25;
 
     // Queens are off the board
     if (bitboardRepresentation.queensOffTheBoard()) {

@@ -71,6 +71,22 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[11] = new Bitboard(71776119061217280L);
   }
 
+  /**
+   * Initialize a board with all wanted values
+   *
+   * @param whiteKing The white king bitboard
+   * @param whiteQueen The white queen bitboard
+   * @param whiteBishops The white bishops bitboard
+   * @param whiteRooks The white rooks bitboard
+   * @param whiteKnights The white knights bitboard
+   * @param whitePawns The white pawns bitboard
+   * @param blackKing The black king bitboard
+   * @param blackQueen The black queen bitboard
+   * @param blackBishops The black bishops bitboard
+   * @param blackRooks The black rooks bitboard
+   * @param blackKnights The black knights bitboard
+   * @param blackPawns The black pawns bitboard
+   */
   @Deprecated
   public BitboardRepresentation(
       Bitboard whiteKing,
@@ -407,7 +423,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   protected Bitboard getKnightMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getKnightMoveBitboard(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getKnightMoveBitboard(square, unreachableSquares);
   }
 
   /**
@@ -601,7 +617,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the bitboard that contains all the white pieces, by or on all white pieces bitboards
+   * Get the bitboard that contains all the white pieces, by or on all white pieces bitboards.
    *
    * @return the bitboard containing all white pieces
    */
@@ -917,6 +933,18 @@ public class BitboardRepresentation implements BoardRepresentation {
     return BitboardUtils.squareToPosition(square);
   }
 
+  /**
+   * Generate all special moves from given board status.
+   *
+   * @param white The side to generate the moves
+   * @param enPassantPos The position of the possible enPassant
+   * @param isLastMoveDoublePush The last move double push status
+   * @param isWhiteLongCastle The white long castle possibility
+   * @param isWhiteShortCastle The white short castle possibility
+   * @param isBlackLongCastle The black long castle possibility
+   * @param isBlackShortCastle The black short castle possibility
+   * @return A list containing all possible special moves
+   */
   public List<Move> getSpecialMoves(
       boolean white,
       Position enPassantPos,

@@ -6,6 +6,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
+/** Interface containing all needed methods to implement a custom board representation. */
 public interface BoardRepresentation {
   public List<Position> getPawns(boolean white);
 
