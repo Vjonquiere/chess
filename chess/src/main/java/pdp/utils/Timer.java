@@ -4,9 +4,13 @@ import static pdp.utils.Logging.debug;
 
 import java.util.logging.Logger;
 
+/**
+ * Utility class creating a timer. There is the possibility to add a callback, to make an action if
+ * the timer is over.
+ */
 public class Timer implements Runnable {
   private static final Logger LOGGER = Logger.getLogger(Timer.class.getName());
-  private long duration; // In milliseconds
+  private final long duration; // In milliseconds
   private long remaining;
   private boolean running = false;
   private Thread thread;
@@ -17,12 +21,23 @@ public class Timer implements Runnable {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Creates a timer with the time and callback given in parameters.
+   *
+   * @param time duration of the timer
+   * @param timeOverCallback callback when the timer is over.
+   */
   public Timer(long time, Runnable timeOverCallback) {
     this.duration = time;
     this.remaining = this.duration;
     this.timeOverCallback = timeOverCallback;
   }
 
+  /**
+   * Creates a timer with the time given in parameters.
+   *
+   * @param time duration of the timer
+   */
   public Timer(long time) {
     this.duration = time;
     this.remaining = this.duration;
@@ -57,7 +72,7 @@ public class Timer implements Runnable {
     running = false;
   }
 
-  /** Creates nd starts the timer thread */
+  /** Creates and starts the timer thread. */
   public synchronized void start() {
     if (!running) {
       this.remaining = this.duration;

@@ -31,10 +31,10 @@ public class AskHintCommand implements Command {
       List<Integer> hintIntegers =
           new ArrayList<>(
               Arrays.asList(
-                  hintMove.getSource().getX(),
-                  hintMove.getSource().getY(),
-                  hintMove.getDest().getX(),
-                  hintMove.getDest().getY()));
+                  hintMove.getSource().x(),
+                  hintMove.getSource().y(),
+                  hintMove.getDest().x(),
+                  hintMove.getDest().y()));
 
       Game.getInstance().getGameState().setHintIntegers(hintIntegers);
       return Optional.empty();

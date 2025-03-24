@@ -4,6 +4,10 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Utility class for internationalization. Need to put all strings needed to be translated in the
+ * chessResources_locale.properties files in the resources.
+ */
 public class TextGetter {
   private static Locale locale = Locale.ENGLISH; // Default language
   private static ResourceBundle messages = ResourceBundle.getBundle("chessResources", locale);
@@ -12,7 +16,7 @@ public class TextGetter {
     Locale.setDefault(locale);
   }
 
-  /*Private constructor to avoid instantiation*/
+  /*Private constructor to avoid instantiation.*/
   private TextGetter() {}
 
   /**
@@ -30,6 +34,11 @@ public class TextGetter {
     messages = ResourceBundle.getBundle("chessResources", locale);
   }
 
+  /**
+   * Retrieves the locale used in the application.
+   *
+   * @return locale save in the fields
+   */
   public static Locale getLocale() {
     return locale;
   }

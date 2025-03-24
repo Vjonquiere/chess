@@ -17,12 +17,14 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/** Utility class to parse the command line options. */
 public class CommandLineOptions {
   private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
   // Not final for test purposes
   private static String DEFAULT_CONFIG_FILE = "default.chessrc";
 
+  /** Private constructor to avoid instantiation. */
   private CommandLineOptions() {}
 
   /**

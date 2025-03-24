@@ -275,8 +275,8 @@ public class Move {
    * @return A string representing the position ("e4")
    */
   public static String positionToString(Position position) {
-    char col = (char) ('a' + position.getX());
-    int row = position.getY() + 1;
+    char col = (char) ('a' + position.x());
+    int row = position.y() + 1;
 
     return "" + col + row;
   }

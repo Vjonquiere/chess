@@ -149,7 +149,7 @@ public class Board extends GridPane {
                 Game.getInstance().getBoard().isBlackLongCastle(),
                 Game.getInstance().getBoard().isBlackShortCastle());
     for (Move move : specialMoves) {
-      if (move.getSource().getX() == x && move.getSource().getY() == y) {
+      if (move.getSource().x() == x && move.getSource().y() == y) {
         moves.add(move);
       }
     }
@@ -183,8 +183,7 @@ public class Board extends GridPane {
    * @return Move as string format
    */
   public boolean processPawnPromoting(int x, int y) {
-    ColoredPiece piece =
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(from.getX(), from.getY());
+    ColoredPiece piece = Game.getInstance().getBoard().getBoardRep().getPieceAt(from.x(), from.y());
     if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && y == 0) { // Black pawn promote
       new PromotionPieceSelectionPopUp(stage, from, new Position(x, y));
       return true;

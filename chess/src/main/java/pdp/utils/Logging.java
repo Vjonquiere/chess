@@ -1,6 +1,9 @@
 package pdp.utils;
 
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Logging class abstracting java.util.logging Usage : in each class, create a logger from
@@ -13,19 +16,29 @@ public class Logging {
   private static boolean debug = false;
   private static boolean verbose = false;
 
-  /*Private constructor to avoid instantiation*/
+  /*Private constructor to avoid instantiation.*/
   private Logging() {}
 
+  /**
+   * Sets the debug field.
+   *
+   * @param debug true to enable debug, false otherwise
+   */
   public static void setDebug(boolean debug) {
     Logging.debug = debug;
   }
 
+  /**
+   * Sets the verbose field.
+   *
+   * @param verbose true to enable verbose, false otherwise
+   */
   public static void setVerbose(boolean verbose) {
     Logging.verbose = verbose;
   }
 
   /**
-   * Creates the messages for the debug mode with the following format ClassName [DEBUG] message
+   * Creates the messages for the debug mode with the following format ClassName [DEBUG] message.
    *
    * @param logger Logger of the class calling the function
    * @param message String to log
@@ -35,7 +48,8 @@ public class Logging {
   }
 
   /**
-   * Creates the messages for the verbose mode with the following format ClassName [VERBOSE] message
+   * Creates the messages for the verbose mode with the following format ClassName [VERBOSE]
+   * message.
    *
    * @param logger Logger of the class calling the function
    * @param message String to log

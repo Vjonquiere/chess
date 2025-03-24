@@ -1,14 +1,23 @@
 package pdp.utils;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/**
+ * Parser for the history of loaded files. Translates the moves from the history into the string
+ * format of the Move class.
+ */
 public class MoveHistoryParser {
 
   /**
    * Reads and parses a history file containing chess moves in format "a1-a2", "a1xb2", "Qe2xe4+",
-   * etc
+   * etc.
    *
    * @param inputStream The input stream of the history file.
    * @return A list of moves extracted from the file.
