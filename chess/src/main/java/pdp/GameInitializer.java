@@ -244,7 +244,11 @@ public abstract class GameInitializer {
           }
 
           model.setLoadedFromFile();
-          model.setLoadingFileHasHistory(true);
+          if (moves.isEmpty()) {
+            model.setLoadingFileHasHistory(false);
+          } else {
+            model.setLoadingFileHasHistory(true);
+          }
           model.setContestModeOnOrOff(true);
           DEBUG(LOGGER, "Game was init with contest mode");
 

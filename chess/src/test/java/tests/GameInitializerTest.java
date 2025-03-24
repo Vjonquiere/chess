@@ -461,6 +461,7 @@ class GameInitializerTest {
             "3. W f1-c4 B g8-f6\n"
             + //
             "4. W h5xf7";
+
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
@@ -473,33 +474,32 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationContestModeValidFileBlackTurn() throws Exception {
-    tempFile = Files.createTempFile("moveHistory", ".txt");
+    tempFile = Files.createTempFile("moveHistory2", ".txt");
     String text =
-        "B\n"
+        "W\n"
             + //
-            "r _ b q k b _ r \n"
+            "r _ b q k b n r \n"
             + //
-            "p p p p _ Q p p \n"
+            "p p p p _ p p p \n"
             + //
-            "_ _ n _ _ n _ _ \n"
+            "_ _ n _ _ _ _ _ \n"
             + //
             "_ _ _ _ p _ _ _ \n"
             + //
-            "_ _ B _ P _ _ _ \n"
+            "_ _ _ _ P _ Q _ \n"
             + //
             "_ _ _ _ _ _ _ _ \n"
             + //
             "P P P P _ P P P \n"
             + //
-            "R N B _ K _ N R \n"
+            "R N B _ K B N R \n"
             + //
             "\n"
             + //
             "1. W e2-e4 B e7-e5\n"
             + //
-            "2. W d1-h5 B b8-c6\n"
-            + //
-            "3. W f1-c4 B g8-f6\n";
+            "2. W d1-g4 B b8-c6\n";
+
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
@@ -508,6 +508,42 @@ class GameInitializerTest {
 
     assertNotNull(game);
     assertTrue(game.isContestModeOn());
+
+    game.playMove(Move.fromString("a7-a6"));
+  }
+
+  @Test
+  void testGameInitializationContestModeWhiteToPlay() throws Exception {
+    tempFile = Files.createTempFile("moveHistory3", ".txt");
+    String text =
+        "W\n"
+            + //
+            "r n b q k b n r \n"
+            + //
+            "p p p p _ p p p \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ _ _ P _ _ _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B Q K B N R \n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isContestModeOn());
+
+    game.playMove(Move.fromString("a7-a6"));
   }
 
   @Test
