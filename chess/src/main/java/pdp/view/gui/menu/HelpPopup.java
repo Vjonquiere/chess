@@ -10,7 +10,9 @@ import javafx.stage.Stage;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
+/** GUI widget with basic help message. */
 public class HelpPopup extends VBox {
+  /** Build a new popup. */
   public HelpPopup() {
     Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("help.title"));
@@ -29,6 +31,11 @@ public class HelpPopup extends VBox {
     popupStage.showAndWait();
   }
 
+  /**
+   * Get the string from TextGetter and build a Label from it.
+   *
+   * @return A label containing the help message.
+   */
   private Label getLabel() {
     Label manualLabel = new Label(TextGetter.getText("help.message"));
     manualLabel.setWrapText(true);

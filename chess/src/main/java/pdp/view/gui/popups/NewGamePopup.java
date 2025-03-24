@@ -4,7 +4,14 @@ import java.io.File;
 import java.util.HashMap;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -17,18 +24,20 @@ import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
+/** GUI popup to configure a new game with all defined options (AI, blitz, ...). */
 public class NewGamePopup {
 
+  /**
+   * GUI widget that represent configurable options for AI.
+   *
+   * @param isWhite Side of the AI.
+   * @param options Current options.
+   * @return A javaFx object to configure AI.
+   */
   private static VBox makeAiBox(boolean isWhite, HashMap<OptionType, String> options) {
 
     String colorTag = isWhite ? "white" : "black";
     String colorText = TextGetter.getText(colorTag);
-
-    OptionType modeType = isWhite ? OptionType.AI_MODE_W : OptionType.AI_MODE_B;
-    OptionType heuristicType = isWhite ? OptionType.AI_HEURISTIC_W : OptionType.AI_HEURISTIC_B;
-    OptionType egHeuristicType = isWhite ? OptionType.AI_ENDGAME_W : OptionType.AI_ENDGAME_B;
-    OptionType depthType = isWhite ? OptionType.AI_DEPTH_W : OptionType.AI_DEPTH_B;
-    OptionType simulationsType = isWhite ? OptionType.AI_SIMULATION_W : OptionType.AI_SIMULATION_B;
 
     VBox aiContainer = new VBox(5);
 
@@ -41,6 +50,7 @@ public class NewGamePopup {
       aiModeDropdown.getItems().add(type.toString());
     }
 
+    OptionType modeType = isWhite ? OptionType.AI_MODE_W : OptionType.AI_MODE_B;
     if (options.containsKey(modeType)) {
       aiModeDropdown.setValue(options.get(modeType));
     }
@@ -76,6 +86,7 @@ public class NewGamePopup {
       heuristicDropdown.getItems().add(type.toString());
     }
 
+    OptionType heuristicType = isWhite ? OptionType.AI_HEURISTIC_W : OptionType.AI_HEURISTIC_B;
     if (options.containsKey(heuristicType)) {
       heuristicDropdown.setValue(options.get(heuristicType));
     }
@@ -106,6 +117,7 @@ public class NewGamePopup {
       endgameHeuristicDropdown.getItems().add(type.toString());
     }
 
+    OptionType egHeuristicType = isWhite ? OptionType.AI_ENDGAME_W : OptionType.AI_ENDGAME_B;
     if (options.containsKey(egHeuristicType)) {
       endgameHeuristicDropdown.setValue(options.get(egHeuristicType));
     }
@@ -135,6 +147,7 @@ public class NewGamePopup {
     depthSlider.setMajorTickUnit(1);
     depthSlider.setMinorTickCount(0);
     depthSlider.setSnapToTicks(true);
+    OptionType depthType = isWhite ? OptionType.AI_DEPTH_W : OptionType.AI_DEPTH_B;
     depthSlider
         .valueProperty()
         .addListener(
@@ -166,7 +179,7 @@ public class NewGamePopup {
     simulationSlider.setMajorTickUnit(10);
     simulationSlider.setMinorTickCount(0);
     simulationSlider.setSnapToTicks(true);
-
+    OptionType simulationsType = isWhite ? OptionType.AI_SIMULATION_W : OptionType.AI_SIMULATION_B;
     simulationSlider
         .valueProperty()
         .addListener(
@@ -245,6 +258,11 @@ public class NewGamePopup {
     return aiTimeFull;
   }
 
+  /**
+   * Build a new game popup configuration.
+   *
+   * @param options Current options.
+   */
   public static void show(HashMap<OptionType, String> options) {
     Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -362,7 +380,6 @@ public class NewGamePopup {
 
     layout.getChildren().add(new Separator());
 
-    Label loadLabel = new Label(TextGetter.getText("newGame.load"));
     TextField loadTextField = new TextField();
     loadTextField.setId("loadTextField");
     loadTextField.setPromptText(TextGetter.getText("newGame.loadPrompt"));
@@ -390,6 +407,7 @@ public class NewGamePopup {
         });
 
     VBox loadContainer = new VBox(5);
+    Label loadLabel = new Label(TextGetter.getText("newGame.load"));
     loadContainer.getChildren().add(loadLabel);
     HBox centerContainer = new HBox(5, loadTextField, browseButton);
     centerContainer.setAlignment(Pos.CENTER_LEFT);

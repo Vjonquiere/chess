@@ -2,7 +2,9 @@ package pdp.view.gui.popups;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -14,6 +16,7 @@ import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 import pdp.view.gui.themes.ColorTheme;
 
+/** GUI popup to configure a custom theme. */
 public class ThemePopUp {
 
   /**
@@ -27,28 +30,28 @@ public class ThemePopUp {
 
     VBox layout = new VBox(10);
     layout.setId("vbox");
-    Label primary = new Label(TextGetter.getText("theme.primary"));
+    final Label primary = new Label(TextGetter.getText("theme.primary"));
     ColorPicker cpPrimary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getPrimary()));
     cpPrimary.setId("primary");
-    Label secondary = new Label(TextGetter.getText("theme.secondary"));
+    final Label secondary = new Label(TextGetter.getText("theme.secondary"));
     ColorPicker cpSecondary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getSecondary()));
     cpSecondary.setId("secondary");
-    Label tertiary = new Label(TextGetter.getText("theme.tertiary"));
+    final Label tertiary = new Label(TextGetter.getText("theme.tertiary"));
     ColorPicker cpTertiary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTertiary()));
     cpTertiary.setId("tertiary");
-    Label accent = new Label(TextGetter.getText("theme.accent"));
+    final Label accent = new Label(TextGetter.getText("theme.accent"));
     ColorPicker cpAccent = new ColorPicker(Color.web(ColorTheme.CUSTOM.getAccent()));
     cpAccent.setId("accent");
-    Label background = new Label(TextGetter.getText("theme.background"));
+    final Label background = new Label(TextGetter.getText("theme.background"));
     ColorPicker cpBackground = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground()));
     cpBackground.setId("background");
-    Label background2 = new Label(TextGetter.getText("theme.background2"));
+    final Label background2 = new Label(TextGetter.getText("theme.background2"));
     ColorPicker cpBackground2 = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground2()));
     cpBackground2.setId("background2");
-    Label text = new Label(TextGetter.getText("theme.text"));
+    final Label text = new Label(TextGetter.getText("theme.text"));
     ColorPicker cpText = new ColorPicker(Color.web(ColorTheme.CUSTOM.getText()));
     cpText.setId("text");
-    Label textInverted = new Label(TextGetter.getText("theme.textInverted"));
+    final Label textInverted = new Label(TextGetter.getText("theme.textInverted"));
     ColorPicker cpTextInverted = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTextInverted()));
     cpTextInverted.setId("textInverted");
     layout
@@ -71,7 +74,6 @@ public class ThemePopUp {
             textInverted,
             cpTextInverted);
 
-    HBox buttonBox = new HBox();
     Button saveButton = new Button(TextGetter.getText("save"));
     saveButton.setId("saveButtonThemes");
     saveButton.setOnAction(
@@ -88,7 +90,7 @@ public class ThemePopUp {
                 toHexString(cpTextInverted.getValue()));
             GuiView.theme = ColorTheme.CUSTOM;
             BagOfCommands.getInstance().addCommand(new ChangeTheme());
-          } catch (IllegalArgumentException ex) {
+          } catch (IllegalArgumentException ignore) {
           }
         });
 
@@ -98,6 +100,7 @@ public class ThemePopUp {
         e -> {
           popupStage.close();
         });
+    HBox buttonBox = new HBox();
     buttonBox.getChildren().addAll(saveButton, cancelButton);
     buttonBox.setSpacing(10);
     buttonBox.setAlignment(Pos.CENTER);

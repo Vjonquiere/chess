@@ -315,7 +315,8 @@ public abstract class GameAbstract extends Subject {
    */
   public boolean isPromotionMove(Move move) {
     // return
-    // getBoard().getBoardRep().isPawnPromoting(move.source.getX(),move.source.getY(),getGameState().isWhiteTurn()); don't pass the tests
+    // isPawnPromoting(move.source.getX(),move.source.getY(),getGameState().isWhiteTurn());
+    // don't pass the tests
     if (this.gameState.getBoard().getBoardRep().getPieceAt(move.source.x(), move.source.y()).piece
         != Piece.PAWN) {
       return false;

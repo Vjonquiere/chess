@@ -4,10 +4,12 @@ import javafx.scene.layout.VBox;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
 
+/** GUI widget to display all the player information. */
 public class PlayerPanel extends VBox {
   PlayerInfos whitePlayer;
   PlayerInfos blackPlayer;
 
+  /** Build a new player panel from current game instance. */
   public PlayerPanel() {
     setSpacing(5);
     whitePlayer =
@@ -17,6 +19,7 @@ public class PlayerPanel extends VBox {
     this.getChildren().addAll(whitePlayer, blackPlayer);
   }
 
+  /** Switch the current player relying on game status. */
   public void switchCurrentPlayer() {
     boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
     whitePlayer.setCurrentPlayer(isWhiteTurn);

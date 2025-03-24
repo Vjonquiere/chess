@@ -72,7 +72,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Initialize a board with all wanted values
+   * Initialize a board with all wanted values.
    *
    * @param whiteKing The white king bitboard
    * @param whiteQueen The white queen bitboard

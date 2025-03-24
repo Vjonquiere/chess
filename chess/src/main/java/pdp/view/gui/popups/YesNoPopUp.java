@@ -12,6 +12,7 @@ import pdp.controller.Command;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
+/** GUI popup with only validate or cancel possibility. */
 public class YesNoPopUp extends VBox {
 
   /**

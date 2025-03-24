@@ -57,6 +57,11 @@ public class PlayerInfos extends HBox {
     return imageView;
   }
 
+  /**
+   * Update the remaining time depending on player color.
+   *
+   * @param isWhite The player color.
+   */
   public void updateTimer(boolean isWhite) {
     timeline =
         new Timeline(
@@ -71,6 +76,11 @@ public class PlayerInfos extends HBox {
     timeline.setCycleCount(Timeline.INDEFINITE);
   }
 
+  /**
+   * Update the current player.
+   *
+   * @param isCurrent The current player status.
+   */
   public void setCurrentPlayer(boolean isCurrent) {
     GraphicsContext gc = currentPlayer.getGraphicsContext2D();
     gc.clearRect(0, 0, currentPlayer.getWidth(), currentPlayer.getHeight());

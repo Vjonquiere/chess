@@ -1,5 +1,6 @@
 package pdp.view.gui.themes;
 
+/** Enum containing all pre-built themes. */
 public enum ColorTheme {
   BLUE("#16697A", "#82C0CC", "#489FB5", "#FFA62B", "#EDE7E3", "#E0D3C9", "#000000", "#FFFFFF"),
   PURPLE("#5E548E", "#BE95C4", "#231942", "#9F86C0", "#F8E6F0", "#E8C8DA", "#231942", "#FFFFFF"),
@@ -66,6 +67,18 @@ public enum ColorTheme {
     return textInverted;
   }
 
+  /**
+   * Set the CUSTOM theme to the given values.
+   *
+   * @param primary The primary color.
+   * @param secondary The secondary color.
+   * @param tertiary The tertiary color.
+   * @param accent The accent color.
+   * @param background The background color.
+   * @param background2 The second background color.
+   * @param text The text color.
+   * @param textInverted The inverted text color.
+   */
   public static void setCustom(
       String primary,
       String secondary,

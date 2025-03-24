@@ -15,6 +15,7 @@ import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
+/** GUI popup to display the information about the end of game. */
 public class EndGamePopUp {
   /**
    * Displays a popup with information about the end of game. Contains the cause of ending and
@@ -76,7 +77,6 @@ public class EndGamePopUp {
     }
     layout.getChildren().addAll(gameOverLabel, endgameLabel);
 
-    HBox buttonBox = new HBox();
     Button analyzeButton = new Button(TextGetter.getText("analyze"));
     analyzeButton.setId("analyzeButton");
     analyzeButton.setOnAction(
@@ -106,6 +106,7 @@ public class EndGamePopUp {
           popupStage.close();
           Runtime.getRuntime().exit(0);
         });
+    HBox buttonBox = new HBox();
     buttonBox.getChildren().addAll(analyzeButton, newGameButton, restartButton, quitButton);
     buttonBox.setAlignment(Pos.CENTER);
     layout.getChildren().add(buttonBox);

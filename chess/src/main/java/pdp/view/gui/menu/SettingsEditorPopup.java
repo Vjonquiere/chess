@@ -16,7 +16,9 @@ import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
+/** GUI widget to edit settings. */
 public class SettingsEditorPopup extends VBox {
+  /** Build a new popup to edit settings. */
   public SettingsEditorPopup() {
     Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("settings.edit"));
