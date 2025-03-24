@@ -4,7 +4,6 @@ import static pdp.utils.Logging.DEBUG;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -282,13 +281,6 @@ public class Game extends Subject {
    */
   public boolean isLoadedFromFile() {
     return this.loadedFromFile;
-  }
-
-  /**
-   * @return the path of the file that generated the game for LOAD mode.
-   */
-  public String getLoadingFile() {
-    return options.get(OptionType.LOAD);
   }
 
   /**
@@ -792,8 +784,7 @@ public class Game extends Subject {
               LOGGER,
               "Move differs from history. Overwriting history for file :" + getContestFile());
         } else {
-          String newFilePath = saveGameToNewFile(getLoadingFile());
-          DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+          DEBUG(LOGGER, "Move differs from history. Overwriting history");
         }
       } else {
         // Check if move we want to play is the same as the next one. If not, overwrite history and
@@ -806,12 +797,9 @@ public class Game extends Subject {
                 LOGGER,
                 "Move differs from history. Overwriting history for file :" + getContestFile());
           } else {
-            // Truncate history
-            this.history.setCurrentMove(null);
+            // Truncate history by adding a new move from this point forward
             this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
-            String newFilePath = saveGameToNewFile(getLoadingFile());
-            DEBUG(
-                LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+            DEBUG(LOGGER, "Move differs from history. Overwriting history");
           }
         } else {
           // If same move, just forward by one in the history
@@ -830,8 +818,7 @@ public class Game extends Subject {
         DEBUG(
             LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
       } else {
-        String newFilePath = saveGameToNewFile(getLoadingFile());
-        DEBUG(LOGGER, "Move differs from history. Overwriting history for file :" + newFilePath);
+        DEBUG(LOGGER, "Move differs from history. Overwriting history");
       }
     }
   }
@@ -873,63 +860,6 @@ public class Game extends Subject {
     }
     DEBUG(LOGGER, "Game saved to " + path);
     this.notifyObservers(EventType.GAME_SAVED);
-  }
-
-  /**
-   * Saves the current game state to a new file.
-   *
-   * <p>The file in parameter contains the current position of the board followed by the move
-   * history of the game in standard algebraic notation.
-   *
-   * @param path The path of the original file.
-   * @throws FailedSaveException If the new file cannot be written to.
-   */
-  public String saveGameToNewFile(String path) throws FailedSaveException {
-    boolean[] castlingRights = getBoard().getCastlingRights();
-    String board =
-        BoardSaver.saveBoard(
-            new FileBoard(
-                this.getBoard().getBoardRep(),
-                this.getGameState().isWhiteTurn(),
-                new FenHeader(
-                    castlingRights[0],
-                    castlingRights[1],
-                    castlingRights[2],
-                    castlingRights[3],
-                    getBoard().getEnPassantPos(),
-                    getBoard().getNbMovesWithNoCaptureOrPawn() * 2,
-                    getGameState().getFullTurn())));
-    String gameStr = this.history.toAlgebraicString();
-    String game = board + "\n" + gameStr;
-
-    // Save to new file and leave the original one as it is
-    File file = new File(path);
-    String newPath = path;
-    int counter = 1;
-
-    // Check if a file with that name already exists
-    while (file.exists()) {
-      int dotIndex = path.lastIndexOf('.');
-      if (dotIndex != -1) {
-        newPath = path.substring(0, dotIndex) + "_" + counter + path.substring(dotIndex);
-      } else {
-        newPath = path + "_" + counter;
-      }
-      file = new File(newPath);
-      counter++;
-    }
-
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(newPath))) {
-      writer.write(game);
-      writer.close();
-    } catch (IOException e) {
-      DEBUG(LOGGER, "Error writing to new file: " + e.getMessage());
-      throw new FailedSaveException(newPath);
-    }
-
-    DEBUG(LOGGER, "Game saved to " + newPath);
-    this.notifyObservers(EventType.GAME_SAVED);
-    return newPath;
   }
 
   /**
