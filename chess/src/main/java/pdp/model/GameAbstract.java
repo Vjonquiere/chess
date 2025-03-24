@@ -62,7 +62,7 @@ public abstract class GameAbstract extends Subject {
       this.stateCount.put(
           simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
 
-      if (this.stateCount.get(simplifiedZobristHashing) == 3) {
+      if (this.stateCount.get(simplifiedZobristHashing) == Game.nFoldRepetition) {
         debug(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
         return true;
       }

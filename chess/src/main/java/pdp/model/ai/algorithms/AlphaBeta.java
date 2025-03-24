@@ -54,8 +54,7 @@ public class AlphaBeta implements SearchAlgorithm {
         executor.submit(
             () -> {
               GameAi gameCopy = aiGame.copy();
-              return alphaBeta(
-                  gameCopy, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+              return alphaBeta(gameCopy, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
             }));
 
     AiMove bestMove = null;
@@ -93,14 +92,14 @@ public class AlphaBeta implements SearchAlgorithm {
       float beta,
       boolean originalPlayer) {
     if (solver.isSearchStopped()) {
-      return new AiMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+      return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
       float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AiMove(null, evaluation);
     }
     AiMove bestMove =
-        new AiMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+        new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     Board board = game.getBoard();
     moves.addAll(

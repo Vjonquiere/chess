@@ -69,7 +69,14 @@ public class UciView implements View {
    * @param event The type of event that occurred.
    */
   @Override
-  public void onGameEvent(EventType event) {}
+  public void onGameEvent(EventType event) {
+    switch (event) {
+      case WIN_BLACK -> System.out.println("Black won!");
+      case WIN_WHITE -> System.out.println("White won!");
+      case THREEFOLD_REPETITION -> System.out.println(Game.nFoldRepetition + " fold repetition!");
+      case FIFTY_MOVE_RULE -> System.out.println(GameState.nMoveRule + " move rule!");
+    }
+  }
 
   /**
    * Prints the error message for an exception related to user input.
@@ -90,6 +97,7 @@ public class UciView implements View {
         || e instanceof FailedRedoException) {
       System.out.println(e.getMessage());
     } else {
+      System.out.println(Game.getInstance().getGameRepresentation());
       System.err.println(e);
       e.printStackTrace();
       running = false;
