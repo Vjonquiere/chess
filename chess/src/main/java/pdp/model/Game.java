@@ -19,7 +19,6 @@ import pdp.events.EventType;
 import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
-import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Board;
@@ -486,13 +485,28 @@ public class Game extends GameAbstract {
         // Set endgame heuristic only once and only if endgame phase
         if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
             && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getEndgameHeurisic())) {
-          this.solverWhite.setHeuristic(HeuristicType.ENDGAME);
+          this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeurisic());
         }
       }
       if (this.solverBlack != null) {
         if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
             && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getEndgameHeurisic())) {
-          this.solverBlack.setHeuristic(HeuristicType.ENDGAME);
+          this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeurisic());
+        }
+      }
+    }
+
+    if (!isEndGamePhase()) {
+      if (this.solverWhite != null) {
+        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getStartHeurisic());
+        }
+      }
+      if (this.solverBlack != null) {
+        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getStartHeurisic());
         }
       }
     }
