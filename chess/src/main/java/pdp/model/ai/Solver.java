@@ -44,6 +44,7 @@ public class Solver {
   private SearchAlgorithm algorithm;
   private Heuristic heuristic;
   private HeuristicType currentHeuristic;
+  private HeuristicType startHeuristic;
   private HeuristicType endgameHeuristic;
   private int depth = 4;
   private Timer timer;
@@ -112,6 +113,9 @@ public class Solver {
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     this.currentHeuristic = heuristic;
+    if (this.startHeuristic == null) {
+      this.startHeuristic = heuristic;
+    }
     this.evaluatedBoards = new HashMap<>();
     debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
@@ -139,6 +143,10 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    this.currentHeuristic = heuristic;
+    if (this.startHeuristic == null) {
+      this.startHeuristic = heuristic;
+    }
     debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
@@ -160,12 +168,20 @@ public class Solver {
     return this.endgameHeuristic;
   }
 
+  public void setStartHeuristic(HeuristicType heuristic) {
+    this.startHeuristic = heuristic;
+  }
+
+  public HeuristicType getStartHeurisic() {
+    return this.startHeuristic;
+  }
+
   /**
    * Retrieves the current heuristic.
    *
    * @return current heuristic
    */
-  public HeuristicType getCurrentHeuristic() {
+  public HeuristicType getCurrentHeurisic() {
     return this.currentHeuristic;
   }
 

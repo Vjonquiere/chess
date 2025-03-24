@@ -19,7 +19,6 @@ import pdp.events.EventType;
 import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
-import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Board;
@@ -525,16 +524,29 @@ public final class Game extends GameAbstract {
       if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
         if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getCurrentHeuristic()
-                == this.solverWhite.getEndgameHeuristic())) {
-          this.solverWhite.setHeuristic(HeuristicType.ENDGAME);
+            && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getEndgameHeuristic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
         }
       }
       if (this.solverBlack != null) {
         if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getCurrentHeuristic()
-                == this.solverWhite.getEndgameHeuristic())) {
-          this.solverBlack.setHeuristic(HeuristicType.ENDGAME);
+            && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getEndgameHeuristic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
+        }
+      }
+    }
+
+    if (!isEndGamePhase()) {
+      if (this.solverWhite != null) {
+        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getStartHeurisic());
+        }
+      }
+      if (this.solverBlack != null) {
+        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getStartHeurisic());
         }
       }
     }
