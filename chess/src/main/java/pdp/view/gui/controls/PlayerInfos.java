@@ -15,11 +15,19 @@ import pdp.model.Game;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
 
+/** GUI widget to display player data. */
 public class PlayerInfos extends HBox {
   Canvas currentPlayer;
   Label timerLabel = new Label();
   Timeline timeline;
 
+  /**
+   * Build a player infos widget from given information.
+   *
+   * @param name The name of the player.
+   * @param isAi The player type.
+   * @param isWhite The color of the player.
+   */
   public PlayerInfos(String name, boolean isAi, boolean isWhite) {
     this.setAlignment(Pos.CENTER_LEFT);
     currentPlayer = new Canvas(20, 20);
@@ -32,6 +40,12 @@ public class PlayerInfos extends HBox {
     this.setSpacing(10);
   }
 
+  /**
+   * Get the icon depending on the player type.
+   *
+   * @param isAi The player type.
+   * @return An image corresponding to the player type
+   */
   public ImageView getPlayerIcon(boolean isAi) {
     ImageView imageView = new ImageView();
     String fileName = isAi ? "ai" : "player";

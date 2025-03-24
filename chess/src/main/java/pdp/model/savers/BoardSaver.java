@@ -7,6 +7,7 @@ import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 
+/** Save board to custom format. */
 public class BoardSaver {
 
   /**

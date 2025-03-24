@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import pdp.view.GuiView;
 
+/** Launcher for GUI view. */
 public class GuiLauncher extends Application {
   private static GuiView guiView;
 

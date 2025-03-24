@@ -9,6 +9,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.view.GuiView;
 
+/** GUI representation of a chess square. */
 public class Square extends StackPane {
   Color baseColor;
   Canvas sq;
@@ -18,7 +19,7 @@ public class Square extends StackPane {
   ImageView pieceImage;
 
   /**
-   * Build a square of the given color with the sprite of the given piece
+   * Build a square of the given color with the sprite of the given piece.
    *
    * @param piece The piece on the square
    * @param squareColor The default color of the square
@@ -45,7 +46,7 @@ public class Square extends StackPane {
   }
 
   /**
-   * Update the sprite displayed on the square with the given piece
+   * Update the sprite displayed on the square with the given piece.
    *
    * @param piece The piece to display
    */
@@ -64,7 +65,7 @@ public class Square extends StackPane {
   }
 
   /**
-   * Update the square color depending on selection state
+   * Update the square color depending on selection state.
    *
    * @param selected The selected state of the square
    */
@@ -79,7 +80,7 @@ public class Square extends StackPane {
   }
 
   /**
-   * Update the square depending on reachability dans take possibility
+   * Update the square depending on reachability dans take possibility.
    *
    * @param reachable The square reachability
    * @param isTake The square take possibility
@@ -99,6 +100,11 @@ public class Square extends StackPane {
     }
   }
 
+  /**
+   * Set the hint status of the square.
+   *
+   * @param hint Status of the hint state.
+   */
   public void setHint(boolean hint) {
     GraphicsContext gc = hintSq.getGraphicsContext2D();
     gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());

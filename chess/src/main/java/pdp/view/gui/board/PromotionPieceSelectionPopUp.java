@@ -20,8 +20,15 @@ import pdp.utils.Position;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
+/** A popup to choose the piece to add on the board when promoting. */
 public class PromotionPieceSelectionPopUp extends VBox {
-
+  /**
+   * Build a popup from the given information.
+   *
+   * @param stage The stage where you want to display the popup.
+   * @param from The source position of the move.
+   * @param to The destination position of the move.
+   */
   public PromotionPieceSelectionPopUp(Stage stage, Position from, Position to) {
     Stage popupStage = new Stage();
     // Remove possibility to close

@@ -1,6 +1,10 @@
 package pdp.view.gui.board;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
@@ -14,6 +18,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
+/** GUI representation of game board. */
 public class Board extends GridPane {
   private BoardRepresentation board;
   private final int boardColumns;
@@ -24,6 +29,12 @@ public class Board extends GridPane {
   private final List<Position> hintSquares = new LinkedList<>();
   private Stage stage;
 
+  /**
+   * Build a new board from a game and a given stage.
+   *
+   * @param game The game to get the board data.
+   * @param stage The stage to add the board.
+   */
   public Board(Game game, Stage stage) {
     this.board = game.getBoard().getBoardRep();
     this.boardColumns = board.getNbCols();
@@ -185,6 +196,11 @@ public class Board extends GridPane {
     return false;
   }
 
+  /**
+   * Set the stage.
+   *
+   * @param stage The stage.
+   */
   public void setStage(Stage stage) {
     this.stage = stage;
   }
@@ -202,6 +218,7 @@ public class Board extends GridPane {
     pieces.get(to).setHint(true);
   }
 
+  /** Clean all squares that have been set to hint. */
   private void cleanHintSquares() {
     if (hintSquares.isEmpty()) {
       return;

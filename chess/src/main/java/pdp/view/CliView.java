@@ -8,7 +8,15 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.*;
+import pdp.controller.commands.CancelDrawCommand;
+import pdp.controller.commands.CancelMoveCommand;
+import pdp.controller.commands.PlayMoveCommand;
+import pdp.controller.commands.ProposeDrawCommand;
+import pdp.controller.commands.RestartCommand;
+import pdp.controller.commands.RestoreMoveCommand;
+import pdp.controller.commands.SaveGameCommand;
+import pdp.controller.commands.StartGameCommand;
+import pdp.controller.commands.SurrenderCommand;
 import pdp.events.EventType;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.exceptions.FailedRedoException;
@@ -22,11 +30,13 @@ import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 
+/** View implementation to play in the terminal. */
 public class CliView implements View {
   private boolean running = false;
   private final Map<String, CommandEntry> commands = new HashMap<>();
   private static final Logger LOGGER = Logger.getLogger(CliView.class.getName());
 
+  /** Build a new Cli view (initialize all commands). */
   public CliView() {
     commands.put(
         "move", new CommandEntry(this::moveCommand, TextGetter.getText("moveHelpDescription")));

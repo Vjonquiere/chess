@@ -9,7 +9,8 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 
-public class FENSaver {
+/** Save boards to the universal FEN format. */
+public class FenSaver {
   private int empty = 0;
 
   /**
@@ -49,10 +50,18 @@ public class FENSaver {
     if (board.header() != null) {
       FenHeader header = board.header();
       String castling = "";
-      if (header.whiteKingCastling()) castling += "K";
-      if (header.whiteQueenCastling()) castling += "Q";
-      if (header.blackKingCastling()) castling += "k";
-      if (header.blackQueenCastling()) castling += "q";
+      if (header.whiteKingCastling()) {
+        castling += "K";
+      }
+      if (header.whiteQueenCastling()) {
+        castling += "Q";
+      }
+      if (header.blackKingCastling()) {
+        castling += "k";
+      }
+      if (header.blackQueenCastling()) {
+        castling += "q";
+      }
       sb.append(" ").append(castling.isEmpty() ? "-" : castling);
 
       sb.append(" ")

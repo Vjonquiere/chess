@@ -11,10 +11,12 @@ import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.utils.TextGetter;
 
+/** GUI representation for history display. */
 public class HistoryPanel extends VBox {
 
   private ListView<String> list = new ListView<String>();
 
+  /** Construct a new panel. */
   public HistoryPanel() {
 
     ObservableList<String> items = FXCollections.observableArrayList();
@@ -44,6 +46,7 @@ public class HistoryPanel extends VBox {
     super.getChildren().add(list);
   }
 
+  /** Update displayed information of the panel. */
   public void updateHistoryPanel() {
 
     ObservableList<String> items = FXCollections.observableArrayList();

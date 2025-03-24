@@ -13,7 +13,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.GameInitializer;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.*;
+import pdp.controller.commands.AskHintCommand;
+import pdp.controller.commands.CancelMoveCommand;
+import pdp.controller.commands.ChangeLang;
+import pdp.controller.commands.ChangeTheme;
+import pdp.controller.commands.RestartCommand;
+import pdp.controller.commands.RestoreMoveCommand;
+import pdp.controller.commands.SaveGameCommand;
+import pdp.controller.commands.StartGameCommand;
 import pdp.model.Game;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
@@ -131,16 +138,12 @@ public class ChessMenu extends VBox {
    * @return Menu Game
    */
   private Menu createGameMenu() {
-    Menu gameMenu = new Menu(TextGetter.getText("game"));
     MenuItem start = new MenuItem(TextGetter.getText("start"));
-    MenuItem undo = new MenuItem(TextGetter.getText("undo"));
-    MenuItem redo = new MenuItem(TextGetter.getText("redo"));
-    MenuItem restart = new MenuItem(TextGetter.getText("restart"));
-    MenuItem hint = new MenuItem(TextGetter.getText("hint"));
     start.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new StartGameCommand());
         });
+    MenuItem undo = new MenuItem(TextGetter.getText("undo"));
     undo.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
@@ -151,6 +154,7 @@ public class ChessMenu extends VBox {
                 () -> Game.getInstance().getGameState().undoRequestReset());
           }
         });
+    MenuItem redo = new MenuItem(TextGetter.getText("redo"));
     redo.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
@@ -161,16 +165,18 @@ public class ChessMenu extends VBox {
                 () -> Game.getInstance().getGameState().redoRequestReset());
           }
         });
+    MenuItem restart = new MenuItem(TextGetter.getText("restart"));
     restart.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new RestartCommand());
           new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
         });
-
+    MenuItem hint = new MenuItem(TextGetter.getText("hint"));
     hint.setOnAction(
         e -> {
           new YesNoPopUp("hintInstructionsGui", new AskHintCommand(), null);
         });
+    Menu gameMenu = new Menu(TextGetter.getText("game"));
     gameMenu.getItems().add(start);
     gameMenu.getItems().add(undo);
     gameMenu.getItems().add(redo);

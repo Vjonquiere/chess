@@ -9,6 +9,7 @@ import pdp.view.gui.controls.ButtonsPanel;
 import pdp.view.gui.controls.HistoryPanel;
 import pdp.view.gui.controls.PlayerPanel;
 
+/** Control panel for GUI view. Contains player infos, history and buttons. */
 public class ControlPanel extends VBox {
   private PlayerPanel playerPanel;
   private HistoryPanel historyPanel;
@@ -70,7 +71,7 @@ public class ControlPanel extends VBox {
   /**
    * Updates the player panel with the current player.
    *
-   * @param type
+   * @param type The type of the event sent.
    */
   public void update(EventType type) {
     playerPanel.switchCurrentPlayer();

@@ -15,6 +15,7 @@ import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.gui.popups.YesNoPopUp;
 
+/** GUI Buttons panel for game commands. */
 public class ButtonsPanel extends GridPane {
   private Button drawButton;
   private Button undoButton;

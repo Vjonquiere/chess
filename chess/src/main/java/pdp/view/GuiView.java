@@ -1,7 +1,7 @@
 package pdp.view;
 
 import static pdp.utils.Logging.debug;
-import static pdp.view.gui.themes.ColorTheme.*;
+import static pdp.view.gui.themes.ColorTheme.SIMPLE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
