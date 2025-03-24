@@ -123,11 +123,11 @@ public abstract class GameAbstract extends Subject {
     Position destPosition = move.dest;
     boolean isSpecialMove = false;
     ColoredPiece coloredPiece =
-        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
 
     // Check Castle
     if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
-      boolean shortCastle = destPosition.getX() > sourcePosition.getX();
+      boolean shortCastle = destPosition.x() > sourcePosition.x();
       Color color = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
       if (gameState.getBoard().canCastle(color, shortCastle)) {
         gameState.getBoard().applyCastle(color, shortCastle);
@@ -142,8 +142,8 @@ public abstract class GameAbstract extends Subject {
             .getBoard()
             .getBoardRep()
             .isEnPassant(
-                gameState.getBoard().getEnPassantPos().getX(),
-                gameState.getBoard().getEnPassantPos().getY(),
+                gameState.getBoard().getEnPassantPos().x(),
+                gameState.getBoard().getEnPassantPos().y(),
                 move,
                 gameState.isWhiteTurn())) {
       if (gameState
@@ -178,8 +178,8 @@ public abstract class GameAbstract extends Subject {
           .getBoard()
           .setEnPassantPos(
               gameState.isWhiteTurn()
-                  ? new Position(move.dest.getX(), move.dest.getY() - 1)
-                  : new Position(move.dest.getX(), move.dest.getY() + 1));
+                  ? new Position(move.dest.x(), move.dest.y() - 1)
+                  : new Position(move.dest.x(), move.dest.y() + 1));
       move.piece = coloredPiece;
       gameState.getBoard().makeMove(move);
       gameState.getBoard().setLastMoveDoublePush(true);
@@ -316,18 +316,14 @@ public abstract class GameAbstract extends Subject {
   public boolean isPromotionMove(Move move) {
     // return
     // getBoard().getBoardRep().isPawnPromoting(move.source.getX(),move.source.getY(),getGameState().isWhiteTurn()); don't pass the tests
-    if (this.gameState
-            .getBoard()
-            .getBoardRep()
-            .getPieceAt(move.source.getX(), move.source.getY())
-            .piece
+    if (this.gameState.getBoard().getBoardRep().getPieceAt(move.source.x(), move.source.y()).piece
         != Piece.PAWN) {
       return false;
     }
-    if (this.gameState.isWhiteTurn() && move.dest.getY() == 7) {
+    if (this.gameState.isWhiteTurn() && move.dest.y() == 7) {
       return true;
     }
-    if (!this.gameState.isWhiteTurn() && move.dest.getY() == 0) {
+    if (!this.gameState.isWhiteTurn() && move.dest.y() == 0) {
       return true;
     }
     return false;

@@ -118,8 +118,8 @@ public class ZobristHashing {
       throw new RuntimeException("Only available for bitboards");
     }
 
-    int from = move.source.getX() + move.source.getY() * board.getBoardRep().getNbRows();
-    int to = move.dest.getX() + move.dest.getY() * board.getBoardRep().getNbCols();
+    int from = move.source.x() + move.source.y() * board.getBoardRep().getNbRows();
+    int to = move.dest.x() + move.dest.y() * board.getBoardRep().getNbCols();
 
     // Remove piece from its source and add it to the destination
     currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
@@ -147,7 +147,7 @@ public class ZobristHashing {
     }
 
     if (board.getEnPassantPos() != null) {
-      prevEnPassantFile = board.getEnPassantPos().getX();
+      prevEnPassantFile = board.getEnPassantPos().x();
       hash ^= enPassant[prevEnPassantFile];
     }
     if (board.isWhite) {
@@ -175,7 +175,7 @@ public class ZobristHashing {
     }
     // if en passant is possible
     if (board.getEnPassantPos() != null) {
-      prevEnPassantFile = board.getEnPassantPos().getX();
+      prevEnPassantFile = board.getEnPassantPos().x();
       currHash ^= enPassant[prevEnPassantFile];
     }
 

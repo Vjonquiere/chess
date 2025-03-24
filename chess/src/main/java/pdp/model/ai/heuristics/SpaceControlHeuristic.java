@@ -50,10 +50,10 @@ public class SpaceControlHeuristic implements Heuristic {
       Position posDest = move.getDest();
       // If move is aiming at the center then bonus
       boolean moveAimsAtCenter =
-          posDest.getX() >= posDownLeftCenter.getX()
-              && posDest.getX() <= posTopRightCenter.getX()
-              && posDest.getY() >= posDownRightCenter.getY()
-              && posDest.getY() <= posTopLeftCenter.getY();
+          posDest.x() >= posDownLeftCenter.x()
+              && posDest.x() <= posTopRightCenter.x()
+              && posDest.y() >= posDownRightCenter.y()
+              && posDest.y() <= posTopLeftCenter.y();
       if (moveAimsAtCenter) {
         score += bonusForEachMoveInCenter;
       }
@@ -91,19 +91,19 @@ public class SpaceControlHeuristic implements Heuristic {
       Position posDest = move.getDest();
       // If move is aiming at the left flank then bonus
       boolean moveAimsAtLeftFlank =
-          posDest.getX() >= posDownLeftCenterLeftFlank.getX()
-              && posDest.getX() <= posTopRightCenterLeftFlank.getX()
-              && posDest.getY() >= posDownRightCenterLeftFlank.getY()
-              && posDest.getY() <= posTopLeftCenterLeftFlank.getY();
+          posDest.x() >= posDownLeftCenterLeftFlank.x()
+              && posDest.x() <= posTopRightCenterLeftFlank.x()
+              && posDest.y() >= posDownRightCenterLeftFlank.y()
+              && posDest.y() <= posTopLeftCenterLeftFlank.y();
       if (moveAimsAtLeftFlank) {
         score += bonusForEachMoveOnFlanks;
       }
       // If move is aiming at the right flank then bonus
       boolean moveAimsAtRightFlank =
-          posDest.getX() >= posDownLeftCenterRightFlank.getX()
-              && posDest.getX() <= posTopRightCenterRightFlank.getX()
-              && posDest.getY() >= posDownRightCenterRightFlank.getY()
-              && posDest.getY() <= posTopLeftCenterRightFlank.getY();
+          posDest.x() >= posDownLeftCenterRightFlank.x()
+              && posDest.x() <= posTopRightCenterRightFlank.x()
+              && posDest.y() >= posDownRightCenterRightFlank.y()
+              && posDest.y() <= posTopLeftCenterRightFlank.y();
       if (moveAimsAtRightFlank) {
         score += bonusForEachMoveOnFlanks;
       }

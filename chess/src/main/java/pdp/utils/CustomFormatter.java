@@ -3,7 +3,7 @@ package pdp.utils;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-/** Custom formatting for the logger class : YYYY-MM-DD hh:mm:ss message */
+/** Custom formatting for the logger class : YYYY-MM-DD hh:mm:ss message. */
 public class CustomFormatter extends Formatter {
   @Override
   public String format(LogRecord record) {

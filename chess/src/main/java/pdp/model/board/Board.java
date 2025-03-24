@@ -73,7 +73,7 @@ public class Board {
   }
 
   public List<Move> getAvailableMoves(Position pos) {
-    return getBoardRep().getAvailableMoves(pos.getX(), pos.getY(), false);
+    return getBoardRep().getAvailableMoves(pos.x(), pos.y(), false);
   }
 
   public boolean getPlayer() {
@@ -91,14 +91,14 @@ public class Board {
    */
   public void makeMove(Move move) {
     this.nbMovesWithNoCaptureOrPawn++;
-    if (getBoardRep().getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
+    if (getBoardRep().getPieceAt(move.source.x(), move.source.y()).piece == Piece.PAWN) {
       // Reset the number of moves with no pawn move
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
     if (move.isTake) {
       // SAVE DELETED PIECE FOR HASHING
       if (!this.isEnPassantTake()) {
-        getBoardRep().deletePieceAt(move.dest.getX(), move.dest.getY());
+        getBoardRep().deletePieceAt(move.dest.x(), move.dest.y());
       }
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
@@ -108,9 +108,9 @@ public class Board {
       this.setLastMoveDoublePush(false);
       this.setEnPassantTake(false);
       if (this.isWhite) {
-        getBoardRep().deletePieceAt(move.dest.getX(), move.dest.getY() - 1);
+        getBoardRep().deletePieceAt(move.dest.x(), move.dest.y() - 1);
       } else {
-        getBoardRep().deletePieceAt(move.dest.getX(), move.dest.getY() + 1);
+        getBoardRep().deletePieceAt(move.dest.x(), move.dest.y() + 1);
       }
     }
 
@@ -137,12 +137,12 @@ public class Board {
             || move.source.equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.setBlackLongCastle(false);
     }
-    if (getBoardRep().isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
+    if (getBoardRep().isPawnPromoting(move.dest.x(), move.dest.y(), this.isWhite)) {
       Piece newPiece = ((PromoteMove) move).getPromPiece();
       getBoardRep()
           .promotePawn(
-              move.dest.getX(),
-              move.dest.getY(),
+              move.dest.x(),
+              move.dest.y(),
               this.isWhite,
               newPiece); // replace Piece.QUEEN by newPiece
     }
@@ -233,7 +233,7 @@ public class Board {
    */
   private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {
     for (Position pos : positions) {
-      board[this.getBoardRep().getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
+      board[this.getBoardRep().getNbRows() - 1 - pos.y()][pos.x()] = rep;
     }
   }
 

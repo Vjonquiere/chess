@@ -37,9 +37,8 @@ public class PawnChainHeuristic implements Heuristic {
 
     for (Position pawn : pawns) {
       for (Position otherPawn : pawns) {
-        if ((Math.abs(otherPawn.getX() - pawn.getX()) == 1
-                && Math.abs(otherPawn.getY() - (pawn.getY())) == 1)
-            || (otherPawn.getY() == pawn.getY() && Math.abs(otherPawn.getX() - pawn.getX()) == 1)) {
+        if ((Math.abs(otherPawn.x() - pawn.x()) == 1 && Math.abs(otherPawn.y() - (pawn.y())) == 1)
+            || (otherPawn.y() == pawn.y() && Math.abs(otherPawn.x() - pawn.x()) == 1)) {
           // Connected pawn
           score += reward;
         }

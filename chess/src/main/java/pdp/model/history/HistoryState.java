@@ -76,7 +76,7 @@ public class HistoryState {
    */
   public String toAlgebraicString() {
     StringBuilder sb = new StringBuilder();
-    if (!(this.move.getSource().getX() == -1)) {
+    if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
         sb.append(this.gameState.getFullTurn())
             .append(". W ")
@@ -105,7 +105,7 @@ public class HistoryState {
    */
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    if (!(this.move.getSource().getX() == -1)) {
+    if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
         sb.append(this.gameState.getFullTurn())
             .append(". W ")

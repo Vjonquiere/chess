@@ -180,9 +180,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void movePiece(Position from, Position to) {
-    ColoredPiece piece = getPieceAt(from.getX(), from.getY());
-    int fromIndex = from.getX() % 8 + from.getY() * 8;
-    int toIndex = to.getX() % 8 + to.getY() * 8;
+    ColoredPiece piece = getPieceAt(from.x(), from.y());
+    int fromIndex = from.x() % 8 + from.y() * 8;
+    int toIndex = to.x() % 8 + to.y() * 8;
     int bitboardIndex =
         switch (piece.piece) {
           case KING -> piece.color == Color.WHITE ? 0 : 6;

@@ -65,8 +65,8 @@ public class BishopEndgameHeuristic implements Heuristic {
     boolean sameColorBishops = false;
     if (bishops.size() > 0) {
       sameColorBishops =
-          (bishops.get(0).getX() + bishops.get(0).getY()) % 2
-              == (bishops.get(1).getX() + bishops.get(1).getY()) % 2;
+          (bishops.get(0).x() + bishops.get(0).y()) % 2
+              == (bishops.get(1).x() + bishops.get(1).y()) % 2;
     }
 
     if (sameColorBishops) {
@@ -93,8 +93,8 @@ public class BishopEndgameHeuristic implements Heuristic {
     boolean sameColorBishops = false;
     if (!bishopsPlayer1.isEmpty() && !bishopsPlayer2.isEmpty()) {
       sameColorBishops =
-          (bishopsPlayer1.get(0).getX() + bishopsPlayer1.get(0).getY()) % 2
-              == (bishopsPlayer2.get(0).getX() + bishopsPlayer2.get(0).getY()) % 2;
+          (bishopsPlayer1.get(0).x() + bishopsPlayer1.get(0).y()) % 2
+              == (bishopsPlayer2.get(0).x() + bishopsPlayer2.get(0).y()) % 2;
     }
 
     if (sameColorBishops) {
@@ -117,7 +117,7 @@ public class BishopEndgameHeuristic implements Heuristic {
     int noBonus = 0;
 
     for (Position bishop : bishops) {
-      int fromCenter = Math.abs(bishop.getX() - 3) + Math.abs(bishop.getY() - 3);
+      int fromCenter = Math.abs(bishop.x() - 3) + Math.abs(bishop.y() - 3);
       score += Math.max(noBonus, 10 - (fromCenter * 2));
     }
 
@@ -138,7 +138,7 @@ public class BishopEndgameHeuristic implements Heuristic {
 
     for (Position bishop : bishops) {
       for (Position pawn : pawns) {
-        if ((bishop.getX() + bishop.getY()) % 2 == (pawn.getX() + pawn.getY()) % 2) {
+        if ((bishop.x() + bishop.y()) % 2 == (pawn.x() + pawn.y()) % 2) {
           score -= 5;
         }
       }
