@@ -26,7 +26,7 @@ import pdp.utils.Position;
 /** Class containing common methods for GameAI and Game. */
 public abstract class GameAbstract extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameAbstract.class.getName());
-  private static ZobristHashing zobristHashing = new ZobristHashing();
+  private ZobristHashing zobristHashing = new ZobristHashing();
   private GameState gameState;
   private HashMap<Long, Integer> stateCount;
   private History history;
@@ -46,6 +46,17 @@ public abstract class GameAbstract extends Subject {
     this.gameState = gameState;
     this.history = history;
     this.stateCount = stateCount;
+  }
+
+  public GameAbstract(
+      GameState gameState,
+      History history,
+      HashMap<Long, Integer> stateCount,
+      ZobristHashing zobristHashing) {
+    this.gameState = gameState;
+    this.history = history;
+    this.stateCount = stateCount;
+    this.zobristHashing = zobristHashing;
   }
 
   public abstract void playMove(Move move);

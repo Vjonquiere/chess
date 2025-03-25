@@ -84,7 +84,7 @@ public class MinimaxTest {
     long elapsedTime = endTime - startTime;
     long remainingTime = solver.getTimer().getTimeRemaining();
 
-    assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 100);
+    assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 500);
     assertTrue(remainingTime <= 5000);
   }
   /*

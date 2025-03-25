@@ -2,13 +2,14 @@ package pdp.model.ai;
 
 import static pdp.utils.Logging.debug;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
+import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
+import pdp.model.ai.algorithms.AlphaBetaParallel;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.algorithms.SearchAlgorithm;
@@ -44,7 +45,7 @@ public class Solver {
   private final ZobristHashing zobristHashing = new ZobristHashing();
 
   /** Map containing evaluations of boards, stored thanks to zobrist. */
-  private Map<Long, Float> evaluatedBoards;
+  private ConcurrentHashMap<Long, Float> evaluatedBoards;
 
   /** AI algorithm to find the best move. */
   private SearchAlgorithm algorithm;
@@ -85,7 +86,7 @@ public class Solver {
 
   /** Initializes the solver with the default heuristic and algorithm. */
   public Solver() {
-    evaluatedBoards = new HashMap<>();
+    evaluatedBoards = new ConcurrentHashMap<>();
     this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
   }
@@ -99,6 +100,8 @@ public class Solver {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
+      case ALPHA_BETA_ID -> this.algorithm = new AlphaBetaIterativeDeepening(this);
+      case ALPHA_BETA_PARALLEL -> this.algorithm = new AlphaBetaParallel(this);
       case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
@@ -143,7 +146,7 @@ public class Solver {
     if (this.startHeuristic == null) {
       this.startHeuristic = heuristic;
     }
-    this.evaluatedBoards = new HashMap<>();
+    this.evaluatedBoards = new ConcurrentHashMap<>();
     debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
@@ -170,6 +173,7 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    evaluatedBoards = new ConcurrentHashMap<>();
     this.currentHeuristic = heuristic;
     if (this.startHeuristic == null) {
       this.startHeuristic = heuristic;
@@ -330,6 +334,7 @@ public class Solver {
       try {
         game.playMove(bestMove.move());
       } catch (Exception e) {
+        e.printStackTrace();
         game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
         System.err.println(e.getMessage());
         if (game.getGameState().isWhiteTurn()) {
