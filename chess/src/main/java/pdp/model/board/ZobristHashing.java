@@ -1,6 +1,7 @@
 package pdp.model.board;
 
 import java.util.Random;
+import pdp.exceptions.InvalidBoardException;
 import pdp.model.piece.ColoredPiece;
 
 /** Implementation of zobrist hashing to store hashes from boards. */
@@ -90,7 +91,7 @@ public class ZobristHashing {
   private long generatePieceHash(Board board) {
     long hash = 0;
     if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardsRepresentation)) {
-      throw new RuntimeException("Only available for bitboards");
+      throw new InvalidBoardException();
     }
     Bitboard[] bitboards = bitboardsRepresentation.getBitboards();
     for (int i = 0; i < PIECES_TYPES; i++) {
@@ -115,7 +116,7 @@ public class ZobristHashing {
    */
   private long updatePieceHash(long currHash, Board board, Move move) {
     if (!(board.getBoardRep() instanceof BitboardRepresentation)) {
-      throw new RuntimeException("Only available for bitboards");
+      throw new InvalidBoardException();
     }
 
     int from = move.source.x() + move.source.y() * board.getBoardRep().getNbRows();

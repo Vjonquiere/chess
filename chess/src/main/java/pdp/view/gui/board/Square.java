@@ -117,6 +117,12 @@ public class Square extends StackPane {
     }
   }
 
+  /**
+   * Draw a red rectangle on the king's square if he is in check or clear the square if he isn't in
+   * check anymore.
+   *
+   * @param isCheck true if the king is check, false otherwise
+   */
   public void setCheck(boolean isCheck) {
     GraphicsContext gc = hintSq.getGraphicsContext2D();
     gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
@@ -126,6 +132,12 @@ public class Square extends StackPane {
     }
   }
 
+  /**
+   * Removes the color from the square and add green if the square to display was in the last move
+   * made.
+   *
+   * @param isLastMove true if the square was in the last move made.
+   */
   public void setLastMove(boolean isLastMove) {
     GraphicsContext gc = hintSq.getGraphicsContext2D();
     gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());

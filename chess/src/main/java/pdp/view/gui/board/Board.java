@@ -249,13 +249,23 @@ public class Board extends GridPane {
   }
 
   private void clearCheckSquare() {
-    if (checkSquare == null) return;
+    if (checkSquare == null) {
+      return;
+    }
     pieces.get(checkSquare).setCheck(false);
     checkSquare = null;
   }
 
+  /**
+   * Displays the last move by adding a color on top of the from and to squares of the last move.
+   *
+   * @param from start position of the last move
+   * @param to end position of the last move
+   */
   public void setLastMoveSquares(Position from, Position to) {
-    if (from.y() == -1 || from.x() == -1 || to.y() == -1 || to.x() == -1) return;
+    if (from.y() == -1 || from.x() == -1 || to.y() == -1 || to.x() == -1) {
+      return;
+    }
     moveSquares.add(from);
     moveSquares.add(to);
     pieces.get(from).setLastMove(true);
@@ -263,7 +273,9 @@ public class Board extends GridPane {
   }
 
   private void clearLastMoveSquares() {
-    if (moveSquares.isEmpty()) return;
+    if (moveSquares.isEmpty()) {
+      return;
+    }
     while (!moveSquares.isEmpty()) {
       pieces.get(moveSquares.get(0)).setLastMove(false);
       moveSquares.remove(moveSquares.get(0));

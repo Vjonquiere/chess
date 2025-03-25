@@ -82,7 +82,7 @@ public class SolverTest {
             () -> {
               solver.evaluateBoard(board, true);
             });
-    assertEquals("Only available for bitboards", exception.getMessage());
+    assertEquals("Only available for bitboards.", exception.getMessage());
   }
 
   @Test

@@ -1,6 +1,6 @@
 package pdp.model.ai.heuristics;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /** Composite heuristic used in start and middle game. */
 public class StandardHeuristic extends AbstractHeuristic {
@@ -24,7 +24,7 @@ public class StandardHeuristic extends AbstractHeuristic {
    *
    * @param weight list of weights to add to the heuristics
    */
-  public StandardHeuristic(ArrayList<Float> weight) {
+  public StandardHeuristic(List<Float> weight) {
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), weight.get(0)));
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), weight.get(1)));
     super.addHeuristic(new WeightedHeuristic(new GameStatus(), weight.get(2)));

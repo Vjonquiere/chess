@@ -2,8 +2,9 @@ package pdp.model.ai;
 
 import static pdp.utils.Logging.debug;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
@@ -36,20 +37,46 @@ import pdp.utils.Timer;
 
 /** Solver corresponding to an AI player. */
 public class Solver {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
-  // Zobrist hashing to avoid recomputing the position evaluation for the same boards
-  private final ZobristHashing zobristHashing = new ZobristHashing();
-  private HashMap<Long, Float> evaluatedBoards;
 
+  /** Zobrist hashing to avoid recomputing the position evaluation for the same boards. */
+  private final ZobristHashing zobristHashing = new ZobristHashing();
+
+  /** Map containing evaluations of boards, stored thanks to zobrist. */
+  private Map<Long, Float> evaluatedBoards;
+
+  /** AI algorithm to find the best move. */
   private SearchAlgorithm algorithm;
+
+  /** Heuristic to compute the score of a board. */
   private Heuristic heuristic;
+
+  /** Heuristic currently used. */
   private HeuristicType currentHeuristic;
+
+  /** Heuristic chosen for the start and middle phase of the game. */
   private HeuristicType startHeuristic;
+
+  /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
+
+  /**
+   * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before
+   * evaluation.
+   */
   private int depth = 4;
+
+  /** Timer for bounded time. */
   private Timer timer;
+
+  /** Time allocated for the search of a move. */
   private long time;
-  private boolean isSearchStopped = false;
+
+  /** Boolean to indicate whether the algorithm is searching for a move. */
+  private boolean searchStopped = false;
+
+  /** Boolean to indicate if the move needs to be played. Used for the hint of gui. */
   private boolean isMoveToPlay = true;
 
   static {
@@ -84,7 +111,7 @@ public class Solver {
    *
    * @param numberSimulations the number of MonteCarloTreeSearch simulations wanted by the user
    */
-  public void setMonteCarloAlgorithm(int numberSimulations) {
+  public void setMonteCarloAlgorithm(final int numberSimulations) {
     this.algorithm = new MonteCarloTreeSearch(this, numberSimulations);
   }
 
@@ -93,7 +120,7 @@ public class Solver {
    *
    * @param heuristic The heuristic to use.
    */
-  public void setHeuristic(HeuristicType heuristic) {
+  public void setHeuristic(final HeuristicType heuristic) {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
       case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
@@ -125,7 +152,7 @@ public class Solver {
    *
    * @param heuristic The heuristic to use.
    */
-  public void setHeuristic(HeuristicType heuristic, ArrayList<Float> weight) {
+  public void setHeuristic(final HeuristicType heuristic, final List<Float> weight) {
     switch (heuristic) {
       case MATERIAL -> this.heuristic = new MaterialHeuristic();
       case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
@@ -155,7 +182,7 @@ public class Solver {
    *
    * @param heuristic endgame heuristic to set
    */
-  public void setEndgameHeuristic(HeuristicType heuristic) {
+  public void setEndgameHeuristic(final HeuristicType heuristic) {
     this.endgameHeuristic = heuristic;
   }
 
@@ -168,7 +195,7 @@ public class Solver {
     return this.endgameHeuristic;
   }
 
-  public void setStartHeuristic(HeuristicType heuristic) {
+  public void setStartHeuristic(final HeuristicType heuristic) {
     this.startHeuristic = heuristic;
   }
 
@@ -217,11 +244,12 @@ public class Solver {
    *
    * @param depth The depth to use.
    */
-  public void setDepth(int depth) {
+  public void setDepth(final int depth) {
     if (depth <= 0) {
       throw new IllegalArgumentException("Depth must be greater than 0");
     }
     debug(LOGGER, "Depth set to " + depth);
+
     this.depth = depth;
   }
 
@@ -230,7 +258,7 @@ public class Solver {
    *
    * @param time The time to use.
    */
-  public void setTime(long time) {
+  public void setTime(final long time) {
     if (time <= 0) {
       throw new IllegalArgumentException("Time must be greater than 0");
     }
@@ -263,8 +291,8 @@ public class Solver {
    *
    * @param playMove boolean
    */
-  public void stopSearch(boolean playMove) {
-    isSearchStopped = true;
+  public void stopSearch(final boolean playMove) {
+    searchStopped = true;
     isMoveToPlay = playMove;
   }
 
@@ -274,7 +302,7 @@ public class Solver {
    * @return true if the search is stopped, false otherwise
    */
   public boolean isSearchStopped() {
-    return isSearchStopped;
+    return searchStopped;
   }
 
   /**
@@ -282,19 +310,20 @@ public class Solver {
    *
    * @param game current game
    */
-  public void playAiMove(Game game) {
+  public void playAiMove(final Game game) {
     game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
-    isSearchStopped = false;
+    searchStopped = false;
     isMoveToPlay = true;
-    AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
+    final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
     if (timer != null) {
       timer.stop();
     }
 
     debug(LOGGER, "Best move " + bestMove);
+
     game.setExploration(false);
 
     if (isMoveToPlay) {
@@ -318,12 +347,12 @@ public class Solver {
    * @param game Game to find the best move in
    * @return best move according to the game in parameter
    */
-  public Move getBestMove(Game game) {
+  public Move getBestMove(final Game game) {
     game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
-    AiMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    final AiMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
     if (timer != null) {
       timer.stop();
     }
@@ -341,12 +370,12 @@ public class Solver {
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public float evaluateBoard(Board board, boolean isWhite) {
+  public float evaluateBoard(final Board board, final boolean isWhite) {
     if (board == null) {
       throw new IllegalArgumentException("Board is null");
     }
 
-    long hash = zobristHashing.generateHashFromBitboards(board);
+    final long hash = zobristHashing.generateHashFromBitboards(board);
     float score;
     if (evaluatedBoards.containsKey(hash)) {
       score = evaluatedBoards.get(hash);
@@ -355,7 +384,7 @@ public class Solver {
       evaluatedBoards.put(hash, score);
     }
 
-    Color player = isWhite ? Color.WHITE : Color.BLACK;
+    final Color player = isWhite ? Color.WHITE : Color.BLACK;
 
     if (Game.getInstance().getGameState().isThreefoldRepetition()
         || board.getBoardRep().isStaleMate(player, player)

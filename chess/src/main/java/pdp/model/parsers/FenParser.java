@@ -12,8 +12,8 @@ import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 /** File parser that produce boards from file at FEN format. */
-public class FenParser {
-  private static final Map<String, ColoredPiece> pieces =
+public final class FenParser {
+  private static final Map<String, ColoredPiece> PIECES =
       Map.ofEntries(
           entry("K", new ColoredPiece(Piece.KING, Color.WHITE)),
           entry("Q", new ColoredPiece(Piece.QUEEN, Color.WHITE)),
@@ -27,7 +27,7 @@ public class FenParser {
           entry("r", new ColoredPiece(Piece.ROOK, Color.BLACK)),
           entry("n", new ColoredPiece(Piece.KNIGHT, Color.BLACK)),
           entry("p", new ColoredPiece(Piece.PAWN, Color.BLACK)));
-  private static final BitboardRepresentation bitboardRepresentation =
+  private static final BitboardRepresentation BITBOARD_REP =
       new BitboardRepresentation(
           new Bitboard(0L),
           new Bitboard(0L),
@@ -42,44 +42,47 @@ public class FenParser {
           new Bitboard(0L),
           new Bitboard(0L));
 
+  /** Private constructor to avoid instantiation. */
+  private FenParser() {}
+
   /**
    * Loads a board position from a FEN string.
    *
    * @param fen The FEN string representing the board state
    * @return A FileBoard representing the loaded position
    */
-  public static FileBoard loadBoardFromFen(String fen) {
-    String[] parts = fen.split(" ");
+  public static FileBoard loadBoardFromFen(final String fen) {
+    final String[] parts = fen.split(" ");
 
     if (parts.length != 6) {
       throw new IllegalArgumentException("Invalid FEN format");
     }
 
-    String[] ranks = parts[0].split("/");
+    final String[] ranks = parts[0].split("/");
     if (ranks.length != 8) {
       throw new IllegalArgumentException("Invalid FEN board structure");
     }
 
     for (int y = 7; y >= 0; y--) {
       int x = 0;
-      for (char c : ranks[7 - y].toCharArray()) {
+      for (final char c : ranks[7 - y].toCharArray()) {
         if (Character.isDigit(c)) {
           x += Character.getNumericValue(c); // Skip empty squares
         } else {
-          ColoredPiece piece = pieces.get(String.valueOf(c));
-          bitboardRepresentation.setSquare(piece, (x + (y * 8)));
+          final ColoredPiece piece = PIECES.get(String.valueOf(c));
+          BITBOARD_REP.setSquare(piece, (x + y * 8));
           x++;
         }
       }
     }
 
-    boolean isWhiteTurn = parts[1].equals("w");
+    final boolean isWhiteTurn = parts[1].equals("w");
     boolean whiteKingCastling = false;
     boolean whiteQueenCastling = false;
     boolean blackKingCastling = false;
     boolean blackQueenCastling = false;
 
-    for (char c : parts[2].toCharArray()) {
+    for (final char c : parts[2].toCharArray()) {
       switch (c) {
         case 'K' -> whiteKingCastling = true;
         case 'Q' -> whiteQueenCastling = true;
@@ -89,12 +92,12 @@ public class FenParser {
       }
     }
 
-    Position pos = parts[3].equals("-") ? null : Move.stringToPosition(parts[3]);
+    final Position pos = parts[3].equals("-") ? null : Move.stringToPosition(parts[3]);
 
-    int fiftyMoveRule = (Integer.parseInt(parts[4]));
-    int playedMoves = (Integer.parseInt(parts[5].trim()));
+    final int fiftyMoveRule = Integer.parseInt(parts[4]);
+    final int playedMoves = Integer.parseInt(parts[5].trim());
 
-    FenHeader header =
+    final FenHeader header =
         new FenHeader(
             whiteKingCastling,
             whiteQueenCastling,
@@ -103,6 +106,6 @@ public class FenParser {
             pos,
             fiftyMoveRule,
             playedMoves);
-    return new FileBoard(bitboardRepresentation, isWhiteTurn, header);
+    return new FileBoard(BITBOARD_REP, isWhiteTurn, header);
   }
 }

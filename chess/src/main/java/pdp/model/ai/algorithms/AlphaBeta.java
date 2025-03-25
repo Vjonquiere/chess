@@ -19,8 +19,11 @@ import pdp.utils.Logging;
 
 /** Algorithm of artificial intelligence Alpha beta pruning. */
 public class AlphaBeta implements SearchAlgorithm {
+  /** Solver used for calling the evaluation of the board once depth si reached or time is up. */
   private final Solver solver;
-  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+
+  /** Logger of the class. */
+  private static final Logger LOGGER = Logger.getLogger(AlphaBeta.class.getName());
 
   static {
     Logging.configureLogging(LOGGER);
@@ -31,7 +34,7 @@ public class AlphaBeta implements SearchAlgorithm {
    *
    * @param solver Solver needed to call the evaluation
    */
-  public AlphaBeta(Solver solver) {
+  public AlphaBeta(final Solver solver) {
     this.solver = solver;
   }
 
@@ -44,16 +47,16 @@ public class AlphaBeta implements SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AiMove findBestMove(Game game, int depth, boolean player) {
-    GameAi aiGame = GameAi.fromGame(game);
-    ExecutorService executor =
+  public AiMove findBestMove(final Game game, final int depth, final boolean player) {
+    final GameAi aiGame = GameAi.fromGame(game);
+    final ExecutorService executor =
         Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
+    final List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
     futures.add(
         executor.submit(
             () -> {
-              GameAi gameCopy = aiGame.copy();
+              final GameAi gameCopy = aiGame.copy();
               return alphaBeta(gameCopy, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
             }));
 
@@ -85,23 +88,23 @@ public class AlphaBeta implements SearchAlgorithm {
    * @return The best move with its evaluated score.
    */
   private AiMove alphaBeta(
-      GameAi game,
-      int depth,
-      boolean currentPlayer,
+      final GameAi game,
+      final int depth,
+      final boolean currentPlayer,
       float alpha,
       float beta,
-      boolean originalPlayer) {
+      final boolean originalPlayer) {
     if (solver.isSearchStopped()) {
       return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AiMove(null, evaluation);
     }
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-    Board board = game.getBoard();
+    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    final Board board = game.getBoard();
     moves.addAll(
         game.getBoard()
             .getBoardRep()
@@ -121,7 +124,8 @@ public class AlphaBeta implements SearchAlgorithm {
 
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AiMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
+        final AiMove currMove =
+            alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
         game.previousState();
         if (currentPlayer == originalPlayer) { // Maximizing
           if (currMove.score() > bestMove.score()) {

@@ -7,7 +7,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 
 /** Utility class to add promotion moves to the AI algorithms. */
-public class AlgorithmHelpers {
+public final class AlgorithmHelpers {
 
   /** Private constructor to prevent instantiation. */
   private AlgorithmHelpers() {

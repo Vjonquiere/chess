@@ -15,7 +15,7 @@ import pdp.utils.Position;
  */
 public class BadPawnsHeuristic implements Heuristic {
 
-  private static final int penaltyForBackwardsPawn = 4;
+  private static final int PENALTY_FOR_BACKWARDS_PAWN = 4;
 
   /**
    * Computes a score according to the potential weaknesses in the observed pawn structures.
@@ -149,6 +149,6 @@ public class BadPawnsHeuristic implements Heuristic {
       }
     }
 
-    return count * penaltyForBackwardsPawn;
+    return count * PENALTY_FOR_BACKWARDS_PAWN;
   }
 }

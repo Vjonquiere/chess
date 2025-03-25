@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * Logger.getLogger(Main.class.getName()); in constructor or main :
  * Logging.configureLogging(LOGGER); Logging.DEBUG(LOGGER, message);
  */
-public class Logging {
+public final class Logging {
   private static boolean debug = false;
   private static boolean verbose = false;
 
@@ -44,7 +44,9 @@ public class Logging {
    * @param message String to log
    */
   public static void debug(Logger logger, String message) {
-    logger.fine(logger.getName() + " [DEBUG] " + message);
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine(logger.getName() + " [DEBUG] " + message);
+    }
   }
 
   /**
@@ -55,7 +57,9 @@ public class Logging {
    * @param message String to log
    */
   public static void verbose(Logger logger, String message) {
-    logger.finer(logger.getName() + " [VERBOSE] " + message);
+    if (logger.isLoggable(Level.FINER)) {
+      logger.finer(logger.getName() + " [VERBOSE] " + message);
+    }
   }
 
   /**
