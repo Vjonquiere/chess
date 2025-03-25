@@ -283,6 +283,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param x The board column
    * @param y The board row
    */
+  @Override
   public void deletePieceAt(int x, int y) {
     ColoredPiece piece = getPieceAt(x, y);
     board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
@@ -309,6 +310,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @param color color for which castling move is applied
    */
+  @Override
   public void applyShortCastle(Color color) {
     if (color == Color.WHITE) {
       Position e1Square = new Position(4, 0);
@@ -337,6 +339,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @param color color for which castling move is applied
    */
+  @Override
   public void applyLongCastle(Color color) {
     if (color == Color.WHITE) {
       Position e1Square = new Position(4, 0);
@@ -651,6 +654,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @return the number of remaining pieces on the board
    */
+  @Override
   public int nbPiecesRemaining() {
     return BitboardPieces.nbPiecesRemaining(this);
   }
@@ -817,6 +821,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param white {true} if pawn is white, {false} if pawn is black
    * @return True if the move is a valid en passant capture, false else
    */
+  @Override
   public boolean isEnPassant(int x, int y, Move move, boolean white) {
     return BitboardRules.isEnPassant(x, y, move, white, this);
   }
@@ -828,6 +833,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param white color of the player we check the material for
    * @return true if {white} has enouhg material to mate. false otherwise
    */
+  @Override
   public boolean hasEnoughMaterialToMate(boolean white) {
     return BitboardRules.hasEnoughMaterialToMate(white, this);
   }
@@ -902,6 +908,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param dest The destination position of the move.
    * @return true if the move is a castle move, false otherwise.
    */
+  @Override
   public boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
     return BitboardRules.isCastleMove(coloredPiece, source, dest);
   }
@@ -914,6 +921,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param sourcePosition the position
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
+  @Override
   public boolean validatePieceOwnership(boolean white, Position sourcePosition) {
     return BitboardRules.validatePieceOwnership(white, sourcePosition, this);
   }
@@ -936,6 +944,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param isWhite true for white pawns, false for black pawns
    * @return true if the majority of pawns for the given color are past the middle of the board.
    */
+  @Override
   public boolean pawnsHaveProgressed(boolean isWhite) {
     return BitboardStatusCheck.pawnsHaveProgressed(isWhite, this);
   }
@@ -959,6 +968,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *     long castle right
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
+  @Override
   public boolean canCastle(
       Color color,
       boolean shortCastle,
@@ -981,6 +991,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @return true if we're in an endgame (according to the chosen criteria)
    */
+  @Override
   public boolean isEndGamePhase(int fullTurn, boolean white) {
     return BitboardStatusCheck.isEndGamePhase(fullTurn, white, this);
   }
@@ -1019,6 +1030,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param isBlackShortCastle The black short castle possibility
    * @return A list containing all possible special moves
    */
+  @Override
   public List<Move> getSpecialMoves(
       boolean white,
       Position enPassantPos,
@@ -1053,6 +1065,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @return The horizontal size of the board
    */
+  @Override
   public int getNbCols() {
     return BitboardUtils.getNbCols(this);
   }
@@ -1062,6 +1075,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @return The vertical size of the board
    */
+  @Override
   public int getNbRows() {
     return BitboardUtils.getNbRows(this);
   }

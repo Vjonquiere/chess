@@ -589,15 +589,13 @@ public final class BitboardMovesGen {
               ? bitboardRepresentation.getWhiteBoard()
               : bitboardRepresentation.getBlackBoard();
       unreachableSquaresWhite.clearBit(whiteKingPos.x() % 8 + whiteKingPos.y() * 8);
-      List<Move> whiteKingMoves =
-          getKingMoves(
-              whiteKingPos,
-              unreachableSquaresWhite,
-              bitboardRepresentation.getBlackBoard(),
-              whiteKing,
-              bitboardRepresentation);
 
-      return whiteKingMoves;
+      return getKingMoves(
+          whiteKingPos,
+          unreachableSquaresWhite,
+          bitboardRepresentation.getBlackBoard(),
+          whiteKing,
+          bitboardRepresentation);
     } else {
       Position blackKingPos = bitboardRepresentation.getKing(false).get(0);
 
@@ -610,15 +608,12 @@ public final class BitboardMovesGen {
               : bitboardRepresentation.getBlackBoard();
       unreachableSquaresBlack.clearBit(blackKingPos.x() % 8 + blackKingPos.y() * 8);
 
-      List<Move> blackKingMoves =
-          getKingMoves(
-              blackKingPos,
-              unreachableSquaresBlack,
-              bitboardRepresentation.getWhiteBoard(),
-              blackKing,
-              bitboardRepresentation);
-
-      return blackKingMoves;
+      return getKingMoves(
+          blackKingPos,
+          unreachableSquaresBlack,
+          bitboardRepresentation.getWhiteBoard(),
+          blackKing,
+          bitboardRepresentation);
     }
   }
 

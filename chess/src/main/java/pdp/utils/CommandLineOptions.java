@@ -18,7 +18,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /** Utility class to parse the command line options. */
-public class CommandLineOptions {
+public final class CommandLineOptions {
   private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
   // Not final for test purposes

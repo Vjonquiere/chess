@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
  * Utility class for internationalization. Need to put all strings needed to be translated in the
  * chessResources_locale.properties files in the resources.
  */
-public class TextGetter {
+public final class TextGetter {
   private static Locale locale = Locale.ENGLISH; // Default language
   private static ResourceBundle messages = ResourceBundle.getBundle("chessResources", locale);
 
