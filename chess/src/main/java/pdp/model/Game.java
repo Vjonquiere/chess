@@ -50,8 +50,8 @@ public class Game extends GameAbstract {
   private boolean loadedFromFile;
   private boolean loadingFileHasHistory;
   private HashMap<OptionType, String> options;
-  public final Lock viewLock = new ReentrantLock();
-  public final Condition workingView = viewLock.newCondition();
+  private final Lock viewLock = new ReentrantLock();
+  private final Condition workingView = viewLock.newCondition();
   private final boolean VIEW_ON_OTHER_THREAD;
 
   static {
@@ -119,6 +119,14 @@ public class Game extends GameAbstract {
       return this.solverBlack.getTimer();
     }
     return super.getGameState().getMoveTimer();
+  }
+
+  public Lock getViewLock() {
+    return this.viewLock;
+  }
+
+  public Condition getWorkingViewCondition() {
+    return this.workingView;
   }
 
   public boolean isCurrentPlayerAI() {

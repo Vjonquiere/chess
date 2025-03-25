@@ -135,7 +135,7 @@ public class GUIView implements View {
     }
     Platform.runLater(
         () -> {
-          Game.getInstance().viewLock.lock();
+          Game.getInstance().getViewLock().lock();
           DEBUG(LOGGER, "View handling event " + event);
           try {
             switch (event) {
@@ -303,9 +303,9 @@ public class GUIView implements View {
                 DEBUG(LOGGER, "Received unknown game event: " + event);
                 break;
             }
-            Game.getInstance().workingView.signal();
+            Game.getInstance().getWorkingViewCondition().signal();
           } finally {
-            Game.getInstance().viewLock.unlock();
+            Game.getInstance().getViewLock().unlock();
           }
         });
   }
