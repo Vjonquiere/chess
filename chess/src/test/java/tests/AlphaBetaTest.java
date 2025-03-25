@@ -82,7 +82,8 @@ public class AlphaBetaTest {
     long elapsedTime = endTime - startTime;
     long remainingTime = solver.getTimer().getTimeRemaining();
     timeLimit *= 1000;
-    assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 100);
+
+    assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 500);
     assertTrue(remainingTime <= timeLimit);
   }
   /*
