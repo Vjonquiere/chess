@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.board.Move;
+import pdp.model.board.ZobristHashing;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
 import pdp.utils.Logging;
@@ -21,8 +22,12 @@ public class GameAi extends GameAbstract {
     Logging.configureLogging(LOGGER);
   }
 
-  private GameAi(GameState gameState, History history, HashMap<Long, Integer> stateCount) {
-    super(gameState, history, stateCount);
+  private GameAi(
+      GameState gameState,
+      History history,
+      HashMap<Long, Integer> stateCount,
+      ZobristHashing zobristHashing) {
+    super(gameState, history, stateCount, zobristHashing);
   }
 
   /**
@@ -165,8 +170,17 @@ public class GameAi extends GameAbstract {
     history.addMove(
         new HistoryState(
             new Move(new Position(-1, -1), new Position(-1, -1)), this.getGameState().getCopy()));
-    return new GameAi(
-        super.getGameState().getCopy(), history, new HashMap<>(super.getStateCount()));
+
+    ZobristHashing zobristHashing = new ZobristHashing(this.getZobristHasher());
+
+    GameAi game =
+        new GameAi(
+            super.getGameState().getCopy(),
+            history,
+            new HashMap<>(super.getStateCount()),
+            zobristHashing);
+
+    return game;
   }
 
   public static GameAi fromGame(Game game) {
@@ -179,6 +193,8 @@ public class GameAi extends GameAbstract {
 
     HashMap<Long, Integer> stateCount = new HashMap<>(game.getStateCount());
 
-    return new GameAi(gameState, history, stateCount);
+    ZobristHashing zobristHashing = new ZobristHashing(game.getZobristHasher());
+
+    return new GameAi(gameState, history, stateCount, zobristHashing);
   }
 }

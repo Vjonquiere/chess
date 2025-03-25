@@ -5,6 +5,7 @@ import pdp.model.Game;
 import pdp.model.GameAi;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
 import pdp.model.board.Move;
 
 public class Minimax implements SearchAlgorithm {
@@ -52,6 +53,18 @@ public class Minimax implements SearchAlgorithm {
     boolean isMinimizing = (currentPlayer != originalPlayer);
     AIMove bestMove = new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    Board board = game.getBoard();
+    moves.addAll(
+        game.getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                currentPlayer,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isBlackShortCastle()));
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;

@@ -1,6 +1,6 @@
 package pdp.model.board;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import pdp.model.piece.ColoredPiece;
 
 public class ZobristHashing {
@@ -10,43 +10,37 @@ public class ZobristHashing {
   private static final int CASTLING = 16;
   private static final int EN_PASSANT = 8;
 
-  private final long[][] pieces = new long[PIECES_TYPES][BOARD_SQUARES];
-  // 16 combinations of castling rights
-  private final long[] castling = new long[CASTLING];
-  // 8 en passant possible (1 per column)
-  private final long[] enPassant = new long[EN_PASSANT];
-  private long sideToMove;
+  private static final long[][] pieces = new long[PIECES_TYPES][BOARD_SQUARES];
+  private static final long[] castling = new long[CASTLING];
+  private static final long[] enPassant = new long[EN_PASSANT];
+
+  private static final long sideToMove;
 
   private int prevCastlingIndex;
   private int prevEnPassantFile = -1;
-  private final Random random = new Random();
 
-  /** Constructor to initialize the components to the future hash. */
-  public ZobristHashing() {
-    initializeHash();
-  }
-
-  /**
-   * Initialize all arrays with random long corresponding to the pieces, castling rights, en passant
-   * moves and size to move.
-   */
-  private void initializeHash() {
-
+  static {
+    // Initialize static tables once using ThreadLocalRandom
     for (int i = 0; i < PIECES_TYPES; i++) {
       for (int j = 0; j < BOARD_SQUARES; j++) {
-        pieces[i][j] = random.nextLong();
+        pieces[i][j] = ThreadLocalRandom.current().nextLong();
       }
     }
-
     for (int i = 0; i < CASTLING; i++) {
-      castling[i] = random.nextLong();
+      castling[i] = ThreadLocalRandom.current().nextLong();
     }
-
     for (int i = 0; i < EN_PASSANT; i++) {
-      enPassant[i] = random.nextLong();
+      enPassant[i] = ThreadLocalRandom.current().nextLong();
     }
+    sideToMove = ThreadLocalRandom.current().nextLong();
+  }
 
-    sideToMove = random.nextLong();
+  /** Constructor to initialize the components to the future hash. */
+  public ZobristHashing() {}
+
+  public ZobristHashing(ZobristHashing parent) {
+    this.prevCastlingIndex = parent.prevCastlingIndex;
+    this.prevEnPassantFile = parent.prevEnPassantFile;
   }
 
   /**
@@ -83,12 +77,12 @@ public class ZobristHashing {
   /**
    * Generate the hash corresponding to the pieces of the current board.
    *
-   * @param board Current board
+   * @param boardRep Current board representation
    * @return hash corresponding to the board given in parameters
    */
-  private long generatePieceHash(Board board) {
+  private long generatePieceHash(BoardRepresentation boardRep) {
     long hash = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardsRepresentation)) {
+    if (!(boardRep instanceof BitboardRepresentation bitboardsRepresentation)) {
       throw new RuntimeException("Only available for bitboards");
     }
     Bitboard[] bitboards = bitboardsRepresentation.getBitboards();
@@ -138,7 +132,7 @@ public class ZobristHashing {
    * @return hash corresponding to the board given in parameters
    */
   public long generateHashFromBitboards(Board board) {
-    long hash = generatePieceHash(board);
+    long hash = generatePieceHash(board.getBoardRep());
     prevCastlingIndex = translateCastling(board);
     if (prevCastlingIndex != -1) {
       hash ^= castling[prevCastlingIndex];
@@ -199,7 +193,11 @@ public class ZobristHashing {
    * @return hash corresponding to the board given in parameters
    */
   public long generateSimplifiedHashFromBitboards(Board board) {
-    return generatePieceHash(board);
+    return generatePieceHash(board.getBoardRep());
+  }
+
+  public long generateSimplifiedHashFromBitboards(BoardRepresentation boardRep) {
+    return generatePieceHash(boardRep);
   }
 
   /**

@@ -24,8 +24,6 @@ public class GameStatus implements Heuristic {
   @Override
   public float evaluate(Board board, boolean isWhite) {
     int score = 0;
-    Color player1 = isWhite ? Color.WHITE : Color.BLACK;
-    Color player2 = isWhite ? Color.BLACK : Color.WHITE;
     /*
     if (board.getBoardRep().isCheck(player2)) {
       score += 50;
