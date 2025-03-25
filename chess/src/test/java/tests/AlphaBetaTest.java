@@ -32,6 +32,7 @@ public class AlphaBetaTest {
 
   @BeforeEach
   void setUp() {
+    Game.initialize(false, false, null, null, null, new HashMap<>());
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
     solver = new Solver();

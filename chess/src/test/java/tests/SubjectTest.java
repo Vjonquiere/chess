@@ -2,11 +2,13 @@ package tests;
 
 import static org.mockito.Mockito.*;
 
+import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.events.Subject;
+import pdp.model.Game;
 
 class SubjectTest {
   private Subject subject;
@@ -15,6 +17,7 @@ class SubjectTest {
 
   @BeforeEach
   public void setUp() {
+    Game.initialize(false, false, null, null, null, new HashMap<>());
     subject = new Subject() {};
     observer = mock(EventObserver.class);
     errorObserver = mock(EventObserver.class);
