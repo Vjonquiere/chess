@@ -458,7 +458,6 @@ public class Game extends GameAbstract {
     }
 
     super.getGameState().switchPlayerTurn();
-    super.getGameState().getBoard().setPlayer(super.getGameState().isWhiteTurn());
     if (isSpecialMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(

@@ -142,7 +142,7 @@ public class ZobristHashing {
       prevEnPassantFile = board.getEnPassantPos().getX();
       hash ^= enPassant[prevEnPassantFile];
     }
-    if (board.isWhite) {
+    if (board.getPlayer()) {
       hash ^= sideToMove;
     }
     return hash;

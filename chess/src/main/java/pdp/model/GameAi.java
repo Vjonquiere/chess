@@ -82,7 +82,6 @@ public class GameAi extends GameAbstract {
     }
 
     super.getGameState().switchPlayerTurn();
-    super.getGameState().getBoard().setPlayer(super.getGameState().isWhiteTurn());
     if (isSpecialMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(
@@ -159,7 +158,6 @@ public class GameAi extends GameAbstract {
     }
 
     gameState.switchPlayerTurn();
-    gameState.getBoard().setPlayer(gameState.isWhiteTurn());
 
     DEBUG(LOGGER, "Checking game status...");
     gameState.checkGameStatus();

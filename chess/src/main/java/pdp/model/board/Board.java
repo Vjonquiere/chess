@@ -12,7 +12,7 @@ import pdp.utils.Position;
 public class Board {
   private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
   private BoardRepresentation board;
-  public boolean isWhite;
+  private boolean isWhite;
   private boolean whiteShortCastle;
   private boolean blackShortCastle;
   private boolean whiteLongCastle;

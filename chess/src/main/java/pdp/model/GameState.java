@@ -18,7 +18,6 @@ public class GameState extends Subject {
   public static int FIFTY_MOVE_RULE = 50;
   private Board board;
   private Timer moveTimer;
-  private boolean isWhiteTurn;
   private boolean whiteWantsToDraw = false;
   private boolean blackWantsToDraw = false;
   private boolean whiteResigns = false;
@@ -41,7 +40,6 @@ public class GameState extends Subject {
   // By default, blitz mode is not on
   public GameState() {
     this.isGameOver = false;
-    this.isWhiteTurn = true;
     this.board = new Board();
     this.moveTimer = null;
     this.fullTurnNumber = 0;
@@ -49,7 +47,6 @@ public class GameState extends Subject {
 
   public GameState(Timer timer) {
     this.isGameOver = false;
-    this.isWhiteTurn = true;
     this.board = new Board();
     this.moveTimer = timer;
     this.fullTurnNumber = 0;
@@ -62,7 +59,6 @@ public class GameState extends Subject {
    */
   public GameState(FileBoard board) {
     this.isGameOver = false;
-    this.isWhiteTurn = board.isWhiteTurn();
     this.board = new Board(board);
     this.moveTimer = null;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
@@ -76,18 +72,17 @@ public class GameState extends Subject {
   public GameState(FileBoard board, Timer timer) {
     Logging.configureLogging(LOGGER);
     this.isGameOver = false;
-    this.isWhiteTurn = board.isWhiteTurn();
     this.board = new Board(board);
     this.moveTimer = timer;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
 
   public boolean isWhiteTurn() {
-    return this.isWhiteTurn;
+    return this.board.getPlayer();
   }
 
   public void switchPlayerTurn() {
-    this.isWhiteTurn = !(this.isWhiteTurn);
+    this.board.setPlayer(!this.board.getPlayer());
   }
 
   public Board getBoard() {
@@ -405,7 +400,6 @@ public class GameState extends Subject {
     GameState copy = new GameState();
 
     copy.board = this.board.getCopy();
-    copy.isWhiteTurn = this.isWhiteTurn;
     copy.whiteWantsToDraw = this.whiteWantsToDraw;
     copy.blackWantsToDraw = this.blackWantsToDraw;
     copy.whiteResigns = this.whiteResigns;
@@ -435,7 +429,6 @@ public class GameState extends Subject {
   public void updateFrom(GameState gameState) {
     this.board = gameState.getBoard();
     this.moveTimer = gameState.getMoveTimer();
-    this.isWhiteTurn = gameState.isWhiteTurn();
     this.whiteWantsToDraw = gameState.hasWhiteRequestedDraw();
     this.blackWantsToDraw = gameState.hasBlackRequestedDraw();
     this.whiteResigns = gameState.hasWhiteResigned();
@@ -447,9 +440,5 @@ public class GameState extends Subject {
     this.fullTurnNumber = gameState.getFullTurn();
     this.zobristHashing = gameState.getZobristHashing();
     this.simplifiedZobristHashing = gameState.getSimplifiedZobristHashing();
-  }
-
-  public void setPlayer(boolean white) {
-    this.isWhiteTurn = white;
   }
 }
