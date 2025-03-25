@@ -39,7 +39,7 @@ public class BitboardMovesGen {
       Bitboard unreachableSquares,
       Bitboard enemies,
       Function<Bitboard, Bitboard> moveFunction) {
-    Bitboard allowedMoves = new Bitboard(piece.bitboard);
+    Bitboard allowedMoves = new Bitboard(piece.getBits());
     int bitCount = enemies.bitCount();
     do {
       allowedMoves = allowedMoves.or(moveFunction.apply(allowedMoves));

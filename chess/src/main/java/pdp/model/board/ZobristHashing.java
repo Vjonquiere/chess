@@ -87,7 +87,7 @@ public class ZobristHashing {
     }
     Bitboard[] bitboards = bitboardsRepresentation.getBitboards();
     for (int i = 0; i < PIECES_TYPES; i++) {
-      long bitboardValue = bitboards[i].bitboard;
+      long bitboardValue = bitboards[i].getBits();
       while (bitboardValue != 0) {
         int square = Long.numberOfTrailingZeros(bitboardValue);
         hash ^= pieces[i][square];

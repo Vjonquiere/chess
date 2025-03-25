@@ -20,7 +20,7 @@ public class Board {
   private Position enPassantPos;
   private boolean isLastMoveDoublePush;
   private boolean isEnPassantTake;
-  public int nbMovesWithNoCaptureOrPawn;
+  private int nbMovesWithNoCaptureOrPawn;
 
   static {
     Logging.configureLogging(LOGGER);

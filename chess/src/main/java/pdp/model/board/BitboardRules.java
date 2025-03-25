@@ -35,8 +35,8 @@ public class BitboardRules {
       int x, int y, Color by, BitboardRepresentation bitboardRepresentation) {
     Bitboard square = new Bitboard();
     square.setBit((x % 8) + (y * 8));
-    return (square.bitboard
-            & bitboardRepresentation.getColorMoveBitboard(by == Color.WHITE).bitboard)
+    return (square.getBits()
+            & bitboardRepresentation.getColorMoveBitboard(by == Color.WHITE).getBits())
         != 0;
   }
 
