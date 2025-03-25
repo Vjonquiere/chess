@@ -223,4 +223,9 @@ public class DummyBoardRepresentation implements BoardRepresentation {
       boolean isBlackShortCastle) {
     return new ArrayList<>();
   }
+
+  @Override
+  public boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite) {
+    return false;
+  }
 }

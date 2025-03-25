@@ -69,6 +69,8 @@ public interface BoardRepresentation {
 
   public boolean isPawnPromoting(int x, int y, boolean white);
 
+  public boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite);
+
   public void promotePawn(int x, int y, boolean white, Piece newPiece);
 
   public boolean isDoublePushPossible(Move move, boolean white);

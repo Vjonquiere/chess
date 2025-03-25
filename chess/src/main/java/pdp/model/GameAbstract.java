@@ -19,7 +19,6 @@ import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
-import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
@@ -318,22 +317,13 @@ public abstract class GameAbstract extends Subject {
    * @return true if the move is a promotion move, false otherwise.
    */
   public boolean isPromotionMove(Move move) {
-    // return
-    // getBoard().getBoardRep().isPawnPromoting(move.source.getX(),move.source.getY(),getGameState().isWhiteTurn()); don't pass the tests
-    if (this.gameState
-            .getBoard()
-            .getBoardRep()
-            .getPieceAt(move.source.getX(), move.source.getY())
-            .piece
-        != Piece.PAWN) {
-      return false;
-    }
-    if (this.gameState.isWhiteTurn() && move.dest.getY() == 7) {
-      return true;
-    }
-    if (!this.gameState.isWhiteTurn() && move.dest.getY() == 0) {
-      return true;
-    }
-    return false;
+    return getBoard()
+        .getBoardRep()
+        .isPromotionMove(
+            move.source.getX(),
+            move.source.getY(),
+            move.dest.getX(),
+            move.dest.getY(),
+            getGameState().isWhiteTurn());
   }
 }

@@ -775,6 +775,21 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Checks if a pawn at Position(x,y) checks for promotion
+   *
+   * @param xSource The x-coordinate (file) of the source position
+   * @param ySource The y-coordinate (rank) of the source position
+   * @param xDest The x-coordinate (file) of the destination position
+   * @param yDest The y-coordinate (rank) of the destination position
+   * @param isWhite {true} if pawn is white, {false} if pawn is black
+   * @return true if the pawn is being promoted with the move, otherwise false
+   */
+  @Override
+  public boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite) {
+    return BitboardRules.isPromotionMove(xSource, ySource, xDest, yDest, isWhite, this);
+  }
+
+  /**
    * Checks if a given move is a double pawn push A double push occurs when a pawn moves forward by
    * two squares from its starting position
    *

@@ -295,6 +295,41 @@ public class BitboardRules {
   }
 
   /**
+   * Checks if a pawn at Position(x,y) checks for promotion
+   *
+   * @param xSource The x-coordinate (file) of the source position
+   * @param ySource The y-coordinate (rank) of the source position
+   * @param xDest The x-coordinate (file) of the destination position
+   * @param yDest The y-coordinate (rank) of the destination position
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @return true if the pawn is being promoted, otherwise false
+   */
+  public static boolean isPromotionMove(
+      int xSource,
+      int ySource,
+      int xDest,
+      int yDest,
+      boolean white,
+      BitboardRepresentation bitboardRepresentation) {
+    DEBUG(LOGGER, "Checking is promotion move");
+    if (white && yDest != 7) {
+      return false;
+    } else if (!white && yDest != 0) {
+      return false;
+    } else {
+      // White pawns --> 5 and Black pawns --> 11
+      Bitboard pawnBitBoard =
+          white
+              ? bitboardRepresentation.getBitboards()[5]
+              : bitboardRepresentation.getBitboards()[11];
+      int bitIndex = 8 * ySource + xSource;
+
+      // If bit is 1 then pawn is located at Position(xSource,ySource)
+      return pawnBitBoard.getBit(bitIndex);
+    }
+  }
+
+  /**
    * Replaces pawnToPromote with newPiece. Bitboards get changed. Assumes pawn can be promoted.
    *
    * @param x The x-coordinate (file) of the pawn
