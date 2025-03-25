@@ -15,6 +15,7 @@ import pdp.utils.Logging;
 
 public class AlphaBeta implements SearchAlgorithm {
   Solver solver;
+  int depth; // TODO REMOVE
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
 
   static {
@@ -35,6 +36,7 @@ public class AlphaBeta implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int depth, boolean player) {
+    this.depth = depth;
     GameAi aiGame = GameAi.fromGame(game);
 
     AIMove bestMove = alphaBeta(aiGame, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
