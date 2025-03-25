@@ -15,7 +15,7 @@ import pdp.utils.Timer;
 
 public class GameState extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
-  public static int FIFTY_MOVE_RULE = 50;
+  private static int FIFTY_MOVE_RULE = 50;
   private Board board;
   private Timer moveTimer;
   private boolean whiteWantsToDraw = false;
@@ -35,6 +35,14 @@ public class GameState extends Subject {
 
   static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public static int getFiftyMoveLimit() {
+    return FIFTY_MOVE_RULE;
+  }
+
+  public static void setFiftyMoveLimit(int limit) {
+    FIFTY_MOVE_RULE = limit;
   }
 
   // By default, blitz mode is not on

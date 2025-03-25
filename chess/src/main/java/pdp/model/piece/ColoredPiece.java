@@ -3,12 +3,20 @@ package pdp.model.piece;
 import java.util.Objects;
 
 public class ColoredPiece {
-  public Piece piece;
-  public Color color;
+  private Piece piece;
+  private Color color;
 
   public ColoredPiece(Piece piece, Color color) {
     this.piece = piece;
     this.color = color;
+  }
+
+  public Piece getPiece() {
+    return this.piece;
+  }
+
+  public Color getColor() {
+    return this.color;
   }
 
   @Override

@@ -16,9 +16,9 @@ import pdp.utils.Timer;
 import pdp.view.GUIView;
 
 public class PlayerInfos extends HBox {
-  Canvas currentPlayer;
-  Label timerLabel = new Label();
-  Timeline timeline;
+  private Canvas currentPlayer;
+  private Label timerLabel = new Label();
+  private Timeline timeline;
 
   public PlayerInfos(String name, boolean isAI, boolean isWhite) {
     this.setAlignment(Pos.CENTER_LEFT);
@@ -62,7 +62,7 @@ public class PlayerInfos extends HBox {
     gc.clearRect(0, 0, currentPlayer.getWidth(), currentPlayer.getHeight());
     if (timeline != null) timeline.stop();
     if (isCurrent) {
-      gc.setFill(Color.web(GUIView.theme.getAccent()));
+      gc.setFill(Color.web(GUIView.getTheme().getAccent()));
       gc.fillOval(0, 0, 20, 20);
       if (timeline != null) timeline.play();
     }

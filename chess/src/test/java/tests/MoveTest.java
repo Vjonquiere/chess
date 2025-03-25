@@ -166,7 +166,8 @@ public class MoveTest {
     game.playMove(move2);
 
     assertEquals(
-        game.getHistory().getCurrentMove().get().getState().getMove().getPiece().piece, Piece.PAWN);
+        game.getHistory().getCurrentMove().get().getState().getMove().getPiece().getPiece(),
+        Piece.PAWN);
   }
 
   @Test

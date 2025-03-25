@@ -24,7 +24,7 @@ public class EndGamePopUp {
     VBox layout = new VBox(10);
     layout.setStyle(
         "-fx-background-color: "
-            + GUIView.theme.getBackground()
+            + GUIView.getTheme().getBackground()
             + "; -fx-padding: 10; -fx-text-fill: black;");
 
     Label gameOverLabel = new Label(TextGetter.getText("gameOver"));

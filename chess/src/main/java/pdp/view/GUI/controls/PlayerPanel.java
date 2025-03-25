@@ -5,8 +5,8 @@ import pdp.model.Game;
 import pdp.utils.TextGetter;
 
 public class PlayerPanel extends VBox {
-  PlayerInfos whitePlayer;
-  PlayerInfos blackPlayer;
+  private PlayerInfos whitePlayer;
+  private PlayerInfos blackPlayer;
 
   public PlayerPanel() {
     setSpacing(5);

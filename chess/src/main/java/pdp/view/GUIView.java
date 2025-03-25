@@ -34,7 +34,7 @@ public class GUIView implements View {
   private Board board;
   private ControlPanel controlPanel;
   private ChessMenu menu;
-  public static ColorTheme theme = SIMPLE;
+  private static ColorTheme theme = SIMPLE;
   private boolean init = false;
 
   static {
@@ -72,6 +72,14 @@ public class GUIView implements View {
         ex.printStackTrace();
       }
     }
+  }
+
+  public static ColorTheme getTheme() {
+    return theme;
+  }
+
+  public static void setTheme(ColorTheme newTheme) {
+    theme = newTheme;
   }
 
   public void updateTheme() {

@@ -17,9 +17,9 @@ public class BitboardRepresentation implements BoardRepresentation {
   private static final int cacheSize = 100000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
-  protected final int nbCols = 8;
-  protected final int nbRows = 8;
-  public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
+  private final int nbCols = 8;
+  private final int nbRows = 8;
+  private static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
   private static BitboardCache cache;
   private static ZobristHashing zobristHashing = new ZobristHashing();
   private long simpleHash;
@@ -109,6 +109,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[11] = blackPawns;
   }
 
+  public static BiDirectionalMap<Integer, ColoredPiece> getPiecesMap() {
+    return pieces;
+  }
+
   @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
@@ -186,14 +190,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     int fromIndex = from.getX() % 8 + from.getY() * 8;
     int toIndex = to.getX() % 8 + to.getY() * 8;
     int bitboardIndex =
-        switch (piece.piece) {
-          case KING -> piece.color == Color.WHITE ? 0 : 6;
-          case QUEEN -> piece.color == Color.WHITE ? 1 : 7;
-          case BISHOP -> piece.color == Color.WHITE ? 2 : 8;
-          case ROOK -> piece.color == Color.WHITE ? 3 : 9;
-          case KNIGHT -> piece.color == Color.WHITE ? 4 : 10;
-          case PAWN -> piece.color == Color.WHITE ? 5 : 11;
-          default -> throw new IllegalArgumentException("Invalid piece: " + piece.piece);
+        switch (piece.getPiece()) {
+          case KING -> piece.getColor() == Color.WHITE ? 0 : 6;
+          case QUEEN -> piece.getColor() == Color.WHITE ? 1 : 7;
+          case BISHOP -> piece.getColor() == Color.WHITE ? 2 : 8;
+          case ROOK -> piece.getColor() == Color.WHITE ? 3 : 9;
+          case KNIGHT -> piece.getColor() == Color.WHITE ? 4 : 10;
+          case PAWN -> piece.getColor() == Color.WHITE ? 5 : 11;
+          default -> throw new IllegalArgumentException("Invalid piece: " + piece.getColor());
         };
     board[bitboardIndex].clearBit(fromIndex);
     board[bitboardIndex].setBit(toIndex);
@@ -213,8 +217,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   public void promotePawn(int x, int y, boolean white, Piece newPiece) {
     DEBUG(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
     ColoredPiece pieceAtPosition = getPieceAt(x, y);
-    if (pieceAtPosition.piece != Piece.PAWN
-        || pieceAtPosition.color != (white ? Color.WHITE : Color.BLACK)) {
+    if (pieceAtPosition.getPiece() != Piece.PAWN
+        || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
       return;
     }
 
@@ -280,7 +284,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   protected void addPieceAt(int x, int y, ColoredPiece piece) {
     board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
-    DEBUG(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
+    DEBUG(LOGGER, "A " + piece.getColor() + " " + piece.getPiece() + " was added to the board");
   }
 
   /**
@@ -1026,13 +1030,13 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The horizontal size of the board
    */
   public int getNbCols() {
-    return BitboardUtils.getNbCols(this);
+    return nbCols;
   }
 
   /**
    * @return The vertical size of the board
    */
   public int getNbRows() {
-    return BitboardUtils.getNbRows(this);
+    return nbRows;
   }
 }

@@ -38,8 +38,8 @@ public class GameAi extends GameAbstract {
    */
   @Override
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
-    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
-    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    Position sourcePosition = new Position(move.getSource().getX(), move.getSource().getY());
+    Position destPosition = new Position(move.getDest().getX(), move.getDest().getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
@@ -118,8 +118,8 @@ public class GameAi extends GameAbstract {
   public void playMoveOtherGameState(GameState gameState, Move move)
       throws IllegalMoveException, InvalidPromoteFormatException {
 
-    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
-    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
+    Position sourcePosition = new Position(move.getSource().getX(), move.getSource().getY());
+    Position destPosition = new Position(move.getDest().getX(), move.getDest().getY());
     DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!validatePieceOwnership(gameState, sourcePosition)) {

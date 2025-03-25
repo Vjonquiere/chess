@@ -25,15 +25,15 @@ public class ButtonsPanel extends GridPane {
   private Button undrawButton;
   private Button restartButton;
   private int buttonMinWidth = 100;
-  String buttonStyle =
+  private String buttonStyle =
       "-fx-background-color: "
-          + GUIView.theme.getSecondary()
+          + GUIView.getTheme().getSecondary()
           + ";"
           + "-fx-text-fill: "
-          + GUIView.theme.getPrimary()
+          + GUIView.getTheme().getPrimary()
           + ";"
           + "-fx-border-color: "
-          + GUIView.theme.getPrimary()
+          + GUIView.getTheme().getPrimary()
           + ";"
           + "-fx-font-size: 18px;"
           + "-fx-font-weight: bold;"

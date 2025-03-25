@@ -77,13 +77,13 @@ public class BitboardStatusCheck {
         bitboardRepresentation.getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
 
     Bitboard unreachableSquaresBlack =
-        blackKing.color == Color.WHITE
+        blackKing.getColor() == Color.WHITE
             ? bitboardRepresentation.getWhiteBoard()
             : bitboardRepresentation.getBlackBoard();
     unreachableSquaresBlack.clearBit(blackKingPos.getX() % 8 + blackKingPos.getY() * 8);
 
     Bitboard unreachableSquaresWhite =
-        whiteKing.color == Color.WHITE
+        whiteKing.getColor() == Color.WHITE
             ? bitboardRepresentation.getWhiteBoard()
             : bitboardRepresentation.getBlackBoard();
     unreachableSquaresWhite.clearBit(whiteKingPos.getX() % 8 + whiteKingPos.getY() * 8);
@@ -138,9 +138,9 @@ public class BitboardStatusCheck {
       Position b1Square = new Position(1, 0);
 
       if (shortCastle) {
-        if ((bitboardRepresentation.getPieceAt(f1Square.getX(), f1Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(f1Square.getX(), f1Square.getY()).getPiece()
                 != Piece.EMPTY)
-            || (bitboardRepresentation.getPieceAt(g1Square.getX(), g1Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(g1Square.getX(), g1Square.getY()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }
@@ -151,11 +151,11 @@ public class BitboardStatusCheck {
           return false;
         }
       } else {
-        if ((bitboardRepresentation.getPieceAt(d1Square.getX(), d1Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(d1Square.getX(), d1Square.getY()).getPiece()
                 != Piece.EMPTY)
-            || (bitboardRepresentation.getPieceAt(c1Square.getX(), c1Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(c1Square.getX(), c1Square.getY()).getPiece()
                 != Piece.EMPTY)
-            || (bitboardRepresentation.getPieceAt(b1Square.getX(), b1Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(b1Square.getX(), b1Square.getY()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }
@@ -183,9 +183,9 @@ public class BitboardStatusCheck {
       Position b8Square = new Position(1, 7);
 
       if (shortCastle) {
-        if ((bitboardRepresentation.getPieceAt(f8Square.getX(), f8Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(f8Square.getX(), f8Square.getY()).getPiece()
                 != Piece.EMPTY)
-            || (bitboardRepresentation.getPieceAt(g8Square.getX(), g8Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(g8Square.getX(), g8Square.getY()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }
@@ -196,11 +196,11 @@ public class BitboardStatusCheck {
           return false;
         }
       } else {
-        if ((bitboardRepresentation.getPieceAt(d8Square.getX(), d8Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(d8Square.getX(), d8Square.getY()).getPiece()
                 != Piece.EMPTY)
-            || (bitboardRepresentation.getPieceAt(c8Square.getX(), c8Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(c8Square.getX(), c8Square.getY()).getPiece()
                 != Piece.EMPTY)
-            || (bitboardRepresentation.getPieceAt(b8Square.getX(), b8Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(b8Square.getX(), b8Square.getY()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }

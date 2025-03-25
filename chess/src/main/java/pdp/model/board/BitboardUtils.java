@@ -56,13 +56,13 @@ public class BitboardUtils {
    * @return The horizontal size of the board
    */
   public static int getNbCols(BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation.nbCols;
+    return bitboardRepresentation.getNbCols();
   }
 
   /**
    * @return The vertical size of the board
    */
   public static int getNbRows(BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation.nbRows;
+    return bitboardRepresentation.getNbRows();
   }
 }

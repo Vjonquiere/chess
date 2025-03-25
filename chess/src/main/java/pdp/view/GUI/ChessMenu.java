@@ -187,7 +187,7 @@ public class ChessMenu extends VBox {
       MenuItem theme = new MenuItem(c.name());
       theme.setOnAction(
           e -> {
-            GUIView.theme = c;
+            GUIView.setTheme(c);
             BagOfCommands.getInstance().addCommand(new ChangeTheme());
           });
       themes.getItems().add(theme);

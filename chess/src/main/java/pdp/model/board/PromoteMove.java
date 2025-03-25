@@ -64,10 +64,10 @@ public class PromoteMove extends Move {
    */
   @Override
   public String toAlgebraicString() {
-    String sourceStr = positionToString(this.source);
-    String destinationStr = positionToString(this.dest);
-    String separator = this.isTake ? "x" : "-";
-    String annotation = this.isCheckMate ? "#" : (this.isCheck ? "+" : "");
+    String sourceStr = positionToString(this.getSource());
+    String destinationStr = positionToString(this.getDest());
+    String separator = this.isTake() ? "x" : "-";
+    String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
 
     return sourceStr
         + separator

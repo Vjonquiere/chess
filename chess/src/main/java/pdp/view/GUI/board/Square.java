@@ -10,13 +10,13 @@ import pdp.model.piece.Piece;
 import pdp.view.GUIView;
 
 public class Square extends StackPane {
-  Color baseColor;
-  Canvas sq;
-  Canvas reachableSq;
-  Canvas hintSq;
-  Canvas checkSq;
-  ColoredPiece currentPiece;
-  ImageView pieceImage;
+  private Color baseColor;
+  private Canvas sq;
+  private Canvas reachableSq;
+  private Canvas hintSq;
+  private Canvas checkSq;
+  private ColoredPiece currentPiece;
+  private ImageView pieceImage;
 
   /**
    * Build a square of the given color with the sprite of the given piece
@@ -27,8 +27,8 @@ public class Square extends StackPane {
   public Square(ColoredPiece piece, boolean squareColor) {
     baseColor =
         squareColor
-            ? Color.web(GUIView.theme.getSecondary())
-            : Color.web(GUIView.theme.getPrimary());
+            ? Color.web(GUIView.getTheme().getSecondary())
+            : Color.web(GUIView.getTheme().getPrimary());
     currentPiece = piece;
     sq = new Canvas(100, 100);
     reachableSq = new Canvas(100, 100);
@@ -41,7 +41,7 @@ public class Square extends StackPane {
     super.getChildren().add(hintSq);
     super.getChildren().add(checkSq);
     super.getChildren().add(reachableSq);
-    if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
+    if (currentPiece != null && currentPiece.getPiece() != Piece.EMPTY) {
       pieceImage = new PieceImage(piece);
       super.getChildren().add(pieceImage);
     }
@@ -59,7 +59,7 @@ public class Square extends StackPane {
         super.getChildren().remove(pieceImage);
       }
       super.getChildren().remove(pieceImage);
-      if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
+      if (currentPiece != null && currentPiece.getPiece() != Piece.EMPTY) {
         pieceImage = new PieceImage(piece);
         super.getChildren().add(pieceImage);
       }
@@ -74,7 +74,7 @@ public class Square extends StackPane {
   public void setSelected(boolean selected) {
     GraphicsContext gc = sq.getGraphicsContext2D();
     if (selected) {
-      gc.setFill(Color.web(GUIView.theme.getAccent()));
+      gc.setFill(Color.web(GUIView.getTheme().getAccent()));
     } else {
       gc.setFill(baseColor);
     }
@@ -92,10 +92,10 @@ public class Square extends StackPane {
     gc.clearRect(0, 0, reachableSq.getWidth(), reachableSq.getHeight()); // Clear the canvas
 
     if (reachable && !isTake) {
-      gc.setFill(Color.web(GUIView.theme.getAccent()));
+      gc.setFill(Color.web(GUIView.getTheme().getAccent()));
       gc.fillOval(37.5, 37.5, 25, 25);
     } else if (isTake) {
-      gc.setFill(Color.web(GUIView.theme.getAccent()));
+      gc.setFill(Color.web(GUIView.getTheme().getAccent()));
       gc.fillOval(10, 10, 80, 80);
       gc.setFill(baseColor);
       gc.fillOval(15, 15, 70, 70);
@@ -106,7 +106,7 @@ public class Square extends StackPane {
     GraphicsContext gc = hintSq.getGraphicsContext2D();
     gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
     if (hint) {
-      gc.setFill(Color.web(GUIView.theme.getTertiary()));
+      gc.setFill(Color.web(GUIView.getTheme().getTertiary()));
       gc.fillRect(10, 10, 80, 80);
     }
   }
