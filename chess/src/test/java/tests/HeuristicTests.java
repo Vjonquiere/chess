@@ -79,8 +79,8 @@ public class HeuristicTests {
     // 1 backward pawn
     // factor -0.5 so (2+2+4)*-0.5
     assertEquals(-4, solver.evaluateBoard(board, true));
-    board.isWhite =
-        false; // to change turn to recalculate (if no change, zobrist takes the previous score)
+    board.setPlayer(
+        false); // to change turn to recalculate (if no change, zobrist takes the previous score)
     assertEquals(4, solver.evaluateBoard(board, false));
   }
 
@@ -226,7 +226,7 @@ public class HeuristicTests {
     game.playMove(new Move(new Position(7, 4), new Position(5, 6)));
     // Scholar's Mate (black checkmate)
     assertEquals(-10000, solver.evaluateBoard(game.getBoard(), false));
-    game.getBoard().isWhite = true;
+    game.getBoard().setPlayer(true);
     assertEquals(10000, solver.evaluateBoard(game.getBoard(), true));
   }
 

@@ -36,8 +36,8 @@ public class UCIView implements View {
     commands.put("go", new CommandEntry(this::goCommand, "go"));
     commands.put("isready", new CommandEntry(this::isReadyCommand, "isReady"));
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
-    GameAbstract.THREE_FOLD_REPETITION = 5;
-    GameState.FIFTY_MOVE_RULE = 75;
+    GameAbstract.setThreeFoldLimit(5);
+    GameState.setFiftyMoveLimit(75);
     solver.setEndgameHeuristic(HeuristicType.STANDARD);
   }
 
@@ -64,8 +64,8 @@ public class UCIView implements View {
       case WIN_BLACK -> System.out.println("Black won!");
       case WIN_WHITE -> System.out.println("White won!");
       case THREEFOLD_REPETITION ->
-          System.out.println(Game.THREE_FOLD_REPETITION + " fold repetition!");
-      case FIFTY_MOVE_RULE -> System.out.println(GameState.FIFTY_MOVE_RULE + " move rule!");
+          System.out.println(Game.getThreeFoldLimit() + " fold repetition!");
+      case FIFTY_MOVE_RULE -> System.out.println(GameState.getFiftyMoveLimit() + " move rule!");
     }
   }
 

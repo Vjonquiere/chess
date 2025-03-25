@@ -87,7 +87,7 @@ public class ZobristHashing {
     }
     Bitboard[] bitboards = bitboardsRepresentation.getBitboards();
     for (int i = 0; i < PIECES_TYPES; i++) {
-      long bitboardValue = bitboards[i].bitboard;
+      long bitboardValue = bitboards[i].getBits();
       while (bitboardValue != 0) {
         int square = Long.numberOfTrailingZeros(bitboardValue);
         hash ^= pieces[i][square];
@@ -110,17 +110,17 @@ public class ZobristHashing {
     if (!(board.getBoardRep() instanceof BitboardRepresentation))
       throw new RuntimeException("Only available for bitboards");
 
-    int from = move.source.getX() + move.source.getY() * board.getBoardRep().getNbRows();
-    int to = move.dest.getX() + move.dest.getY() * board.getBoardRep().getNbCols();
+    int from = move.getSource().getX() + move.getSource().getY() * board.getBoardRep().getNbRows();
+    int to = move.getDest().getX() + move.getDest().getY() * board.getBoardRep().getNbCols();
 
     // Remove piece from its source and add it to the destination
-    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
-    currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
+    currHash ^= pieces[BitboardRepresentation.getPiecesMap().getFromValue(move.getPiece())][to];
+    currHash ^= pieces[BitboardRepresentation.getPiecesMap().getFromValue(move.getPiece())][from];
 
-    ColoredPiece capturedPiece = move.takenPiece;
+    ColoredPiece capturedPiece = move.getPieceTaken();
     // delete the captured piece
     if (capturedPiece != null) {
-      currHash ^= pieces[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
+      currHash ^= pieces[BitboardRepresentation.getPiecesMap().getFromValue(capturedPiece)][to];
     }
     return currHash;
   }
@@ -142,7 +142,7 @@ public class ZobristHashing {
       prevEnPassantFile = board.getEnPassantPos().getX();
       hash ^= enPassant[prevEnPassantFile];
     }
-    if (board.isWhite) {
+    if (board.getPlayer()) {
       hash ^= sideToMove;
     }
     return hash;

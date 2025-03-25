@@ -5,8 +5,8 @@ import java.util.logging.Logger;
 
 public class Position {
   private static final Logger LOGGER = Logger.getLogger(Position.class.getName());
-  int x;
-  int y;
+  private int x;
+  private int y;
 
   static {
     Logging.configureLogging(LOGGER);

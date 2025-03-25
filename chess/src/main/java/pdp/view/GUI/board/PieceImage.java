@@ -6,9 +6,9 @@ import pdp.model.piece.ColoredPiece;
 
 public class PieceImage extends ImageView {
   public PieceImage(ColoredPiece piece) {
-    String color = piece.color == pdp.model.piece.Color.WHITE ? "white" : "black";
+    String color = piece.getColor() == pdp.model.piece.Color.WHITE ? "white" : "black";
     String path =
-        "/assets/pieces/" + color + "/" + piece.piece.getCharRepresentation(false) + ".png";
+        "/assets/pieces/" + color + "/" + piece.getPiece().getCharRepresentation(false) + ".png";
     Image image = new Image(getClass().getResourceAsStream(path));
     this.setImage(image);
     this.setFitWidth(50);

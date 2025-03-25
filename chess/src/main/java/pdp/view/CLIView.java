@@ -80,7 +80,7 @@ public class CLIView implements View {
    */
   @Override
   public void onGameEvent(EventType event) {
-    Game.getInstance().viewLock.lock();
+    Game.getInstance().getViewLock().lock();
     try {
       switch (event) {
         case GAME_STARTED:
@@ -189,9 +189,9 @@ public class CLIView implements View {
           DEBUG(LOGGER, "Received unknown game event: " + event);
           break;
       }
-      Game.getInstance().workingView.signal();
+      Game.getInstance().getWorkingViewCondition().signal();
     } finally {
-      Game.getInstance().viewLock.unlock();
+      Game.getInstance().getViewLock().unlock();
     }
   }
 

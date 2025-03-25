@@ -3,7 +3,7 @@ package pdp.model.board;
 import java.util.ArrayList;
 
 public class Bitboard {
-  long bitboard;
+  private long bitboard;
 
   public Bitboard() {}
 

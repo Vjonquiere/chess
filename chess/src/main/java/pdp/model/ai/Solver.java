@@ -286,7 +286,7 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
-    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().isWhite);
+    AIMove bestMove = algorithm.findBestMove(game, depth, game.getBoard().getPlayer());
     if (timer != null) {
       timer.stop();
     }

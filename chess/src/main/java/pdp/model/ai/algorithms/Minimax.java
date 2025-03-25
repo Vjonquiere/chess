@@ -9,7 +9,7 @@ import pdp.model.board.Board;
 import pdp.model.board.Move;
 
 public class Minimax implements SearchAlgorithm {
-  Solver solver;
+  private Solver solver;
 
   public Minimax(Solver solver) {
     this.solver = solver;

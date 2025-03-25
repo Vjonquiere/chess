@@ -13,9 +13,9 @@ public class ControlPanel extends VBox {
   private PlayerPanel playerPanel;
   private HistoryPanel historyPanel;
   private ButtonsPanel buttonsPanel;
-  String borderStyle =
+  private String borderStyle =
       "-fx-border-color: "
-          + GUIView.theme.getPrimary()
+          + GUIView.getTheme().getPrimary()
           + ";\n"
           + "-fx-border-width: 2;\n"
           + "-fx-border-radius: 10;\n"

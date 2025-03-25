@@ -12,7 +12,7 @@ import pdp.model.board.Move;
 import pdp.model.piece.Color;
 
 public class MonteCarloTreeSearch implements SearchAlgorithm {
-  Solver solver;
+  private Solver solver;
   private static final double EXPLORATION_FACTOR = Math.sqrt(2); // c value
   private final Random random = new Random(); // Randomizer for the moves
   private final int simulationLimit; // Number of times to execute MonteCarloTreeSearch

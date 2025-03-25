@@ -15,11 +15,15 @@ public abstract class AlgorithmHelpers {
     }
 
     ColoredPiece piece = move.getPiece();
-    if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && move.dest.getY() == 0) {
-      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.BLACK
+        && move.getDest().getY() == 0) {
+      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
-    if (piece.piece == Piece.PAWN && piece.color == Color.WHITE && move.dest.getY() == 7) {
-      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.WHITE
+        && move.getDest().getY() == 7) {
+      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
     return move;
   }
