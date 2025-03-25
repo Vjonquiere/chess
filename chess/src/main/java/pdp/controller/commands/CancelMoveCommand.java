@@ -5,6 +5,10 @@ import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.model.Game;
 
+/**
+ * Part of Command Design pattern. Creates a command to cancel the last move. Corresponds to an
+ * undo.
+ */
 public class CancelMoveCommand implements Command {
   /**
    * Cancels the last move in the game.
@@ -16,17 +20,18 @@ public class CancelMoveCommand implements Command {
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
     try {
-      if (model.isBlackAI() || model.isWhiteAI()) {
+      if (model.isBlackAi() || model.isWhiteAi()) {
         model.previousState();
         try {
           model.previousState();
         } catch (Exception e) {
+          // TODO: add an event to send to the view
         }
-        if (model.isBlackAI() && !model.getGameState().isWhiteTurn()) {
-          model.getBlackSolver().playAIMove(model);
+        if (model.isBlackAi() && !model.getGameState().isWhiteTurn()) {
+          model.getBlackSolver().playAiMove(model);
         }
-        if (model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
-          model.getWhiteSolver().playAIMove(model);
+        if (model.isWhiteAi() && model.getGameState().isWhiteTurn()) {
+          model.getWhiteSolver().playAiMove(model);
         }
       } else {
         if (model.getGameState().getUndoRequestTurnNumber() == model.getGameState().getFullTurn()) {

@@ -1,6 +1,6 @@
 package pdp.model;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -23,6 +23,7 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Class containing common methods for GameAI and Game. */
 public abstract class GameAbstract extends Subject {
   private static int THREE_FOLD_REPETITION = 3;
   private static final Logger LOGGER = Logger.getLogger(GameAbstract.class.getName());
@@ -43,6 +44,13 @@ public abstract class GameAbstract extends Subject {
     THREE_FOLD_REPETITION = limit;
   }
 
+  /**
+   * Initializes the private fields of the Game abstract.
+   *
+   * @param gameState Current game state
+   * @param history History of the game
+   * @param stateCount Current state count
+   */
   public GameAbstract(GameState gameState, History history, HashMap<Long, Integer> stateCount) {
     this.gameState = gameState;
     this.history = history;
@@ -69,13 +77,13 @@ public abstract class GameAbstract extends Subject {
    * @return true if the state has been seen 3 times, false otherwise
    */
   protected boolean addStateToCount(long simplifiedZobristHashing) {
-    DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
+    debug(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
     if (this.stateCount.containsKey(simplifiedZobristHashing)) {
       this.stateCount.put(
           simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
 
-      if (this.stateCount.get(simplifiedZobristHashing) == THREE_FOLD_REPETITION) {
-        DEBUG(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
+      if (this.stateCount.get(simplifiedZobristHashing) == Game.nFoldRepetition) {
+        debug(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
         return true;
       }
       return false;
@@ -106,7 +114,7 @@ public abstract class GameAbstract extends Subject {
   }
 
   /**
-   * Handles classical moves
+   * Handles classical moves.
    *
    * @param gameState the game state for which we want the move to occur
    * @param move The move to be executed.
@@ -115,16 +123,16 @@ public abstract class GameAbstract extends Subject {
   protected void processClassicalMove(GameState gameState, Move move) throws IllegalMoveException {
     Color currentColor = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
     if (gameState.getBoard().getBoardRep().isCheckAfterMove(currentColor, move)) {
-      DEBUG(LOGGER, "Move puts the king in check: " + move);
+      debug(LOGGER, "Move puts the king in check: " + move);
       throw new IllegalMoveException(move.toString());
     }
 
     gameState.getBoard().makeMove(move);
-    DEBUG(LOGGER, "Move played!");
+    debug(LOGGER, "Move played!");
   }
 
   /**
-   * Handles special moves: castling, en passant, double pawn push
+   * Handles special moves: castling, en passant, double pawn push.
    *
    * @param gameState the game state for which we want the move to occur
    * @param move The move to be executed.
@@ -135,11 +143,11 @@ public abstract class GameAbstract extends Subject {
     Position destPosition = move.getDest();
     boolean isSpecialMove = false;
     ColoredPiece coloredPiece =
-        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.getX(), sourcePosition.getY());
+        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
 
     // Check Castle
     if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
-      boolean shortCastle = destPosition.getX() > sourcePosition.getX();
+      boolean shortCastle = destPosition.x() > sourcePosition.x();
       Color color = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
       if (gameState.getBoard().canCastle(color, shortCastle)) {
         gameState.getBoard().applyCastle(color, shortCastle);
@@ -154,15 +162,15 @@ public abstract class GameAbstract extends Subject {
             .getBoard()
             .getBoardRep()
             .isEnPassant(
-                gameState.getBoard().getEnPassantPos().getX(),
-                gameState.getBoard().getEnPassantPos().getY(),
+                gameState.getBoard().getEnPassantPos().x(),
+                gameState.getBoard().getEnPassantPos().y(),
                 move,
                 gameState.isWhiteTurn())) {
       if (gameState
           .getBoard()
           .getBoardRep()
           .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
-        DEBUG(LOGGER, "En passant puts the king in check!");
+        debug(LOGGER, "En passant puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
       isSpecialMove = true;
@@ -184,7 +192,7 @@ public abstract class GameAbstract extends Subject {
           .getBoard()
           .getBoardRep()
           .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
-        DEBUG(LOGGER, "Double push puts the king in check!");
+        debug(LOGGER, "Double push puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
       isSpecialMove = true;
@@ -192,15 +200,15 @@ public abstract class GameAbstract extends Subject {
           .getBoard()
           .setEnPassantPos(
               gameState.isWhiteTurn()
-                  ? new Position(move.getDest().getX(), move.getDest().getY() - 1)
-                  : new Position(move.getDest().getX(), move.getDest().getY() + 1));
+                  ? new Position(move.getDest().x(), move.getDest().y() - 1)
+                  : new Position(move.getDest().x(), move.getDest().y() + 1));
       move.setPiece(coloredPiece);
       gameState.getBoard().makeMove(move);
       gameState.getBoard().setLastMoveDoublePush(true);
     }
 
     if (!isSpecialMove) {
-      DEBUG(LOGGER, "Move was not a special move!");
+      debug(LOGGER, "Move was not a special move!");
       throw new IllegalMoveException(move.toString());
     }
   }
@@ -221,7 +229,7 @@ public abstract class GameAbstract extends Subject {
   }
 
   /**
-   * Checks if the given move is a promotion move and if is an instance of PromoteMove
+   * Checks if the given move is a promotion move and if is an instance of PromoteMove.
    *
    * @param move The move to be validated.
    * @throws InvalidPromoteFormatException If the move is a promotion move but not of PromoteMove
@@ -288,7 +296,7 @@ public abstract class GameAbstract extends Subject {
 
     this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
     this.history.setCurrentMove(previousNode.get());
-    DEBUG(LOGGER, "Move undo : change state and update Zobrist for threefold");
+    debug(LOGGER, "Move undo : change state and update Zobrist for threefold");
     this.notifyObservers(EventType.MOVE_UNDO);
   }
 
@@ -317,7 +325,7 @@ public abstract class GameAbstract extends Subject {
     this.history.setCurrentMove(nextNode.get());
     long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
     stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
-    DEBUG(LOGGER, "Move redo : change state and update Zobrist for threefold");
+    debug(LOGGER, "Move redo : change state and update Zobrist for threefold");
     this.notifyObservers(EventType.MOVE_REDO);
   }
 
@@ -331,10 +339,10 @@ public abstract class GameAbstract extends Subject {
     return getBoard()
         .getBoardRep()
         .isPromotionMove(
-            move.getSource().getX(),
-            move.getSource().getY(),
-            move.getDest().getX(),
-            move.getDest().getY(),
+            move.getSource().x(),
+            move.getSource().y(),
+            move.getDest().x(),
+            move.getDest().y(),
             getGameState().isWhiteTurn());
   }
 }

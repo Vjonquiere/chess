@@ -1,6 +1,6 @@
 package pdp.model.ai.algorithms;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.GameAi;
-import pdp.model.ai.AIMove;
+import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Board;
 import pdp.model.board.Move;
@@ -38,11 +38,11 @@ public class AlphaBetaParallel implements SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AIMove findBestMove(Game game, int depth, boolean player) {
+  public AiMove findBestMove(Game game, int depth, boolean player) {
     GameAi aiGame = GameAi.fromGame(game);
     int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
     ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
-    List<Future<AIMove>> futures = new CopyOnWriteArrayList<>();
+    List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
     List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
     Board board = aiGame.getBoard();
@@ -67,21 +67,21 @@ public class AlphaBetaParallel implements SearchAlgorithm {
                 try {
                   Move promoteMove = AlgorithmHelpers.promoteMove(move);
                   gameCopy.playMove(promoteMove);
-                  AIMove result =
+                  AiMove result =
                       alphaBeta(
                           gameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
-                  return new AIMove(promoteMove, result.score());
+                  return new AiMove(promoteMove, result.score());
                 } catch (IllegalMoveException e) {
-                  return new AIMove(null, -Float.MAX_VALUE);
+                  return new AiMove(null, -Float.MAX_VALUE);
                 }
               }));
     }
 
-    AIMove bestMove = new AIMove(null, -Float.MAX_VALUE);
+    AiMove bestMove = new AiMove(null, -Float.MAX_VALUE);
 
     try {
-      for (Future<AIMove> future : futures) {
-        AIMove candidateMove = future.get();
+      for (Future<AiMove> future : futures) {
+        AiMove candidateMove = future.get();
         if (candidateMove.move() != null) {
           if (candidateMove.score() > bestMove.score()) {
             bestMove = candidateMove;
@@ -93,7 +93,7 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     }
 
     executor.shutdown();
-    DEBUG(LOGGER, "Best move: " + bestMove);
+    debug(LOGGER, "Best move: " + bestMove);
     return bestMove;
   }
 
@@ -111,7 +111,7 @@ public class AlphaBetaParallel implements SearchAlgorithm {
    * @param originalPlayer The player at root
    * @return The best move with its evaluated score.
    */
-  private AIMove alphaBeta(
+  private AiMove alphaBeta(
       GameAi game,
       int depth,
       boolean currentPlayer,
@@ -119,15 +119,15 @@ public class AlphaBetaParallel implements SearchAlgorithm {
       float beta,
       boolean originalPlayer) {
     if (solver.isSearchStopped()) {
-      return new AIMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
+      return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
       float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
-      return new AIMove(null, evaluation);
+      return new AiMove(null, evaluation);
     }
 
-    AIMove bestMove =
-        new AIMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
+    AiMove bestMove =
+        new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     Board board = game.getBoard();
     moves.addAll(
@@ -149,18 +149,18 @@ public class AlphaBetaParallel implements SearchAlgorithm {
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AIMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
+        AiMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
 
         game.previousState();
 
         if (currentPlayer == originalPlayer) { // Maximizing
           if (currMove.score() > bestMove.score() || bestMove.move() == null) {
-            bestMove = new AIMove(move, currMove.score());
+            bestMove = new AiMove(move, currMove.score());
           }
           alpha = Math.max(alpha, bestMove.score());
         } else { // Minimizing
           if (currMove.score() < bestMove.score() || bestMove.move() == null) {
-            bestMove = new AIMove(move, currMove.score());
+            bestMove = new AiMove(move, currMove.score());
           }
           beta = Math.min(beta, bestMove.score());
         }

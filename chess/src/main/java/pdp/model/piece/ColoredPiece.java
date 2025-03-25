@@ -2,6 +2,7 @@ package pdp.model.piece;
 
 import java.util.Objects;
 
+/** Combination of piece and color to represent a chess piece. */
 public class ColoredPiece {
   private Piece piece;
   private Color color;

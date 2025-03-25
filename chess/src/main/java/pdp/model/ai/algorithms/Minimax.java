@@ -3,15 +3,22 @@ package pdp.model.ai.algorithms;
 import java.util.List;
 import pdp.model.Game;
 import pdp.model.GameAi;
-import pdp.model.ai.AIMove;
+import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Board;
 import pdp.model.board.Move;
 
+/** Algorithm of artificial intelligence Minimax. */
 public class Minimax implements SearchAlgorithm {
-  private Solver solver;
+  /** Solver used for calling the evaluation of the board once depth si reached or time is up. */
+  private final Solver solver;
 
-  public Minimax(Solver solver) {
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
+  public Minimax(final Solver solver) {
     this.solver = solver;
   }
 
@@ -24,8 +31,8 @@ public class Minimax implements SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AIMove findBestMove(Game game, int depth, boolean player) {
-    GameAi aiGame = GameAi.fromGame(game);
+  public AiMove findBestMove(final Game game, final int depth, final boolean player) {
+    final GameAi aiGame = GameAi.fromGame(game);
     return minimax(aiGame, depth, player, player);
   }
 
@@ -40,19 +47,23 @@ public class Minimax implements SearchAlgorithm {
    * @param currentPlayer The current player (true for white, false for black).
    * @return The best move with its evaluated score.
    */
-  private AIMove minimax(GameAi game, int depth, boolean currentPlayer, boolean originalPlayer) {
+  private AiMove minimax(
+      final GameAi game,
+      final int depth,
+      final boolean currentPlayer,
+      final boolean originalPlayer) {
     if (solver.isSearchStopped()) {
-      boolean isMinimizing = (currentPlayer != originalPlayer);
-      return new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
+      final boolean isMinimizing = currentPlayer != originalPlayer;
+      return new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
-      return new AIMove(null, evaluation);
+      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      return new AiMove(null, evaluation);
     }
 
-    boolean isMinimizing = (currentPlayer != originalPlayer);
-    AIMove bestMove = new AIMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    final boolean isMinimizing = currentPlayer != originalPlayer;
+    AiMove bestMove = new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
+    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     Board board = game.getBoard();
     moves.addAll(
         game.getBoard()
@@ -72,19 +83,19 @@ public class Minimax implements SearchAlgorithm {
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AIMove currMove = minimax(game, depth - 1, !currentPlayer, originalPlayer);
+        final AiMove currMove = minimax(game, depth - 1, !currentPlayer, originalPlayer);
         game.previousState();
 
         if (isMinimizing) {
           if (currMove.score() < bestMove.score()) {
-            bestMove = new AIMove(move, currMove.score());
+            bestMove = new AiMove(move, currMove.score());
           }
         } else {
           if (currMove.score() > bestMove.score()) {
-            bestMove = new AIMove(move, currMove.score());
+            bestMove = new AiMove(move, currMove.score());
           }
         }
-      } catch (Exception e) {
+      } catch (Exception ignored) {
         // Handle illegal move
       }
     }

@@ -1,20 +1,19 @@
 package tests.GUI;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static pdp.view.GUI.popups.ThemePopUp.toHexString;
+import static pdp.view.gui.popups.ThemePopUp.toHexString;
 
 import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.testfx.framework.junit5.ApplicationTest;
-import pdp.view.GUI.popups.ThemePopUp;
-import pdp.view.GUI.themes.ColorTheme;
+import pdp.view.gui.popups.ThemePopUp;
+import pdp.view.gui.themes.ColorTheme;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ThemePopUpTest extends ApplicationTest {

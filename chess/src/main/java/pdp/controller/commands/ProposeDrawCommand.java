@@ -6,9 +6,13 @@ import pdp.controller.GameController;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
 
+/**
+ * Part of Command Design pattern. Creates a command for the proposition of a draw by the player of
+ * the color given in parameters.
+ */
 public class ProposeDrawCommand implements Command {
 
-  boolean isWhite;
+  private final boolean isWhite;
 
   public ProposeDrawCommand(boolean isWhite) {
     this.isWhite = isWhite;

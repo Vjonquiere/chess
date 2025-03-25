@@ -5,6 +5,7 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/** Heuristic based on the closeness of pawn promotion. */
 public class PromotionHeuristic implements Heuristic {
   /**
    * Computes a score according to the closeness of pawns promoting. Heuristic used for endgames.
@@ -24,7 +25,7 @@ public class PromotionHeuristic implements Heuristic {
 
   /**
    * Checks if the pawns are well advanced for the corresponding color and returns a score
-   * accordingly
+   * accordingly.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
@@ -55,10 +56,10 @@ public class PromotionHeuristic implements Heuristic {
     final int secondLastRank = isWhite ? 6 : 1;
 
     for (Position pawn : pawns) {
-      if (pawn.getY() == secondLastRank) {
+      if (pawn.y() == secondLastRank) {
         // Pawn one step from promotion
         score += 20;
-      } else if ((isWhite && pawn.getY() >= 5) || (!isWhite && pawn.getY() <= 2)) {
+      } else if ((isWhite && pawn.y() >= 5) || (!isWhite && pawn.y() <= 2)) {
         // Pawn in the final phase of advancement
         score += 10;
       }

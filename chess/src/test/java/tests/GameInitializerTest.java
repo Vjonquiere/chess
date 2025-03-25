@@ -25,7 +25,7 @@ import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Piece;
 import pdp.utils.OptionType;
 import pdp.utils.Position;
-import pdp.view.CLIView;
+import pdp.view.CliView;
 
 class GameInitializerTest {
   private HashMap<OptionType, String> options;
@@ -56,7 +56,7 @@ class GameInitializerTest {
   void testGameInitializationCLI() {
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
-    assertTrue(controller.getView() instanceof CLIView);
+    assertTrue(controller.getView() instanceof CliView);
   }
 
   /*
@@ -96,8 +96,8 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
   }
 
@@ -106,8 +106,8 @@ class GameInitializerTest {
     options.put(OptionType.AI, "B");
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
-    assertTrue(controller.getModel().isBlackAI());
-    assertFalse(controller.getModel().isWhiteAI());
+    assertTrue(controller.getModel().isBlackAi());
+    assertFalse(controller.getModel().isWhiteAi());
     assertNotNull(controller.getModel().getBlackSolver());
   }
 
@@ -130,8 +130,8 @@ class GameInitializerTest {
     assertTrue(outputStream.toString().contains("Unknown AI option: X"));
     assertTrue(outputStream.toString().contains("Defaulting to AI playing White"));
     assertNotNull(controller);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
   }
 
@@ -141,8 +141,8 @@ class GameInitializerTest {
     options.put(OptionType.AI_MODE, "MINIMAX");
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertInstanceOf(Minimax.class, controller.getModel().getWhiteSolver().getAlgorithm());
   }
@@ -155,8 +155,8 @@ class GameInitializerTest {
     assertTrue(outputStream.toString().contains("Unknown AI mode option: minimax"));
     assertTrue(outputStream.toString().contains("Defaulting to ALPHABETA"));
     assertNotNull(controller);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertInstanceOf(AlphaBeta.class, controller.getModel().getWhiteSolver().getAlgorithm());
   }
@@ -167,8 +167,8 @@ class GameInitializerTest {
     options.put(OptionType.AI_HEURISTIC, "MOBILITY");
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertInstanceOf(
         MobilityHeuristic.class, controller.getModel().getWhiteSolver().getHeuristic());
@@ -183,8 +183,8 @@ class GameInitializerTest {
     assertTrue(outputStream.toString().contains("Unknown Heuristic: MINIMAX"));
     assertTrue(outputStream.toString().contains("Defaulting to Heuristic STANDARD"));
     assertNotNull(controller);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertInstanceOf(
         StandardHeuristic.class, controller.getModel().getWhiteSolver().getHeuristic());
@@ -195,8 +195,8 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_DEPTH, "1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertEquals(1, controller.getModel().getWhiteSolver().getDepth());
   }
@@ -212,8 +212,8 @@ class GameInitializerTest {
         outputStream
             .toString()
             .contains("Defaulting to depth " + controller.getModel().getWhiteSolver().getDepth()));
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
   }
 
@@ -228,8 +228,8 @@ class GameInitializerTest {
         outputStream
             .toString()
             .contains("Defaulting to depth " + controller.getModel().getWhiteSolver().getDepth()));
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
   }
 
@@ -238,8 +238,8 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_TIME, "1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertEquals(1000, controller.getModel().getWhiteSolver().getTime());
   }
@@ -252,8 +252,8 @@ class GameInitializerTest {
     GameController controller = GameControllerInit.initialize(options);
     assertTrue(outputStream.toString().contains("Not an int for the time of AI (in seconds)"));
     assertTrue(outputStream.toString().contains("Defaulting to a 5 seconds timer"));
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
   }
 
@@ -265,8 +265,8 @@ class GameInitializerTest {
     GameController controller = GameControllerInit.initialize(options);
     assertTrue(outputStream.toString().contains("Not an int for the time of AI (in seconds)"));
     assertTrue(outputStream.toString().contains("Defaulting to a 5 seconds timer"));
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
   }
 
@@ -277,8 +277,8 @@ class GameInitializerTest {
     options.put(OptionType.BLITZ, "");
     options.put(OptionType.TIME, "1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertEquals(60000, controller.getModel().getWhiteSolver().getTime());
   }
@@ -290,8 +290,8 @@ class GameInitializerTest {
     options.put(OptionType.BLITZ, "");
     options.put(OptionType.TIME, "1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     assertEquals(1000, controller.getModel().getWhiteSolver().getTime());
   }
@@ -303,8 +303,8 @@ class GameInitializerTest {
     options.put(OptionType.BLITZ, "");
     options.put(OptionType.TIME, "1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(controller.getModel().isWhiteAI());
-    assertFalse(controller.getModel().isBlackAI());
+    assertTrue(controller.getModel().isWhiteAi());
+    assertFalse(controller.getModel().isBlackAi());
     assertNotNull(controller.getModel().getWhiteSolver());
     // Blitz time
     assertEquals(60000, controller.getModel().getWhiteSolver().getTime());
@@ -327,7 +327,7 @@ class GameInitializerTest {
             .getModel()
             .getBoard()
             .getBoardRep()
-            .getPieceAt(newPosition.getX(), newPosition.getY())
+            .getPieceAt(newPosition.x(), newPosition.y())
             .getPiece(),
         Piece.PAWN);
   }

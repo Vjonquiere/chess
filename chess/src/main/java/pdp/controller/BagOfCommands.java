@@ -6,7 +6,8 @@ import java.util.logging.Logger;
 import pdp.model.Game;
 import pdp.utils.Logging;
 
-public class BagOfCommands {
+/** Variation of the design pattern command to execute several commands at once. */
+public final class BagOfCommands {
   private static final Logger LOGGER = Logger.getLogger(BagOfCommands.class.getName());
   private static BagOfCommands instance;
   private ConcurrentLinkedQueue<Command> commands = new ConcurrentLinkedQueue<>();
@@ -88,12 +89,17 @@ public class BagOfCommands {
     this.controller = controller;
   }
 
+  /**
+   * Indicates whether the bag of commands is running.
+   *
+   * @return isRunning field
+   */
   public boolean isRunning() {
     return this.isRunning;
   }
 
   /**
-   * Gets the single instance of BagOfCommands and creats it if it doesn't exist.
+   * Gets the single instance of BagOfCommands and creates it if it doesn't exist.
    *
    * @return The single instance of BagOfCommands.
    */

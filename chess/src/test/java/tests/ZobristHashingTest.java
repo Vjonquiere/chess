@@ -512,7 +512,7 @@ public class ZobristHashingTest {
               zobrist.generateHashFromBitboards(board);
             });
 
-    assertEquals("Only available for bitboards", exception.getMessage());
+    assertEquals("Only available for bitboards.", exception.getMessage());
   }
 
   @Test
@@ -535,7 +535,7 @@ public class ZobristHashingTest {
                   1234532, board, new Move(new Position(4, 1), new Position(4, 2)));
             });
 
-    assertEquals("Only available for bitboards", exception.getMessage());
-    assertEquals("Only available for bitboards", exception2.getMessage());
+    assertEquals("Only available for bitboards.", exception.getMessage());
+    assertEquals("Only available for bitboards.", exception2.getMessage());
   }
 }

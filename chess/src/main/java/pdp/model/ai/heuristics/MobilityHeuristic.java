@@ -3,6 +3,7 @@ package pdp.model.ai.heuristics;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
+/** Heuristic based on the number of moves available for each player. */
 public class MobilityHeuristic implements Heuristic {
 
   /**

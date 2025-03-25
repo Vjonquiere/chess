@@ -1,5 +1,6 @@
 package pdp.model.board;
 
+import java.util.AbstractMap;
 import java.util.concurrent.ConcurrentHashMap;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
@@ -13,9 +14,9 @@ public class CachedResult {
   private Boolean isStalemateBlack = null;
   private Long whiteMoveBitboard = null;
   private Long blackMoveBitboard = null;
-  private ConcurrentHashMap<Integer, ColoredPiece> pieces = new ConcurrentHashMap<>();
-  private ConcurrentHashMap<Integer, Boolean> isAttackedByWhite = new ConcurrentHashMap<>();
-  private ConcurrentHashMap<Integer, Boolean> isAttackedByBlack = new ConcurrentHashMap<>();
+  private final AbstractMap<Integer, ColoredPiece> pieces = new ConcurrentHashMap<>();
+  private final AbstractMap<Integer, Boolean> isAttackedByWhite = new ConcurrentHashMap<>();
+  private final AbstractMap<Integer, Boolean> isAttackedByBlack = new ConcurrentHashMap<>();
 
   public Boolean isCheck(Color color) {
     return color == Color.WHITE ? isCheckWhite : isCheckBlack;

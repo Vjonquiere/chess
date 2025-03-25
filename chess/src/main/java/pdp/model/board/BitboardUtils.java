@@ -6,10 +6,12 @@ import java.util.logging.Logger;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
-public class BitboardUtils {
+/** Utility class to remove complexity for BitboardRepresentation. */
+public final class BitboardUtils {
   private static final Logger LOGGER = Logger.getLogger(BitboardUtils.class.getName());
 
-  private BitboardUtils(BitboardRepresentation bitboardRepresentation) {
+  /** Private constructor to avoid instantiation. */
+  private BitboardUtils() {
     throw new UnsupportedOperationException("Cannot instantiate utility class");
   }
 
@@ -18,7 +20,7 @@ public class BitboardUtils {
   }
 
   /**
-   * Get the positions of all bits set to 1 in the given bitboard
+   * Get the positions of all bits set to 1 in the given bitboard.
    *
    * @param bitBoardIndex The bitboard to lookUp
    * @return A list of positions
@@ -29,7 +31,7 @@ public class BitboardUtils {
   }
 
   /**
-   * Translate a squares (0..63) to a position (x,y)
+   * Translate a squares (0..63) to a position (x,y).
    *
    * @param square The square to change to position
    * @return A Position containing the translations
@@ -39,7 +41,7 @@ public class BitboardUtils {
   }
 
   /**
-   * Translate a list of squares (0..63) to a list of position (x,y)
+   * Translate a list of squares (0..63) to a list of position (x,y).
    *
    * @param squares The list of squares to change to position
    * @return A new list containing the translations
@@ -53,6 +55,8 @@ public class BitboardUtils {
   }
 
   /**
+   * Retrieves the number of columns of the board.
+   *
    * @return The horizontal size of the board
    */
   public static int getNbCols(BitboardRepresentation bitboardRepresentation) {
@@ -60,6 +64,8 @@ public class BitboardUtils {
   }
 
   /**
+   * Retrieves the number of rows of the board.
+   *
    * @return The vertical size of the board
    */
   public static int getNbRows(BitboardRepresentation bitboardRepresentation) {

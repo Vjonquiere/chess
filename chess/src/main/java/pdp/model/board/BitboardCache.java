@@ -1,11 +1,12 @@
 package pdp.model.board;
 
+import java.util.AbstractMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class BitboardCache {
   private final int maxNb;
-  private final ConcurrentHashMap<Long, CachedResult> cache = new ConcurrentHashMap<>();
+  private final AbstractMap<Long, CachedResult> cache = new ConcurrentHashMap<>();
   private final ConcurrentLinkedDeque<Long> accessOrder = new ConcurrentLinkedDeque<>();
 
   public BitboardCache(int maxNb) {

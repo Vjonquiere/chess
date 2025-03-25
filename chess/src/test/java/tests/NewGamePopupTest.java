@@ -16,7 +16,7 @@ import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 import pdp.model.Game;
 import pdp.utils.OptionType;
-import pdp.view.GUI.popups.NewGamePopup;
+import pdp.view.gui.popups.NewGamePopup;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class NewGamePopupTest extends ApplicationTest {
@@ -148,7 +148,7 @@ public class NewGamePopupTest extends ApplicationTest {
 
   @Test
   @Tag("gui")
-  public void testBlackeDepthSlider() {
+  public void testBlackDepthSlider() {
 
     ComboBox<String> aiDropdown = lookup("#aiDropdown").query();
     assertTrue(scrollUntilVisible("#aiDropdown"));

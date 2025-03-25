@@ -4,6 +4,10 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/**
+ * Heuristic based on the balance of kings position. If they are in opposition , the endgame tends
+ * to lead to a draw.
+ */
 public class KingOppositionHeuristic implements Heuristic {
 
   /**
@@ -35,8 +39,8 @@ public class KingOppositionHeuristic implements Heuristic {
     Position whiteKing = bitboard.getKing(true).get(0);
     Position blackKing = bitboard.getKing(false).get(0);
 
-    int diffX = Math.abs(whiteKing.getX() - blackKing.getX());
-    int diffY = Math.abs(whiteKing.getY() - blackKing.getY());
+    int diffX = Math.abs(whiteKing.x() - blackKing.x());
+    int diffY = Math.abs(whiteKing.y() - blackKing.y());
 
     // If kings are directly opposite with one square between them
     if ((diffX == 2 && diffY == 0) || (diffY == 2 && diffX == 0)) {

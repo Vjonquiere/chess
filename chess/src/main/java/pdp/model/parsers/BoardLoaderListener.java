@@ -14,6 +14,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
+/** Class that use parser generator class to generate boards from parsing trees. */
 public class BoardLoaderListener extends BoardLoaderBaseListener {
   private static Map<String, ColoredPiece> pieces =
       Map.ofEntries(
@@ -56,7 +57,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
   private int movePlayed;
 
   /**
-   * Get the result of the parsing
+   * Get the result of the parsing.
    *
    * @return The board and current player parsed
    */

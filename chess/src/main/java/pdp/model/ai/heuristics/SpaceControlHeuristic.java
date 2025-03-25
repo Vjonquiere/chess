@@ -5,11 +5,15 @@ import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
+/**
+ * Heuristic based on the amount of control of the board the players have. More control in the
+ * center is important.
+ */
 public class SpaceControlHeuristic implements Heuristic {
 
   /**
    * Gives a score based on how much control over the entire board the players have. Center is
-   * generally more important so it has more impact on the score
+   * generally more important, so it has more impact on the score.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
@@ -46,10 +50,10 @@ public class SpaceControlHeuristic implements Heuristic {
       Position posDest = move.getDest();
       // If move is aiming at the center then bonus
       boolean moveAimsAtCenter =
-          posDest.getX() >= posDownLeftCenter.getX()
-              && posDest.getX() <= posTopRightCenter.getX()
-              && posDest.getY() >= posDownRightCenter.getY()
-              && posDest.getY() <= posTopLeftCenter.getY();
+          posDest.x() >= posDownLeftCenter.x()
+              && posDest.x() <= posTopRightCenter.x()
+              && posDest.y() >= posDownRightCenter.y()
+              && posDest.y() <= posTopLeftCenter.y();
       if (moveAimsAtCenter) {
         score += bonusForEachMoveInCenter;
       }
@@ -87,19 +91,19 @@ public class SpaceControlHeuristic implements Heuristic {
       Position posDest = move.getDest();
       // If move is aiming at the left flank then bonus
       boolean moveAimsAtLeftFlank =
-          posDest.getX() >= posDownLeftCenterLeftFlank.getX()
-              && posDest.getX() <= posTopRightCenterLeftFlank.getX()
-              && posDest.getY() >= posDownRightCenterLeftFlank.getY()
-              && posDest.getY() <= posTopLeftCenterLeftFlank.getY();
+          posDest.x() >= posDownLeftCenterLeftFlank.x()
+              && posDest.x() <= posTopRightCenterLeftFlank.x()
+              && posDest.y() >= posDownRightCenterLeftFlank.y()
+              && posDest.y() <= posTopLeftCenterLeftFlank.y();
       if (moveAimsAtLeftFlank) {
         score += bonusForEachMoveOnFlanks;
       }
       // If move is aiming at the right flank then bonus
       boolean moveAimsAtRightFlank =
-          posDest.getX() >= posDownLeftCenterRightFlank.getX()
-              && posDest.getX() <= posTopRightCenterRightFlank.getX()
-              && posDest.getY() >= posDownRightCenterRightFlank.getY()
-              && posDest.getY() <= posTopLeftCenterRightFlank.getY();
+          posDest.x() >= posDownLeftCenterRightFlank.x()
+              && posDest.x() <= posTopRightCenterRightFlank.x()
+              && posDest.y() >= posDownRightCenterRightFlank.y()
+              && posDest.y() <= posTopLeftCenterRightFlank.y();
       if (moveAimsAtRightFlank) {
         score += bonusForEachMoveOnFlanks;
       }

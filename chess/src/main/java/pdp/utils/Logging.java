@@ -1,6 +1,9 @@
 package pdp.utils;
 
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Logging class abstracting java.util.logging Usage : in each class, create a logger from
@@ -9,39 +12,54 @@ import java.util.logging.*;
  * Logger.getLogger(Main.class.getName()); in constructor or main :
  * Logging.configureLogging(LOGGER); Logging.DEBUG(LOGGER, message);
  */
-public class Logging {
+public final class Logging {
   private static boolean debug = false;
   private static boolean verbose = false;
 
-  /*Private constructor to avoid instantiation*/
+  /*Private constructor to avoid instantiation.*/
   private Logging() {}
 
+  /**
+   * Sets the debug field.
+   *
+   * @param debug true to enable debug, false otherwise
+   */
   public static void setDebug(boolean debug) {
     Logging.debug = debug;
   }
 
+  /**
+   * Sets the verbose field.
+   *
+   * @param verbose true to enable verbose, false otherwise
+   */
   public static void setVerbose(boolean verbose) {
     Logging.verbose = verbose;
   }
 
   /**
-   * Creates the messages for the debug mode with the following format ClassName [DEBUG] message
+   * Creates the messages for the debug mode with the following format ClassName [DEBUG] message.
    *
    * @param logger Logger of the class calling the function
    * @param message String to log
    */
-  public static void DEBUG(Logger logger, String message) {
-    logger.fine(logger.getName() + " [DEBUG] " + message);
+  public static void debug(Logger logger, String message) {
+    if (logger.isLoggable(Level.FINE)) {
+      logger.fine(logger.getName() + " [DEBUG] " + message);
+    }
   }
 
   /**
-   * Creates the messages for the verbose mode with the following format ClassName [VERBOSE] message
+   * Creates the messages for the verbose mode with the following format ClassName [VERBOSE]
+   * message.
    *
    * @param logger Logger of the class calling the function
    * @param message String to log
    */
-  public static void VERBOSE(Logger logger, String message) {
-    logger.finer(logger.getName() + " [VERBOSE] " + message);
+  public static void verbose(Logger logger, String message) {
+    if (logger.isLoggable(Level.FINER)) {
+      logger.finer(logger.getName() + " [VERBOSE] " + message);
+    }
   }
 
   /**

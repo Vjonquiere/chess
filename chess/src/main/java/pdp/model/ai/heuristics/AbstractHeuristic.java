@@ -29,6 +29,11 @@ public abstract class AbstractHeuristic implements Heuristic {
     heuristics.remove(heuristic);
   }
 
+  /**
+   * Retries the list of heuristics (without their weights) composing this heuristic.
+   *
+   * @return list of heuristics
+   */
   public List<Heuristic> getHeuristics() {
     List<Heuristic> h = new ArrayList<>();
     for (WeightedHeuristic heuristic : heuristics) {
@@ -37,6 +42,11 @@ public abstract class AbstractHeuristic implements Heuristic {
     return h;
   }
 
+  /**
+   * Retries the list of weighted heuristics composing this heuristic.
+   *
+   * @return list of weighted heuristics
+   */
   public List<WeightedHeuristic> getWeightedHeuristics() {
     return heuristics;
   }
@@ -46,7 +56,7 @@ public abstract class AbstractHeuristic implements Heuristic {
    *
    * @param board The current Board.
    * @param isWhite true if the player is white, false if he is black
-   * @return
+   * @return Total score of all the heuristics evaluation
    */
   @Override
   public float evaluate(Board board, boolean isWhite) {

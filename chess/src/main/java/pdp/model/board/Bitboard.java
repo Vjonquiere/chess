@@ -2,6 +2,7 @@ package pdp.model.board;
 
 import java.util.ArrayList;
 
+/** Bitboard structure with all needed treatments. */
 public class Bitboard {
   private long bitboard;
 
@@ -12,7 +13,7 @@ public class Bitboard {
   }
 
   /**
-   * Set the given bit to True
+   * Set the given bit to True.
    *
    * @param square Position of the bit to set
    */
@@ -21,7 +22,7 @@ public class Bitboard {
   }
 
   /**
-   * Set the given bit to False
+   * Set the given bit to False.
    *
    * @param square Position of the bit to set
    */
@@ -30,7 +31,7 @@ public class Bitboard {
   }
 
   /**
-   * Toggle the value of the given bit (False => True, True => False)
+   * Toggle the value of the given bit (False => True, True => False).
    *
    * @param square Position of the bit to set
    */
@@ -39,7 +40,7 @@ public class Bitboard {
   }
 
   /**
-   * Get the value of the given bit
+   * Get the value of the given bit.
    *
    * @param square Position of the bit
    * @return Value of the given bit
@@ -49,7 +50,7 @@ public class Bitboard {
   }
 
   /**
-   * Get the current value of the bitboard
+   * Get the current value of the bitboard.
    *
    * @return The complete bitboard
    */
@@ -58,7 +59,7 @@ public class Bitboard {
   }
 
   /**
-   * Move up all the bits of the bitboard
+   * Move up all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -67,7 +68,7 @@ public class Bitboard {
   }
 
   /**
-   * Move down all the bits of the bitboard
+   * Move down all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -76,7 +77,7 @@ public class Bitboard {
   }
 
   /**
-   * Move right all the bits of the bitboard
+   * Move right all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -85,7 +86,7 @@ public class Bitboard {
   }
 
   /**
-   * Move left all the bits of the bitboard
+   * Move left all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -94,7 +95,7 @@ public class Bitboard {
   }
 
   /**
-   * Move up-right all the bits of the bitboard
+   * Move up-right all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -103,7 +104,7 @@ public class Bitboard {
   }
 
   /**
-   * Move up-left all the bits of the bitboard
+   * Move up-left all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -112,7 +113,7 @@ public class Bitboard {
   }
 
   /**
-   * Move down-right all the bits of the bitboard
+   * Move down-right all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -121,7 +122,7 @@ public class Bitboard {
   }
 
   /**
-   * Move down-left all the bits of the bitboard
+   * Move down-left all the bits of the bitboard.
    *
    * @return A new bitboard with the bits correctly sets
    */
@@ -129,13 +130,13 @@ public class Bitboard {
     return new Bitboard(bitboard).moveDown().moveLeft();
   }
 
-  /** Set all the bits to False */
+  /** Set all the bits to False. */
   public void clearBits() {
     bitboard = 0L;
   }
 
   /**
-   * Count the number of bits set to 1
+   * Count the number of bits set to 1.
    *
    * @return The number of bits set to true
    */
@@ -144,7 +145,7 @@ public class Bitboard {
   }
 
   /**
-   * Get the bits set to 1
+   * Get the bits set to 1.
    *
    * @return Array list containing the square set to 1
    */
@@ -159,7 +160,7 @@ public class Bitboard {
   }
 
   /**
-   * Make a bitwise AND between the two bitboards
+   * Make a bitwise AND between the two bitboards.
    *
    * @param b the second bitboard
    * @return A new bitboard containing the AND operation
@@ -169,7 +170,7 @@ public class Bitboard {
   }
 
   /**
-   * Make a bitwise OR between the two bitboards
+   * Make a bitwise OR between the two bitboards.
    *
    * @param b the second bitboard
    * @return A new bitboard containing the OR operation
@@ -179,7 +180,7 @@ public class Bitboard {
   }
 
   /**
-   * Make a bitwise XOR between the two bitboards
+   * Make a bitwise XOR between the two bitboards.
    *
    * @param b the second bitboard
    * @return A new bitboard containing the XOR operation
@@ -189,7 +190,7 @@ public class Bitboard {
   }
 
   /**
-   * Invert all the bits of the bitboard
+   * Invert all the bits of the bitboard.
    *
    * @return A new bitboard with the inverted bits
    */

@@ -50,7 +50,7 @@ public class AlphaBetaTest {
     game.playMove(new Move(new Position(1, 7), new Position(2, 5)));
     game.playMove(new Move(new Position(5, 0), new Position(2, 3)));
     game.playMove(new Move(new Position(6, 7), new Position(5, 5)));
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     assertTrue(game.getGameState().isGameOver());
   }
 
@@ -59,7 +59,7 @@ public class AlphaBetaTest {
     solver.setTime(5);
     solver.setDepth(5);
     long startTime = System.currentTimeMillis();
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     long endTime = System.currentTimeMillis();
 
     long elapsedTime = endTime - startTime;
@@ -76,7 +76,7 @@ public class AlphaBetaTest {
     solver.setDepth(5);
 
     long startTime = System.currentTimeMillis();
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     long endTime = System.currentTimeMillis();
 
     long elapsedTime = endTime - startTime;

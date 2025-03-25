@@ -56,7 +56,7 @@ public class MonteCarloTreeSearchTest {
     game.playMove(new Move(new Position(5, 0), new Position(2, 3)));
     game.playMove(new Move(new Position(6, 7), new Position(5, 5)));
 
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     System.out.println("After AI move:");
     printBoard(game);
 

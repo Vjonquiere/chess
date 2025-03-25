@@ -1,8 +1,10 @@
 package pdp.model.ai.heuristics;
 
+import pdp.exceptions.InvalidBoardException;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
+/** Heuristic based on the number of pieces still on the board. */
 public class MaterialHeuristic implements Heuristic {
 
   /**
@@ -16,7 +18,7 @@ public class MaterialHeuristic implements Heuristic {
   public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation)) {
-      throw new RuntimeException("Only available for bitboards");
+      throw new InvalidBoardException();
     }
     score +=
         bitboardRepresentation.getPawns(true).size()

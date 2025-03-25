@@ -4,7 +4,11 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class TextGetter {
+/**
+ * Utility class for internationalization. Need to put all strings needed to be translated in the
+ * chessResources_locale.properties files in the resources.
+ */
+public final class TextGetter {
   private static Locale locale = Locale.ENGLISH; // Default language
   private static ResourceBundle messages = ResourceBundle.getBundle("chessResources", locale);
 
@@ -12,7 +16,7 @@ public class TextGetter {
     Locale.setDefault(locale);
   }
 
-  /*Private constructor to avoid instantiation*/
+  /*Private constructor to avoid instantiation.*/
   private TextGetter() {}
 
   /**
@@ -31,6 +35,15 @@ public class TextGetter {
   }
 
   /**
+   * Retrieves the locale used in the application.
+   *
+   * @return locale save in the fields
+   */
+  public static Locale getLocale() {
+    return locale;
+  }
+
+  /**
    * Gets the string corresponding to the key in the correct language.
    *
    * @param key key corresponding to the string to get from the resource file
@@ -38,10 +51,6 @@ public class TextGetter {
    */
   public static String getText(String key) {
     return messages.getString(key);
-  }
-
-  public static Locale getLocale() {
-    return locale;
   }
 
   /**

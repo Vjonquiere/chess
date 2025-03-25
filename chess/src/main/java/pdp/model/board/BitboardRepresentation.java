@@ -1,6 +1,6 @@
 package pdp.model.board;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.List;
 import java.util.function.Function;
@@ -13,12 +13,13 @@ import pdp.utils.BiDirectionalMap;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Implementation of BoardRepresentation using bitboards. */
 public class BitboardRepresentation implements BoardRepresentation {
-  private static final int cacheSize = 100000;
+  private static final int CACHE_SIZE = 100000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
-  private final int nbCols = 8;
-  private final int nbRows = 8;
+  private static final int nbCols = 8;
+  private static final int nbRows = 8;
   private static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
   private static BitboardCache cache;
   private static ZobristHashing zobristHashing = new ZobristHashing();
@@ -41,7 +42,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
     zobristHashing = new ZobristHashing();
 
-    cache = new BitboardCache(cacheSize);
+    cache = new BitboardCache(CACHE_SIZE);
   }
 
   /*
@@ -59,7 +60,7 @@ public class BitboardRepresentation implements BoardRepresentation {
      10. Black knights
      11. Black pawns
    */
-  /** Initialize all the bitboards to the default values for a board when the game begin */
+  /** Initialize all the bitboards to the default values for a board when the game begin. */
   public BitboardRepresentation() {
     board = new Bitboard[12];
     board[0] = new Bitboard(16L); // WKi
@@ -80,6 +81,22 @@ public class BitboardRepresentation implements BoardRepresentation {
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
+  /**
+   * Initialize a board with all wanted values.
+   *
+   * @param whiteKing The white king bitboard
+   * @param whiteQueen The white queen bitboard
+   * @param whiteBishops The white bishops bitboard
+   * @param whiteRooks The white rooks bitboard
+   * @param whiteKnights The white knights bitboard
+   * @param whitePawns The white pawns bitboard
+   * @param blackKing The black king bitboard
+   * @param blackQueen The black queen bitboard
+   * @param blackBishops The black bishops bitboard
+   * @param blackRooks The black rooks bitboard
+   * @param blackKnights The black knights bitboard
+   * @param blackPawns The black pawns bitboard
+   */
   @Deprecated
   public BitboardRepresentation(
       Bitboard whiteKing,
@@ -121,9 +138,13 @@ public class BitboardRepresentation implements BoardRepresentation {
   @Override
   public boolean equals(Object o) {
     if (o instanceof BitboardRepresentation obj) {
-      if (board.length != obj.board.length) return false;
+      if (board.length != obj.board.length) {
+        return false;
+      }
       for (int i = 0; i < board.length; i++) {
-        if (!board[i].equals(obj.board[i])) return false;
+        if (!board[i].equals(obj.board[i])) {
+          return false;
+        }
       }
       return true;
     }
@@ -149,7 +170,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the piece and its color for the given square
+   * Get the piece and its color for the given square.
    *
    * @param x column
    * @param y row
@@ -179,16 +200,16 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Move a piece from a source position to a destination position Can throw an exception if there
-   * isn't a piece at source position
+   * isn't a piece at source position.
    *
    * @param from The initial position of the piece
    * @param to The position to reach
    */
   @Override
   public void movePiece(Position from, Position to) {
-    ColoredPiece piece = getPieceAt(from.getX(), from.getY());
-    int fromIndex = from.getX() % 8 + from.getY() * 8;
-    int toIndex = to.getX() % 8 + to.getY() * 8;
+    ColoredPiece piece = getPieceAt(from.x(), from.y());
+    int fromIndex = from.x() % 8 + from.y() * 8;
+    int toIndex = to.x() % 8 + to.y() * 8;
     int bitboardIndex =
         switch (piece.getPiece()) {
           case KING -> piece.getColor() == Color.WHITE ? 0 : 6;
@@ -215,7 +236,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public void promotePawn(int x, int y, boolean white, Piece newPiece) {
-    DEBUG(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
+    debug(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
     ColoredPiece pieceAtPosition = getPieceAt(x, y);
     if (pieceAtPosition.getPiece() != Piece.PAWN
         || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
@@ -261,21 +282,22 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Delete the piece contained at the given position
+   * Delete the piece contained at the given position.
    *
    * @param x The board column
    * @param y The board row
    */
+  @Override
   public void deletePieceAt(int x, int y) {
     ColoredPiece piece = getPieceAt(x, y);
     board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
-    DEBUG(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
+    debug(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
   /**
-   * Add a new piece in the bitboard corresponding to the given piece at the coordinates x,y. This
-   * method should be only used for undo/redo moves
+   * Add a new piece in the bitboard corresponding to the given piece at the coordinates x,y. ⚠️
+   * This method should be only used for undo/redo moves.
    *
    * @param x The board column
    * @param y The board row
@@ -284,14 +306,15 @@ public class BitboardRepresentation implements BoardRepresentation {
   protected void addPieceAt(int x, int y, ColoredPiece piece) {
     board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
-    DEBUG(LOGGER, "A " + piece.getColor() + " " + piece.getPiece() + " was added to the board");
+    debug(LOGGER, "A " + piece.getColor() + " " + piece.getPiece() + " was added to the board");
   }
 
   /**
-   * Applies short castle for color {color}. Changes bitboards. Assumes castle is possible
+   * Applies short castle for color {color}. Changes bitboards. Assumes castle is possible.
    *
    * @param color color for which castling move is applied
    */
+  @Override
   public void applyShortCastle(Color color) {
     if (color == Color.WHITE) {
       Position e1Square = new Position(4, 0);
@@ -316,10 +339,11 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Applies long castle for color {color}. Changes bitboards. Assumes castle is possible
+   * Applies long castle for color {color}. Changes bitboards. Assumes castle is possible.
    *
    * @param color color for which castling move is applied
    */
+  @Override
   public void applyLongCastle(Color color) {
     if (color == Color.WHITE) {
       Position e1Square = new Position(4, 0);
@@ -346,7 +370,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Iterate on the given direction to generate the possible movement from a given position
-   * depending on allies and enemies
+   * depending on allies and enemies.
    *
    * @param piece Bitboard where only the position of the piece you want to move is set to 1
    * @param unreachableSquares A bitboard containing all the unreachable squares
@@ -364,7 +388,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Generate the bitboard containing the reachable positions for up, down, left, right directions
+   * Generate the bitboard containing the reachable positions for up, down, left, right directions.
    *
    * @param square The position of the piece that want to move
    * @param unreachableSquares A bitboard containing all the unreachable squares
@@ -378,7 +402,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Generate the bitboard containing the reachable positions for up left, down left, up right, down
-   * right directions
+   * right directions.
    *
    * @param square The position of the piece that want to move
    * @param unreachableSquares A bitboard containing all the unreachable squares
@@ -391,7 +415,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Convert a move bitboard to a list of possible moves. It also set if a move is a capture or not
+   * Convert a move bitboard to a list of possible moves. It also set if a move is a capture or not.
    *
    * @param moveBitboard The bitboard to transform
    * @param enemies A bitboard containing the enemies
@@ -404,7 +428,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a king piece
+   * Generate the list of possible moves from a given position for a king piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -422,7 +446,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a knight piece
+   * Generate the list of possible moves from a given position for a knight piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -436,11 +460,11 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   protected Bitboard getKnightMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getKnightMoveBitboard(square, unreachableSquares, enemies, piece);
+    return BitboardMovesGen.getKnightMoveBitboard(square, unreachableSquares);
   }
 
   /**
-   * Generate the list of possible moves from a given position for a pawn piece
+   * Generate the list of possible moves from a given position for a pawn piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -458,7 +482,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a queen piece
+   * Generate the list of possible moves from a given position for a queen piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -471,7 +495,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a bishop piece
+   * Generate the list of possible moves from a given position for a bishop piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -484,7 +508,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Generate the list of possible moves from a given position for a rook piece
+   * Generate the list of possible moves from a given position for a rook piece.
    *
    * @param square Position of the piece
    * @param unreachableSquares unreachable squares bitboard
@@ -498,7 +522,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Generate the possible moves from a position depending on the piece type. This function do not
-   * apply special rules (castling, pinned, ...)
+   * apply special rules (castling, pinned, ...).
    *
    * @param x The board column
    * @param y The board row
@@ -513,7 +537,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Equivalent to getAvailableMoves but do not generate the move list from the bitboard. Used in
-   * check verification optimisation
+   * check verification optimisation.
    *
    * @param x The board column
    * @param y The board row
@@ -527,7 +551,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Generate the possible moves for a player. This function do not apply special rules (castling,
-   * pinned, ...)
+   * pinned, ...).
    *
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The list of possible moves (without special cases)
@@ -539,7 +563,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Generate the possible moves for a player. This function do not apply special rules (castling,
-   * pinned, ...). Optimised for AI
+   * pinned, ...). Optimised for AI.
    *
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The bitboard containing all possible moves (without special cases)
@@ -560,7 +584,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   // ________________________ BitboardPieces
 
   /**
-   * Get the positions of the pawns
+   * Get the positions of the pawns.
    *
    * @param white if true -> white pawns, if false -> black pawns
    * @return A list of the pawns positions for the given color
@@ -571,7 +595,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the positions of the rooks
+   * Get the positions of the rooks.
    *
    * @param white if true -> white rooks, if false -> black rooks
    * @return A list of the rooks positions for the given color
@@ -582,7 +606,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the positions of the bishops
+   * Get the positions of the bishops.
    *
    * @param white if true -> white bishops, if false -> black bishops
    * @return A list of the bishops positions for the given color
@@ -593,7 +617,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the positions of the knights
+   * Get the positions of the knights.
    *
    * @param white if true -> white knights, if false -> black knights
    * @return A list of the knights positions for the given color
@@ -604,7 +628,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the positions of the queens
+   * Get the positions of the queens.
    *
    * @param white if true -> white queens, if false -> black queens
    * @return A list of the queens positions for the given color
@@ -615,7 +639,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the positions of the king
+   * Get the positions of the king.
    *
    * @param white if true -> white king, if false -> black king
    * @return A list containing the king position for the given color
@@ -630,16 +654,17 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Checks and returns the number of remaining pieces on the board
+   * Checks and returns the number of remaining pieces on the board.
    *
    * @return the number of remaining pieces on the board
    */
+  @Override
   public int nbPiecesRemaining() {
     return BitboardPieces.nbPiecesRemaining(this);
   }
 
   /**
-   * Get the bitboard that contains all the white pieces, by or on all white pieces bitboards
+   * Get the bitboard that contains all the white pieces, by or on all white pieces bitboards.
    *
    * @return the bitboard containing all white pieces
    */
@@ -648,7 +673,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the bitboard that contains all the black pieces, by or on all black pieces bitboards
+   * Get the bitboard that contains all the black pieces, by or on all black pieces bitboards.
    *
    * @return the bitboard containing all black pieces
    */
@@ -659,7 +684,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   // ________________________ BitboardRules
 
   /**
-   * Get if the given square (x,y format) can be attacked by a piece of the given color
+   * Get if the given square (x,y format) can be attacked by a piece of the given color.
    *
    * @param x X coordinate of the Position
    * @param y Y coordinate of the Position
@@ -680,7 +705,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the check state for the given color
+   * Get the check state for the given color.
    *
    * @param color The piece color you want to know check status
    * @return True if the given color is in check, False else
@@ -700,7 +725,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the check state after move for the given color
+   * Get the check state after move for the given color.
    *
    * @param color The piece color you want to know check status
    * @param move The move you want to check if it puts the king in check
@@ -713,7 +738,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Get the checkMate state for the given color (can be resources/time-consuming if there are many
-   * pieces remaining on the board)
+   * pieces remaining on the board).
    *
    * @param color The piece color you want to know checkMate status
    * @return True if the given color is in checkMate, False else
@@ -733,7 +758,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Checks the StaleMate state for the given color
+   * Checks the StaleMate state for the given color.
    *
    * @param color The color you want to check StaleMate for
    * @param colorTurnToPlay Player's turn to know if player who potentially moves in check has to
@@ -756,7 +781,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Checks if draw by insufficient material is observed (both colors each case) Cases: King vs King
-   * and Bishop vs King and Knight vs King and Bishop vs King and Bishop (same colored Bishops)
+   * and Bishop vs King and Knight vs King and Bishop vs King and Bishop (same colored Bishops).
    *
    * @return true if a draw by insufficient material is observed
    */
@@ -766,7 +791,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Checks if a pawn at Position(x,y) checks for promotion
+   * Checks if a pawn at Position(x,y) checks for promotion.
    *
    * @param x The x-coordinate (file) of the pawn
    * @param y The y-coordinate (rank) of the pawn
@@ -795,7 +820,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Checks if a given move is a double pawn push A double push occurs when a pawn moves forward by
-   * two squares from its starting position
+   * two squares from its starting position.
    *
    * @param move The move to check
    * @param white {true} if pawn is white, {false} if pawn is black
@@ -807,7 +832,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Checks if a given move is an en passant
+   * Checks if a given move is an en passant.
    *
    * @param x The x-coordinate of the square where an en passant capture can occur
    * @param y The y-coordinate of the square where an en passant capture can occur
@@ -815,23 +840,25 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param white {true} if pawn is white, {false} if pawn is black
    * @return True if the move is a valid en passant capture, false else
    */
+  @Override
   public boolean isEnPassant(int x, int y, Move move, boolean white) {
     return BitboardRules.isEnPassant(x, y, move, white, this);
   }
 
   /**
    * Method that verifies of a player has enough material to mate. Used for rule loss on time but
-   * enemy does not have enough material to mate
+   * enemy does not have enough material to mate.
    *
    * @param white color of the player we check the material for
    * @return true if {white} has enouhg material to mate. false otherwise
    */
+  @Override
   public boolean hasEnoughMaterialToMate(boolean white) {
     return BitboardRules.hasEnoughMaterialToMate(white, this);
   }
 
   /**
-   * Returns the list of available moves for the king of either white or black
+   * Returns the list of available moves for the king of either white or black.
    *
    * @param white true if we want the moves of the white king, false otherwise
    * @return the list of moves for the corresponding king
@@ -842,7 +869,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Returns the list of available for the bishops of either white or black
+   * Returns the list of available for the bishops of either white or black.
    *
    * @param white true if we want the moves of the white bishops, false otherwise
    * @return the list of moves for the corresponding bishops
@@ -853,6 +880,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Retrieves the current positions of white pieces.
+   *
    * @return the list containing the list of current positions for the white pieces
    */
   @Override
@@ -861,6 +890,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Retrieves the current positions of black pieces.
+   *
    * @return the list containing the list of current positions for the black pieces
    */
   @Override
@@ -869,6 +900,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Retrieves the positions of white pieces at the start of the game.
+   *
    * @return the list containing the list of initial positions for the white pieces
    */
   @Override
@@ -877,6 +910,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Retrieves the positions of black pieces at the start of the game.
+   *
    * @return the list containing the list of initial positions for the black pieces
    */
   @Override
@@ -892,6 +927,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param dest The destination position of the move.
    * @return true if the move is a castle move, false otherwise.
    */
+  @Override
   public boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
     return BitboardRules.isCastleMove(coloredPiece, source, dest);
   }
@@ -904,6 +940,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param sourcePosition the position
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
+  @Override
   public boolean validatePieceOwnership(boolean white, Position sourcePosition) {
     return BitboardRules.validatePieceOwnership(white, sourcePosition, this);
   }
@@ -911,7 +948,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   // ________________________ BitboardStatusCheck
 
   /**
-   * Checks if queens are off the board. Method used to detect endgames
+   * Checks if queens are off the board. Method used to detect endgames.
    *
    * @return true if queens are off the board. false otherwise
    */
@@ -926,12 +963,13 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param isWhite true for white pawns, false for black pawns
    * @return true if the majority of pawns for the given color are past the middle of the board.
    */
+  @Override
   public boolean pawnsHaveProgressed(boolean isWhite) {
     return BitboardStatusCheck.pawnsHaveProgressed(isWhite, this);
   }
 
   /**
-   * Checks if the kings on the board are active. Method used to detect endgames
+   * Checks if the kings on the board are active. Method used to detect endgames.
    *
    * @return true if kings are somewhat active. false otherwise
    */
@@ -942,13 +980,14 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   /**
    * Checks if castle (long or short in parameter) for one side is possible or not. No need to fetch
-   * king position because if king has moved, then boolean attributes for castling rights are false
+   * king position because if king has moved, then boolean attributes for castling rights are false.
    *
    * @param color the color of the player we want to test castle for
    * @param shortCastle boolean value to indicate if we're looking for the short castle right or
    *     long castle right
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
+  @Override
   public boolean canCastle(
       Color color,
       boolean shortCastle,
@@ -969,8 +1008,9 @@ public class BitboardRepresentation implements BoardRepresentation {
   /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
-   * @return true if we're in an endgame (according to the chosen criterias)
+   * @return true if we're in an endgame (according to the chosen criteria)
    */
+  @Override
   public boolean isEndGamePhase(int fullTurn, boolean white) {
     return BitboardStatusCheck.isEndGamePhase(fullTurn, white, this);
   }
@@ -978,7 +1018,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   // ________________________ BitboardUtils
 
   /**
-   * Translate a list of squares (0..63) to a list of position (x,y)
+   * Translate a list of squares (0..63) to a list of position (x,y).
    *
    * @param squares The list of squares to change to position
    * @return A new list containing the translations
@@ -988,7 +1028,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Translate a squares (0..63) to a position (x,y)
+   * Translate a squares (0..63) to a position (x,y).
    *
    * @param square The square to change to position
    * @return A Position containing the translations
@@ -997,6 +1037,19 @@ public class BitboardRepresentation implements BoardRepresentation {
     return BitboardUtils.squareToPosition(square);
   }
 
+  /**
+   * Generate all special moves from given board status.
+   *
+   * @param white The side to generate the moves
+   * @param enPassantPos The position of the possible enPassant
+   * @param isLastMoveDoublePush The last move double push status
+   * @param isWhiteLongCastle The white long castle possibility
+   * @param isWhiteShortCastle The white short castle possibility
+   * @param isBlackLongCastle The black long castle possibility
+   * @param isBlackShortCastle The black short castle possibility
+   * @return A list containing all possible special moves
+   */
+  @Override
   public List<Move> getSpecialMoves(
       boolean white,
       Position enPassantPos,
@@ -1017,7 +1070,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Get the positions of all bits set to 1 in the given bitboard
+   * Get the positions of all bits set to 1 in the given bitboard.
    *
    * @param bitBoardIndex The bitboard to lookUp
    * @return A list of positions
@@ -1027,15 +1080,21 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Retrieves the number of columns of a board.
+   *
    * @return The horizontal size of the board
    */
+  @Override
   public int getNbCols() {
     return nbCols;
   }
 
   /**
+   * Retrieves the number of rows of a board.
+   *
    * @return The vertical size of the board
    */
+  @Override
   public int getNbRows() {
     return nbRows;
   }

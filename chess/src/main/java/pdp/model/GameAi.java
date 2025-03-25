@@ -1,6 +1,6 @@
 package pdp.model;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +15,8 @@ import pdp.model.history.HistoryState;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
-public class GameAi extends GameAbstract {
+/** Specific implementation of game for AI players. */
+public final class GameAi extends GameAbstract {
   private static final Logger LOGGER = Logger.getLogger(GameAi.class.getName());
 
   static {
@@ -38,9 +39,9 @@ public class GameAi extends GameAbstract {
    */
   @Override
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
-    Position sourcePosition = new Position(move.getSource().getX(), move.getSource().getY());
-    Position destPosition = new Position(move.getDest().getX(), move.getDest().getY());
-    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+    Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    Position destPosition = new Position(move.getDest().x(), move.getDest().y());
+    debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
       throw new IllegalMoveException(move.toString());
@@ -94,7 +95,7 @@ public class GameAi extends GameAbstract {
               super.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
     }
 
-    DEBUG(LOGGER, "Checking threefold repetition...");
+    debug(LOGGER, "Checking threefold repetition...");
     boolean threefoldRepetition =
         super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
 
@@ -102,14 +103,14 @@ public class GameAi extends GameAbstract {
       super.getGameState().activateThreefold();
     }
 
-    DEBUG(LOGGER, "Checking game status...");
+    debug(LOGGER, "Checking game status...");
     super.getGameState().checkGameStatus();
 
     super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
   }
 
   /**
-   * Tries to play the given move on the game for the game state in parameter
+   * Tries to play the given move on the game for the game state in parameter.
    *
    * @param gameState the game state for which we want the move to occur
    * @param move The move to be executed
@@ -118,9 +119,9 @@ public class GameAi extends GameAbstract {
   public void playMoveOtherGameState(GameState gameState, Move move)
       throws IllegalMoveException, InvalidPromoteFormatException {
 
-    Position sourcePosition = new Position(move.getSource().getX(), move.getSource().getY());
-    Position destPosition = new Position(move.getDest().getX(), move.getDest().getY());
-    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+    Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    Position destPosition = new Position(move.getDest().x(), move.getDest().y());
+    debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!validatePieceOwnership(gameState, sourcePosition)) {
       throw new IllegalMoveException(move.toString());
@@ -159,10 +160,15 @@ public class GameAi extends GameAbstract {
 
     gameState.switchPlayerTurn();
 
-    DEBUG(LOGGER, "Checking game status...");
+    debug(LOGGER, "Checking game status...");
     gameState.checkGameStatus();
   }
 
+  /**
+   * Retrieves a copy of the current GameAI.
+   *
+   * @return Instance of game AI
+   */
   public GameAi copy() {
     History history = new History();
     history.addMove(
@@ -181,6 +187,12 @@ public class GameAi extends GameAbstract {
     return game;
   }
 
+  /**
+   * Creates a GameAI from a given Game.
+   *
+   * @param game game to transform into a GameAI
+   * @return a gameAI from the given game
+   */
   public static GameAi fromGame(Game game) {
     History history = new History();
     history.addMove(
