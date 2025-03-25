@@ -153,7 +153,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
-    ColoredPiece piece = cache.getOrCreate(simpleHash).getPieceAt(x, y);
+    CachedResult cached = cache.getOrCreate(simpleHash);
+    ColoredPiece piece = cached.getPieceAt(x, y);
 
     if (piece != null) {
       return piece;
@@ -163,12 +164,12 @@ public class BitboardRepresentation implements BoardRepresentation {
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) {
         piece = pieces.getFromKey(index);
-        cache.getOrCreate(simpleHash).setPieceAt(x, y, piece);
+        cached.setPieceAt(x, y, piece);
         return piece;
       }
     }
     piece = new ColoredPiece(Piece.EMPTY, Color.EMPTY);
-    cache.getOrCreate(simpleHash).setPieceAt(x, y, piece);
+    cached.setPieceAt(x, y, piece);
     return piece;
   }
 
@@ -540,7 +541,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The bitboard containing all possible moves (without special cases)
    */
   public Bitboard getColorMoveBitboard(boolean isWhite) {
-    return BitboardMovesGen.getColorMoveBitboard(isWhite, this);
+    CachedResult cached = cache.getOrCreate(simpleHash);
+    Long bitboard = cached.getColorMoveBitboard(isWhite);
+    if (bitboard != null) {
+      return new Bitboard(bitboard);
+    }
+
+    Bitboard moves = BitboardMovesGen.getColorMoveBitboard(isWhite, this);
+
+    cached.setColorMoveBitboard(moves.getBits(), isWhite);
+    return moves;
   }
 
   // ________________________ BitboardPieces
@@ -654,13 +664,14 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isAttacked(int x, int y, Color by) {
-    Boolean isAttacked = cache.getOrCreate(simpleHash).isAttacked(x, y, by);
+    CachedResult cached = cache.getOrCreate(simpleHash);
+    Boolean isAttacked = cached.isAttacked(x, y, by);
     if (isAttacked != null) {
       return isAttacked;
     }
 
     isAttacked = BitboardRules.isAttacked(x, y, by, this);
-    cache.getOrCreate(simpleHash).setAttacked(x, y, by, isAttacked);
+    cached.setAttacked(x, y, by, isAttacked);
     return isAttacked;
   }
 
@@ -672,13 +683,14 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheck(Color color) {
-    Boolean isCheck = cache.getOrCreate(simpleHash).isCheck(color);
+    CachedResult cached = cache.getOrCreate(simpleHash);
+    Boolean isCheck = cached.isCheck(color);
     if (isCheck != null) {
       return isCheck;
     }
 
     isCheck = BitboardRules.isCheck(color, this);
-    cache.getOrCreate(simpleHash).setCheck(isCheck, color);
+    cached.setCheck(isCheck, color);
 
     return isCheck;
   }
@@ -704,14 +716,15 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckMate(Color color) {
-    Boolean isCheckMate = cache.getOrCreate(simpleHash).isCheckMate(color);
+    CachedResult cached = cache.getOrCreate(simpleHash);
+    Boolean isCheckMate = cached.isCheckMate(color);
     if (isCheckMate != null) {
       return isCheckMate;
     }
 
     isCheckMate = BitboardRules.isCheckMate(color, this);
 
-    cache.getOrCreate(simpleHash).setCheckMate(isCheckMate, color);
+    cached.setCheckMate(isCheckMate, color);
     return isCheckMate;
   }
 
@@ -725,14 +738,15 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isStaleMate(Color color, Color colorTurnToPlay) {
-    Boolean isStaleMate = cache.getOrCreate(simpleHash).isStaleMate(color);
+    CachedResult cached = cache.getOrCreate(simpleHash);
+    Boolean isStaleMate = cached.isStaleMate(color);
     if (isStaleMate != null) {
       return isStaleMate;
     }
 
     isStaleMate = BitboardRules.isStaleMate(color, colorTurnToPlay, this);
 
-    cache.getOrCreate(simpleHash).setStaleMate(isStaleMate, color);
+    cached.setStaleMate(isStaleMate, color);
     return isStaleMate;
   }
 

@@ -5,12 +5,14 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 
 public class CachedResult {
-  private Boolean isCheckWhite;
-  private Boolean isCheckMateWhite;
-  private Boolean isCheckBlack;
-  private Boolean isCheckMateBlack;
-  private Boolean isStalemateWhite;
-  private Boolean isStalemateBlack;
+  private Boolean isCheckWhite = null;
+  private Boolean isCheckMateWhite = null;
+  private Boolean isCheckBlack = null;
+  private Boolean isCheckMateBlack = null;
+  private Boolean isStalemateWhite = null;
+  private Boolean isStalemateBlack = null;
+  private Long whiteMoveBitboard = null;
+  private Long blackMoveBitboard = null;
   private ConcurrentHashMap<Integer, ColoredPiece> pieces = new ConcurrentHashMap<>();
   private ConcurrentHashMap<Integer, Boolean> isAttackedByWhite = new ConcurrentHashMap<>();
   private ConcurrentHashMap<Integer, Boolean> isAttackedByBlack = new ConcurrentHashMap<>();
@@ -48,6 +50,18 @@ public class CachedResult {
       isCheckMateWhite = checkMate;
     } else {
       isCheckMateBlack = checkMate;
+    }
+  }
+
+  public Long getColorMoveBitboard(boolean isWhite) {
+    return isWhite ? this.whiteMoveBitboard : this.blackMoveBitboard;
+  }
+
+  public void setColorMoveBitboard(long bitboard, boolean isWhite) {
+    if (isWhite) {
+      this.whiteMoveBitboard = bitboard;
+    } else {
+      this.blackMoveBitboard = bitboard;
     }
   }
 
