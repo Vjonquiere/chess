@@ -14,6 +14,7 @@ public class Square extends StackPane {
   Canvas sq;
   Canvas reachableSq;
   Canvas hintSq;
+  Canvas checkSq;
   ColoredPiece currentPiece;
   ImageView pieceImage;
 
@@ -32,12 +33,14 @@ public class Square extends StackPane {
     sq = new Canvas(100, 100);
     reachableSq = new Canvas(100, 100);
     hintSq = new Canvas(100, 100);
+    checkSq = new Canvas(100, 100);
     GraphicsContext gc = sq.getGraphicsContext2D();
     gc.setFill(baseColor);
     gc.fillRect(0, 0, 100, 100);
     super.getChildren().add(sq);
-    super.getChildren().add(reachableSq);
     super.getChildren().add(hintSq);
+    super.getChildren().add(checkSq);
+    super.getChildren().add(reachableSq);
     if (currentPiece != null && currentPiece.piece != Piece.EMPTY) {
       pieceImage = new PieceImage(piece);
       super.getChildren().add(pieceImage);
@@ -105,6 +108,24 @@ public class Square extends StackPane {
     if (hint) {
       gc.setFill(Color.web(GUIView.theme.getTertiary()));
       gc.fillRect(10, 10, 80, 80);
+    }
+  }
+
+  public void setCheck(boolean isCheck) {
+    GraphicsContext gc = hintSq.getGraphicsContext2D();
+    gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
+    if (isCheck) {
+      gc.setFill(Color.rgb(255, 0, 0, 0.5));
+      gc.fillRect(0, 0, 100, 100);
+    }
+  }
+
+  public void setLastMove(boolean isLastMove) {
+    GraphicsContext gc = hintSq.getGraphicsContext2D();
+    gc.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
+    if (isLastMove) {
+      gc.setFill(Color.rgb(51, 153, 102, 0.5));
+      gc.fillRect(0, 0, 100, 100);
     }
   }
 }
