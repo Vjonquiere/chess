@@ -351,9 +351,9 @@ public final class BitboardRules {
         && move.source.y() == 1
         && move.dest.y() == 3
         && move.source.x() == move.dest.x()) {
-      return ((bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y()).piece == Piece.EMPTY)
+      return (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y()).piece == Piece.EMPTY)
           && (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y() - 1).piece
-              == Piece.EMPTY));
+              == Piece.EMPTY);
     }
 
     if (!white
@@ -361,9 +361,9 @@ public final class BitboardRules {
         && move.source.y() == 6
         && move.dest.y() == 4
         && move.source.x() == move.dest.x()) {
-      return ((bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y()).piece == Piece.EMPTY)
+      return (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y()).piece == Piece.EMPTY)
           && (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y() + 1).piece
-              == Piece.EMPTY));
+              == Piece.EMPTY);
     }
     return false;
   }
@@ -383,14 +383,16 @@ public final class BitboardRules {
     ColoredPiece piece = bitboardRepresentation.getPieceAt(move.source.x(), move.source.y());
     if (white
         && piece.piece == Piece.PAWN
-        && (move.dest.x() == (x) && move.dest.y() == (y))
+        && move.dest.x() == x
+        && move.dest.y() == y
         && ((move.source.x() == (x - 1) && move.source.y() == (y - 1))
             || (move.source.x() == (x + 1) && move.source.y() == (y - 1)))) {
       return true;
     }
     if (!white
         && piece.piece == Piece.PAWN
-        && (move.dest.x() == (x) && move.dest.y() == (y))
+        && move.dest.x() == x
+        && move.dest.y() == y
         && ((move.source.x() == (x + 1) && move.source.y() == (y + 1))
             || (move.source.x() == (x - 1) && move.source.y() == (y + 1)))) {
       return true;

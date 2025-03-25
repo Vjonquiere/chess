@@ -15,11 +15,11 @@ import pdp.utils.Position;
 
 /** Implementation of BoardRepresentation using bitboards. */
 public class BitboardRepresentation implements BoardRepresentation {
-  private static final int cacheSize = 100000;
+  private static final int CACHE_SIZE = 100000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
-  protected final int nbCols = 8;
-  protected final int nbRows = 8;
+  protected static final int nbCols = 8;
+  protected static final int nbRows = 8;
   public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
   private static BitboardCache cache;
   private static ZobristHashing zobristHashing = new ZobristHashing();
@@ -42,7 +42,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
     zobristHashing = new ZobristHashing();
 
-    cache = new BitboardCache(cacheSize);
+    cache = new BitboardCache(CACHE_SIZE);
   }
 
   /*

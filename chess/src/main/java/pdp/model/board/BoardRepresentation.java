@@ -8,81 +8,81 @@ import pdp.utils.Position;
 
 /** Interface containing all needed methods to implement a custom board representation. */
 public interface BoardRepresentation {
-  public List<Position> getPawns(boolean white);
+  List<Position> getPawns(boolean white);
 
-  public List<Position> getRooks(boolean white);
+  List<Position> getRooks(boolean white);
 
-  public List<Position> getBishops(boolean white);
+  List<Position> getBishops(boolean white);
 
-  public List<Position> getKnights(boolean white);
+  List<Position> getKnights(boolean white);
 
-  public List<Position> getQueens(boolean white);
+  List<Position> getQueens(boolean white);
 
-  public List<Position> getKing(boolean white);
+  List<Position> getKing(boolean white);
 
-  public ColoredPiece getPieceAt(int x, int y);
+  ColoredPiece getPieceAt(int x, int y);
 
-  public int getNbCols();
+  int getNbCols();
 
-  public int getNbRows();
+  int getNbRows();
 
-  public void movePiece(Position from, Position to);
+  void movePiece(Position from, Position to);
 
-  public void deletePieceAt(int x, int y);
+  void deletePieceAt(int x, int y);
 
-  public boolean queensOffTheBoard();
+  boolean queensOffTheBoard();
 
-  public boolean areKingsActive();
+  boolean areKingsActive();
 
-  public boolean pawnsHaveProgressed(boolean isWhite);
+  boolean pawnsHaveProgressed(boolean isWhite);
 
-  public int nbPiecesRemaining();
+  int nbPiecesRemaining();
 
-  public List<Move> retrieveKingMoves(boolean white);
+  List<Move> retrieveKingMoves(boolean white);
 
-  public List<Move> retrieveBishopMoves(boolean white);
+  List<Move> retrieveBishopMoves(boolean white);
 
-  public List<List<Position>> retrieveWhitePiecesPos();
+  List<List<Position>> retrieveWhitePiecesPos();
 
-  public List<List<Position>> retrieveBlackPiecesPos();
+  List<List<Position>> retrieveBlackPiecesPos();
 
-  public List<List<Position>> retrieveInitialWhitePiecesPos();
+  List<List<Position>> retrieveInitialWhitePiecesPos();
 
-  public List<List<Position>> retrieveInitialBlackPiecesPos();
+  List<List<Position>> retrieveInitialBlackPiecesPos();
 
-  public BoardRepresentation getCopy();
+  BoardRepresentation getCopy();
 
-  public List<Move> getAvailableMoves(int x, int y, boolean kingReachable);
+  List<Move> getAvailableMoves(int x, int y, boolean kingReachable);
 
-  public List<Move> getAllAvailableMoves(boolean isWhite);
+  List<Move> getAllAvailableMoves(boolean isWhite);
 
-  public boolean isAttacked(int x, int y, Color by);
+  boolean isAttacked(int x, int y, Color by);
 
-  public boolean isCheck(Color color);
+  boolean isCheck(Color color);
 
-  public boolean isCheckAfterMove(Color color, Move move);
+  boolean isCheckAfterMove(Color color, Move move);
 
-  public boolean isCheckMate(Color color);
+  boolean isCheckMate(Color color);
 
-  public boolean isStaleMate(Color color, Color colorTurnToPlay);
+  boolean isStaleMate(Color color, Color colorTurnToPlay);
 
-  public boolean isDrawByInsufficientMaterial();
+  boolean isDrawByInsufficientMaterial();
 
-  public boolean isPawnPromoting(int x, int y, boolean white);
+  boolean isPawnPromoting(int x, int y, boolean white);
 
-  public void promotePawn(int x, int y, boolean white, Piece newPiece);
+  void promotePawn(int x, int y, boolean white, Piece newPiece);
 
-  public boolean isDoublePushPossible(Move move, boolean white);
+  boolean isDoublePushPossible(Move move, boolean white);
 
-  public boolean isEnPassant(int x, int y, Move move, boolean white);
+  boolean isEnPassant(int x, int y, Move move, boolean white);
 
-  public boolean hasEnoughMaterialToMate(boolean white);
+  boolean hasEnoughMaterialToMate(boolean white);
 
-  public void applyShortCastle(Color color);
+  void applyShortCastle(Color color);
 
-  public void applyLongCastle(Color color);
+  void applyLongCastle(Color color);
 
-  public boolean canCastle(
+  boolean canCastle(
       Color color,
       boolean shortCastle,
       boolean whiteShortCastle,
@@ -90,13 +90,13 @@ public interface BoardRepresentation {
       boolean blackShortCastle,
       boolean blackLongCastle);
 
-  public boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest);
+  boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest);
 
-  public boolean isEndGamePhase(int fullTurn, boolean white);
+  boolean isEndGamePhase(int fullTurn, boolean white);
 
-  public boolean validatePieceOwnership(boolean white, Position sourcePosition);
+  boolean validatePieceOwnership(boolean white, Position sourcePosition);
 
-  public List<Move> getSpecialMoves(
+  List<Move> getSpecialMoves(
       boolean white,
       Position enPassantPos,
       boolean isLastMoveDoublePush,

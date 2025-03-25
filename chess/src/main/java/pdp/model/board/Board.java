@@ -51,23 +51,23 @@ public class Board {
     this.isWhite = board.isWhiteTurn();
 
     if (board.header() != null) { // Initialize board with header values
-      this.setEnPassantPos(board.header().enPassant());
-      if (this.getEnPassantPos() != null) {
-        this.setLastMoveDoublePush(true);
+      this.enPassantPos = board.header().enPassant();
+      if (this.enPassantPos != null) {
+        this.isLastMoveDoublePush = true;
       }
-      this.setWhiteShortCastle(board.header().whiteKingCastling());
-      this.setBlackShortCastle(board.header().blackKingCastling());
-      this.setWhiteLongCastle(board.header().whiteQueenCastling());
-      this.setBlackLongCastle(board.header().blackQueenCastling());
+      this.whiteShortCastle = board.header().whiteKingCastling();
+      this.blackShortCastle = board.header().blackKingCastling();
+      this.whiteLongCastle = board.header().whiteQueenCastling();
+      this.blackLongCastle = board.header().blackQueenCastling();
       this.nbMovesWithNoCaptureOrPawn = board.header().fiftyMoveRule();
     } else { // No header -> default values
-      this.setEnPassantPos(null);
-      this.setWhiteShortCastle(true);
-      this.setBlackShortCastle(true);
-      this.setWhiteLongCastle(true);
-      this.setBlackLongCastle(true);
-      this.setLastMoveDoublePush(false);
-      this.setEnPassantTake(false);
+      this.enPassantPos = null;
+      this.whiteShortCastle = true;
+      this.blackShortCastle = true;
+      this.whiteLongCastle = true;
+      this.blackLongCastle = true;
+      this.isLastMoveDoublePush = false;
+      this.isEnPassantTake = false;
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
   }
@@ -200,7 +200,7 @@ public class Board {
     }
 
     for (int i = 0; i < 2; i++) {
-      boolean color = (i == 0);
+      boolean color = i == 0;
 
       placePiecesOnBoard(
           charBoard, this.getBoardRep().getPawns(color), Piece.PAWN.getCharRepresentation(color));
