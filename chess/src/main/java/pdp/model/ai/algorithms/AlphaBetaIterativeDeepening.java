@@ -10,6 +10,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.ai.AIMove;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.piece.ColoredPiece;
@@ -17,8 +18,8 @@ import pdp.utils.Logging;
 
 public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
   private Solver solver;
-  private AIMove lastIterationBestMove = null;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+  private boolean stoppedEarly = false;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -38,9 +39,25 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
    */
   @Override
   public AIMove findBestMove(Game game, int maxDepth, boolean player) {
+
+    this.stoppedEarly = false;
+
     AIMove bestMove = null;
     List<Move> rootMoves =
         new ArrayList<>(game.getBoard().getBoardRep().getAllAvailableMoves(player));
+
+    Board board = game.getBoard();
+    rootMoves.addAll(
+        game.getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                player,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isBlackShortCastle()));
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -53,21 +70,17 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
       }
 
       AIMove currentBest =
-          alphaBeta(game, depth, player, Integer.MIN_VALUE, Integer.MAX_VALUE, player, rootMoves);
-      if (currentBest != null) {
+          alphaBeta(game, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player, rootMoves);
+      if (currentBest != null && !this.stoppedEarly) {
         bestMove = currentBest;
       }
     }
 
+    if (bestMove == null) {
+      bestMove = new AIMove(rootMoves.get(0), 0);
+    }
+
     DEBUG(LOGGER, "Best move: " + bestMove);
-    System.out.println(
-        "Positions Calculated for player "
-            + (player ? "White " : "Black ")
-            + this.solver.positionsCalculated);
-    System.out.println(
-        "Positions from saved for player "
-            + (player ? "White " : "Black ")
-            + this.solver.positionsFromEvaluated);
     return bestMove;
   }
 
@@ -89,16 +102,17 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
       Game game,
       int depth,
       boolean currentPlayer,
-      int alpha,
-      int beta,
+      float alpha,
+      float beta,
       boolean originalPlayer,
       List<Move> orderedMoves) {
 
     if (solver.isSearchStopped()) {
-      return new AIMove(null, originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+      this.stoppedEarly = true;
+      return new AIMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      int evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AIMove(null, evaluation);
     }
 
@@ -115,6 +129,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
         new AIMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
+        this.stoppedEarly = true;
         break;
       }
       try {
