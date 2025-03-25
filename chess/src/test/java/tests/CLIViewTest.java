@@ -75,6 +75,7 @@ public class CLIViewTest {
     BagOfCommands.setInstance(mockBagOfCommands);
 
     view = new CLIView();
+    Game.initialize(false, false, null, null, null, new HashMap<>());
 
     handleUserInputMethod = CLIView.class.getDeclaredMethod("handleUserInput", String.class);
     handleUserInputMethod.setAccessible(true); // Allows access to private method

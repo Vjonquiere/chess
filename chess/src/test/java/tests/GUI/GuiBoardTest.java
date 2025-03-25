@@ -25,7 +25,7 @@ import pdp.view.GUI.board.Board;
 import pdp.view.GUI.board.Square;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BoardTest extends ApplicationTest {
+public class GuiBoardTest extends ApplicationTest {
 
   private HashMap<OptionType, String> options;
   private Board board;
