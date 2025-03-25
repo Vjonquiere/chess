@@ -179,7 +179,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     ColoredPiece target =
         game.getBoard().getBoardRep().getPieceAt(move.getDest().x(), move.getDest().y());
     int score = 0;
-    switch (target.piece) {
+    switch (target.getPiece()) {
       case PAWN:
         score += 1;
         break;

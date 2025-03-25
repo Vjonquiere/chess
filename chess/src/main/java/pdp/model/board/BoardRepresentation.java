@@ -70,6 +70,8 @@ public interface BoardRepresentation {
 
   boolean isPawnPromoting(int x, int y, boolean white);
 
+  boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite);
+
   void promotePawn(int x, int y, boolean white, Piece newPiece);
 
   boolean isDoublePushPossible(Move move, boolean white);

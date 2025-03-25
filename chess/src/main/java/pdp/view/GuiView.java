@@ -35,7 +35,7 @@ public class GuiView implements View {
   private Board board;
   private ControlPanel controlPanel;
   private ChessMenu menu;
-  public static ColorTheme theme = SIMPLE;
+  private static ColorTheme theme = SIMPLE;
   private boolean init = false;
 
   static {
@@ -79,6 +79,14 @@ public class GuiView implements View {
         ex.printStackTrace();
       }
     }
+  }
+
+  public static ColorTheme getTheme() {
+    return theme;
+  }
+
+  public static void setTheme(ColorTheme newTheme) {
+    theme = newTheme;
   }
 
   public void updateTheme() {
@@ -144,7 +152,7 @@ public class GuiView implements View {
     }
     Platform.runLater(
         () -> {
-          Game.getInstance().viewLock.lock();
+          Game.getInstance().getViewLock().lock();
           debug(LOGGER, "View handling event " + event);
           try {
             switch (event) {
@@ -312,9 +320,9 @@ public class GuiView implements View {
                 debug(LOGGER, "Received unknown game event: " + event);
                 break;
             }
-            Game.getInstance().workingView.signal();
+            Game.getInstance().getWorkingViewCondition().signal();
           } finally {
-            Game.getInstance().viewLock.unlock();
+            Game.getInstance().getViewLock().unlock();
           }
         });
   }

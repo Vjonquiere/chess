@@ -17,9 +17,9 @@ import pdp.view.GuiView;
 
 /** GUI widget to display player data. */
 public class PlayerInfos extends HBox {
-  Canvas currentPlayer;
-  Label timerLabel = new Label();
-  Timeline timeline;
+  private Canvas currentPlayer;
+  private Label timerLabel = new Label();
+  private Timeline timeline;
 
   /**
    * Build a player infos widget from given information.
@@ -88,7 +88,7 @@ public class PlayerInfos extends HBox {
       timeline.stop();
     }
     if (isCurrent) {
-      gc.setFill(Color.web(GuiView.theme.getAccent()));
+      gc.setFill(Color.web(GuiView.getTheme().getAccent()));
       gc.fillOval(0, 0, 20, 20);
       if (timeline != null) {
         timeline.play();

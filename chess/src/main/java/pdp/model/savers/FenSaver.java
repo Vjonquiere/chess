@@ -34,7 +34,7 @@ public class FenSaver {
             sb.append(emptyCount);
             emptyCount = 0;
           }
-          sb.append(piece.piece.getCharRepresentation(piece.color == Color.WHITE));
+          sb.append(piece.getPiece().getCharRepresentation(piece.getColor() == Color.WHITE));
         }
       }
       if (emptyCount > 0) {

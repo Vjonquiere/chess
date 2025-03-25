@@ -52,8 +52,8 @@ public final class Game extends GameAbstract {
   private boolean loadedFromFile;
   private boolean loadingFileHasHistory;
   private HashMap<OptionType, String> options;
-  public final Lock viewLock = new ReentrantLock();
-  public final Condition workingView = viewLock.newCondition();
+  private final Lock viewLock = new ReentrantLock();
+  private final Condition workingView = viewLock.newCondition();
   private final boolean viewOnOtherThread;
 
   static {
@@ -143,6 +143,14 @@ public final class Game extends GameAbstract {
       return this.solverBlack.getTimer();
     }
     return super.getGameState().getMoveTimer();
+  }
+
+  public Lock getViewLock() {
+    return this.viewLock;
+  }
+
+  public Condition getWorkingViewCondition() {
+    return this.workingView;
   }
 
   /**
@@ -445,8 +453,8 @@ public final class Game extends GameAbstract {
    */
   @Override
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
-    Position sourcePosition = new Position(move.source.x(), move.source.y());
-    Position destPosition = new Position(move.dest.x(), move.dest.y());
+    Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
@@ -498,7 +506,6 @@ public final class Game extends GameAbstract {
     }
 
     super.getGameState().switchPlayerTurn();
-    super.getGameState().getBoard().setPlayer(super.getGameState().isWhiteTurn());
     if (isSpecialMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(

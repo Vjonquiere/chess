@@ -25,6 +25,7 @@ import pdp.utils.Position;
 
 /** Class containing common methods for GameAI and Game. */
 public abstract class GameAbstract extends Subject {
+  private static int THREE_FOLD_REPETITION = 3;
   private static final Logger LOGGER = Logger.getLogger(GameAbstract.class.getName());
   private ZobristHashing zobristHashing = new ZobristHashing();
   private GameState gameState;
@@ -33,6 +34,14 @@ public abstract class GameAbstract extends Subject {
 
   static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public static int getThreeFoldLimit() {
+    return THREE_FOLD_REPETITION;
+  }
+
+  public static void setThreeFoldLimit(int limit) {
+    THREE_FOLD_REPETITION = limit;
   }
 
   /**
@@ -130,8 +139,8 @@ public abstract class GameAbstract extends Subject {
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
   protected void processSpecialMove(GameState gameState, Move move) throws IllegalMoveException {
-    Position sourcePosition = move.source;
-    Position destPosition = move.dest;
+    Position sourcePosition = move.getSource();
+    Position destPosition = move.getDest();
     boolean isSpecialMove = false;
     ColoredPiece coloredPiece =
         gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
@@ -167,8 +176,10 @@ public abstract class GameAbstract extends Subject {
       isSpecialMove = true;
       gameState.getBoard().setEnPassantPos(null);
       gameState.getBoard().setEnPassantTake(true);
-      move.piece = coloredPiece;
-      move.isTake = true;
+      move.setPiece(coloredPiece);
+      move.setTake(true);
+      move.setPieceTaken(
+          new ColoredPiece(Piece.PAWN, !gameState.isWhiteTurn() ? Color.BLACK : Color.WHITE));
       gameState.getBoard().makeMove(move);
     }
 
@@ -189,9 +200,9 @@ public abstract class GameAbstract extends Subject {
           .getBoard()
           .setEnPassantPos(
               gameState.isWhiteTurn()
-                  ? new Position(move.dest.x(), move.dest.y() - 1)
-                  : new Position(move.dest.x(), move.dest.y() + 1));
-      move.piece = coloredPiece;
+                  ? new Position(move.getDest().x(), move.getDest().y() - 1)
+                  : new Position(move.getDest().x(), move.getDest().y() + 1));
+      move.setPiece(coloredPiece);
       gameState.getBoard().makeMove(move);
       gameState.getBoard().setLastMoveDoublePush(true);
     }
@@ -325,19 +336,13 @@ public abstract class GameAbstract extends Subject {
    * @return true if the move is a promotion move, false otherwise.
    */
   public boolean isPromotionMove(Move move) {
-    // return
-    // isPawnPromoting(move.source.getX(),move.source.getY(),getGameState().isWhiteTurn());
-    // don't pass the tests
-    if (this.gameState.getBoard().getBoardRep().getPieceAt(move.source.x(), move.source.y()).piece
-        != Piece.PAWN) {
-      return false;
-    }
-    if (this.gameState.isWhiteTurn() && move.dest.y() == 7) {
-      return true;
-    }
-    if (!this.gameState.isWhiteTurn() && move.dest.y() == 0) {
-      return true;
-    }
-    return false;
+    return getBoard()
+        .getBoardRep()
+        .isPromotionMove(
+            move.getSource().x(),
+            move.getSource().y(),
+            move.getDest().x(),
+            move.getDest().y(),
+            getGameState().isWhiteTurn());
   }
 }

@@ -39,8 +39,8 @@ public final class GameAi extends GameAbstract {
    */
   @Override
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
-    Position sourcePosition = new Position(move.source.x(), move.source.y());
-    Position destPosition = new Position(move.dest.x(), move.dest.y());
+    Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
@@ -83,7 +83,6 @@ public final class GameAi extends GameAbstract {
     }
 
     super.getGameState().switchPlayerTurn();
-    super.getGameState().getBoard().setPlayer(super.getGameState().isWhiteTurn());
     if (isSpecialMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(
@@ -120,8 +119,8 @@ public final class GameAi extends GameAbstract {
   public void playMoveOtherGameState(GameState gameState, Move move)
       throws IllegalMoveException, InvalidPromoteFormatException {
 
-    Position sourcePosition = new Position(move.source.x(), move.source.y());
-    Position destPosition = new Position(move.dest.x(), move.dest.y());
+    Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!validatePieceOwnership(gameState, sourcePosition)) {
@@ -160,7 +159,6 @@ public final class GameAi extends GameAbstract {
     }
 
     gameState.switchPlayerTurn();
-    gameState.getBoard().setPlayer(gameState.isWhiteTurn());
 
     debug(LOGGER, "Checking game status...");
     gameState.checkGameStatus();

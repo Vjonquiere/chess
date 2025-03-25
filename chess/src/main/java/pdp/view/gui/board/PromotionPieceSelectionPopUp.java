@@ -82,9 +82,9 @@ public class PromotionPieceSelectionPopUp extends VBox {
     layout.setAlignment(Pos.CENTER);
     layout.setStyle(
         "-fx-padding: 15; -fx-border-color: "
-            + GuiView.theme.getPrimary()
+            + GuiView.getTheme().getPrimary()
             + "; -fx-border-width: 5; -fx-background-radius: 10;-fx-background-color: "
-            + GuiView.theme.getBackground()
+            + GuiView.getTheme().getBackground()
             + ";");
     Scene scene = new Scene(layout, 500, 150);
     popupStage.setScene(scene);
@@ -98,28 +98,26 @@ public class PromotionPieceSelectionPopUp extends VBox {
     result.setAlignment(Pos.CENTER);
     result.setStyle(
         "-fx-padding: 15; -fx-background-color: "
-            + GuiView.theme.getSecondary()
+            + GuiView.getTheme().getSecondary()
             + "; -fx-border-color: "
-            + GuiView.theme.getPrimary()
+            + GuiView.getTheme().getPrimary()
             + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;");
     result.setOnMouseEntered(
         e ->
             result.setStyle(
                 "-fx-padding: 15; -fx-background-color: "
-                    + GuiView.theme.getPrimary()
+                    + GuiView.getTheme().getPrimary()
                     + "; -fx-border-color: "
-                    + GuiView.theme.getSecondary()
-                    + "; -fx-border-radius: 5; -fx-background-radius: 10;"
-                    + " -fx-background-insets: 0, 1;"));
+                    + GuiView.getTheme().getSecondary()
+                    + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
     result.setOnMouseExited(
         e ->
             result.setStyle(
                 "-fx-padding: 15; -fx-background-color: "
-                    + GuiView.theme.getSecondary()
+                    + GuiView.getTheme().getSecondary()
                     + "; -fx-border-color: "
-                    + GuiView.theme.getPrimary()
-                    + "; -fx-border-radius: 5; -fx-background-radius: 10;"
-                    + " -fx-background-insets: 0, 1;"));
+                    + GuiView.getTheme().getPrimary()
+                    + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
     return result;
   }
 }

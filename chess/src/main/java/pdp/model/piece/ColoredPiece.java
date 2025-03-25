@@ -4,12 +4,20 @@ import java.util.Objects;
 
 /** Combination of piece and color to represent a chess piece. */
 public class ColoredPiece {
-  public Piece piece;
-  public Color color;
+  private Piece piece;
+  private Color color;
 
   public ColoredPiece(Piece piece, Color color) {
     this.piece = piece;
     this.color = color;
+  }
+
+  public Piece getPiece() {
+    return this.piece;
+  }
+
+  public Color getColor() {
+    return this.color;
   }
 
   @Override

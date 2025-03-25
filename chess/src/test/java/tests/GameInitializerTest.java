@@ -328,7 +328,7 @@ class GameInitializerTest {
             .getBoard()
             .getBoardRep()
             .getPieceAt(newPosition.x(), newPosition.y())
-            .piece,
+            .getPiece(),
         Piece.PAWN);
   }
 

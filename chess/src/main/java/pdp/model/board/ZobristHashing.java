@@ -113,7 +113,7 @@ public class ZobristHashing {
     final Bitboard[] bitboards = bitboardRep.getBitboards();
     long hash = 0;
     for (int i = 0; i < PIECES_TYPES; i++) {
-      long bitboardValue = bitboards[i].bitboard;
+      long bitboardValue = bitboards[i].getBits();
       while (bitboardValue != 0) {
         final int square = Long.numberOfTrailingZeros(bitboardValue);
         hash ^= PIECES[i][square];
@@ -138,17 +138,17 @@ public class ZobristHashing {
     }
     long hash = currHash;
 
-    final int from = move.source.x() + move.source.y() * board.getBoardRep().getNbRows();
-    final int to = move.dest.x() + move.dest.y() * board.getBoardRep().getNbCols();
+    final int from = move.getSource().x() + move.getSource().y() * board.getBoardRep().getNbRows();
+    final int to = move.getDest().x() + move.getDest().y() * board.getBoardRep().getNbCols();
 
     // Remove piece from its source and add it to the destination
-    hash ^= PIECES[BitboardRepresentation.pieces.getFromValue(move.piece)][to];
-    hash ^= PIECES[BitboardRepresentation.pieces.getFromValue(move.piece)][from];
+    hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(move.getPiece())][to];
+    hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(move.getPiece())][from];
 
-    final ColoredPiece capturedPiece = move.takenPiece;
+    final ColoredPiece capturedPiece = move.getPieceTaken();
     // delete the captured piece
     if (capturedPiece != null) {
-      hash ^= PIECES[BitboardRepresentation.pieces.getFromValue(capturedPiece)][to];
+      hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(capturedPiece)][to];
     }
     return hash;
   }
@@ -170,7 +170,7 @@ public class ZobristHashing {
       prevEnPassantFile = board.getEnPassantPos().x();
       hash ^= EN_PASSANT[prevEnPassantFile];
     }
-    if (board.isWhite) {
+    if (board.getPlayer()) {
       hash ^= SIDE_TO_MOVE;
     }
     return hash;

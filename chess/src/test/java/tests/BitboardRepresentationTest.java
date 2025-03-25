@@ -542,7 +542,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.KNIGHT);
 
     assertNotNull(board.getPieceAt(0, 7));
-    assertEquals(Piece.KNIGHT, board.getPieceAt(0, 7).piece);
+    assertEquals(Piece.KNIGHT, board.getPieceAt(0, 7).getPiece());
 
     // Same thing for black
     Position blackBlockerCurrPos = new Position(7, 0);
@@ -555,7 +555,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.QUEEN);
 
     assertNotNull(board.getPieceAt(7, 0));
-    assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).piece);
+    assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).getPiece());
   }
 
   @Test
@@ -575,7 +575,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.ROOK);
 
     assertNotNull(board.getPieceAt(0, 7));
-    assertEquals(Piece.ROOK, board.getPieceAt(0, 7).piece);
+    assertEquals(Piece.ROOK, board.getPieceAt(0, 7).getPiece());
 
     // Same thing for black
     Position blackBlockerCurrPos = new Position(7, 0);
@@ -588,7 +588,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.BISHOP);
 
     assertNotNull(board.getPieceAt(7, 0));
-    assertEquals(Piece.BISHOP, board.getPieceAt(7, 0).piece);
+    assertEquals(Piece.BISHOP, board.getPieceAt(7, 0).getPiece());
   }
 
   @Test
@@ -609,7 +609,7 @@ public class BitboardRepresentationTest {
     // Ensure pawn is remaining at the promotion position before trying invalid promotion
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(0, 7).piece,
+        board.getPieceAt(0, 7).getPiece(),
         "White pawn should still be at promotion square before invalid promotion !");
 
     // Attempt invalid promotions
@@ -618,7 +618,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(0, 7).piece,
+        board.getPieceAt(0, 7).getPiece(),
         "White pawn should remain unchanged after invalid promotion !");
 
     // Same process for black
@@ -632,7 +632,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(7, 0).piece,
+        board.getPieceAt(7, 0).getPiece(),
         "Black pawn should still be at promotion square before invalid promotion!");
 
     board.promotePawn(7, 0, !white, Piece.KING);
@@ -640,7 +640,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(7, 0).piece,
+        board.getPieceAt(7, 0).getPiece(),
         "Black pawn should remain unchanged after invalid promotion!");
   }
 
@@ -662,7 +662,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.QUEEN);
 
     assertEquals(
-        Piece.KNIGHT, board.getPieceAt(0, 7).piece, "White knight should not be promotable !");
+        Piece.KNIGHT, board.getPieceAt(0, 7).getPiece(), "White knight should not be promotable !");
 
     // Same for black but with a bishop for instance
     Position blackBlockerCurrPos = new Position(7, 0);
@@ -678,7 +678,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.QUEEN);
 
     assertEquals(
-        Piece.BISHOP, board.getPieceAt(7, 0).piece, "Black bishop should not be promotable !");
+        Piece.BISHOP, board.getPieceAt(7, 0).getPiece(), "Black bishop should not be promotable !");
   }
 
   @Test

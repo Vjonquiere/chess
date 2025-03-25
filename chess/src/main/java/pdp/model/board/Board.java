@@ -13,7 +13,7 @@ import pdp.utils.Position;
 public class Board {
   private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
   private BoardRepresentation board;
-  public boolean isWhite;
+  private boolean isWhite;
   private boolean whiteShortCastle;
   private boolean blackShortCastle;
   private boolean whiteLongCastle;
@@ -21,7 +21,7 @@ public class Board {
   private Position enPassantPos;
   private boolean isLastMoveDoublePush;
   private boolean isEnPassantTake;
-  public int nbMovesWithNoCaptureOrPawn;
+  private int nbMovesWithNoCaptureOrPawn;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -91,14 +91,15 @@ public class Board {
    */
   public void makeMove(Move move) {
     this.nbMovesWithNoCaptureOrPawn++;
-    if (getBoardRep().getPieceAt(move.source.x(), move.source.y()).piece == Piece.PAWN) {
+    if (getBoardRep().getPieceAt(move.getSource().x(), move.getSource().y()).getPiece()
+        == Piece.PAWN) {
       // Reset the number of moves with no pawn move
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
-    if (move.isTake) {
+    if (move.isTake()) {
       // SAVE DELETED PIECE FOR HASHING
       if (!this.isEnPassantTake()) {
-        getBoardRep().deletePieceAt(move.dest.x(), move.dest.y());
+        getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y());
       }
       // Reset the number of moves with no capture
       this.nbMovesWithNoCaptureOrPawn = 0;
@@ -108,41 +109,41 @@ public class Board {
       this.setLastMoveDoublePush(false);
       this.setEnPassantTake(false);
       if (this.isWhite) {
-        getBoardRep().deletePieceAt(move.dest.x(), move.dest.y() - 1);
+        getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y() - 1);
       } else {
-        getBoardRep().deletePieceAt(move.dest.x(), move.dest.y() + 1);
+        getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y() + 1);
       }
     }
 
-    getBoardRep().movePiece(move.source, move.dest);
+    getBoardRep().movePiece(move.getSource(), move.getDest());
 
     if (this.isWhiteLongCastle()
-        && (move.source.equals(new Position(4, 0))
-            || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
+        && (move.getSource().equals(new Position(4, 0))
+            || move.getSource().equals(new Position(0, 0)))) { // rook on a1 and king on e1
       this.setWhiteLongCastle(false);
     }
     if (this.isWhiteShortCastle()
-        && (move.source.equals(new Position(4, 0))
-            || move.source.equals(new Position(7, 0)))) { // rook on h1 and king on e1
+        && (move.getSource().equals(new Position(4, 0))
+            || move.getSource().equals(new Position(7, 0)))) { // rook on h1 and king on e1
       this.setWhiteShortCastle(false);
     }
 
     if (this.isBlackShortCastle()
-        && (move.source.equals(new Position(4, 7))
-            || move.source.equals(new Position(7, 7)))) { // rook on h8 and king on e8
+        && (move.getSource().equals(new Position(4, 7))
+            || move.getSource().equals(new Position(7, 7)))) { // rook on h8 and king on e8
       this.setBlackShortCastle(false);
     }
     if (this.isBlackLongCastle()
-        && (move.source.equals(new Position(4, 7))
-            || move.source.equals(new Position(0, 7)))) { // rook on a8 and king on e8
+        && (move.getSource().equals(new Position(4, 7))
+            || move.getSource().equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.setBlackLongCastle(false);
     }
-    if (getBoardRep().isPawnPromoting(move.dest.x(), move.dest.y(), this.isWhite)) {
+    if (getBoardRep().isPawnPromoting(move.getDest().x(), move.getDest().y(), this.isWhite)) {
       Piece newPiece = ((PromoteMove) move).getPromPiece();
       getBoardRep()
           .promotePawn(
-              move.dest.x(),
-              move.dest.y(),
+              move.getDest().x(),
+              move.getDest().y(),
               this.isWhite,
               newPiece); // replace Piece.QUEEN by newPiece
     }

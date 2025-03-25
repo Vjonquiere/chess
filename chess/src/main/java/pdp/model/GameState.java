@@ -16,10 +16,9 @@ import pdp.utils.Timer;
 /** State of the game. Can be observed by an observer. */
 public class GameState extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
-  public static int nMoveRule = 50;
+  private static int nMoveRule = 50;
   private Board board;
   private Timer moveTimer;
-  private boolean isWhiteTurn;
   private boolean whiteWantsToDraw = false;
   private boolean blackWantsToDraw = false;
   private boolean whiteResigns = false;
@@ -39,10 +38,17 @@ public class GameState extends Subject {
     Logging.configureLogging(LOGGER);
   }
 
+  public static int getFiftyMoveLimit() {
+    return nMoveRule;
+  }
+
+  public static void setFiftyMoveLimit(int limit) {
+    nMoveRule = limit;
+  }
+
   /** Creates a game state with default parameters. By default, blitz mode is not on */
   public GameState() {
     this.isGameOver = false;
-    this.isWhiteTurn = true;
     this.board = new Board();
     this.moveTimer = null;
     this.fullTurnNumber = 0;
@@ -55,7 +61,6 @@ public class GameState extends Subject {
    */
   public GameState(Timer timer) {
     this.isGameOver = false;
-    this.isWhiteTurn = true;
     this.board = new Board();
     this.moveTimer = timer;
     this.fullTurnNumber = 0;
@@ -68,7 +73,6 @@ public class GameState extends Subject {
    */
   public GameState(FileBoard board) {
     this.isGameOver = false;
-    this.isWhiteTurn = board.isWhiteTurn();
     this.board = new Board(board);
     this.moveTimer = null;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
@@ -82,7 +86,6 @@ public class GameState extends Subject {
   public GameState(FileBoard board, Timer timer) {
     Logging.configureLogging(LOGGER);
     this.isGameOver = false;
-    this.isWhiteTurn = board.isWhiteTurn();
     this.board = new Board(board);
     this.moveTimer = timer;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
@@ -94,12 +97,12 @@ public class GameState extends Subject {
    * @return true if the player is white, false if he is white
    */
   public boolean isWhiteTurn() {
-    return this.isWhiteTurn;
+    return this.board.getPlayer();
   }
 
   /** Changes the color of the current player. */
   public void switchPlayerTurn() {
-    this.isWhiteTurn = !(this.isWhiteTurn);
+    this.board.setPlayer(!this.board.getPlayer());
   }
 
   /**
@@ -493,7 +496,6 @@ public class GameState extends Subject {
     GameState copy = new GameState();
 
     copy.board = this.board.getCopy();
-    copy.isWhiteTurn = this.isWhiteTurn;
     copy.whiteWantsToDraw = this.whiteWantsToDraw;
     copy.blackWantsToDraw = this.blackWantsToDraw;
     copy.whiteResigns = this.whiteResigns;
@@ -523,7 +525,6 @@ public class GameState extends Subject {
   public void updateFrom(GameState gameState) {
     this.board = gameState.getBoard();
     this.moveTimer = gameState.getMoveTimer();
-    this.isWhiteTurn = gameState.isWhiteTurn();
     this.whiteWantsToDraw = gameState.hasWhiteRequestedDraw();
     this.blackWantsToDraw = gameState.hasBlackRequestedDraw();
     this.whiteResigns = gameState.hasWhiteResigned();
@@ -535,14 +536,5 @@ public class GameState extends Subject {
     this.fullTurnNumber = gameState.getFullTurn();
     this.zobristHashing = gameState.getZobristHashing();
     this.simplifiedZobristHashing = gameState.getSimplifiedZobristHashing();
-  }
-
-  /**
-   * Sets the current player with the boolean in parameter.
-   *
-   * @param white true if the player is white, false otherwise
-   */
-  public void setPlayer(boolean white) {
-    this.isWhiteTurn = white;
   }
 }

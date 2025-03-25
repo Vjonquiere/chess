@@ -91,8 +91,8 @@ public class KingSafetyHeuristic implements Heuristic {
 
       if (newPos.isValid()) {
         ColoredPiece piece = bitboard.getPieceAt(newX, newY);
-        if (piece.piece != Piece.EMPTY) {
-          Color colorPiece = piece.color;
+        if (piece.getPiece() != Piece.EMPTY) {
+          Color colorPiece = piece.getColor();
           boolean white = colorPiece == Color.WHITE;
           if (white == isWhite) {
             // Protection from piece of the same color
@@ -125,7 +125,7 @@ public class KingSafetyHeuristic implements Heuristic {
       for (List<Position> posList : posBlackPieces) {
         for (Position posBlackPiece : posList) {
           // Must not be king
-          if (bitboard.getPieceAt(posBlackPiece.x(), posBlackPiece.y()).piece != Piece.KING) {
+          if (bitboard.getPieceAt(posBlackPiece.x(), posBlackPiece.y()).getPiece() != Piece.KING) {
             List<Move> movesForPiece =
                 bitboard.getAvailableMoves(posBlackPiece.x(), posBlackPiece.y(), true);
             for (Move move : movesForPiece) {
@@ -146,7 +146,7 @@ public class KingSafetyHeuristic implements Heuristic {
       for (List<Position> posList : posWhitePieces) {
         for (Position posWhitePiece : posList) {
           // Must not be king
-          if (bitboard.getPieceAt(posWhitePiece.x(), posWhitePiece.y()).piece != Piece.KING) {
+          if (bitboard.getPieceAt(posWhitePiece.x(), posWhitePiece.y()).getPiece() != Piece.KING) {
             List<Move> movesForPiece =
                 bitboard.getAvailableMoves(posWhitePiece.x(), posWhitePiece.y(), true);
             for (Move move : movesForPiece) {

@@ -88,7 +88,8 @@ public class ThemePopUp {
                 toHexString(cpBackground2.getValue()),
                 toHexString(cpText.getValue()),
                 toHexString(cpTextInverted.getValue()));
-            GuiView.theme = ColorTheme.CUSTOM;
+            GuiView.setTheme(ColorTheme.CUSTOM);
+            ;
             BagOfCommands.getInstance().addCommand(new ChangeTheme());
           } catch (IllegalArgumentException ignore) {
           }

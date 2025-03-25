@@ -37,8 +37,8 @@ public final class BitboardRules {
       int x, int y, Color by, BitboardRepresentation bitboardRepresentation) {
     Bitboard square = new Bitboard();
     square.setBit((x % 8) + (y * 8));
-    return (square.bitboard
-            & bitboardRepresentation.getColorMoveBitboard(by == Color.WHITE).bitboard)
+    return (square.getBits()
+            & bitboardRepresentation.getColorMoveBitboard(by == Color.WHITE).getBits())
         != 0;
   }
 
@@ -66,17 +66,17 @@ public final class BitboardRules {
     debug(LOGGER, "Checking if " + color + " is check after move (" + move + ")");
     ColoredPiece removedPiece = null;
     if (move.getTakeDest() == null) {
-      move.setTakeDest(move.dest);
+      move.setTakeDest(move.getDest());
     }
-    if (move.isTake) {
+    if (move.isTake()) {
       removedPiece =
           bitboardRepresentation.getPieceAt(move.getTakeDest().x(), move.getTakeDest().y());
       bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
     }
-    bitboardRepresentation.movePiece(move.source, move.dest); // Play move
+    bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
     boolean isCheckAfterMove = isCheck(color, bitboardRepresentation);
-    bitboardRepresentation.movePiece(move.dest, move.source); // undo move
-    if (move.isTake) {
+    bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // undo move
+    if (move.isTake()) {
       bitboardRepresentation.addPieceAt(
           move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
     }
@@ -109,18 +109,18 @@ public final class BitboardRules {
               piecePosition.x(), piecePosition.y(), false); // TODO: Check this line
       for (Move move : availableMoves) {
         if (move.getTakeDest() == null) {
-          move.setTakeDest(move.dest);
+          move.setTakeDest(move.getDest());
         }
         ColoredPiece removedPiece = null;
-        if (move.isTake) {
+        if (move.isTake()) {
           removedPiece =
               bitboardRepresentation.getPieceAt(move.getTakeDest().x(), move.getTakeDest().y());
           bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
         }
-        bitboardRepresentation.movePiece(move.source, move.dest); // Play move
+        bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
         boolean isStillCheck = isCheck(color, bitboardRepresentation);
-        bitboardRepresentation.movePiece(move.dest, move.source); // Undo move
-        if (move.isTake) {
+        bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // Undo move
+        if (move.isTake()) {
           bitboardRepresentation.addPieceAt(
               move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
         }
@@ -157,14 +157,14 @@ public final class BitboardRules {
           bitboardRepresentation.getAvailableMoves(piecePosition.x(), piecePosition.y(), true);
       for (Move move : availableMoves) {
         ColoredPiece removedPiece = null;
-        if (move.isTake) {
+        if (move.isTake()) {
           removedPiece = bitboardRepresentation.getPieceAt(move.getDest().x(), move.getDest().y());
           bitboardRepresentation.deletePieceAt(move.getDest().x(), move.getDest().y());
         }
-        bitboardRepresentation.movePiece(move.source, move.dest); // Play move
+        bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
         boolean isStillCheck = isCheck(color, bitboardRepresentation);
-        bitboardRepresentation.movePiece(move.dest, move.source); // Undo move
-        if (move.isTake) {
+        bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // Undo move
+        if (move.isTake()) {
           bitboardRepresentation.addPieceAt(move.getDest().x(), move.getDest().y(), removedPiece);
         }
         if (!isStillCheck) {
@@ -291,6 +291,41 @@ public final class BitboardRules {
   }
 
   /**
+   * Checks if a pawn at Position(x,y) checks for promotion
+   *
+   * @param xSource The x-coordinate (file) of the source position
+   * @param ySource The y-coordinate (rank) of the source position
+   * @param xDest The x-coordinate (file) of the destination position
+   * @param yDest The y-coordinate (rank) of the destination position
+   * @param white {true} if pawn is white, {false} if pawn is black
+   * @return true if the pawn is being promoted, otherwise false
+   */
+  public static boolean isPromotionMove(
+      int xSource,
+      int ySource,
+      int xDest,
+      int yDest,
+      boolean white,
+      BitboardRepresentation bitboardRepresentation) {
+    debug(LOGGER, "Checking is promotion move");
+    if (white && yDest != 7) {
+      return false;
+    } else if (!white && yDest != 0) {
+      return false;
+    } else {
+      // White pawns --> 5 and Black pawns --> 11
+      Bitboard pawnBitBoard =
+          white
+              ? bitboardRepresentation.getBitboards()[5]
+              : bitboardRepresentation.getBitboards()[11];
+      int bitIndex = 8 * ySource + xSource;
+
+      // If bit is 1 then pawn is located at Position(xSource,ySource)
+      return pawnBitBoard.getBit(bitIndex);
+    }
+  }
+
+  /**
    * Replaces pawnToPromote with newPiece. Bitboards get changed. Assumes pawn can be promoted.
    *
    * @param x The x-coordinate (file) of the pawn
@@ -302,8 +337,8 @@ public final class BitboardRules {
       int x, int y, boolean white, Piece newPiece, BitboardRepresentation bitboardRepresentation) {
     debug(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
     ColoredPiece pieceAtPosition = bitboardRepresentation.getPieceAt(x, y);
-    if (pieceAtPosition.piece != Piece.PAWN
-        || pieceAtPosition.color != (white ? Color.WHITE : Color.BLACK)) {
+    if (pieceAtPosition.getPiece() != Piece.PAWN
+        || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
       return;
     }
 
@@ -345,24 +380,31 @@ public final class BitboardRules {
   public static boolean isDoublePushPossible(
       Move move, boolean white, BitboardRepresentation bitboardRepresentation) {
     debug(LOGGER, "Checking is double push possible");
-    ColoredPiece piece = bitboardRepresentation.getPieceAt(move.source.x(), move.source.y());
+    ColoredPiece piece =
+        bitboardRepresentation.getPieceAt(move.getSource().x(), move.getSource().y());
     if (white
-        && piece.piece == Piece.PAWN
-        && move.source.y() == 1
-        && move.dest.y() == 3
-        && move.source.x() == move.dest.x()) {
-      return (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y()).piece == Piece.EMPTY)
-          && (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y() - 1).piece
+        && piece.getPiece() == Piece.PAWN
+        && move.getSource().y() == 1
+        && move.getDest().y() == 3
+        && move.getSource().x() == move.getDest().x()) {
+      return (bitboardRepresentation.getPieceAt(move.getDest().x(), move.getDest().y()).getPiece()
+              == Piece.EMPTY)
+          && (bitboardRepresentation
+                  .getPieceAt(move.getDest().x(), move.getDest().y() - 1)
+                  .getPiece()
               == Piece.EMPTY);
     }
 
     if (!white
-        && piece.piece == Piece.PAWN
-        && move.source.y() == 6
-        && move.dest.y() == 4
-        && move.source.x() == move.dest.x()) {
-      return (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y()).piece == Piece.EMPTY)
-          && (bitboardRepresentation.getPieceAt(move.dest.x(), move.dest.y() + 1).piece
+        && piece.getPiece() == Piece.PAWN
+        && move.getSource().y() == 6
+        && move.getDest().y() == 4
+        && move.getSource().x() == move.getDest().x()) {
+      return (bitboardRepresentation.getPieceAt(move.getDest().x(), move.getDest().y()).getPiece()
+              == Piece.EMPTY)
+          && (bitboardRepresentation
+                  .getPieceAt(move.getDest().x(), move.getDest().y() + 1)
+                  .getPiece()
               == Piece.EMPTY);
     }
     return false;
@@ -380,21 +422,22 @@ public final class BitboardRules {
   public static boolean isEnPassant(
       int x, int y, Move move, boolean white, BitboardRepresentation bitboardRepresentation) {
     debug(LOGGER, "Checking is en passant");
-    ColoredPiece piece = bitboardRepresentation.getPieceAt(move.source.x(), move.source.y());
+    ColoredPiece piece =
+        bitboardRepresentation.getPieceAt(move.getSource().x(), move.getSource().y());
     if (white
-        && piece.piece == Piece.PAWN
-        && move.dest.x() == x
-        && move.dest.y() == y
-        && ((move.source.x() == (x - 1) && move.source.y() == (y - 1))
-            || (move.source.x() == (x + 1) && move.source.y() == (y - 1)))) {
+        && piece.getPiece() == Piece.PAWN
+        && move.getDest().x() == x
+        && move.getDest().y() == y
+        && ((move.getSource().x() == (x - 1) && move.getSource().y() == (y - 1))
+            || (move.getSource().x() == (x + 1) && move.getSource().y() == (y - 1)))) {
       return true;
     }
     if (!white
-        && piece.piece == Piece.PAWN
-        && move.dest.x() == x
-        && move.dest.y() == y
-        && ((move.source.x() == (x + 1) && move.source.y() == (y + 1))
-            || (move.source.x() == (x - 1) && move.source.y() == (y + 1)))) {
+        && piece.getPiece() == Piece.PAWN
+        && move.getDest().x() == x
+        && move.getDest().y() == y
+        && ((move.getSource().x() == (x + 1) && move.getSource().y() == (y + 1))
+            || (move.getSource().x() == (x - 1) && move.getSource().y() == (y + 1)))) {
       return true;
     }
     return false;
@@ -402,8 +445,8 @@ public final class BitboardRules {
 
   public static void setSquare(
       ColoredPiece piece, int squareIndex, BitboardRepresentation bitboardRepresentation) {
-    bitboardRepresentation.getBitboards()[BitboardRepresentation.pieces.getFromValue(piece)].setBit(
-        squareIndex);
+    bitboardRepresentation.getBitboards()[BitboardRepresentation.getPiecesMap().getFromValue(piece)]
+        .setBit(squareIndex);
   }
 
   public static Bitboard[] getBitboards(BitboardRepresentation bitboardRepresentation) {
@@ -573,7 +616,7 @@ public final class BitboardRules {
    * @return true if the move is a castle move, false otherwise.
    */
   public static boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
-    if (coloredPiece.piece != Piece.KING) {
+    if (coloredPiece.getPiece() != Piece.KING) {
       return false;
     }
     int deltaX = Math.abs(dest.x() - source.x());
@@ -595,9 +638,9 @@ public final class BitboardRules {
     ColoredPiece pieceAtSource =
         bitboardRepresentation.getPieceAt(sourcePosition.x(), sourcePosition.y());
 
-    if ((pieceAtSource.color == Color.WHITE && !white)
-        || (pieceAtSource.color == Color.BLACK && white)) {
-      debug(LOGGER, "Not a " + pieceAtSource.color + " piece at " + sourcePosition);
+    if ((pieceAtSource.getColor() == Color.WHITE && !white)
+        || (pieceAtSource.getColor() == Color.BLACK && white)) {
+      debug(LOGGER, "Not a " + pieceAtSource.getColor() + " piece at " + sourcePosition);
       return false;
     }
     return true;

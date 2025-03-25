@@ -18,9 +18,9 @@ public class BitboardRepresentation implements BoardRepresentation {
   private static final int CACHE_SIZE = 100000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
-  protected static final int nbCols = 8;
-  protected static final int nbRows = 8;
-  public static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
+  private static final int nbCols = 8;
+  private static final int nbRows = 8;
+  private static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
   private static BitboardCache cache;
   private static ZobristHashing zobristHashing = new ZobristHashing();
   private long simpleHash;
@@ -126,6 +126,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[11] = blackPawns;
   }
 
+  public static BiDirectionalMap<Integer, ColoredPiece> getPiecesMap() {
+    return pieces;
+  }
+
   @Override
   public String toString() {
     return getWhiteBoard().or(getBlackBoard()).toString();
@@ -207,14 +211,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     int fromIndex = from.x() % 8 + from.y() * 8;
     int toIndex = to.x() % 8 + to.y() * 8;
     int bitboardIndex =
-        switch (piece.piece) {
-          case KING -> piece.color == Color.WHITE ? 0 : 6;
-          case QUEEN -> piece.color == Color.WHITE ? 1 : 7;
-          case BISHOP -> piece.color == Color.WHITE ? 2 : 8;
-          case ROOK -> piece.color == Color.WHITE ? 3 : 9;
-          case KNIGHT -> piece.color == Color.WHITE ? 4 : 10;
-          case PAWN -> piece.color == Color.WHITE ? 5 : 11;
-          default -> throw new IllegalArgumentException("Invalid piece: " + piece.piece);
+        switch (piece.getPiece()) {
+          case KING -> piece.getColor() == Color.WHITE ? 0 : 6;
+          case QUEEN -> piece.getColor() == Color.WHITE ? 1 : 7;
+          case BISHOP -> piece.getColor() == Color.WHITE ? 2 : 8;
+          case ROOK -> piece.getColor() == Color.WHITE ? 3 : 9;
+          case KNIGHT -> piece.getColor() == Color.WHITE ? 4 : 10;
+          case PAWN -> piece.getColor() == Color.WHITE ? 5 : 11;
+          default -> throw new IllegalArgumentException("Invalid piece: " + piece.getColor());
         };
     board[bitboardIndex].clearBit(fromIndex);
     board[bitboardIndex].setBit(toIndex);
@@ -234,8 +238,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   public void promotePawn(int x, int y, boolean white, Piece newPiece) {
     debug(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
     ColoredPiece pieceAtPosition = getPieceAt(x, y);
-    if (pieceAtPosition.piece != Piece.PAWN
-        || pieceAtPosition.color != (white ? Color.WHITE : Color.BLACK)) {
+    if (pieceAtPosition.getPiece() != Piece.PAWN
+        || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
       return;
     }
 
@@ -302,7 +306,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   protected void addPieceAt(int x, int y, ColoredPiece piece) {
     board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
-    debug(LOGGER, "A " + piece.color + " " + piece.piece + " was added to the board");
+    debug(LOGGER, "A " + piece.getColor() + " " + piece.getPiece() + " was added to the board");
   }
 
   /**
@@ -800,6 +804,21 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
+   * Checks if a pawn at Position(x,y) checks for promotion
+   *
+   * @param xSource The x-coordinate (file) of the source position
+   * @param ySource The y-coordinate (rank) of the source position
+   * @param xDest The x-coordinate (file) of the destination position
+   * @param yDest The y-coordinate (rank) of the destination position
+   * @param isWhite {true} if pawn is white, {false} if pawn is black
+   * @return true if the pawn is being promoted with the move, otherwise false
+   */
+  @Override
+  public boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite) {
+    return BitboardRules.isPromotionMove(xSource, ySource, xDest, yDest, isWhite, this);
+  }
+
+  /**
    * Checks if a given move is a double pawn push A double push occurs when a pawn moves forward by
    * two squares from its starting position.
    *
@@ -1067,7 +1086,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public int getNbCols() {
-    return BitboardUtils.getNbCols(this);
+    return nbCols;
   }
 
   /**
@@ -1077,6 +1096,6 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public int getNbRows() {
-    return BitboardUtils.getNbRows(this);
+    return nbRows;
   }
 }

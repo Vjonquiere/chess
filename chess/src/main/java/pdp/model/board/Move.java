@@ -14,14 +14,14 @@ import pdp.utils.Position;
 /** Move representation for all move types. */
 public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
-  public Position source;
-  public Position dest;
-  public Position takeDest;
-  public ColoredPiece piece;
-  public ColoredPiece takenPiece;
-  public boolean isTake = false;
-  public boolean isCheck = false;
-  public boolean isCheckMate = false;
+  private Position source;
+  private Position dest;
+  private Position takeDest;
+  private ColoredPiece piece;
+  private ColoredPiece takenPiece;
+  private boolean isTake = false;
+  private boolean isCheck = false;
+  private boolean isCheckMate = false;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -344,6 +344,10 @@ public class Move {
     return piece;
   }
 
+  public void setPiece(ColoredPiece piece) {
+    this.piece = piece;
+  }
+
   /**
    * Retrieves the piece taken.
    *
@@ -351,6 +355,10 @@ public class Move {
    */
   public ColoredPiece getPieceTaken() {
     return takenPiece;
+  }
+
+  public void setPieceTaken(ColoredPiece pieceTaken) {
+    this.takenPiece = pieceTaken;
   }
 
   /**
@@ -400,8 +408,8 @@ public class Move {
    */
   public String toAlgebraicString() {
     String piece = "";
-    if (this.piece != null && this.piece.piece != Piece.PAWN) {
-      piece = String.valueOf(this.piece.piece.getCharRepresentation(true));
+    if (this.piece != null && this.piece.getPiece() != Piece.PAWN) {
+      piece = String.valueOf(this.piece.getPiece().getCharRepresentation(true));
     }
     String sourceStr = positionToString(this.source);
     String destinationStr = positionToString(this.dest);

@@ -18,7 +18,7 @@ import pdp.model.board.Move;
 import pdp.utils.Logging;
 
 public class AlphaBetaParallel implements SearchAlgorithm {
-  Solver solver;
+  private Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
 
   static {

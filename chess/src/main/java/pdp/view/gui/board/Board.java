@@ -95,7 +95,8 @@ public class Board extends GridPane {
         .getCurrentMove()
         .ifPresent(
             (move) -> {
-              setLastMoveSquares(move.getState().getMove().source, move.getState().getMove().dest);
+              setLastMoveSquares(
+                  move.getState().getMove().getSource(), move.getState().getMove().getDest());
             });
   }
 
@@ -107,7 +108,7 @@ public class Board extends GridPane {
    */
   private void switchSelectedSquare(int x, int y) {
     boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
-    Color squareColor = Game.getInstance().getBoard().getBoardRep().getPieceAt(x, y).color;
+    Color squareColor = Game.getInstance().getBoard().getBoardRep().getPieceAt(x, y).getColor();
     if (from == null) {
       if ((isWhiteTurn && squareColor != Color.WHITE)
           || (!isWhiteTurn && squareColor != Color.BLACK)) {
@@ -172,8 +173,8 @@ public class Board extends GridPane {
       GameAi g = GameAi.fromGame(Game.getInstance());
       try {
         g.playMove(move);
-        pieces.get(move.dest).setReachable(true, move.isTake);
-        reachableSquares.add(move.dest);
+        pieces.get(move.getDest()).setReachable(true, move.isTake());
+        reachableSquares.add(move.getDest());
       } catch (Exception e) {
         // e.printStackTrace();
       }
@@ -199,11 +200,15 @@ public class Board extends GridPane {
    */
   public boolean processPawnPromoting(int x, int y) {
     ColoredPiece piece = Game.getInstance().getBoard().getBoardRep().getPieceAt(from.x(), from.y());
-    if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && y == 0) { // Black pawn promote
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.BLACK
+        && y == 0) { // Black pawn promote
       new PromotionPieceSelectionPopUp(stage, from, new Position(x, y));
       return true;
     }
-    if (piece.piece == Piece.PAWN && piece.color == Color.WHITE && y == 7) { // White pawn promote
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.WHITE
+        && y == 7) { // White pawn promote
       new PromotionPieceSelectionPopUp(stage, from, new Position(x, y));
       return true;
     }

@@ -27,11 +27,15 @@ public final class AlgorithmHelpers {
     }
 
     final ColoredPiece piece = move.getPiece();
-    if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && move.dest.y() == 0) {
-      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.BLACK
+        && move.getDest().y() == 0) {
+      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
-    if (piece.piece == Piece.PAWN && piece.color == Color.WHITE && move.dest.y() == 7) {
-      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.WHITE
+        && move.getDest().y() == 7) {
+      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
     return move;
   }

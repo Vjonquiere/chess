@@ -19,7 +19,9 @@ import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameState;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
@@ -47,8 +49,9 @@ public class UciView implements View {
     commands.put("go", new CommandEntry(this::goCommand, "go"));
     commands.put("isready", new CommandEntry(this::isReadyCommand, "isReady"));
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
-    Game.nFoldRepetition = 5;
-    GameState.nMoveRule = 75;
+    GameAbstract.setThreeFoldLimit(5);
+    GameState.setFiftyMoveLimit(75);
+    solver.setEndgameHeuristic(HeuristicType.STANDARD);
   }
 
   /**
@@ -73,8 +76,9 @@ public class UciView implements View {
     switch (event) {
       case WIN_BLACK -> System.out.println("Black won!");
       case WIN_WHITE -> System.out.println("White won!");
-      case THREEFOLD_REPETITION -> System.out.println(Game.nFoldRepetition + " fold repetition!");
-      case FIFTY_MOVE_RULE -> System.out.println(GameState.nMoveRule + " move rule!");
+      case THREEFOLD_REPETITION ->
+          System.out.println(Game.getThreeFoldLimit() + " fold repetition!");
+      case FIFTY_MOVE_RULE -> System.out.println(GameState.getFiftyMoveLimit() + " move rule!");
     }
   }
 

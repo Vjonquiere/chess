@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /** Bitboard structure with all needed treatments. */
 public class Bitboard {
-  long bitboard;
+  private long bitboard;
 
   public Bitboard() {}
 
