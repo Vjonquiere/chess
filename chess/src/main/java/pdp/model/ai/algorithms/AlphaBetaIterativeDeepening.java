@@ -119,6 +119,18 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     List<Move> moves = orderedMoves;
     if (moves == null) {
       moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+      Board board = game.getBoard();
+      moves.addAll(
+          game.getBoard()
+              .getBoardRep()
+              .getSpecialMoves(
+                  currentPlayer,
+                  board.getEnPassantPos(),
+                  board.isLastMoveDoublePush(),
+                  board.isWhiteLongCastle(),
+                  board.isWhiteShortCastle(),
+                  board.isBlackLongCastle(),
+                  board.isBlackShortCastle()));
     }
 
     if (orderedMoves == null) {
