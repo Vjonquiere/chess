@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
+import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
 import pdp.model.ai.algorithms.AlphaBetaParallel;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
@@ -70,6 +71,7 @@ public class Solver {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
+      case ALPHA_BETA_ID -> this.algorithm = new AlphaBetaIterativeDeepening(this);
       case ALPHA_BETA_PARALLEL -> this.algorithm = new AlphaBetaParallel(this);
       case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
@@ -139,6 +141,7 @@ public class Solver {
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
+    evaluatedBoards = new ConcurrentHashMap<>();
     DEBUG(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
