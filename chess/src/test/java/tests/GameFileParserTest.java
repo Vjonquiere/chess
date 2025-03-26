@@ -364,7 +364,7 @@ public class GameFileParserTest {
 
     // Checking params are given to the game
     assertNull(game.getBoard().getEnPassantPos());
-    assertEquals(49, game.getBoard().getNbMovesWithNoCaptureOrPawn());
+    assertEquals(49, game.getBoard().getNbFullMovesWithNoCaptureOrPawn());
     assertEquals(140, game.getGameState().getFullTurn());
 
     assertFalse(Game.getInstance().isOver());
@@ -392,7 +392,7 @@ public class GameFileParserTest {
     Game game = Game.initialize(false, false, null, null, null, fb, new HashMap<>());
 
     // Checking params are given to the game
-    assertEquals(0, game.getBoard().getNbMovesWithNoCaptureOrPawn());
+    assertEquals(0, game.getBoard().getNbFullMovesWithNoCaptureOrPawn());
     assertEquals(141, game.getGameState().getFullTurn());
     assertEquals(new Position(0, 2), game.getBoard().getEnPassantPos());
     assertFalse(Game.getInstance().isOver());

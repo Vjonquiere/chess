@@ -22,7 +22,7 @@ public final class CommandLineOptions {
   private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
   // Not final for test purposes
-  private static String DEFAULT_CONFIG_FILE = "default.chessrc";
+  private static String defaultConfigFile = "default.chessrc";
 
   /** Private constructor to avoid instantiation. */
   private CommandLineOptions() {}
@@ -90,7 +90,7 @@ public final class CommandLineOptions {
     if (file != null && !file.endsWith(".chessrc")) {
       file = null;
       System.out.println("Selected file is not of .chessrc format, defaulting to default options");
-      activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
+      activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
     }
     if (file != null) {
       try {
@@ -99,14 +99,14 @@ public final class CommandLineOptions {
         System.err.println("Error while parsing chessrc file: " + e.getMessage());
         System.err.println("Default options will be used");
         file = null;
-        activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
+        activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
       }
     }
     if (file == null) {
       try {
         inputStream =
-            CommandLineOptions.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE);
-        activatedOptions.put(OptionType.CONFIG, DEFAULT_CONFIG_FILE);
+            CommandLineOptions.class.getClassLoader().getResourceAsStream(defaultConfigFile);
+        activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
         if (inputStream == null) {
           throw new FileNotFoundException("config.chessrc not found in classpath!");
         }
