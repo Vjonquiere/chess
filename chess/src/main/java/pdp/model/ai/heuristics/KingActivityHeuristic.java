@@ -34,7 +34,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @return score according to the location of the king on the board
    */
   private int kingIsInCenterScore(final Board board, final boolean isWhite) {
-    int score;
+    final int score;
 
     // Delineate center box
     final Position posTopLeftCenter = new Position(2, 5);

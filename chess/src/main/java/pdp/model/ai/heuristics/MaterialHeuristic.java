@@ -15,30 +15,16 @@ public class MaterialHeuristic implements Heuristic {
    * @return score of the board
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
-    int score = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation)) {
+  public float evaluate(final Board board, final boolean isWhite) {
+    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRep)) {
       throw new InvalidBoardException();
     }
-    score +=
-        bitboardRepresentation.getPawns(true).size()
-            - bitboardRepresentation.getPawns(false).size();
-    score +=
-        (bitboardRepresentation.getQueens(true).size()
-                - bitboardRepresentation.getQueens(false).size())
-            * 9;
-    score +=
-        (bitboardRepresentation.getBishops(true).size()
-                - bitboardRepresentation.getBishops(false).size())
-            * 3;
-    score +=
-        (bitboardRepresentation.getKnights(true).size()
-                - bitboardRepresentation.getKnights(false).size())
-            * 3;
-    score +=
-        (bitboardRepresentation.getRooks(true).size()
-                - bitboardRepresentation.getRooks(false).size())
-            * 5;
+    int score = 0;
+    score += bitboardRep.getPawns(true).size() - bitboardRep.getPawns(false).size();
+    score += (bitboardRep.getQueens(true).size() - bitboardRep.getQueens(false).size()) * 9;
+    score += (bitboardRep.getBishops(true).size() - bitboardRep.getBishops(false).size()) * 3;
+    score += (bitboardRep.getKnights(true).size() - bitboardRep.getKnights(false).size()) * 3;
+    score += (bitboardRep.getRooks(true).size() - bitboardRep.getRooks(false).size()) * 5;
     return isWhite ? score : -score;
   }
 }

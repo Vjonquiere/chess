@@ -20,7 +20,7 @@ public final class AlgorithmHelpers {
    * @param move The move to be checked for promotion.
    * @return A promoted move or the original if it is not a promotion.
    */
-  public static Move promoteMove(Move move) {
+  public static Move promoteMove(final Move move) {
 
     if (move instanceof PromoteMove) {
       return move;

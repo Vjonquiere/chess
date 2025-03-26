@@ -18,7 +18,7 @@ import pdp.utils.Logging;
 
 /** Algorithm of artificial intelligence Alpha beta pruning. */
 public class AlphaBeta implements SearchAlgorithm {
-  /** Solver used for calling the evaluation of the board once depth si reached or time is up. */
+  /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 
   /** Logger of the class. */

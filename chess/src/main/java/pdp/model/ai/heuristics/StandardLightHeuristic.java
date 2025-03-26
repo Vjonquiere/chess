@@ -7,6 +7,7 @@ public class StandardLightHeuristic extends AbstractHeuristic {
    * and middle game. It extends AbstractHeuristic to set up the Composite Design Pattern.
    */
   public StandardLightHeuristic() {
+    super();
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 100));
     super.addHeuristic(new WeightedHeuristic(new GameStatus(), 100));
     super.addHeuristic(new WeightedHeuristic(new DevelopmentHeuristic(), 3));

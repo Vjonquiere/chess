@@ -9,6 +9,7 @@ public class StandardHeuristic extends AbstractHeuristic {
    * and middle game. It extends AbstractHeuristic to set up the Composite Design Pattern.
    */
   public StandardHeuristic() {
+    super();
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 100));
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new GameStatus(), 100));
@@ -24,7 +25,8 @@ public class StandardHeuristic extends AbstractHeuristic {
    *
    * @param weight list of weights to add to the heuristics
    */
-  public StandardHeuristic(List<Float> weight) {
+  public StandardHeuristic(final List<Float> weight) {
+    super();
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), weight.get(0)));
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), weight.get(1)));
     super.addHeuristic(new WeightedHeuristic(new GameStatus(), weight.get(2)));
