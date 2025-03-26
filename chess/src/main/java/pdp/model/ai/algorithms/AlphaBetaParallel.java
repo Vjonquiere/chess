@@ -17,6 +17,10 @@ import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
+/**
+ * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) to have
+ * more efficient search.
+ */
 public class AlphaBetaParallel implements SearchAlgorithm {
   private Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
@@ -25,6 +29,11 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
   public AlphaBetaParallel(Solver solver) {
     this.solver = solver;
   }
