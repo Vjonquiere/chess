@@ -9,6 +9,7 @@ import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
+import pdp.model.ai.algorithms.AlphaBetaIterativeDeepeningParallel;
 import pdp.model.ai.algorithms.AlphaBetaParallel;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
@@ -102,6 +103,7 @@ public class Solver {
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
       case ALPHA_BETA_ID -> this.algorithm = new AlphaBetaIterativeDeepening(this);
       case ALPHA_BETA_PARALLEL -> this.algorithm = new AlphaBetaParallel(this);
+      case ALPHA_BETA_ID_PARALLEL -> this.algorithm = new AlphaBetaIterativeDeepeningParallel(this);
       case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
