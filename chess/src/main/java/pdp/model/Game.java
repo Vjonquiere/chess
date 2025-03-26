@@ -495,9 +495,9 @@ public final class Game extends GameAbstract {
     Move moveToProcess = move;
     if (classicalMove.isPresent()) {
       moveToProcess = classicalMove.get();
-      super.processClassicalMove(super.getGameState(), moveToProcess);
+      super.processMove(super.getGameState(), moveToProcess);
     } else {
-      processSpecialMove(super.getGameState(), moveToProcess);
+      throw new IllegalMoveException(move.toString());
     }
 
     this.updateGameStateAfterMove(moveToProcess, classicalMove.isPresent());
@@ -699,7 +699,7 @@ public final class Game extends GameAbstract {
                     castlingRights[2],
                     castlingRights[3],
                     getBoard().getEnPassantPos(),
-                    getBoard().getNbMovesWithNoCaptureOrPawn() * 2,
+                    getBoard().getNbMovesWithNoCaptureOrPawn(),
                     getGameState().getFullTurn())));
     final String gameStr = super.getHistory().toAlgebraicString();
 

@@ -414,7 +414,7 @@ public class GameState extends Subject {
    * @return true if fifty move rule is observed
    */
   public boolean isFiftyMoveRule() {
-    return this.board.getNbMovesWithNoCaptureOrPawn() >= nMoveRule;
+    return this.board.getNbFullMovesWithNoCaptureOrPawn() >= nMoveRule;
   }
 
   /** Fifty move rule is observed so change game status to 'Over', it's a draw. */

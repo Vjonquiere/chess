@@ -54,9 +54,9 @@ public final class GameAi extends GameAbstract {
 
     if (classicalMove.isPresent()) {
       move = classicalMove.get();
-      super.processClassicalMove(super.getGameState(), move);
+      super.processMove(super.getGameState(), move);
     } else {
-      super.processSpecialMove(super.getGameState(), move);
+      throw new IllegalMoveException(move.toString());
     }
 
     this.updateGameStateAfterMove(move, classicalMove.isPresent());
@@ -133,9 +133,9 @@ public final class GameAi extends GameAbstract {
     final Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
     if (classicalMove.isPresent()) {
-      processClassicalMove(gameState, classicalMove.get());
+      processMove(gameState, classicalMove.get());
     } else {
-      processSpecialMove(gameState, move);
+      throw new IllegalMoveException(move.toString());
     }
     updateOtherGameStateAfterMove(gameState, move);
   }

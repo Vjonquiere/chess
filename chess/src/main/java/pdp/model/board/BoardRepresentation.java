@@ -84,13 +84,7 @@ public interface BoardRepresentation {
 
   void applyLongCastle(Color color);
 
-  boolean canCastle(
-      Color color,
-      boolean shortCastle,
-      boolean whiteShortCastle,
-      boolean whiteLongCastle,
-      boolean blackShortCastle,
-      boolean blackLongCastle);
+  boolean canCastle(Color color, boolean shortCastle);
 
   boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest);
 
@@ -98,12 +92,39 @@ public interface BoardRepresentation {
 
   boolean validatePieceOwnership(boolean white, Position sourcePosition);
 
-  List<Move> getSpecialMoves(
-      boolean white,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean isWhiteLongCastle,
-      boolean isWhiteShortCastle,
-      boolean isBlackLongCastle,
-      boolean isBlackShortCastle);
+  boolean getPlayer();
+
+  void setPlayer(boolean isWhite);
+
+  Position getEnPassantPos();
+
+  void setEnPassantPos(Position enPassantPos);
+
+  boolean isLastMoveDoublePush();
+
+  void setLastMoveDoublePush(boolean lastMoveDoublePush);
+
+  boolean isWhiteShortCastle();
+
+  void setWhiteShortCastle(boolean whiteShortCastle);
+
+  boolean isBlackShortCastle();
+
+  void setBlackShortCastle(boolean blackShortCastle);
+
+  boolean isWhiteLongCastle();
+
+  void setWhiteLongCastle(boolean whiteLongCastle);
+
+  boolean isBlackLongCastle();
+
+  void setBlackLongCastle(boolean blackLongCastle);
+
+  boolean isEnPassantTake();
+
+  void setEnPassantTake(boolean enPassantTake);
+
+  int getNbMovesWithNoCaptureOrPawn();
+
+  void setNbMovesWithNoCaptureOrPawn(int newVal);
 }
