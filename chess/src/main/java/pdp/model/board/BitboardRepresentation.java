@@ -652,9 +652,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The bitboard containing all possible moves (without special cases)
    */
   public Bitboard getColorMoveBitboard(boolean isWhite) {
-
-    Bitboard moves =
-        BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
+    Bitboard moves = getColorAttackBitboard(isWhite); // TODO: can delete this function ?
+    // Bitboard moves =
+    // BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
 
     return moves;
   }
@@ -667,10 +667,13 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The bitboard containing all possible moves (without special cases)
    */
   public Bitboard getColorAttackBitboard(boolean isWhite) {
-
+    Bitboard res = cache.getOrCreate(simpleHash).getAttackBitboard(isWhite);
+    if (res != null) {
+      return res;
+    }
     Bitboard moves =
         BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
-
+    cache.getOrCreate(simpleHash).setAttackBitboard(isWhite, moves);
     return moves;
   }
 
@@ -890,16 +893,23 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isStaleMate(Color color, Color colorTurnToPlay) {
-    return BitboardRules.isStaleMate(
-        color,
-        colorTurnToPlay,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
+    Boolean res = cache.getOrCreate(simpleHash).isStaleMate(color);
+    if (res != null) {
+      return res;
+    }
+    boolean cacheElt =
+        BitboardRules.isStaleMate(
+            color,
+            colorTurnToPlay,
+            this,
+            enPassantPos,
+            isLastMoveDoublePush,
+            whiteLongCastle,
+            whiteShortCastle,
+            blackLongCastle,
+            blackShortCastle);
+    cache.getOrCreate(simpleHash).setStaleMate(cacheElt, color);
+    return cacheElt;
   }
 
   /**
