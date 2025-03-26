@@ -10,12 +10,15 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
-import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.piece.ColoredPiece;
 import pdp.utils.Logging;
 
+/**
+ * Algorithm of artificial intelligence Alpha beta pruning, with iterative deepening to have more
+ * efficient search.
+ */
 public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
   private Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
@@ -25,6 +28,11 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
   public AlphaBetaIterativeDeepening(Solver solver) {
     this.solver = solver;
   }
@@ -45,19 +53,6 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     AiMove bestMove = null;
     List<Move> rootMoves =
         new ArrayList<>(game.getBoard().getBoardRep().getAllAvailableMoves(player));
-
-    Board board = game.getBoard();
-    rootMoves.addAll(
-        game.getBoard()
-            .getBoardRep()
-            .getSpecialMoves(
-                player,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle()));
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -119,18 +114,6 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     List<Move> moves = orderedMoves;
     if (moves == null) {
       moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-      Board board = game.getBoard();
-      moves.addAll(
-          game.getBoard()
-              .getBoardRep()
-              .getSpecialMoves(
-                  currentPlayer,
-                  board.getEnPassantPos(),
-                  board.isLastMoveDoublePush(),
-                  board.isWhiteLongCastle(),
-                  board.isWhiteShortCastle(),
-                  board.isBlackLongCastle(),
-                  board.isBlackShortCastle()));
     }
 
     if (orderedMoves == null) {

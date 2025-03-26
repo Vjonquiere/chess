@@ -43,7 +43,7 @@ public class DummyBoardRepresentation implements BoardRepresentation {
 
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
-    return null;
+    return new ColoredPiece(Piece.EMPTY, Color.EMPTY);
   }
 
   @Override
@@ -132,13 +132,7 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public void applyLongCastle(Color color) {}
 
   @Override
-  public boolean canCastle(
-      Color color,
-      boolean shortCastle,
-      boolean whiteShortCastle,
-      boolean whiteLongCastle,
-      boolean blackShortCastle,
-      boolean blackLongCastle) {
+  public boolean canCastle(Color color, boolean shortCastle) {
     return false;
   }
 
@@ -213,19 +207,79 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public List<Move> getSpecialMoves(
-      boolean white,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean isWhiteLongCastle,
-      boolean isWhiteShortCastle,
-      boolean isBlackLongCastle,
-      boolean isBlackShortCastle) {
-    return new ArrayList<>();
-  }
-
-  @Override
   public boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite) {
     return false;
   }
+
+  @Override
+  public boolean getPlayer() {
+    return true;
+  }
+
+  @Override
+  public void setPlayer(boolean isWhite) {}
+
+  @Override
+  public Position getEnPassantPos() {
+    return null;
+  }
+
+  @Override
+  public void setEnPassantPos(Position enPassantPos) {}
+
+  @Override
+  public boolean isLastMoveDoublePush() {
+    return false;
+  }
+
+  @Override
+  public void setLastMoveDoublePush(boolean lastMoveDoublePush) {}
+
+  @Override
+  public boolean isWhiteShortCastle() {
+    return false;
+  }
+
+  @Override
+  public void setWhiteShortCastle(boolean whiteShortCastle) {}
+
+  @Override
+  public boolean isBlackShortCastle() {
+    return false;
+  }
+
+  @Override
+  public void setBlackShortCastle(boolean blackShortCastle) {}
+
+  @Override
+  public boolean isWhiteLongCastle() {
+    return false;
+  }
+
+  @Override
+  public void setWhiteLongCastle(boolean whiteLongCastle) {}
+
+  @Override
+  public boolean isBlackLongCastle() {
+    return false;
+  }
+
+  @Override
+  public void setBlackLongCastle(boolean blackLongCastle) {}
+
+  @Override
+  public boolean isEnPassantTake() {
+    return false;
+  }
+
+  @Override
+  public void setEnPassantTake(boolean enPassantTake) {}
+
+  @Override
+  public int getNbMovesWithNoCaptureOrPawn() {
+    return 0;
+  }
+
+  @Override
+  public void setNbMovesWithNoCaptureOrPawn(int newVal) {}
 }

@@ -67,7 +67,14 @@ public final class BitboardStatusCheck {
    *
    * @return true if kings are somewhat active. false otherwise
    */
-  public static boolean areKingsActive(BitboardRepresentation bitboardRepresentation) {
+  public static boolean areKingsActive(
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean whiteLongCastle,
+      boolean whiteShortCastle,
+      boolean blackLongCastle,
+      boolean blackShortCastle) {
     int nbMovesConsideringKingActive = 4;
 
     Position blackKingPos = bitboardRepresentation.getKing(false).get(0);
@@ -121,7 +128,9 @@ public final class BitboardStatusCheck {
       boolean whiteLongCastle,
       boolean blackShortCastle,
       boolean blackLongCastle,
-      BitboardRepresentation bitboardRepresentation) {
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush) {
     if (color == Color.WHITE) {
       if (shortCastle && !whiteShortCastle) {
         return false;
@@ -221,7 +230,15 @@ public final class BitboardStatusCheck {
    * @return true if we're in an endgame (according to the chosen criteria)
    */
   public static boolean isEndGamePhase(
-      int fullTurn, boolean white, BitboardRepresentation bitboardRepresentation) {
+      int fullTurn,
+      boolean white,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     final int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 

@@ -152,23 +152,6 @@ public class Board extends GridPane {
   public void setReachableSquares(int x, int y) {
     reachableSquares = new ArrayList<>();
     List<Move> moves = Game.getInstance().getBoard().getBoardRep().getAvailableMoves(x, y, false);
-    List<Move> specialMoves =
-        Game.getInstance()
-            .getBoard()
-            .getBoardRep()
-            .getSpecialMoves(
-                Game.getInstance().getGameState().isWhiteTurn(),
-                Game.getInstance().getBoard().getEnPassantPos(),
-                Game.getInstance().getBoard().isLastMoveDoublePush(),
-                Game.getInstance().getBoard().isWhiteLongCastle(),
-                Game.getInstance().getBoard().isWhiteShortCastle(),
-                Game.getInstance().getBoard().isBlackLongCastle(),
-                Game.getInstance().getBoard().isBlackShortCastle());
-    for (Move move : specialMoves) {
-      if (move.getSource().x() == x && move.getSource().y() == y) {
-        moves.add(move);
-      }
-    }
     for (Move move : moves) {
       GameAi g = GameAi.fromGame(Game.getInstance());
       try {

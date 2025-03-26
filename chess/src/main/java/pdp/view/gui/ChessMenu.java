@@ -25,6 +25,7 @@ import pdp.model.Game;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
+import pdp.view.gui.menu.AboutPopUp;
 import pdp.view.gui.menu.HelpPopup;
 import pdp.view.gui.menu.SettingsEditorPopup;
 import pdp.view.gui.popups.InfoPopUp;
@@ -192,8 +193,17 @@ public class ChessMenu extends VBox {
     return gameMenu;
   }
 
+  /**
+   * Creates the About menu. Composed of the following items : Themes and Language.
+   *
+   * @return Menu About
+   */
   private Menu createAboutMenu() {
     Menu aboutMenu = new Menu(TextGetter.getText("about"));
+    aboutMenu.setId("aboutMenu");
+    MenuItem about = new MenuItem(TextGetter.getText("about"));
+    about.setOnAction(event -> new AboutPopUp());
+    aboutMenu.getItems().add(about);
     return aboutMenu;
   }
 

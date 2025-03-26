@@ -13,10 +13,13 @@ import pdp.model.Game;
 import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
-import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
+/**
+ * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) to have
+ * more efficient search.
+ */
 public class AlphaBetaParallel implements SearchAlgorithm {
   private Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
@@ -25,6 +28,11 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
   public AlphaBetaParallel(Solver solver) {
     this.solver = solver;
   }
@@ -45,19 +53,6 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
     List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
-    Board board = aiGame.getBoard();
-    moves.addAll(
-        aiGame
-            .getBoard()
-            .getBoardRep()
-            .getSpecialMoves(
-                player,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle()));
 
     for (Move move : moves) {
       futures.add(
@@ -129,18 +124,6 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-    Board board = game.getBoard();
-    moves.addAll(
-        board
-            .getBoardRep()
-            .getSpecialMoves(
-                currentPlayer,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle()));
 
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
