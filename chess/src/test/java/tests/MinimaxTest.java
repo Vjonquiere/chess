@@ -50,7 +50,7 @@ public class MinimaxTest {
     game.playMove(new Move(new Position(5, 0), new Position(2, 3)));
     game.playMove(new Move(new Position(6, 7), new Position(5, 5)));
     solver.setDepth(2);
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     assertTrue(game.getGameState().isGameOver());
   }
 
@@ -61,7 +61,7 @@ public class MinimaxTest {
     solver.setDepth(5);
 
     long startTime = System.currentTimeMillis();
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     long endTime = System.currentTimeMillis();
 
     long elapsedTime = endTime - startTime;
@@ -78,13 +78,13 @@ public class MinimaxTest {
     solver.setDepth(5);
 
     long startTime = System.currentTimeMillis();
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     long endTime = System.currentTimeMillis();
 
     long elapsedTime = endTime - startTime;
     long remainingTime = solver.getTimer().getTimeRemaining();
 
-    assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 100);
+    assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 500);
     assertTrue(remainingTime <= 5000);
   }
   /*

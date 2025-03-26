@@ -8,12 +8,13 @@ import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
-public class BitboardStatusCheck {
+/** Utility class to remove complexity for BitboardRepresentation. */
+public final class BitboardStatusCheck {
   private static final Logger LOGGER = Logger.getLogger(BitboardStatusCheck.class.getName());
-  private BitboardRepresentation bitboardRepresentation;
 
-  public BitboardStatusCheck(BitboardRepresentation bitboardRepresentation) {
-    this.bitboardRepresentation = bitboardRepresentation;
+  /** Private constructor to avoid instantiation. */
+  private BitboardStatusCheck() {
+    throw new UnsupportedOperationException("Cannot instantiate utility class");
   }
 
   static {
@@ -21,13 +22,13 @@ public class BitboardStatusCheck {
   }
 
   /**
-   * Checks if queens are off the board. Method used to detect endgames
+   * Checks if queens are off the board. Method used to detect endgames.
    *
    * @return true if queens are off the board. false otherwise
    */
-  public boolean queensOffTheBoard() {
-    return this.bitboardRepresentation.getQueens(true).size() == 0
-        && this.bitboardRepresentation.getQueens(false).size() == 0;
+  public static boolean queensOffTheBoard(BitboardRepresentation bitboardRepresentation) {
+    return bitboardRepresentation.getQueens(true).isEmpty()
+        && bitboardRepresentation.getQueens(false).isEmpty();
   }
 
   /**
@@ -36,8 +37,9 @@ public class BitboardStatusCheck {
    * @param isWhite true for white pawns, false for black pawns
    * @return true if the majority of pawns for the given color are past the middle of the board.
    */
-  public boolean pawnsHaveProgressed(boolean isWhite) {
-    List<Position> pawns = this.bitboardRepresentation.getPawns(isWhite);
+  public static boolean pawnsHaveProgressed(
+      boolean isWhite, BitboardRepresentation bitboardRepresentation) {
+    List<Position> pawns = bitboardRepresentation.getPawns(isWhite);
     if (pawns.isEmpty()) {
       return false;
     }
@@ -49,9 +51,9 @@ public class BitboardStatusCheck {
     int advancedPawns = 0;
 
     for (Position pos : pawns) {
-      if (isWhite && pos.getY() >= middleRankWhite) {
+      if (isWhite && pos.y() >= middleRankWhite) {
         advancedPawns++;
-      } else if (!isWhite && pos.getY() <= middleRankBlack) {
+      } else if (!isWhite && pos.y() <= middleRankBlack) {
         advancedPawns++;
       }
     }
@@ -61,44 +63,42 @@ public class BitboardStatusCheck {
   }
 
   /**
-   * Checks if the kings on the board are active. Method used to detect endgames
+   * Checks if the kings on the board are active. Method used to detect endgames.
    *
    * @return true if kings are somewhat active. false otherwise
    */
-  public boolean areKingsActive() {
+  public static boolean areKingsActive(BitboardRepresentation bitboardRepresentation) {
     int nbMovesConsideringKingActive = 4;
 
-    Position blackKingPos = this.bitboardRepresentation.getKing(false).get(0);
-    Position whiteKingPos = this.bitboardRepresentation.getKing(true).get(0);
+    Position blackKingPos = bitboardRepresentation.getKing(false).get(0);
+    Position whiteKingPos = bitboardRepresentation.getKing(true).get(0);
 
-    ColoredPiece blackKing =
-        this.bitboardRepresentation.getPieceAt(blackKingPos.getX(), blackKingPos.getY());
-    ColoredPiece whiteKing =
-        this.bitboardRepresentation.getPieceAt(whiteKingPos.getX(), whiteKingPos.getY());
+    ColoredPiece blackKing = bitboardRepresentation.getPieceAt(blackKingPos.x(), blackKingPos.y());
+    ColoredPiece whiteKing = bitboardRepresentation.getPieceAt(whiteKingPos.x(), whiteKingPos.y());
 
     Bitboard unreachableSquaresBlack =
-        blackKing.color == Color.WHITE
-            ? this.bitboardRepresentation.getWhiteBoard()
-            : this.bitboardRepresentation.getBlackBoard();
-    unreachableSquaresBlack.clearBit(blackKingPos.getX() % 8 + blackKingPos.getY() * 8);
+        blackKing.getColor() == Color.WHITE
+            ? bitboardRepresentation.getWhiteBoard()
+            : bitboardRepresentation.getBlackBoard();
+    unreachableSquaresBlack.clearBit(blackKingPos.x() % 8 + blackKingPos.y() * 8);
 
     Bitboard unreachableSquaresWhite =
-        whiteKing.color == Color.WHITE
-            ? this.bitboardRepresentation.getWhiteBoard()
-            : this.bitboardRepresentation.getBlackBoard();
-    unreachableSquaresWhite.clearBit(whiteKingPos.getX() % 8 + whiteKingPos.getY() * 8);
+        whiteKing.getColor() == Color.WHITE
+            ? bitboardRepresentation.getWhiteBoard()
+            : bitboardRepresentation.getBlackBoard();
+    unreachableSquaresWhite.clearBit(whiteKingPos.x() % 8 + whiteKingPos.y() * 8);
 
     List<Move> blackKingMoves =
-        this.bitboardRepresentation.getKingMoves(
+        bitboardRepresentation.getKingMoves(
             blackKingPos,
             unreachableSquaresBlack,
-            this.bitboardRepresentation.getWhiteBoard(),
+            bitboardRepresentation.getWhiteBoard(),
             blackKing);
     List<Move> whiteKingMoves =
-        this.bitboardRepresentation.getKingMoves(
+        bitboardRepresentation.getKingMoves(
             whiteKingPos,
             unreachableSquaresWhite,
-            this.bitboardRepresentation.getBlackBoard(),
+            bitboardRepresentation.getBlackBoard(),
             whiteKing);
 
     return blackKingMoves.size() >= nbMovesConsideringKingActive
@@ -107,20 +107,21 @@ public class BitboardStatusCheck {
 
   /**
    * Checks if castle (long or short in parameter) for one side is possible or not. No need to fetch
-   * king position because if king has moved, then boolean attributes for castling rights are false
+   * king position because if king has moved, then boolean attributes for castling rights are false.
    *
    * @param color the color of the player we want to test castle for
    * @param shortCastle boolean value to indicate if we're looking for the short castle right or
    *     long castle right
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
-  public boolean canCastle(
+  public static boolean canCastle(
       Color color,
       boolean shortCastle,
       boolean whiteShortCastle,
       boolean whiteLongCastle,
       boolean blackShortCastle,
-      boolean blackLongCastle) {
+      boolean blackLongCastle,
+      BitboardRepresentation bitboardRepresentation) {
     if (color == Color.WHITE) {
       if (shortCastle && !whiteShortCastle) {
         return false;
@@ -137,31 +138,31 @@ public class BitboardStatusCheck {
       Position b1Square = new Position(1, 0);
 
       if (shortCastle) {
-        if ((this.bitboardRepresentation.getPieceAt(f1Square.getX(), f1Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(f1Square.x(), f1Square.y()).getPiece()
                 != Piece.EMPTY)
-            || (this.bitboardRepresentation.getPieceAt(g1Square.getX(), g1Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(g1Square.x(), g1Square.y()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (this.bitboardRepresentation.isCheck(Color.WHITE)
-            || this.bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
-            || this.bitboardRepresentation.isAttacked(6, 0, Color.BLACK)) {
+        if (bitboardRepresentation.isCheck(Color.WHITE)
+            || bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
+            || bitboardRepresentation.isAttacked(6, 0, Color.BLACK)) {
           return false;
         }
       } else {
-        if ((this.bitboardRepresentation.getPieceAt(d1Square.getX(), d1Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(d1Square.x(), d1Square.y()).getPiece()
                 != Piece.EMPTY)
-            || (this.bitboardRepresentation.getPieceAt(c1Square.getX(), c1Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(c1Square.x(), c1Square.y()).getPiece()
                 != Piece.EMPTY)
-            || (this.bitboardRepresentation.getPieceAt(b1Square.getX(), b1Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(b1Square.x(), b1Square.y()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (this.bitboardRepresentation.isCheck(Color.WHITE)
-            || this.bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
-            || this.bitboardRepresentation.isAttacked(2, 0, Color.BLACK)) {
+        if (bitboardRepresentation.isCheck(Color.WHITE)
+            || bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
+            || bitboardRepresentation.isAttacked(2, 0, Color.BLACK)) {
           return false;
         }
       }
@@ -182,31 +183,31 @@ public class BitboardStatusCheck {
       Position b8Square = new Position(1, 7);
 
       if (shortCastle) {
-        if ((this.bitboardRepresentation.getPieceAt(f8Square.getX(), f8Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(f8Square.x(), f8Square.y()).getPiece()
                 != Piece.EMPTY)
-            || (this.bitboardRepresentation.getPieceAt(g8Square.getX(), g8Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(g8Square.x(), g8Square.y()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (this.bitboardRepresentation.isCheck(Color.BLACK)
-            || this.bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
-            || this.bitboardRepresentation.isAttacked(6, 7, Color.WHITE)) {
+        if (bitboardRepresentation.isCheck(Color.BLACK)
+            || bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
+            || bitboardRepresentation.isAttacked(6, 7, Color.WHITE)) {
           return false;
         }
       } else {
-        if ((this.bitboardRepresentation.getPieceAt(d8Square.getX(), d8Square.getY()).piece
+        if ((bitboardRepresentation.getPieceAt(d8Square.x(), d8Square.y()).getPiece()
                 != Piece.EMPTY)
-            || (this.bitboardRepresentation.getPieceAt(c8Square.getX(), c8Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(c8Square.x(), c8Square.y()).getPiece()
                 != Piece.EMPTY)
-            || (this.bitboardRepresentation.getPieceAt(b8Square.getX(), b8Square.getY()).piece
+            || (bitboardRepresentation.getPieceAt(b8Square.x(), b8Square.y()).getPiece()
                 != Piece.EMPTY)) {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (this.bitboardRepresentation.isCheck(Color.BLACK)
-            || this.bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
-            || this.bitboardRepresentation.isAttacked(2, 7, Color.WHITE)) {
+        if (bitboardRepresentation.isCheck(Color.BLACK)
+            || bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
+            || bitboardRepresentation.isAttacked(2, 7, Color.WHITE)) {
           return false;
         }
       }
@@ -217,26 +218,27 @@ public class BitboardStatusCheck {
   /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
-   * @return true if we're in an endgame (according to the chosen criterias)
+   * @return true if we're in an endgame (according to the chosen criteria)
    */
-  public boolean isEndGamePhase(int fullTurn, boolean white) {
-    int nbRequiredConditions = 4;
+  public static boolean isEndGamePhase(
+      int fullTurn, boolean white, BitboardRepresentation bitboardRepresentation) {
+    final int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 
-    int halfNbPieces = 16;
-    int nbPlayedMovesBeforeEndGame = 25;
-    int nbPossibleMoveInEndGame = 25;
+    final int halfNbPieces = 16;
+    final int nbPlayedMovesBeforeEndGame = 25;
+    final int nbPossibleMoveInEndGame = 25;
 
     // Queens are off the board
-    if (this.bitboardRepresentation.queensOffTheBoard()) {
+    if (bitboardRepresentation.queensOffTheBoard()) {
       nbFilledConditions++;
     }
     // Number of pieces remaining
-    if (this.bitboardRepresentation.nbPiecesRemaining() <= halfNbPieces) {
+    if (bitboardRepresentation.nbPiecesRemaining() <= halfNbPieces) {
       nbFilledConditions++;
     }
     // King activity
-    if (this.bitboardRepresentation.areKingsActive()) {
+    if (bitboardRepresentation.areKingsActive()) {
       nbFilledConditions++;
     }
     // Number of played moves
@@ -248,24 +250,13 @@ public class BitboardStatusCheck {
     int nbMovesWhite;
     int nbMovesBlack;
 
-    if (this.bitboardRepresentation instanceof BitboardRepresentation) {
-      nbMovesWhite =
-          ((BitboardRepresentation) this.bitboardRepresentation)
-              .getColorMoveBitboard(true)
-              .bitCount();
-      nbMovesBlack =
-          ((BitboardRepresentation) this.bitboardRepresentation)
-              .getColorMoveBitboard(false)
-              .bitCount();
-    } else {
-      nbMovesWhite = this.bitboardRepresentation.getAllAvailableMoves(true).size();
-      nbMovesBlack = this.bitboardRepresentation.getAllAvailableMoves(false).size();
-    }
+    nbMovesWhite = bitboardRepresentation.getColorMoveBitboard(true).bitCount();
+    nbMovesBlack = bitboardRepresentation.getColorMoveBitboard(false).bitCount();
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }
     // Pawns progresses on the board
-    if (this.bitboardRepresentation.pawnsHaveProgressed(white)) {
+    if (bitboardRepresentation.pawnsHaveProgressed(white)) {
       nbFilledConditions++;
     }
 

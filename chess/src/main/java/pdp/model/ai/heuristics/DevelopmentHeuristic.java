@@ -4,24 +4,25 @@ import java.util.List;
 import pdp.model.board.Board;
 import pdp.utils.Position;
 
+/** Heuristic based on the development (advancement) of pieces. */
 public class DevelopmentHeuristic implements Heuristic {
 
   /**
-   * Computes and returns a score corresponding to the level of development for each player
+   * Computes and returns a score corresponding to the level of development for each player.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
    * @return a score based on the development of each player
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = evaluatePiecesDevelopment(board, true) - evaluatePiecesDevelopment(board, false);
     return isWhite ? score : -score;
   }
 
   /**
-   * Counts the number of pieces that are placed on their home squares If pieces other than pawns
-   * and kings are developped then a good score is assigned to the player
+   * Counts the number of pieces that are placed on their home squares. If pieces other than pawns
+   * and kings are developed then a good score is assigned to the player.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise

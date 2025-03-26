@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ public class GameStateTest {
 
   @BeforeEach
   void setUpConsole() {
+    Game.initialize(false, false, null, null, null, new HashMap<>());
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
   }

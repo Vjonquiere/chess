@@ -5,6 +5,7 @@ import pdp.model.GameState;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
+/** Data structure use in History node to represent a game state. */
 public class HistoryState {
   private static final Logger LOGGER = Logger.getLogger(HistoryState.class.getName());
   private final GameState gameState;
@@ -75,7 +76,7 @@ public class HistoryState {
    */
   public String toAlgebraicString() {
     StringBuilder sb = new StringBuilder();
-    if (!(this.move.getSource().getX() == -1)) {
+    if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
         sb.append(this.gameState.getFullTurn())
             .append(". W ")
@@ -104,7 +105,7 @@ public class HistoryState {
    */
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    if (!(this.move.getSource().getX() == -1)) {
+    if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
         sb.append(this.gameState.getFullTurn())
             .append(". W ")

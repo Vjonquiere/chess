@@ -1,5 +1,6 @@
 package pdp.events;
 
+/** Enum containing all types of events that can be encountered in the application. */
 public enum EventType {
   GAME_STARTED,
   GAME_RESTART,
@@ -31,5 +32,7 @@ public enum EventType {
   STALEMATE,
   AI_PLAYING,
   AI_NOT_ENOUGH_TIME,
-  UPDATE_THEME
+  UPDATE_THEME,
+  UPDATE_LANG,
+  MOVE_HINT
 }

@@ -1,44 +1,63 @@
 package pdp.utils;
 
-import java.util.Objects;
 import java.util.logging.Logger;
 
-public class Position {
+/** Relative position depending on x and y coordinates. */
+public record Position(int x, int y) {
   private static final Logger LOGGER = Logger.getLogger(Position.class.getName());
-  int x;
-  int y;
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
-  public Position(int x, int y) {
-    this.y = y;
-    this.x = x;
-  }
+  /**
+   * Creates a position.
+   *
+   * @param x x-coordinate
+   * @param y y-coordinate
+   */
+  public Position {}
 
-  public int getX() {
+  /**
+   * Retrieves the x coordinate.
+   *
+   * @return x coordinate
+   */
+  @Override
+  public int x() {
     return x;
   }
 
-  public int getY() {
+  /**
+   * Retrieves the y coordinate.
+   *
+   * @return y coordinate
+   */
+  @Override
+  public int y() {
     return y;
   }
 
+  /**
+   * Retrieves a boolean to indicate if the position is valid depending on the size of a chess board
+   * (8x8).
+   *
+   * @return validity on a chess board.
+   */
   public boolean isValid() {
-    return getX() <= 7 && getX() >= 0 && getY() <= 7 && getY() >= 0;
-  }
-
-  public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null || getClass() != obj.getClass()) return false;
-    Position position = (Position) obj;
-    return x == position.getX() && y == position.getY();
+    return x() <= 7 && x() >= 0 && y() <= 7 && y() >= 0;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(x, y); // hashCode est souvent nécessaire en parallèle avec equals
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    Position position = (Position) obj;
+    return x == position.x() && y == position.y();
   }
 
   @Override

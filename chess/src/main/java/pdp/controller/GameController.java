@@ -5,20 +5,28 @@ import pdp.model.Game;
 import pdp.utils.Logging;
 import pdp.view.View;
 
+/** Controller of our MVC architecture. */
 public class GameController {
   private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
   private Game model;
   private View view;
   private BagOfCommands bagOfCommands;
 
+  /**
+   * Initializes the private fields corresponding to the model, the view and the bag of commands.
+   *
+   * @param model Game, our model for MVC
+   * @param view View, our view for MVC
+   * @param bagOfCommands Singleton for Command Design pattern
+   */
   public GameController(Game model, View view, BagOfCommands bagOfCommands) {
     Logging.configureLogging(LOGGER);
-    this.setView(view);
-    this.setBagOfCommands(bagOfCommands);
-    this.getBagOfCommands().setController(this);
-    this.getBagOfCommands().setModel(model);
-    this.getModel().addObserver(view);
-    this.getModel().addErrorObserver(view);
+    this.view = view;
+    this.bagOfCommands = bagOfCommands;
+    bagOfCommands.setController(this);
+    bagOfCommands.setModel(model);
+    model.addObserver(view);
+    model.addErrorObserver(view);
     // this.model.startAI();
   }
 
@@ -49,19 +57,21 @@ public class GameController {
     this.getView().onErrorEvent(e);
   }
 
+  /**
+   * Assigns the field model to the value given in parameter.
+   *
+   * @param model Current model
+   */
   public void setModel(Game model) {
     this.model = model;
   }
 
+  /**
+   * Assigns the field view to the value given in parameter.
+   *
+   * @param view Current view
+   */
   public void setView(View view) {
     this.view = view;
-  }
-
-  public BagOfCommands getBagOfCommands() {
-    return bagOfCommands;
-  }
-
-  public void setBagOfCommands(BagOfCommands bagOfCommands) {
-    this.bagOfCommands = bagOfCommands;
   }
 }

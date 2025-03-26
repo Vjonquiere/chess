@@ -211,4 +211,21 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public BoardRepresentation getCopy() {
     return new DummyBoardRepresentation();
   }
+
+  @Override
+  public List<Move> getSpecialMoves(
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite) {
+    return false;
+  }
 }

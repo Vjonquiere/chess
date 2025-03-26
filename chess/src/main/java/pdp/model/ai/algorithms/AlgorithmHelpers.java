@@ -6,15 +6,36 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 
-public abstract class AlgorithmHelpers {
+/** Utility class to add promotion moves to the AI algorithms. */
+public final class AlgorithmHelpers {
 
+  /** Private constructor to prevent instantiation. */
+  private AlgorithmHelpers() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated.");
+  }
+
+  /**
+   * Promotes a pawn move if it reaches the last rank or retrieves the original move otherwise.
+   *
+   * @param move The move to be checked for promotion.
+   * @return A promoted move or the original if it is not a promotion.
+   */
   public static Move promoteMove(Move move) {
-    ColoredPiece piece = move.getPiece();
-    if (piece.piece == Piece.PAWN && piece.color == Color.BLACK && move.dest.getY() == 0) {
-      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+
+    if (move instanceof PromoteMove) {
+      return move;
     }
-    if (piece.piece == Piece.PAWN && piece.color == Color.WHITE && move.dest.getY() == 7) {
-      move = new PromoteMove(move.source, move.dest, Piece.QUEEN);
+
+    final ColoredPiece piece = move.getPiece();
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.BLACK
+        && move.getDest().y() == 0) {
+      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
+    }
+    if (piece.getPiece() == Piece.PAWN
+        && piece.getColor() == Color.WHITE
+        && move.getDest().y() == 7) {
+      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
     return move;
   }

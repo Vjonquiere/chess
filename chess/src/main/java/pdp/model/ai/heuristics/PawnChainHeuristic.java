@@ -5,6 +5,7 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/** Heuristic based on the connection of pawns. The more connected the pawns are, the better. */
 public class PawnChainHeuristic implements Heuristic {
 
   /**
@@ -15,7 +16,7 @@ public class PawnChainHeuristic implements Heuristic {
    * @return a score depending on the solidity of the pawn chains
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += evaluatePawnChains(board, true) - evaluatePawnChains(board, false);
     return isWhite ? score : -score;
@@ -36,9 +37,8 @@ public class PawnChainHeuristic implements Heuristic {
 
     for (Position pawn : pawns) {
       for (Position otherPawn : pawns) {
-        if ((Math.abs(otherPawn.getX() - pawn.getX()) == 1
-                && Math.abs(otherPawn.getY() - (pawn.getY())) == 1)
-            || (otherPawn.getY() == pawn.getY() && Math.abs(otherPawn.getX() - pawn.getX()) == 1)) {
+        if ((Math.abs(otherPawn.x() - pawn.x()) == 1 && Math.abs(otherPawn.y() - (pawn.y())) == 1)
+            || (otherPawn.y() == pawn.y() && Math.abs(otherPawn.x() - pawn.x()) == 1)) {
           // Connected pawn
           score += reward;
         }

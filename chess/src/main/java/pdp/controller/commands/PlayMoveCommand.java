@@ -7,8 +7,9 @@ import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
 import pdp.model.board.Move;
 
+/** Part of Command Design pattern. Creates a command to play the given move. */
 public class PlayMoveCommand implements Command {
-  private String move;
+  private final String move;
 
   public PlayMoveCommand(String move) {
     this.move = move;
@@ -26,7 +27,7 @@ public class PlayMoveCommand implements Command {
       return Optional.of(new CommandNotAvailableNowException());
     }
     try {
-      model.playMove(Move.fromString(this.move));
+      model.playMove(Move.fromString(this.move, Game.getInstance().getGameState().isWhiteTurn()));
       return Optional.empty();
     } catch (Exception e) {
       System.out.println(e.getMessage());

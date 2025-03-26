@@ -1,8 +1,9 @@
 package pdp.model.ai.algorithms;
 
 import pdp.model.Game;
-import pdp.model.ai.AIMove;
+import pdp.model.ai.AiMove;
 
+/** Common interface for all AI algorithms to be able to change the solver's algorithm with ease. */
 public interface SearchAlgorithm {
-  AIMove findBestMove(Game game, int depth, boolean player);
+  AiMove findBestMove(Game game, int depth, boolean player);
 }

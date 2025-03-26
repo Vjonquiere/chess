@@ -6,10 +6,11 @@ import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
+/** Heuristic based on the activity of the king. */
 public class KingActivityHeuristic implements Heuristic {
 
   /**
-   * Checks the activity of the king and returns a score accordingly King is close to the center ?
+   * Checks the activity of the king and returns a score accordingly. King is close to the center?
    * King has a lot of possible moves ?
    *
    * @param board board of the game
@@ -17,7 +18,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @return score according to the activity of the king
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(Board board, boolean isWhite) {
     int score = 0;
     score += kingIsInCenterScore(board, true) - kingIsInCenterScore(board, false);
     score += kingActivityScore(board, true) - kingActivityScore(board, false);
@@ -26,7 +27,7 @@ public class KingActivityHeuristic implements Heuristic {
   }
 
   /**
-   * Checks the location of the king and returns a score accordingly
+   * Checks the location of the king and returns a score accordingly.
    *
    * @param board board of the game
    * @param isWhite true if this is for white, false otherwise
@@ -45,20 +46,19 @@ public class KingActivityHeuristic implements Heuristic {
     // Check if the king is close to the center of the board and therefore has easier access to the
     // entire board
     boolean isKingInCenter =
-        kingPosition.getX() >= posDownLeftCenter.getX()
-            && kingPosition.getX() <= posTopRightCenter.getX()
-            && kingPosition.getY() >= posDownRightCenter.getY()
-            && kingPosition.getY() <= posTopLeftCenter.getY();
+        kingPosition.x() >= posDownLeftCenter.x()
+            && kingPosition.x() <= posTopRightCenter.x()
+            && kingPosition.y() >= posDownRightCenter.y()
+            && kingPosition.y() <= posTopLeftCenter.y();
 
     if (isKingInCenter) {
       score = 20;
     } else {
       // Compute Manhattan distance to center
-      int centerX = (posTopLeftCenter.getX() + posTopRightCenter.getX()) / 2;
-      int centerY = (posDownLeftCenter.getY() + posTopLeftCenter.getY()) / 2;
+      int centerX = (posTopLeftCenter.x() + posTopRightCenter.x()) / 2;
+      int centerY = (posDownLeftCenter.y() + posTopLeftCenter.y()) / 2;
 
-      int distance =
-          Math.abs(kingPosition.getX() - centerX) + Math.abs(kingPosition.getY() - centerY);
+      int distance = Math.abs(kingPosition.x() - centerX) + Math.abs(kingPosition.y() - centerY);
       int noBonus = 0;
       // King more or less far from the center
       score = Math.max(noBonus, 15 - (distance * 3));
@@ -68,7 +68,7 @@ public class KingActivityHeuristic implements Heuristic {
   }
 
   /**
-   * Checks the activity of the king and returns a score accordingly
+   * Checks the activity of the king and returns a score accordingly.
    *
    * @param board board of the game
    * @param isWhite true if this is for white, false otherwise

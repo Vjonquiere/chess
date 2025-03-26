@@ -1,10 +1,11 @@
 package pdp;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
 
+/** Initializes the game (model) with either the options given in the method initialize. */
 public abstract class GameInitializer {
 
   private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
@@ -40,7 +42,7 @@ public abstract class GameInitializer {
 
     CommandLineOptions.validateAiOptions(options);
 
-    DEBUG(LOGGER, "Initializing game with options: " + options);
+    debug(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
     Integer blitzTime = 30 * 60;
@@ -111,25 +113,88 @@ public abstract class GameInitializer {
 
       if (options.containsKey(OptionType.AI_HEURISTIC_W)) {
         try {
-          HeuristicType heuristicType =
-              HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W));
-          solverWhite.setHeuristic(heuristicType);
+          if (options.containsKey(OptionType.AI_WEIGHT_W)
+              && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W))
+                  .equals(HeuristicType.STANDARD)) {
+            String weight = options.get(OptionType.AI_WEIGHT_W);
+            String[] weights = weight.split(",");
+            ArrayList<Float> weightsFloats = new ArrayList<>();
+            for (String w : weights) {
+              weightsFloats.add(Float.parseFloat(w));
+            }
+            if (weightsFloats.size() != 7) {
+              throw new ParseException("Invalid number of weights", 0);
+            }
+            solverWhite.setHeuristic(
+                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)), weightsFloats);
+          } else {
+            solverWhite.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)));
+          }
+
         } catch (IllegalArgumentException e) {
           System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC_W));
           System.err.println("Defaulting to Heuristic STANDARD");
+          solverWhite.setHeuristic(HeuristicType.STANDARD);
+        } catch (ParseException e) {
+          System.err.println(
+              "Weights problem: " + options.get(OptionType.AI_WEIGHT_W) + " -> " + e.getMessage());
+          System.err.println("Defaulting to Unweighted Heuristic STANDARD");
           solverWhite.setHeuristic(HeuristicType.STANDARD);
         }
       }
 
       if (options.containsKey(OptionType.AI_HEURISTIC_B)) {
         try {
-          HeuristicType heuristicType =
-              HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B));
-          solverBlack.setHeuristic(heuristicType);
+          if (options.containsKey(OptionType.AI_WEIGHT_B)
+              && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B))
+                  .equals(HeuristicType.STANDARD)) {
+            String weight = options.get(OptionType.AI_WEIGHT_B);
+            String[] weights = weight.split(",");
+            ArrayList<Float> weightsFloats = new ArrayList<>();
+            for (String w : weights) {
+              weightsFloats.add(Float.parseFloat(w));
+            }
+            if (weightsFloats.size() != 7) {
+              throw new ParseException("Invalid number of weights", 0);
+            }
+            solverBlack.setHeuristic(
+                HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B)), weightsFloats);
+          } else {
+            solverBlack.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B)));
+          }
         } catch (IllegalArgumentException e) {
           System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_HEURISTIC_B));
           System.err.println("Defaulting to Heuristic STANDARD");
           solverBlack.setHeuristic(HeuristicType.STANDARD);
+        } catch (ParseException e) {
+          System.err.println(
+              "Weights problem: " + options.get(OptionType.AI_WEIGHT_B) + " -> " + e.getMessage());
+          System.err.println("Defaulting to Unweighted Heuristic STANDARD");
+          solverBlack.setHeuristic(HeuristicType.STANDARD);
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_ENDGAME_W)) {
+        System.out.println(options);
+        try {
+          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_W));
+          solverWhite.setEndgameHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_W));
+          System.err.println("Defaulting to Endgame Heuristic STANDARD");
+          solverWhite.setEndgameHeuristic(HeuristicType.ENDGAME);
+        }
+      }
+
+      if (options.containsKey(OptionType.AI_ENDGAME_B)) {
+        System.out.println(options);
+        try {
+          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_B));
+          solverBlack.setEndgameHeuristic(heuristicType);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_B));
+          System.err.println("Defaulting to Endgame Heuristic STANDARD");
+          solverBlack.setEndgameHeuristic(HeuristicType.ENDGAME);
         }
       }
 
@@ -286,9 +351,11 @@ public abstract class GameInitializer {
 
             List<Move> moves = new ArrayList<>();
 
-            for (String move : moveStrings) {
-              moves.add(Move.fromString(move.replace("x", "-")));
-            }
+          boolean isWhite = true;
+          for (String move : moveStrings) {
+            moves.add(Move.fromString(move.replace("x", "-"), isWhite));
+            isWhite = !isWhite;
+          }
 
             model =
                 Game.fromHistory(

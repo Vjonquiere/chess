@@ -58,16 +58,16 @@ public class BitboardRepresentationTest {
     int y = 6;
     // Black pawns initial positions
     for (Position position : board.getPawns(false)) {
-      assertEquals(x++, position.getX());
-      assertEquals(y, position.getY());
+      assertEquals(x++, position.x());
+      assertEquals(y, position.y());
     }
 
     x = 0;
     y = 1;
     // White pawns initial positions
     for (Position position : board.getPawns(true)) {
-      assertEquals(x++, position.getX());
-      assertEquals(y, position.getY());
+      assertEquals(x++, position.x());
+      assertEquals(y, position.y());
     }
 
     board.movePiece(new Position(0, 1), new Position(0, 2)); // move pawn
@@ -125,14 +125,12 @@ public class BitboardRepresentationTest {
     for (Position position :
         board.getPawns(true)) { // Test getPieceAt on white pawns at the beginning of the game
       assertEquals(
-          new ColoredPiece(Piece.PAWN, Color.WHITE),
-          board.getPieceAt(position.getX(), position.getY()));
+          new ColoredPiece(Piece.PAWN, Color.WHITE), board.getPieceAt(position.x(), position.y()));
     }
     for (Position position :
         board.getPawns(false)) { // Test getPieceAt on white pawns at the beginning of the game
       assertEquals(
-          new ColoredPiece(Piece.PAWN, Color.BLACK),
-          board.getPieceAt(position.getX(), position.getY()));
+          new ColoredPiece(Piece.PAWN, Color.BLACK), board.getPieceAt(position.x(), position.y()));
     }
     assertNotEquals(
         new ColoredPiece(Piece.ROOK, Color.WHITE),
@@ -544,7 +542,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.KNIGHT);
 
     assertNotNull(board.getPieceAt(0, 7));
-    assertEquals(Piece.KNIGHT, board.getPieceAt(0, 7).piece);
+    assertEquals(Piece.KNIGHT, board.getPieceAt(0, 7).getPiece());
 
     // Same thing for black
     Position blackBlockerCurrPos = new Position(7, 0);
@@ -557,7 +555,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.QUEEN);
 
     assertNotNull(board.getPieceAt(7, 0));
-    assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).piece);
+    assertEquals(Piece.QUEEN, board.getPieceAt(7, 0).getPiece());
   }
 
   @Test
@@ -577,7 +575,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.ROOK);
 
     assertNotNull(board.getPieceAt(0, 7));
-    assertEquals(Piece.ROOK, board.getPieceAt(0, 7).piece);
+    assertEquals(Piece.ROOK, board.getPieceAt(0, 7).getPiece());
 
     // Same thing for black
     Position blackBlockerCurrPos = new Position(7, 0);
@@ -590,7 +588,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.BISHOP);
 
     assertNotNull(board.getPieceAt(7, 0));
-    assertEquals(Piece.BISHOP, board.getPieceAt(7, 0).piece);
+    assertEquals(Piece.BISHOP, board.getPieceAt(7, 0).getPiece());
   }
 
   @Test
@@ -611,7 +609,7 @@ public class BitboardRepresentationTest {
     // Ensure pawn is remaining at the promotion position before trying invalid promotion
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(0, 7).piece,
+        board.getPieceAt(0, 7).getPiece(),
         "White pawn should still be at promotion square before invalid promotion !");
 
     // Attempt invalid promotions
@@ -620,7 +618,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(0, 7).piece,
+        board.getPieceAt(0, 7).getPiece(),
         "White pawn should remain unchanged after invalid promotion !");
 
     // Same process for black
@@ -634,7 +632,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(7, 0).piece,
+        board.getPieceAt(7, 0).getPiece(),
         "Black pawn should still be at promotion square before invalid promotion!");
 
     board.promotePawn(7, 0, !white, Piece.KING);
@@ -642,7 +640,7 @@ public class BitboardRepresentationTest {
 
     assertEquals(
         Piece.PAWN,
-        board.getPieceAt(7, 0).piece,
+        board.getPieceAt(7, 0).getPiece(),
         "Black pawn should remain unchanged after invalid promotion!");
   }
 
@@ -664,7 +662,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(0, 7, white, Piece.QUEEN);
 
     assertEquals(
-        Piece.KNIGHT, board.getPieceAt(0, 7).piece, "White knight should not be promotable !");
+        Piece.KNIGHT, board.getPieceAt(0, 7).getPiece(), "White knight should not be promotable !");
 
     // Same for black but with a bishop for instance
     Position blackBlockerCurrPos = new Position(7, 0);
@@ -680,7 +678,7 @@ public class BitboardRepresentationTest {
     board.promotePawn(7, 0, !white, Piece.QUEEN);
 
     assertEquals(
-        Piece.BISHOP, board.getPieceAt(7, 0).piece, "Black bishop should not be promotable !");
+        Piece.BISHOP, board.getPieceAt(7, 0).getPiece(), "Black bishop should not be promotable !");
   }
 
   @Test
@@ -1203,8 +1201,8 @@ public class BitboardRepresentationTest {
     Position whiteQueenPos = new Position(3, 0);
     Position blackQueenPos = new Position(3, 7);
 
-    board.deletePieceAt(whiteQueenPos.getX(), whiteQueenPos.getY());
-    board.deletePieceAt(blackQueenPos.getX(), blackQueenPos.getY());
+    board.deletePieceAt(whiteQueenPos.x(), whiteQueenPos.y());
+    board.deletePieceAt(blackQueenPos.x(), blackQueenPos.y());
 
     assertTrue(board.queensOffTheBoard());
   }
@@ -1235,20 +1233,20 @@ public class BitboardRepresentationTest {
     Position whiteKingsBishop = new Position(5, 0);
     Position blackKingsBishop = new Position(5, 7);
 
-    board.deletePieceAt(whiteQueenPos.getX(), whiteQueenPos.getY());
-    board.deletePieceAt(blackQueenPos.getX(), blackQueenPos.getY());
+    board.deletePieceAt(whiteQueenPos.x(), whiteQueenPos.y());
+    board.deletePieceAt(blackQueenPos.x(), blackQueenPos.y());
 
-    board.deletePieceAt(d2Pawn.getX(), d2Pawn.getY());
-    board.deletePieceAt(d7Pawn.getX(), d7Pawn.getY());
+    board.deletePieceAt(d2Pawn.x(), d2Pawn.y());
+    board.deletePieceAt(d7Pawn.x(), d7Pawn.y());
 
-    board.deletePieceAt(e2Pawn.getX(), e2Pawn.getY());
-    board.deletePieceAt(e7Pawn.getX(), e7Pawn.getY());
+    board.deletePieceAt(e2Pawn.x(), e2Pawn.y());
+    board.deletePieceAt(e7Pawn.x(), e7Pawn.y());
 
-    board.deletePieceAt(f2Pawn.getX(), f2Pawn.getY());
-    board.deletePieceAt(f7Pawn.getX(), f7Pawn.getY());
+    board.deletePieceAt(f2Pawn.x(), f2Pawn.y());
+    board.deletePieceAt(f7Pawn.x(), f7Pawn.y());
 
-    board.deletePieceAt(whiteKingsBishop.getX(), whiteKingsBishop.getY());
-    board.deletePieceAt(blackKingsBishop.getX(), blackKingsBishop.getY());
+    board.deletePieceAt(whiteKingsBishop.x(), whiteKingsBishop.y());
+    board.deletePieceAt(blackKingsBishop.x(), blackKingsBishop.y());
 
     assertTrue(board.areKingsActive());
   }

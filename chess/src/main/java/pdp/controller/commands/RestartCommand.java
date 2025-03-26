@@ -5,6 +5,7 @@ import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.model.Game;
 
+/** Part of Command Design pattern. Creates a command to restart the game. */
 public class RestartCommand implements Command {
   /**
    * Executes the RestartCommand which attempts to restart the game.
