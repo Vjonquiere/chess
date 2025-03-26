@@ -57,6 +57,14 @@ public abstract class GameAbstract extends Subject {
     this.stateCount = stateCount;
   }
 
+  /**
+   * Initializes the private fields of the Game abstract.
+   *
+   * @param gameState Current game state
+   * @param history History of the game
+   * @param stateCount Current state count
+   * @param zobristHashing instance of zobrist to avoid too many instances.
+   */
   public GameAbstract(
       GameState gameState,
       History history,

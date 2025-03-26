@@ -18,8 +18,8 @@ public class BitboardRepresentation implements BoardRepresentation {
   private static final int CACHE_SIZE = 100000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
-  private static final int nbCols = 8;
-  private static final int nbRows = 8;
+  private static final int NB_COLS = 8;
+  private static final int NB_ROWS = 8;
   private static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
   private static BitboardCache cache;
   private static ZobristHashing zobristHashing = new ZobristHashing();
@@ -927,7 +927,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   /**
-   * Checks if a pawn at Position(x,y) checks for promotion
+   * Checks if a pawn at Position(x,y) checks for promotion.
    *
    * @param xSource The x-coordinate (file) of the source position
    * @param ySource The y-coordinate (rank) of the source position
@@ -1197,7 +1197,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public int getNbCols() {
-    return nbCols;
+    return NB_COLS;
   }
 
   /**
@@ -1207,7 +1207,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public int getNbRows() {
-    return nbRows;
+    return NB_ROWS;
   }
 
   @Override

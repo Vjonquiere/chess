@@ -386,7 +386,7 @@ public final class BitboardRules {
   }
 
   /**
-   * Checks if a pawn at Position(x,y) checks for promotion
+   * Checks if a pawn at Position(x,y) checks for promotion.
    *
    * @param xSource The x-coordinate (file) of the source position
    * @param ySource The y-coordinate (rank) of the source position

@@ -479,7 +479,7 @@ public class CommandLineOptionsTest {
     Path defaultConfig = Files.createTempFile("nonexistant", ".chessrc");
     Files.deleteIfExists(defaultConfig);
 
-    Field defaultConfigField = CommandLineOptions.class.getDeclaredField("DEFAULT_CONFIG_FILE");
+    Field defaultConfigField = CommandLineOptions.class.getDeclaredField("defaultConfigFile");
     defaultConfigField.setAccessible(true);
     String originalDefault = (String) defaultConfigField.get(null);
     defaultConfigField.set(null, defaultConfig.toString());

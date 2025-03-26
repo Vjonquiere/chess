@@ -15,6 +15,10 @@ import pdp.model.board.PromoteMove;
 import pdp.model.piece.ColoredPiece;
 import pdp.utils.Logging;
 
+/**
+ * Algorithm of artificial intelligence Alpha beta pruning, with iterative deepening to have more
+ * efficient search.
+ */
 public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
   private Solver solver;
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
@@ -24,6 +28,11 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
   public AlphaBetaIterativeDeepening(Solver solver) {
     this.solver = solver;
   }
