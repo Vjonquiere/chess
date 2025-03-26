@@ -15,6 +15,9 @@ public class CachedResult {
   private Boolean isStalemateBlack = null;
   private Long whiteMoveBitboard = null;
   private Long blackMoveBitboard = null;
+  private Bitboard whiteAttackBitboards = null;
+  private Bitboard blackAttackBitboards = null;
+  private final AbstractMap<Integer, Long> blackAttackBitboard = new ConcurrentHashMap<>();
   private final AbstractMap<Integer, ColoredPiece> pieces = new ConcurrentHashMap<>();
   private final AbstractMap<Integer, Boolean> isAttackedByWhite = new ConcurrentHashMap<>();
   private final AbstractMap<Integer, Boolean> isAttackedByBlack = new ConcurrentHashMap<>();
@@ -162,6 +165,22 @@ public class CachedResult {
       isAttackedByWhite.put(x * 8 + y, isAttacked);
     } else {
       isAttackedByBlack.put(x * 8 + y, isAttacked);
+    }
+  }
+
+  public void setAttackBitboard(boolean white, Bitboard bitboard) {
+    if (white) {
+      whiteAttackBitboards = bitboard;
+    } else {
+      blackAttackBitboards = bitboard;
+    }
+  }
+
+  public Bitboard getAttackBitboard(boolean white) {
+    if (white) {
+      return whiteAttackBitboards;
+    } else {
+      return blackAttackBitboards;
     }
   }
 }
