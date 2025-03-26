@@ -32,13 +32,26 @@ public interface BoardRepresentation {
 
   boolean queensOffTheBoard();
 
-  boolean areKingsActive();
+  boolean areKingsActive(
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
   boolean pawnsHaveProgressed(boolean isWhite);
 
   int nbPiecesRemaining();
 
-  List<Move> retrieveKingMoves(boolean white);
+  List<Move> retrieveKingMoves(
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
   List<Move> retrieveBishopMoves(boolean white);
 
@@ -52,19 +65,74 @@ public interface BoardRepresentation {
 
   BoardRepresentation getCopy();
 
-  List<Move> getAvailableMoves(int x, int y, boolean kingReachable);
+  List<Move> getAvailableMoves(
+      int x,
+      int y,
+      boolean kingReachable,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
-  List<Move> getAllAvailableMoves(boolean isWhite);
+  List<Move> getAllAvailableMoves(
+      boolean isWhite,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
-  boolean isAttacked(int x, int y, Color by);
+  boolean isAttacked(
+      int x,
+      int y,
+      Color by,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
-  boolean isCheck(Color color);
+  boolean isCheck(
+      Color color,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
-  boolean isCheckAfterMove(Color color, Move move);
+  boolean isCheckAfterMove(
+      Color color,
+      Move move,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
-  boolean isCheckMate(Color color);
+  boolean isCheckMate(
+      Color color,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
-  boolean isStaleMate(Color color, Color colorTurnToPlay);
+  boolean isStaleMate(
+      Color color,
+      Color colorTurnToPlay,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle);
 
   boolean isDrawByInsufficientMaterial();
 
@@ -90,15 +158,14 @@ public interface BoardRepresentation {
       boolean whiteShortCastle,
       boolean whiteLongCastle,
       boolean blackShortCastle,
-      boolean blackLongCastle);
+      boolean blackLongCastle,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush);
 
   boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest);
 
-  boolean isEndGamePhase(int fullTurn, boolean white);
-
-  boolean validatePieceOwnership(boolean white, Position sourcePosition);
-
-  List<Move> getSpecialMoves(
+  boolean isEndGamePhase(
+      int fullTurn,
       boolean white,
       Position enPassantPos,
       boolean isLastMoveDoublePush,
@@ -106,4 +173,6 @@ public interface BoardRepresentation {
       boolean isWhiteShortCastle,
       boolean isBlackLongCastle,
       boolean isBlackShortCastle);
+
+  boolean validatePieceOwnership(boolean white, Position sourcePosition);
 }

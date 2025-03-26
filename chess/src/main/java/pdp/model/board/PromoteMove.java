@@ -20,6 +20,17 @@ public class PromoteMove extends Move {
     this.promPiece = promPiece;
   }
 
+  public PromoteMove(
+      Position source,
+      Position dest,
+      Piece promPiece,
+      ColoredPiece piece,
+      boolean isTake,
+      ColoredPiece takenPiece) {
+    super(source, dest, piece, isTake, takenPiece);
+    this.promPiece = promPiece;
+  }
+
   /**
    * Constructs a new PromoteMove object with the specified source and destination positions, the
    * promoted piece, the piece being moved, a flag indicating whether the move is a capture, the

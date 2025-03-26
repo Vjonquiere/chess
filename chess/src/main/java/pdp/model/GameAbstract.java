@@ -121,13 +121,39 @@ public abstract class GameAbstract extends Subject {
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
   protected void processClassicalMove(GameState gameState, Move move) throws IllegalMoveException {
+
+    Position sourcePosition = move.getSource();
+    Position destPosition = move.getDest();
+    ColoredPiece coloredPiece =
+        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
+
     Color currentColor = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
-    if (gameState.getBoard().getBoardRep().isCheckAfterMove(currentColor, move)) {
+    if (gameState
+        .getBoard()
+        .getBoardRep()
+        .isCheckAfterMove(
+            currentColor,
+            move,
+            getBoard().getEnPassantPos(),
+            getBoard().isLastMoveDoublePush(),
+            getBoard().isWhiteLongCastle(),
+            getBoard().isWhiteShortCastle(),
+            getBoard().isBlackLongCastle(),
+            getBoard().isBlackShortCastle())) {
       debug(LOGGER, "Move puts the king in check: " + move);
       throw new IllegalMoveException(move.toString());
     }
 
-    gameState.getBoard().makeMove(move);
+    if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
+      boolean shortCastle = destPosition.x() > sourcePosition.x();
+      Color color = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
+      if (gameState.getBoard().canCastle(color, shortCastle)) {
+        gameState.getBoard().applyCastle(color, shortCastle);
+      }
+    } else {
+      gameState.getBoard().makeMove(move);
+    }
+
     debug(LOGGER, "Move played!");
   }
 
@@ -145,16 +171,6 @@ public abstract class GameAbstract extends Subject {
     ColoredPiece coloredPiece =
         gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
 
-    // Check Castle
-    if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
-      boolean shortCastle = destPosition.x() > sourcePosition.x();
-      Color color = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
-      if (gameState.getBoard().canCastle(color, shortCastle)) {
-        gameState.getBoard().applyCastle(color, shortCastle);
-        isSpecialMove = true;
-      }
-    }
-
     // Check en passant
     if (!isSpecialMove
         && gameState.getBoard().isLastMoveDoublePush()
@@ -169,7 +185,15 @@ public abstract class GameAbstract extends Subject {
       if (gameState
           .getBoard()
           .getBoardRep()
-          .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
+          .isCheckAfterMove(
+              gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK,
+              move,
+              getBoard().getEnPassantPos(),
+              getBoard().isLastMoveDoublePush(),
+              getBoard().isWhiteLongCastle(),
+              getBoard().isWhiteShortCastle(),
+              getBoard().isBlackLongCastle(),
+              getBoard().isBlackShortCastle())) {
         debug(LOGGER, "En passant puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
@@ -191,7 +215,15 @@ public abstract class GameAbstract extends Subject {
       if (gameState
           .getBoard()
           .getBoardRep()
-          .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
+          .isCheckAfterMove(
+              gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK,
+              move,
+              getBoard().getEnPassantPos(),
+              getBoard().isLastMoveDoublePush(),
+              getBoard().isWhiteLongCastle(),
+              getBoard().isWhiteShortCastle(),
+              getBoard().isBlackLongCastle(),
+              getBoard().isBlackShortCastle())) {
         debug(LOGGER, "Double push puts the king in check!");
         throw new IllegalMoveException(move.toString());
       }
@@ -261,7 +293,15 @@ public abstract class GameAbstract extends Subject {
   public boolean isEndGamePhase() {
     return getBoard()
         .getBoardRep()
-        .isEndGamePhase(getGameState().getFullTurn(), getGameState().isWhiteTurn());
+        .isEndGamePhase(
+            getGameState().getFullTurn(),
+            getBoard().getPlayer(),
+            getBoard().getEnPassantPos(),
+            getBoard().isLastMoveDoublePush(),
+            getBoard().isWhiteLongCastle(),
+            getBoard().isWhiteShortCastle(),
+            getBoard().isBlackLongCastle(),
+            getBoard().isBlackShortCastle());
   }
 
   public boolean isOver() {

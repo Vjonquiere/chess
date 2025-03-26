@@ -161,6 +161,18 @@ public class TreeNodeMonteCarlo {
    */
   public boolean isFullyExpanded() {
     boolean isWhite = state.isWhiteTurn();
-    return state.getBoard().getBoardRep().getAllAvailableMoves(isWhite).size() == children.size();
+    return state
+            .getBoard()
+            .getBoardRep()
+            .getAllAvailableMoves(
+                isWhite,
+                state.getBoard().getEnPassantPos(),
+                state.getBoard().isLastMoveDoublePush(),
+                state.getBoard().isWhiteLongCastle(),
+                state.getBoard().isWhiteShortCastle(),
+                state.getBoard().isBlackLongCastle(),
+                state.getBoard().isBlackShortCastle())
+            .size()
+        == children.size();
   }
 }

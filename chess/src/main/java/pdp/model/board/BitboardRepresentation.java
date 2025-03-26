@@ -436,13 +436,53 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   protected List<Move> getKingMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getKingMoves(square, unreachableSquares, enemies, piece, this);
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      ColoredPiece piece,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardMovesGen.getKingMoves(
+        square,
+        unreachableSquares,
+        enemies,
+        piece,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   protected Bitboard getKingMoveBitboard(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getKingMoveBitboard(square, unreachableSquares, enemies, piece);
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      ColoredPiece piece,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardMovesGen.getKingMoveBitboard(
+        square,
+        unreachableSquares,
+        enemies,
+        piece,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -472,13 +512,25 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   protected List<Move> getPawnMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
-    return BitboardMovesGen.getPawnMoves(square, unreachableSquares, enemies, white, this);
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush) {
+    return BitboardMovesGen.getPawnMoves(
+        square, unreachableSquares, enemies, white, this, enPassantPos, isLastMoveDoublePush);
   }
 
   protected Bitboard getPawnMoveBitboard(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
-    return BitboardMovesGen.getPawnMoveBitboard(square, unreachableSquares, enemies, white);
+      Position square,
+      Bitboard unreachableSquares,
+      Bitboard enemies,
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush) {
+    return BitboardMovesGen.getPawnMoveBitboard(
+        square, unreachableSquares, enemies, white, enPassantPos, isLastMoveDoublePush);
   }
 
   /**
@@ -531,8 +583,27 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves (without special cases)
    */
   @Override
-  public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
-    return BitboardMovesGen.getAvailableMoves(x, y, kingReachable, this);
+  public List<Move> getAvailableMoves(
+      int x,
+      int y,
+      boolean kingReachable,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardMovesGen.getAvailableMoves(
+        x,
+        y,
+        kingReachable,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -545,8 +616,27 @@ public class BitboardRepresentation implements BoardRepresentation {
    *     check/checkmate)
    * @return The bitboard containing all the reachable positions
    */
-  public Bitboard getMoveBitboard(int x, int y, boolean kingReachable) {
-    return BitboardMovesGen.getMoveBitboard(x, y, kingReachable, this);
+  public Bitboard getMoveBitboard(
+      int x,
+      int y,
+      boolean kingReachable,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardMovesGen.getMoveBitboard(
+        x,
+        y,
+        kingReachable,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -557,8 +647,23 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves (without special cases)
    */
   @Override
-  public List<Move> getAllAvailableMoves(boolean isWhite) {
-    return BitboardMovesGen.getAllAvailableMoves(isWhite, this);
+  public List<Move> getAllAvailableMoves(
+      boolean isWhite,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardMovesGen.getAllAvailableMoves(
+        isWhite,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -568,14 +673,30 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The bitboard containing all possible moves (without special cases)
    */
-  public Bitboard getColorMoveBitboard(boolean isWhite) {
+  public Bitboard getColorMoveBitboard(
+      boolean isWhite,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     CachedResult cached = cache.getOrCreate(simpleHash);
     Long bitboard = cached.getColorMoveBitboard(isWhite);
     if (bitboard != null) {
       return new Bitboard(bitboard);
     }
 
-    Bitboard moves = BitboardMovesGen.getColorMoveBitboard(isWhite, this);
+    Bitboard moves =
+        BitboardMovesGen.getColorMoveBitboard(
+            isWhite,
+            this,
+            enPassantPos,
+            isLastMoveDoublePush,
+            isWhiteLongCastle,
+            isWhiteShortCastle,
+            isBlackLongCastle,
+            isBlackShortCastle);
 
     cached.setColorMoveBitboard(moves.getBits(), isWhite);
     return moves;
@@ -692,14 +813,34 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given square is attacked, False else
    */
   @Override
-  public boolean isAttacked(int x, int y, Color by) {
+  public boolean isAttacked(
+      int x,
+      int y,
+      Color by,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     CachedResult cached = cache.getOrCreate(simpleHash);
     Boolean isAttacked = cached.isAttacked(x, y, by);
     if (isAttacked != null) {
       return isAttacked;
     }
 
-    isAttacked = BitboardRules.isAttacked(x, y, by, this);
+    isAttacked =
+        BitboardRules.isAttacked(
+            x,
+            y,
+            by,
+            this,
+            enPassantPos,
+            isLastMoveDoublePush,
+            isWhiteLongCastle,
+            isWhiteShortCastle,
+            isBlackLongCastle,
+            isBlackShortCastle);
     cached.setAttacked(x, y, by, isAttacked);
     return isAttacked;
   }
@@ -711,14 +852,30 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in check, False else
    */
   @Override
-  public boolean isCheck(Color color) {
+  public boolean isCheck(
+      Color color,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     CachedResult cached = cache.getOrCreate(simpleHash);
     Boolean isCheck = cached.isCheck(color);
     if (isCheck != null) {
       return isCheck;
     }
 
-    isCheck = BitboardRules.isCheck(color, this);
+    isCheck =
+        BitboardRules.isCheck(
+            color,
+            this,
+            enPassantPos,
+            isLastMoveDoublePush,
+            isWhiteLongCastle,
+            isWhiteShortCastle,
+            isBlackLongCastle,
+            isBlackShortCastle);
     cached.setCheck(isCheck, color);
 
     return isCheck;
@@ -732,8 +889,25 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in check after the given move, False else
    */
   @Override
-  public boolean isCheckAfterMove(Color color, Move move) {
-    return BitboardRules.isCheckAfterMove(color, move, this);
+  public boolean isCheckAfterMove(
+      Color color,
+      Move move,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardRules.isCheckAfterMove(
+        color,
+        move,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -744,14 +918,30 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in checkMate, False else
    */
   @Override
-  public boolean isCheckMate(Color color) {
+  public boolean isCheckMate(
+      Color color,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     CachedResult cached = cache.getOrCreate(simpleHash);
     Boolean isCheckMate = cached.isCheckMate(color);
     if (isCheckMate != null) {
       return isCheckMate;
     }
 
-    isCheckMate = BitboardRules.isCheckMate(color, this);
+    isCheckMate =
+        BitboardRules.isCheckMate(
+            color,
+            this,
+            enPassantPos,
+            isLastMoveDoublePush,
+            isWhiteLongCastle,
+            isWhiteShortCastle,
+            isBlackLongCastle,
+            isBlackShortCastle);
 
     cached.setCheckMate(isCheckMate, color);
     return isCheckMate;
@@ -766,14 +956,32 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if color {color} is stalemated. false otherwise.
    */
   @Override
-  public boolean isStaleMate(Color color, Color colorTurnToPlay) {
+  public boolean isStaleMate(
+      Color color,
+      Color colorTurnToPlay,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     CachedResult cached = cache.getOrCreate(simpleHash);
     Boolean isStaleMate = cached.isStaleMate(color);
     if (isStaleMate != null) {
       return isStaleMate;
     }
 
-    isStaleMate = BitboardRules.isStaleMate(color, colorTurnToPlay, this);
+    isStaleMate =
+        BitboardRules.isStaleMate(
+            color,
+            colorTurnToPlay,
+            this,
+            enPassantPos,
+            isLastMoveDoublePush,
+            isWhiteLongCastle,
+            isWhiteShortCastle,
+            isBlackLongCastle,
+            isBlackShortCastle);
 
     cached.setStaleMate(isStaleMate, color);
     return isStaleMate;
@@ -864,8 +1072,23 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return the list of moves for the corresponding king
    */
   @Override
-  public List<Move> retrieveKingMoves(boolean white) {
-    return BitboardMovesGen.retrieveKingMoves(white, this);
+  public List<Move> retrieveKingMoves(
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardMovesGen.retrieveKingMoves(
+        white,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -974,8 +1197,21 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if kings are somewhat active. false otherwise
    */
   @Override
-  public boolean areKingsActive() {
-    return BitboardStatusCheck.areKingsActive(this);
+  public boolean areKingsActive(
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardStatusCheck.areKingsActive(
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -994,7 +1230,9 @@ public class BitboardRepresentation implements BoardRepresentation {
       boolean whiteShortCastle,
       boolean whiteLongCastle,
       boolean blackShortCastle,
-      boolean blackLongCastle) {
+      boolean blackLongCastle,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush) {
     return BitboardStatusCheck.canCastle(
         color,
         shortCastle,
@@ -1002,7 +1240,9 @@ public class BitboardRepresentation implements BoardRepresentation {
         whiteLongCastle,
         blackShortCastle,
         blackLongCastle,
-        this);
+        this,
+        enPassantPos,
+        isLastMoveDoublePush);
   }
 
   /**
@@ -1011,8 +1251,25 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if we're in an endgame (according to the chosen criteria)
    */
   @Override
-  public boolean isEndGamePhase(int fullTurn, boolean white) {
-    return BitboardStatusCheck.isEndGamePhase(fullTurn, white, this);
+  public boolean isEndGamePhase(
+      int fullTurn,
+      boolean white,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return BitboardStatusCheck.isEndGamePhase(
+        fullTurn,
+        white,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   // ________________________ BitboardUtils
@@ -1035,38 +1292,6 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected Position squareToPosition(int square) {
     return BitboardUtils.squareToPosition(square);
-  }
-
-  /**
-   * Generate all special moves from given board status.
-   *
-   * @param white The side to generate the moves
-   * @param enPassantPos The position of the possible enPassant
-   * @param isLastMoveDoublePush The last move double push status
-   * @param isWhiteLongCastle The white long castle possibility
-   * @param isWhiteShortCastle The white short castle possibility
-   * @param isBlackLongCastle The black long castle possibility
-   * @param isBlackShortCastle The black short castle possibility
-   * @return A list containing all possible special moves
-   */
-  @Override
-  public List<Move> getSpecialMoves(
-      boolean white,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean isWhiteLongCastle,
-      boolean isWhiteShortCastle,
-      boolean isBlackLongCastle,
-      boolean isBlackShortCastle) {
-    return BitboardMovesGen.getSpecialMoves(
-        white,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        isWhiteLongCastle,
-        isWhiteShortCastle,
-        isBlackLongCastle,
-        isBlackShortCastle);
   }
 
   /**

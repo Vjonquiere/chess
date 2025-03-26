@@ -34,11 +34,29 @@ public final class BitboardRules {
    * @return True if the given square is attacked, False else
    */
   public static boolean isAttacked(
-      int x, int y, Color by, BitboardRepresentation bitboardRepresentation) {
+      int x,
+      int y,
+      Color by,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     Bitboard square = new Bitboard();
     square.setBit((x % 8) + (y * 8));
     return (square.getBits()
-            & bitboardRepresentation.getColorMoveBitboard(by == Color.WHITE).getBits())
+            & bitboardRepresentation
+                .getColorMoveBitboard(
+                    by == Color.WHITE,
+                    enPassantPos,
+                    isLastMoveDoublePush,
+                    isWhiteLongCastle,
+                    isWhiteShortCastle,
+                    isBlackLongCastle,
+                    isBlackShortCastle)
+                .getBits())
         != 0;
   }
 
@@ -48,10 +66,28 @@ public final class BitboardRules {
    * @param color The piece color you want to know check status
    * @return True if the given color is in check, False else
    */
-  public static boolean isCheck(Color color, BitboardRepresentation bitboardRepresentation) {
+  public static boolean isCheck(
+      Color color,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     int kingPosition = bitboardRepresentation.getKingOpti(color == Color.WHITE);
     Color attacker = color == Color.WHITE ? Color.BLACK : Color.WHITE;
-    return isAttacked(kingPosition % 8, kingPosition / 8, attacker, bitboardRepresentation);
+    return isAttacked(
+        kingPosition % 8,
+        kingPosition / 8,
+        attacker,
+        bitboardRepresentation,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle);
   }
 
   /**
@@ -62,7 +98,15 @@ public final class BitboardRules {
    * @return True if the given color is in check after the given move, False else
    */
   public static boolean isCheckAfterMove(
-      Color color, Move move, BitboardRepresentation bitboardRepresentation) {
+      Color color,
+      Move move,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     debug(LOGGER, "Checking if " + color + " is check after move (" + move + ")");
     ColoredPiece removedPiece = null;
     if (move.getTakeDest() == null) {
@@ -74,7 +118,16 @@ public final class BitboardRules {
       bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
     }
     bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
-    boolean isCheckAfterMove = isCheck(color, bitboardRepresentation);
+    boolean isCheckAfterMove =
+        isCheck(
+            color,
+            bitboardRepresentation,
+            enPassantPos,
+            isLastMoveDoublePush,
+            isWhiteLongCastle,
+            isWhiteShortCastle,
+            isBlackLongCastle,
+            isBlackShortCastle);
     bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // undo move
     if (move.isTake()) {
       bitboardRepresentation.addPieceAt(
@@ -93,9 +146,25 @@ public final class BitboardRules {
    * @param color The piece color you want to know checkMate status
    * @return True if the given color is in checkMate, False else
    */
-  public static boolean isCheckMate(Color color, BitboardRepresentation bitboardRepresentation) {
+  public static boolean isCheckMate(
+      Color color,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     debug(LOGGER, "Checking if " + color + " is check mate");
-    if (!isCheck(color, bitboardRepresentation)) {
+    if (!isCheck(
+        color,
+        bitboardRepresentation,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle)) {
       return false;
     }
     Bitboard pieces =
@@ -106,7 +175,15 @@ public final class BitboardRules {
       Position piecePosition = bitboardRepresentation.squareToPosition(i);
       List<Move> availableMoves =
           bitboardRepresentation.getAvailableMoves(
-              piecePosition.x(), piecePosition.y(), false); // TODO: Check this line
+              piecePosition.x(),
+              piecePosition.y(),
+              false,
+              enPassantPos,
+              isLastMoveDoublePush,
+              isWhiteLongCastle,
+              isWhiteShortCastle,
+              isBlackLongCastle,
+              isBlackShortCastle);
       for (Move move : availableMoves) {
         if (move.getTakeDest() == null) {
           move.setTakeDest(move.getDest());
@@ -118,7 +195,16 @@ public final class BitboardRules {
           bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
         }
         bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
-        boolean isStillCheck = isCheck(color, bitboardRepresentation);
+        boolean isStillCheck =
+            isCheck(
+                color,
+                bitboardRepresentation,
+                enPassantPos,
+                isLastMoveDoublePush,
+                isWhiteLongCastle,
+                isWhiteShortCastle,
+                isBlackLongCastle,
+                isBlackShortCastle);
         bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // Undo move
         if (move.isTake()) {
           bitboardRepresentation.addPieceAt(
@@ -143,8 +229,24 @@ public final class BitboardRules {
    * @return true if color {color} is stalemated. false otherwise.
    */
   public static boolean isStaleMate(
-      Color color, Color colorTurnToPlay, BitboardRepresentation bitboardRepresentation) {
-    if (isCheck(color, bitboardRepresentation)) {
+      Color color,
+      Color colorTurnToPlay,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    if (isCheck(
+        color,
+        bitboardRepresentation,
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle)) {
       return false;
     }
     Bitboard pieces =
@@ -154,7 +256,16 @@ public final class BitboardRules {
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = bitboardRepresentation.squareToPosition(i);
       List<Move> availableMoves =
-          bitboardRepresentation.getAvailableMoves(piecePosition.x(), piecePosition.y(), true);
+          bitboardRepresentation.getAvailableMoves(
+              piecePosition.x(),
+              piecePosition.y(),
+              true,
+              enPassantPos,
+              isLastMoveDoublePush,
+              isWhiteLongCastle,
+              isWhiteShortCastle,
+              isBlackLongCastle,
+              isBlackShortCastle);
       for (Move move : availableMoves) {
         ColoredPiece removedPiece = null;
         if (move.isTake()) {
@@ -162,7 +273,16 @@ public final class BitboardRules {
           bitboardRepresentation.deletePieceAt(move.getDest().x(), move.getDest().y());
         }
         bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
-        boolean isStillCheck = isCheck(color, bitboardRepresentation);
+        boolean isStillCheck =
+            isCheck(
+                color,
+                bitboardRepresentation,
+                enPassantPos,
+                isLastMoveDoublePush,
+                isWhiteLongCastle,
+                isWhiteShortCastle,
+                isBlackLongCastle,
+                isBlackShortCastle);
         bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // Undo move
         if (move.isTake()) {
           bitboardRepresentation.addPieceAt(move.getDest().x(), move.getDest().y(), removedPiece);

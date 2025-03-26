@@ -8,6 +8,7 @@ import pdp.model.GameAi;
 import pdp.model.GameState;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
+import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
 
@@ -91,11 +92,31 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    */
   private int evaluateSimulation(GameState state) {
     if (state.isGameOver()) {
-      if (state.getBoard().getBoardRep().isCheckMate(Color.WHITE)) {
+      if (state
+          .getBoard()
+          .getBoardRep()
+          .isCheckMate(
+              Color.WHITE,
+              state.getBoard().getEnPassantPos(),
+              state.getBoard().isLastMoveDoublePush(),
+              state.getBoard().isWhiteLongCastle(),
+              state.getBoard().isWhiteShortCastle(),
+              state.getBoard().isBlackLongCastle(),
+              state.getBoard().isBlackShortCastle())) {
         // Black wins
         return -1;
       }
-      if (state.getBoard().getBoardRep().isCheckMate(Color.BLACK)) {
+      if (state
+          .getBoard()
+          .getBoardRep()
+          .isCheckMate(
+              Color.BLACK,
+              state.getBoard().getEnPassantPos(),
+              state.getBoard().isLastMoveDoublePush(),
+              state.getBoard().isWhiteLongCastle(),
+              state.getBoard().isWhiteShortCastle(),
+              state.getBoard().isBlackLongCastle(),
+              state.getBoard().isBlackShortCastle())) {
         // White wins
         return 1;
       }
@@ -137,11 +158,19 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
       return node;
     }
 
+    Board board = node.getGameState().getBoard();
     List<Move> possibleMoves =
         node.getGameState()
             .getBoard()
             .getBoardRep()
-            .getAllAvailableMoves(node.getGameState().isWhiteTurn());
+            .getAllAvailableMoves(
+                node.getGameState().isWhiteTurn(),
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isBlackShortCastle());
     for (Move move : possibleMoves) {
       if (solver.isSearchStopped()) {
         return node;
@@ -192,11 +221,20 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
         }
         return parentNode.getGameState().isWhiteTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
       }
+
+      Board board = simulationState.getBoard();
       List<Move> availableMoves =
           simulationState
               .getBoard()
               .getBoardRep()
-              .getAllAvailableMoves(simulationState.isWhiteTurn());
+              .getAllAvailableMoves(
+                  simulationState.isWhiteTurn(),
+                  board.getEnPassantPos(),
+                  board.isLastMoveDoublePush(),
+                  board.isWhiteLongCastle(),
+                  board.isWhiteShortCastle(),
+                  board.isBlackLongCastle(),
+                  board.isBlackShortCastle());
 
       if (availableMoves.isEmpty()) {
         break;

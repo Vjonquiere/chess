@@ -67,7 +67,14 @@ public final class BitboardStatusCheck {
    *
    * @return true if kings are somewhat active. false otherwise
    */
-  public static boolean areKingsActive(BitboardRepresentation bitboardRepresentation) {
+  public static boolean areKingsActive(
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean whiteLongCastle,
+      boolean whiteShortCastle,
+      boolean blackLongCastle,
+      boolean blackShortCastle) {
     int nbMovesConsideringKingActive = 4;
 
     Position blackKingPos = bitboardRepresentation.getKing(false).get(0);
@@ -93,13 +100,25 @@ public final class BitboardStatusCheck {
             blackKingPos,
             unreachableSquaresBlack,
             bitboardRepresentation.getWhiteBoard(),
-            blackKing);
+            blackKing,
+            enPassantPos,
+            isLastMoveDoublePush,
+            whiteLongCastle,
+            whiteShortCastle,
+            blackLongCastle,
+            blackShortCastle);
     List<Move> whiteKingMoves =
         bitboardRepresentation.getKingMoves(
             whiteKingPos,
             unreachableSquaresWhite,
             bitboardRepresentation.getBlackBoard(),
-            whiteKing);
+            whiteKing,
+            enPassantPos,
+            isLastMoveDoublePush,
+            whiteLongCastle,
+            whiteShortCastle,
+            blackLongCastle,
+            blackShortCastle);
 
     return blackKingMoves.size() >= nbMovesConsideringKingActive
         && whiteKingMoves.size() >= nbMovesConsideringKingActive;
@@ -121,7 +140,9 @@ public final class BitboardStatusCheck {
       boolean whiteLongCastle,
       boolean blackShortCastle,
       boolean blackLongCastle,
-      BitboardRepresentation bitboardRepresentation) {
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush) {
     if (color == Color.WHITE) {
       if (shortCastle && !whiteShortCastle) {
         return false;
@@ -145,9 +166,34 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.WHITE)
-            || bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
-            || bitboardRepresentation.isAttacked(6, 0, Color.BLACK)) {
+        if (bitboardRepresentation.isCheck(
+                Color.WHITE,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                5,
+                0,
+                Color.BLACK,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                6,
+                0,
+                Color.BLACK,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)) {
           return false;
         }
       } else {
@@ -160,9 +206,34 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.WHITE)
-            || bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
-            || bitboardRepresentation.isAttacked(2, 0, Color.BLACK)) {
+        if (bitboardRepresentation.isCheck(
+                Color.WHITE,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                3,
+                0,
+                Color.BLACK,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                2,
+                0,
+                Color.BLACK,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)) {
           return false;
         }
       }
@@ -190,9 +261,34 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.BLACK)
-            || bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
-            || bitboardRepresentation.isAttacked(6, 7, Color.WHITE)) {
+        if (bitboardRepresentation.isCheck(
+                Color.BLACK,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                5,
+                7,
+                Color.WHITE,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                6,
+                7,
+                Color.WHITE,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)) {
           return false;
         }
       } else {
@@ -205,9 +301,34 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.BLACK)
-            || bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
-            || bitboardRepresentation.isAttacked(2, 7, Color.WHITE)) {
+        if (bitboardRepresentation.isCheck(
+                Color.BLACK,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                3,
+                7,
+                Color.WHITE,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)
+            || bitboardRepresentation.isAttacked(
+                2,
+                7,
+                Color.WHITE,
+                enPassantPos,
+                isLastMoveDoublePush,
+                whiteLongCastle,
+                whiteShortCastle,
+                blackLongCastle,
+                blackShortCastle)) {
           return false;
         }
       }
@@ -221,7 +342,15 @@ public final class BitboardStatusCheck {
    * @return true if we're in an endgame (according to the chosen criteria)
    */
   public static boolean isEndGamePhase(
-      int fullTurn, boolean white, BitboardRepresentation bitboardRepresentation) {
+      int fullTurn,
+      boolean white,
+      BitboardRepresentation bitboardRepresentation,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
     final int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 
@@ -238,7 +367,13 @@ public final class BitboardStatusCheck {
       nbFilledConditions++;
     }
     // King activity
-    if (bitboardRepresentation.areKingsActive()) {
+    if (bitboardRepresentation.areKingsActive(
+        enPassantPos,
+        isLastMoveDoublePush,
+        isWhiteLongCastle,
+        isWhiteShortCastle,
+        isBlackLongCastle,
+        isBlackShortCastle)) {
       nbFilledConditions++;
     }
     // Number of played moves
@@ -250,8 +385,28 @@ public final class BitboardStatusCheck {
     int nbMovesWhite;
     int nbMovesBlack;
 
-    nbMovesWhite = bitboardRepresentation.getColorMoveBitboard(true).bitCount();
-    nbMovesBlack = bitboardRepresentation.getColorMoveBitboard(false).bitCount();
+    nbMovesWhite =
+        bitboardRepresentation
+            .getColorMoveBitboard(
+                true,
+                enPassantPos,
+                isLastMoveDoublePush,
+                isWhiteLongCastle,
+                isWhiteShortCastle,
+                isBlackLongCastle,
+                isBlackShortCastle)
+            .bitCount();
+    nbMovesBlack =
+        bitboardRepresentation
+            .getColorMoveBitboard(
+                false,
+                enPassantPos,
+                isLastMoveDoublePush,
+                isWhiteLongCastle,
+                isWhiteShortCastle,
+                isBlackLongCastle,
+                isBlackShortCastle)
+            .bitCount();
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
     }

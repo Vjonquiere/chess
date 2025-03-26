@@ -78,7 +78,15 @@ public class KingActivityHeuristic implements Heuristic {
     int score = 0;
     BoardRepresentation bitboard = board.getBoardRep();
     // Check the activity of the King
-    List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);
+    List<Move> kingMoves =
+        bitboard.retrieveKingMoves(
+            isWhite,
+            board.getEnPassantPos(),
+            board.isLastMoveDoublePush(),
+            board.isWhiteLongCastle(),
+            board.isWhiteShortCastle(),
+            board.isBlackLongCastle(),
+            board.isBlackShortCastle());
     if (kingMoves.size() >= 5) {
       score += 10;
     }

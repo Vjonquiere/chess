@@ -72,8 +72,25 @@ public class Board {
     }
   }
 
-  public List<Move> getAvailableMoves(Position pos) {
-    return getBoardRep().getAvailableMoves(pos.x(), pos.y(), false);
+  public List<Move> getAvailableMoves(
+      Position pos,
+      Position enPassantPos,
+      boolean isLastMoveDoublePush,
+      boolean isWhiteLongCastle,
+      boolean isWhiteShortCastle,
+      boolean isBlackLongCastle,
+      boolean isBlackShortCastle) {
+    return getBoardRep()
+        .getAvailableMoves(
+            pos.x(),
+            pos.y(),
+            false,
+            enPassantPos,
+            isLastMoveDoublePush,
+            isWhiteLongCastle,
+            isWhiteShortCastle,
+            isBlackLongCastle,
+            isBlackShortCastle);
   }
 
   public boolean getPlayer() {
@@ -260,7 +277,9 @@ public class Board {
             this.isWhiteShortCastle(),
             this.isWhiteLongCastle(),
             this.isBlackShortCastle(),
-            this.isBlackLongCastle());
+            this.isBlackLongCastle(),
+            this.getEnPassantPos(),
+            this.isLastMoveDoublePush());
   }
 
   /**

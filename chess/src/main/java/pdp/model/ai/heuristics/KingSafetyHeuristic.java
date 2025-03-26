@@ -127,7 +127,16 @@ public class KingSafetyHeuristic implements Heuristic {
           // Must not be king
           if (bitboard.getPieceAt(posBlackPiece.x(), posBlackPiece.y()).getPiece() != Piece.KING) {
             List<Move> movesForPiece =
-                bitboard.getAvailableMoves(posBlackPiece.x(), posBlackPiece.y(), true);
+                bitboard.getAvailableMoves(
+                    posBlackPiece.x(),
+                    posBlackPiece.y(),
+                    true,
+                    board.getEnPassantPos(),
+                    board.isLastMoveDoublePush(),
+                    board.isWhiteLongCastle(),
+                    board.isWhiteShortCastle(),
+                    board.isBlackLongCastle(),
+                    board.isBlackShortCastle());
             for (Move move : movesForPiece) {
               if (move.getDest().x() == whiteKingPosition.x()
                   && move.getDest().y() == whiteKingPosition.y()) {
@@ -148,7 +157,16 @@ public class KingSafetyHeuristic implements Heuristic {
           // Must not be king
           if (bitboard.getPieceAt(posWhitePiece.x(), posWhitePiece.y()).getPiece() != Piece.KING) {
             List<Move> movesForPiece =
-                bitboard.getAvailableMoves(posWhitePiece.x(), posWhitePiece.y(), true);
+                bitboard.getAvailableMoves(
+                    posWhitePiece.x(),
+                    posWhitePiece.y(),
+                    true,
+                    board.getEnPassantPos(),
+                    board.isLastMoveDoublePush(),
+                    board.isWhiteLongCastle(),
+                    board.isWhiteShortCastle(),
+                    board.isBlackLongCastle(),
+                    board.isBlackShortCastle());
             for (Move move : movesForPiece) {
               if (move.getDest().x() == blackKingPosition.x()
                   && move.getDest().y() == blackKingPosition.y()) {
