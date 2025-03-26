@@ -43,7 +43,7 @@ public class DummyBoardRepresentation implements BoardRepresentation {
 
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
-    return null;
+    return new ColoredPiece(Piece.EMPTY, Color.EMPTY);
   }
 
   @Override

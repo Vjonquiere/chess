@@ -15,12 +15,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.events.EventType;
 import pdp.model.*;
+import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
 import pdp.utils.Timer;
-import tests.helpers.DummyBoardRepresentation;
 
 public class GameStateTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -64,7 +64,7 @@ public class GameStateTest {
 
   @Test
   public void testInitialisationWithBoard() {
-    FileBoard board = new FileBoard(new DummyBoardRepresentation(), true, null);
+    FileBoard board = new FileBoard(new BitboardRepresentation(), true, null);
 
     GameState gameBlitzOffWithBoard = new GameState(board);
     assertNotNull(gameBlitzOffWithBoard.getBoard(), "The board should be initialized !");
@@ -109,9 +109,7 @@ public class GameStateTest {
 
     board =
         new FileBoard(
-            new DummyBoardRepresentation(),
-            false,
-            new FenHeader(true, true, true, true, null, 0, 5));
+            new BitboardRepresentation(), false, new FenHeader(true, true, true, true, null, 0, 5));
     GameState gameBlitzOffWithHeader = new GameState(board);
     assertNotNull(gameBlitzOffWithHeader.getBoard(), "The board should be initialized !");
     assertFalse(gameBlitzOffWithHeader.isWhiteTurn(), "The current player should be black !");
