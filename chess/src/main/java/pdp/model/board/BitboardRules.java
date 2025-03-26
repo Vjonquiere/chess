@@ -242,8 +242,9 @@ public final class BitboardRules {
       for (Move move : availableMoves) {
         ColoredPiece removedPiece = null;
         if (move.isTake()) {
-          removedPiece = bitboardRepresentation.getPieceAt(move.getDest().x(), move.getDest().y());
-          bitboardRepresentation.deletePieceAt(move.getDest().x(), move.getDest().y());
+          removedPiece =
+              bitboardRepresentation.getPieceAt(move.getTakeDest().x(), move.getTakeDest().y());
+          bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
         }
         bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
         boolean isStillCheck =
@@ -258,7 +259,8 @@ public final class BitboardRules {
                 isBlackShortCastle);
         bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // Undo move
         if (move.isTake()) {
-          bitboardRepresentation.addPieceAt(move.getDest().x(), move.getDest().y(), removedPiece);
+          bitboardRepresentation.addPieceAt(
+              move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
         }
         if (!isStillCheck) {
           debug(LOGGER, color.toString() + " is not stalemate");

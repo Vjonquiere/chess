@@ -467,11 +467,10 @@ public final class Game extends GameAbstract {
 
     if (classicalMove.isPresent()) {
       move = classicalMove.get();
-      super.processClassicalMove(super.getGameState(), move);
+      super.processMove(super.getGameState(), move);
     } else {
-      processSpecialMove(super.getGameState(), move);
+      throw new IllegalMoveException(move.toString());
     }
-
     this.updateGameStateAfterMove(move, classicalMove.isPresent());
   }
 

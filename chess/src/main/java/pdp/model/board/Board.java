@@ -87,10 +87,12 @@ public class Board {
       // Reset the number of moves with no pawn move
       this.board.setNbMovesWithNoCaptureOrPawn(0);
     }
+
+    // TODO REFACTOR EN PASSANT DELETE
     if (move.isTake()) {
       // SAVE DELETED PIECE FOR HASHING
       if (!this.isEnPassantTake()) {
-        getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y());
+        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
       }
       // Reset the number of moves with no capture
       this.board.setNbMovesWithNoCaptureOrPawn(0);
@@ -100,9 +102,9 @@ public class Board {
       this.setLastMoveDoublePush(false);
       this.setEnPassantTake(false);
       if (this.getPlayer()) {
-        getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y() - 1);
+        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
       } else {
-        getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y() + 1);
+        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
       }
     }
 

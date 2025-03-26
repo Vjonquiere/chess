@@ -239,6 +239,7 @@
                 <configuration>
                     <forkCount>1.0C</forkCount>
                     <reuseForks>false</reuseForks>
+                    <argLine>-Xmx4G</argLine>
                     <systemPropertyVariables>
                         <testfx.headless>true</testfx.headless>
                         <prism.order>sw</prism.order>

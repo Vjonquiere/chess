@@ -533,7 +533,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   protected Bitboard getPawnMoveBitboard(
       Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
     return BitboardMovesGen.getPawnMoveBitboard(
-        square, unreachableSquares, enemies, white, enPassantPos, isLastMoveDoublePush);
+        square, unreachableSquares, enemies, white, this, enPassantPos, isLastMoveDoublePush);
   }
 
   /**
@@ -890,26 +890,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isStaleMate(Color color, Color colorTurnToPlay) {
-    CachedResult cached = cache.getOrCreate(simpleHash);
-    Boolean isStaleMate = cached.isStaleMate(color);
-    if (isStaleMate != null) {
-      return isStaleMate;
-    }
-
-    isStaleMate =
-        BitboardRules.isStaleMate(
-            color,
-            colorTurnToPlay,
-            this,
-            enPassantPos,
-            isLastMoveDoublePush,
-            whiteLongCastle,
-            whiteShortCastle,
-            blackLongCastle,
-            blackShortCastle);
-
-    cached.setStaleMate(isStaleMate, color);
-    return isStaleMate;
+    return BitboardRules.isStaleMate(
+        color,
+        colorTurnToPlay,
+        this,
+        enPassantPos,
+        isLastMoveDoublePush,
+        whiteLongCastle,
+        whiteShortCastle,
+        blackLongCastle,
+        blackShortCastle);
   }
 
   /**

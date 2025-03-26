@@ -120,96 +120,42 @@ public abstract class GameAbstract extends Subject {
    * @param move The move to be executed.
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
-  protected void processClassicalMove(GameState gameState, Move move) throws IllegalMoveException {
+  protected void processMove(GameState gameState, Move move) throws IllegalMoveException {
     Color currentColor = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
+
+    Position sourcePosition = move.getSource();
+    Position destPosition = move.getDest();
+    ColoredPiece coloredPiece =
+        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
+
     if (gameState.getBoard().getBoardRep().isCheckAfterMove(currentColor, move)) {
       debug(LOGGER, "Move puts the king in check: " + move);
       throw new IllegalMoveException(move.toString());
     }
 
-    gameState.getBoard().makeMove(move);
-    debug(LOGGER, "Move played!");
-  }
-
-  /**
-   * Handles special moves: castling, en passant, double pawn push.
-   *
-   * @param gameState the game state for which we want the move to occur
-   * @param move The move to be executed.
-   * @throws IllegalMoveException If the move is illegal in the current configuration.
-   */
-  protected void processSpecialMove(GameState gameState, Move move) throws IllegalMoveException {
-    Position sourcePosition = move.getSource();
-    Position destPosition = move.getDest();
-    boolean isSpecialMove = false;
-    ColoredPiece coloredPiece =
-        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
-
-    // Check Castle
     if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
       boolean shortCastle = destPosition.x() > sourcePosition.x();
       Color color = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
       if (gameState.getBoard().canCastle(color, shortCastle)) {
         gameState.getBoard().applyCastle(color, shortCastle);
-        isSpecialMove = true;
-      }
-    }
-
-    // Check en passant
-    if (!isSpecialMove
-        && gameState.getBoard().isLastMoveDoublePush()
-        && gameState
-            .getBoard()
-            .getBoardRep()
-            .isEnPassant(
-                gameState.getBoard().getEnPassantPos().x(),
-                gameState.getBoard().getEnPassantPos().y(),
-                move,
-                gameState.isWhiteTurn())) {
-      if (gameState
-          .getBoard()
-          .getBoardRep()
-          .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
-        debug(LOGGER, "En passant puts the king in check!");
+      } else {
+        debug(LOGGER, "Castle is not possible: " + move);
         throw new IllegalMoveException(move.toString());
       }
-      isSpecialMove = true;
-      gameState.getBoard().setEnPassantPos(null);
-      gameState.getBoard().setEnPassantTake(true);
-      move.setPiece(coloredPiece);
-      move.setTake(true);
-      move.setPieceTaken(
-          new ColoredPiece(Piece.PAWN, !gameState.isWhiteTurn() ? Color.BLACK : Color.WHITE));
+    } else {
       gameState.getBoard().makeMove(move);
+      debug(LOGGER, "Move played!");
     }
 
-    gameState.getBoard().setLastMoveDoublePush(false);
-    gameState.getBoard().setEnPassantPos(null);
-    // Check double pawn push
-    if (!isSpecialMove
-        && gameState.getBoard().getBoardRep().isDoublePushPossible(move, gameState.isWhiteTurn())) {
-      if (gameState
-          .getBoard()
-          .getBoardRep()
-          .isCheckAfterMove(gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK, move)) {
-        debug(LOGGER, "Double push puts the king in check!");
-        throw new IllegalMoveException(move.toString());
-      }
-      isSpecialMove = true;
-      gameState
-          .getBoard()
-          .setEnPassantPos(
-              gameState.isWhiteTurn()
-                  ? new Position(move.getDest().x(), move.getDest().y() - 1)
-                  : new Position(move.getDest().x(), move.getDest().y() + 1));
-      move.setPiece(coloredPiece);
-      gameState.getBoard().makeMove(move);
+    if (coloredPiece.getPiece() == Piece.PAWN
+        && Math.abs(destPosition.y() - sourcePosition.y()) == 2) {
+      Position enPassantPos =
+          new Position(destPosition.x(), (sourcePosition.y() + destPosition.y()) / 2);
+      gameState.getBoard().setEnPassantPos(enPassantPos);
       gameState.getBoard().setLastMoveDoublePush(true);
-    }
-
-    if (!isSpecialMove) {
-      debug(LOGGER, "Move was not a special move!");
-      throw new IllegalMoveException(move.toString());
+    } else {
+      gameState.getBoard().setLastMoveDoublePush(false);
+      gameState.getBoard().setEnPassantPos(null);
     }
   }
 

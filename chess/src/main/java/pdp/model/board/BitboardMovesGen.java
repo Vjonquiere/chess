@@ -149,50 +149,73 @@ public final class BitboardMovesGen {
             break;
           }
         }
+      }
 
-        if (piece.getPiece() == Piece.PAWN) {
-          if (piece.getColor() == Color.WHITE && i >= 7 * 8) {
-            isPromotion = true;
-          }
-          if (piece.getColor() == Color.BLACK && i <= 7) {
-            isPromotion = true;
-          }
-        }
+      if (piece.getPiece() == Piece.PAWN
+          && bitboardRepresentation.getEnPassantPos() != null
+          && i
+              == bitboardRepresentation.getEnPassantPos().x()
+                  + bitboardRepresentation.getEnPassantPos().y() * 8) {
 
-        if (isPromotion) {
-          moves.add(
-              new PromoteMove(
-                  source,
-                  bitboardRepresentation.squareToPosition(i),
-                  Piece.QUEEN,
-                  piece,
-                  isTake,
-                  capturedPiece));
-          moves.add(
-              new PromoteMove(
-                  source,
-                  bitboardRepresentation.squareToPosition(i),
-                  Piece.KNIGHT,
-                  piece,
-                  isTake,
-                  capturedPiece));
-          moves.add(
-              new PromoteMove(
-                  source,
-                  bitboardRepresentation.squareToPosition(i),
-                  Piece.ROOK,
-                  piece,
-                  isTake,
-                  capturedPiece));
-          moves.add(
-              new PromoteMove(
-                  source,
-                  bitboardRepresentation.squareToPosition(i),
-                  Piece.BISHOP,
-                  piece,
-                  isTake,
-                  capturedPiece));
+        Position capturedPawnPos =
+            new Position(bitboardRepresentation.getEnPassantPos().x(), source.y());
+
+        capturedPiece =
+            new ColoredPiece(
+                Piece.PAWN, piece.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
+
+        moves.add(
+            new Move(
+                source,
+                bitboardRepresentation.squareToPosition(i),
+                piece,
+                true,
+                capturedPiece,
+                capturedPawnPos));
+      }
+
+      if (piece.getPiece() == Piece.PAWN) {
+        if (piece.getColor() == Color.WHITE && i >= 7 * 8) {
+          isPromotion = true;
         }
+        if (piece.getColor() == Color.BLACK && i <= 7) {
+          isPromotion = true;
+        }
+      }
+
+      if (isPromotion) {
+        moves.add(
+            new PromoteMove(
+                source,
+                bitboardRepresentation.squareToPosition(i),
+                Piece.QUEEN,
+                piece,
+                isTake,
+                capturedPiece));
+        moves.add(
+            new PromoteMove(
+                source,
+                bitboardRepresentation.squareToPosition(i),
+                Piece.KNIGHT,
+                piece,
+                isTake,
+                capturedPiece));
+        moves.add(
+            new PromoteMove(
+                source,
+                bitboardRepresentation.squareToPosition(i),
+                Piece.ROOK,
+                piece,
+                isTake,
+                capturedPiece));
+        moves.add(
+            new PromoteMove(
+                source,
+                bitboardRepresentation.squareToPosition(i),
+                Piece.BISHOP,
+                piece,
+                isTake,
+                capturedPiece));
       } else {
         moves.add(
             new Move(
@@ -202,6 +225,7 @@ public final class BitboardMovesGen {
       // TODO: save the captured piece
       // enemies.getBit(i) ? true : false -> capture ?
     }
+
     return moves;
   }
 
@@ -435,7 +459,13 @@ public final class BitboardMovesGen {
       boolean isLastMoveDoublePush) {
     return bitboardToMoves(
         getPawnMoveBitboard(
-            square, unreachableSquares, enemies, white, enPassantPos, isLastMoveDoublePush),
+            square,
+            unreachableSquares,
+            enemies,
+            white,
+            bitboardRepresentation,
+            enPassantPos,
+            isLastMoveDoublePush),
         enemies,
         square,
         new ColoredPiece(Piece.PAWN, white ? Color.WHITE : Color.BLACK),
@@ -455,6 +485,7 @@ public final class BitboardMovesGen {
       Bitboard unreachableSquares,
       Bitboard enemies,
       boolean white,
+      BitboardRepresentation bitboardRepresentation,
       Position enPassantPos,
       boolean isLastMoveDoublePush) {
 
@@ -462,6 +493,7 @@ public final class BitboardMovesGen {
     Bitboard attackRight;
     Bitboard attackLeft;
     Bitboard enPassantCapture = new Bitboard();
+    Bitboard doublePush = new Bitboard();
     int squareIndex = square.x() % 8 + square.y() * 8;
     position.setBit(squareIndex);
 
@@ -469,6 +501,17 @@ public final class BitboardMovesGen {
       attackRight = position.moveUpRight().and(enemies);
       attackLeft = position.moveUpLeft().and(enemies);
       position = position.moveUp().and(enemies.not());
+
+      if (square.y() == 1
+          && bitboardRepresentation
+              .getPieceAt(square.x(), square.y() + 2)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(square.x(), square.y() + 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+
+        doublePush.setBit(square.x() + (square.y() + 2) * 8);
+      }
 
       if (isLastMoveDoublePush && enPassantPos != null && square.y() == 4) {
         if (square.x() == enPassantPos.x() - 1 || square.x() == enPassantPos.x() + 1) {
@@ -480,6 +523,17 @@ public final class BitboardMovesGen {
       attackLeft = position.moveDownLeft().and(enemies);
       position = position.moveDown().and(enemies.not());
 
+      if (square.y() == 6
+          && bitboardRepresentation
+              .getPieceAt(square.x(), square.y() - 2)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+          && bitboardRepresentation
+              .getPieceAt(square.x(), square.y() - 1)
+              .equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+
+        doublePush.setBit(square.x() + (square.y() - 2) * 8);
+      }
+
       if (isLastMoveDoublePush && enPassantPos != null && square.y() == 3) {
         if (square.x() == enPassantPos.x() - 1 || square.x() == enPassantPos.x() + 1) {
           enPassantCapture.setBit(enPassantPos.x() % 8 + (square.y() - 1) * 8);
@@ -488,7 +542,7 @@ public final class BitboardMovesGen {
     }
 
     position = position.xor(position.and(unreachableSquares));
-    return position.or(attackRight).or(attackLeft).or(enPassantCapture);
+    return position.or(attackRight).or(attackLeft).or(enPassantCapture).or(doublePush);
   }
 
   /**
@@ -715,6 +769,7 @@ public final class BitboardMovesGen {
                   unreachableSquares,
                   enemies,
                   true,
+                  bitboardRepresentation,
                   enPassantPos,
                   isLastMoveDoublePush)
               : getPawnMoveBitboard(
@@ -722,6 +777,7 @@ public final class BitboardMovesGen {
                   unreachableSquares,
                   enemies,
                   false,
+                  bitboardRepresentation,
                   enPassantPos,
                   isLastMoveDoublePush);
       default -> new Bitboard();
@@ -803,6 +859,7 @@ public final class BitboardMovesGen {
                   unreachableSquares,
                   enemies,
                   true,
+                  bitboardRepresentation,
                   enPassantPos,
                   isLastMoveDoublePush)
               : getPawnMoveBitboard(
@@ -810,6 +867,7 @@ public final class BitboardMovesGen {
                   unreachableSquares,
                   enemies,
                   false,
+                  bitboardRepresentation,
                   enPassantPos,
                   isLastMoveDoublePush);
       default -> new Bitboard();
