@@ -27,6 +27,7 @@ import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 import pdp.view.gui.menu.HelpPopup;
 import pdp.view.gui.menu.SettingsEditorPopup;
+import pdp.view.gui.popups.InfoPopUp;
 import pdp.view.gui.popups.NewGamePopup;
 import pdp.view.gui.popups.ThemePopUp;
 import pdp.view.gui.popups.YesNoPopUp;
@@ -133,7 +134,7 @@ public class ChessMenu extends VBox {
   }
 
   /**
-   * Creates the Game menu. Composed of the following items : Start, Undo, Redo, Restart.
+   * Creates the Game menu. Composed of the following items : Start, Undo, Redo, Restart, Hint.
    *
    * @return Menu Game
    */
@@ -152,6 +153,9 @@ public class ChessMenu extends VBox {
                 "undoInstructionsGui",
                 new CancelMoveCommand(),
                 () -> Game.getInstance().getGameState().undoRequestReset());
+          } else {
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+              InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
     MenuItem redo = new MenuItem(TextGetter.getText("redo"));
@@ -163,6 +167,9 @@ public class ChessMenu extends VBox {
                 "redoInstructionsGui",
                 new RestoreMoveCommand(),
                 () -> Game.getInstance().getGameState().redoRequestReset());
+          } else {
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+              InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
     MenuItem restart = new MenuItem(TextGetter.getText("restart"));
