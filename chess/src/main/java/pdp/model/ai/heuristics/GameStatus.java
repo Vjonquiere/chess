@@ -16,28 +16,10 @@ public class GameStatus implements Heuristic {
   @Override
   public float evaluate(Board board, boolean isWhite) {
     int score = 0;
-    if (board
-        .getBoardRep()
-        .isCheckMate(
-            Color.WHITE,
-            board.getEnPassantPos(),
-            board.isLastMoveDoublePush(),
-            board.isWhiteLongCastle(),
-            board.isWhiteShortCastle(),
-            board.isBlackLongCastle(),
-            board.isBlackShortCastle())) {
+    if (board.getBoardRep().isCheckMate(Color.WHITE)) {
       score -= 10000;
     }
-    if (board
-        .getBoardRep()
-        .isCheckMate(
-            Color.BLACK,
-            board.getEnPassantPos(),
-            board.isLastMoveDoublePush(),
-            board.isWhiteLongCastle(),
-            board.isWhiteShortCastle(),
-            board.isBlackLongCastle(),
-            board.isBlackShortCastle())) {
+    if (board.getBoardRep().isCheckMate(Color.BLACK)) {
       score += 10000;
     }
     return isWhite ? score : -score;

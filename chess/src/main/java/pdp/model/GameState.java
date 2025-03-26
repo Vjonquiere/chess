@@ -449,16 +449,7 @@ public class GameState extends Subject {
       return;
     }
     // Checkmate
-    if (board
-        .getBoardRep()
-        .isCheckMate(
-            currColor,
-            board.getEnPassantPos(),
-            board.isLastMoveDoublePush(),
-            board.isWhiteLongCastle(),
-            board.isWhiteShortCastle(),
-            board.isBlackLongCastle(),
-            board.isBlackShortCastle())) {
+    if (board.getBoardRep().isCheckMate(currColor)) {
       this.isGameOver = true;
       if (currColor == Color.WHITE) {
         debug(LOGGER, "End of game : Checkmate, Black won");
@@ -472,17 +463,7 @@ public class GameState extends Subject {
       return;
     }
     // Stalemate
-    if (board
-        .getBoardRep()
-        .isStaleMate(
-            currColor,
-            currColor,
-            board.getEnPassantPos(),
-            board.isLastMoveDoublePush(),
-            board.isWhiteLongCastle(),
-            board.isWhiteShortCastle(),
-            board.isBlackLongCastle(),
-            board.isBlackShortCastle())) {
+    if (board.getBoardRep().isStaleMate(currColor, currColor)) {
       this.isGameOver = true;
       debug(LOGGER, "End of game : Stale mate, Draw");
       notifyObservers(EventType.STALEMATE);

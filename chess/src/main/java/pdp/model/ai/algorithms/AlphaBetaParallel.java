@@ -44,19 +44,20 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
     List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
+    List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
     Board board = aiGame.getBoard();
-    List<Move> moves =
+    moves.addAll(
         aiGame
             .getBoard()
             .getBoardRep()
-            .getAllAvailableMoves(
+            .getSpecialMoves(
                 player,
                 board.getEnPassantPos(),
                 board.isLastMoveDoublePush(),
                 board.isWhiteLongCastle(),
                 board.isWhiteShortCastle(),
                 board.isBlackLongCastle(),
-                board.isBlackShortCastle());
+                board.isBlackShortCastle()));
 
     for (Move move : moves) {
       futures.add(
@@ -127,18 +128,19 @@ public class AlphaBetaParallel implements SearchAlgorithm {
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
+    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     Board board = game.getBoard();
-    List<Move> moves =
-        game.getBoard()
+    moves.addAll(
+        board
             .getBoardRep()
-            .getAllAvailableMoves(
+            .getSpecialMoves(
                 currentPlayer,
                 board.getEnPassantPos(),
                 board.isLastMoveDoublePush(),
                 board.isWhiteLongCastle(),
                 board.isWhiteShortCastle(),
                 board.isBlackLongCastle(),
-                board.isBlackShortCastle());
+                board.isBlackShortCastle()));
 
     for (Move move : moves) {
       if (solver.isSearchStopped()) {

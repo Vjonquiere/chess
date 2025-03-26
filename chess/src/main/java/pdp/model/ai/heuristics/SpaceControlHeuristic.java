@@ -38,17 +38,7 @@ public class SpaceControlHeuristic implements Heuristic {
     int score = 0;
     int bonusForEachMoveInCenter = 3;
 
-    List<Move> allPossibleMoves =
-        board
-            .getBoardRep()
-            .getAllAvailableMoves(
-                isWhite,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle());
+    List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
 
     // Delineate center box
     Position posTopLeftCenter = new Position(2, 5);
@@ -83,17 +73,7 @@ public class SpaceControlHeuristic implements Heuristic {
     int score = 0;
     int bonusForEachMoveOnFlanks = 1;
 
-    List<Move> allPossibleMoves =
-        board
-            .getBoardRep()
-            .getAllAvailableMoves(
-                isWhite,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle());
+    List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
 
     // Left flank
     Position posTopLeftCenterLeftFlank = new Position(0, 5);

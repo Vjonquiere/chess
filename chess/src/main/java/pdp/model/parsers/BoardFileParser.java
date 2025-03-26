@@ -84,8 +84,8 @@ public class BoardFileParser {
       FileBoard result = listener.getResult();
       if (result.board().getKing(true).size() != 1
           || result.board().getKing(false).size() != 1
-          || result.board().isCheckMate(Color.WHITE, null, false, false, false, false, false)
-          || result.board().isCheckMate(Color.BLACK, null, false, false, false, false, false)) {
+          || result.board().isCheckMate(Color.WHITE)
+          || result.board().isCheckMate(Color.BLACK)) {
         throw new RuntimeException(
             "Board do not satisfy load requirements (no check mate and one king by player)");
       }

@@ -19,52 +19,14 @@ public class MobilityHeuristic implements Heuristic {
     int score = 0;
     if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
       score +=
-          bitBoard
-                  .getColorMoveBitboard(
-                      true,
-                      board.getEnPassantPos(),
-                      board.isLastMoveDoublePush(),
-                      board.isWhiteLongCastle(),
-                      board.isWhiteShortCastle(),
-                      board.isBlackLongCastle(),
-                      board.isBlackShortCastle())
-                  .bitCount()
-              - bitBoard
-                  .getColorMoveBitboard(
-                      false,
-                      board.getEnPassantPos(),
-                      board.isLastMoveDoublePush(),
-                      board.isWhiteLongCastle(),
-                      board.isWhiteShortCastle(),
-                      board.isBlackLongCastle(),
-                      board.isBlackShortCastle())
-                  .bitCount();
+          bitBoard.getColorMoveBitboard(true).bitCount()
+              - bitBoard.getColorMoveBitboard(false).bitCount();
       return isWhite ? (int) (score * 0.1) : (int) (-score * 0.1);
     }
 
     return (int)
-        ((board
-                    .getBoardRep()
-                    .getAllAvailableMoves(
-                        isWhite,
-                        board.getEnPassantPos(),
-                        board.isLastMoveDoublePush(),
-                        board.isWhiteLongCastle(),
-                        board.isWhiteShortCastle(),
-                        board.isBlackLongCastle(),
-                        board.isBlackShortCastle())
-                    .size()
-                - board
-                    .getBoardRep()
-                    .getAllAvailableMoves(
-                        !isWhite,
-                        board.getEnPassantPos(),
-                        board.isLastMoveDoublePush(),
-                        board.isWhiteLongCastle(),
-                        board.isWhiteShortCastle(),
-                        board.isBlackLongCastle(),
-                        board.isBlackShortCastle())
-                    .size())
+        ((board.getBoardRep().getAllAvailableMoves(isWhite).size()
+                - board.getBoardRep().getAllAvailableMoves(!isWhite).size())
             * 0.1);
   }
 }

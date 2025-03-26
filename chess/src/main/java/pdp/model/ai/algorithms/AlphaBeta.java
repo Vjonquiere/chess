@@ -103,19 +103,19 @@ public class AlphaBeta implements SearchAlgorithm {
     }
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
+    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
     final Board board = game.getBoard();
-    final List<Move> moves =
+    moves.addAll(
         game.getBoard()
             .getBoardRep()
-            .getAllAvailableMoves(
+            .getSpecialMoves(
                 currentPlayer,
                 board.getEnPassantPos(),
                 board.isLastMoveDoublePush(),
                 board.isWhiteLongCastle(),
                 board.isWhiteShortCastle(),
                 board.isBlackLongCastle(),
-                board.isBlackShortCastle());
-
+                board.isBlackShortCastle()));
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;

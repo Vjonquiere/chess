@@ -42,20 +42,22 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
 
     this.stoppedEarly = false;
 
-    Board board = game.getBoard();
     AiMove bestMove = null;
     List<Move> rootMoves =
-        new ArrayList<>(
-            game.getBoard()
-                .getBoardRep()
-                .getAllAvailableMoves(
-                    player,
-                    board.getEnPassantPos(),
-                    board.isLastMoveDoublePush(),
-                    board.isWhiteLongCastle(),
-                    board.isWhiteShortCastle(),
-                    board.isBlackLongCastle(),
-                    board.isBlackShortCastle()));
+        new ArrayList<>(game.getBoard().getBoardRep().getAllAvailableMoves(player));
+
+    Board board = game.getBoard();
+    rootMoves.addAll(
+        game.getBoard()
+            .getBoardRep()
+            .getSpecialMoves(
+                player,
+                board.getEnPassantPos(),
+                board.isLastMoveDoublePush(),
+                board.isWhiteLongCastle(),
+                board.isWhiteShortCastle(),
+                board.isBlackLongCastle(),
+                board.isBlackShortCastle()));
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -116,18 +118,19 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
 
     List<Move> moves = orderedMoves;
     if (moves == null) {
+      moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
       Board board = game.getBoard();
-      moves =
+      moves.addAll(
           game.getBoard()
               .getBoardRep()
-              .getAllAvailableMoves(
+              .getSpecialMoves(
                   currentPlayer,
                   board.getEnPassantPos(),
                   board.isLastMoveDoublePush(),
                   board.isWhiteLongCastle(),
                   board.isWhiteShortCastle(),
                   board.isBlackLongCastle(),
-                  board.isBlackShortCastle());
+                  board.isBlackShortCastle()));
     }
 
     if (orderedMoves == null) {

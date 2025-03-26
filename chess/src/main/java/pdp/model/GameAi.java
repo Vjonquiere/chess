@@ -48,17 +48,7 @@ public final class GameAi extends GameAbstract {
     }
     super.validatePromotionMove(move);
 
-    List<Move> availableMoves =
-        super.getGameState()
-            .getBoard()
-            .getAvailableMoves(
-                sourcePosition,
-                this.getBoard().getEnPassantPos(),
-                this.getBoard().isLastMoveDoublePush(),
-                this.getBoard().isWhiteLongCastle(),
-                this.getBoard().isWhiteShortCastle(),
-                this.getBoard().isBlackLongCastle(),
-                this.getBoard().isBlackShortCastle());
+    List<Move> availableMoves = super.getGameState().getBoard().getAvailableMoves(sourcePosition);
     Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
     if (classicalMove.isPresent()) {
@@ -138,17 +128,7 @@ public final class GameAi extends GameAbstract {
     }
     validatePromotionMove(move);
 
-    List<Move> availableMoves =
-        gameState
-            .getBoard()
-            .getAvailableMoves(
-                sourcePosition,
-                this.getBoard().getEnPassantPos(),
-                this.getBoard().isLastMoveDoublePush(),
-                this.getBoard().isWhiteLongCastle(),
-                this.getBoard().isWhiteShortCastle(),
-                this.getBoard().isBlackLongCastle(),
-                this.getBoard().isBlackShortCastle());
+    List<Move> availableMoves = gameState.getBoard().getAvailableMoves(sourcePosition);
     Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
     if (classicalMove.isPresent()) {

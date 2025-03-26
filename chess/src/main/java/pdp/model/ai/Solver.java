@@ -392,18 +392,8 @@ public class Solver {
     final Color player = isWhite ? Color.WHITE : Color.BLACK;
 
     if (Game.getInstance().getGameState().isThreefoldRepetition()
-        || board
-            .getBoardRep()
-            .isStaleMate(
-                player,
-                player,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle())
-        || board.getNbMovesWithNoCaptureOrPawn() >= 3) { // TODO: REPLACE 3 WITH VARIABLE
+        || board.getBoardRep().isStaleMate(player, player)
+        || board.getNbMovesWithNoCaptureOrPawn() >= 50) {
       score = 0;
     }
 
