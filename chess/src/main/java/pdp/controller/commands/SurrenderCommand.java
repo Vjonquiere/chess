@@ -23,7 +23,7 @@ public record SurrenderCommand(boolean isWhite) implements Command {
    *     successful.
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }

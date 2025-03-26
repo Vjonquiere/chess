@@ -12,8 +12,6 @@ import pdp.model.Game;
  */
 public class ChangeLang implements Command {
 
-  public ChangeLang() {}
-
   /**
    * Executes the move on the game model.
    *

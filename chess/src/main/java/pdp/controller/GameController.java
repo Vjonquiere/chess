@@ -7,10 +7,14 @@ import pdp.view.View;
 
 /** Controller of our MVC architecture. */
 public class GameController {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
+
+  /** Model, for MVC architecture. */
   private Game model;
+
+  /** View, for MVC architecture. */
   private View view;
-  private BagOfCommands bagOfCommands;
 
   /**
    * Initializes the private fields corresponding to the model, the view and the bag of commands.
@@ -19,10 +23,9 @@ public class GameController {
    * @param view View, our view for MVC
    * @param bagOfCommands Singleton for Command Design pattern
    */
-  public GameController(Game model, View view, BagOfCommands bagOfCommands) {
+  public GameController(final Game model, final View view, final BagOfCommands bagOfCommands) {
     Logging.configureLogging(LOGGER);
     this.view = view;
-    this.bagOfCommands = bagOfCommands;
     bagOfCommands.setController(this);
     bagOfCommands.setModel(model);
     model.addObserver(view);
@@ -51,10 +54,10 @@ public class GameController {
   /**
    * Handles an exception by passing it to the view for display.
    *
-   * @param e The exception to handle.
+   * @param exception The exception to handle.
    */
-  public void onErrorEvent(Exception e) {
-    this.getView().onErrorEvent(e);
+  public void onErrorEvent(final Exception exception) {
+    this.getView().onErrorEvent(exception);
   }
 
   /**
@@ -62,7 +65,7 @@ public class GameController {
    *
    * @param model Current model
    */
-  public void setModel(Game model) {
+  public void setModel(final Game model) {
     this.model = model;
   }
 
@@ -71,7 +74,7 @@ public class GameController {
    *
    * @param view Current view
    */
-  public void setView(View view) {
+  public void setView(final View view) {
     this.view = view;
   }
 }

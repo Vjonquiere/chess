@@ -11,7 +11,7 @@ import pdp.model.Game;
  */
 public class StartGameCommand implements Command {
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     try {
       model.startAi();
       return Optional.empty();
