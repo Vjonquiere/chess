@@ -14,13 +14,13 @@ public class GameStatus implements Heuristic {
    * @return score of the board
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
     if (board.getBoardRep().isCheckMate(Color.WHITE)) {
-      score -= 10000;
+      score -= 10_000;
     }
     if (board.getBoardRep().isCheckMate(Color.BLACK)) {
-      score += 10000;
+      score += 10_000;
     }
     return isWhite ? score : -score;
   }

@@ -26,17 +26,18 @@ public final class AlgorithmHelpers {
       return move;
     }
 
+    Move newMove = move;
     final ColoredPiece piece = move.getPiece();
     if (piece.getPiece() == Piece.PAWN
         && piece.getColor() == Color.BLACK
         && move.getDest().y() == 0) {
-      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
+      newMove = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
     if (piece.getPiece() == Piece.PAWN
         && piece.getColor() == Color.WHITE
         && move.getDest().y() == 7) {
-      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
+      newMove = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
-    return move;
+    return newMove;
   }
 }

@@ -15,8 +15,9 @@ public class DevelopmentHeuristic implements Heuristic {
    * @return a score based on the development of each player
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
-    int score = evaluatePiecesDevelopment(board, true) - evaluatePiecesDevelopment(board, false);
+  public float evaluate(final Board board, final boolean isWhite) {
+    final int score =
+        evaluatePiecesDevelopment(board, true) - evaluatePiecesDevelopment(board, false);
     return isWhite ? score : -score;
   }
 
@@ -28,13 +29,13 @@ public class DevelopmentHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on the development of each player
    */
-  private int evaluatePiecesDevelopment(Board board, boolean isWhite) {
+  private int evaluatePiecesDevelopment(final Board board, final boolean isWhite) {
     int score = 0;
-    int bonusForEveryDevelopedPiece = 3;
-    int bonusForEveryDevelopedPawn = 1;
+    final int bonusDevPiece = 3;
+    final int bonusDevPawn = 1;
 
-    List<List<Position>> initPlayerPos;
-    List<List<Position>> currentPlayerPos;
+    final List<List<Position>> initPlayerPos;
+    final List<List<Position>> currentPlayerPos;
 
     if (isWhite) {
       initPlayerPos = board.getBoardRep().retrieveInitialWhitePiecesPos();
@@ -46,17 +47,17 @@ public class DevelopmentHeuristic implements Heuristic {
     // Compare each piece's position to home square position
     // If not on home square, then it is a developed piece
     for (int i = 0; i < currentPlayerPos.size(); i++) {
-      List<Position> currentPositions = currentPlayerPos.get(i);
-      List<Position> initialPositions = initPlayerPos.get(i);
-      for (Position pos : currentPositions) {
+      final List<Position> currentPositions = currentPlayerPos.get(i);
+      final List<Position> initialPositions = initPlayerPos.get(i);
+      for (final Position pos : currentPositions) {
         // If the piece is not on one of its initial squares, it is considered developed
         if (!initialPositions.contains(pos)) {
           // Pawns for index 5
           if (i == 5) {
-            score += bonusForEveryDevelopedPawn;
+            score += bonusDevPawn;
           } else if (i != 0) {
             // King for index 0
-            score += bonusForEveryDevelopedPiece;
+            score += bonusDevPiece;
           }
         }
       }

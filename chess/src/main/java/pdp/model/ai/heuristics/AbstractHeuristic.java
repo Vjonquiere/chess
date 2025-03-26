@@ -9,14 +9,15 @@ import pdp.model.board.Board;
  * extend this class.
  */
 public abstract class AbstractHeuristic implements Heuristic {
-  List<WeightedHeuristic> heuristics = new ArrayList<>();
+  /** List of heuristics for composite heuristics. */
+  private final List<WeightedHeuristic> heuristics = new ArrayList<>();
 
   /**
    * Adds a heuristic to the composite heuristic.
    *
    * @param heuristic Heuristic to be added
    */
-  public void addHeuristic(WeightedHeuristic heuristic) {
+  public void addHeuristic(final WeightedHeuristic heuristic) {
     heuristics.add(heuristic);
   }
 
@@ -25,7 +26,7 @@ public abstract class AbstractHeuristic implements Heuristic {
    *
    * @param heuristic Heuristic to be removed
    */
-  public void removeHeuristic(WeightedHeuristic heuristic) {
+  public void removeHeuristic(final WeightedHeuristic heuristic) {
     heuristics.remove(heuristic);
   }
 
@@ -35,11 +36,11 @@ public abstract class AbstractHeuristic implements Heuristic {
    * @return list of heuristics
    */
   public List<Heuristic> getHeuristics() {
-    List<Heuristic> h = new ArrayList<>();
-    for (WeightedHeuristic heuristic : heuristics) {
-      h.add(heuristic.heuristic());
+    final List<Heuristic> heuristicList = new ArrayList<>();
+    for (final WeightedHeuristic heuristic : heuristics) {
+      heuristicList.add(heuristic.heuristic());
     }
-    return h;
+    return heuristicList;
   }
 
   /**
@@ -59,9 +60,9 @@ public abstract class AbstractHeuristic implements Heuristic {
    * @return Total score of all the heuristics evaluation
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
-    for (WeightedHeuristic heuristic : heuristics) {
+    for (final WeightedHeuristic heuristic : heuristics) {
       score += heuristic.heuristic().evaluate(board, isWhite) * heuristic.weight();
     }
     return score;

@@ -18,7 +18,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
     score += evaluateBishopMobility(board, true) - evaluateBishopMobility(board, false);
     score +=
@@ -39,11 +39,11 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return score based on how many moves bishops can make
    */
-  private int evaluateBishopMobility(Board board, boolean isWhite) {
+  private int evaluateBishopMobility(final Board board, final boolean isWhite) {
     int score = 0;
-    BoardRepresentation bitboard = board.getBoardRep();
-    int scoreForEachMove = 2;
-    List<Move> bishopMoves = bitboard.retrieveBishopMoves(isWhite);
+    final BoardRepresentation bitboard = board.getBoardRep();
+    final int scoreForEachMove = 2;
+    final List<Move> bishopMoves = bitboard.retrieveBishopMoves(isWhite);
 
     score += bishopMoves.size() * scoreForEachMove;
     return score;
@@ -56,8 +56,8 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return Negative score if bishops are on the same color
    */
-  private int evaluateSameColorBishopsSamePlayer(Board board, boolean isWhite) {
-    List<Position> bishops = board.getBoardRep().getBishops(isWhite);
+  private int evaluateSameColorBishopsSamePlayer(final Board board, final boolean isWhite) {
+    final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
     if (bishops.size() < 2) {
       return 0;
     }
@@ -83,9 +83,9 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return Positive score if bishops are on the same color, 0 otherwise
    */
-  private int evaluateSameColorBishopsOpponent(Board board, boolean isWhite) {
-    List<Position> bishopsPlayer1 = board.getBoardRep().getBishops(isWhite);
-    List<Position> bishopsPlayer2 = board.getBoardRep().getBishops(!isWhite);
+  private int evaluateSameColorBishopsOpponent(final Board board, final boolean isWhite) {
+    final List<Position> bishopsPlayer1 = board.getBoardRep().getBishops(isWhite);
+    final List<Position> bishopsPlayer2 = board.getBoardRep().getBishops(!isWhite);
     if (bishopsPlayer1.size() > 1 || bishopsPlayer2.size() > 1) {
       return 0;
     }
@@ -111,13 +111,13 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return score for bishops that are close to the center
    */
-  private int evaluateCentralization(Board board, boolean isWhite) {
+  private int evaluateCentralization(final Board board, final boolean isWhite) {
     int score = 0;
-    List<Position> bishops = board.getBoardRep().getBishops(isWhite);
-    int noBonus = 0;
+    final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
+    final int noBonus = 0;
 
-    for (Position bishop : bishops) {
-      int fromCenter = Math.abs(bishop.x() - 3) + Math.abs(bishop.y() - 3);
+    for (final Position bishop : bishops) {
+      final int fromCenter = Math.abs(bishop.x() - 3) + Math.abs(bishop.y() - 3);
       score += Math.max(noBonus, 10 - (fromCenter * 2));
     }
 
@@ -131,13 +131,13 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return Negative score if bishop is blocked by pawns
    */
-  private int evaluateBadBishop(Board board, boolean isWhite) {
+  private int evaluateBadBishop(final Board board, final boolean isWhite) {
     int score = 0;
-    List<Position> bishops = board.getBoardRep().getBishops(isWhite);
-    List<Position> pawns = board.getBoardRep().getPawns(isWhite);
+    final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
+    final List<Position> pawns = board.getBoardRep().getPawns(isWhite);
 
-    for (Position bishop : bishops) {
-      for (Position pawn : pawns) {
+    for (final Position bishop : bishops) {
+      for (final Position pawn : pawns) {
         if ((bishop.x() + bishop.y()) % 2 == (pawn.x() + pawn.y()) % 2) {
           score -= 5;
         }
