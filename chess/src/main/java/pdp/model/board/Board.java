@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
@@ -13,15 +14,6 @@ import pdp.utils.Position;
 public class Board {
   private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
   private BoardRepresentation board;
-  private boolean isWhite;
-  private boolean whiteShortCastle;
-  private boolean blackShortCastle;
-  private boolean whiteLongCastle;
-  private boolean blackLongCastle;
-  private Position enPassantPos;
-  private boolean isLastMoveDoublePush;
-  private boolean isEnPassantTake;
-  private int nbMovesWithNoCaptureOrPawn;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -30,15 +22,6 @@ public class Board {
   /** Creates a default board. */
   public Board() {
     this.setBoard(new BitboardRepresentation());
-    this.isWhite = true;
-    this.enPassantPos = null;
-    this.whiteShortCastle = true;
-    this.blackShortCastle = true;
-    this.whiteLongCastle = true;
-    this.blackLongCastle = true;
-    this.isLastMoveDoublePush = false;
-    this.isEnPassantTake = false;
-    this.nbMovesWithNoCaptureOrPawn = 0;
   }
 
   /**
@@ -48,27 +31,34 @@ public class Board {
    */
   public Board(FileBoard board) {
     this.setBoard(board.board());
-    this.isWhite = board.isWhiteTurn();
+    this.setPlayer(board.isWhiteTurn());
 
     if (board.header() != null) { // Initialize board with header values
-      this.enPassantPos = board.header().enPassant();
-      if (this.enPassantPos != null) {
-        this.isLastMoveDoublePush = true;
+      this.setEnPassantPos(board.header().enPassant());
+      if (this.getEnPassantPos() != null) {
+        this.setLastMoveDoublePush(true);
       }
-      this.whiteShortCastle = board.header().whiteKingCastling();
-      this.blackShortCastle = board.header().blackKingCastling();
-      this.whiteLongCastle = board.header().whiteQueenCastling();
-      this.blackLongCastle = board.header().blackQueenCastling();
-      this.nbMovesWithNoCaptureOrPawn = board.header().fiftyMoveRule();
+      this.setWhiteShortCastle(board.header().whiteKingCastling());
+      this.setBlackShortCastle(board.header().blackKingCastling());
+      this.setWhiteLongCastle(board.header().whiteQueenCastling());
+      this.setBlackLongCastle(board.header().blackQueenCastling());
+      this.setNbMovesWithNoCaptureOrPawn(board.header().fiftyMoveRule());
     } else { // No header -> default values
-      this.enPassantPos = null;
-      this.whiteShortCastle = true;
-      this.blackShortCastle = true;
-      this.whiteLongCastle = true;
-      this.blackLongCastle = true;
-      this.isLastMoveDoublePush = false;
-      this.isEnPassantTake = false;
-      this.nbMovesWithNoCaptureOrPawn = 0;
+      this.setEnPassantPos(null);
+      this.setLastMoveDoublePush(false);
+      this.setWhiteShortCastle(
+          board.board().getPieceAt(7, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
+      this.setBlackShortCastle(
+          board.board().getPieceAt(7, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
+      this.setWhiteLongCastle(
+          board.board().getPieceAt(0, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
+      this.setBlackLongCastle(
+          board.board().getPieceAt(0, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
+      this.setNbMovesWithNoCaptureOrPawn(0);
     }
   }
 
@@ -77,11 +67,11 @@ public class Board {
   }
 
   public boolean getPlayer() {
-    return this.isWhite;
+    return this.board.getPlayer();
   }
 
   public void setPlayer(boolean isWhite) {
-    this.isWhite = isWhite;
+    this.board.setPlayer(isWhite);
   }
 
   /**
@@ -90,11 +80,12 @@ public class Board {
    * @param move The move to be executed
    */
   public void makeMove(Move move) {
-    this.nbMovesWithNoCaptureOrPawn++;
+
+    this.board.setNbMovesWithNoCaptureOrPawn(board.getNbMovesWithNoCaptureOrPawn() + 1);
     if (getBoardRep().getPieceAt(move.getSource().x(), move.getSource().y()).getPiece()
         == Piece.PAWN) {
       // Reset the number of moves with no pawn move
-      this.nbMovesWithNoCaptureOrPawn = 0;
+      this.board.setNbMovesWithNoCaptureOrPawn(0);
     }
     if (move.isTake()) {
       // SAVE DELETED PIECE FOR HASHING
@@ -102,13 +93,13 @@ public class Board {
         getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y());
       }
       // Reset the number of moves with no capture
-      this.nbMovesWithNoCaptureOrPawn = 0;
+      this.board.setNbMovesWithNoCaptureOrPawn(0);
     }
 
     if (this.isEnPassantTake()) {
       this.setLastMoveDoublePush(false);
       this.setEnPassantTake(false);
-      if (this.isWhite) {
+      if (this.getPlayer()) {
         getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y() - 1);
       } else {
         getBoardRep().deletePieceAt(move.getDest().x(), move.getDest().y() + 1);
@@ -138,13 +129,13 @@ public class Board {
             || move.getSource().equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.setBlackLongCastle(false);
     }
-    if (getBoardRep().isPawnPromoting(move.getDest().x(), move.getDest().y(), this.isWhite)) {
+    if (getBoardRep().isPawnPromoting(move.getDest().x(), move.getDest().y(), this.getPlayer())) {
       Piece newPiece = ((PromoteMove) move).getPromPiece();
       getBoardRep()
           .promotePawn(
               move.getDest().x(),
               move.getDest().y(),
-              this.isWhite,
+              this.getPlayer(),
               newPiece); // replace Piece.QUEEN by newPiece
     }
 
@@ -166,7 +157,7 @@ public class Board {
   public Board getCopy() {
     Board copy = new Board();
     copy.setBoard(this.getBoardRep().getCopy());
-    copy.isWhite = this.isWhite;
+    copy.setPlayer(this.getPlayer());
     copy.setWhiteShortCastle(this.isWhiteShortCastle());
     copy.setBlackShortCastle(this.isBlackShortCastle());
     copy.setWhiteLongCastle(this.isWhiteLongCastle());
@@ -175,7 +166,7 @@ public class Board {
         (this.getEnPassantPos() != null) ? this.getEnPassantPos().getCopy() : null);
     copy.setLastMoveDoublePush(this.isLastMoveDoublePush());
     copy.setEnPassantTake(this.isEnPassantTake());
-    copy.nbMovesWithNoCaptureOrPawn = this.nbMovesWithNoCaptureOrPawn;
+    copy.setNbMovesWithNoCaptureOrPawn(this.getNbMovesWithNoCaptureOrPawn());
     return copy;
   }
 
@@ -238,9 +229,9 @@ public class Board {
     }
   }
 
-  public int getNbMovesWithNoCaptureOrPawn() {
+  public int getNbFullMovesWithNoCaptureOrPawn() {
     // Divide by 2 because fifty move rule is for full moves
-    return this.nbMovesWithNoCaptureOrPawn / 2;
+    return board.getNbMovesWithNoCaptureOrPawn() / 2;
   }
 
   /**
@@ -253,14 +244,7 @@ public class Board {
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
   public boolean canCastle(Color color, boolean shortCastle) {
-    return getBoardRep()
-        .canCastle(
-            color,
-            shortCastle,
-            this.isWhiteShortCastle(),
-            this.isWhiteLongCastle(),
-            this.isBlackShortCastle(),
-            this.isBlackLongCastle());
+    return getBoardRep().canCastle(color, shortCastle);
   }
 
   /**
@@ -294,58 +278,66 @@ public class Board {
   }
 
   public Position getEnPassantPos() {
-    return enPassantPos;
+    return board.getEnPassantPos();
   }
 
   public void setEnPassantPos(Position enPassantPos) {
-    this.enPassantPos = enPassantPos;
+    board.setEnPassantPos(enPassantPos);
   }
 
   public boolean isLastMoveDoublePush() {
-    return isLastMoveDoublePush;
+    return board.isLastMoveDoublePush();
   }
 
   public void setLastMoveDoublePush(boolean lastMoveDoublePush) {
-    isLastMoveDoublePush = lastMoveDoublePush;
+    board.setLastMoveDoublePush(lastMoveDoublePush);
   }
 
   public boolean isWhiteShortCastle() {
-    return whiteShortCastle;
+    return board.isWhiteShortCastle();
   }
 
   public void setWhiteShortCastle(boolean whiteShortCastle) {
-    this.whiteShortCastle = whiteShortCastle;
+    board.setWhiteShortCastle(whiteShortCastle);
   }
 
   public boolean isBlackShortCastle() {
-    return blackShortCastle;
+    return board.isBlackShortCastle();
   }
 
   public void setBlackShortCastle(boolean blackShortCastle) {
-    this.blackShortCastle = blackShortCastle;
+    board.setBlackShortCastle(blackShortCastle);
   }
 
   public boolean isWhiteLongCastle() {
-    return whiteLongCastle;
+    return board.isWhiteLongCastle();
   }
 
   public void setWhiteLongCastle(boolean whiteLongCastle) {
-    this.whiteLongCastle = whiteLongCastle;
+    board.setWhiteLongCastle(whiteLongCastle);
   }
 
   public boolean isBlackLongCastle() {
-    return blackLongCastle;
+    return board.isBlackLongCastle();
   }
 
   public void setBlackLongCastle(boolean blackLongCastle) {
-    this.blackLongCastle = blackLongCastle;
+    board.setBlackLongCastle(blackLongCastle);
   }
 
   public boolean isEnPassantTake() {
-    return isEnPassantTake;
+    return board.isEnPassantTake();
   }
 
   public void setEnPassantTake(boolean enPassantTake) {
-    isEnPassantTake = enPassantTake;
+    board.setEnPassantTake(enPassantTake);
+  }
+
+  public int getNbMovesWithNoCaptureOrPawn() {
+    return board.getNbMovesWithNoCaptureOrPawn();
+  }
+
+  public void setNbMovesWithNoCaptureOrPawn(int newVal) {
+    board.setNbMovesWithNoCaptureOrPawn(newVal);
   }
 }

@@ -675,7 +675,7 @@ public final class Game extends GameAbstract {
                     castlingRights[2],
                     castlingRights[3],
                     getBoard().getEnPassantPos(),
-                    getBoard().getNbMovesWithNoCaptureOrPawn() * 2,
+                    getBoard().getNbMovesWithNoCaptureOrPawn(),
                     getGameState().getFullTurn())));
     String gameStr = super.getHistory().toAlgebraicString();
 

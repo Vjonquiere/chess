@@ -47,16 +47,7 @@ public final class BitboardRules {
     Bitboard square = new Bitboard();
     square.setBit((x % 8) + (y * 8));
     return (square.getBits()
-            & bitboardRepresentation
-                .getColorMoveBitboard(
-                    by == Color.WHITE,
-                    enPassantPos,
-                    isLastMoveDoublePush,
-                    isWhiteLongCastle,
-                    isWhiteShortCastle,
-                    isBlackLongCastle,
-                    isBlackShortCastle)
-                .getBits())
+            & bitboardRepresentation.getColorAttackBitboard(by == Color.WHITE).getBits())
         != 0;
   }
 
@@ -174,16 +165,7 @@ public final class BitboardRules {
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = bitboardRepresentation.squareToPosition(i);
       List<Move> availableMoves =
-          bitboardRepresentation.getAvailableMoves(
-              piecePosition.x(),
-              piecePosition.y(),
-              false,
-              enPassantPos,
-              isLastMoveDoublePush,
-              isWhiteLongCastle,
-              isWhiteShortCastle,
-              isBlackLongCastle,
-              isBlackShortCastle);
+          bitboardRepresentation.getAvailableMoves(piecePosition.x(), piecePosition.y(), false);
       for (Move move : availableMoves) {
         if (move.getTakeDest() == null) {
           move.setTakeDest(move.getDest());
@@ -256,16 +238,7 @@ public final class BitboardRules {
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = bitboardRepresentation.squareToPosition(i);
       List<Move> availableMoves =
-          bitboardRepresentation.getAvailableMoves(
-              piecePosition.x(),
-              piecePosition.y(),
-              true,
-              enPassantPos,
-              isLastMoveDoublePush,
-              isWhiteLongCastle,
-              isWhiteShortCastle,
-              isBlackLongCastle,
-              isBlackShortCastle);
+          bitboardRepresentation.getAvailableMoves(piecePosition.x(), piecePosition.y(), true);
       for (Move move : availableMoves) {
         ColoredPiece removedPiece = null;
         if (move.isTake()) {
