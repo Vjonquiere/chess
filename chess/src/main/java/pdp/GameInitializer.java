@@ -315,10 +315,10 @@ public abstract class GameInitializer {
             model.setLoadingFileHasHistory(true);
           }
           model.setContestModeOnOrOff(true);
-          DEBUG(LOGGER, "Game was init with contest mode");
+          debug(LOGGER, "Game was init with contest mode");
 
-          solver.playAIMove(model);
-          DEBUG(LOGGER, "AI move played and recorded in: " + contestFile);
+          solver.playAiMove(model);
+          debug(LOGGER, "AI move played and recorded in: " + contestFile);
         } catch (IOException
             | IllegalMoveException
             | InvalidPositionException
@@ -351,11 +351,11 @@ public abstract class GameInitializer {
 
             List<Move> moves = new ArrayList<>();
 
-          boolean isWhite = true;
-          for (String move : moveStrings) {
-            moves.add(Move.fromString(move.replace("x", "-"), isWhite));
-            isWhite = !isWhite;
-          }
+            boolean isWhite = true;
+            for (String move : moveStrings) {
+              moves.add(Move.fromString(move.replace("x", "-"), isWhite));
+              isWhite = !isWhite;
+            }
 
             model =
                 Game.fromHistory(

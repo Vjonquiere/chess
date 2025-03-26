@@ -555,7 +555,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isWhiteAI());
+    assertTrue(game.isWhiteAi());
     assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertEquals(
         100, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
@@ -570,7 +570,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isBlackAI());
+    assertTrue(game.isBlackAi());
     assertTrue(game.getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertEquals(
         200, ((MonteCarloTreeSearch) game.getBlackSolver().getAlgorithm()).getSimulationLimit());
@@ -585,7 +585,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isWhiteAI());
+    assertTrue(game.isWhiteAi());
     assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertTrue(outputStream.toString().contains("Not an integer for the simulations of AI"));
   }
@@ -599,7 +599,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isBlackAI());
+    assertTrue(game.isBlackAi());
     assertTrue(game.getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertTrue(outputStream.toString().contains("Not an integer for the simulations of AI"));
   }

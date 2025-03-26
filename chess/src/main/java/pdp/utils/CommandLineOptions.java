@@ -240,7 +240,7 @@ public final class CommandLineOptions {
         System.err.println("Error: --contest option requires a valid file path.");
         activatedOptions.remove(OptionType.CONTEST);
       } else {
-        DEBUG(LOGGER, "Contest mode activated with file: " + contestFile);
+        debug(LOGGER, "Contest mode activated with file: " + contestFile);
       }
     }
 

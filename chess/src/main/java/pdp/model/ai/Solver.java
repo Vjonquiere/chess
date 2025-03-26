@@ -321,9 +321,9 @@ public class Solver {
     }
     searchStopped = false;
     isMoveToPlay = true;
-    game.setAIPlayedItsLastMove(false);
+    game.setAiPlayedItsLastMove(false);
     final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
-    game.setAIPlayedItsLastMove(true);
+    game.setAiPlayedItsLastMove(true);
     if (timer != null) {
       timer.stop();
     }

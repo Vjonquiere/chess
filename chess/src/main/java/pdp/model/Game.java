@@ -316,24 +316,11 @@ public final class Game extends GameAbstract {
   }
 
   /**
-   * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
-   * file with contest mode on.
-   *
-   * @param mode boolean to indicate if contest mode is on or off.
-   */
-  public void startAI() {
-    if (isWhiteAi && this.getGameState().isWhiteTurn()) {
-      this.notifyObservers(EventType.AI_PLAYING);
-      solverWhite.playAiMove(this);
-    }
-  }
-
-  /**
    * Used in updateGameStateAfterMove() method to know how to handle game save.
    *
    * @return true if AI finished computing moves. false otherwise.
    */
-  public boolean AIPlayedItsLastMove() {
+  public boolean AiPlayedItsLastMove() {
     return this.AIPlayedItsLastMove;
   }
 
@@ -341,7 +328,7 @@ public final class Game extends GameAbstract {
    * Method used in Solver.playAIMove(this) to indicate when AI finished computing. Used to know
    * when the game can be saved when loading or contest mode.
    */
-  public void setAIPlayedItsLastMove(boolean lastMove) {
+  public void setAiPlayedItsLastMove(boolean lastMove) {
     this.AIPlayedItsLastMove = lastMove;
   }
 
@@ -361,7 +348,6 @@ public final class Game extends GameAbstract {
   public boolean isContestModeOn() {
     return this.contestModeOn;
   }
-
 
   /**
    * Plays the first AI move if White AI is activated. The other calls to AI will be done in {@link
@@ -651,7 +637,7 @@ public final class Game extends GameAbstract {
     if (!isLoadedFromFile()) {
       super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
     } else {
-      if (!AIPlayedItsLastMove()) {
+      if (!AiPlayedItsLastMove()) {
         if (isBlackAi() || isWhiteAi()) {
           super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
         } else {
@@ -762,7 +748,6 @@ public final class Game extends GameAbstract {
       } else {
         debug(LOGGER, "Move differs from history. Overwriting history");
       }
-
     }
   }
 
