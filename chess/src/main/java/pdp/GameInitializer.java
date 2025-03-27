@@ -289,22 +289,34 @@ public abstract class GameInitializer {
           Solver solver = null;
           if (model.getGameState().isWhiteTurn()) {
             Solver whiteSolver = new Solver();
-            whiteSolver.setAlgorithm(AlgorithmType.ALPHA_BETA);
-            whiteSolver.setHeuristic(HeuristicType.STANDARD);
-            whiteSolver.setDepth(4);
+
+            processAiDepthContest(options, true, whiteSolver);
+            processAiModeContest(options, true, whiteSolver);
+            processAiEndGameHeuristicContest(options, true, whiteSolver);
+            processAiHeuristicContest(options, true, whiteSolver);
+
             model.setWhiteSolver(whiteSolver);
-            model.setWhiteAI(true);
-            model.setBlackAI(false);
+            model.setWhiteAi(true);
+            model.setBlackAi(false);
+
+            System.err.println("HERE IS THE DEPTH AFTER SET :" + model.getWhiteSolver().getDepth());
+
             solver = whiteSolver;
           } else {
             new Solver();
             Solver blackSolver = new Solver();
-            blackSolver.setAlgorithm(AlgorithmType.ALPHA_BETA);
-            blackSolver.setHeuristic(HeuristicType.STANDARD);
-            blackSolver.setDepth(4);
+
+            processAiDepthContest(options, false, blackSolver);
+            processAiModeContest(options, false, blackSolver);
+            processAiEndGameHeuristicContest(options, false, blackSolver);
+            processAiHeuristicContest(options, false, blackSolver);
+
             model.setBlackSolver(blackSolver);
-            model.setBlackAI(true);
-            model.setWhiteAI(false);
+            model.setBlackAi(true);
+            model.setWhiteAi(false);
+
+            System.err.println("HERE IS THE DEPTH AFTER SET :" + model.getBlackSolver().getDepth());
+
             solver = blackSolver;
           }
 
@@ -380,5 +392,235 @@ public abstract class GameInitializer {
     }
 
     return model;
+  }
+
+  /**
+   * Processes the AI depth setting for contest mode based on the current player's turn. Retrieves
+   * the depth value from the options and applies it to the solver. Defaults to a depth of 4 if no
+   * valid value is provided. Used for Contest mode.
+   *
+   * @param options The map containing AI configuration options.
+   * @param whiteTurn Indicates whether it is White's turn.
+   * @param solver The solver instance for the current player.
+   */
+  private static void processAiDepthContest(
+      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
+    int depth = 0;
+    if (whiteTurn) {
+      if (options.containsKey(OptionType.AI_DEPTH_W)) {
+        try {
+          depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_W));
+        } catch (Exception e) {
+          System.err.println("Not an integer for ai depth");
+        }
+      }
+    } else {
+      if (options.containsKey(OptionType.AI_DEPTH_B)) {
+        try {
+          depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_B));
+        } catch (Exception e) {
+          System.err.println("Not an integer for ai depth");
+        }
+      }
+    }
+
+    if (depth != 0) {
+      solver.setDepth(depth);
+      System.err.println("SETTING DEPTH : " + depth);
+    } else {
+      solver.setDepth(4);
+      System.err.println("SETTING DEFAULT DEPTH 4");
+    }
+  }
+
+  /**
+   * Configures the AI mode for contest mode based on the current player's turn. Determines whether
+   * the AI should use Minimax, Alpha-Beta, or Monte Carlo Tree Search (MCTS). If MCTS is selected,
+   * retrieves the number of simulations from the options. Defaults to Alpha-Beta if no valid mode
+   * is specified. Used for Contest mode.
+   *
+   * @param options The map containing AI configuration options.
+   * @param whiteTurn Indicates whether it is White's turn.
+   * @param solver The solver instance for the current player.
+   */
+  private static void processAiModeContest(
+      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
+    AlgorithmType algorithmTypeContest = null;
+    if (whiteTurn) {
+      if (options.containsKey(OptionType.AI_MODE_W)) {
+        try {
+          algorithmTypeContest = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_W));
+        } catch (Exception e) {
+          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
+          System.err.println("Defaulting to ALPHABETA.");
+        }
+      }
+    } else {
+      if (options.containsKey(OptionType.AI_MODE_B)) {
+        try {
+          algorithmTypeContest = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_B));
+        } catch (Exception e) {
+          System.err.println("Unknown AI mode option: " + options.get(OptionType.AI_MODE_B));
+          System.err.println("Defaulting to ALPHABETA.");
+        }
+      }
+    }
+
+    // Check if MCTS
+    int simulations = 0;
+    if (algorithmTypeContest == AlgorithmType.MCTS) {
+      if (whiteTurn) {
+        if (options.containsKey(OptionType.AI_SIMULATION_W)) {
+          try {
+            simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
+          } catch (Exception e) {
+            System.err.println("Not an integer for the simulations of AI");
+            System.err.println(
+                "Defaulting to simulations "
+                    + ((MonteCarloTreeSearch) solver.getAlgorithm()).getSimulationLimit());
+          }
+        }
+      } else {
+        if (options.containsKey(OptionType.AI_SIMULATION_B)) {
+          try {
+            simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
+          } catch (Exception e) {
+            System.err.println("Not an integer for the simulations of AI");
+            System.err.println(
+                "Defaulting to simulations "
+                    + ((MonteCarloTreeSearch) solver.getAlgorithm()).getSimulationLimit());
+          }
+        }
+      }
+    }
+
+    if (algorithmTypeContest != null) {
+      if (algorithmTypeContest == AlgorithmType.MCTS) {
+        if (simulations != 0) {
+          solver.setMonteCarloAlgorithm(simulations);
+        } else { // Default number of simulations
+          int defaultNbSimulations = 100;
+          solver.setMonteCarloAlgorithm(defaultNbSimulations);
+        }
+      } else { // ALPHA_BETA or MINIMAX
+        solver.setAlgorithm(algorithmTypeContest);
+      }
+    } else { // DEFAULT IS ALPHA_BETA
+      solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
+    }
+  }
+
+  /**
+   * Processes the AI endgame heuristic for contest mode based on the current player's turn.
+   * Retrieves the heuristic type from the options and applies it to the solver. Defaults to the
+   * STANDARD endgame heuristic if no valid heuristic is provided. Used for Contest mode.
+   *
+   * @param options The map containing AI configuration options.
+   * @param whiteTurn Indicates whether it is White's turn.
+   * @param solver The solver instance for the current player.
+   */
+  private static void processAiEndGameHeuristicContest(
+      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
+    HeuristicType heuristicTypeEndGame = null;
+    if (whiteTurn) {
+      if (options.containsKey(OptionType.AI_ENDGAME_W)) {
+        try {
+          heuristicTypeEndGame = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_W));
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_W));
+          System.err.println("Defaulting to Endgame Heuristic STANDARD");
+        }
+      }
+    } else {
+      if (options.containsKey(OptionType.AI_ENDGAME_B)) {
+        try {
+          heuristicTypeEndGame = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_B));
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_B));
+          System.err.println("Defaulting to Endgame Heuristic STANDARD");
+        }
+      }
+    }
+
+    if (heuristicTypeEndGame != null) {
+      solver.setEndgameHeuristic(heuristicTypeEndGame);
+    }
+  }
+
+  /**
+   * Processes the AI heuristic for contest mode based on the current player's turn. Retrieves the
+   * heuristic type and associated weights (if applicable) from the options and applies them to the
+   * solver. Used for Contest mode.
+   *
+   * @param options The map containing AI configuration options.
+   * @param whiteTurn Indicates whether it is White's turn.
+   * @param solver The solver instance for the current player.
+   */
+  private static void processAiHeuristicContest(
+      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
+    OptionType heuristicKey = whiteTurn ? OptionType.AI_HEURISTIC_W : OptionType.AI_HEURISTIC_B;
+    OptionType weightKey = whiteTurn ? OptionType.AI_WEIGHT_W : OptionType.AI_WEIGHT_B;
+
+    HeuristicType heuristicType = getHeuristicType(options, heuristicKey);
+    ArrayList<Float> weights = getWeights(options, heuristicType, weightKey);
+
+    if (weights != null) {
+      solver.setHeuristic(heuristicType, weights);
+    } else {
+      solver.setHeuristic(heuristicType);
+    }
+  }
+
+  /**
+   * Helper method. Retrieves the heuristic type from the provided options. Defaults to STANDARD if
+   * the heuristic type is invalid or unspecified. Used for Contest mode.
+   *
+   * @param options The map containing AI configuration options.
+   * @param heuristicKey The key corresponding to the heuristic option for the current player.
+   * @return The heuristic type to be used.
+   */
+  private static HeuristicType getHeuristicType(
+      HashMap<OptionType, String> options, OptionType heuristicKey) {
+    if (options.containsKey(heuristicKey)) {
+      try {
+        return HeuristicType.valueOf(options.get(heuristicKey));
+      } catch (IllegalArgumentException e) {
+        System.err.println("Unknown Heuristic: " + options.get(heuristicKey));
+      }
+    }
+    return HeuristicType.STANDARD;
+  }
+
+  /**
+   * Helper method. Retrieves the weight values for the heuristic if applicable. Only applies
+   * weights if the heuristic type is STANDARD. Returns null if weights are invalid or missing. Used
+   * for Contest mode.
+   *
+   * @param options The map containing AI configuration options.
+   * @param heuristicType The heuristic type being used.
+   * @param weightKey The key corresponding to the weight option for the current player.
+   * @return A list of float values representing the heuristic weights, or null if unavailable.
+   */
+  private static ArrayList<Float> getWeights(
+      HashMap<OptionType, String> options, HeuristicType heuristicType, OptionType weightKey) {
+    if (heuristicType.equals(HeuristicType.STANDARD) && options.containsKey(weightKey)) {
+      try {
+        String weight = options.get(weightKey);
+        String[] weightsArray = weight.split(",");
+        ArrayList<Float> weightsFloats = new ArrayList<>();
+
+        for (String w : weightsArray) {
+          weightsFloats.add(Float.parseFloat(w));
+        }
+        if (weightsFloats.size() != 7) {
+          throw new ParseException("Invalid number of weights", 0);
+        }
+        return weightsFloats;
+      } catch (ParseException | NumberFormatException e) {
+        System.err.println("Weights problem: " + options.get(weightKey) + " -> " + e.getMessage());
+        System.err.println("Defaulting to Unweighted Heuristic STANDARD");
+      }
+    }
+    return null;
   }
 }

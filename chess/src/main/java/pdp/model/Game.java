@@ -204,7 +204,7 @@ public final class Game extends GameAbstract {
    *
    * @param ai true if white is AI. false otherwise.
    */
-  public void setWhiteAI(boolean ai) {
+  public void setWhiteAi(boolean ai) {
     this.isWhiteAi = ai;
   }
 
@@ -213,7 +213,7 @@ public final class Game extends GameAbstract {
    *
    * @param ai true if black is AI. false otherwise.
    */
-  public void setBlackAI(boolean ai) {
+  public void setBlackAi(boolean ai) {
     this.isBlackAi = ai;
   }
 
@@ -604,13 +604,15 @@ public final class Game extends GameAbstract {
       if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
         if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getEndgameHeuristic())) {
+            && !(this.solverWhite.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
           this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
         }
       }
       if (this.solverBlack != null) {
         if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getEndgameHeuristic())) {
+            && !(this.solverBlack.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
           this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
         }
       }
@@ -619,14 +621,16 @@ public final class Game extends GameAbstract {
     if (!isEndGamePhase()) {
       if (this.solverWhite != null) {
         if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
-          this.solverWhite.setHeuristic(this.solverWhite.getStartHeurisic());
+            && this.solverBlack != null
+            && !(this.solverWhite.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getStartHeuristic());
         }
       }
       if (this.solverBlack != null) {
         if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
-          this.solverBlack.setHeuristic(this.solverBlack.getStartHeurisic());
+            && this.solverWhite != null
+            && !(this.solverBlack.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getStartHeuristic());
         }
       }
     }

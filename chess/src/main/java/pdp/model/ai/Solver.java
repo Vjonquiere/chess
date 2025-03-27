@@ -203,7 +203,7 @@ public class Solver {
     this.startHeuristic = heuristic;
   }
 
-  public HeuristicType getStartHeurisic() {
+  public HeuristicType getStartHeuristic() {
     return this.startHeuristic;
   }
 
@@ -212,7 +212,7 @@ public class Solver {
    *
    * @return current heuristic
    */
-  public HeuristicType getCurrentHeurisic() {
+  public HeuristicType getCurrentHeuristic() {
     return this.currentHeuristic;
   }
 

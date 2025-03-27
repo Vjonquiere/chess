@@ -603,4 +603,118 @@ class GameInitializerTest {
     assertTrue(game.getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertTrue(outputStream.toString().contains("Not an integer for the simulations of AI"));
   }
+
+  @Test
+  void testContestMode_InvalidFilePath() {
+    options.put(OptionType.CONTEST, "");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(
+        outputStream.toString().contains("Error: --contest option requires a valid file path."));
+  }
+
+  @Test
+  void testContestMode_FileNotFound() {
+    options.put(OptionType.CONTEST, "non_existent_file.txt");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(outputStream.toString().contains("Error loading contest file"));
+    assertTrue(outputStream.toString().contains("Starting a new game instead."));
+  }
+
+  /*
+  @Test
+  void testContestMode_ValidFile_WhiteTurn() throws IOException {
+    tempFile = Files.createTempFile("moveHistory2", ".txt");
+    String text =
+        "W\n"
+            + //
+            "r _ b q k b n r \n"
+            + //
+            "p p p p _ p p p \n"
+            + //
+            "_ _ n _ _ _ _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ _ _ P _ Q _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K B N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-g4 B b8-c6\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI_DEPTH, "5");
+    options.put(OptionType.AI_MODE, "MCTS");
+    options.put(OptionType.AI_SIMULATION, "150");
+    options.put(OptionType.AI_HEURISTIC, "BAD_PAWNS");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isWhiteAi());
+    assertEquals(5, game.getWhiteSolver().getDepth());
+    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+    assertEquals(
+        150, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
+  }
+
+  @Test
+  void testContestMode_ValidFile_BlackTurn() throws IOException {
+    tempFile = Files.createTempFile("moveHistory2", ".txt");
+    String text =
+        "B\n"
+            + //
+            "r n b q k b n r \n"
+            + //
+            "p p p p _ p p p \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ _ _ P _ Q _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K B N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-g4\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI_DEPTH, "2");
+    options.put(OptionType.AI_MODE, "ALPHA_BETA");
+    options.put(OptionType.AI_ENDGAME, "ENDGAME");
+    options.put(OptionType.AI_HEURISTIC, "STANDARD");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isBlackAi());
+    assertEquals(2, game.getBlackSolver().getDepth());
+    assertEquals(AlgorithmType.ALPHA_BETA, game.getBlackSolver().getAlgorithm());
+  }
+    */
 }
