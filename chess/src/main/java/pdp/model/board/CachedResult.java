@@ -1,9 +1,6 @@
 package pdp.model.board;
 
-import java.util.AbstractMap;
-import java.util.concurrent.ConcurrentHashMap;
 import pdp.model.piece.Color;
-import pdp.model.piece.ColoredPiece;
 
 /** Structure of the elements present in bitboard cache. Avoid recalculating expensive methods. */
 public class CachedResult {
@@ -13,14 +10,8 @@ public class CachedResult {
   private Boolean isCheckMateBlack = null;
   private Boolean isStalemateWhite = null;
   private Boolean isStalemateBlack = null;
-  private Long whiteMoveBitboard = null;
-  private Long blackMoveBitboard = null;
-  private Bitboard whiteAttackBitboards = null;
-  private Bitboard blackAttackBitboards = null;
-  private final AbstractMap<Integer, Long> blackAttackBitboard = new ConcurrentHashMap<>();
-  private final AbstractMap<Integer, ColoredPiece> pieces = new ConcurrentHashMap<>();
-  private final AbstractMap<Integer, Boolean> isAttackedByWhite = new ConcurrentHashMap<>();
-  private final AbstractMap<Integer, Boolean> isAttackedByBlack = new ConcurrentHashMap<>();
+  private Long whiteAttackBitboard = null;
+  private Long blackAttackBitboard = null;
 
   /**
    * Checks whether the king is in check in this cache instance.
@@ -95,80 +86,6 @@ public class CachedResult {
   }
 
   /**
-   * Retrieves the move bitboard of the given color.
-   *
-   * @param isWhite true if we want the withe bitboard, false otherwise.
-   * @return move bitboard of the given color
-   */
-  public Long getColorMoveBitboard(boolean isWhite) {
-    return isWhite ? this.whiteMoveBitboard : this.blackMoveBitboard;
-  }
-
-  /**
-   * Sets the move bitboard of the given color to the one given in parameters.
-   *
-   * @param bitboard bitboard to set in the cache
-   * @param isWhite true if we want the withe bitboard, false otherwise.
-   */
-  public void setColorMoveBitboard(long bitboard, boolean isWhite) {
-    if (isWhite) {
-      this.whiteMoveBitboard = bitboard;
-    } else {
-      this.blackMoveBitboard = bitboard;
-    }
-  }
-
-  /**
-   * Retrieves the piece at the given position.
-   *
-   * @param x x coordinates of the square
-   * @param y y coordinates of the square
-   * @return piece at x,y
-   */
-  public ColoredPiece getPieceAt(int x, int y) {
-    return pieces.get(x * 8 + y);
-  }
-
-  /**
-   * Sets in the cache the given piece at the given position.
-   *
-   * @param x x coordinates of the square
-   * @param y y coordinates of the square
-   * @param piece piece at the given position
-   */
-  public void setPieceAt(int x, int y, ColoredPiece piece) {
-    pieces.put(x * 8 + y, piece);
-  }
-
-  /**
-   * Checks whether the given position is attacked in this cache instance.
-   *
-   * @param x x coordinates of the square to check
-   * @param y y coordinates of the square to check
-   * @param by Color of the attacking side
-   * @return true if the square is attacked, false otherwise
-   */
-  public Boolean isAttacked(int x, int y, Color by) {
-    return by == Color.WHITE ? isAttackedByWhite.get(x * 8 + y) : isAttackedByBlack.get(x * 8 + y);
-  }
-
-  /**
-   * Sets the attack status of the square of the given position to isAttacked.
-   *
-   * @param x x coordinates of the square to check
-   * @param y y coordinates of the square to check
-   * @param by Color of the attacking side
-   * @param isAttacked true if the square is attacked, false otherwise
-   */
-  public void setAttacked(int x, int y, Color by, boolean isAttacked) {
-    if (by == Color.WHITE) {
-      isAttackedByWhite.put(x * 8 + y, isAttacked);
-    } else {
-      isAttackedByBlack.put(x * 8 + y, isAttacked);
-    }
-  }
-
-  /**
    * Saves the given bitboard into the attack bitboard field corresponding to the colo given in
    * parameters.
    *
@@ -177,9 +94,9 @@ public class CachedResult {
    */
   public void setAttackBitboard(boolean white, Bitboard bitboard) {
     if (white) {
-      whiteAttackBitboards = bitboard;
+      this.whiteAttackBitboard = bitboard.getBits();
     } else {
-      blackAttackBitboards = bitboard;
+      this.blackAttackBitboard = bitboard.getBits();
     }
   }
 
@@ -189,11 +106,11 @@ public class CachedResult {
    * @param white true if the player is white, false otherwise.
    * @return attack bitboard of the side given in arguments
    */
-  public Bitboard getAttackBitboard(boolean white) {
+  public Long getAttackBitboard(boolean white) {
     if (white) {
-      return whiteAttackBitboards;
+      return this.whiteAttackBitboard;
     } else {
-      return blackAttackBitboards;
+      return this.blackAttackBitboard;
     }
   }
 }

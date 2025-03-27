@@ -210,23 +210,15 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public ColoredPiece getPieceAt(int x, int y) {
-    CachedResult cached = cache.getOrCreate(simpleHash);
-    ColoredPiece piece = cached.getPieceAt(x, y);
-
-    if (piece != null) {
-      return piece;
-    }
-
+    ColoredPiece piece = null;
     int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) {
         piece = pieces.getFromKey(index);
-        cached.setPieceAt(x, y, piece);
         return piece;
       }
     }
     piece = new ColoredPiece(Piece.EMPTY, Color.EMPTY);
-    cached.setPieceAt(x, y, piece);
     return piece;
   }
 
@@ -668,14 +660,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The bitboard containing all possible moves (without special cases)
    */
   public Bitboard getColorAttackBitboard(boolean isWhite) {
-    Bitboard res = cache.getOrCreate(simpleHash).getAttackBitboard(isWhite);
-    if (res != null) {
-      return res;
+    CachedResult cached = cache.getOrCreate(simpleHash);
+    Long attackLong = cached.getAttackBitboard(isWhite);
+    if (attackLong != null) {
+      return new Bitboard(attackLong);
     }
-    Bitboard moves =
+
+    Bitboard attackBitboard =
         BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
-    cache.getOrCreate(simpleHash).setAttackBitboard(isWhite, moves);
-    return moves;
+    cached.setAttackBitboard(isWhite, attackBitboard);
+    return attackBitboard;
   }
 
   // ________________________ BitboardPieces
