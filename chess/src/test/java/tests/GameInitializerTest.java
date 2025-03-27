@@ -715,7 +715,7 @@ class GameInitializerTest {
     assertTrue(game.isBlackAi());
     assertTrue(game.getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertEquals(
-        100, ((MonteCarloTreeSearch) game.getBlackSolver().getAlgorithm()).getSimulationLimit());
+        150, ((MonteCarloTreeSearch) game.getBlackSolver().getAlgorithm()).getSimulationLimit());
   }
 
   @Test

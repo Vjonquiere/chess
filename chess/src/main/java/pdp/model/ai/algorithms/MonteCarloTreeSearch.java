@@ -47,7 +47,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    */
   public MonteCarloTreeSearch(final Solver solver) {
     this.solver = solver;
-    simulationLimit = 100; // 100 by default
+    simulationLimit = 150; // 150 by default
   }
 
   /**
