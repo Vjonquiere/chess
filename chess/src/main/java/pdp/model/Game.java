@@ -1,6 +1,7 @@
 package pdp.model;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.print;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
@@ -75,8 +76,8 @@ public final class Game extends GameAbstract {
   /** Map containing the different options to parametrize the game and their values. */
   private boolean contestModeOn;
 
-  /** Boolean value used to know if Ai played its move (contest Mode) */
-  private boolean AiPlayedItsLastMove;
+  /** Boolean value used to know if Ai played its move (contest Mode). */
+  private boolean aiPlayedItsLastMove;
 
   private final HashMap<OptionType, String> options;
 
@@ -132,7 +133,7 @@ public final class Game extends GameAbstract {
     this.explorationAi = false;
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
-    this.AiPlayedItsLastMove = false;
+    this.aiPlayedItsLastMove = false;
 
     if (instance != null) {
       if (instance.getBlackSolver() != null) {
@@ -348,8 +349,8 @@ public final class Game extends GameAbstract {
    *
    * @return true if AI finished computing moves. false otherwise.
    */
-  public boolean AiPlayedItsLastMove() {
-    return this.AiPlayedItsLastMove;
+  public boolean aiPlayedItsLastMove() {
+    return this.aiPlayedItsLastMove;
   }
 
   /**
@@ -357,7 +358,7 @@ public final class Game extends GameAbstract {
    * when the game can be saved when loading or contest mode.
    */
   public void setAiPlayedItsLastMove(boolean lastMove) {
-    this.AiPlayedItsLastMove = lastMove;
+    this.aiPlayedItsLastMove = lastMove;
   }
 
   /**
@@ -371,6 +372,8 @@ public final class Game extends GameAbstract {
   }
 
   /**
+   * Retrieves a boolean to indicate whether the contest mode is on or not.
+   *
    * @return true if the game was loaded from a file with contest mode enabled. false otherwise.
    */
   public boolean isContestModeOn() {
@@ -670,7 +673,7 @@ public final class Game extends GameAbstract {
     if (!isLoadedFromFile()) {
       super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
     } else {
-      if (!AiPlayedItsLastMove()) {
+      if (!aiPlayedItsLastMove()) {
         if (isBlackAi() || isWhiteAi()) {
           super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
         } else {
@@ -701,7 +704,6 @@ public final class Game extends GameAbstract {
         viewLock.lock();
         this.notifyObservers(EventType.AI_PLAYING);
         try {
-          System.out.println("Waiting for View");
           workingView.await();
         } catch (InterruptedException e) {
           e.printStackTrace();
@@ -774,7 +776,7 @@ public final class Game extends GameAbstract {
       // If no history just add the move
       super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
       if (isContestModeOn()) {
-        System.err.println("LOADING FILE : " + getContestFile());
+        print("LOADING FILE : " + getContestFile());
         saveGame(getContestFile());
         debug(
             LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
@@ -834,8 +836,6 @@ public final class Game extends GameAbstract {
 
   /** Restarts the game by resetting the game state and history. */
   public void restartGame() {
-
-    System.out.println(this.getStateCount());
 
     debug(LOGGER, "Restarting game");
 

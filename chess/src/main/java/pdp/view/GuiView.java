@@ -108,7 +108,6 @@ public class GuiView implements View {
    * @param stage Main stage of the Application.
    */
   public void init(Stage stage) {
-    System.out.println(stage);
     stage.setTitle(TextGetter.getText("title"));
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);

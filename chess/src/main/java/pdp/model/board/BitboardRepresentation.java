@@ -1,6 +1,7 @@
 package pdp.model.board;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
 
 import java.util.List;
 import java.util.function.Function;
@@ -291,7 +292,7 @@ public class BitboardRepresentation implements BoardRepresentation {
         newPieceBitBoard = this.board[1 + boardIndex];
         break;
       default:
-        System.err.println("Error: A pawn can only be promoted to Queen, Rook, Knight or Bishop !");
+        error("Error: A pawn can only be promoted to Queen, Rook, Knight or Bishop !");
         return;
     }
 

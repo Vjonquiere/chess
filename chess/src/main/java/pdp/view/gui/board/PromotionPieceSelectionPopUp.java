@@ -109,7 +109,8 @@ public class PromotionPieceSelectionPopUp extends VBox {
                     + GuiView.getTheme().getPrimary()
                     + "; -fx-border-color: "
                     + GuiView.getTheme().getSecondary()
-                    + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
+                    + "; -fx-border-radius: 5; -fx-background-radius: 10;"
+                    + " -fx-background-insets: 0, 1;"));
     result.setOnMouseExited(
         e ->
             result.setStyle(
@@ -117,7 +118,8 @@ public class PromotionPieceSelectionPopUp extends VBox {
                     + GuiView.getTheme().getSecondary()
                     + "; -fx-border-color: "
                     + GuiView.getTheme().getPrimary()
-                    + "; -fx-border-radius: 5; -fx-background-radius: 10; -fx-background-insets: 0, 1;"));
+                    + "; -fx-border-radius: 5; -fx-background-radius: 10;"
+                    + " -fx-background-insets: 0, 1;"));
     return result;
   }
 }

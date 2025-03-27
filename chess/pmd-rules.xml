@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ruleset name="Custom PMD Ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+             http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+
+    <description>Custom PMD Ruleset with exclusions</description>
+
+
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="GuardLogStatement"/>
+    </rule>
+    <rule ref="category/java/documentation.xml"/>
+
+    <rule ref="category/java/documentation.xml/CommentSize">
+        <properties>
+            <property name="maxLines" value="15" />
+            <property name="maxLineLength" value="100" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+        <!--At least one constructor and no empty constructor were present, cannot satisfy both in some simple classes -->
+        <exclude name="AtLeastOneConstructor"/>
+    </rule>
+    <rule ref="category/java/design.xml"/>
+    <rule ref="category/java/design.xml/LawOfDemeter">
+    <properties>
+        <property name="trustRadius" value="2" />
+    </properties>
+</rule>
+
+    <rule ref="category/java/errorprone.xml"/>
+
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="DoNotUseThreads"/>
+    </rule>
+
+    <rule ref="category/java/performance.xml"/>
+    <rule ref="category/java/security.xml"/>
+
+</ruleset>

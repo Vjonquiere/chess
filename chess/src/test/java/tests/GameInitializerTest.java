@@ -211,7 +211,7 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_DEPTH, "abc");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(outputStream.toString().contains("Not an integer for the depth of AI"));
+    assertTrue(outputStream.toString().contains("Not an integer for the depth of white AI"));
     assertTrue(
         outputStream
             .toString()
@@ -227,7 +227,7 @@ class GameInitializerTest {
     options.put(OptionType.AI, "W");
     options.put(OptionType.AI_DEPTH, "3.1");
     GameController controller = GameControllerInit.initialize(options);
-    assertTrue(outputStream.toString().contains("Not an integer for the depth of AI"));
+    assertTrue(outputStream.toString().contains("Not an integer for the depth of white AI"));
     assertTrue(
         outputStream
             .toString()

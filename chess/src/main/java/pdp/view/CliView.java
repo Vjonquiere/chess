@@ -1,6 +1,8 @@
 package pdp.view;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,106 +96,106 @@ public class CliView implements View {
     try {
       switch (event) {
         case GAME_STARTED:
-          System.out.println(TextGetter.getText("welcomeCLI"));
-          System.out.println(TextGetter.getText("welcomeInstructions"));
-          System.out.println(Game.getInstance().getGameRepresentation());
+          print(TextGetter.getText("welcomeCLI"));
+          print(TextGetter.getText("welcomeInstructions"));
+          print(Game.getInstance().getGameRepresentation());
           break;
         case MOVE_PLAYED:
-          System.out.println(Game.getInstance().getGameRepresentation());
+          print(Game.getInstance().getGameRepresentation());
           break;
         case WIN_WHITE:
-          System.out.println(TextGetter.getText("whiteWin"));
+          print(TextGetter.getText("whiteWin"));
           break;
         case WIN_BLACK:
-          System.out.println(TextGetter.getText("blackWin"));
+          print(TextGetter.getText("blackWin"));
           break;
         case DRAW:
-          System.out.println(TextGetter.getText("onDraw"));
+          print(TextGetter.getText("onDraw"));
           break;
         case WHITE_DRAW_PROPOSAL:
-          System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("white")));
+          print(TextGetter.getText("drawProposal", TextGetter.getText("white")));
           break;
         case BLACK_DRAW_PROPOSAL:
-          System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("black")));
+          print(TextGetter.getText("drawProposal", TextGetter.getText("black")));
           break;
         case WHITE_UNDRAW:
-          System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")));
+          print(TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")));
           break;
         case BLACK_UNDRAW:
-          System.out.println(TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
+          print(TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
           break;
         case DRAW_ACCEPTED:
-          System.out.println(TextGetter.getText("drawAccepted"));
+          print(TextGetter.getText("drawAccepted"));
           break;
         case GAME_SAVED:
-          System.out.println(TextGetter.getText("gameSaved"));
+          print(TextGetter.getText("gameSaved"));
           break;
         case MOVE_UNDO:
-          System.out.println(TextGetter.getText("moveUndone"));
-          System.out.println(Game.getInstance().getGameRepresentation());
+          print(TextGetter.getText("moveUndone"));
+          print(Game.getInstance().getGameRepresentation());
           break;
         case WHITE_UNDO_PROPOSAL:
-          System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("white")));
-          System.out.println(TextGetter.getText("undoInstructions", TextGetter.getText("black")));
+          print(TextGetter.getText("undoProposal", TextGetter.getText("white")));
+          print(TextGetter.getText("undoInstructions", TextGetter.getText("black")));
           break;
         case BLACK_UNDO_PROPOSAL:
-          System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("black")));
-          System.out.println(TextGetter.getText("undoInstructions", TextGetter.getText("white")));
+          print(TextGetter.getText("undoProposal", TextGetter.getText("black")));
+          print(TextGetter.getText("undoInstructions", TextGetter.getText("white")));
           break;
         case MOVE_REDO:
-          System.out.println(TextGetter.getText("moveRedone"));
-          System.out.println(Game.getInstance().getGameRepresentation());
+          print(TextGetter.getText("moveRedone"));
+          print(Game.getInstance().getGameRepresentation());
           break;
         case WHITE_REDO_PROPOSAL:
-          System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("white")));
-          System.out.println(TextGetter.getText("redoInstructions", TextGetter.getText("black")));
+          print(TextGetter.getText("redoProposal", TextGetter.getText("white")));
+          print(TextGetter.getText("redoInstructions", TextGetter.getText("black")));
           break;
         case BLACK_REDO_PROPOSAL:
-          System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("black")));
-          System.out.println(TextGetter.getText("redoInstructions", TextGetter.getText("white")));
+          print(TextGetter.getText("redoProposal", TextGetter.getText("black")));
+          print(TextGetter.getText("redoInstructions", TextGetter.getText("white")));
           break;
         case OUT_OF_TIME_WHITE:
-          System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("white")));
+          print(TextGetter.getText("outOfTime", TextGetter.getText("white")));
           break;
         case OUT_OF_TIME_BLACK:
-          System.out.println(TextGetter.getText("outOfTime", TextGetter.getText("black")));
+          print(TextGetter.getText("outOfTime", TextGetter.getText("black")));
           break;
         case THREEFOLD_REPETITION:
-          System.out.println(TextGetter.getText("threeFoldRepetition"));
+          print(TextGetter.getText("threeFoldRepetition"));
           break;
         case INSUFFICIENT_MATERIAL:
-          System.out.println(TextGetter.getText("insufficientMaterial"));
+          print(TextGetter.getText("insufficientMaterial"));
           break;
         case FIFTY_MOVE_RULE:
-          System.out.println(TextGetter.getText("fiftyMoveRule"));
+          print(TextGetter.getText("fiftyMoveRule"));
           break;
         case WHITE_RESIGNS:
-          System.out.println(TextGetter.getText("resigns", TextGetter.getText("white")));
+          print(TextGetter.getText("resigns", TextGetter.getText("white")));
           break;
         case BLACK_RESIGNS:
-          System.out.println(TextGetter.getText("resigns", TextGetter.getText("black")));
+          print(TextGetter.getText("resigns", TextGetter.getText("black")));
           break;
         case CHECKMATE_WHITE:
-          System.out.println(
+          print(
               TextGetter.getText(
                   "checkmate", TextGetter.getText("white"), TextGetter.getText("black")));
           break;
         case CHECKMATE_BLACK:
-          System.out.println(
+          print(
               TextGetter.getText(
                   "checkmate", TextGetter.getText("black"), TextGetter.getText("white")));
           break;
         case STALEMATE:
-          System.out.println(TextGetter.getText("stalemate"));
+          print(TextGetter.getText("stalemate"));
           break;
         case AI_PLAYING:
-          System.out.println(TextGetter.getText("ai_playing"));
+          print(TextGetter.getText("ai_playing"));
           break;
         case GAME_RESTART:
-          System.out.println(TextGetter.getText("gameRestart"));
-          System.out.println(TextGetter.getText("welcomeCLI"));
-          System.out.println(TextGetter.getText("welcomeInstructions"));
-          System.out.println(Game.getInstance().getGameRepresentation());
+          print(TextGetter.getText("gameRestart"));
+          print(TextGetter.getText("welcomeCLI"));
+          print(TextGetter.getText("welcomeInstructions"));
+          print(Game.getInstance().getGameRepresentation());
           break;
         default:
           debug(LOGGER, "Received unknown game event: " + event);
@@ -222,10 +224,9 @@ public class CliView implements View {
         || exception instanceof CommandNotAvailableNowException
         || exception instanceof FailedUndoException
         || exception instanceof FailedRedoException) {
-      System.out.println(exception.getMessage());
+      error(exception.getMessage());
     } else {
-      System.err.println(exception);
-      exception.printStackTrace();
+      error(String.valueOf(exception));
       running = false;
     }
   }
@@ -268,7 +269,7 @@ public class CliView implements View {
       Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
-      System.out.println(TextGetter.getText("unknownCommand", input));
+      print(TextGetter.getText("unknownCommand", input));
       this.helpCommand("");
     }
   }
@@ -279,7 +280,7 @@ public class CliView implements View {
    * @param args Unused argument
    */
   private void displayBoardCommand(String args) {
-    System.out.println(Game.getInstance().getGameRepresentation());
+    print(Game.getInstance().getGameRepresentation());
   }
 
   /**
@@ -288,7 +289,7 @@ public class CliView implements View {
    * @param args Unused argument
    */
   private void historyCommand(String args) {
-    System.out.println(TextGetter.getText("historyTitle"));
+    print(TextGetter.getText("historyTitle"));
     System.out.println(Game.getInstance().getHistory());
   }
 
@@ -307,7 +308,7 @@ public class CliView implements View {
    * @param args Unused argument
    */
   private void helpCommand(String args) {
-    System.out.println(TextGetter.getText("availableCommandsTitle"));
+    print(TextGetter.getText("availableCommandsTitle"));
     for (Map.Entry<String, CommandEntry> entry : commands.entrySet()) {
       System.out.printf("  %-10s - %s%n", entry.getKey(), entry.getValue().description());
     }
@@ -348,7 +349,7 @@ public class CliView implements View {
    * @param args Unused argument
    */
   private void quitCommand(String args) {
-    System.out.println(TextGetter.getText("quitting"));
+    print(TextGetter.getText("quitting"));
     this.running = false;
   }
 
@@ -392,10 +393,9 @@ public class CliView implements View {
   private void timeCommand(String args) {
     Timer timer = Game.getInstance().getTimer(Game.getInstance().getGameState().isWhiteTurn());
     if (timer != null) {
-      System.out.println(
-          TextGetter.getText("timeRemainingCurrent", timer.getTimeRemainingString()));
+      print(TextGetter.getText("timeRemainingCurrent", timer.getTimeRemainingString()));
     } else {
-      System.out.println(TextGetter.getText("noTimer"));
+      print(TextGetter.getText("noTimer"));
     }
   }
 

@@ -1,14 +1,7 @@
 package pdp.utils;
 
-import java.util.logging.Logger;
-
 /** Relative position depending on x and y coordinates. */
 public record Position(int x, int y) {
-  private static final Logger LOGGER = Logger.getLogger(Position.class.getName());
-
-  static {
-    Logging.configureLogging(LOGGER);
-  }
 
   /**
    * Creates a position.
@@ -49,14 +42,14 @@ public record Position(int x, int y) {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj) {
       return true;
     }
     if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    Position position = (Position) obj;
+    final Position position = (Position) obj;
     return x == position.x() && y == position.y();
   }
 

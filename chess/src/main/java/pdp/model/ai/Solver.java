@@ -1,6 +1,7 @@
 package pdp.model.ai;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -336,9 +337,8 @@ public class Solver {
       try {
         game.playMove(bestMove.move());
       } catch (Exception e) {
-        e.printStackTrace();
         game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
-        System.err.println(e.getMessage());
+        error(e.getMessage());
         if (game.getGameState().isWhiteTurn()) {
           game.getGameState().whiteResigns();
         } else {

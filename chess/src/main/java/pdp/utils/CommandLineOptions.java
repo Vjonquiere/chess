@@ -1,6 +1,8 @@
 package pdp.utils;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,9 +21,10 @@ import org.apache.commons.cli.ParseException;
 
 /** Utility class to parse the command line options. */
 public final class CommandLineOptions {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
-  // Not final for test purposes
+  /** Default name of the configuration file. Not final for test purposes. */
   private static String defaultConfigFile = "default.chessrc";
 
   /** Private constructor to avoid instantiation. */
@@ -37,19 +40,20 @@ public final class CommandLineOptions {
    * @param runtime The runtime.
    * @return A map of the activated options.
    */
-  public static HashMap<OptionType, String> parseOptions(String[] args, Runtime runtime) {
-    Options options = new Options();
-    for (OptionType optionType : OptionType.values()) {
+  public static HashMap<OptionType, String> parseOptions(
+      final String[] args, final Runtime runtime) {
+    final Options options = new Options();
+    for (final OptionType optionType : OptionType.values()) {
       options.addOption(optionType.getOption());
     }
 
-    Map<String, String> defaultArgs = new HashMap<>();
-    CommandLineParser parser = new DefaultParser();
-    HashMap<OptionType, String> activatedOptions = new HashMap<>();
+    final Map<String, String> defaultArgs;
+    final CommandLineParser parser = new DefaultParser();
+    final HashMap<OptionType, String> activatedOptions = new HashMap<>();
 
     try {
-      CommandLine cmd = parser.parse(options, args);
-      String configFile = cmd.getOptionValue(OptionType.CONFIG.getLong(), (String) null);
+      final CommandLine cmd = parser.parse(options, args);
+      final String configFile = cmd.getOptionValue(OptionType.CONFIG.getLong(), (String) null);
       defaultArgs = loadDefaultArgs(configFile, activatedOptions);
       handleLoggingOptions(cmd, defaultArgs);
       if (handleImmediateExitOptions(cmd, options, runtime)) {
@@ -58,12 +62,12 @@ public final class CommandLineOptions {
       processOptions(cmd, defaultArgs, activatedOptions);
 
       if (!cmd.getArgList().isEmpty()) {
-        String loadFile = cmd.getArgList().get(0);
+        final String loadFile = cmd.getArgList().get(0);
         activatedOptions.put(OptionType.LOAD, loadFile);
         debug(LOGGER, "Load file set to: " + loadFile);
       }
     } catch (ParseException exp) {
-      System.out.println("Parsing failed.  Reason: " + exp.getMessage());
+      error("Parsing failed.  Reason: " + exp.getMessage());
       new HelpFormatter().printHelp("chess", options);
       runtime.exit(1);
     } catch (IOException e) {
@@ -85,19 +89,19 @@ public final class CommandLineOptions {
    * @return A map of default arguments read from the configuration file.
    */
   private static Map<String, String> loadDefaultArgs(
-      String file, HashMap<OptionType, String> activatedOptions) {
+      String file, final HashMap<OptionType, String> activatedOptions) {
     InputStream inputStream = null;
     if (file != null && !file.endsWith(".chessrc")) {
       file = null;
-      System.out.println("Selected file is not of .chessrc format, defaulting to default options");
+      print("Selected file is not of .chessrc format, defaulting to default options");
       activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
     }
     if (file != null) {
       try {
         inputStream = new FileInputStream(file);
       } catch (FileNotFoundException e) {
-        System.err.println("Error while parsing chessrc file: " + e.getMessage());
-        System.err.println("Default options will be used");
+        error("Error while parsing chessrc file: " + e.getMessage());
+        error("Default options will be used");
         file = null;
         activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
       }
@@ -111,7 +115,7 @@ public final class CommandLineOptions {
           throw new FileNotFoundException("config.chessrc not found in classpath!");
         }
       } catch (Exception e) {
-        System.err.println("Error while parsing chessrc file: " + e.getMessage());
+        error("Error while parsing chessrc file: " + e.getMessage());
         activatedOptions.put(OptionType.CONFIG, null);
         return new HashMap<>();
       }
@@ -119,7 +123,7 @@ public final class CommandLineOptions {
 
     if (inputStream != null) {
       try {
-        Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
+        final Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
         return iniMap.getOrDefault("Default", new HashMap<>());
       } catch (Exception e) {
         activatedOptions.put(OptionType.CONFIG, null);
@@ -138,7 +142,8 @@ public final class CommandLineOptions {
    * @param cmd The command line options.
    * @param defaultArgs The default arguments.
    */
-  private static void handleLoggingOptions(CommandLine cmd, Map<String, String> defaultArgs) {
+  private static void handleLoggingOptions(
+      final CommandLine cmd, final Map<String, String> defaultArgs) {
     if (cmd.hasOption(OptionType.DEBUG.getLong()) || "true".equals(defaultArgs.get("debug"))) {
       Logging.setDebug(true);
       Logging.configureLogging(LOGGER);
@@ -161,7 +166,7 @@ public final class CommandLineOptions {
    * @throws IOException If an IO exception occurs.
    */
   private static boolean handleImmediateExitOptions(
-      CommandLine cmd, Options options, Runtime runtime) throws IOException {
+      final CommandLine cmd, final Options options, final Runtime runtime) throws IOException {
     if (cmd.hasOption(OptionType.HELP.getLong())) {
       debug(LOGGER, "Help option activated");
       new HelpFormatter().printHelp("chess", options);
@@ -170,9 +175,9 @@ public final class CommandLineOptions {
     }
     if (cmd.hasOption(OptionType.VERSION.getLong())) {
       debug(LOGGER, "Version option activated");
-      Properties properties = new Properties();
+      final Properties properties = new Properties();
       properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
-      System.out.println("Version: " + properties.getProperty("version"));
+      print("Version: " + properties.getProperty("version"));
       runtime.exit(0);
       return true;
     }
@@ -189,10 +194,10 @@ public final class CommandLineOptions {
    * @param activatedOptions The map to store the activated options.
    */
   private static void processOptions(
-      CommandLine cmd,
-      Map<String, String> defaultArgs,
-      HashMap<OptionType, String> activatedOptions) {
-    for (OptionType option : OptionType.values()) {
+      final CommandLine cmd,
+      final Map<String, String> defaultArgs,
+      final HashMap<OptionType, String> activatedOptions) {
+    for (final OptionType option : OptionType.values()) {
 
       if (option == OptionType.CONFIG) {
         if (activatedOptions.containsKey(OptionType.CONFIG)) {
@@ -200,13 +205,13 @@ public final class CommandLineOptions {
         }
       }
 
-      boolean userProvided = cmd.hasOption(option.getLong());
-      boolean defaultEnabled =
+      final boolean userProvided = cmd.hasOption(option.getLong());
+      final boolean defaultEnabled =
           defaultArgs.containsKey(option.getLong())
               && !"false".equals(defaultArgs.get(option.getLong()));
 
       if (userProvided || defaultEnabled) {
-        String value =
+        final String value =
             userProvided
                 ? cmd.getOptionValue(option.getLong(), "")
                 : defaultArgs.get(option.getLong());
@@ -221,7 +226,7 @@ public final class CommandLineOptions {
             debug(LOGGER, "Language = French");
             TextGetter.setLocale("fr");
           } else {
-            System.err.println(
+            error(
                 "Language "
                     + cmd.getOptionValue(option.getLong(), "")
                     + " not supported, language = english");
@@ -229,7 +234,7 @@ public final class CommandLineOptions {
         }
 
         if (!isFeatureImplemented(option)) {
-          System.err.println(option.getLong() + " not implemented yet");
+          error(option.getLong() + " not implemented yet");
         }
       }
     }
@@ -246,7 +251,7 @@ public final class CommandLineOptions {
 
     if (activatedOptions.containsKey(OptionType.TIME)
         && !activatedOptions.containsKey(OptionType.BLITZ)) {
-      System.err.println("The TIME option can't be used without BLITZ activated : option ignored.");
+      error("The TIME option can't be used without BLITZ activated : option ignored.");
       activatedOptions.remove(OptionType.TIME);
     } else if (activatedOptions.containsKey(OptionType.BLITZ)
         && !activatedOptions.containsKey(OptionType.TIME)) {
@@ -269,9 +274,9 @@ public final class CommandLineOptions {
    *
    * @param activatedOptions The map containing the currently activated options.
    */
-  public static void validateAiOptions(HashMap<OptionType, String> activatedOptions) {
+  public static void validateAiOptions(final HashMap<OptionType, String> activatedOptions) {
     if (!activatedOptions.containsKey(OptionType.AI)) {
-      for (OptionType aiOption :
+      for (final OptionType aiOption :
           new OptionType[] {
             OptionType.AI_MODE,
             OptionType.AI_DEPTH,
@@ -289,7 +294,7 @@ public final class CommandLineOptions {
             OptionType.AI_ENDGAME_B
           }) {
         if (activatedOptions.containsKey(aiOption)) {
-          System.err.println("Modifying " + aiOption.getLong() + " requires 'a' argument");
+          error("Modifying " + aiOption.getLong() + " requires 'a' argument");
           activatedOptions.remove(aiOption);
         }
       }
@@ -376,7 +381,7 @@ public final class CommandLineOptions {
    * @param option The option to check.
    * @return Whether the given option is implemented.
    */
-  private static boolean isFeatureImplemented(OptionType option) {
+  private static boolean isFeatureImplemented(final OptionType option) {
     return switch (option) {
       default -> true;
     };

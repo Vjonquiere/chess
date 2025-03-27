@@ -164,8 +164,9 @@ public class ChessMenu extends HBox {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
 
-          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
+          }
         });
     MenuItem redo = new MenuItem(TextGetter.getText("redo"));
     redo.setOnAction(
@@ -183,8 +184,9 @@ public class ChessMenu extends HBox {
           } else {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
-          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
+          }
         });
     MenuItem restart = new MenuItem(TextGetter.getText("restart"));
     restart.setOnAction(
@@ -300,7 +302,8 @@ public class ChessMenu extends HBox {
    *
    * @param message The message to display.
    * @param error The type of message.
-   * @param infinite
+   * @param infinite true if the message needs to be kept while no new message arrived, false
+   *     otherwise.
    */
   public void displayMessage(String message, boolean error, boolean infinite) {
     if (error) {

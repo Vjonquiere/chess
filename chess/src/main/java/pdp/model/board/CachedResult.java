@@ -168,6 +168,13 @@ public class CachedResult {
     }
   }
 
+  /**
+   * Saves the given bitboard into the attack bitboard field corresponding to the colo given in
+   * parameters.
+   *
+   * @param white true if the player is white, false otherwise.
+   * @param bitboard bitboard to save in whiteAttackBitboards/blackAttackBitboards
+   */
   public void setAttackBitboard(boolean white, Bitboard bitboard) {
     if (white) {
       whiteAttackBitboards = bitboard;
@@ -176,6 +183,12 @@ public class CachedResult {
     }
   }
 
+  /**
+   * Retrieves the attack bitboard of the side corresponding to the parameter white.
+   *
+   * @param white true if the player is white, false otherwise.
+   * @return attack bitboard of the side given in arguments
+   */
   public Bitboard getAttackBitboard(boolean white) {
     if (white) {
       return whiteAttackBitboards;

@@ -9,7 +9,10 @@ import java.util.ResourceBundle;
  * chessResources_locale.properties files in the resources.
  */
 public final class TextGetter {
-  private static Locale locale = Locale.ENGLISH; // Default language
+  /** Locale corresponding to the language of the app, english by default. */
+  private static Locale locale = Locale.ENGLISH;
+
+  /** ResourceBundle to get the strings from. */
   private static ResourceBundle messages = ResourceBundle.getBundle("chessResources", locale);
 
   static {
@@ -24,7 +27,7 @@ public final class TextGetter {
    *
    * @param languageCode wished language for the app
    */
-  public static void setLocale(String languageCode) {
+  public static void setLocale(final String languageCode) {
     // If the language code is "fr", set to French, otherwise default to English
     if ("fr".equalsIgnoreCase(languageCode)) {
       locale = Locale.FRENCH;
@@ -49,7 +52,7 @@ public final class TextGetter {
    * @param key key corresponding to the string to get from the resource file
    * @return String corresponding to the value of the given key
    */
-  public static String getText(String key) {
+  public static String getText(final String key) {
     return messages.getString(key);
   }
 
@@ -62,7 +65,7 @@ public final class TextGetter {
    * @throws IllegalArgumentException if the pattern is invalid or argument indices are out of
    *     range.
    */
-  public static String getText(String key, Object... args) {
+  public static String getText(final String key, final Object... args) {
     return MessageFormat.format(getText(key), args);
   }
 }

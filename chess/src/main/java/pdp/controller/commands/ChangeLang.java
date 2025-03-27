@@ -1,5 +1,7 @@
 package pdp.controller.commands;
 
+import static pdp.utils.Logging.error;
+
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
@@ -24,7 +26,7 @@ public class ChangeLang implements Command {
       Game.getInstance().notifyObservers(EventType.UPDATE_LANG);
       return Optional.empty();
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      error(e.getMessage());
       return Optional.of(e);
     }
   }
