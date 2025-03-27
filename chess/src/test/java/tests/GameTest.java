@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.GameAbstract;
@@ -620,6 +621,16 @@ public class GameTest {
     assertTrue(content.contains(game.getHistory().toAlgebraicString()));
 
     Files.deleteIfExists(tempFile);
+  }
+
+  @Test
+  public void testSaveGameToUnwritableLocation() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    // Use an invalid directory (Linux: /root/, Windows: C:\InvalidPath\)
+    String invalidPath = "/root/game-save-test.txt"; // Adjust path based on OS
+
+    assertThrows(FailedSaveException.class, () -> game.saveGame(invalidPath));
   }
 
   @Test

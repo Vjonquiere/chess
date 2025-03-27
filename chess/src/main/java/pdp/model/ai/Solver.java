@@ -204,7 +204,7 @@ public class Solver {
     this.startHeuristic = heuristic;
   }
 
-  public HeuristicType getStartHeurisic() {
+  public HeuristicType getStartHeuristic() {
     return this.startHeuristic;
   }
 
@@ -213,7 +213,7 @@ public class Solver {
    *
    * @return current heuristic
    */
-  public HeuristicType getCurrentHeurisic() {
+  public HeuristicType getCurrentHeuristic() {
     return this.currentHeuristic;
   }
 
@@ -322,7 +322,9 @@ public class Solver {
     }
     searchStopped = false;
     isMoveToPlay = true;
+    game.setAiPlayedItsLastMove(false);
     final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
+    game.setAiPlayedItsLastMove(true);
     if (timer != null) {
       timer.stop();
     }

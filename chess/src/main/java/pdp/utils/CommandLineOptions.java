@@ -237,6 +237,16 @@ public final class CommandLineOptions {
       }
     }
 
+    if (activatedOptions.containsKey(OptionType.CONTEST)) {
+      String contestFile = activatedOptions.get(OptionType.CONTEST);
+      if (contestFile == null || contestFile.isEmpty()) {
+        System.err.println("Error: --contest option requires a valid file path.");
+        activatedOptions.remove(OptionType.CONTEST);
+      } else {
+        debug(LOGGER, "Contest mode activated with file: " + contestFile);
+      }
+    }
+
     if (activatedOptions.containsKey(OptionType.TIME)
         && !activatedOptions.containsKey(OptionType.BLITZ)) {
       error("The TIME option can't be used without BLITZ activated : option ignored.");
@@ -325,7 +335,7 @@ public final class CommandLineOptions {
       activatedOptions.remove(OptionType.AI_DEPTH);
 
       if (!activatedOptions.containsKey(OptionType.AI_SIMULATION)) {
-        activatedOptions.put(OptionType.AI_SIMULATION, "100");
+        activatedOptions.put(OptionType.AI_SIMULATION, "150");
       }
 
       if (!activatedOptions.containsKey(OptionType.AI_SIMULATION_W)) {
@@ -371,7 +381,6 @@ public final class CommandLineOptions {
    */
   private static boolean isFeatureImplemented(final OptionType option) {
     return switch (option) {
-      case CONTEST -> false;
       default -> true;
     };
   }

@@ -47,16 +47,16 @@ public final class Game extends GameAbstract {
   private static Game instance;
 
   /** Solver of the White AI player. */
-  private final Solver solverWhite;
+  private Solver solverWhite;
 
   /** Solver of the Black AI player. */
-  private final Solver solverBlack;
+  private Solver solverBlack;
 
   /** Boolean to indicate whether the white player is an AI or not. */
-  private final boolean whiteAi;
+  private boolean whiteAi;
 
   /** Boolean to indicate whether the black player is an AI or not. */
-  private final boolean blackAi;
+  private boolean blackAi;
 
   /**
    * Boolean to indicate whether an AI is searching for a move, avoid sending message to the view.
@@ -73,6 +73,11 @@ public final class Game extends GameAbstract {
   private boolean loadingFileWithHistory;
 
   /** Map containing the different options to parametrize the game and their values. */
+  private boolean contestModeOn;
+
+  /** Boolean value used to know if Ai played its move (contest Mode) */
+  private boolean AiPlayedItsLastMove;
+
   private final HashMap<OptionType, String> options;
 
   /** Lock of the view, to avoid desynchronization between the view and the model. */
@@ -127,6 +132,7 @@ public final class Game extends GameAbstract {
     this.explorationAi = false;
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
+    this.AiPlayedItsLastMove = false;
 
     if (instance != null) {
       if (instance.getBlackSolver() != null) {
@@ -222,6 +228,24 @@ public final class Game extends GameAbstract {
   }
 
   /**
+   * Assigns boolean value to whiteAi attribute field. Method used in GameInitializer.
+   *
+   * @param ai true if white is AI. false otherwise.
+   */
+  public void setWhiteAi(boolean ai) {
+    this.whiteAi = ai;
+  }
+
+  /**
+   * Assigns boolean value to blakAi attribute field. Method used in GameInitializer.
+   *
+   * @param ai true if black is AI. false otherwise.
+   */
+  public void setBlackAi(boolean ai) {
+    this.blackAi = ai;
+  }
+
+  /**
    * Gets the solver used by the White AI.
    *
    * @return the {@link Solver} instance used for White AI decision-making.
@@ -237,6 +261,24 @@ public final class Game extends GameAbstract {
    */
   public Solver getBlackSolver() {
     return solverBlack;
+  }
+
+  /**
+   * Assigns solver for white. Method used in GameInitializer.
+   *
+   * @param solver The new solver to assign to white.
+   */
+  public void setWhiteSolver(Solver solver) {
+    this.solverWhite = solver;
+  }
+
+  /**
+   * Assigns solver for black. Method used in GameInitializer.
+   *
+   * @param solver The new solver to assign to black.
+   */
+  public void setBlackSolver(Solver solver) {
+    this.solverBlack = solver;
   }
 
   /**
@@ -279,8 +321,8 @@ public final class Game extends GameAbstract {
    *
    * @return the path of the file that generated the game
    */
-  public String getLoadingFile() {
-    return options.get(OptionType.LOAD);
+  public String getContestFile() {
+    return options.get(OptionType.CONTEST);
   }
 
   /**
@@ -299,6 +341,40 @@ public final class Game extends GameAbstract {
    */
   public void setLoadingFileHasHistory(final boolean fileHasHistory) {
     this.loadingFileWithHistory = fileHasHistory;
+  }
+
+  /**
+   * Used in updateGameStateAfterMove() method to know how to handle game save.
+   *
+   * @return true if AI finished computing moves. false otherwise.
+   */
+  public boolean AiPlayedItsLastMove() {
+    return this.AiPlayedItsLastMove;
+  }
+
+  /**
+   * Method used in Solver.playAIMove(this) to indicate when AI finished computing. Used to know
+   * when the game can be saved when loading or contest mode.
+   */
+  public void setAiPlayedItsLastMove(boolean lastMove) {
+    this.AiPlayedItsLastMove = lastMove;
+  }
+
+  /**
+   * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
+   * file with contest mode on.
+   *
+   * @param mode boolean to indicate if contest mode is on or off.
+   */
+  public void setContestModeOnOrOff(boolean mode) {
+    this.contestModeOn = mode;
+  }
+
+  /**
+   * @return true if the game was loaded from a file with contest mode enabled. false otherwise.
+   */
+  public boolean isContestModeOn() {
+    return this.contestModeOn;
   }
 
   /**
@@ -556,29 +632,35 @@ public final class Game extends GameAbstract {
 
     debug(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase()) {
-      if (this.solverWhite != null
-          && (!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-          && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getEndgameHeuristic())) {
+      if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
-        this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
+        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverWhite.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
+        }
       }
-      if (this.solverBlack != null
-          && (!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-          && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getEndgameHeuristic())) {
-        this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
+      if (this.solverBlack != null) {
+        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverBlack.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
+        }
       }
     }
 
     if (!isEndGamePhase()) {
-      if (this.solverWhite != null
-          && (!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-          && !(this.solverWhite.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
-        this.solverWhite.setHeuristic(this.solverWhite.getStartHeurisic());
+      if (this.solverWhite != null) {
+        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverWhite.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getStartHeuristic());
+        }
       }
-      if (this.solverBlack != null
-          && (!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-          && !(this.solverBlack.getCurrentHeurisic() == this.solverWhite.getStartHeurisic())) {
-        this.solverBlack.setHeuristic(this.solverBlack.getStartHeurisic());
+      if (this.solverBlack != null) {
+        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverBlack.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getStartHeuristic());
+        }
       }
     }
     debug(LOGGER, "Checking game status...");
@@ -588,7 +670,15 @@ public final class Game extends GameAbstract {
     if (!isLoadedFromFile()) {
       super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
     } else {
-      checkAndOverwriteHistory(move);
+      if (!AiPlayedItsLastMove()) {
+        if (isBlackAi() || isWhiteAi()) {
+          super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+        } else {
+          checkAndOverwriteHistory(move);
+        }
+      } else {
+        checkAndOverwriteHistory(move);
+      }
     }
 
     if (!explorationAi && !isInitializing) {
@@ -645,21 +735,31 @@ public final class Game extends GameAbstract {
       }
       if (nextState == null) {
         // End of history already, so add new move and save
-        this.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-        saveGame(getLoadingFile());
-        debug(
-            LOGGER, "Move differs from history. Overwriting history for file :" + getLoadingFile());
+        super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+        if (isContestModeOn()) {
+          saveGame(getContestFile());
+          debug(
+              LOGGER,
+              "Move differs from history. Overwriting history for file :" + getContestFile());
+        } else {
+          debug(LOGGER, "Move differs from history. Overwriting history");
+        }
       } else {
         // Check if move we want to play is the same as the next one. If not, overwrite history and
         // save
         if (!move.equals(nextState.getMove())) {
-          // Truncate history
-          super.getHistory().setCurrentMove(null);
-          super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-          saveGame(getLoadingFile());
-          debug(
-              LOGGER,
-              "Move differs from history. Overwriting history for file :" + getLoadingFile());
+          if (isContestModeOn()) {
+            super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+            saveGame(getContestFile());
+            debug(
+                LOGGER,
+                "Move differs from history. Overwriting history for file :" + getContestFile());
+          } else {
+            // Truncate history by adding a new move from this point forward
+            super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+            debug(LOGGER, "Move differs from history. Overwriting history");
+          }
+
         } else {
           // If same move, just forward by one in the history
           super.getGameState().updateFrom(nextNode.get().getState().getGameState().getCopy());
@@ -672,7 +772,14 @@ public final class Game extends GameAbstract {
     } else {
       // If no history just add the move
       super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-      saveGame(getLoadingFile());
+      if (isContestModeOn()) {
+        System.err.println("LOADING FILE : " + getContestFile());
+        saveGame(getContestFile());
+        debug(
+            LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
+      } else {
+        debug(LOGGER, "Move differs from history. Overwriting history");
+      }
     }
   }
 
@@ -706,6 +813,7 @@ public final class Game extends GameAbstract {
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(game);
+      writer.close();
     } catch (IOException e) {
       debug(LOGGER, "Error writing to file: " + e.getMessage());
       throw new FailedSaveException(path);
