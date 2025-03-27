@@ -5,7 +5,11 @@ import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.model.Game;
 
+/**
+ * Part of Command Design pattern. Creates a command to replay the last move. Corresponds to a redo.
+ */
 public class RestoreMoveCommand implements Command {
+
   /**
    * Reverts the last cancelled move in the game model if possible.
    *
@@ -14,12 +18,28 @@ public class RestoreMoveCommand implements Command {
    * @return An Optional containing an exception if an error occurred or empty if successful.
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     try {
-      model.nextState();
-      if (model.isBlackAI() && !model.getGameState().isWhiteTurn()
-          || model.isWhiteAI() && model.getGameState().isWhiteTurn()) {
-        model.getSolver().playAIMove(model);
+      if (model.getGameState().getRedoRequestTurnNumber() == model.getGameState().getFullTurn()) {
+        model.nextState();
+        if (model.isBlackAi() && !model.getGameState().isWhiteTurn()) {
+          model.getBlackSolver().playAiMove(model);
+        }
+        if (model.isWhiteAi() && model.getGameState().isWhiteTurn()) {
+          model.getWhiteSolver().playAiMove(model);
+        }
+      } else {
+        if (model.isBlackAi() || model.isWhiteAi()) {
+          model.nextState();
+          if (model.isBlackAi() && !model.getGameState().isWhiteTurn()) {
+            model.getBlackSolver().playAiMove(model);
+          }
+          if (model.isWhiteAi() && model.getGameState().isWhiteTurn()) {
+            model.getWhiteSolver().playAiMove(model);
+          }
+        } else {
+          model.getGameState().redoRequest();
+        }
       }
       return Optional.empty();
     } catch (Exception e) {

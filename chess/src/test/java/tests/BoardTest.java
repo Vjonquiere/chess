@@ -2,7 +2,11 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.Game;
@@ -15,27 +19,44 @@ import pdp.utils.Position;
 public class BoardTest {
   public Game game;
 
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
+
   @Test
   public void testClassicMove() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 2));
     game.playMove(move);
-    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(4, 2).piece);
-    assertEquals(game.getBoard().getBoardRep().getPieceAt(1, 4).piece, Piece.EMPTY);
+    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(4, 2).getPiece());
+    assertEquals(game.getBoard().getBoardRep().getPieceAt(1, 4).getPiece(), Piece.EMPTY);
   }
 
   @Test
   public void testDoublePushMove() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
-    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(4, 3).piece);
-    assertEquals(game.getBoard().getBoardRep().getPieceAt(1, 4).piece, Piece.EMPTY);
+    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(4, 3).getPiece());
+    assertEquals(game.getBoard().getBoardRep().getPieceAt(1, 4).getPiece(), Piece.EMPTY);
   }
 
   @Test
   public void testCaptureMove() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move1 = new Move(new Position(3, 6), new Position(3, 4));
@@ -44,12 +65,12 @@ public class BoardTest {
     Move move2 = new Move(new Position(4, 3), new Position(3, 4));
     game.playMove(move2);
 
-    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(3, 4).piece);
+    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(3, 4).getPiece());
   }
 
   @Test
   public void testCanCastleWhenGameStartsShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     assertFalse(
         game.getBoard().canCastle(Color.WHITE, true),
         "Short castle should not be possible for white at initial position !");
@@ -66,7 +87,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenBlackInCheckShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -99,7 +120,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenWhiteInCheckShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -128,7 +149,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleShortWhenPieceInBetweenShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -157,7 +178,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleLongWhenPieceInBetweenShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -194,7 +215,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleShortWhenSquareAttackedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -239,7 +260,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenKingHasMovedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -292,7 +313,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleWhenRookHasMovedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -353,7 +374,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleShortShouldBeTrue() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -390,7 +411,7 @@ public class BoardTest {
 
   @Test
   public void testCanCastleLongShouldBeTrue() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -435,7 +456,7 @@ public class BoardTest {
 
   @Test
   public void testApplyShortCastleShouldBeSuccess() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -470,42 +491,42 @@ public class BoardTest {
 
     // ensure white king ended up on g1
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(6, 0).piece == Piece.KING,
+        game.getBoard().getBoardRep().getPieceAt(6, 0).getPiece() == Piece.KING,
         "White king should end up on g1 square after short castle !");
     // ensure black king ended up on g8
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(6, 7).piece == Piece.KING,
+        game.getBoard().getBoardRep().getPieceAt(6, 7).getPiece() == Piece.KING,
         "Black king should end up on g8 square after short castle !");
     // ensure white rook ended up on f1
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(5, 0).piece == Piece.ROOK,
+        game.getBoard().getBoardRep().getPieceAt(5, 0).getPiece() == Piece.ROOK,
         "White rook should end up on f1 square after short castle !");
     // ensure black rook ended up on f8
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(5, 7).piece == Piece.ROOK,
+        game.getBoard().getBoardRep().getPieceAt(5, 7).getPiece() == Piece.ROOK,
         "Black rook should end up on f8 square after short castle !");
 
     // ensure h1 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(7, 0).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(7, 0).getPiece() == Piece.EMPTY,
         "H1 square should be empty after short castle for white !");
     // ensure e1 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(4, 0).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(4, 0).getPiece() == Piece.EMPTY,
         "E1 square should be empty after short castle for white !");
     // ensure h8 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(7, 7).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(7, 7).getPiece() == Piece.EMPTY,
         "H8 square should be empty after short castle for black !");
     // ensure e8 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(4, 7).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(4, 7).getPiece() == Piece.EMPTY,
         "E8 square should be empty after short castle for black !");
   }
 
   @Test
   public void testApplyLongCastleShouldBeSuccess() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // d2-d4  white
     Move move1 = new Move(new Position(3, 1), new Position(3, 3));
@@ -548,50 +569,50 @@ public class BoardTest {
 
     // ensure white king ended up on c1
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(2, 0).piece == Piece.KING,
+        game.getBoard().getBoardRep().getPieceAt(2, 0).getPiece() == Piece.KING,
         "White king should end up on c1 square after long castle !");
     // ensure black king ended up on c8
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(2, 7).piece == Piece.KING,
+        game.getBoard().getBoardRep().getPieceAt(2, 7).getPiece() == Piece.KING,
         "Black king should end up on c8 square after long castle !");
     // ensure white rook ended up on d1
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(3, 0).piece == Piece.ROOK,
+        game.getBoard().getBoardRep().getPieceAt(3, 0).getPiece() == Piece.ROOK,
         "White rook should end up on d1 square after long castle !");
     // ensure black rook ended up on d8
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(3, 7).piece == Piece.ROOK,
+        game.getBoard().getBoardRep().getPieceAt(3, 7).getPiece() == Piece.ROOK,
         "White rook should end up on d1 square after long castle !");
 
     // ensure a1 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(0, 0).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(0, 0).getPiece() == Piece.EMPTY,
         "A1 square should be empty after long castle for white !");
     // ensure e1 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(4, 0).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(4, 0).getPiece() == Piece.EMPTY,
         "E1 square should be empty after long castle for white !");
     // ensure b1 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(1, 0).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(1, 0).getPiece() == Piece.EMPTY,
         "B1 square should be empty after long castle for white !");
     // ensure a8 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(0, 7).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(0, 7).getPiece() == Piece.EMPTY,
         "A8 square should be empty after long castle for black !");
     // ensure e8 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(4, 7).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(4, 7).getPiece() == Piece.EMPTY,
         "E8 square should be empty after long castle for black !");
     // ensure b8 square is empty
     assertTrue(
-        game.getBoard().getBoardRep().getPieceAt(1, 7).piece == Piece.EMPTY,
+        game.getBoard().getBoardRep().getPieceAt(1, 7).getPiece() == Piece.EMPTY,
         "B8 square should be empty after long castle for black !");
   }
 
   @Test
   public void testCanCastleLongWhenSquareAttackedShouldBeFalse() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     // e2-e4  white
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
@@ -647,7 +668,7 @@ public class BoardTest {
 
   @Test
   public void testEnPassant() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move1 = new Move(new Position(1, 6), new Position(1, 5));
@@ -657,16 +678,16 @@ public class BoardTest {
     Move move3 = new Move(new Position(3, 6), new Position(3, 4));
     game.playMove(move3);
 
-    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(3, 5).piece);
+    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(3, 5).getPiece());
     Move move4 = new Move(new Position(4, 4), new Position(3, 5));
     game.playMove(move4);
-    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(3, 4).piece);
-    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(3, 5).piece);
+    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(3, 4).getPiece());
+    assertEquals(Piece.PAWN, game.getBoard().getBoardRep().getPieceAt(3, 5).getPiece());
   }
 
   @Test // must promote a pawn to Queen
   public void boardPromotionWhiteQueenTest() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move1 = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move1);
     Move move2 = new Move(new Position(4, 6), new Position(4, 5));
@@ -690,18 +711,18 @@ public class BoardTest {
     PromoteMove move9 = new PromoteMove(new Position(2, 6), new Position(1, 7), Piece.QUEEN);
     game.playMove(move9);
 
-    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(1, 7).piece);
+    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(1, 7).getPiece());
     Move move10 = new Move(new Position(5, 4), new Position(5, 3));
     game.playMove(move10);
     Move move11 = new Move(new Position(1, 7), new Position(4, 4));
     game.playMove(move11);
-    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(1, 7).piece);
-    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(4, 4).piece);
+    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(1, 7).getPiece());
+    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(4, 4).getPiece());
   }
 
   @Test // must promote a pawn to Queen
   public void boardPromotionQueenBlackTest() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move1 = new Move(new Position(4, 1), new Position(4, 3)); // w
     game.playMove(move1);
@@ -728,20 +749,20 @@ public class BoardTest {
     PromoteMove move10 = new PromoteMove(new Position(2, 1), new Position(1, 0), Piece.QUEEN); // b
     game.playMove(move10);
 
-    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(1, 0).piece);
+    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(1, 0).getPiece());
 
     Move move15 = new Move(new Position(3, 3), new Position(3, 4)); // w
     game.playMove(move15);
     Move move16 = new Move(new Position(1, 0), new Position(3, 2)); // b
     game.playMove(move16);
 
-    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(1, 0).piece);
-    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(3, 2).piece);
+    assertEquals(Piece.EMPTY, game.getBoard().getBoardRep().getPieceAt(1, 0).getPiece());
+    assertEquals(Piece.QUEEN, game.getBoard().getBoardRep().getPieceAt(3, 2).getPiece());
   }
 
   @Test
   public void exceptionOnPromotionWithoutTargetPiece() {
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move1 = new Move(new Position(4, 1), new Position(4, 3)); // w
     game.playMove(move1);

@@ -1,13 +1,17 @@
 package pdp.model.parsers;
 
-import static pdp.utils.Logging.DEBUG;
-import static pdp.utils.Logging.VERBOSE;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.verbose;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
@@ -16,6 +20,7 @@ import pdp.model.board.BitboardRepresentation;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
 
+/** Parser that produce board objects from given file format (support FEN header). */
 public class BoardFileParser {
   private static final Logger LOGGER = Logger.getLogger(BoardFileParser.class.getName());
 
@@ -24,14 +29,14 @@ public class BoardFileParser {
   }
 
   /**
-   * Get the string contained in the given file
+   * Get the string contained in the given file.
    *
    * @param path The path to the file
    * @return The content of the given file has a String
-   * @throws FileNotFoundException
+   * @throws FileNotFoundException if the path is not valid
    */
   public String readFile(String path) throws FileNotFoundException {
-    DEBUG(LOGGER, "Loading file: " + path);
+    debug(LOGGER, "Loading file: " + path);
     StringBuilder fileContent = new StringBuilder();
     File myObj = new File(path);
     Scanner myReader = new Scanner(myObj);
@@ -40,7 +45,7 @@ public class BoardFileParser {
       fileContent.append("\n");
     }
     myReader.close();
-    VERBOSE(LOGGER, "File content: " + fileContent);
+    verbose(LOGGER, "File content: " + fileContent);
     return fileContent.toString();
   }
 
@@ -57,26 +62,26 @@ public class BoardFileParser {
     try {
       content = readFile(fileName);
     } catch (FileNotFoundException e) {
-      System.out.println("File not found, loading default game");
+      error("File not found, loading default game");
       runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true, null);
     }
     content = content.split("\\d+\\.")[0].trim(); // Removing history if present
     try {
-      DEBUG(LOGGER, "Converting file to charStream...");
+      debug(LOGGER, "Converting file to charStream...");
       CharStream charStream = CharStreams.fromString(content);
-      DEBUG(LOGGER, "Lexing...");
+      debug(LOGGER, "Lexing...");
       BoardLoaderLexer lexer = new BoardLoaderLexer(charStream);
       CommonTokenStream tokens = new CommonTokenStream(lexer);
-      DEBUG(LOGGER, "Parsing...");
+      debug(LOGGER, "Parsing...");
       BoardLoaderParser parser = new BoardLoaderParser(tokens);
       parser.setErrorHandler(new BailErrorStrategy()); // force parser to throw error
       ParseTree tree = parser.board();
-      DEBUG(LOGGER, "Building board...");
+      debug(LOGGER, "Building board...");
       ParseTreeWalker walker = new ParseTreeWalker();
       BoardLoaderListener listener = new BoardLoaderListener();
       walker.walk(listener, tree);
-      DEBUG(LOGGER, "Board built successfully");
+      debug(LOGGER, "Board built successfully");
       FileBoard result = listener.getResult();
       if (result.board().getKing(true).size() != 1
           || result.board().getKing(false).size() != 1
@@ -87,7 +92,7 @@ public class BoardFileParser {
       }
       return result;
     } catch (Exception e) {
-      System.out.println("Failed to build board: " + e.getMessage());
+      error("Failed to build board: " + e.getMessage());
       runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true, null);
     }

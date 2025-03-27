@@ -1,11 +1,15 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import pdp.controller.GameController;
 import pdp.controller.commands.*;
 import pdp.exceptions.CommandNotAvailableNowException;
@@ -16,10 +20,11 @@ import pdp.model.Game;
 import pdp.model.GameState;
 import pdp.model.board.Move;
 
-class CommandTest {
+public class CommandsTest {
   private Game model;
   private GameController controller;
   private GameState gameState;
+  private MockedStatic<Game> gameMock;
 
   @BeforeEach
   public void setUp() {
@@ -27,12 +32,21 @@ class CommandTest {
     controller = mock(GameController.class);
     gameState = mock(GameState.class);
     when(model.getGameState()).thenReturn(gameState);
+
+    gameMock = mockStatic(Game.class);
+    gameMock.when(Game::getInstance).thenReturn(model);
+  }
+
+  @AfterEach
+  public void tearDown() {
+    gameMock.close();
   }
 
   // PlayMoveCommand
 
   @Test
   public void testPlayMoveCommandSuccess() {
+
     PlayMoveCommand command = new PlayMoveCommand("e2-e4");
 
     Optional<Exception> result = command.execute(model, controller);

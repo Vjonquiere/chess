@@ -3,7 +3,9 @@ package pdp.model.ai.heuristics;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
+/** Heuristic based on the number of moves available for each player. */
 public class MobilityHeuristic implements Heuristic {
+
   /**
    * Evaluates the board based on the available moves for each player. The amount is divided by 10
    * based on Shannon's paper (XXII. Programming a Computer for Playing Chess).
@@ -13,12 +15,13 @@ public class MobilityHeuristic implements Heuristic {
    * @return score of the board
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
+    int score = 0;
     if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
-      return (int)
-          ((bitBoard.getColorMoveBitboard(isWhite).bitCount()
-                  - bitBoard.getColorMoveBitboard(!isWhite).bitCount())
-              * 0.1);
+      score +=
+          bitBoard.getColorMoveBitboard(true).bitCount()
+              - bitBoard.getColorMoveBitboard(false).bitCount();
+      return isWhite ? (int) (score * 0.1) : (int) (-score * 0.1);
     }
 
     return (int)

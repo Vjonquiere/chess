@@ -1,8 +1,10 @@
 package pdp.model.ai.heuristics;
 
+import pdp.exceptions.InvalidBoardException;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Board;
 
+/** Heuristic based on the number of pieces still on the board. */
 public class MaterialHeuristic implements Heuristic {
 
   /**
@@ -13,29 +15,16 @@ public class MaterialHeuristic implements Heuristic {
    * @return score of the board
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
+    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRep)) {
+      throw new InvalidBoardException();
+    }
     int score = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation))
-      throw new RuntimeException("Only available for bitboards");
-    score +=
-        bitboardRepresentation.getPawns(isWhite).size()
-            - bitboardRepresentation.getPawns(!isWhite).size();
-    score +=
-        (bitboardRepresentation.getQueens(isWhite).size()
-                - bitboardRepresentation.getQueens(!isWhite).size())
-            * 18;
-    score +=
-        (bitboardRepresentation.getBishops(isWhite).size()
-                - bitboardRepresentation.getBishops(!isWhite).size())
-            * 6;
-    score +=
-        (bitboardRepresentation.getKnights(isWhite).size()
-                - bitboardRepresentation.getKnights(!isWhite).size())
-            * 6;
-    score +=
-        (bitboardRepresentation.getRooks(isWhite).size()
-                - bitboardRepresentation.getRooks(!isWhite).size())
-            * 10;
-    return score;
+    score += bitboardRep.getPawns(true).size() - bitboardRep.getPawns(false).size();
+    score += (bitboardRep.getQueens(true).size() - bitboardRep.getQueens(false).size()) * 9;
+    score += (bitboardRep.getBishops(true).size() - bitboardRep.getBishops(false).size()) * 3;
+    score += (bitboardRep.getKnights(true).size() - bitboardRep.getKnights(false).size()) * 3;
+    score += (bitboardRep.getRooks(true).size() - bitboardRep.getRooks(false).size()) * 5;
+    return isWhite ? score : -score;
   }
 }

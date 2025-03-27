@@ -5,22 +5,15 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
+import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
+/** Board structure to be used in game states. */
 public class Board {
   private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
-  public BoardRepresentation board;
-  public boolean isWhite;
-  boolean whiteShortCastle;
-  boolean blackShortCastle;
-  boolean whiteLongCastle;
-  boolean blackLongCastle;
-  public Position enPassantPos;
-  public boolean isLastMoveDoublePush;
-  public boolean isEnPassantTake;
-  int nbMovesWithNoCaptureOrPawn;
+  private BoardRepresentation board;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -28,129 +21,132 @@ public class Board {
 
   /** Creates a default board. */
   public Board() {
-    this.board = new BitboardRepresentation();
-    this.isWhite = true;
-    this.enPassantPos = null;
-    this.whiteShortCastle = true;
-    this.blackShortCastle = true;
-    this.whiteLongCastle = true;
-    this.blackLongCastle = true;
-    this.isLastMoveDoublePush = false;
-    this.isEnPassantTake = false;
-    this.nbMovesWithNoCaptureOrPawn = 0;
+    this.setBoard(new BitboardRepresentation());
   }
 
   /**
-   * Create a board from a given board state (support FileBoard header)
+   * Create a board from a given board state (support FileBoard header).
    *
    * @param board The board state to use
    */
   public Board(FileBoard board) {
-    this.board = board.board();
-    this.isWhite = board.isWhiteTurn();
+    this.setBoard(board.board());
+    this.setPlayer(board.isWhiteTurn());
 
     if (board.header() != null) { // Initialize board with header values
-      this.enPassantPos = board.header().enPassant();
-      if (this.enPassantPos != null) {
-        this.isLastMoveDoublePush = true;
+      this.setEnPassantPos(board.header().enPassant());
+      if (this.getEnPassantPos() != null) {
+        this.setLastMoveDoublePush(true);
       }
-      this.whiteShortCastle = board.header().whiteKingCastling();
-      this.blackShortCastle = board.header().blackKingCastling();
-      this.whiteLongCastle = board.header().whiteQueenCastling();
-      this.blackLongCastle = board.header().blackQueenCastling();
-      this.nbMovesWithNoCaptureOrPawn = board.header().fiftyMoveRule();
+      this.setWhiteShortCastle(board.header().whiteKingCastling());
+      this.setBlackShortCastle(board.header().blackKingCastling());
+      this.setWhiteLongCastle(board.header().whiteQueenCastling());
+      this.setBlackLongCastle(board.header().blackQueenCastling());
+      this.setNbMovesWithNoCaptureOrPawn(board.header().fiftyMoveRule());
     } else { // No header -> default values
-      this.enPassantPos = null;
-      this.whiteShortCastle = true;
-      this.blackShortCastle = true;
-      this.whiteLongCastle = true;
-      this.blackLongCastle = true;
-      this.isLastMoveDoublePush = false;
-      this.isEnPassantTake = false;
-      this.nbMovesWithNoCaptureOrPawn = 0;
+      this.setEnPassantPos(null);
+      this.setLastMoveDoublePush(false);
+      this.setWhiteShortCastle(
+          board.board().getPieceAt(7, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
+      this.setBlackShortCastle(
+          board.board().getPieceAt(7, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
+      this.setWhiteLongCastle(
+          board.board().getPieceAt(0, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
+      this.setBlackLongCastle(
+          board.board().getPieceAt(0, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
+      this.setNbMovesWithNoCaptureOrPawn(0);
     }
   }
 
   public List<Move> getAvailableMoves(Position pos) {
-    return board.getAvailableMoves(pos.getX(), pos.getY(), false);
+    return getBoardRep().getAvailableMoves(pos.x(), pos.y(), false);
   }
 
   public boolean getPlayer() {
-    return this.isWhite;
+    return this.board.getPlayer();
   }
 
   public void setPlayer(boolean isWhite) {
-    this.isWhite = isWhite;
+    this.board.setPlayer(isWhite);
   }
 
   /**
-   * Executes a given move on the board, handling captures, en passant, castling, pawn promotion,
+   * Executes a given move on the board, handling captures, en passant, castling, pawn promotion.
    *
    * @param move The move to be executed
    */
   public void makeMove(Move move) {
-    this.nbMovesWithNoCaptureOrPawn++;
-    if (board.getPieceAt(move.source.getX(), move.source.getY()).piece == Piece.PAWN) {
+
+    this.board.setNbMovesWithNoCaptureOrPawn(board.getNbMovesWithNoCaptureOrPawn() + 1);
+    if (getBoardRep().getPieceAt(move.getSource().x(), move.getSource().y()).getPiece()
+        == Piece.PAWN) {
       // Reset the number of moves with no pawn move
-      this.nbMovesWithNoCaptureOrPawn = 0;
+      this.board.setNbMovesWithNoCaptureOrPawn(0);
     }
-    if (move.isTake) {
+
+    // TODO REFACTOR EN PASSANT DELETE
+    if (move.isTake()) {
       // SAVE DELETED PIECE FOR HASHING
-      if (!this.isEnPassantTake) {
-        board.deletePieceAt(move.dest.getX(), move.dest.getY());
+      if (!this.isEnPassantTake()) {
+        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
       }
       // Reset the number of moves with no capture
-      this.nbMovesWithNoCaptureOrPawn = 0;
+      this.board.setNbMovesWithNoCaptureOrPawn(0);
     }
 
-    if (this.isEnPassantTake) {
-      this.isLastMoveDoublePush = false;
-      this.isEnPassantTake = false;
-      if (this.isWhite) {
-        board.deletePieceAt(move.dest.getX(), move.dest.getY() - 1);
+    if (this.isEnPassantTake()) {
+      this.setLastMoveDoublePush(false);
+      this.setEnPassantTake(false);
+      if (this.getPlayer()) {
+        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
       } else {
-        board.deletePieceAt(move.dest.getX(), move.dest.getY() + 1);
+        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
       }
     }
 
-    board.movePiece(move.source, move.dest);
+    getBoardRep().movePiece(move.getSource(), move.getDest());
 
-    if (this.whiteShortCastle
-        && (move.source.equals(new Position(4, 0))
-            || move.source.equals(new Position(0, 0)))) { // rook on a1 and king on e1
-      this.whiteShortCastle = false;
+    if (this.isWhiteLongCastle()
+        && (move.getSource().equals(new Position(4, 0))
+            || move.getSource().equals(new Position(0, 0)))) { // rook on a1 and king on e1
+      this.setWhiteLongCastle(false);
     }
-    if (this.whiteLongCastle
-        && (move.source.equals(new Position(4, 0))
-            || move.source.equals(new Position(7, 0)))) { // rook on h1 and king on e1
-      this.whiteLongCastle = false;
+    if (this.isWhiteShortCastle()
+        && (move.getSource().equals(new Position(4, 0))
+            || move.getSource().equals(new Position(7, 0)))) { // rook on h1 and king on e1
+      this.setWhiteShortCastle(false);
     }
 
-    if (this.blackShortCastle
-        && (move.source.equals(new Position(4, 7))
-            || move.source.equals(new Position(7, 7)))) { // rook on h8 and king on e8
-      this.blackShortCastle = false;
+    if (this.isBlackShortCastle()
+        && (move.getSource().equals(new Position(4, 7))
+            || move.getSource().equals(new Position(7, 7)))) { // rook on h8 and king on e8
+      this.setBlackShortCastle(false);
     }
-    if (this.blackLongCastle
-        && (move.source.equals(new Position(4, 7))
-            || move.source.equals(new Position(0, 7)))) { // rook on a8 and king on e8
-      this.blackLongCastle = false;
+    if (this.isBlackLongCastle()
+        && (move.getSource().equals(new Position(4, 7))
+            || move.getSource().equals(new Position(0, 7)))) { // rook on a8 and king on e8
+      this.setBlackLongCastle(false);
     }
-    if (board.isPawnPromoting(move.dest.getX(), move.dest.getY(), this.isWhite)) {
+    if (getBoardRep().isPawnPromoting(move.getDest().x(), move.getDest().y(), this.getPlayer())) {
       Piece newPiece = ((PromoteMove) move).getPromPiece();
-      board.promotePawn(
-          move.dest.getX(),
-          move.dest.getY(),
-          this.isWhite,
-          newPiece); // replace Piece.QUEEN by newPiece
+      getBoardRep()
+          .promotePawn(
+              move.getDest().x(),
+              move.getDest().y(),
+              this.getPlayer(),
+              newPiece); // replace Piece.QUEEN by newPiece
     }
 
-    if (isLastMoveDoublePush) {
-      this.isLastMoveDoublePush = false;
+    if (isLastMoveDoublePush()) {
+      this.setLastMoveDoublePush(false);
     }
 
-    if (this.isEnPassantTake) {
-      this.isLastMoveDoublePush = false;
+    if (this.isEnPassantTake()) {
+      this.setLastMoveDoublePush(false);
     }
   }
 
@@ -162,21 +158,22 @@ public class Board {
    */
   public Board getCopy() {
     Board copy = new Board();
-    copy.board = this.board.getCopy();
-    copy.isWhite = this.isWhite;
-    copy.whiteShortCastle = this.whiteShortCastle;
-    copy.blackShortCastle = this.blackShortCastle;
-    copy.whiteLongCastle = this.whiteLongCastle;
-    copy.blackLongCastle = this.blackLongCastle;
-    copy.enPassantPos = (this.enPassantPos != null) ? this.enPassantPos.getCopy() : null;
-    copy.isLastMoveDoublePush = this.isLastMoveDoublePush;
-    copy.isEnPassantTake = this.isEnPassantTake;
-    copy.nbMovesWithNoCaptureOrPawn = this.nbMovesWithNoCaptureOrPawn;
+    copy.setBoard(this.getBoardRep().getCopy());
+    copy.setPlayer(this.getPlayer());
+    copy.setWhiteShortCastle(this.isWhiteShortCastle());
+    copy.setBlackShortCastle(this.isBlackShortCastle());
+    copy.setWhiteLongCastle(this.isWhiteLongCastle());
+    copy.setBlackLongCastle(this.isBlackLongCastle());
+    copy.setEnPassantPos(
+        (this.getEnPassantPos() != null) ? this.getEnPassantPos().getCopy() : null);
+    copy.setLastMoveDoublePush(this.isLastMoveDoublePush());
+    copy.setEnPassantTake(this.isEnPassantTake());
+    copy.setNbMovesWithNoCaptureOrPawn(this.getNbMovesWithNoCaptureOrPawn());
     return copy;
   }
 
   public BoardRepresentation getBoardRep() {
-    return board;
+    return this.board;
   }
 
   /**
@@ -188,8 +185,8 @@ public class Board {
    * @return a 2D array of characters representing the chess board.
    */
   public char[][] getAsciiRepresentation() {
-    int rows = this.board.getNbRows();
-    int cols = this.board.getNbCols();
+    int rows = this.getBoardRep().getNbRows();
+    int cols = this.getBoardRep().getNbCols();
     char[][] charBoard = new char[rows][cols];
 
     for (int i = 0; i < rows; i++) {
@@ -197,20 +194,24 @@ public class Board {
     }
 
     for (int i = 0; i < 2; i++) {
-      boolean color = (i == 0);
+      boolean color = i == 0;
 
       placePiecesOnBoard(
-          charBoard, this.board.getPawns(color), Piece.PAWN.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getPawns(color), Piece.PAWN.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.board.getRooks(color), Piece.ROOK.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getRooks(color), Piece.ROOK.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.board.getKnights(color), Piece.KNIGHT.getCharRepresentation(color));
+          charBoard,
+          this.getBoardRep().getKnights(color),
+          Piece.KNIGHT.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.board.getBishops(color), Piece.BISHOP.getCharRepresentation(color));
+          charBoard,
+          this.getBoardRep().getBishops(color),
+          Piece.BISHOP.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.board.getQueens(color), Piece.QUEEN.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getQueens(color), Piece.QUEEN.getCharRepresentation(color));
       placePiecesOnBoard(
-          charBoard, this.board.getKing(color), Piece.KING.getCharRepresentation(color));
+          charBoard, this.getBoardRep().getKing(color), Piece.KING.getCharRepresentation(color));
     }
 
     return charBoard;
@@ -226,13 +227,13 @@ public class Board {
    */
   private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {
     for (Position pos : positions) {
-      board[this.board.getNbRows() - 1 - pos.getY()][pos.getX()] = rep;
+      board[this.getBoardRep().getNbRows() - 1 - pos.y()][pos.x()] = rep;
     }
   }
 
-  public int getNbMovesWithNoCaptureOrPawn() {
+  public int getNbFullMovesWithNoCaptureOrPawn() {
     // Divide by 2 because fifty move rule is for full moves
-    return this.nbMovesWithNoCaptureOrPawn / 2;
+    return board.getNbMovesWithNoCaptureOrPawn() / 2;
   }
 
   /**
@@ -245,134 +246,7 @@ public class Board {
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
   public boolean canCastle(Color color, boolean shortCastle) {
-    if (color == Color.WHITE) {
-      if (shortCastle && !this.whiteShortCastle) return false;
-      if (!shortCastle && !this.whiteLongCastle) return false;
-
-      Position f1Square = new Position(5, 0);
-      Position g1Square = new Position(6, 0);
-
-      Position d1Square = new Position(3, 0);
-      Position c1Square = new Position(2, 0);
-      Position b1Square = new Position(1, 0);
-
-      if (shortCastle) {
-        if ((board.getPieceAt(f1Square.getX(), f1Square.getY()).piece != Piece.EMPTY)
-            || (board.getPieceAt(g1Square.getX(), g1Square.getY()).piece != Piece.EMPTY)) {
-          return false;
-        }
-        // Squares are empty so now ensure king is not in check and does not move through check
-        if (board.isCheck(Color.WHITE)
-            || board.isAttacked(5, 0, Color.BLACK)
-            || board.isAttacked(6, 0, Color.BLACK)) {
-          return false;
-        }
-      } else {
-        if ((board.getPieceAt(d1Square.getX(), d1Square.getY()).piece != Piece.EMPTY)
-            || (board.getPieceAt(c1Square.getX(), c1Square.getY()).piece != Piece.EMPTY)
-            || (board.getPieceAt(b1Square.getX(), b1Square.getY()).piece != Piece.EMPTY)) {
-          return false;
-        }
-        // Squares are empty so now ensure king is not in check and does not move through check
-        if (board.isCheck(Color.WHITE)
-            || board.isAttacked(3, 0, Color.BLACK)
-            || board.isAttacked(2, 0, Color.BLACK)) {
-          return false;
-        }
-      }
-      return true;
-    } else {
-      if (shortCastle && !this.blackShortCastle) return false;
-      if (!shortCastle && !this.blackLongCastle) return false;
-
-      Position f8Square = new Position(5, 7);
-      Position g8Square = new Position(6, 7);
-
-      Position d8Square = new Position(3, 7);
-      Position c8Square = new Position(2, 7);
-      Position b8Square = new Position(1, 7);
-
-      if (shortCastle) {
-        if ((board.getPieceAt(f8Square.getX(), f8Square.getY()).piece != Piece.EMPTY)
-            || (board.getPieceAt(g8Square.getX(), g8Square.getY()).piece != Piece.EMPTY)) {
-          return false;
-        }
-        // Squares are empty so now ensure king is not in check and does not move through check
-        if (board.isCheck(Color.BLACK)
-            || board.isAttacked(5, 7, Color.WHITE)
-            || board.isAttacked(6, 7, Color.WHITE)) {
-          return false;
-        }
-      } else {
-        if ((board.getPieceAt(d8Square.getX(), d8Square.getY()).piece != Piece.EMPTY)
-            || (board.getPieceAt(c8Square.getX(), c8Square.getY()).piece != Piece.EMPTY)
-            || (board.getPieceAt(b8Square.getX(), b8Square.getY()).piece != Piece.EMPTY)) {
-          return false;
-        }
-        // Squares are empty so now ensure king is not in check and does not move through check
-        if (board.isCheck(Color.BLACK)
-            || board.isAttacked(3, 7, Color.WHITE)
-            || board.isAttacked(2, 7, Color.WHITE)) {
-          return false;
-        }
-      }
-      return true;
-    }
-  }
-
-  /**
-   * Applies short castle for color {color}. Changes bitboards. Assumes castle is possible
-   *
-   * @param color color for which castling move is applied
-   */
-  public void applyShortCastle(Color color) {
-    if (color == Color.WHITE) {
-      Position e1Square = new Position(4, 0);
-      Position f1Square = new Position(5, 0);
-      Position g1Square = new Position(6, 0);
-      Position h1Square = new Position(7, 0);
-      // Move king
-      this.board.movePiece(e1Square, g1Square);
-      // Move rook
-      this.board.movePiece(h1Square, f1Square);
-
-    } else {
-      Position e8Square = new Position(4, 7);
-      Position f8Square = new Position(5, 7);
-      Position g8Square = new Position(6, 7);
-      Position h8Square = new Position(7, 7);
-      // Move king
-      this.board.movePiece(e8Square, g8Square);
-      // Move rook
-      this.board.movePiece(h8Square, f8Square);
-    }
-  }
-
-  /**
-   * Applies long castle for color {color}. Changes bitboards. Assumes castle is possible
-   *
-   * @param color color for which castling move is applied
-   */
-  public void applyLongCastle(Color color) {
-    if (color == Color.WHITE) {
-      Position e1Square = new Position(4, 0);
-      Position d1Square = new Position(3, 0);
-      Position c1Square = new Position(2, 0);
-      Position a1Square = new Position(0, 0);
-      // Move king
-      this.board.movePiece(e1Square, c1Square);
-      // Move rook
-      this.board.movePiece(a1Square, d1Square);
-    } else {
-      Position e8Square = new Position(4, 7);
-      Position d8Square = new Position(3, 7);
-      Position c8Square = new Position(2, 7);
-      Position a8Square = new Position(0, 7);
-      // Move king
-      this.board.movePiece(e8Square, c8Square);
-      // Move rook
-      this.board.movePiece(a8Square, d8Square);
-    }
+    return getBoardRep().canCastle(color, shortCastle);
   }
 
   /**
@@ -382,14 +256,90 @@ public class Board {
    * @param color color for which castling move is applied
    */
   public void applyCastle(Color color, boolean shortCastle) {
+
     if (shortCastle) {
-      applyShortCastle(color);
+      getBoardRep().applyShortCastle(color);
     } else {
-      applyLongCastle(color);
+      getBoardRep().applyLongCastle(color);
     }
   }
 
+  /**
+   * Get the castling rights of the board.
+   *
+   * @return An array that contains castling rights
+   */
   public boolean[] getCastlingRights() {
-    return new boolean[] {whiteShortCastle, whiteLongCastle, blackShortCastle, blackLongCastle};
+    return new boolean[] {
+      isWhiteShortCastle(), isWhiteLongCastle(), isBlackShortCastle(), isBlackLongCastle()
+    };
+  }
+
+  private void setBoard(BoardRepresentation board) {
+    this.board = board;
+  }
+
+  public Position getEnPassantPos() {
+    return board.getEnPassantPos();
+  }
+
+  public void setEnPassantPos(Position enPassantPos) {
+    board.setEnPassantPos(enPassantPos);
+  }
+
+  public boolean isLastMoveDoublePush() {
+    return board.isLastMoveDoublePush();
+  }
+
+  public void setLastMoveDoublePush(boolean lastMoveDoublePush) {
+    board.setLastMoveDoublePush(lastMoveDoublePush);
+  }
+
+  public boolean isWhiteShortCastle() {
+    return board.isWhiteShortCastle();
+  }
+
+  public void setWhiteShortCastle(boolean whiteShortCastle) {
+    board.setWhiteShortCastle(whiteShortCastle);
+  }
+
+  public boolean isBlackShortCastle() {
+    return board.isBlackShortCastle();
+  }
+
+  public void setBlackShortCastle(boolean blackShortCastle) {
+    board.setBlackShortCastle(blackShortCastle);
+  }
+
+  public boolean isWhiteLongCastle() {
+    return board.isWhiteLongCastle();
+  }
+
+  public void setWhiteLongCastle(boolean whiteLongCastle) {
+    board.setWhiteLongCastle(whiteLongCastle);
+  }
+
+  public boolean isBlackLongCastle() {
+    return board.isBlackLongCastle();
+  }
+
+  public void setBlackLongCastle(boolean blackLongCastle) {
+    board.setBlackLongCastle(blackLongCastle);
+  }
+
+  public boolean isEnPassantTake() {
+    return board.isEnPassantTake();
+  }
+
+  public void setEnPassantTake(boolean enPassantTake) {
+    board.setEnPassantTake(enPassantTake);
+  }
+
+  public int getNbMovesWithNoCaptureOrPawn() {
+    return board.getNbMovesWithNoCaptureOrPawn();
+  }
+
+  public void setNbMovesWithNoCaptureOrPawn(int newVal) {
+    board.setNbMovesWithNoCaptureOrPawn(newVal);
   }
 }

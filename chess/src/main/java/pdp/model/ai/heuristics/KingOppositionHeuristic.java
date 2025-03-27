@@ -4,6 +4,10 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/**
+ * Heuristic based on the balance of kings position. If they are in opposition , the endgame tends
+ * to lead to a draw.
+ */
 public class KingOppositionHeuristic implements Heuristic {
 
   /**
@@ -15,9 +19,9 @@ public class KingOppositionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
-    score += evaluateKingOpposition(board, isWhite);
+    score += evaluateKingOpposition(board);
     return score;
   }
 
@@ -27,24 +31,23 @@ public class KingOppositionHeuristic implements Heuristic {
    * know who's got the advantage.
    *
    * @param board the board of the game
-   * @param isWhite true if white, false otherwise
    * @return a score based on the king opposition
    */
-  private int evaluateKingOpposition(Board board, boolean isWhite) {
-    BoardRepresentation bitboard = board.getBoardRep();
-    Position whiteKing = bitboard.getKing(true).get(0);
-    Position blackKing = bitboard.getKing(false).get(0);
+  private int evaluateKingOpposition(final Board board) {
+    final BoardRepresentation bitboard = board.getBoardRep();
+    final Position whiteKing = bitboard.getKing(true).get(0);
+    final Position blackKing = bitboard.getKing(false).get(0);
 
-    int xDiff = Math.abs(whiteKing.getX() - blackKing.getX());
-    int yDiff = Math.abs(whiteKing.getY() - blackKing.getY());
+    final int diffX = Math.abs(whiteKing.x() - blackKing.x());
+    final int diffY = Math.abs(whiteKing.y() - blackKing.y());
 
     // If kings are directly opposite with one square between them
-    if ((xDiff == 2 && yDiff == 0) || (yDiff == 2 && xDiff == 0)) {
+    if ((diffX == 2 && diffY == 0) || (diffY == 2 && diffX == 0)) {
       // Strong opposition so more drawish
       return -10;
     }
     // If kings are diagonally close
-    if (xDiff <= 2 && yDiff <= 2) {
+    if (diffX <= 2 && diffY <= 2) {
       // Marginally drawish cuz slight opposition
       return -5;
     }

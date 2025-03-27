@@ -4,15 +4,22 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class TextGetter {
-  private static Locale locale = Locale.ENGLISH; // Default language
+/**
+ * Utility class for internationalization. Need to put all strings needed to be translated in the
+ * chessResources_locale.properties files in the resources.
+ */
+public final class TextGetter {
+  /** Locale corresponding to the language of the app, english by default. */
+  private static Locale locale = Locale.ENGLISH;
+
+  /** ResourceBundle to get the strings from. */
   private static ResourceBundle messages = ResourceBundle.getBundle("chessResources", locale);
 
   static {
     Locale.setDefault(locale);
   }
 
-  /*Private constructor to avoid instantiation*/
+  /*Private constructor to avoid instantiation.*/
   private TextGetter() {}
 
   /**
@@ -20,7 +27,7 @@ public class TextGetter {
    *
    * @param languageCode wished language for the app
    */
-  public static void setLocale(String languageCode) {
+  public static void setLocale(final String languageCode) {
     // If the language code is "fr", set to French, otherwise default to English
     if ("fr".equalsIgnoreCase(languageCode)) {
       locale = Locale.FRENCH;
@@ -31,17 +38,22 @@ public class TextGetter {
   }
 
   /**
+   * Retrieves the locale used in the application.
+   *
+   * @return locale save in the fields
+   */
+  public static Locale getLocale() {
+    return locale;
+  }
+
+  /**
    * Gets the string corresponding to the key in the correct language.
    *
    * @param key key corresponding to the string to get from the resource file
    * @return String corresponding to the value of the given key
    */
-  public static String getText(String key) {
+  public static String getText(final String key) {
     return messages.getString(key);
-  }
-
-  public static Locale getLocale() {
-    return locale;
   }
 
   /**
@@ -53,7 +65,7 @@ public class TextGetter {
    * @throws IllegalArgumentException if the pattern is invalid or argument indices are out of
    *     range.
    */
-  public static String getText(String key, Object... args) {
+  public static String getText(final String key, final Object... args) {
     return MessageFormat.format(getText(key), args);
   }
 }

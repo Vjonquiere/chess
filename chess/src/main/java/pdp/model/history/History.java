@@ -1,12 +1,13 @@
 package pdp.model.history;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
 
+/** Data structure to represent a history. */
 public class History {
   private static final Logger LOGGER = Logger.getLogger(History.class.getName());
   private HistoryNode currentMove;
@@ -17,6 +18,10 @@ public class History {
 
   /** Constructs a new History instance. Initializes logging and sets the current move to null. */
   public History() {
+    this.currentMove = null;
+  }
+
+  public void clear() {
     this.currentMove = null;
   }
 
@@ -50,13 +55,14 @@ public class History {
    *     and the color played.
    */
   public void addMove(HistoryState state) {
-    DEBUG(LOGGER, "Adding new state to History");
-    DEBUG(LOGGER, state.getMove().toString());
-    DEBUG(LOGGER, state.isWhite() + " " + String.valueOf(state.getFullTurn()));
+    debug(LOGGER, "Adding new state to History");
+    debug(LOGGER, state.getMove().toString());
+    debug(LOGGER, state.isWhite() + " " + String.valueOf(state.getFullTurn()));
 
     this.currentMove = new HistoryNode(state, this.currentMove);
-    if (this.currentMove.getPrevious() != null)
+    if (this.currentMove.getPrevious() != null) {
       this.currentMove.getPrevious().ifPresent(prev -> prev.setNext(this.currentMove));
+    }
   }
 
   /**
@@ -72,18 +78,18 @@ public class History {
 
     while (current != null) {
       stack.push(current);
-      current = current.previous;
+      current = current.getPrevious().orElse(null); // Utilisation de getPrevious()
     }
 
     while (!stack.isEmpty()) {
       HistoryNode node = stack.pop();
-      if (node != null) {
-        sb.append(node.state.toString());
-        if (node.state.isWhite()) {
-          sb.append("\n");
-        }
+      sb.append(node.getState().toString());
+
+      if (node.getState().isWhite()) {
+        sb.append("\n");
       }
     }
+
     return sb.toString().trim();
   }
 
@@ -92,6 +98,7 @@ public class History {
    *
    * @return A string representing the history of moves.
    */
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     HistoryNode current = currentMove;
@@ -99,18 +106,22 @@ public class History {
 
     while (current != null) {
       stack.push(current);
-      current = current.previous;
+      current = current.getPrevious().orElse(null); // Utilisation du getter
     }
 
     while (!stack.isEmpty()) {
       HistoryNode node = stack.pop();
-      if (node != null) {
-        sb.append(node.state.toString());
-        if (node.state.isWhite()) {
-          sb.append("\n");
-        }
+      sb.append(node.getState().toString());
+
+      if (node.getState().isWhite()) {
+        sb.append("\n");
       }
     }
+
     return sb.toString().trim();
+  }
+
+  public String toUniString() {
+    return currentMove == null ? "" : currentMove.getState().getMove().toUciString();
   }
 }

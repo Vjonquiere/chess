@@ -2,8 +2,12 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
@@ -13,6 +17,22 @@ import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class HistoryTest {
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
 
   /*   @Test
   void testHistoryToString() {
@@ -33,7 +53,7 @@ public class HistoryTest {
 
   @Test
   public void HistoryTestInGame() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move2 = new Move(new Position(4, 6), new Position(4, 4));
@@ -52,7 +72,7 @@ public class HistoryTest {
 
   @Test
   public void HistoryAlgebraicTestInGame() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move2 = new Move(new Position(4, 6), new Position(4, 4));
@@ -71,7 +91,7 @@ public class HistoryTest {
 
   @Test
   public void undoHistoryInGame() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -89,7 +109,7 @@ public class HistoryTest {
 
   @Test
   public void redoHistoryInGame() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -112,7 +132,7 @@ public class HistoryTest {
 
   @Test
   public void redoWithEmptyHistoryHistoryInGame() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     assertThrows(
         FailedRedoException.class,
         () -> {
@@ -122,7 +142,7 @@ public class HistoryTest {
 
   @Test
   public void undoWithEmptyHistoryHistoryInGame() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     assertThrows(
         FailedUndoException.class,
         () -> {
@@ -132,7 +152,7 @@ public class HistoryTest {
 
   @Test
   public void getCurrentMoveTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -167,7 +187,7 @@ public class HistoryTest {
 
   @Test
   public void compareGameStatePositionAndHistory() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -182,12 +202,12 @@ public class HistoryTest {
             .getBoard()
             .getBoardRep()
             .getPieceAt(4, 3)
-            .piece);
+            .getPiece());
   }
 
   @Test
   public void compareGameStatePositionAndHistoryAfterUndo() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -204,7 +224,7 @@ public class HistoryTest {
             .getBoard()
             .getBoardRep()
             .getPieceAt(4, 4)
-            .piece);
+            .getPiece());
     assertEquals(
         Piece.EMPTY,
         game.getHistory()
@@ -215,7 +235,7 @@ public class HistoryTest {
             .getBoard()
             .getBoardRep()
             .getPieceAt(4, 6)
-            .piece);
+            .getPiece());
 
     game.previousState();
 
@@ -229,7 +249,7 @@ public class HistoryTest {
             .getBoard()
             .getBoardRep()
             .getPieceAt(4, 4)
-            .piece);
+            .getPiece());
     assertEquals(
         Piece.PAWN,
         game.getHistory()
@@ -240,12 +260,12 @@ public class HistoryTest {
             .getBoard()
             .getBoardRep()
             .getPieceAt(4, 6)
-            .piece);
+            .getPiece());
   }
 
   @Test
   public void getNextNodeEmptyTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -264,7 +284,7 @@ public class HistoryTest {
 
   @Test
   public void toAlgebraicinHistoryStateBlackTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move2 = new Move(new Position(4, 6), new Position(4, 4));
@@ -282,7 +302,7 @@ public class HistoryTest {
   }
 
   public void toAlgebraicinHistoryStateWhiteTest() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
     Move move2 = new Move(new Position(4, 6), new Position(4, 4));

@@ -2,17 +2,39 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPositionException;
 import pdp.model.Game;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class MoveTest {
+
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @BeforeEach
+  void setUpConsole() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+  }
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
 
   @Test
   public void testEquals_sameMove() {
@@ -137,7 +159,7 @@ public class MoveTest {
 
   @Test
   public void testGetPiece() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -145,12 +167,13 @@ public class MoveTest {
     game.playMove(move2);
 
     assertEquals(
-        game.getHistory().getCurrentMove().get().getState().getMove().getPiece().piece, Piece.PAWN);
+        game.getHistory().getCurrentMove().get().getState().getMove().getPiece().getPiece(),
+        Piece.PAWN);
   }
 
   @Test
   public void testIsTake() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -166,7 +189,7 @@ public class MoveTest {
 
   @Test
   public void testIsCheck() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -182,7 +205,7 @@ public class MoveTest {
 
   @Test
   public void testSetCheck() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -200,7 +223,7 @@ public class MoveTest {
 
   @Test
   public void testIsCheckMate() {
-    Game game = Game.initialize(false, false, null, null, new HashMap<>());
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
     Move move = new Move(new Position(4, 1), new Position(4, 3));
     game.playMove(move);
@@ -213,5 +236,53 @@ public class MoveTest {
 
     assertEquals(
         game.getHistory().getCurrentMove().get().getState().getMove().isCheckMate(), false);
+  }
+
+  @Test
+  public void testMoveToUCI() {
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    assertEquals("e2e4", move.toUciString());
+    assertNotEquals(move.toString(), move.toUciString());
+
+    move = new Move(new Position(4, 6), new Position(4, 4));
+    assertEquals("e7e5", move.toUciString());
+  }
+
+  @Test
+  public void testPromoteMoveToUCI() {
+    Move move = new PromoteMove(new Position(4, 6), new Position(4, 7), Piece.ROOK);
+    assertEquals("e7e8R", move.toUciString());
+
+    move = new PromoteMove(new Position(4, 1), new Position(4, 0), Piece.ROOK);
+    assertEquals("e2e1R", move.toUciString());
+    assertNotEquals(move.toString(), move.toUciString());
+  }
+
+  @Test
+  public void testMoveFromUCIString() {
+    Move move = Move.fromUciString("e2e4");
+    assertEquals(new Position(4, 1), move.getSource());
+    assertEquals(new Position(4, 3), move.getDest());
+    assertEquals(Move.fromString("e2-e4"), move);
+
+    move = Move.fromUciString("e7e5");
+    assertEquals(new Position(4, 6), move.getSource());
+    assertEquals(new Position(4, 4), move.getDest());
+    assertEquals(Move.fromString("e7-e5"), move);
+
+    assertThrows(InvalidPositionException.class, () -> Move.fromUciString("j7e8R"));
+  }
+
+  @Test
+  public void testPromoteMoveFromUCIString() {
+    Move move = Move.fromUciString("e2e4Q");
+    assertEquals(new Position(4, 1), move.getSource());
+    assertEquals(new Position(4, 3), move.getDest());
+    assertEquals(Move.fromString("e2-e4"), move);
+
+    /*move = Move.fromUciString("e7e8R");
+    assertEquals(new Position(4, 6), move.getSource());
+    assertEquals(new Position(4, 4), move.getDest());
+    assertEquals(Move.fromString("e7-e5"), move);*/
   }
 }

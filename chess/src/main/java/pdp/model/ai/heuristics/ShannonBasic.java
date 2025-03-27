@@ -19,9 +19,11 @@ package pdp.model.ai.heuristics;
  */
 public class ShannonBasic extends AbstractHeuristic {
 
+  /** Creates a composite heuristic with material, mobility and bad pawn structure heuristics. */
   public ShannonBasic() {
-    super.addHeuristic(new MobilityHeuristic());
-    super.addHeuristic(new MaterialHeuristic());
-    super.addHeuristic(new BadPawnsHeuristic());
+    super();
+    super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), 1));
+    super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 1));
+    super.addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), 1));
   }
 }

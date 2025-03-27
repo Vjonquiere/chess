@@ -5,8 +5,8 @@ import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
+/** Heuristic based on the closeness of pawn promotion. */
 public class PromotionHeuristic implements Heuristic {
-
   /**
    * Computes a score according to the closeness of pawns promoting. Heuristic used for endgames.
    *
@@ -15,23 +15,23 @@ public class PromotionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
-    score += pawnsHaveProgressedScore(board, isWhite) - pawnsHaveProgressedScore(board, !isWhite);
-    score += pawnsAreCloseToPromotion(board, isWhite) - pawnsAreCloseToPromotion(board, !isWhite);
+    score += pawnsHaveProgressedScore(board, true) - pawnsHaveProgressedScore(board, false);
+    score += pawnsAreCloseToPromotion(board, true) - pawnsAreCloseToPromotion(board, false);
 
-    return score;
+    return isWhite ? score : -score;
   }
 
   /**
    * Checks if the pawns are well advanced for the corresponding color and returns a score
-   * accordingly
+   * accordingly.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
    * @return a score if the pawns were pushed far enough for the majority of them
    */
-  private int pawnsHaveProgressedScore(Board board, boolean isWhite) {
+  private int pawnsHaveProgressedScore(final Board board, final boolean isWhite) {
     int score = 0;
     if (board.getBoardRep().pawnsHaveProgressed(isWhite)) {
       score += 10;
@@ -47,19 +47,19 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on how many pawns are close to promoting.
    */
-  private int pawnsAreCloseToPromotion(Board board, boolean isWhite) {
+  private int pawnsAreCloseToPromotion(final Board board, final boolean isWhite) {
     int score = 0;
 
-    BoardRepresentation bitboard = board.getBoardRep();
-    List<Position> pawns = bitboard.getPawns(isWhite);
+    final BoardRepresentation bitboard = board.getBoardRep();
+    final List<Position> pawns = bitboard.getPawns(isWhite);
 
-    final int SECOND_LAST_RANK = isWhite ? 6 : 1;
+    final int secondLastRank = isWhite ? 6 : 1;
 
-    for (Position pawn : pawns) {
-      if (pawn.getY() == SECOND_LAST_RANK) {
+    for (final Position pawn : pawns) {
+      if (pawn.y() == secondLastRank) {
         // Pawn one step from promotion
         score += 20;
-      } else if ((isWhite && pawn.getY() >= 5) || (!isWhite && pawn.getY() <= 2)) {
+      } else if ((isWhite && pawn.y() >= 5) || (!isWhite && pawn.y() <= 2)) {
         // Pawn in the final phase of advancement
         score += 10;
       }

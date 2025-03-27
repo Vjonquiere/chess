@@ -3,8 +3,13 @@ package pdp.controller.commands;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
+import pdp.exceptions.FailedUndoException;
 import pdp.model.Game;
 
+/**
+ * Part of Command Design pattern. Creates a command to cancel the last move. Corresponds to an
+ * undo.
+ */
 public class CancelMoveCommand implements Command {
   /**
    * Cancels the last move in the game.
@@ -14,11 +19,27 @@ public class CancelMoveCommand implements Command {
    * @return An Optional containing an exception if an error occurred, or empty if successful
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     try {
-      model.previousState();
-      if (model.isBlackAI() || model.isWhiteAI()) {
+      if (model.isBlackAi() || model.isWhiteAi()) {
         model.previousState();
+        try {
+          model.previousState();
+        } catch (FailedUndoException e) {
+          // TODO: add an event to send to the view
+        }
+        if (model.isBlackAi() && !model.getGameState().isWhiteTurn()) {
+          model.getBlackSolver().playAiMove(model);
+        }
+        if (model.isWhiteAi() && model.getGameState().isWhiteTurn()) {
+          model.getWhiteSolver().playAiMove(model);
+        }
+      } else {
+        if (model.getGameState().getUndoRequestTurnNumber() == model.getGameState().getFullTurn()) {
+          model.previousState();
+        } else {
+          model.getGameState().undoRequest();
+        }
       }
       return Optional.empty();
     } catch (Exception e) {

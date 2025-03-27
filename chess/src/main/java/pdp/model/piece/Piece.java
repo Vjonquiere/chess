@@ -1,5 +1,6 @@
 package pdp.model.piece;
 
+/** Enum that represent chess pieces. */
 public enum Piece {
   PAWN {
     @Override
@@ -45,7 +46,7 @@ public enum Piece {
   };
 
   /**
-   * Get the character representation of the piece
+   * Get the character representation of the piece.
    *
    * @param white if true -> white piece, if false -> black piece
    * @return The character representation of the piece

@@ -6,13 +6,13 @@ import pdp.controller.GameController;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
 
-public class CancelDrawCommand implements Command {
-
-  boolean isWhite;
-
-  public CancelDrawCommand(boolean isWhite) {
-    this.isWhite = isWhite;
-  }
+/**
+ * Part of Command Design pattern. Creates a command for the cancellation of the draw request of the
+ * player of the color given in parameters.
+ *
+ * @param isWhite true if the player is white, false if he is black
+ */
+public record CancelDrawCommand(boolean isWhite) implements Command {
 
   /**
    * Executes the CancelDrawCommand which attempts to cancel a draw request in the game. If the game
@@ -24,11 +24,11 @@ public class CancelDrawCommand implements Command {
    *     Optional
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }
-    if (isWhite) {
+    if (isWhite()) {
       model.getGameState().whiteCancelsDrawRequest();
     } else {
       model.getGameState().blackCancelsDrawRequest();

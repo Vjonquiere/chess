@@ -1,6 +1,6 @@
 package pdp.events;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,16 @@ import java.util.logging.Logger;
 import pdp.model.Game;
 import pdp.utils.Logging;
 
+/** Part of design pattern observer. */
 public abstract class Subject {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Subject.class.getName());
-  List<EventObserver> observers = new ArrayList<>();
-  List<EventObserver> errorObservers = new ArrayList<>();
+
+  /** List of observers. */
+  private final List<EventObserver> observers = new ArrayList<>();
+
+  /** List of error observers. */
+  private final List<EventObserver> errorObservers = new ArrayList<>();
 
   static {
     Logging.configureLogging(LOGGER);
@@ -22,7 +28,7 @@ public abstract class Subject {
    *
    * @param observer The observer to be added.
    */
-  public void addObserver(EventObserver observer) {
+  public void addObserver(final EventObserver observer) {
     observers.add(observer);
   }
 
@@ -32,8 +38,8 @@ public abstract class Subject {
    * @param observer The observer to be notified.
    * @param event The type of event that occurred.
    */
-  public void notifyObserver(EventObserver observer, EventType event) {
-    DEBUG(LOGGER, "Notifying observer " + observer + " with event " + event);
+  public void notifyObserver(final EventObserver observer, final EventType event) {
+    debug(LOGGER, "Notifying observer " + observer + " with event " + event);
     observer.onGameEvent(event);
   }
 
@@ -42,7 +48,7 @@ public abstract class Subject {
    *
    * @param observer The observer to be removed.
    */
-  public void removeObserver(EventObserver observer) {
+  public void removeObserver(final EventObserver observer) {
     observers.remove(observer);
   }
 
@@ -51,7 +57,7 @@ public abstract class Subject {
    *
    * @param observer The observer to be added.
    */
-  public void addErrorObserver(EventObserver observer) {
+  public void addErrorObserver(final EventObserver observer) {
     errorObservers.add(observer);
   }
 
@@ -60,7 +66,7 @@ public abstract class Subject {
    *
    * @param observer The observer to be removed.
    */
-  public void removeErrorObserver(EventObserver observer) {
+  public void removeErrorObserver(final EventObserver observer) {
     errorObservers.remove(observer);
   }
 
@@ -69,10 +75,10 @@ public abstract class Subject {
    *
    * @param event The type of event that occurred.
    */
-  public void notifyObservers(EventType event) {
-    DEBUG(LOGGER, "Notifying observers with event " + event);
-    if (!Game.getInstance().isAIExploring()) {
-      for (EventObserver observer : observers) {
+  public void notifyObservers(final EventType event) {
+    debug(LOGGER, "Notifying observers with event " + event);
+    if (!Game.getInstance().isAiExploring()) {
+      for (final EventObserver observer : observers) {
         notifyObserver(observer, event);
       }
     }
@@ -81,12 +87,12 @@ public abstract class Subject {
   /**
    * Notifies all error observers of an exception that occurred.
    *
-   * @param e The exception that occurred.
+   * @param exception The exception that occurred.
    */
-  public void notifyErrorObservers(Exception e) {
-    if (!Game.getInstance().isAIExploring()) {
-      for (EventObserver observer : errorObservers) {
-        observer.onErrorEvent(e);
+  public void notifyErrorObservers(final Exception exception) {
+    if (!Game.getInstance().isAiExploring()) {
+      for (final EventObserver observer : errorObservers) {
+        observer.onErrorEvent(exception);
       }
     }
   }

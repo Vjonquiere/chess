@@ -7,6 +7,7 @@ import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 
+/** Save board to custom format. */
 public class BoardSaver {
 
   /**
@@ -62,7 +63,8 @@ public class BoardSaver {
     for (int y = 7; y >= 0; y--) {
       for (int x = 0; x <= 7; x++) {
         ColoredPiece piece = representation.getPieceAt(x, y);
-        sb.append(piece.piece.getCharRepresentation(piece.color == Color.WHITE)).append(" ");
+        sb.append(piece.getPiece().getCharRepresentation(piece.getColor() == Color.WHITE))
+            .append(" ");
       }
       sb.append("\n");
     }

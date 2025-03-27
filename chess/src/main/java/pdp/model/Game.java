@@ -1,6 +1,7 @@
 package pdp.model;
 
-import static pdp.utils.Logging.DEBUG;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.print;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
@@ -13,18 +14,16 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import pdp.controller.BagOfCommands;
 import pdp.events.EventObserver;
 import pdp.events.EventType;
-import pdp.events.Subject;
-import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedSaveException;
-import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
-import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
-import pdp.model.ai.heuristics.EndGameHeuristic;
-import pdp.model.board.*;
+import pdp.model.ai.algorithms.MonteCarloTreeSearch;
+import pdp.model.board.Board;
+import pdp.model.board.Move;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
@@ -34,101 +33,181 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.model.savers.BoardSaver;
-import pdp.utils.*;
+import pdp.utils.Logging;
+import pdp.utils.OptionType;
+import pdp.utils.Position;
+import pdp.utils.TextGetter;
+import pdp.utils.Timer;
 
-public class Game extends Subject {
+/** Model of our MVC architecture. Uses the Singleton design pattern. */
+public final class Game extends GameAbstract {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
+
+  /** Instance of Game, design pattern singleton. */
   private static Game instance;
-  private static ZobristHashing zobristHashing = new ZobristHashing();
-  private GameState gameState;
-  private Solver solver;
-  private boolean isWhiteAI;
-  private boolean isBlackAI;
-  private boolean explorationAI;
-  private History history;
-  private HashMap<Long, Integer> stateCount;
-  private HashMap<OptionType, String> options;
-  public final Lock viewLock = new ReentrantLock();
-  public final Condition workingView = viewLock.newCondition();
-  private final boolean VIEW_ON_OTHER_THREAD;
+
+  /** Solver of the White AI player. */
+  private Solver solverWhite;
+
+  /** Solver of the Black AI player. */
+  private Solver solverBlack;
+
+  /** Boolean to indicate whether the white player is an AI or not. */
+  private boolean whiteAi;
+
+  /** Boolean to indicate whether the black player is an AI or not. */
+  private boolean blackAi;
+
+  /**
+   * Boolean to indicate whether an AI is searching for a move, avoid sending message to the view.
+   */
+  private boolean explorationAi;
+
+  /** Boolean to indicate whether the game instance is initializing or is ready to use. */
+  private boolean isInitializing;
+
+  /** Boolean to indicate whether the game was load from a file or not. */
+  private boolean loadedFromFile;
+
+  /** Boolean to indicate whether the game was load from a file which had a history or not. */
+  private boolean loadingFileWithHistory;
+
+  /** Map containing the different options to parametrize the game and their values. */
+  private boolean contestModeOn;
+
+  /** Boolean value used to know if Ai played its move (contest Mode). */
+  private boolean aiPlayedItsLastMove;
+
+  private final HashMap<OptionType, String> options;
+
+  /** Lock of the view, to avoid desynchronization between the view and the model. */
+  private final Lock viewLock = new ReentrantLock();
+
+  /** Condition of the lock. */
+  private final Condition workingView = viewLock.newCondition();
+
+  /** Boolean to indicate whether the view is on another thread (javafx) or not. */
+  private final boolean viewOnOtherThread;
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Private constructor for design pattern singleton.
+   *
+   * @param whiteAi true if the white player is an AI, false otherwise.
+   * @param blackAi true if the black player is an AI, false otherwise.
+   * @param solverWhite solver of the white AI player.
+   * @param solverBlack solver of the white AI player.
+   * @param gameState Game state of the game
+   * @param history History of the game
+   * @param options Options given in arguments or by default
+   */
   private Game(
-      boolean isWhiteAI,
-      boolean isBlackAI,
-      Solver solver,
-      GameState gameState,
-      History history,
-      HashMap<OptionType, String> options) {
+      final boolean whiteAi,
+      final boolean blackAi,
+      final Solver solverWhite,
+      final Solver solverBlack,
+      final GameState gameState,
+      final History history,
+      final HashMap<OptionType, String> options) {
+
+    super(gameState, history, new HashMap<>());
+
+    super.getGameState()
+        .setSimplifiedZobristHashing(
+            super.getZobristHasher()
+                .generateSimplifiedHashFromBitboards(this.getGameState().getBoard()));
+    this.addStateToCount(this.getGameState().getSimplifiedZobristHashing());
+    this.getHistory()
+        .addMove(
+            new HistoryState(
+                new Move(new Position(-1, -1), new Position(-1, -1)),
+                this.getGameState().getCopy()));
+    this.options = options;
+    this.viewOnOtherThread = options.containsKey(GUI);
+    this.whiteAi = whiteAi;
+    this.blackAi = blackAi;
+    this.explorationAi = false;
+    this.solverWhite = solverWhite;
+    this.solverBlack = solverBlack;
+    this.aiPlayedItsLastMove = false;
 
     if (instance != null) {
-      for (EventObserver observer : instance.getObservers()) {
+      if (instance.getBlackSolver() != null) {
+        instance.getBlackSolver().stopSearch(false);
+      }
+      if (instance.getWhiteSolver() != null) {
+        instance.getWhiteSolver().stopSearch(false);
+      }
+
+      for (final EventObserver observer : instance.getObservers()) {
         this.addObserver(observer);
       }
 
-      for (EventObserver observer : instance.getErrorObservers()) {
+      for (final EventObserver observer : instance.getErrorObservers()) {
         this.addErrorObserver(observer);
       }
     }
 
-    this.options = options;
-    this.VIEW_ON_OTHER_THREAD = options.containsKey(GUI);
-    this.isWhiteAI = isWhiteAI;
-    this.isBlackAI = isBlackAI;
-    this.explorationAI = false;
-    this.solver = solver;
-    this.gameState = gameState;
-    this.history = history;
-    this.history.addMove(
-        new HistoryState(
-            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
-    this.stateCount = new HashMap<>();
-    // this.gameState.setZobristHashing(zobristHashing.generateHashFromBitboards(this.gameState.getBoard()));
-    this.gameState.setSimplifiedZobristHashing(
-        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
-    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
-    DEBUG(LOGGER, "Game created");
+    debug(LOGGER, "Game created");
   }
 
   /**
-   * Add a state to the count of seen states. If the state has been seen 3 times, returns true.
+   * Retrieves the options of the game.
    *
-   * @param simplifiedZobristHashing the simplified Zobrist hashing of the state
-   * @return true if the state has been seen 3 times, false otherwise
+   * @return map of options and values
    */
-  private boolean addStateToCount(long simplifiedZobristHashing) {
-    DEBUG(LOGGER, "Adding hash [" + simplifiedZobristHashing + "] to count");
-    if (this.stateCount.containsKey(simplifiedZobristHashing)) {
-      this.stateCount.put(
-          simplifiedZobristHashing, this.stateCount.get(simplifiedZobristHashing) + 1);
-      if (this.stateCount.get(simplifiedZobristHashing) == 3) {
-        DEBUG(LOGGER, "State with hash " + simplifiedZobristHashing + " has been repeated 3 times");
-        return true;
-      }
-      return false;
-    } else {
-      this.stateCount.put(simplifiedZobristHashing, 1);
-      return false;
-    }
-  }
-
   public HashMap<OptionType, String> getOptions() {
     return options;
   }
 
-  public Board getBoard() {
-    return this.gameState.getBoard();
+  /**
+   * Retrieves the timer of the player of the color given in parameters.
+   *
+   * @param isWhite true if the player is white, false for black player
+   * @return timer of a player
+   */
+  public Timer getTimer(final boolean isWhite) {
+    if (isWhite && this.whiteAi) {
+      return this.solverWhite.getTimer();
+    }
+    if (!isWhite && this.blackAi) {
+      return this.solverBlack.getTimer();
+    }
+    return super.getGameState().getMoveTimer();
   }
 
-  public GameState getGameState() {
-    return this.gameState;
+  public Lock getViewLock() {
+    return this.viewLock;
   }
 
-  public History getHistory() {
-    return this.history;
+  public Condition getWorkingViewCondition() {
+    return this.workingView;
+  }
+
+  /**
+   * Returns a boolean corresponding to whether the current player is an AI.
+   *
+   * @return true if the current player is an AI
+   */
+  public boolean isCurrentPlayerAi() {
+    final boolean player = super.getGameState().isWhiteTurn();
+    if (player && this.whiteAi) {
+      return true;
+    }
+    return !player && this.blackAi;
+  }
+
+  /**
+   * Sets the value of the field isInitializing.
+   *
+   * @param isInit boolean to indicate if the game is initializing
+   */
+  public void setInitializing(final boolean isInit) {
+    this.isInitializing = isInit;
   }
 
   /**
@@ -136,8 +215,8 @@ public class Game extends Subject {
    *
    * @return true if the White player is an AI, false otherwise.
    */
-  public boolean isWhiteAI() {
-    return isWhiteAI;
+  public boolean isWhiteAi() {
+    return whiteAi;
   }
 
   /**
@@ -145,17 +224,62 @@ public class Game extends Subject {
    *
    * @return true if the Black player is an AI, false otherwise.
    */
-  public boolean isBlackAI() {
-    return isBlackAI;
+  public boolean isBlackAi() {
+    return blackAi;
   }
 
   /**
-   * Gets the solver used by the AI.
+   * Assigns boolean value to whiteAi attribute field. Method used in GameInitializer.
    *
-   * @return the {@link Solver} instance used for AI decision-making.
+   * @param ai true if white is AI. false otherwise.
    */
-  public Solver getSolver() {
-    return solver;
+  public void setWhiteAi(boolean ai) {
+    this.whiteAi = ai;
+  }
+
+  /**
+   * Assigns boolean value to blakAi attribute field. Method used in GameInitializer.
+   *
+   * @param ai true if black is AI. false otherwise.
+   */
+  public void setBlackAi(boolean ai) {
+    this.blackAi = ai;
+  }
+
+  /**
+   * Gets the solver used by the White AI.
+   *
+   * @return the {@link Solver} instance used for White AI decision-making.
+   */
+  public Solver getWhiteSolver() {
+    return solverWhite;
+  }
+
+  /**
+   * Gets the solver used by the Black AI.
+   *
+   * @return the {@link Solver} instance used for Black AI decision-making.
+   */
+  public Solver getBlackSolver() {
+    return solverBlack;
+  }
+
+  /**
+   * Assigns solver for white. Method used in GameInitializer.
+   *
+   * @param solver The new solver to assign to white.
+   */
+  public void setWhiteSolver(Solver solver) {
+    this.solverWhite = solver;
+  }
+
+  /**
+   * Assigns solver for black. Method used in GameInitializer.
+   *
+   * @param solver The new solver to assign to black.
+   */
+  public void setBlackSolver(Solver solver) {
+    this.solverBlack = solver;
   }
 
   /**
@@ -163,8 +287,8 @@ public class Game extends Subject {
    *
    * @param exploration boolean corresponding to the new rights of explorationAI.
    */
-  public void setExploration(boolean exploration) {
-    this.explorationAI = exploration;
+  public void setExploration(final boolean exploration) {
+    this.explorationAi = exploration;
   }
 
   /**
@@ -172,75 +296,99 @@ public class Game extends Subject {
    *
    * @return True if it is exploring, False otherwise
    */
-  public boolean isAIExploring() {
-    return this.explorationAI;
+  public boolean isAiExploring() {
+    return this.explorationAi;
+  }
+
+  /**
+   * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
+   * file. Boolean value is used in playMove() to know if history has to be overwritten.
+   */
+  public void setLoadedFromFile() {
+    this.loadedFromFile = true;
+  }
+
+  /**
+   * Indicates whether the game was loaded from a file or not.
+   *
+   * @return true if the game was loaded from a file, false otherwise
+   */
+  public boolean isLoadedFromFile() {
+    return this.loadedFromFile;
+  }
+
+  /**
+   * Retrieves the file the game was loaded from.
+   *
+   * @return the path of the file that generated the game
+   */
+  public String getContestFile() {
+    return options.get(OptionType.CONTEST);
+  }
+
+  /**
+   * Indicates whether the file loaded had a history.
+   *
+   * @return true if the file that was used to load the game has a history. false otherwise.
+   */
+  public boolean loadingFileHasHistory() {
+    return this.loadingFileWithHistory;
+  }
+
+  /**
+   * Method used in checkAndOverwriteHistory() to know how to handle new moves.
+   *
+   * @param fileHasHistory boolean value used to set private boolean loadingFileHasHistory.
+   */
+  public void setLoadingFileHasHistory(final boolean fileHasHistory) {
+    this.loadingFileWithHistory = fileHasHistory;
+  }
+
+  /**
+   * Used in updateGameStateAfterMove() method to know how to handle game save.
+   *
+   * @return true if AI finished computing moves. false otherwise.
+   */
+  public boolean aiPlayedItsLastMove() {
+    return this.aiPlayedItsLastMove;
+  }
+
+  /**
+   * Method used in Solver.playAIMove(this) to indicate when AI finished computing. Used to know
+   * when the game can be saved when loading or contest mode.
+   */
+  public void setAiPlayedItsLastMove(boolean lastMove) {
+    this.aiPlayedItsLastMove = lastMove;
+  }
+
+  /**
+   * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
+   * file with contest mode on.
+   *
+   * @param mode boolean to indicate if contest mode is on or off.
+   */
+  public void setContestModeOnOrOff(boolean mode) {
+    this.contestModeOn = mode;
+  }
+
+  /**
+   * Retrieves a boolean to indicate whether the contest mode is on or not.
+   *
+   * @return true if the game was loaded from a file with contest mode enabled. false otherwise.
+   */
+  public boolean isContestModeOn() {
+    return this.contestModeOn;
   }
 
   /**
    * Plays the first AI move if White AI is activated. The other calls to AI will be done in {@link
    * Game#updateGameStateAfterMove}
    */
-  public void startAI() {
-    if (isWhiteAI && this.getGameState().isWhiteTurn()) {
+  public void startAi() {
+    if (whiteAi && this.getGameState().isWhiteTurn()) {
       this.notifyObservers(EventType.AI_PLAYING);
-      solver.playAIMove(this);
+      solverWhite.playAiMove(this);
     }
-  }
-
-  /**
-   * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
-   *
-   * @return true if wer're in an endgame (according to the chosen criterias)
-   */
-  public boolean isEndGamePhase() {
-    int nbRequiredConditions = 4;
-    int nbFilledConditions = 0;
-
-    int halfNbPieces = 16;
-    int nbPlayedMovesBeforeEndGame = 25;
-    int nbPossibleMoveInEndGame = 25;
-
-    // Queens are off the board
-    if (getBoard().getBoardRep().queensOffTheBoard()) {
-      nbFilledConditions++;
-    }
-    // Number of pieces remaining
-    if (getBoard().getBoardRep().nbPiecesRemaining() <= halfNbPieces) {
-      nbFilledConditions++;
-    }
-    // King activity
-    if (getBoard().getBoardRep().areKingsActive()) {
-      nbFilledConditions++;
-    }
-    // Number of played moves
-    if (gameState.getFullTurn() >= nbPlayedMovesBeforeEndGame) {
-      nbFilledConditions++;
-    }
-    // Number of possible Moves
-
-    int nbMovesWhite;
-    int nbMovesBlack;
-
-    if (getBoard().getBoardRep() instanceof BitboardRepresentation) {
-      nbMovesWhite =
-          ((BitboardRepresentation) getBoard().getBoardRep()).getColorMoveBitboard(true).bitCount();
-      nbMovesBlack =
-          ((BitboardRepresentation) getBoard().getBoardRep())
-              .getColorMoveBitboard(false)
-              .bitCount();
-    } else {
-      nbMovesWhite = getBoard().getBoardRep().getAllAvailableMoves(true).size();
-      nbMovesBlack = getBoard().getBoardRep().getAllAvailableMoves(false).size();
-    }
-    if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
-      nbFilledConditions++;
-    }
-    // Pawns progresses on the board
-    if (getBoard().getBoardRep().pawnsHaveProgressed(this.gameState.isWhiteTurn())) {
-      nbFilledConditions++;
-    }
-
-    return nbFilledConditions >= nbRequiredConditions;
   }
 
   /**
@@ -249,11 +397,11 @@ public class Game extends Subject {
    * @param observer The observer to be added.
    */
   @Override
-  public void addObserver(EventObserver observer) {
-    DEBUG(LOGGER, "An observer have been attached to Game");
+  public void addObserver(final EventObserver observer) {
+    debug(LOGGER, "An observer have been attached to Game");
     super.addObserver(observer);
-    if (gameState != null) {
-      this.gameState.addObserver(observer);
+    if (super.getGameState() != null) {
+      super.getGameState().addObserver(observer);
     }
     this.notifyObserver(observer, EventType.GAME_STARTED);
   }
@@ -264,72 +412,142 @@ public class Game extends Subject {
    * @param observer The observer to be added.
    */
   @Override
-  public void addErrorObserver(EventObserver observer) {
-    DEBUG(LOGGER, "An error observer have been attached to Game");
+  public void addErrorObserver(final EventObserver observer) {
+    debug(LOGGER, "An error observer have been attached to Game");
     super.addErrorObserver(observer);
-    if (gameState != null) {
-      this.gameState.addErrorObserver(observer);
+    if (super.getGameState() != null) {
+      super.getGameState().addErrorObserver(observer);
     }
   }
 
   /**
    * Creates a new instance of the Game class and stores it in the instance variable.
    *
-   * @param isWhiteAI Whether the white player is an AI.
-   * @param isBlackAI Whether the black player is an AI.
-   * @param solver The solver to be used for AI moves.
-   * @param options
+   * @param isWhiteAi Whether the white player is an AI.
+   * @param isBlackAi Whether the black player is an AI.
+   * @param solverWhite The solver to use for White AI moves.
+   * @param solverBlack The solver to use for Black AI moves.
+   * @param options Options given in command line or by default.
    * @return The newly created instance of Game.
    */
   public static Game initialize(
-      boolean isWhiteAI,
-      boolean isBlackAI,
-      Solver solver,
-      Timer timer,
-      HashMap<OptionType, String> options) {
-    DEBUG(LOGGER, "Initializing Game...");
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
-    if (timer != null) {
-      timer.setCallback(instance::outOfTimeCallback);
-      timer.start();
-    }
-    DEBUG(LOGGER, "Game initialized!");
-    instance.notifyObservers(EventType.GAME_STARTED);
-    return instance;
-  }
-
-  /**
-   * Creates a new instance of the Game class and stores it in the instance variable.
-   *
-   * @param isWhiteAI Whether the white player is an AI.
-   * @param isBlackAI Whether the black player is an AI.
-   * @param solver The solver to be used for AI moves.
-   * @param board The board state to use
-   * @param options
-   * @return The newly created instance of Game.
-   */
-  public static Game initialize(
-      boolean isWhiteAI,
-      boolean isBlackAI,
-      Solver solver,
-      Timer timer,
-      FileBoard board,
-      HashMap<OptionType, String> options) {
-    DEBUG(LOGGER, "Initializing Game from given board...");
+      final boolean isWhiteAi,
+      final boolean isBlackAi,
+      final Solver solverWhite,
+      final Solver solverBlack,
+      final Timer timer,
+      final HashMap<OptionType, String> options) {
+    debug(LOGGER, "Initializing Game...");
     instance =
-        new Game(isWhiteAI, isBlackAI, solver, new GameState(board, timer), new History(), options);
+        new Game(
+            isWhiteAi,
+            isBlackAi,
+            solverWhite,
+            solverBlack,
+            new GameState(timer),
+            new History(),
+            options);
+    BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      timer.start();
+      if (!instance.isCurrentPlayerAi()) {
+        timer.start();
+      }
     }
-    DEBUG(LOGGER, "Game initialized!");
+    debug(LOGGER, "Game initialized!");
     instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
   }
 
+  /**
+   * Creates a new instance of the Game class and stores it in the instance variable.
+   *
+   * @param isWhiteAi Whether the white player is an AI.
+   * @param isBlackAi Whether the black player is an AI.
+   * @param solverWhite The solver to use for White AI moves.
+   * @param solverBlack The solver to use for Black AI moves.
+   * @param board The board state to use
+   * @param options Options given in command line or by default.
+   * @return The newly created instance of Game.
+   */
+  public static Game initialize(
+      final boolean isWhiteAi,
+      final boolean isBlackAi,
+      final Solver solverWhite,
+      final Solver solverBlack,
+      final Timer timer,
+      final FileBoard board,
+      final HashMap<OptionType, String> options) {
+    debug(LOGGER, "Initializing Game from given board...");
+    instance =
+        new Game(
+            isWhiteAi,
+            isBlackAi,
+            solverWhite,
+            solverBlack,
+            new GameState(board, timer),
+            new History(),
+            options);
+
+    final Board gameBoard = instance.getGameState().getBoard();
+    if (!gameBoard
+        .getBoardRep()
+        .getPieceAt(4, 0)
+        .equals(new ColoredPiece(Piece.KING, Color.WHITE))) {
+      gameBoard.setWhiteLongCastle(false);
+      gameBoard.setWhiteShortCastle(false);
+    } else {
+      if (!gameBoard
+          .getBoardRep()
+          .getPieceAt(0, 0)
+          .equals(new ColoredPiece(Piece.ROOK, Color.WHITE))) {
+        gameBoard.setWhiteLongCastle(false);
+      }
+      if (!gameBoard
+          .getBoardRep()
+          .getPieceAt(7, 0)
+          .equals(new ColoredPiece(Piece.ROOK, Color.WHITE))) {
+        gameBoard.setWhiteShortCastle(false);
+      }
+    }
+
+    if (!gameBoard
+        .getBoardRep()
+        .getPieceAt(4, 7)
+        .equals(new ColoredPiece(Piece.KING, Color.BLACK))) {
+      gameBoard.setWhiteLongCastle(false);
+      gameBoard.setWhiteShortCastle(false);
+    } else {
+      if (!gameBoard
+          .getBoardRep()
+          .getPieceAt(0, 7)
+          .equals(new ColoredPiece(Piece.ROOK, Color.BLACK))) {
+        gameBoard.setWhiteLongCastle(false);
+      }
+      if (!gameBoard
+          .getBoardRep()
+          .getPieceAt(7, 7)
+          .equals(new ColoredPiece(Piece.ROOK, Color.BLACK))) {
+        gameBoard.setBlackShortCastle(false);
+      }
+    }
+
+    BagOfCommands.getInstance().setModel(instance);
+    if (timer != null) {
+      timer.setCallback(instance::outOfTimeCallback);
+      if (!instance.isCurrentPlayerAi()) {
+        timer.start();
+      }
+    }
+    debug(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
+    return instance;
+  }
+
+  /** When out of time, the callback will be sent and the game will end. */
   public void outOfTimeCallback() {
-    DEBUG(LOGGER, "outOfTimeCallback called");
-    this.gameState.playerOutOfTime(this.gameState.isWhiteTurn());
+    debug(LOGGER, "outOfTimeCallback called");
+    super.getGameState().playerOutOfTime(super.getGameState().isWhiteTurn());
   }
 
   /**
@@ -338,165 +556,30 @@ public class Game extends Subject {
    * @param move The move to be executed.
    * @throws IllegalMoveException If the move is not legal.
    */
-  public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
-    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
-    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
-    DEBUG(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
+  @Override
+  public void playMove(final Move move) throws IllegalMoveException, InvalidPromoteFormatException {
+    final Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    final Position destPosition = new Position(move.getDest().x(), move.getDest().y());
+    debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
-    if (!validatePieceOwnership(sourcePosition)) {
+    if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
       throw new IllegalMoveException(move.toString());
     }
-    validatePromotionMove(move);
+    super.validatePromotionMove(move);
 
-    List<Move> availableMoves = this.gameState.getBoard().getAvailableMoves(sourcePosition);
-    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
+    final List<Move> availableMoves =
+        super.getGameState().getBoard().getAvailableMoves(sourcePosition);
+    final Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
+    Move moveToProcess = move;
     if (classicalMove.isPresent()) {
-      move = classicalMove.get();
-      processClassicalMove(move);
+      moveToProcess = classicalMove.get();
+      super.processMove(super.getGameState(), moveToProcess);
     } else {
-      processSpecialMove(move);
-    }
-    this.updateGameStateAfterMove(move);
-  }
-
-  /**
-   * Checks if the given move is a promotion move and if is an instance of PromoteMove
-   *
-   * @param move The move to be validated.
-   * @throws InvalidPromoteFormatException If the move is a promotion move but not of PromoteMove
-   *     type.
-   */
-  private void validatePromotionMove(Move move) throws InvalidPromoteFormatException {
-    if (this.isPromotionMove(move) && !(move instanceof PromoteMove)) {
-      throw new InvalidPromoteFormatException();
-    }
-  }
-
-  private boolean validatePieceOwnership(Position sourcePosition) throws IllegalMoveException {
-    ColoredPiece pieceAtSource =
-        this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
-    boolean isWhiteTurn = this.gameState.getBoard().isWhite;
-    if ((pieceAtSource.color == Color.WHITE && !isWhiteTurn)
-        || (pieceAtSource.color == Color.BLACK && isWhiteTurn)) {
-      DEBUG(
-          LOGGER,
-          "Not a " + pieceAtSource.color.toString() + "piece at " + sourcePosition.toString());
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Handles classical moves
-   *
-   * @param move The move to be executed.
-   * @throws IllegalMoveException If the move is illegal in the current configuration.
-   */
-  private void processClassicalMove(Move move) throws IllegalMoveException {
-    Color currentColor = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
-    if (this.gameState.getBoard().board.isCheckAfterMove(currentColor, move)) {
-      DEBUG(LOGGER, "Move puts the king in check " + move.toString());
       throw new IllegalMoveException(move.toString());
     }
 
-    this.gameState.getBoard().makeMove(move);
-    DEBUG(LOGGER, "Move played!");
-  }
-
-  /**
-   * Handles special moves: castling, en passant, double pawn push
-   *
-   * @param move The move to be executed.
-   * @throws IllegalMoveException If the move is illegal in the current configuration.
-   */
-  private void processSpecialMove(Move move) throws IllegalMoveException {
-    Position sourcePosition = new Position(move.source.getX(), move.source.getY());
-    Position destPosition = new Position(move.dest.getX(), move.dest.getY());
-    boolean isSpecialMove = false;
-    ColoredPiece coloredPiece =
-        this.gameState.getBoard().board.getPieceAt(sourcePosition.getX(), sourcePosition.getY());
-
-    // Check Castle
-    if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
-      boolean shortCastle = destPosition.getX() > sourcePosition.getX();
-      Color color = this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK;
-      if (this.gameState.getBoard().canCastle(color, shortCastle)) {
-        this.gameState.getBoard().applyCastle(color, shortCastle);
-        isSpecialMove = true;
-      }
-    }
-
-    // Check en passant
-    if (!isSpecialMove
-        && this.gameState.getBoard().isLastMoveDoublePush
-        && this.gameState
-            .getBoard()
-            .board
-            .isEnPassant(
-                this.gameState.getBoard().enPassantPos.getX(),
-                this.gameState.getBoard().enPassantPos.getY(),
-                move,
-                this.gameState.getBoard().isWhite)) {
-      if (this.gameState
-          .getBoard()
-          .board
-          .isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
-        DEBUG(LOGGER, "En passant puts the king in check!");
-        throw new IllegalMoveException(move.toString());
-      }
-      isSpecialMove = true;
-      this.gameState.getBoard().enPassantPos = null;
-      this.gameState.getBoard().isEnPassantTake = true;
-      move.piece = coloredPiece;
-      move.isTake = true;
-      this.gameState.getBoard().makeMove(move);
-    }
-
-    // Check double pawn push
-    if (!isSpecialMove
-        && this.gameState
-            .getBoard()
-            .board
-            .isDoublePushPossible(move, this.gameState.getBoard().isWhite)) {
-      if (this.gameState
-          .getBoard()
-          .board
-          .isCheckAfterMove(this.gameState.getBoard().isWhite ? Color.WHITE : Color.BLACK, move)) {
-        DEBUG(LOGGER, "Double push puts the king in check!");
-        throw new IllegalMoveException(move.toString());
-      }
-      isSpecialMove = true;
-      this.gameState.getBoard().enPassantPos =
-          this.gameState.getBoard().isWhite
-              ? new Position(move.dest.getX(), move.dest.getY() - 1)
-              : new Position(move.dest.getX(), move.dest.getY() + 1);
-      move.piece = coloredPiece;
-      this.gameState.getBoard().makeMove(move);
-      this.gameState.getBoard().isLastMoveDoublePush = true;
-    }
-
-    if (!isSpecialMove) {
-      DEBUG(LOGGER, "Move was not a special move!");
-      throw new IllegalMoveException(move.toString());
-    }
-  }
-
-  /**
-   * Determines if the given move is a castle move.
-   *
-   * @param coloredPiece The piece being moved, expected to be a king for castling.
-   * @param source The source position of the move.
-   * @param dest The destination position of the move.
-   * @return true if the move is a castle move, false otherwise.
-   */
-  private boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
-    if (coloredPiece.piece != Piece.KING) {
-      return false;
-    }
-    int deltaX = Math.abs(dest.getX() - source.getX());
-    return deltaX == 2
-        && ((source.getY() == 0 && dest.getY() == 0) || (source.getY() == 7 && dest.getY() == 7));
+    this.updateGameStateAfterMove(moveToProcess, classicalMove.isPresent());
   }
 
   /**
@@ -515,60 +598,112 @@ public class Game extends Subject {
    *   <li>Notifying observers that a move has been played.
    * </ul>
    */
-  private void updateGameStateAfterMove(Move move) {
+  private void updateGameStateAfterMove(final Move move, final boolean isSpecialMove) {
 
-    if (this.gameState.getMoveTimer() != null) {
-      this.gameState.getMoveTimer().stop();
+    if (super.getGameState().getMoveTimer() != null
+        && !this.isCurrentPlayerAi()
+        && !explorationAi
+        && !isInitializing
+        && !super.getGameState().isGameOver()) {
+      super.getGameState().getMoveTimer().stop();
     }
 
-    if (this.gameState.getBoard().isWhite) {
-      this.gameState.incrementsFullTurn();
+    if (super.getGameState().isWhiteTurn()) {
+      super.getGameState().incrementsFullTurn();
     }
 
-    this.gameState.switchPlayerTurn();
-    this.gameState.getBoard().setPlayer(this.gameState.isWhiteTurn());
-    if (!explorationAI) {
-      this.gameState.setSimplifiedZobristHashing(
-          zobristHashing.updateSimplifiedHashFromBitboards(
-              this.gameState.getSimplifiedZobristHashing(), getBoard(), move));
-      DEBUG(LOGGER, "Checking threefold repetition...");
-      boolean threefoldRepetition =
-          this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
-      if (threefoldRepetition) {
-        this.gameState.activateThreefold();
+    super.getGameState().switchPlayerTurn();
+    if (isSpecialMove) {
+      super.getGameState()
+          .setSimplifiedZobristHashing(
+              super.getZobristHasher()
+                  .updateSimplifiedHashFromBitboards(
+                      super.getGameState().getSimplifiedZobristHashing(), getBoard(), move));
+    } else {
+      super.getGameState()
+          .setSimplifiedZobristHashing(
+              super.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
+    }
+
+    debug(LOGGER, "Checking threefold repetition...");
+    final boolean threefoldRep =
+        super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
+
+    if (threefoldRep) {
+      super.getGameState().activateThreefold();
+    }
+
+    debug(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
+    if (isEndGamePhase()) {
+      if (this.solverWhite != null) {
+        // Set endgame heuristic only once and only if endgame phase
+        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverWhite.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
+        }
+      }
+      if (this.solverBlack != null) {
+        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverBlack.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
+        }
       }
     }
 
-    DEBUG(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
-    if (isEndGamePhase() && this.solver != null) {
-      // Set endgame heuristic only once and only if endgame phase
-      if (!(solver.getHeuristic() instanceof EndGameHeuristic)) {
-        this.solver.setHeuristic(HeuristicType.ENDGAME);
+    if (!isEndGamePhase()) {
+      if (this.solverWhite != null) {
+        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverWhite.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
+          this.solverWhite.setHeuristic(this.solverWhite.getStartHeuristic());
+        }
+      }
+      if (this.solverBlack != null) {
+        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+            && !(this.solverBlack.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
+          this.solverBlack.setHeuristic(this.solverBlack.getStartHeuristic());
+        }
       }
     }
-    DEBUG(LOGGER, "Checking game status...");
-    this.gameState.checkGameStatus();
+    debug(LOGGER, "Checking game status...");
+    super.getGameState().checkGameStatus();
 
-    this.history.addMove(new HistoryState(move, this.gameState.getCopy()));
+    // Check for history overwrite
+    if (!isLoadedFromFile()) {
+      super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+    } else {
+      if (!aiPlayedItsLastMove()) {
+        if (isBlackAi() || isWhiteAi()) {
+          super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+        } else {
+          checkAndOverwriteHistory(move);
+        }
+      } else {
+        checkAndOverwriteHistory(move);
+      }
+    }
 
-    if (!explorationAI) {
+    if (!explorationAi && !isInitializing) {
       this.notifyObservers(EventType.MOVE_PLAYED);
     }
-
-    if (this.gameState.getMoveTimer() != null && !this.gameState.isGameOver()) {
-      this.gameState.getMoveTimer().start();
+    if (super.getGameState().getMoveTimer() != null
+        && !this.isCurrentPlayerAi()
+        && !explorationAi
+        && !super.getGameState().isGameOver()) {
+      super.getGameState().getMoveTimer().start();
     }
 
-    if (!explorationAI
+    if (!explorationAi
+        && !isInitializing
         && !isOver()
-        && ((this.gameState.getBoard().isWhite && isWhiteAI)
-            || (!this.gameState.getBoard().isWhite && isBlackAI))) {
+        && ((super.getGameState().isWhiteTurn() && whiteAi)
+            || (!super.getGameState().isWhiteTurn() && blackAi))) {
 
-      if (VIEW_ON_OTHER_THREAD) {
+      if (viewOnOtherThread) {
         viewLock.lock();
         this.notifyObservers(EventType.AI_PLAYING);
         try {
-          System.out.println("Waiting for View");
           workingView.await();
         } catch (InterruptedException e) {
           e.printStackTrace();
@@ -578,7 +713,76 @@ public class Game extends Subject {
       } else {
         this.notifyObservers(EventType.AI_PLAYING);
       }
-      solver.playAIMove(this);
+      if (super.getGameState().isWhiteTurn()) {
+        solverWhite.playAiMove(this);
+      } else {
+        solverBlack.playAiMove(this);
+      }
+    }
+  }
+
+  /**
+   * Checks if the move in parameter (the one we would like to play) matches or not the next move in
+   * history. If not, overwrite history. This is used for games that are loaded from files.
+   *
+   * @param move the move we want to play in the game.
+   */
+  private void checkAndOverwriteHistory(final Move move) {
+    final Optional<HistoryNode> currentNode = this.getHistory().getCurrentMove();
+
+    if (loadingFileHasHistory()) {
+      final Optional<HistoryNode> nextNode = currentNode.get().getNext();
+      HistoryState nextState = null;
+      if (nextNode.isPresent()) {
+        nextState = nextNode.get().getState();
+      }
+      if (nextState == null) {
+        // End of history already, so add new move and save
+        super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+        if (isContestModeOn()) {
+          saveGame(getContestFile());
+          debug(
+              LOGGER,
+              "Move differs from history. Overwriting history for file :" + getContestFile());
+        } else {
+          debug(LOGGER, "Move differs from history. Overwriting history");
+        }
+      } else {
+        // Check if move we want to play is the same as the next one. If not, overwrite history and
+        // save
+        if (!move.equals(nextState.getMove())) {
+          if (isContestModeOn()) {
+            super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+            saveGame(getContestFile());
+            debug(
+                LOGGER,
+                "Move differs from history. Overwriting history for file :" + getContestFile());
+          } else {
+            // Truncate history by adding a new move from this point forward
+            super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+            debug(LOGGER, "Move differs from history. Overwriting history");
+          }
+
+        } else {
+          // If same move, just forward by one in the history
+          super.getGameState().updateFrom(nextNode.get().getState().getGameState().getCopy());
+          super.getHistory().setCurrentMove(currentNode.get().getNext().get());
+          final long currBoardZobrist = super.getGameState().getSimplifiedZobristHashing();
+          this.getStateCount()
+              .put(currBoardZobrist, this.getStateCount().getOrDefault(currBoardZobrist, 0) + 1);
+        }
+      }
+    } else {
+      // If no history just add the move
+      super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+      if (isContestModeOn()) {
+        print("LOADING FILE : " + getContestFile());
+        saveGame(getContestFile());
+        debug(
+            LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
+      } else {
+        debug(LOGGER, "Move differs from history. Overwriting history");
+      }
     }
   }
 
@@ -591,32 +795,33 @@ public class Game extends Subject {
    * @param path The path to the file to write to.
    * @throws FailedSaveException If the file cannot be written to.
    */
-  public void saveGame(String path) throws FailedSaveException {
-    boolean[] castlingRights = getBoard().getCastlingRights();
-    String board =
+  public void saveGame(final String path) throws FailedSaveException {
+    final boolean[] castlingRights = getBoard().getCastlingRights();
+    final String board =
         BoardSaver.saveBoard(
             new FileBoard(
-                this.getBoard().board,
-                this.getBoard().isWhite,
+                this.getBoard().getBoardRep(),
+                this.getGameState().isWhiteTurn(),
                 new FenHeader(
                     castlingRights[0],
                     castlingRights[1],
                     castlingRights[2],
                     castlingRights[3],
-                    getBoard().enPassantPos,
-                    getBoard().getNbMovesWithNoCaptureOrPawn() * 2,
+                    getBoard().getEnPassantPos(),
+                    getBoard().getNbMovesWithNoCaptureOrPawn(),
                     getGameState().getFullTurn())));
-    String gameStr = this.history.toAlgebraicString();
+    final String gameStr = super.getHistory().toAlgebraicString();
 
-    String game = board + "\n" + gameStr;
+    final String game = board + "\n" + gameStr;
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(game);
+      writer.close();
     } catch (IOException e) {
-      DEBUG(LOGGER, "Error writing to file: " + e.getMessage());
+      debug(LOGGER, "Error writing to file: " + e.getMessage());
       throw new FailedSaveException(path);
     }
-    DEBUG(LOGGER, "Game saved to " + path);
+    debug(LOGGER, "Game saved to " + path);
     this.notifyObservers(EventType.GAME_SAVED);
   }
 
@@ -626,32 +831,35 @@ public class Game extends Subject {
    * @return A string representation of the game's movverify(model).previousState();e history.
    */
   public String getStringHistory() {
-    return this.history.toString();
+    return super.getHistory().toString();
   }
 
   /** Restarts the game by resetting the game state and history. */
   public void restartGame() {
-    DEBUG(LOGGER, "Restarting game");
 
-    this.gameState = new GameState(this.gameState.getMoveTimer());
-    this.history = new History();
+    debug(LOGGER, "Restarting game");
 
-    this.history.addMove(
-        new HistoryState(
-            new Move(new Position(-1, -1), new Position(-1, -1)), this.gameState.getCopy()));
+    super.getGameState().updateFrom(new GameState(super.getGameState().getMoveTimer()));
+    super.getHistory().clear();
 
-    this.stateCount.clear();
-    this.gameState.setSimplifiedZobristHashing(
-        zobristHashing.generateSimplifiedHashFromBitboards(this.gameState.getBoard()));
-    this.addStateToCount(this.gameState.getSimplifiedZobristHashing());
+    super.getHistory()
+        .addMove(
+            new HistoryState(
+                new Move(new Position(-1, -1), new Position(-1, -1)),
+                super.getGameState().getCopy()));
+
+    super.getStateCount().clear();
+    super.getGameState()
+        .setSimplifiedZobristHashing(
+            super.getZobristHasher()
+                .generateSimplifiedHashFromBitboards(super.getGameState().getBoard()));
+    this.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
 
     this.notifyObservers(EventType.GAME_RESTART);
 
-    DEBUG(LOGGER, "Game restarted");
-  }
+    this.startAi();
 
-  public boolean isOver() {
-    return this.gameState.isGameOver();
+    debug(LOGGER, "Game restarted");
   }
 
   /**
@@ -660,93 +868,50 @@ public class Game extends Subject {
    * <p>The new game is initialized with the given AI settings, solver, and starting position.
    *
    * @param moves The moves to play in sequence.
-   * @param isWhiteAI Whether the white player is an AI.
-   * @param isBlackAI Whether the black player is an AI.
-   * @param solver The solver to use for AI moves.
+   * @param isWhiteAi Whether the white player is an AI.
+   * @param isBlackAi Whether the black player is an AI.
+   * @param solverWhite The solver to use for White AI moves.
+   * @param solverBlack The solver to use for Black AI moves.
    * @param timer The timer to use for the game.
-   * @param options
+   * @param options Options given in command line or by default.
    * @return A new Game object with the given moves played.
    * @throws IllegalMoveException If any of the given moves are illegal.
    */
   public static Game fromHistory(
-      List<Move> moves,
-      boolean isWhiteAI,
-      boolean isBlackAI,
-      Solver solver,
-      Timer timer,
-      HashMap<OptionType, String> options)
+      final List<Move> moves,
+      final boolean isWhiteAi,
+      final boolean isBlackAi,
+      final Solver solverWhite,
+      final Solver solverBlack,
+      final Timer timer,
+      final HashMap<OptionType, String> options)
       throws IllegalMoveException {
-    instance = new Game(isWhiteAI, isBlackAI, solver, new GameState(timer), new History(), options);
-
-    for (Move move : moves) {
+    instance =
+        new Game(
+            isWhiteAi,
+            isBlackAi,
+            solverWhite,
+            solverBlack,
+            new GameState(timer),
+            new History(),
+            options);
+    BagOfCommands.getInstance().setModel(instance);
+    instance.setInitializing(true);
+    for (final Move move : moves) {
       instance.playMove(move);
     }
 
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
-      timer.start();
+      if (!instance.isCurrentPlayerAi()) {
+        timer.start();
+      }
     }
 
+    instance.setInitializing(false);
     instance.notifyObservers(EventType.GAME_STARTED);
 
     return instance;
-  }
-
-  /**
-   * Moves to the previous move in history and updates the game state.
-   *
-   * <p>Throws a FailedUndoException if there is no previous move to undo. Notifies observers of the
-   * move undo event.
-   *
-   * @throws FailedUndoException if no previous move exists.
-   */
-  public void previousState() throws FailedUndoException {
-    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
-    if (!currentNode.isPresent()) {
-      throw new FailedUndoException();
-    }
-
-    Optional<HistoryNode> previousNode = currentNode.get().getPrevious();
-    if (!previousNode.isPresent()) {
-      throw new FailedUndoException();
-    }
-    // update zobrist to avoid threefold
-    long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
-    if (stateCount.containsKey(currBoardZobrist)) {
-      stateCount.put(currBoardZobrist, stateCount.get(currBoardZobrist) - 1);
-    }
-
-    this.gameState.updateFrom(previousNode.get().getState().getGameState().getCopy());
-    this.history.setCurrentMove(previousNode.get());
-    DEBUG(LOGGER, "Move undo : change state and update Zobrist for threefold");
-    this.notifyObservers(EventType.MOVE_UNDO);
-  }
-
-  /**
-   * Moves to the next move in history and updates the game state.
-   *
-   * <p>Throws a FailedRedoException if there is no next move to redo. Notifies observers of the
-   * move redo event.
-   *
-   * @throws FailedRedoException if no next move exists.
-   */
-  public void nextState() throws FailedRedoException {
-    Optional<HistoryNode> currentNode = this.history.getCurrentMove();
-    if (!currentNode.isPresent()) {
-      throw new FailedRedoException();
-    }
-
-    Optional<HistoryNode> nextNode = currentNode.get().getNext();
-    if (!nextNode.isPresent()) {
-      throw new FailedRedoException();
-    }
-
-    this.gameState.updateFrom(nextNode.get().getState().getGameState().getCopy());
-    this.history.setCurrentMove(nextNode.get());
-    long currBoardZobrist = this.gameState.getSimplifiedZobristHashing();
-    stateCount.put(currBoardZobrist, stateCount.getOrDefault(currBoardZobrist, 0) + 1);
-    DEBUG(LOGGER, "Move redo : change state and update Zobrist for threefold");
-    this.notifyObservers(EventType.MOVE_REDO);
   }
 
   /**
@@ -756,68 +921,50 @@ public class Game extends Subject {
    * @return A string representation of the game.
    */
   public String getGameRepresentation() {
-    char[][] board = this.gameState.getBoard().getAsciiRepresentation();
-    StringBuilder sb = new StringBuilder();
+    final char[][] board = super.getGameState().getBoard().getAsciiRepresentation();
+    final StringBuilder stringBuilder = new StringBuilder();
 
-    Timer timer = gameState.getMoveTimer();
+    final Timer timer = this.getTimer(!super.getGameState().isWhiteTurn());
     if (timer != null) {
-      sb.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
+      stringBuilder.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
     }
 
-    sb.append("\n");
+    stringBuilder.append("\n");
 
-    int size = board.length;
+    final int size = board.length;
 
     for (int row = 0; row < size; row++) {
-      sb.append(size - row).append(" | ");
+      stringBuilder.append(size - row).append(" | ");
       for (int col = 0; col < size; col++) {
-        sb.append(board[row][col]).append(" ");
+        stringBuilder.append(board[row][col]).append(" ");
       }
-      sb.append("\n");
+      stringBuilder.append("\n");
     }
 
-    sb.append("    "); // Offset for row numbers
+    stringBuilder.append("    "); // Offset for row numbers
     for (int i = 0; i < size; i++) {
-      sb.append("-").append(" ");
+      stringBuilder.append("-").append(" ");
     }
-    sb.append("\n    ");
+    stringBuilder.append("\n    ");
     for (char c = 'A'; c < 'A' + size; c++) {
-      sb.append(c).append(" ");
+      stringBuilder.append(c).append(" ");
     }
-    sb.append("\n\n");
+    stringBuilder.append("\n\n");
 
-    if (!this.gameState.isGameOver()) {
-      sb.append(
+    if (!super.getGameState().isGameOver()) {
+      stringBuilder.append(
           TextGetter.getText(
               "toPlay",
-              gameState.isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
+              super.getGameState().isWhiteTurn()
+                  ? TextGetter.getText("white")
+                  : TextGetter.getText("black")));
     } else {
-      sb.append(TextGetter.getText("gameOver"));
+      stringBuilder.append(TextGetter.getText("gameOver"));
     }
 
-    sb.append("\n");
+    stringBuilder.append("\n");
 
-    return sb.toString();
-  }
-
-  /**
-   * Determines if the given move is a pawn promotion move.
-   *
-   * @param move The move to be checked.
-   * @return true if the move is a promotion move, false otherwise.
-   */
-  public boolean isPromotionMove(Move move) {
-    if (this.gameState.getBoard().board.getPieceAt(move.source.getX(), move.source.getY()).piece
-        != Piece.PAWN) {
-      return false;
-    }
-    if (this.gameState.isWhiteTurn() && move.dest.getY() == 7) {
-      return true;
-    }
-    if (!this.gameState.isWhiteTurn() && move.dest.getY() == 0) {
-      return true;
-    }
-    return false;
+    return stringBuilder.toString();
   }
 
   /**

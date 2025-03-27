@@ -4,6 +4,7 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
+/** Special move representation for pawn promotion. */
 public class PromoteMove extends Move {
   private Piece promPiece;
 
@@ -16,6 +17,17 @@ public class PromoteMove extends Move {
    */
   public PromoteMove(Position source, Position dest, Piece promPiece) {
     super(source, dest);
+    this.promPiece = promPiece;
+  }
+
+  public PromoteMove(
+      Position source,
+      Position dest,
+      Piece promPiece,
+      ColoredPiece piece,
+      boolean isTake,
+      ColoredPiece takenPiece) {
+    super(source, dest, piece, isTake, takenPiece);
     this.promPiece = promPiece;
   }
 
@@ -64,10 +76,10 @@ public class PromoteMove extends Move {
    */
   @Override
   public String toAlgebraicString() {
-    String sourceStr = positionToString(this.source);
-    String destinationStr = positionToString(this.dest);
-    String separator = this.isTake ? "x" : "-";
-    String annotation = this.isCheckMate ? "#" : (this.isCheck ? "+" : "");
+    String sourceStr = positionToString(this.getSource());
+    String destinationStr = positionToString(this.getDest());
+    String separator = this.isTake() ? "x" : "-";
+    String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
 
     return sourceStr
         + separator
@@ -75,6 +87,10 @@ public class PromoteMove extends Move {
         + "="
         + this.promPiece.getCharRepresentation(true)
         + annotation;
+  }
+
+  public String toUciString() {
+    return super.toUciString() + this.promPiece.getCharRepresentation(true);
   }
 
   /**

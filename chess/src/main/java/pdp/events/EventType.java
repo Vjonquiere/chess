@@ -1,5 +1,6 @@
 package pdp.events;
 
+/** Enum containing all types of events that can be encountered in the application. */
 public enum EventType {
   GAME_STARTED,
   GAME_RESTART,
@@ -15,7 +16,11 @@ public enum EventType {
   BLACK_UNDRAW,
   MOVE_PLAYED,
   MOVE_UNDO,
+  WHITE_UNDO_PROPOSAL,
+  BLACK_UNDO_PROPOSAL,
   MOVE_REDO,
+  WHITE_REDO_PROPOSAL,
+  BLACK_REDO_PROPOSAL,
   GAME_SAVED,
   THREEFOLD_REPETITION,
   INSUFFICIENT_MATERIAL,
@@ -26,5 +31,8 @@ public enum EventType {
   CHECKMATE_BLACK,
   STALEMATE,
   AI_PLAYING,
-  AI_NOT_ENOUGH_TIME
+  AI_NOT_ENOUGH_TIME,
+  UPDATE_THEME,
+  UPDATE_LANG,
+  MOVE_HINT
 }

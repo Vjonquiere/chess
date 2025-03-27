@@ -9,14 +9,15 @@ import pdp.model.board.Board;
  * extend this class.
  */
 public abstract class AbstractHeuristic implements Heuristic {
-  List<Heuristic> heuristics = new ArrayList<>();
+  /** List of heuristics for composite heuristics. */
+  private final List<WeightedHeuristic> heuristics = new ArrayList<>();
 
   /**
    * Adds a heuristic to the composite heuristic.
    *
    * @param heuristic Heuristic to be added
    */
-  public void addHeuristic(Heuristic heuristic) {
+  public void addHeuristic(final WeightedHeuristic heuristic) {
     heuristics.add(heuristic);
   }
 
@@ -25,11 +26,29 @@ public abstract class AbstractHeuristic implements Heuristic {
    *
    * @param heuristic Heuristic to be removed
    */
-  public void removeHeuristic(Heuristic heuristic) {
+  public void removeHeuristic(final WeightedHeuristic heuristic) {
     heuristics.remove(heuristic);
   }
 
+  /**
+   * Retries the list of heuristics (without their weights) composing this heuristic.
+   *
+   * @return list of heuristics
+   */
   public List<Heuristic> getHeuristics() {
+    final List<Heuristic> heuristicList = new ArrayList<>();
+    for (final WeightedHeuristic heuristic : heuristics) {
+      heuristicList.add(heuristic.heuristic());
+    }
+    return heuristicList;
+  }
+
+  /**
+   * Retries the list of weighted heuristics composing this heuristic.
+   *
+   * @return list of weighted heuristics
+   */
+  public List<WeightedHeuristic> getWeightedHeuristics() {
     return heuristics;
   }
 
@@ -38,13 +57,13 @@ public abstract class AbstractHeuristic implements Heuristic {
    *
    * @param board The current Board.
    * @param isWhite true if the player is white, false if he is black
-   * @return
+   * @return Total score of all the heuristics evaluation
    */
   @Override
-  public int evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
-    for (Heuristic heuristic : heuristics) {
-      score += heuristic.evaluate(board, isWhite);
+    for (final WeightedHeuristic heuristic : heuristics) {
+      score += heuristic.heuristic().evaluate(board, isWhite) * heuristic.weight();
     }
     return score;
   }

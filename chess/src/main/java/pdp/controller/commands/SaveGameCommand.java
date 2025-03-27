@@ -5,12 +5,20 @@ import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.model.Game;
 
+/** Part of Command Design pattern. Creates a command used to save the game into a file. */
 public class SaveGameCommand implements Command {
-  private static String DEFAULT_FILE_PATH = "save.txt";
+  /** Default file path to save a game into. */
+  private static final String DEFAULT_FILE_PATH = "save.txt";
 
-  private String filepath;
+  /** Path where the file will be saved. */
+  private final String filepath;
 
-  public SaveGameCommand(String filepath) {
+  /**
+   * Assigns the filepath to save the game into.
+   *
+   * @param filepath string containing a path to save the game or empty string to use default
+   */
+  public SaveGameCommand(final String filepath) {
     if (filepath.isEmpty()) {
       this.filepath = DEFAULT_FILE_PATH;
     } else {
@@ -27,7 +35,7 @@ public class SaveGameCommand implements Command {
    *     if the save was successful.
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     try {
       model.saveGame(filepath);
       return Optional.empty();

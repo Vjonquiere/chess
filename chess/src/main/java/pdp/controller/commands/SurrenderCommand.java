@@ -6,13 +6,13 @@ import pdp.controller.GameController;
 import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
 
-public class SurrenderCommand implements Command {
-
-  boolean isWhite;
-
-  public SurrenderCommand(boolean isWhite) {
-    this.isWhite = isWhite;
-  }
+/**
+ * Part of Command Design pattern. Creates a command for the surrender of the player of the color
+ * given in parameters.
+ *
+ * @param isWhite true if the player is white, false if he is black
+ */
+public record SurrenderCommand(boolean isWhite) implements Command {
 
   /**
    * Executes the SurrenderCommand which attempts to make the current player lose the game.
@@ -23,11 +23,11 @@ public class SurrenderCommand implements Command {
    *     successful.
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }
-    if (isWhite) {
+    if (isWhite()) {
       model.getGameState().whiteResigns();
     } else {
       model.getGameState().blackResigns();

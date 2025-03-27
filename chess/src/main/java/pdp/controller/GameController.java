@@ -5,21 +5,31 @@ import pdp.model.Game;
 import pdp.utils.Logging;
 import pdp.view.View;
 
+/** Controller of our MVC architecture. */
 public class GameController {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
-  Game model;
-  View view;
-  BagOfCommands bagOfCommands;
 
-  public GameController(Game model, View view, BagOfCommands bagOfCommands) {
+  /** Model, for MVC architecture. */
+  private Game model;
+
+  /** View, for MVC architecture. */
+  private View view;
+
+  /**
+   * Initializes the private fields corresponding to the model, the view and the bag of commands.
+   *
+   * @param model Game, our model for MVC
+   * @param view View, our view for MVC
+   * @param bagOfCommands Singleton for Command Design pattern
+   */
+  public GameController(final Game model, final View view, final BagOfCommands bagOfCommands) {
     Logging.configureLogging(LOGGER);
-    this.model = model;
     this.view = view;
-    this.bagOfCommands = bagOfCommands;
-    this.bagOfCommands.setModel(model);
-    this.bagOfCommands.setController(this);
-    this.model.addObserver(view);
-    this.model.addErrorObserver(view);
+    bagOfCommands.setController(this);
+    bagOfCommands.setModel(model);
+    model.addObserver(view);
+    model.addErrorObserver(view);
     // this.model.startAI();
   }
 
@@ -44,9 +54,27 @@ public class GameController {
   /**
    * Handles an exception by passing it to the view for display.
    *
-   * @param e The exception to handle.
+   * @param exception The exception to handle.
    */
-  public void onErrorEvent(Exception e) {
-    this.view.onErrorEvent(e);
+  public void onErrorEvent(final Exception exception) {
+    this.getView().onErrorEvent(exception);
+  }
+
+  /**
+   * Assigns the field model to the value given in parameter.
+   *
+   * @param model Current model
+   */
+  public void setModel(final Game model) {
+    this.model = model;
+  }
+
+  /**
+   * Assigns the field view to the value given in parameter.
+   *
+   * @param view Current view
+   */
+  public void setView(final View view) {
+    this.view = view;
   }
 }

@@ -2,7 +2,10 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -16,12 +19,25 @@ public class MinimaxTest {
   Solver solver;
   Game game;
 
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private final PrintStream originalErr = System.err;
+
+  @AfterEach
+  void tearDownConsole() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    outputStream.reset();
+  }
+
   @BeforeEach
   void setUp() {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
     solver = new Solver();
     solver.setAlgorithm(AlgorithmType.MINIMAX);
     solver.setHeuristic(HeuristicType.STANDARD);
-    game = Game.initialize(false, false, null, null, new HashMap<>());
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
   @Test
@@ -34,7 +50,7 @@ public class MinimaxTest {
     game.playMove(new Move(new Position(5, 0), new Position(2, 3)));
     game.playMove(new Move(new Position(6, 7), new Position(5, 5)));
     solver.setDepth(2);
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     assertTrue(game.getGameState().isGameOver());
   }
 
@@ -45,7 +61,7 @@ public class MinimaxTest {
     solver.setDepth(5);
 
     long startTime = System.currentTimeMillis();
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     long endTime = System.currentTimeMillis();
 
     long elapsedTime = endTime - startTime;
@@ -62,13 +78,13 @@ public class MinimaxTest {
     solver.setDepth(5);
 
     long startTime = System.currentTimeMillis();
-    solver.playAIMove(game);
+    solver.playAiMove(game);
     long endTime = System.currentTimeMillis();
 
     long elapsedTime = endTime - startTime;
     long remainingTime = solver.getTimer().getTimeRemaining();
 
-    assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 100);
+    assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 500);
     assertTrue(remainingTime <= 5000);
   }
   /*

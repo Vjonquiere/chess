@@ -3,6 +3,15 @@ package pdp.controller;
 import java.util.Optional;
 import pdp.model.Game;
 
+/** Interface needed for the design pattern Command. */
 public interface Command {
-  public Optional<Exception> execute(Game model, GameController controller);
+
+  /**
+   * Executes the command in the model, returns an exception if one is encountered.
+   *
+   * @param model model to execute the command on
+   * @param controller controller that manages the model.
+   * @return An exception if one occurs
+   */
+  Optional<Exception> execute(Game model, GameController controller);
 }

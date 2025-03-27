@@ -4,11 +4,19 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.utils.Logging;
 
+/** Data structure used in History to represent a node. */
 public class HistoryNode {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(HistoryNode.class.getName());
-  HistoryState state;
-  HistoryNode previous;
-  HistoryNode next;
+
+  /** State of the current node. */
+  private final HistoryState state;
+
+  /** Node leading to the current node. */
+  private final HistoryNode previous;
+
+  /** Node corresponding to the state reached after a move was played from this node. */
+  private HistoryNode next;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -21,7 +29,7 @@ public class HistoryNode {
    * @param previous The previous HistoryNode in the history chain, or null if this is the first
    *     node.
    */
-  public HistoryNode(HistoryState state, HistoryNode previous) {
+  public HistoryNode(final HistoryState state, final HistoryNode previous) {
     this.state = state;
     this.previous = previous;
     this.next = null;
@@ -57,7 +65,7 @@ public class HistoryNode {
    *
    * @param next representing the current move in the history.
    */
-  public void setNext(HistoryNode next) {
+  public void setNext(final HistoryNode next) {
     this.next = next;
   }
 

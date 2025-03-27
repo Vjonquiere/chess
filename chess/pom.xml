@@ -6,7 +6,7 @@
 
     <groupId>pdp</groupId>
     <artifactId>chess</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -36,11 +36,27 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21</version>
+            <version>17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>17</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>openjfx-monocle</artifactId>
+            <version>17.0.10</version> <!-- 17.0.10 For OpenJFX 17, 11.0.2 For OpenJFX 11, jdk-8.0.372 for Java 8 -->
             <scope>test</scope>
         </dependency>
         <!-- Optionally: parameterized tests support -->
@@ -64,6 +80,18 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>4.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-core</artifactId>
+            <version>4.0.18</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-junit5</artifactId>
+            <version>4.0.18</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -103,6 +131,35 @@
                     <java>
                         <googleJavaFormat/>
                     </java>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                <configLocation>google_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.26.0</version>
+                <configuration>
+                <rulesets>
+                    <!-- If you want to start small, take only this line -->
+                    <!-- <ruleset>/rulesets/java/quickstart.xml</ruleset> -->
+                    <!-- All the rulesets
+                    <ruleset>/category/java/bestpractices.xml</ruleset>
+                    <ruleset>/category/java/codestyle.xml</ruleset>
+                    <ruleset>/category/java/design.xml</ruleset>
+                    <ruleset>/category/java/documentation.xml</ruleset>
+                    <ruleset>/category/java/errorprone.xml</ruleset>
+                    <ruleset>/category/java/multithreading.xml</ruleset>
+                    <ruleset>/category/java/performance.xml</ruleset>
+                    <ruleset>/category/java/security.xml</ruleset>-->
+                    <ruleset>pmd-rules.xml</ruleset>
+                </rulesets>
                 </configuration>
             </plugin>
             <plugin>
@@ -180,6 +237,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+                <configuration>
+                    <forkCount>1.0C</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <systemPropertyVariables>
+                        <testfx.headless>true</testfx.headless>
+                        <prism.order>sw</prism.order>
+                        <glass.platform>Monocle</glass.platform>
+                        <monocle.platform>headless</monocle.platform>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
