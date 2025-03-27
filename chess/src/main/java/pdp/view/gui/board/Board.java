@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javafx.animation.TranslateTransition;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
@@ -13,6 +14,7 @@ import pdp.model.Game;
 import pdp.model.GameAi;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
+import pdp.model.history.HistoryNode;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
@@ -79,6 +81,13 @@ public class Board extends GridPane {
     cleanHintSquares();
     clearCheckSquare();
     clearLastMoveSquares();
+    // Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece); // TODO:
+    // Re-activate after tests.
+    updateAfterAnimation();
+  }
+
+  /** Used to update the board after the move animation finished. */
+  private void updateAfterAnimation() {
     board = Game.getInstance().getBoard().getBoardRep();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
@@ -101,6 +110,37 @@ public class Board extends GridPane {
   }
 
   /**
+   * Play an animation corresponding to the move contained in the history node.
+   *
+   * @param historyNode The history to extract the move.
+   */
+  private void movePiece(HistoryNode historyNode) {
+    Move move = historyNode.getState().getMove();
+    pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
+    pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
+
+    PieceImage piece = new PieceImage(move.getPiece());
+    piece.setLayoutX(move.getSource().x() * 100 + 25);
+    piece.setLayoutY((boardRows - 1 - move.getSource().y()) * 100);
+    super.getChildren().add(piece);
+
+    TranslateTransition tt = new TranslateTransition();
+    tt.setNode(piece);
+    tt.setDuration(javafx.util.Duration.seconds(0.1));
+    tt.setFromX(move.getSource().x() * 100 + 25);
+    tt.setFromY((boardRows - 1 - move.getSource().y()) * 100);
+    tt.setToX(move.getDest().x() * 100 + 25);
+    tt.setToY((boardRows - 1 - move.getDest().y()) * 100);
+
+    tt.setOnFinished(
+        (event) -> {
+          super.getChildren().remove(piece);
+          updateAfterAnimation();
+        });
+    tt.play();
+  }
+
+  /**
    * Define the selected square (color + command).
    *
    * @param x x coordinate of the selected square
@@ -110,6 +150,12 @@ public class Board extends GridPane {
     boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
     Color squareColor = Game.getInstance().getBoard().getBoardRep().getPieceAt(x, y).getColor();
     if (from == null) {
+      if (isWhiteTurn && Game.getInstance().isWhiteAi() && squareColor == Color.WHITE) {
+        return;
+      }
+      if (!isWhiteTurn && Game.getInstance().isBlackAi() && squareColor == Color.BLACK) {
+        return;
+      }
       if ((isWhiteTurn && squareColor != Color.WHITE)
           || (!isWhiteTurn && squareColor != Color.BLACK)) {
         return;

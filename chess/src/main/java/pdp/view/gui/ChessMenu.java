@@ -291,12 +291,13 @@ public class ChessMenu extends HBox {
    *
    * @param message The message to display.
    * @param error The type of message.
+   * @param infinite
    */
-  public void displayMessage(String message, boolean error) {
+  public void displayMessage(String message, boolean error, boolean infinite) {
     if (error) {
-      messageDisplay.displayError(message);
+      messageDisplay.displayError(message, infinite);
     } else {
-      messageDisplay.displayInfo(message);
+      messageDisplay.displayInfo(message, infinite);
     }
   }
 }

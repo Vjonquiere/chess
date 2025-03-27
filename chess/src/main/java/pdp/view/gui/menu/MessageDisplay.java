@@ -32,10 +32,12 @@ public class MessageDisplay extends HBox {
    *
    * @param error The error message.
    */
-  public void displayError(String error) {
+  public void displayError(String error, boolean infinite) {
     clearPreviousMessage();
     super.getChildren().addAll(errorIcon, new Label(error));
-    autoClearMessage();
+    if (!infinite) {
+      autoClearMessage();
+    }
   }
 
   /**
@@ -43,10 +45,12 @@ public class MessageDisplay extends HBox {
    *
    * @param information The information message.
    */
-  public void displayInfo(String information) {
+  public void displayInfo(String information, boolean infinite) {
     clearPreviousMessage();
     super.getChildren().addAll(infoIcon, new Label(information));
-    autoClearMessage();
+    if (!infinite) {
+      autoClearMessage();
+    }
   }
 
   /**
