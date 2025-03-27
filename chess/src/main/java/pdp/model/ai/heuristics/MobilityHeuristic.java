@@ -5,8 +5,8 @@ import pdp.model.board.Board;
 
 /** Heuristic based on the number of moves available for each player. */
 public class MobilityHeuristic implements Heuristic {
-  private static final int SCORE_CAP = 100;
-  private static final int MOVE_VALUE = 1;
+  private static final float SCORE_CAP = 100;
+  private static final float MOVE_VALUE = 1;
 
   /**
    * Evaluates the board based on the available moves for each player.
@@ -20,7 +20,7 @@ public class MobilityHeuristic implements Heuristic {
 
     // realistic maximum of moves is 100 (can be more in specific positions)
 
-    int score = 0;
+    float score = 0;
     if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
       score +=
           (bitBoard.getColorMoveBitboard(true).bitCount()
@@ -28,7 +28,7 @@ public class MobilityHeuristic implements Heuristic {
               * MOVE_VALUE;
 
       score = Math.min(score, SCORE_CAP); // cap to 100
-      return isWhite ? (int) (score * 1) : (int) (-score * 1);
+      return isWhite ? score * 1 : -score * 1;
     }
 
     score +=
@@ -37,6 +37,6 @@ public class MobilityHeuristic implements Heuristic {
             * MOVE_VALUE;
 
     score = Math.min(score, SCORE_CAP); // cap to 100
-    return isWhite ? (int) (score * 1) : (int) (-score * 1);
+    return isWhite ? score * 1 : -score * 1;
   }
 }

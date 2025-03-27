@@ -6,9 +6,9 @@ import pdp.utils.Position;
 
 /** Heuristic based on the development (advancement) of pieces. */
 public class DevelopmentHeuristic implements Heuristic {
-  private static final int SCORE_CAP = 100;
-  private static final int BONUS_DEV_PAWN = 1;
-  private static final int BONUS_DEV_PIECE = 3;
+  private static final float SCORE_CAP = 100f;
+  private static final float BONUS_DEV_PAWN = 1f;
+  private static final float BONUS_DEV_PIECE = 3f;
   private static final float MULTIPLIER =
       SCORE_CAP / (15 * BONUS_DEV_PIECE); // all pawns have promoted
 
@@ -21,7 +21,7 @@ public class DevelopmentHeuristic implements Heuristic {
    */
   @Override
   public float evaluate(final Board board, final boolean isWhite) {
-    final int score =
+    final float score =
         evaluatePiecesDevelopment(board, true) - evaluatePiecesDevelopment(board, false);
     return isWhite ? score : -score;
   }
@@ -34,8 +34,8 @@ public class DevelopmentHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on the development of each player
    */
-  private int evaluatePiecesDevelopment(final Board board, final boolean isWhite) {
-    int score = 0;
+  private float evaluatePiecesDevelopment(final Board board, final boolean isWhite) {
+    float score = 0;
 
     final List<List<Position>> initPlayerPos;
     final List<List<Position>> currentPlayerPos;

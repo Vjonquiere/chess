@@ -6,7 +6,7 @@ import pdp.model.piece.Color;
 /** Heuristic adding/ removing points in case of checkmate. */
 public class GameStatus implements Heuristic {
 
-  private static final int SCORE_CAP = 100;
+  private static final float SCORE_CAP = 100;
 
   /**
    * Evaluates the board based on the possible checkmates.
@@ -17,7 +17,7 @@ public class GameStatus implements Heuristic {
    */
   @Override
   public float evaluate(final Board board, final boolean isWhite) {
-    int score = 0;
+    float score = 0;
     if (board.getBoardRep().isCheckMate(Color.WHITE)) {
       score -= SCORE_CAP;
     }

@@ -9,9 +9,9 @@ import pdp.utils.Position;
  * to lead to a draw.
  */
 public class KingOppositionHeuristic implements Heuristic {
-  private static final int SCORE_CAP = 100;
-  private static final int OPPOSITION_SCORE = -(SCORE_CAP / 2);
-  private static final int DIAGONAL_SCORE = -(SCORE_CAP / 4);
+  private static final float SCORE_CAP = 100;
+  private static final float OPPOSITION_SCORE = -(SCORE_CAP / 2);
+  private static final float DIAGONAL_SCORE = -(SCORE_CAP / 4);
 
   /**
    * Computes a score according to the (un)balance of the kings position. The more the kings are in
@@ -39,7 +39,7 @@ public class KingOppositionHeuristic implements Heuristic {
    * @param board the board of the game
    * @return a score based on the king opposition
    */
-  private int evaluateKingOpposition(final Board board) {
+  private float evaluateKingOpposition(final Board board) {
     final BoardRepresentation bitboard = board.getBoardRep();
     final Position whiteKing = bitboard.getKing(true).get(0);
     final Position blackKing = bitboard.getKing(false).get(0);

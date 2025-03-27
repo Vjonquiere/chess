@@ -9,11 +9,11 @@ import pdp.utils.Position;
 /** Heuristic based on the activity of the king. */
 public class KingActivityHeuristic implements Heuristic {
 
-  private static final int SCORE_CAP = 100;
-  private static final int ACTIVITY_SCORE = 10;
-  private static final int CENTER_SCORE = 20;
-  private static final int NOT_CENTER_MAX = 15;
-  private static final int CENTER_DISTANCE_DECREASE = 3;
+  private static final float SCORE_CAP = 100f;
+  private static final float ACTIVITY_SCORE = 10f;
+  private static final float CENTER_SCORE = 20f;
+  private static final float NOT_CENTER_MAX = 15f;
+  private static final float CENTER_DISTANCE_DECREASE = 3f;
   private static final float MULTIPLIER = SCORE_CAP / (ACTIVITY_SCORE + CENTER_SCORE);
 
   /**
@@ -44,8 +44,8 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the location of the king on the board
    */
-  private int kingIsInCenterScore(final Board board, final boolean isWhite) {
-    final int score;
+  private float kingIsInCenterScore(final Board board, final boolean isWhite) {
+    final float score;
 
     // Delineate center box
     final Position posTopLeftCenter = new Position(2, 5);
@@ -86,8 +86,8 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the activity of the king
    */
-  private int kingActivityScore(final Board board, final boolean isWhite) {
-    int score = 0;
+  private float kingActivityScore(final Board board, final boolean isWhite) {
+    float score = 0;
     final BoardRepresentation bitboard = board.getBoardRep();
     // Check the activity of the King
     final List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);

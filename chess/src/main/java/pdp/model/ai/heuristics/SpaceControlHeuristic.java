@@ -21,7 +21,7 @@ public class SpaceControlHeuristic implements Heuristic {
    */
   @Override
   public float evaluate(final Board board, final boolean isWhite) {
-    int score = 0;
+    float score = 0;
     score += evaluateCenterControl(board, true) - evaluateCenterControl(board, false);
     score += evaluateFlanksControl(board, true) - evaluateFlanksControl(board, false);
     return isWhite ? score : -score;
@@ -34,9 +34,9 @@ public class SpaceControlHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on center control
    */
-  private int evaluateCenterControl(final Board board, final boolean isWhite) {
-    int score = 0;
-    final int bonusMoveInCenter = 3;
+  private float evaluateCenterControl(final Board board, final boolean isWhite) {
+    float score = 0;
+    final float bonusMoveInCenter = 3f;
 
     final List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
 
@@ -69,9 +69,9 @@ public class SpaceControlHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on flanks control
    */
-  private int evaluateFlanksControl(final Board board, final boolean isWhite) {
-    int score = 0;
-    final int bonusMoveOnFlanks = 1;
+  private float evaluateFlanksControl(final Board board, final boolean isWhite) {
+    float score = 0;
+    final float bonusMoveOnFlanks = 1f;
 
     final List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
 

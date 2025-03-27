@@ -7,8 +7,8 @@ import pdp.utils.Position;
 
 /** Heuristic based on the connection of pawns. The more connected the pawns are, the better. */
 public class PawnChainHeuristic implements Heuristic {
-  private static final int SCORE_CAP = 100;
-  private static final int REWARD = 5;
+  private static final float SCORE_CAP = 100f;
+  private static final float REWARD = 5f;
   private static final float MULTIPLIER = (SCORE_CAP / (28 * REWARD));
 
   /**
@@ -20,7 +20,7 @@ public class PawnChainHeuristic implements Heuristic {
    */
   @Override
   public float evaluate(final Board board, final boolean isWhite) {
-    int score = 0;
+    float score = 0;
     score += evaluatePawnChains(board, true) - evaluatePawnChains(board, false);
     score *= MULTIPLIER;
     return isWhite ? score : -score;
@@ -33,8 +33,8 @@ public class PawnChainHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a positive score for pawn chains, 0 otherwise
    */
-  private int evaluatePawnChains(final Board board, final boolean isWhite) {
-    int score = 0;
+  private float evaluatePawnChains(final Board board, final boolean isWhite) {
+    float score = 0;
     final BoardRepresentation bitboard = board.getBoardRep();
     final List<Position> pawns = bitboard.getPawns(isWhite);
 
