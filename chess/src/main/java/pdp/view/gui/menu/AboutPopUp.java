@@ -1,5 +1,7 @@
 package pdp.view.gui.menu;
 
+import java.io.IOException;
+import java.util.Properties;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -7,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import pdp.utils.CommandLineOptions;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
@@ -17,8 +20,12 @@ public class AboutPopUp extends VBox {
     Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("about"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
+    Label infoLabel = null;
+    try {
+      infoLabel = getLabel();
+    } catch (IOException ignored) {
 
-    Label infoLabel = getLabel();
+    }
 
     Button closeButton = new Button(TextGetter.getText("close"));
     closeButton.setOnAction(e -> popupStage.close());
@@ -38,11 +45,14 @@ public class AboutPopUp extends VBox {
    *
    * @return A label containing the about message.
    */
-  private Label getLabel() {
+  private Label getLabel() throws IOException {
+    Properties properties = new Properties();
+    properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
+
     String aboutText =
         TextGetter.getText("version")
             + " "
-            + "1.0.0"
+            + properties.getProperty("version")
             + "\n"
             + TextGetter.getText("authors")
             + " "

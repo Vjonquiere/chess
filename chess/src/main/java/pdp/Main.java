@@ -1,5 +1,8 @@
 package pdp;
 
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
+
 import java.util.HashMap;
 import java.util.logging.Logger;
 import pdp.controller.GameController;
@@ -19,12 +22,14 @@ public class Main {
    * @param args Command line arguments.
    */
   public static void main(String[] args) {
+
+    error("test");
     HashMap<OptionType, String> options =
         CommandLineOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
     if (!options.containsKey(OptionType.UCI)) {
-      System.out.println(TextGetter.getText("title"));
-      System.out.println("options: " + options.toString());
+      print(TextGetter.getText("title"));
+      print("options: " + options.toString());
     }
 
     if (options.containsKey(OptionType.CONTEST)) {

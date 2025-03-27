@@ -1,5 +1,7 @@
 package pdp.controller;
 
+import static pdp.utils.Logging.error;
+
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
@@ -52,7 +54,7 @@ public final class BagOfCommands {
                   Thread.sleep(1); // Prevent CPU overuse
                 }
               } catch (Exception e) {
-                System.out.println("Error in processCommands: " + e.getMessage());
+                error("Error in processCommands: " + e.getMessage());
                 e.printStackTrace();
               } finally {
                 bagRunning = false;

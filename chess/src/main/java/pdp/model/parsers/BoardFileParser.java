@@ -1,7 +1,6 @@
 package pdp.model.parsers;
 
-import static pdp.utils.Logging.debug;
-import static pdp.utils.Logging.verbose;
+import static pdp.utils.Logging.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +60,7 @@ public class BoardFileParser {
     try {
       content = readFile(fileName);
     } catch (FileNotFoundException e) {
-      System.out.println("File not found, loading default game");
+      error("File not found, loading default game");
       runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true, null);
     }
@@ -91,7 +90,7 @@ public class BoardFileParser {
       }
       return result;
     } catch (Exception e) {
-      System.out.println("Failed to build board: " + e.getMessage());
+      error("Failed to build board: " + e.getMessage());
       runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true, null);
     }

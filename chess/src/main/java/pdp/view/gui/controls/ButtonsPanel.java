@@ -68,8 +68,9 @@ public class ButtonsPanel extends GridPane {
                 new CancelMoveCommand(),
                 () -> Game.getInstance().getGameState().undoRequestReset());
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
   }
@@ -91,8 +92,9 @@ public class ButtonsPanel extends GridPane {
                 new RestoreMoveCommand(),
                 () -> Game.getInstance().getGameState().redoRequestReset());
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
   }
@@ -113,8 +115,9 @@ public class ButtonsPanel extends GridPane {
                 new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
   }
@@ -135,8 +138,9 @@ public class ButtonsPanel extends GridPane {
                 new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
   }
@@ -157,8 +161,9 @@ public class ButtonsPanel extends GridPane {
                 new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
   }

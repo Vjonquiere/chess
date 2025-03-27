@@ -1,9 +1,6 @@
 package pdp.utils;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  * Logging class abstracting java.util.logging Usage : in each class, create a logger from
@@ -16,6 +13,13 @@ public final class Logging {
   private static boolean debug = false;
   private static boolean verbose = false;
 
+  /*
+   private static final Logger GLOBAL_LOGGER = Logger.getLogger("GlobalLogger");
+
+   static {
+     configureGlobalLogger();
+   }
+  */
   /*Private constructor to avoid instantiation.*/
   private Logging() {}
 
@@ -64,6 +68,7 @@ public final class Logging {
 
   /**
    * Configure the given logger to display information of the correct level in the console.
+   * Configures the class loggers.
    *
    * @param logger Logger of the class calling the function
    */
@@ -87,5 +92,35 @@ public final class Logging {
     }
     logger.addHandler(consoleHandler);
     logger.setUseParentHandlers(false);
+  }
+
+  /*
+    /** Configures the global logger for print and error messages.
+    private static void configureGlobalLogger() {
+      GLOBAL_LOGGER.setLevel(Level.INFO);
+      ConsoleHandler consoleHandler = new ConsoleHandler();
+      consoleHandler.setLevel(Level.INFO);
+      consoleHandler.setFormatter(new SimpleFormatter() {
+        @Override
+        public String format(LogRecord record) {
+          return record.getMessage() + System.lineSeparator();
+        }
+      });
+
+      for (Handler handler : GLOBAL_LOGGER.getHandlers()) {
+        GLOBAL_LOGGER.removeHandler(handler);
+      }
+      GLOBAL_LOGGER.addHandler(consoleHandler);
+      GLOBAL_LOGGER.setUseParentHandlers(false);
+    }
+  */
+  /** Logs a normal message (replaces System.out in the rest of the code). */
+  public static void print(String message) {
+    System.out.println(message);
+  }
+
+  /** Logs an error message (replaces System.err in the rest of the code). */
+  public static void error(String message) {
+    System.err.println(message);
   }
 }

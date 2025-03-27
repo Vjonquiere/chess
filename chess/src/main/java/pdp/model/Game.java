@@ -611,7 +611,6 @@ public final class Game extends GameAbstract {
         viewLock.lock();
         this.notifyObservers(EventType.AI_PLAYING);
         try {
-          System.out.println("Waiting for View");
           workingView.await();
         } catch (InterruptedException e) {
           e.printStackTrace();
@@ -726,8 +725,6 @@ public final class Game extends GameAbstract {
 
   /** Restarts the game by resetting the game state and history. */
   public void restartGame() {
-
-    System.out.println(this.getStateCount());
 
     debug(LOGGER, "Restarting game");
 
