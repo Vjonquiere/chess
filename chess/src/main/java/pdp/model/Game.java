@@ -74,7 +74,8 @@ public final class Game extends GameAbstract {
 
   /** Map containing the different options to parametrize the game and their values. */
   private boolean contestModeOn;
-  private boolean AIPlayedItsLastMove;
+  /** Boolean value used to know if Ai played its move (contest Mode) */
+  private boolean AiPlayedItsLastMove;
   private final HashMap<OptionType, String> options;
 
   /** Lock of the view, to avoid desynchronization between the view and the model. */
@@ -129,7 +130,7 @@ public final class Game extends GameAbstract {
     this.explorationAi = false;
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
-    this.AIPlayedItsLastMove = false;
+    this.AiPlayedItsLastMove = false;
 
     if (instance != null) {
       if (instance.getBlackSolver() != null) {
@@ -225,7 +226,7 @@ public final class Game extends GameAbstract {
   }
 
   /**
-   * Assigns boolean value to isWhiteAI field. Method used in GameInitializer.
+   * Assigns boolean value to whiteAi attribute field. Method used in GameInitializer.
    *
    * @param ai true if white is AI. false otherwise.
    */
@@ -234,7 +235,7 @@ public final class Game extends GameAbstract {
   }
 
   /**
-   * Assigns boolean value to isBlakAI field. Method used in GameInitializer.
+   * Assigns boolean value to blakAi attribute field. Method used in GameInitializer.
    *
    * @param ai true if black is AI. false otherwise.
    */
@@ -346,7 +347,7 @@ public final class Game extends GameAbstract {
    * @return true if AI finished computing moves. false otherwise.
    */
   public boolean AiPlayedItsLastMove() {
-    return this.AIPlayedItsLastMove;
+    return this.AiPlayedItsLastMove;
   }
 
   /**
@@ -354,7 +355,7 @@ public final class Game extends GameAbstract {
    * when the game can be saved when loading or contest mode.
    */
   public void setAiPlayedItsLastMove(boolean lastMove) {
-    this.AIPlayedItsLastMove = lastMove;
+    this.AiPlayedItsLastMove = lastMove;
   }
 
   /**
