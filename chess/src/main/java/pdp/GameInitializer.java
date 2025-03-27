@@ -290,14 +290,14 @@ public abstract class GameInitializer {
           if (model.getGameState().isWhiteTurn()) {
             Solver whiteSolver = new Solver();
 
+            model.setWhiteSolver(whiteSolver);
+            model.setWhiteAi(true);
+            model.setBlackAi(false);
+
             processAiDepthContest(options, true, whiteSolver);
             processAiModeContest(options, true, whiteSolver);
             processAiEndGameHeuristicContest(options, true, whiteSolver);
             processAiHeuristicContest(options, true, whiteSolver);
-
-            model.setWhiteSolver(whiteSolver);
-            model.setWhiteAi(true);
-            model.setBlackAi(false);
 
             System.err.println("HERE IS THE DEPTH AFTER SET :" + model.getWhiteSolver().getDepth());
 
@@ -306,14 +306,14 @@ public abstract class GameInitializer {
             new Solver();
             Solver blackSolver = new Solver();
 
+            model.setBlackSolver(blackSolver);
+            model.setBlackAi(true);
+            model.setWhiteAi(false);
+
             processAiDepthContest(options, false, blackSolver);
             processAiModeContest(options, false, blackSolver);
             processAiEndGameHeuristicContest(options, false, blackSolver);
             processAiHeuristicContest(options, false, blackSolver);
-
-            model.setBlackSolver(blackSolver);
-            model.setBlackAi(true);
-            model.setWhiteAi(false);
 
             System.err.println("HERE IS THE DEPTH AFTER SET :" + model.getBlackSolver().getDepth());
 
@@ -475,9 +475,6 @@ public abstract class GameInitializer {
             simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
           } catch (Exception e) {
             System.err.println("Not an integer for the simulations of AI");
-            System.err.println(
-                "Defaulting to simulations "
-                    + ((MonteCarloTreeSearch) solver.getAlgorithm()).getSimulationLimit());
           }
         }
       } else {
@@ -486,9 +483,6 @@ public abstract class GameInitializer {
             simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
           } catch (Exception e) {
             System.err.println("Not an integer for the simulations of AI");
-            System.err.println(
-                "Defaulting to simulations "
-                    + ((MonteCarloTreeSearch) solver.getAlgorithm()).getSimulationLimit());
           }
         }
       }
@@ -498,9 +492,6 @@ public abstract class GameInitializer {
       if (algorithmTypeContest == AlgorithmType.MCTS) {
         if (simulations != 0) {
           solver.setMonteCarloAlgorithm(simulations);
-        } else { // Default number of simulations
-          int defaultNbSimulations = 100;
-          solver.setMonteCarloAlgorithm(defaultNbSimulations);
         }
       } else { // ALPHA_BETA or MINIMAX
         solver.setAlgorithm(algorithmTypeContest);

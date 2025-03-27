@@ -626,9 +626,8 @@ class GameInitializerTest {
     assertTrue(outputStream.toString().contains("Starting a new game instead."));
   }
 
-  /*
   @Test
-  void testContestMode_ValidFile_WhiteTurn() throws IOException {
+  void testContestModeValidFileWhiteTurn() throws IOException {
     tempFile = Files.createTempFile("moveHistory2", ".txt");
     String text =
         "W\n"
@@ -658,23 +657,25 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI_DEPTH, "5");
-    options.put(OptionType.AI_MODE, "MCTS");
-    options.put(OptionType.AI_SIMULATION, "150");
-    options.put(OptionType.AI_HEURISTIC, "BAD_PAWNS");
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_DEPTH_W, "3");
+    options.put(OptionType.AI_MODE_W, "MCTS");
+    options.put(OptionType.AI_SIMULATION_W, "150");
+    options.put(OptionType.AI_HEURISTIC_W, "BAD_PAWNS");
+    options.put(OptionType.AI_WEIGHT_W, "9.2");
 
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
     assertTrue(game.isWhiteAi());
-    assertEquals(5, game.getWhiteSolver().getDepth());
     assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertEquals(
         150, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
+    assertEquals(3, game.getWhiteSolver().getDepth());
   }
 
   @Test
-  void testContestMode_ValidFile_BlackTurn() throws IOException {
+  void testContestModeValidFileBlackTurnMCTS() throws IOException {
     tempFile = Files.createTempFile("moveHistory2", ".txt");
     String text =
         "B\n"
@@ -704,17 +705,280 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI_DEPTH, "2");
-    options.put(OptionType.AI_MODE, "ALPHA_BETA");
-    options.put(OptionType.AI_ENDGAME, "ENDGAME");
-    options.put(OptionType.AI_HEURISTIC, "STANDARD");
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_MODE_B, "MCTS");
 
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
     assertTrue(game.isBlackAi());
-    assertEquals(2, game.getBlackSolver().getDepth());
-    assertEquals(AlgorithmType.ALPHA_BETA, game.getBlackSolver().getAlgorithm());
+    assertTrue(game.getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+    assertEquals(
+        100, ((MonteCarloTreeSearch) game.getBlackSolver().getAlgorithm()).getSimulationLimit());
   }
-    */
+
+  @Test
+  void testContestModeValidFileBlackTurn() throws IOException {
+    tempFile = Files.createTempFile("moveHistory2", ".txt");
+    String text =
+        "B\n"
+            + //
+            "r n b q k b n r \n"
+            + //
+            "p p p p _ p p p \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ _ _ P _ Q _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K B N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-g4\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_DEPTH_B, "2");
+    options.put(OptionType.AI_MODE_B, "ALPHA_BETA");
+    options.put(OptionType.AI_ENDGAME_B, "ENDGAME");
+    options.put(OptionType.AI_WEIGHT_B, "9.2");
+    options.put(OptionType.AI_HEURISTIC_B, "STANDARD");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.isBlackAi());
+    assertTrue(game.getBlackSolver().getAlgorithm() instanceof AlphaBeta);
+    assertEquals(2, game.getBlackSolver().getDepth());
+  }
+
+  @Test
+  void testInvalidAiDepthWhite() throws IOException {
+    tempFile = Files.createTempFile("moveHistoryInvalidDepthW", ".txt");
+    String text =
+        "W\n"
+            + "r n b q k b n r \n"
+            + "p p p p p p p p \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "P P P P P P P P \n"
+            + "R N B Q K B N R \n"
+            + "\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_DEPTH_W, "invalid");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertEquals(4, game.getWhiteSolver().getDepth());
+  }
+
+  @Test
+  void testInvalidAiDepthBlack() throws IOException {
+    tempFile = Files.createTempFile("moveHistoryInvalidDepthB", ".txt");
+    String text =
+        "B\n"
+            + "r n b q k b n r \n"
+            + "p p p p p p p p \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "P P P P P P P P \n"
+            + "R N B Q K B N R \n"
+            + "\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_DEPTH_B, "notanumber");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertEquals(4, game.getBlackSolver().getDepth());
+  }
+
+  @Test
+  void testInvalidAiModeWhite() throws IOException {
+    tempFile = Files.createTempFile("moveHistoryInvalidModeW", ".txt");
+    String text =
+        "W\n"
+            + "r n b q k b n r \n"
+            + "p p p p p p p p \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "P P P P P P P P \n"
+            + "R N B Q K B N R \n"
+            + "\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_MODE_W, "UNKNOWN_MODE");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof AlphaBeta);
+  }
+
+  @Test
+  void testInvalidAiSimulationWhite() throws IOException {
+    tempFile = Files.createTempFile("moveHistoryInvalidSimW", ".txt");
+    String text =
+        "W\n"
+            + "r n b q k b n r \n"
+            + "p p p p p p p p \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "P P P P P P P P \n"
+            + "R N B Q K B N R \n"
+            + "\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_MODE_W, "MCTS");
+    options.put(OptionType.AI_SIMULATION_W, "invalid");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+  }
+
+  @Test
+  void testInvalidAiSimulationBlack() throws IOException {
+    tempFile = Files.createTempFile("moveHistoryInvalidSimW", ".txt");
+    String text =
+        "B\n"
+            + //
+            "r n b q k b n r \n"
+            + //
+            "p p p p _ p p p \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ _ _ P _ Q _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K B N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-g4\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_MODE_B, "MCTS");
+    options.put(OptionType.AI_SIMULATION_B, "invalid");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+  }
+
+  @Test
+  void testInvalidAiEndgameHeuristicBlack() throws IOException {
+    tempFile = Files.createTempFile("moveHistoryInvalidEndgameB", ".txt");
+    String text =
+        "B\n"
+            + //
+            "r n b q k b n r \n"
+            + //
+            "p p p p _ p p p \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ _ _ P _ Q _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B _ K B N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n"
+            + //
+            "2. W d1-g4\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_MODE_B, "10");
+    options.put(OptionType.AI_DEPTH_B, "2");
+    options.put(OptionType.AI_ENDGAME_B, "8");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+  }
+
+  @Test
+  void testInvalidAiEndgameHeuristicWhite() throws IOException {
+    tempFile = Files.createTempFile("moveHistoryInvalidEndgameB", ".txt");
+    String text =
+        "B\n"
+            + "r n b q k b n r \n"
+            + "p p p p p p p p \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "_ _ _ _ _ _ _ _ \n"
+            + "P P P P P P P P \n"
+            + "R N B Q K B N R \n"
+            + "\n";
+
+    Files.writeString(tempFile, text);
+
+    options.put(OptionType.CONTEST, tempFile.toString());
+    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI_MODE_W, "INVALID_MODE");
+    options.put(OptionType.AI_DEPTH_W, "INVALID_DEPTH");
+    options.put(OptionType.AI_ENDGAME_W, "9");
+
+    Game game = GameInitializer.initialize(options);
+
+    assertNotNull(game);
+  }
 }
