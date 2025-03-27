@@ -74,8 +74,10 @@ public final class Game extends GameAbstract {
 
   /** Map containing the different options to parametrize the game and their values. */
   private boolean contestModeOn;
+
   /** Boolean value used to know if Ai played its move (contest Mode) */
   private boolean AiPlayedItsLastMove;
+
   private final HashMap<OptionType, String> options;
 
   /** Lock of the view, to avoid desynchronization between the view and the model. */
@@ -633,13 +635,15 @@ public final class Game extends GameAbstract {
       if (this.solverWhite != null) {
         // Set endgame heuristic only once and only if endgame phase
         if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getCurrentHeuristic() == this.solverWhite.getEndgameHeuristic())) {
+            && !(this.solverWhite.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
           this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
         }
       }
       if (this.solverBlack != null) {
         if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getCurrentHeuristic() == this.solverWhite.getEndgameHeuristic())) {
+            && !(this.solverBlack.getCurrentHeuristic()
+                == this.solverWhite.getEndgameHeuristic())) {
           this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
         }
       }
