@@ -61,16 +61,19 @@ public class ButtonsPanel extends GridPane {
     undoButton.setMinWidth(100);
     undoButton.setOnAction(
         event -> {
-          BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
-            new YesNoPopUp(
-                "undoInstructionsGui",
-                new CancelMoveCommand(),
-                () -> Game.getInstance().getGameState().undoRequestReset());
+          if (Game.getInstance().getGameState().getFullTurn() > 0) {
+            BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+              new YesNoPopUp(
+                  "undoInstructionsGui",
+                  new CancelMoveCommand(),
+                  () -> Game.getInstance().getGameState().undoRequestReset());
+            }
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
-              InfoPopUp.show(TextGetter.getText("notAllowed"));
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
         });
   }
 
@@ -84,16 +87,22 @@ public class ButtonsPanel extends GridPane {
     redoButton.setMinWidth(100);
     redoButton.setOnAction(
         event -> {
-          BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
-            new YesNoPopUp(
-                "redoInstructionsGui",
-                new RestoreMoveCommand(),
-                () -> Game.getInstance().getGameState().redoRequestReset());
+          if (Game.getInstance().getHistory().getCurrentMove().orElse(null) != null
+              && Game.getInstance().getHistory().getCurrentMove().get().getNext().orElse(null)
+                  != null) {
+            BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+              new YesNoPopUp(
+                  "redoInstructionsGui",
+                  new RestoreMoveCommand(),
+                  () -> Game.getInstance().getGameState().redoRequestReset());
+            }
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
-              InfoPopUp.show(TextGetter.getText("notAllowed"));
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
+
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
         });
   }
 

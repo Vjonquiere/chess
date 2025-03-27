@@ -148,30 +148,39 @@ public class ChessMenu extends VBox {
     MenuItem undo = new MenuItem(TextGetter.getText("undo"));
     undo.setOnAction(
         e -> {
-          BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
-            new YesNoPopUp(
-                "undoInstructionsGui",
-                new CancelMoveCommand(),
-                () -> Game.getInstance().getGameState().undoRequestReset());
+          if (Game.getInstance().getGameState().getFullTurn() > 0) {
+            BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+              new YesNoPopUp(
+                  "undoInstructionsGui",
+                  new CancelMoveCommand(),
+                  () -> Game.getInstance().getGameState().undoRequestReset());
+            }
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
-              InfoPopUp.show(TextGetter.getText("notAllowed"));
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
+
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
         });
     MenuItem redo = new MenuItem(TextGetter.getText("redo"));
     redo.setOnAction(
         e -> {
-          BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
-            new YesNoPopUp(
-                "redoInstructionsGui",
-                new RestoreMoveCommand(),
-                () -> Game.getInstance().getGameState().redoRequestReset());
+          if (Game.getInstance().getHistory().getCurrentMove().orElse(null) != null
+              && Game.getInstance().getHistory().getCurrentMove().get().getNext().orElse(null)
+                  != null) {
+            BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+              new YesNoPopUp(
+                  "redoInstructionsGui",
+                  new RestoreMoveCommand(),
+                  () -> Game.getInstance().getGameState().redoRequestReset());
+            }
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
-              InfoPopUp.show(TextGetter.getText("notAllowed"));
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
         });
     MenuItem restart = new MenuItem(TextGetter.getText("restart"));
     restart.setOnAction(
