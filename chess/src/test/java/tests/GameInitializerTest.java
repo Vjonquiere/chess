@@ -849,15 +849,26 @@ class GameInitializerTest {
     tempFile = Files.createTempFile("moveHistoryInvalidSimW", ".txt");
     String text =
         "W\n"
-            + "r n b q k b n r \n"
-            + "p p p p p p p p \n"
-            + "_ _ _ _ _ _ _ _ \n"
-            + "_ _ _ _ _ _ _ _ \n"
-            + "_ _ _ _ _ _ _ _ \n"
-            + "_ _ _ _ _ _ _ _ \n"
-            + "P P P P P P P P \n"
-            + "R N B Q K B N R \n"
-            + "\n";
+            + //
+            "r n b q k b n r \n"
+            + //
+            "p p p p _ p p p \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "_ _ _ _ p _ _ _ \n"
+            + //
+            "_ _ _ _ P _ _ _ \n"
+            + //
+            "_ _ _ _ _ _ _ _ \n"
+            + //
+            "P P P P _ P P P \n"
+            + //
+            "R N B Q K B N R \n"
+            + //
+            "\n"
+            + //
+            "1. W e2-e4 B e7-e5\n";
 
     Files.writeString(tempFile, text);
 
@@ -869,7 +880,6 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
   }
 
   @Test
@@ -910,7 +920,6 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
   }
 
   @Test

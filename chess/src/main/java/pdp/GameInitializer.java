@@ -299,8 +299,6 @@ public abstract class GameInitializer {
             processAiEndGameHeuristicContest(options, true, whiteSolver);
             processAiHeuristicContest(options, true, whiteSolver);
 
-            System.err.println("HERE IS THE DEPTH AFTER SET :" + model.getWhiteSolver().getDepth());
-
             solver = whiteSolver;
           } else {
             new Solver();
@@ -314,8 +312,6 @@ public abstract class GameInitializer {
             processAiModeContest(options, false, blackSolver);
             processAiEndGameHeuristicContest(options, false, blackSolver);
             processAiHeuristicContest(options, false, blackSolver);
-
-            System.err.println("HERE IS THE DEPTH AFTER SET :" + model.getBlackSolver().getDepth());
 
             solver = blackSolver;
           }
@@ -426,10 +422,8 @@ public abstract class GameInitializer {
 
     if (depth != 0) {
       solver.setDepth(depth);
-      System.err.println("SETTING DEPTH : " + depth);
     } else {
       solver.setDepth(4);
-      System.err.println("SETTING DEFAULT DEPTH 4");
     }
   }
 
