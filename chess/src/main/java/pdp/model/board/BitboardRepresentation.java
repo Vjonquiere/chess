@@ -4,7 +4,6 @@ import static pdp.utils.Logging.debug;
 import static pdp.utils.Logging.error;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.piece.Color;
@@ -390,67 +389,6 @@ public class BitboardRepresentation implements BoardRepresentation {
     }
   }
 
-  // ________________________ BitboardMovesGen
-
-  /**
-   * Iterate on the given direction to generate the possible movement from a given position
-   * depending on allies and enemies.
-   *
-   * @param piece Bitboard where only the position of the piece you want to move is set to 1
-   * @param unreachableSquares A bitboard containing all the unreachable squares
-   * @param enemies A bitboard containing all the enemies pieces
-   * @param moveFunction The function that make the direction to follow (ex: right)
-   * @return A bitboard containing all the squares reachable for a given direction
-   */
-  protected Bitboard getMultipleMovesFromDirection(
-      Bitboard piece,
-      Bitboard unreachableSquares,
-      Bitboard enemies,
-      Function<Bitboard, Bitboard> moveFunction) {
-    return BitboardMovesGen.getMultipleMovesFromDirection(
-        piece, unreachableSquares, enemies, moveFunction);
-  }
-
-  /**
-   * Generate the bitboard containing the reachable positions for up, down, left, right directions.
-   *
-   * @param square The position of the piece that want to move
-   * @param unreachableSquares A bitboard containing all the unreachable squares
-   * @param enemies A bitboard containing all the enemies pieces
-   * @return A bitboard containing the possible inline moves
-   */
-  protected Bitboard getInlineMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies) {
-    return BitboardMovesGen.getInlineMoves(square, unreachableSquares, enemies);
-  }
-
-  /**
-   * Generate the bitboard containing the reachable positions for up left, down left, up right, down
-   * right directions.
-   *
-   * @param square The position of the piece that want to move
-   * @param unreachableSquares A bitboard containing all the unreachable squares
-   * @param enemies A bitboard containing all the enemies pieces
-   * @return A bitboard containing the possible diagonal moves
-   */
-  protected Bitboard getDiagonalMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies) {
-    return BitboardMovesGen.getDiagonalMoves(square, unreachableSquares, enemies);
-  }
-
-  /**
-   * Convert a move bitboard to a list of possible moves. It also set if a move is a capture or not.
-   *
-   * @param moveBitboard The bitboard to transform
-   * @param enemies A bitboard containing the enemies
-   * @param source The initial position of the piece
-   * @return A list of possible moves from a move bitboard
-   */
-  protected List<Move> bitboardToMoves(
-      Bitboard moveBitboard, Bitboard enemies, Position source, ColoredPiece piece) {
-    return BitboardMovesGen.bitboardToMoves(moveBitboard, enemies, source, piece, this);
-  }
-
   /**
    * Generate the list of possible moves from a given position for a king piece.
    *
@@ -475,99 +413,6 @@ public class BitboardRepresentation implements BoardRepresentation {
         blackShortCastle);
   }
 
-  protected Bitboard getKingMoveBitboard(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getKingMoveBitboard(
-        square,
-        unreachableSquares,
-        enemies,
-        piece,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
-  }
-
-  /**
-   * Generate the list of possible moves from a given position for a knight piece.
-   *
-   * @param square Position of the piece
-   * @param unreachableSquares unreachable squares bitboard
-   * @param enemies Enemies occupation bitboard
-   * @return The list of possible moves
-   */
-  protected List<Move> getKnightMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getKnightMoves(square, unreachableSquares, enemies, piece, this);
-  }
-
-  protected Bitboard getKnightMoveBitboard(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getKnightMoveBitboard(square, unreachableSquares);
-  }
-
-  /**
-   * Generate the list of possible moves from a given position for a pawn piece.
-   *
-   * @param square Position of the piece
-   * @param unreachableSquares unreachable squares bitboard
-   * @param enemies Enemies occupation bitboard
-   * @return The list of possible moves
-   */
-  protected List<Move> getPawnMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
-    return BitboardMovesGen.getPawnMoves(
-        square, unreachableSquares, enemies, white, this, enPassantPos, isLastMoveDoublePush);
-  }
-
-  protected Bitboard getPawnMoveBitboard(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, boolean white) {
-    return BitboardMovesGen.getPawnMoveBitboard(
-        square, unreachableSquares, enemies, white, this, enPassantPos, isLastMoveDoublePush);
-  }
-
-  /**
-   * Generate the list of possible moves from a given position for a queen piece.
-   *
-   * @param square Position of the piece
-   * @param unreachableSquares unreachable squares bitboard
-   * @param enemies Enemies occupation bitboard
-   * @return The list of possible moves
-   */
-  protected List<Move> getQueenMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getQueenMoves(square, unreachableSquares, enemies, piece, this);
-  }
-
-  /**
-   * Generate the list of possible moves from a given position for a bishop piece.
-   *
-   * @param square Position of the piece
-   * @param unreachableSquares unreachable squares bitboard
-   * @param enemies Enemies occupation bitboard
-   * @return The list of possible moves
-   */
-  protected List<Move> getBishopMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getBishopMoves(square, unreachableSquares, enemies, piece, this);
-  }
-
-  /**
-   * Generate the list of possible moves from a given position for a rook piece.
-   *
-   * @param square Position of the piece
-   * @param unreachableSquares unreachable squares bitboard
-   * @param enemies Enemies occupation bitboard
-   * @return The list of possible moves
-   */
-  protected List<Move> getRookMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
-    return BitboardMovesGen.getRookMoves(square, unreachableSquares, enemies, piece, this);
-  }
-
   /**
    * Generate the possible moves from a position depending on the piece type. This function do not
    * apply special rules (castling, pinned, ...).
@@ -581,30 +426,6 @@ public class BitboardRepresentation implements BoardRepresentation {
   @Override
   public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
     return BitboardMovesGen.getAvailableMoves(
-        x,
-        y,
-        kingReachable,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
-  }
-
-  /**
-   * Equivalent to getAvailableMoves but do not generate the move list from the bitboard. Used in
-   * check verification optimisation.
-   *
-   * @param x The board column
-   * @param y The board row
-   * @param kingReachable Can the piece reach opponent king (keep false if not checking
-   *     check/checkmate)
-   * @return The bitboard containing all the reachable positions
-   */
-  public Bitboard getMoveBitboard(int x, int y, boolean kingReachable) {
-    return BitboardMovesGen.getMoveBitboard(
         x,
         y,
         kingReachable,
