@@ -9,6 +9,9 @@ import pdp.utils.Position;
  * to lead to a draw.
  */
 public class KingOppositionHeuristic implements Heuristic {
+  private static final int SCORE_CAP = 100;
+  private static final int OPPOSITION_SCORE = -(SCORE_CAP / 2);
+  private static final int DIAGONAL_SCORE = -(SCORE_CAP / 4);
 
   /**
    * Computes a score according to the (un)balance of the kings position. The more the kings are in
@@ -22,6 +25,9 @@ public class KingOppositionHeuristic implements Heuristic {
   public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
     score += evaluateKingOpposition(board);
+
+    // min score -100 (max 0)
+
     return score;
   }
 
@@ -44,12 +50,12 @@ public class KingOppositionHeuristic implements Heuristic {
     // If kings are directly opposite with one square between them
     if ((diffX == 2 && diffY == 0) || (diffY == 2 && diffX == 0)) {
       // Strong opposition so more drawish
-      return -10;
+      return OPPOSITION_SCORE;
     }
     // If kings are diagonally close
     if (diffX <= 2 && diffY <= 2) {
       // Marginally drawish cuz slight opposition
-      return -5;
+      return DIAGONAL_SCORE;
     }
     // No real opposition
     return 0;

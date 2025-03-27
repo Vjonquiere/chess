@@ -6,6 +6,11 @@ import pdp.utils.Position;
 
 /** Heuristic based on the development (advancement) of pieces. */
 public class DevelopmentHeuristic implements Heuristic {
+  private static final int SCORE_CAP = 100;
+  private static final int BONUS_DEV_PAWN = 1;
+  private static final int BONUS_DEV_PIECE = 3;
+  private static final float MULTIPLIER =
+      SCORE_CAP / (15 * BONUS_DEV_PIECE); // all pawns have promoted
 
   /**
    * Computes and returns a score corresponding to the level of development for each player.
@@ -31,8 +36,6 @@ public class DevelopmentHeuristic implements Heuristic {
    */
   private int evaluatePiecesDevelopment(final Board board, final boolean isWhite) {
     int score = 0;
-    final int bonusDevPiece = 3;
-    final int bonusDevPawn = 1;
 
     final List<List<Position>> initPlayerPos;
     final List<List<Position>> currentPlayerPos;
@@ -54,14 +57,17 @@ public class DevelopmentHeuristic implements Heuristic {
         if (!initialPositions.contains(pos)) {
           // Pawns for index 5
           if (i == 5) {
-            score += bonusDevPawn;
+            score += BONUS_DEV_PAWN;
           } else if (i != 0) {
             // King for index 0
-            score += bonusDevPiece;
+            score += BONUS_DEV_PIECE;
           }
         }
       }
     }
+
+    // max score 29
+    score *= MULTIPLIER;
 
     return score;
   }

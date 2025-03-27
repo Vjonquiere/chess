@@ -9,6 +9,13 @@ import pdp.utils.Position;
 /** Heuristic based on the activity of the king. */
 public class KingActivityHeuristic implements Heuristic {
 
+  private static final int SCORE_CAP = 100;
+  private static final int ACTIVITY_SCORE = 10;
+  private static final int CENTER_SCORE = 20;
+  private static final int NOT_CENTER_MAX = 15;
+  private static final int CENTER_DISTANCE_DECREASE = 3;
+  private static final float MULTIPLIER = SCORE_CAP / (ACTIVITY_SCORE + CENTER_SCORE);
+
   /**
    * Checks the activity of the king and returns a score accordingly. King is close to the center?
    * King has a lot of possible moves ?
@@ -22,6 +29,10 @@ public class KingActivityHeuristic implements Heuristic {
     int score = 0;
     score += kingIsInCenterScore(board, true) - kingIsInCenterScore(board, false);
     score += kingActivityScore(board, true) - kingActivityScore(board, false);
+
+    // max score 30
+
+    score *= MULTIPLIER;
 
     return isWhite ? score : -score;
   }
@@ -52,7 +63,7 @@ public class KingActivityHeuristic implements Heuristic {
             && kingPosition.y() <= posTopLeftCenter.y();
 
     if (isKingInCenter) {
-      score = 20;
+      score = CENTER_SCORE;
     } else {
       // Compute Manhattan distance to center
       final int centerX = (posTopLeftCenter.x() + posTopRightCenter.x()) / 2;
@@ -62,7 +73,7 @@ public class KingActivityHeuristic implements Heuristic {
           Math.abs(kingPosition.x() - centerX) + Math.abs(kingPosition.y() - centerY);
       final int noBonus = 0;
       // King more or less far from the center
-      score = Math.max(noBonus, 15 - (distance * 3));
+      score = Math.max(noBonus, NOT_CENTER_MAX - (distance * CENTER_DISTANCE_DECREASE));
     }
 
     return score;
@@ -81,7 +92,7 @@ public class KingActivityHeuristic implements Heuristic {
     // Check the activity of the King
     final List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);
     if (kingMoves.size() >= 5) {
-      score += 10;
+      score += ACTIVITY_SCORE;
     }
 
     return score;

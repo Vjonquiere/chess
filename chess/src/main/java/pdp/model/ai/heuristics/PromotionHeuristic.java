@@ -7,6 +7,14 @@ import pdp.utils.Position;
 
 /** Heuristic based on the closeness of pawn promotion. */
 public class PromotionHeuristic implements Heuristic {
+  private static final int SCORE_CAP = 100;
+  private static final int SECOND_LAST_RANK_SCORE = 20;
+  private static final int FINAL_PHASE_SCORE = 10;
+  private static final int PROGRESS_SCORE = 10;
+
+  private static final float MULTIPLIER =
+      (SCORE_CAP / (8 * SECOND_LAST_RANK_SCORE + 8 * PROGRESS_SCORE));
+
   /**
    * Computes a score according to the closeness of pawns promoting. Heuristic used for endgames.
    *
@@ -19,6 +27,8 @@ public class PromotionHeuristic implements Heuristic {
     int score = 0;
     score += pawnsHaveProgressedScore(board, true) - pawnsHaveProgressedScore(board, false);
     score += pawnsAreCloseToPromotion(board, true) - pawnsAreCloseToPromotion(board, false);
+
+    score *= MULTIPLIER;
 
     return isWhite ? score : -score;
   }
