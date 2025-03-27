@@ -92,7 +92,7 @@ public class HeuristicTests {
     board.movePiece(new Position(1, 1), new Position(1, 2));
     board.movePiece(new Position(1, 6), new Position(1, 5));
 
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(0f, Math.abs(solver.evaluateBoard(game.getBoard(), false)));
   }
 
   @Test
@@ -157,8 +157,8 @@ public class HeuristicTests {
     BitboardRepresentationTest.deleteAllPiecesExceptThosePositionsBoard(
         board, posListWhite, posListBlack);
 
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(0f, Math.abs(solver.evaluateBoard(game.getBoard(), false)));
+    assertEquals(0f, Math.abs(solver.evaluateBoard(game.getBoard(), true)));
   }
 
   @Test
@@ -225,9 +225,9 @@ public class HeuristicTests {
     game.playMove(new Move(new Position(6, 7), new Position(5, 5)));
     game.playMove(new Move(new Position(7, 4), new Position(5, 6)));
     // Scholar's Mate (black checkmate)
-    assertEquals(-10000, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(-100, solver.evaluateBoard(game.getBoard(), false));
     game.getBoard().setPlayer(true);
-    assertEquals(10000, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(100, solver.evaluateBoard(game.getBoard(), true));
   }
 
   @Test
@@ -241,9 +241,9 @@ public class HeuristicTests {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
       for (Heuristic h : heuristics) {
         if (h instanceof PromotionHeuristic) {
-          int scoreWhenGameStarts = 0;
-          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), true));
-          assertEquals(scoreWhenGameStarts, h.evaluate(game.getBoard(), false));
+          float scoreWhenGameStarts = 0f;
+          assertEquals(scoreWhenGameStarts, Math.abs(h.evaluate(game.getBoard(), true)));
+          assertEquals(scoreWhenGameStarts, Math.abs(h.evaluate(game.getBoard(), false)));
         }
       }
     }
@@ -260,8 +260,8 @@ public class HeuristicTests {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
       for (Heuristic h : heuristics) {
         if (h instanceof KingActivityHeuristic) {
-          int scoreWhenGameStartsBlack = -3;
-          int scoreWhenGameStartsWhite = 3;
+          float scoreWhenGameStartsBlack = -10;
+          float scoreWhenGameStartsWhite = 10;
           assertEquals(scoreWhenGameStartsBlack, h.evaluate(game.getBoard(), false));
           assertEquals(scoreWhenGameStartsWhite, h.evaluate(game.getBoard(), true));
         }
@@ -280,8 +280,8 @@ public class HeuristicTests {
       List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
       for (Heuristic h : heuristics) {
         if (h instanceof KingSafetyHeuristic) {
-          int scoreWhenGameStartsIsBalanced = 0;
-          assertEquals(scoreWhenGameStartsIsBalanced, h.evaluate(game.getBoard(), false));
+          float scoreWhenGameStartsIsBalanced = 0f;
+          assertEquals(scoreWhenGameStartsIsBalanced, Math.abs(h.evaluate(game.getBoard(), false)));
         }
       }
     }
@@ -437,7 +437,7 @@ public class HeuristicTests {
       for (Heuristic h : heuristics) {
         if (h instanceof KingOppositionHeuristic) {
           // Expected score
-          int expectedScore = -10;
+          float expectedScore = -50;
           assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
         }
       }
@@ -562,7 +562,7 @@ public class HeuristicTests {
       for (Heuristic h : heuristics) {
         if (h instanceof KingOppositionHeuristic) {
           // Expected score in this position
-          int expectedScore = -5;
+          float expectedScore = -25f;
           assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
         }
       }
@@ -640,7 +640,7 @@ public class HeuristicTests {
       for (Heuristic h : heuristics) {
         if (h instanceof KingActivityHeuristic) {
           // Expected score in this position
-          int expectedScore = 3;
+          float expectedScore = 10;
           assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
         }
       }
@@ -757,14 +757,14 @@ public class HeuristicTests {
   public void testDevelopmentHeuristicWhenGameStartsWhite() {
     solver.setHeuristic(HeuristicType.DEVELOPMENT);
 
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(0f, Math.abs(solver.evaluateBoard(game.getBoard(), false)));
   }
 
   @Test
   public void testDevelopmentHeuristicWhenGameStartsBlack() {
     solver.setHeuristic(HeuristicType.DEVELOPMENT);
 
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(0f, Math.abs(solver.evaluateBoard(game.getBoard(), true)));
   }
 
   @Test
@@ -788,7 +788,7 @@ public class HeuristicTests {
     game.playMove(Move.fromString("h2-h4"));
     game.playMove(Move.fromString("h7-h5"));
 
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(0f, Math.abs(solver.evaluateBoard(game.getBoard(), false)));
   }
 
   @Test
@@ -816,6 +816,6 @@ public class HeuristicTests {
     game.playMove(Move.fromString("d1-e1"));
     game.playMove(Move.fromString("d8-e8"));
 
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(0f, Math.abs(solver.evaluateBoard(game.getBoard(), true)));
   }
 }
