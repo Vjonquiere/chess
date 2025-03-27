@@ -7,7 +7,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,6 +27,7 @@ import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 import pdp.view.gui.menu.AboutPopUp;
 import pdp.view.gui.menu.HelpPopup;
+import pdp.view.gui.menu.MessageDisplay;
 import pdp.view.gui.menu.SettingsEditorPopup;
 import pdp.view.gui.popups.InfoPopUp;
 import pdp.view.gui.popups.NewGamePopup;
@@ -35,19 +36,22 @@ import pdp.view.gui.popups.YesNoPopUp;
 import pdp.view.gui.themes.ColorTheme;
 
 /** Menu of the application. */
-public class ChessMenu extends VBox {
+public class ChessMenu extends HBox {
+  private MessageDisplay messageDisplay;
+
   /**
    * Creates the menu of out application. Composed of different menus : File, Game, About and
    * Options.
    */
   public ChessMenu() {
+    messageDisplay = new MessageDisplay();
     MenuBar menuBar = new MenuBar();
     menuBar.setId("menuBar");
     menuBar.getMenus().add(createFileMenu());
     menuBar.getMenus().add(createGameMenu());
     menuBar.getMenus().add(createAboutMenu());
     menuBar.getMenus().add(createOptionsMenu());
-    this.getChildren().add(menuBar);
+    this.getChildren().addAll(menuBar, messageDisplay);
   }
 
   /**
@@ -280,5 +284,19 @@ public class ChessMenu extends VBox {
     lang.getItems().addAll(english, french);
 
     return lang;
+  }
+
+  /**
+   * Display a message in the menu bar.
+   *
+   * @param message The message to display.
+   * @param error The type of message.
+   */
+  public void displayMessage(String message, boolean error) {
+    if (error) {
+      messageDisplay.displayError(message);
+    } else {
+      messageDisplay.displayInfo(message);
+    }
   }
 }
