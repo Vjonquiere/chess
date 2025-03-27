@@ -328,7 +328,7 @@ public class GuiView implements View {
   }
 
   @Override
-  public void onErrorEvent(Exception e) {
+  public void onErrorEvent(Exception exception) {
     // TODO: manage errors
     /*
     throw new UnsupportedOperationException(

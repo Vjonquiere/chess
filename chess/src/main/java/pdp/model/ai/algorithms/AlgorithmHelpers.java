@@ -20,23 +20,24 @@ public final class AlgorithmHelpers {
    * @param move The move to be checked for promotion.
    * @return A promoted move or the original if it is not a promotion.
    */
-  public static Move promoteMove(Move move) {
+  public static Move promoteMove(final Move move) {
 
     if (move instanceof PromoteMove) {
       return move;
     }
 
+    Move newMove = move;
     final ColoredPiece piece = move.getPiece();
     if (piece.getPiece() == Piece.PAWN
         && piece.getColor() == Color.BLACK
         && move.getDest().y() == 0) {
-      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
+      newMove = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
     if (piece.getPiece() == Piece.PAWN
         && piece.getColor() == Color.WHITE
         && move.getDest().y() == 7) {
-      move = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
+      newMove = new PromoteMove(move.getSource(), move.getDest(), Piece.QUEEN);
     }
-    return move;
+    return newMove;
   }
 }

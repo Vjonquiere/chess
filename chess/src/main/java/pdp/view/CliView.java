@@ -210,22 +210,22 @@ public class CliView implements View {
    *
    * <p>Stops the game if the exception is not related to handled.
    *
-   * @param e The exception that was thrown.
+   * @param exception The exception that was thrown.
    */
   @Override
-  public void onErrorEvent(Exception e) {
-    if (e instanceof IllegalMoveException
-        || e instanceof MoveParsingException
-        || e instanceof InvalidPositionException
-        || e instanceof FailedSaveException
-        || e instanceof InvalidPromoteFormatException
-        || e instanceof CommandNotAvailableNowException
-        || e instanceof FailedUndoException
-        || e instanceof FailedRedoException) {
-      System.out.println(e.getMessage());
+  public void onErrorEvent(Exception exception) {
+    if (exception instanceof IllegalMoveException
+        || exception instanceof MoveParsingException
+        || exception instanceof InvalidPositionException
+        || exception instanceof FailedSaveException
+        || exception instanceof InvalidPromoteFormatException
+        || exception instanceof CommandNotAvailableNowException
+        || exception instanceof FailedUndoException
+        || exception instanceof FailedRedoException) {
+      System.out.println(exception.getMessage());
     } else {
-      System.err.println(e);
-      e.printStackTrace();
+      System.err.println(exception);
+      exception.printStackTrace();
       running = false;
     }
   }

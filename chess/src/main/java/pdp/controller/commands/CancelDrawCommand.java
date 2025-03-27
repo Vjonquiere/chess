@@ -24,7 +24,7 @@ public record CancelDrawCommand(boolean isWhite) implements Command {
    *     Optional
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }

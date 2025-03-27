@@ -15,7 +15,7 @@ public class PromotionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
     score += pawnsHaveProgressedScore(board, true) - pawnsHaveProgressedScore(board, false);
     score += pawnsAreCloseToPromotion(board, true) - pawnsAreCloseToPromotion(board, false);
@@ -31,7 +31,7 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score if the pawns were pushed far enough for the majority of them
    */
-  private int pawnsHaveProgressedScore(Board board, boolean isWhite) {
+  private int pawnsHaveProgressedScore(final Board board, final boolean isWhite) {
     int score = 0;
     if (board.getBoardRep().pawnsHaveProgressed(isWhite)) {
       score += 10;
@@ -47,15 +47,15 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on how many pawns are close to promoting.
    */
-  private int pawnsAreCloseToPromotion(Board board, boolean isWhite) {
+  private int pawnsAreCloseToPromotion(final Board board, final boolean isWhite) {
     int score = 0;
 
-    BoardRepresentation bitboard = board.getBoardRep();
-    List<Position> pawns = bitboard.getPawns(isWhite);
+    final BoardRepresentation bitboard = board.getBoardRep();
+    final List<Position> pawns = bitboard.getPawns(isWhite);
 
     final int secondLastRank = isWhite ? 6 : 1;
 
-    for (Position pawn : pawns) {
+    for (final Position pawn : pawns) {
       if (pawn.y() == secondLastRank) {
         // Pawn one step from promotion
         score += 20;
