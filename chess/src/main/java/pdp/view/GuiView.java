@@ -6,7 +6,8 @@ import static pdp.view.gui.themes.ColorTheme.SIMPLE;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.net.URL;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -52,12 +53,17 @@ public class GuiView implements View {
     String text;
     String path = "";
     try {
-      // TODO: allow user to give his css file
+      // TODO: allow user to give his CSS file
       text = new BoardFileParser().readFile(path);
     } catch (FileNotFoundException e) {
       try {
-        URL filePath = GuiView.class.getClassLoader().getResource("styles/sample.css");
-        text = new BoardFileParser().readFile(filePath.getPath());
+        InputStream inputStream =
+            GuiView.class.getClassLoader().getResourceAsStream("styles/sample.css");
+        if (inputStream == null) {
+          throw new FileNotFoundException("CSS file not found in resources.");
+        }
+
+        text = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         text = text.replace("#000001", theme.getPrimary());
         text = text.replace("#000002", theme.getSecondary());
         text = text.replace("#000003", theme.getTertiary());
