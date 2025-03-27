@@ -1,6 +1,9 @@
 package pdp.utils;
 
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Logging class abstracting java.util.logging Usage : in each class, create a logger from

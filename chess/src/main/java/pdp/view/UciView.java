@@ -1,6 +1,8 @@
 package pdp.view;
 
-import static pdp.utils.Logging.*;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 
 import java.util.HashMap;
 import java.util.Map;

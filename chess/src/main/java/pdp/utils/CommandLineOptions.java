@@ -1,6 +1,8 @@
 package pdp.utils;
 
-import static pdp.utils.Logging.*;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

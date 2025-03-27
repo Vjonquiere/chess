@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -627,8 +628,8 @@ public class GameTest {
   public void testSaveGameToUnwritableLocation() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
-    // Use an invalid directory (Linux: /root/, Windows: C:\InvalidPath\)
-    String invalidPath = "/root/game-save-test.txt"; // Adjust path based on OS
+    // Use an invalid directory
+    String invalidPath = "/this/path/does/not/exist-" + UUID.randomUUID().toString();
 
     assertThrows(FailedSaveException.class, () -> game.saveGame(invalidPath));
   }
