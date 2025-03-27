@@ -10,8 +10,11 @@ import java.util.logging.*;
  * Logging.configureLogging(LOGGER); Logging.DEBUG(LOGGER, message);
  */
 public final class Logging {
-  private static boolean debug = false;
-  private static boolean verbose = false;
+  /** Boolean to indicate whether debug is enabled. */
+  private static boolean debugOn;
+
+  /** Boolean to indicate whether verbose is enabled. */
+  private static boolean verboseOn;
 
   /*
    private static final Logger GLOBAL_LOGGER = Logger.getLogger("GlobalLogger");
@@ -28,8 +31,8 @@ public final class Logging {
    *
    * @param debug true to enable debug, false otherwise
    */
-  public static void setDebug(boolean debug) {
-    Logging.debug = debug;
+  public static void setDebug(final boolean debug) {
+    Logging.debugOn = debug;
   }
 
   /**
@@ -37,8 +40,8 @@ public final class Logging {
    *
    * @param verbose true to enable verbose, false otherwise
    */
-  public static void setVerbose(boolean verbose) {
-    Logging.verbose = verbose;
+  public static void setVerbose(final boolean verbose) {
+    Logging.verboseOn = verbose;
   }
 
   /**
@@ -47,7 +50,7 @@ public final class Logging {
    * @param logger Logger of the class calling the function
    * @param message String to log
    */
-  public static void debug(Logger logger, String message) {
+  public static void debug(final Logger logger, final String message) {
     if (logger.isLoggable(Level.FINE)) {
       logger.fine(logger.getName() + " [DEBUG] " + message);
     }
@@ -60,7 +63,7 @@ public final class Logging {
    * @param logger Logger of the class calling the function
    * @param message String to log
    */
-  public static void verbose(Logger logger, String message) {
+  public static void verbose(final Logger logger, final String message) {
     if (logger.isLoggable(Level.FINER)) {
       logger.finer(logger.getName() + " [VERBOSE] " + message);
     }
@@ -72,22 +75,22 @@ public final class Logging {
    *
    * @param logger Logger of the class calling the function
    */
-  public static void configureLogging(Logger logger) {
+  public static void configureLogging(final Logger logger) {
     Level level = Level.WARNING;
-    if (debug) {
+    if (debugOn) {
       level = Level.FINE;
     }
-    if (verbose) {
+    if (verboseOn) {
       level = Level.FINER;
     }
     logger.setLevel(level);
 
     // Display logs in console
-    ConsoleHandler consoleHandler = new ConsoleHandler();
+    final ConsoleHandler consoleHandler = new ConsoleHandler();
     consoleHandler.setLevel(level);
     consoleHandler.setFormatter(new CustomFormatter());
 
-    for (Handler handler : logger.getHandlers()) {
+    for (final Handler handler : logger.getHandlers()) {
       logger.removeHandler(handler);
     }
     logger.addHandler(consoleHandler);
@@ -115,12 +118,12 @@ public final class Logging {
     }
   */
   /** Logs a normal message (replaces System.out in the rest of the code). */
-  public static void print(String message) {
+  public static void print(final String message) {
     System.out.println(message);
   }
 
   /** Logs an error message (replaces System.err in the rest of the code). */
-  public static void error(String message) {
+  public static void error(final String message) {
     System.err.println(message);
   }
 }

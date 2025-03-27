@@ -15,6 +15,9 @@ import java.util.regex.Pattern;
  */
 public class MoveHistoryParser {
 
+  /** Private constructor to avoid instantiation. */
+  private MoveHistoryParser() {}
+
   /**
    * Reads and parses a history file containing chess moves in format "a1-a2", "a1xb2", "Qe2xe4+",
    * etc.
@@ -23,11 +26,11 @@ public class MoveHistoryParser {
    * @return A list of moves extracted from the file.
    * @throws IOException If an I/O error occurs while reading the input stream.
    */
-  public static List<String> parseHistoryFile(InputStream inputStream) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+  public static List<String> parseHistoryFile(final InputStream inputStream) throws IOException {
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
     String line;
 
-    List<String> movesList = new ArrayList<>();
+    final List<String> movesList = new ArrayList<>();
     while ((line = reader.readLine()) != null) {
       movesList.addAll(parseMoves(line));
     }
@@ -44,18 +47,18 @@ public class MoveHistoryParser {
    */
   private static List<String> parseMoves(String line) {
 
-    List<String> moves = new ArrayList<>();
+    final List<String> moves = new ArrayList<>();
 
     line = line.strip();
     if (line.startsWith("#")) {
       return moves;
     }
 
-    String regex =
+    final String regex =
         "\\b(?:[KQRBN])?((?:O-O(?:-O)?|[a-h][1-8](?:[-x])[a-h][1-8](?:=[QRBN])?))(?:[+#])?";
 
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(line);
+    final Pattern pattern = Pattern.compile(regex);
+    final Matcher matcher = pattern.matcher(line);
 
     while (matcher.find()) {
       String move = matcher.group(1);
