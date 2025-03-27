@@ -177,11 +177,11 @@ public class GuiView implements View {
                 root.setTop(menu);
                 if (Game.getInstance().isWhiteAi()) {
                   menu.displayMessage(
-                      "Start game by clicking Game -> start",
+                      TextGetter.getText("guiStartMessageGameStart"),
                       false,
                       true); // TODO: Add in resource bundle
                 } else {
-                  menu.displayMessage("Play a move to begin the game", false, true);
+                  menu.displayMessage(TextGetter.getText("guiStartMessagePlayAMove"), false, true);
                 }
 
                 break;
