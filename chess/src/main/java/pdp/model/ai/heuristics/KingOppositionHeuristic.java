@@ -19,9 +19,9 @@ public class KingOppositionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
-    score += evaluateKingOpposition(board, isWhite);
+    score += evaluateKingOpposition(board);
     return score;
   }
 
@@ -31,16 +31,15 @@ public class KingOppositionHeuristic implements Heuristic {
    * know who's got the advantage.
    *
    * @param board the board of the game
-   * @param isWhite true if white, false otherwise
    * @return a score based on the king opposition
    */
-  private int evaluateKingOpposition(Board board, boolean isWhite) {
-    BoardRepresentation bitboard = board.getBoardRep();
-    Position whiteKing = bitboard.getKing(true).get(0);
-    Position blackKing = bitboard.getKing(false).get(0);
+  private int evaluateKingOpposition(final Board board) {
+    final BoardRepresentation bitboard = board.getBoardRep();
+    final Position whiteKing = bitboard.getKing(true).get(0);
+    final Position blackKing = bitboard.getKing(false).get(0);
 
-    int diffX = Math.abs(whiteKing.x() - blackKing.x());
-    int diffY = Math.abs(whiteKing.y() - blackKing.y());
+    final int diffX = Math.abs(whiteKing.x() - blackKing.x());
+    final int diffY = Math.abs(whiteKing.y() - blackKing.y());
 
     // If kings are directly opposite with one square between them
     if ((diffX == 2 && diffY == 0) || (diffY == 2 && diffX == 0)) {

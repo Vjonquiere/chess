@@ -10,22 +10,36 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
-import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.piece.ColoredPiece;
 import pdp.utils.Logging;
 
+/**
+ * Algorithm of artificial intelligence Alpha beta pruning, with iterative deepening to have more
+ * efficient search.
+ */
 public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
-  private Solver solver;
-  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
-  private boolean stoppedEarly = false;
+  /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
+  private final Solver solver;
+
+  /** Logger of the class. */
+  private static final Logger LOGGER =
+      Logger.getLogger(AlphaBetaIterativeDeepening.class.getName());
+
+  /** Boolean to indicate whether the search has been stopped before reaching the depth asked. */
+  private boolean stoppedEarly;
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
-  public AlphaBetaIterativeDeepening(Solver solver) {
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
+  public AlphaBetaIterativeDeepening(final Solver solver) {
     this.solver = solver;
   }
 
@@ -38,26 +52,13 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AiMove findBestMove(Game game, int maxDepth, boolean player) {
+  public AiMove findBestMove(final Game game, final int maxDepth, final boolean player) {
 
     this.stoppedEarly = false;
 
     AiMove bestMove = null;
-    List<Move> rootMoves =
+    final List<Move> rootMoves =
         new ArrayList<>(game.getBoard().getBoardRep().getAllAvailableMoves(player));
-
-    Board board = game.getBoard();
-    rootMoves.addAll(
-        game.getBoard()
-            .getBoardRep()
-            .getSpecialMoves(
-                player,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle()));
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -69,7 +70,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
         rootMoves.add(0, bestMove.move());
       }
 
-      AiMove currentBest =
+      final AiMove currentBest =
           alphaBeta(game, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player, rootMoves);
       if (currentBest != null && !this.stoppedEarly) {
         bestMove = currentBest;
@@ -99,38 +100,26 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
    * @return The best move with its evaluated score.
    */
   private AiMove alphaBeta(
-      Game game,
-      int depth,
-      boolean currentPlayer,
+      final Game game,
+      final int depth,
+      final boolean currentPlayer,
       float alpha,
       float beta,
-      boolean originalPlayer,
-      List<Move> orderedMoves) {
+      final boolean originalPlayer,
+      final List<Move> orderedMoves) {
 
     if (solver.isSearchStopped()) {
       this.stoppedEarly = true;
       return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 
     List<Move> moves = orderedMoves;
     if (moves == null) {
       moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-      Board board = game.getBoard();
-      moves.addAll(
-          game.getBoard()
-              .getBoardRep()
-              .getSpecialMoves(
-                  currentPlayer,
-                  board.getEnPassantPos(),
-                  board.isLastMoveDoublePush(),
-                  board.isWhiteLongCastle(),
-                  board.isWhiteShortCastle(),
-                  board.isBlackLongCastle(),
-                  board.isBlackShortCastle()));
     }
 
     if (orderedMoves == null) {
@@ -171,22 +160,19 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     return bestMove;
   }
 
-  private void sortMoves(List<Move> moves, Game game) {
+  private void sortMoves(final List<Move> moves, final Game game) {
     moves.sort(Comparator.comparingInt((Move m) -> -evaluateMove(m, game)));
   }
 
-  private int evaluateMove(Move move, Game game) {
-    ColoredPiece target =
+  private int evaluateMove(final Move move, final Game game) {
+    final ColoredPiece target =
         game.getBoard().getBoardRep().getPieceAt(move.getDest().x(), move.getDest().y());
     int score = 0;
     switch (target.getPiece()) {
       case PAWN:
         score += 1;
         break;
-      case KNIGHT:
-        score += 3;
-        break;
-      case BISHOP:
+      case KNIGHT, BISHOP:
         score += 3;
         break;
       case ROOK:

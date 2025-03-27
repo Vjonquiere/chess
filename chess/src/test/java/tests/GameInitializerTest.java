@@ -17,6 +17,7 @@ import pdp.GameControllerInit;
 import pdp.GameInitializer;
 import pdp.controller.GameController;
 import pdp.model.Game;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
@@ -989,5 +990,94 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
+  }
+
+  @Test
+  void testGameInitializationDifferentAIModes() {
+    options.put(OptionType.AI, "A");
+    options.put(OptionType.AI_MODE_W, "ALPHA_BETA");
+    options.put(OptionType.AI_MODE_B, "MCTS");
+    GameController controller = GameControllerInit.initialize(options);
+
+    assertTrue(controller.getModel().getWhiteSolver().getAlgorithm() instanceof AlphaBeta);
+    assertTrue(
+        controller.getModel().getBlackSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
+  }
+
+  @Test
+  void testGameInitializationEndgameHeuristic() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_ENDGAME_W, "ENDGAME");
+
+    GameController controller = GameControllerInit.initialize(options);
+    assertEquals(
+        HeuristicType.ENDGAME, controller.getModel().getWhiteSolver().getEndgameHeuristic());
+  }
+
+  @Test
+  void testMonteCarloSimulations() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_MODE_W, "MCTS");
+    options.put(OptionType.AI_SIMULATION_W, "1000");
+
+    GameController controller = GameControllerInit.initialize(options);
+    MonteCarloTreeSearch mc =
+        (MonteCarloTreeSearch) controller.getModel().getWhiteSolver().getAlgorithm();
+    assertEquals(1000, mc.getSimulationLimit());
+  }
+
+  @Test
+  void testDepthIgnoredForMonteCarlo() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_MODE_W, "MCTS");
+    options.put(OptionType.AI_SIMULATION_W, "1000");
+    options.put(OptionType.AI_DEPTH_W, "5");
+
+    GameController controller = GameControllerInit.initialize(options);
+    MonteCarloTreeSearch mc =
+        (MonteCarloTreeSearch) controller.getModel().getWhiteSolver().getAlgorithm();
+    assertEquals(1000, mc.getSimulationLimit());
+  }
+
+  @Test
+  void testMixedHeuristics() {
+    options.put(OptionType.AI, "A");
+    options.put(OptionType.AI_HEURISTIC_W, "STANDARD");
+    options.put(OptionType.AI_HEURISTIC_B, "MOBILITY");
+
+    GameController controller = GameControllerInit.initialize(options);
+    assertTrue(controller.getModel().getWhiteSolver().getHeuristic() instanceof StandardHeuristic);
+    assertTrue(controller.getModel().getBlackSolver().getHeuristic() instanceof MobilityHeuristic);
+  }
+
+  @Test
+  void testInvalidEndgameHeuristic() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_ENDGAME_W, "INVALID");
+
+    GameController controller = GameControllerInit.initialize(options);
+    assertEquals(
+        HeuristicType.ENDGAME, controller.getModel().getWhiteSolver().getEndgameHeuristic());
+  }
+
+  @Test
+  void testAITimeInMilliseconds() {
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_TIME, "10");
+
+    GameController controller = GameControllerInit.initialize(options);
+    assertEquals(10 * 1000, controller.getModel().getWhiteSolver().getTime());
+  }
+
+  @Test
+  void testBlitzOverridesAITime() {
+    options.put(OptionType.BLITZ, "");
+    options.put(OptionType.TIME, "5"); // 5 mins
+    options.put(OptionType.AI, "W");
+    options.put(OptionType.AI_TIME, "600"); // 10 mins
+
+    GameController controller = GameControllerInit.initialize(options);
+    int expectedTime = 5 * 60; // 5 mins
+    assertEquals(expectedTime * 1000L, controller.getModel().getWhiteSolver().getTime());
   }
 }

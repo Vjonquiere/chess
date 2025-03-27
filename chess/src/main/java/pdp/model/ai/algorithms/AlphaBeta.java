@@ -13,13 +13,12 @@ import pdp.model.Game;
 import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
-import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
 /** Algorithm of artificial intelligence Alpha beta pruning. */
 public class AlphaBeta implements SearchAlgorithm {
-  /** Solver used for calling the evaluation of the board once depth si reached or time is up. */
+  /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 
   /** Logger of the class. */
@@ -104,18 +103,6 @@ public class AlphaBeta implements SearchAlgorithm {
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-    final Board board = game.getBoard();
-    moves.addAll(
-        game.getBoard()
-            .getBoardRep()
-            .getSpecialMoves(
-                currentPlayer,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle()));
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;

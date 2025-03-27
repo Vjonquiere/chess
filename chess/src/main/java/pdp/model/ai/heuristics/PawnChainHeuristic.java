@@ -16,7 +16,7 @@ public class PawnChainHeuristic implements Heuristic {
    * @return a score depending on the solidity of the pawn chains
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
+  public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
     score += evaluatePawnChains(board, true) - evaluatePawnChains(board, false);
     return isWhite ? score : -score;
@@ -29,14 +29,14 @@ public class PawnChainHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a positive score for pawn chains, 0 otherwise
    */
-  private int evaluatePawnChains(Board board, boolean isWhite) {
-    int reward = 5;
+  private int evaluatePawnChains(final Board board, final boolean isWhite) {
+    final int reward = 5;
     int score = 0;
-    BoardRepresentation bitboard = board.getBoardRep();
-    List<Position> pawns = bitboard.getPawns(isWhite);
+    final BoardRepresentation bitboard = board.getBoardRep();
+    final List<Position> pawns = bitboard.getPawns(isWhite);
 
-    for (Position pawn : pawns) {
-      for (Position otherPawn : pawns) {
+    for (final Position pawn : pawns) {
+      for (final Position otherPawn : pawns) {
         if ((Math.abs(otherPawn.x() - pawn.x()) == 1 && Math.abs(otherPawn.y() - (pawn.y())) == 1)
             || (otherPawn.y() == pawn.y() && Math.abs(otherPawn.x() - pawn.x()) == 1)) {
           // Connected pawn

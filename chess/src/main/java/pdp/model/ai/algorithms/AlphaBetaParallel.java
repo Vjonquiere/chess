@@ -13,19 +13,30 @@ import pdp.model.Game;
 import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
-import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
 
+/**
+ * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) to have
+ * more efficient search.
+ */
 public class AlphaBetaParallel implements SearchAlgorithm {
-  private Solver solver;
-  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+  /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
+  private final Solver solver;
+
+  /** Logger of the class. */
+  private static final Logger LOGGER = Logger.getLogger(AlphaBetaParallel.class.getName());
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
-  public AlphaBetaParallel(Solver solver) {
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
+  public AlphaBetaParallel(final Solver solver) {
     this.solver = solver;
   }
 
@@ -38,36 +49,23 @@ public class AlphaBetaParallel implements SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AiMove findBestMove(Game game, int depth, boolean player) {
-    GameAi aiGame = GameAi.fromGame(game);
-    int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
-    ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
-    List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
+  public AiMove findBestMove(final Game game, final int depth, final boolean player) {
+    final GameAi aiGame = GameAi.fromGame(game);
+    final int nbThreads = Runtime.getRuntime().availableProcessors() / 2;
+    final ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+    final List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
-    List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
-    Board board = aiGame.getBoard();
-    moves.addAll(
-        aiGame
-            .getBoard()
-            .getBoardRep()
-            .getSpecialMoves(
-                player,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle()));
+    final List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
 
-    for (Move move : moves) {
+    for (final Move move : moves) {
       futures.add(
           executor.submit(
               () -> {
-                GameAi gameCopy = aiGame.copy();
+                final GameAi gameCopy = aiGame.copy();
                 try {
-                  Move promoteMove = AlgorithmHelpers.promoteMove(move);
+                  final Move promoteMove = AlgorithmHelpers.promoteMove(move);
                   gameCopy.playMove(promoteMove);
-                  AiMove result =
+                  final AiMove result =
                       alphaBeta(
                           gameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
                   return new AiMove(promoteMove, result.score());
@@ -80,12 +78,10 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     AiMove bestMove = new AiMove(null, -Float.MAX_VALUE);
 
     try {
-      for (Future<AiMove> future : futures) {
-        AiMove candidateMove = future.get();
-        if (candidateMove.move() != null) {
-          if (candidateMove.score() > bestMove.score()) {
-            bestMove = candidateMove;
-          }
+      for (final Future<AiMove> future : futures) {
+        final AiMove candidateMove = future.get();
+        if (candidateMove.move() != null && candidateMove.score() > bestMove.score()) {
+          bestMove = candidateMove;
         }
       }
     } catch (Exception e) {
@@ -112,35 +108,23 @@ public class AlphaBetaParallel implements SearchAlgorithm {
    * @return The best move with its evaluated score.
    */
   private AiMove alphaBeta(
-      GameAi game,
-      int depth,
-      boolean currentPlayer,
+      final GameAi game,
+      final int depth,
+      final boolean currentPlayer,
       float alpha,
       float beta,
-      boolean originalPlayer) {
+      final boolean originalPlayer) {
     if (solver.isSearchStopped()) {
       return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-    Board board = game.getBoard();
-    moves.addAll(
-        board
-            .getBoardRep()
-            .getSpecialMoves(
-                currentPlayer,
-                board.getEnPassantPos(),
-                board.isLastMoveDoublePush(),
-                board.isWhiteLongCastle(),
-                board.isWhiteShortCastle(),
-                board.isBlackLongCastle(),
-                board.isBlackShortCastle()));
+    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
 
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
@@ -149,7 +133,8 @@ public class AlphaBetaParallel implements SearchAlgorithm {
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AiMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
+        final AiMove currMove =
+            alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
 
         game.previousState();
 

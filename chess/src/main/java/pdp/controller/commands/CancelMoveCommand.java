@@ -3,6 +3,7 @@ package pdp.controller.commands;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
+import pdp.exceptions.FailedUndoException;
 import pdp.model.Game;
 
 /**
@@ -18,13 +19,13 @@ public class CancelMoveCommand implements Command {
    * @return An Optional containing an exception if an error occurred, or empty if successful
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     try {
       if (model.isBlackAi() || model.isWhiteAi()) {
         model.previousState();
         try {
           model.previousState();
-        } catch (Exception e) {
+        } catch (FailedUndoException e) {
           // TODO: add an event to send to the view
         }
         if (model.isBlackAi() && !model.getGameState().isWhiteTurn()) {

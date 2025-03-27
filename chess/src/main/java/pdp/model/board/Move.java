@@ -14,8 +14,8 @@ import pdp.utils.Position;
 /** Move representation for all move types. */
 public class Move {
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
-  private Position source;
-  private Position dest;
+  private final Position source;
+  private final Position dest;
   private Position takeDest;
   private ColoredPiece piece;
   private ColoredPiece takenPiece;
@@ -33,7 +33,7 @@ public class Move {
    * @param source The starting Position of the move.
    * @param dest The destination Position of the move.
    */
-  public Move(Position source, Position dest) {
+  public Move(final Position source, final Position dest) {
     this.source = source;
     this.dest = dest;
   }
@@ -46,7 +46,8 @@ public class Move {
    * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
    *     otherwise).
    */
-  public Move(Position source, Position dest, ColoredPiece piece, boolean isTake) {
+  public Move(
+      final Position source, final Position dest, final ColoredPiece piece, final boolean isTake) {
     this.source = source;
     this.dest = dest;
     this.piece = piece;
@@ -67,7 +68,11 @@ public class Move {
    * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
    */
   public Move(
-      Position source, Position dest, ColoredPiece piece, boolean isTake, ColoredPiece takenPiece) {
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final boolean isTake,
+      final ColoredPiece takenPiece) {
     this.source = source;
     this.dest = dest;
     this.piece = piece;
@@ -88,12 +93,12 @@ public class Move {
    * @param takeDest The position of the taken piece.
    */
   public Move(
-      Position source,
-      Position dest,
-      ColoredPiece piece,
-      boolean isTake,
-      ColoredPiece takenPiece,
-      Position takeDest) {
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final boolean isTake,
+      final ColoredPiece takenPiece,
+      final Position takeDest) {
     this.source = source;
     this.dest = dest;
     this.piece = piece;
@@ -119,13 +124,13 @@ public class Move {
    *     checkmate, false otherwise).
    */
   public Move(
-      Position source,
-      Position dest,
-      ColoredPiece piece,
-      boolean isTake,
-      ColoredPiece takenPiece,
-      boolean isCheck,
-      boolean isCheckMate) {
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final boolean isTake,
+      final ColoredPiece takenPiece,
+      final boolean isCheck,
+      final boolean isCheckMate) {
     this.source = source;
     this.dest = dest;
     this.piece = piece;
@@ -143,24 +148,25 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(String stringMove, boolean isWhiteTurn)
+  public static Move fromString(final String stringMove, final boolean isWhiteTurn)
       throws MoveParsingException {
+    String move = stringMove;
 
-    if (stringMove.equalsIgnoreCase("o-o-o")) {
+    if (move.equalsIgnoreCase("o-o-o")) {
       if (isWhiteTurn) {
-        stringMove = "e1-c1";
+        move = "e1-c1";
       } else {
-        stringMove = "e8-c8";
+        move = "e8-c8";
       }
-    } else if (stringMove.equalsIgnoreCase("o-o")) {
+    } else if (move.equalsIgnoreCase("o-o")) {
       if (isWhiteTurn) {
-        stringMove = "e1-g1";
+        move = "e1-g1";
       } else {
-        stringMove = "e8-g8";
+        move = "e8-g8";
       }
     }
 
-    return fromString(stringMove);
+    return fromString(move);
   }
 
   /**
@@ -171,19 +177,19 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(String stringMove) throws MoveParsingException {
+  public static Move fromString(final String stringMove) throws MoveParsingException {
 
     if (stringMove.equalsIgnoreCase("o-o-o") || stringMove.equalsIgnoreCase("o-o")) {
       throw new MoveParsingException(
           "Castling notation ('o-o' or 'o-o-o') is not supported in this method.");
     }
 
-    String[] parts = stringMove.split("-");
+    final String[] parts = stringMove.split("-");
     if (parts.length != 2) {
       throw new MoveParsingException(stringMove);
     }
 
-    String[] promoteParts = parts[1].split("=");
+    final String[] promoteParts = parts[1].split("=");
     if (promoteParts.length == 2) {
       return new PromoteMove(
           stringToPosition(parts[0]),
@@ -200,7 +206,7 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromUciString(String stringMove) throws MoveParsingException {
+  public static Move fromUciString(final String stringMove) throws MoveParsingException {
     if (stringMove.length() == 5) {
       return new PromoteMove(
           stringToPosition(stringMove.substring(0, 2)),
@@ -221,14 +227,14 @@ public class Move {
    * @return A {@code Position} object representing the parsed position
    * @throws InvalidPositionException If the input string is not a valid chess position
    */
-  public static Position stringToPosition(String move) {
+  public static Position stringToPosition(final String move) {
 
     if (move.length() != 2) {
       throw new InvalidPositionException(move);
     }
 
-    char colLetter = Character.toLowerCase(move.charAt(0));
-    int rowNumber = Character.getNumericValue(move.charAt(1));
+    final char colLetter = Character.toLowerCase(move.charAt(0));
+    final int rowNumber = Character.getNumericValue(move.charAt(1));
 
     if (colLetter < 'a' || colLetter > 'h' || rowNumber < 1 || rowNumber > 8) {
       throw new InvalidPositionException(move);
@@ -249,23 +255,16 @@ public class Move {
    * @return The corresponding Piece enum value.
    * @throws IllegalArgumentException If the input string does not correspond to a valid piece.
    */
-  public static Piece stringToPiece(String pieceStr) {
-    switch (pieceStr.toLowerCase()) {
-      case "p":
-        return Piece.PAWN;
-      case "n":
-        return Piece.KNIGHT;
-      case "b":
-        return Piece.BISHOP;
-      case "r":
-        return Piece.ROOK;
-      case "q":
-        return Piece.QUEEN;
-      case "k":
-        return Piece.KING;
-      default:
-        throw new IllegalArgumentException("Invalid piece string: " + pieceStr);
-    }
+  public static Piece stringToPiece(final String pieceStr) {
+    return switch (pieceStr.toLowerCase()) {
+      case "p" -> Piece.PAWN;
+      case "n" -> Piece.KNIGHT;
+      case "b" -> Piece.BISHOP;
+      case "r" -> Piece.ROOK;
+      case "q" -> Piece.QUEEN;
+      case "k" -> Piece.KING;
+      default -> throw new IllegalArgumentException("Invalid piece string: " + pieceStr);
+    };
   }
 
   /**
@@ -274,9 +273,9 @@ public class Move {
    * @param position The {@code Position} object to convert
    * @return A string representing the position ("e4")
    */
-  public static String positionToString(Position position) {
-    char col = (char) ('a' + position.x());
-    int row = position.y() + 1;
+  public static String positionToString(final Position position) {
+    final char col = (char) ('a' + position.x());
+    final int row = position.y() + 1;
 
     return "" + col + row;
   }
@@ -288,8 +287,9 @@ public class Move {
    * @return The matching move if found
    * @throws IllegalMoveException If the move is not found in the list of available moves
    */
-  public Optional<Move> isMoveClassical(List<Move> availableMoves) throws IllegalMoveException {
-    for (Move move : availableMoves) {
+  public Optional<Move> isMoveClassical(final List<Move> availableMoves)
+      throws IllegalMoveException {
+    for (final Move move : availableMoves) {
       if (move.equals(this)) {
         if (this instanceof PromoteMove) {
           return Optional.of(
@@ -331,7 +331,7 @@ public class Move {
     return this.takeDest;
   }
 
-  public void setTakeDest(Position takeDest) {
+  public void setTakeDest(final Position takeDest) {
     this.takeDest = takeDest;
   }
 
@@ -344,7 +344,7 @@ public class Move {
     return piece;
   }
 
-  public void setPiece(ColoredPiece piece) {
+  public void setPiece(final ColoredPiece piece) {
     this.piece = piece;
   }
 
@@ -357,7 +357,7 @@ public class Move {
     return takenPiece;
   }
 
-  public void setPieceTaken(ColoredPiece pieceTaken) {
+  public void setPieceTaken(final ColoredPiece pieceTaken) {
     this.takenPiece = pieceTaken;
   }
 
@@ -375,7 +375,7 @@ public class Move {
    *
    * @param isTake A boolean indicating whether the move is a capture.
    */
-  public void setTake(boolean isTake) {
+  public void setTake(final boolean isTake) {
     this.isTake = isTake;
   }
 
@@ -411,10 +411,10 @@ public class Move {
     if (this.piece != null && this.piece.getPiece() != Piece.PAWN) {
       piece = String.valueOf(this.piece.getPiece().getCharRepresentation(true));
     }
-    String sourceStr = positionToString(this.source);
-    String destinationStr = positionToString(this.dest);
-    String separator = this.isTake ? "x" : "-";
-    String annotation = this.isCheckMate ? "#" : (this.isCheck ? "+" : "");
+    final String sourceStr = positionToString(this.source);
+    final String destinationStr = positionToString(this.dest);
+    final String separator = this.isTake ? "x" : "-";
+    final String annotation = this.isCheckMate ? "#" : (this.isCheck ? "+" : "");
 
     return piece + sourceStr + separator + destinationStr + annotation;
   }
@@ -425,8 +425,8 @@ public class Move {
    * @return The string representing the move at UCI format
    */
   public String toUciString() {
-    String sourceStr = positionToString(this.source);
-    String destinationStr = positionToString(this.dest);
+    final String sourceStr = positionToString(this.source);
+    final String destinationStr = positionToString(this.dest);
     return sourceStr + destinationStr;
   }
 
@@ -440,9 +440,9 @@ public class Move {
    */
   @Override
   public String toString() {
-    String sourceStr = positionToString(this.source);
-    String destinationStr = positionToString(this.dest);
-    String separator = this.isTake ? "x" : "-";
+    final String sourceStr = positionToString(this.source);
+    final String destinationStr = positionToString(this.dest);
+    final String separator = this.isTake ? "x" : "-";
 
     return sourceStr + separator + destinationStr;
   }
@@ -455,14 +455,14 @@ public class Move {
    * @return true if the two Move objects are equal, false otherwise.
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj) {
       return true;
     }
     if (obj == null || !(obj instanceof Move)) {
       return false;
     }
-    Move move = (Move) obj;
+    final Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }
 

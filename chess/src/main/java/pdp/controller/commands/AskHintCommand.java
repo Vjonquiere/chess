@@ -22,13 +22,13 @@ public class AskHintCommand implements Command {
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
     try {
-      Solver hintSolver = new Solver();
-      Move hintMove =
+      final Solver hintSolver = new Solver();
+      final Move hintMove =
           hintSolver
               .getAlgorithm()
               .findBestMove(Game.getInstance(), 4, Game.getInstance().getGameState().isWhiteTurn())
               .move();
-      List<Integer> hintIntegers =
+      final List<Integer> hintIntegers =
           new ArrayList<>(
               Arrays.asList(
                   hintMove.getSource().x(),

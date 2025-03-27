@@ -395,7 +395,7 @@ public class Solver {
 
     if (Game.getInstance().getGameState().isThreefoldRepetition()
         || board.getBoardRep().isStaleMate(player, player)
-        || board.getNbMovesWithNoCaptureOrPawn() >= 50) {
+        || board.getNbFullMovesWithNoCaptureOrPawn() >= 50) {
       score = 0;
     }
 

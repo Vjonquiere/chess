@@ -24,10 +24,10 @@ public final class GameAi extends GameAbstract {
   }
 
   private GameAi(
-      GameState gameState,
-      History history,
-      HashMap<Long, Integer> stateCount,
-      ZobristHashing zobristHashing) {
+      final GameState gameState,
+      final History history,
+      final HashMap<Long, Integer> stateCount,
+      final ZobristHashing zobristHashing) {
     super(gameState, history, stateCount, zobristHashing);
   }
 
@@ -39,8 +39,8 @@ public final class GameAi extends GameAbstract {
    */
   @Override
   public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
-    Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
-    Position destPosition = new Position(move.getDest().x(), move.getDest().y());
+    final Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    final Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!super.validatePieceOwnership(super.getGameState(), sourcePosition)) {
@@ -48,14 +48,15 @@ public final class GameAi extends GameAbstract {
     }
     super.validatePromotionMove(move);
 
-    List<Move> availableMoves = super.getGameState().getBoard().getAvailableMoves(sourcePosition);
-    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
+    final List<Move> availableMoves =
+        super.getGameState().getBoard().getAvailableMoves(sourcePosition);
+    final Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
     if (classicalMove.isPresent()) {
       move = classicalMove.get();
-      super.processClassicalMove(super.getGameState(), move);
+      super.processMove(super.getGameState(), move);
     } else {
-      super.processSpecialMove(super.getGameState(), move);
+      throw new IllegalMoveException(move.toString());
     }
 
     this.updateGameStateAfterMove(move, classicalMove.isPresent());
@@ -77,7 +78,7 @@ public final class GameAi extends GameAbstract {
    *   <li>Notifying observers that a move has been played.
    * </ul>
    */
-  private void updateGameStateAfterMove(Move move, boolean isSpecialMove) {
+  private void updateGameStateAfterMove(final Move move, final boolean isSpecialMove) {
     if (super.getGameState().isWhiteTurn()) {
       super.getGameState().incrementsFullTurn();
     }
@@ -96,10 +97,10 @@ public final class GameAi extends GameAbstract {
     }
 
     debug(LOGGER, "Checking threefold repetition...");
-    boolean threefoldRepetition =
+    final boolean threefoldRep =
         super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
 
-    if (threefoldRepetition) {
+    if (threefoldRep) {
       super.getGameState().activateThreefold();
     }
 
@@ -116,11 +117,11 @@ public final class GameAi extends GameAbstract {
    * @param move The move to be executed
    * @throws IllegalMoveException If the move is not legal
    */
-  public void playMoveOtherGameState(GameState gameState, Move move)
+  public void playMoveOtherGameState(final GameState gameState, final Move move)
       throws IllegalMoveException, InvalidPromoteFormatException {
 
-    Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
-    Position destPosition = new Position(move.getDest().x(), move.getDest().y());
+    final Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
+    final Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
 
     if (!validatePieceOwnership(gameState, sourcePosition)) {
@@ -128,14 +129,13 @@ public final class GameAi extends GameAbstract {
     }
     validatePromotionMove(move);
 
-    List<Move> availableMoves = gameState.getBoard().getAvailableMoves(sourcePosition);
-    Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
+    final List<Move> availableMoves = gameState.getBoard().getAvailableMoves(sourcePosition);
+    final Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
     if (classicalMove.isPresent()) {
-      move = classicalMove.get();
-      processClassicalMove(gameState, move);
+      processMove(gameState, classicalMove.get());
     } else {
-      processSpecialMove(gameState, move);
+      throw new IllegalMoveException(move.toString());
     }
     updateOtherGameStateAfterMove(gameState, move);
   }
@@ -153,7 +153,7 @@ public final class GameAi extends GameAbstract {
    *   <li>Checking the game status, which may end the game.
    * </ul>
    */
-  private void updateOtherGameStateAfterMove(GameState gameState, Move move) {
+  private void updateOtherGameStateAfterMove(final GameState gameState, final Move move) {
     if (gameState.isWhiteTurn()) {
       gameState.incrementsFullTurn();
     }
@@ -170,21 +170,18 @@ public final class GameAi extends GameAbstract {
    * @return Instance of game AI
    */
   public GameAi copy() {
-    History history = new History();
+    final History history = new History();
     history.addMove(
         new HistoryState(
             new Move(new Position(-1, -1), new Position(-1, -1)), this.getGameState().getCopy()));
 
-    ZobristHashing zobristHashing = new ZobristHashing(this.getZobristHasher());
+    final ZobristHashing zobristHashing = new ZobristHashing(this.getZobristHasher());
 
-    GameAi game =
-        new GameAi(
-            super.getGameState().getCopy(),
-            history,
-            new HashMap<>(super.getStateCount()),
-            zobristHashing);
-
-    return game;
+    return new GameAi(
+        super.getGameState().getCopy(),
+        history,
+        new HashMap<>(super.getStateCount()),
+        zobristHashing);
   }
 
   /**
@@ -193,17 +190,17 @@ public final class GameAi extends GameAbstract {
    * @param game game to transform into a GameAI
    * @return a gameAI from the given game
    */
-  public static GameAi fromGame(Game game) {
-    History history = new History();
+  public static GameAi fromGame(final Game game) {
+    final History history = new History();
     history.addMove(
         new HistoryState(
             new Move(new Position(-1, -1), new Position(-1, -1)), game.getGameState().getCopy()));
 
-    GameState gameState = game.getGameState().getCopy();
+    final GameState gameState = game.getGameState().getCopy();
 
-    HashMap<Long, Integer> stateCount = new HashMap<>(game.getStateCount());
+    final HashMap<Long, Integer> stateCount = new HashMap<>(game.getStateCount());
 
-    ZobristHashing zobristHashing = new ZobristHashing(game.getZobristHasher());
+    final ZobristHashing zobristHashing = new ZobristHashing(game.getZobristHasher());
 
     return new GameAi(gameState, history, stateCount, zobristHashing);
   }
