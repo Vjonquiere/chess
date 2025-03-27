@@ -332,7 +332,7 @@ public final class CommandLineOptions {
       activatedOptions.remove(OptionType.AI_DEPTH);
 
       if (!activatedOptions.containsKey(OptionType.AI_SIMULATION)) {
-        activatedOptions.put(OptionType.AI_SIMULATION, "100");
+        activatedOptions.put(OptionType.AI_SIMULATION, "150");
       }
 
       if (!activatedOptions.containsKey(OptionType.AI_SIMULATION_W)) {
