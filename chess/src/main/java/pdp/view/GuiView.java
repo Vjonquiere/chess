@@ -163,7 +163,6 @@ public class GuiView implements View {
                 }
                 board = new Board(Game.getInstance(), stage);
                 root.setLeft(board);
-                System.out.println("GUI board displayed"); // TODO: Add in resource bundle
                 debug(LOGGER, "Board view initialized");
                 if (controlPanel != null) {
                   root.getChildren().remove(controlPanel);
@@ -176,6 +175,14 @@ public class GuiView implements View {
                 }
                 menu = new ChessMenu();
                 root.setTop(menu);
+                if (Game.getInstance().isWhiteAi()) {
+                  menu.displayMessage(
+                      "Start game by clicking Game -> start",
+                      false,
+                      true); // TODO: Add in resource bundle
+                } else {
+                  menu.displayMessage("Play a move to begin the game", false, true);
+                }
 
                 break;
               case MOVE_PLAYED:
@@ -204,33 +211,39 @@ public class GuiView implements View {
                 EndGamePopUp.show(event);
                 break;
               case WIN_WHITE:
-                System.out.println(TextGetter.getText("whiteWin"));
+                menu.displayMessage(TextGetter.getText("whiteWin"), false, false);
                 break;
               case WIN_BLACK:
-                System.out.println(TextGetter.getText("blackWin"));
+                menu.displayMessage(TextGetter.getText("blackWin"), false, false);
                 break;
               case DRAW:
-                System.out.println(TextGetter.getText("onDraw"));
+                menu.displayMessage(TextGetter.getText("onDraw"), false, false);
                 break;
               case WHITE_DRAW_PROPOSAL:
-                System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("white")));
+                menu.displayMessage(
+                    TextGetter.getText("drawProposal", TextGetter.getText("white")), false, false);
                 break;
               case BLACK_DRAW_PROPOSAL:
-                System.out.println(TextGetter.getText("drawProposal", TextGetter.getText("black")));
+                menu.displayMessage(
+                    TextGetter.getText("drawProposal", TextGetter.getText("black")), false, false);
                 break;
               case WHITE_UNDRAW:
-                System.out.println(
-                    TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")));
+                menu.displayMessage(
+                    TextGetter.getText("cancelDrawProposal", TextGetter.getText("white")),
+                    false,
+                    false);
                 break;
               case BLACK_UNDRAW:
-                System.out.println(
-                    TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")));
+                menu.displayMessage(
+                    TextGetter.getText("cancelDrawProposal", TextGetter.getText("black")),
+                    false,
+                    false);
                 break;
               case GAME_SAVED:
-                System.out.println(TextGetter.getText("gameSaved"));
+                menu.displayMessage(TextGetter.getText("gameSaved"), false, false);
                 break;
               case MOVE_UNDO:
-                System.out.println(TextGetter.getText("moveUndone"));
+                menu.displayMessage(TextGetter.getText("moveUndone"), false, false);
                 if (board != null) {
                   board.updateBoard();
                 }
@@ -242,9 +255,6 @@ public class GuiView implements View {
                 }
                 break;
               case WHITE_UNDO_PROPOSAL:
-                System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("white")));
-                System.out.println(
-                    TextGetter.getText("undoInstructions", TextGetter.getText("black")));
                 if (board != null) {
                   board.updateBoard();
                 }
@@ -253,9 +263,6 @@ public class GuiView implements View {
                 }
                 break;
               case BLACK_UNDO_PROPOSAL:
-                System.out.println(TextGetter.getText("undoProposal", TextGetter.getText("black")));
-                System.out.println(
-                    TextGetter.getText("undoInstructions", TextGetter.getText("white")));
                 if (board != null) {
                   board.updateBoard();
                 }
@@ -264,7 +271,7 @@ public class GuiView implements View {
                 }
                 break;
               case MOVE_REDO:
-                System.out.println(TextGetter.getText("moveRedone"));
+                menu.displayMessage(TextGetter.getText("moveRedone"), false, false);
                 if (board != null) {
                   board.updateBoard();
                 }
@@ -276,22 +283,14 @@ public class GuiView implements View {
                 }
                 break;
               case WHITE_REDO_PROPOSAL:
-                System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("white")));
-                System.out.println(
-                    TextGetter.getText("redoInstructions", TextGetter.getText("black")));
                 break;
               case BLACK_REDO_PROPOSAL:
-                System.out.println(TextGetter.getText("redoProposal", TextGetter.getText("black")));
-                System.out.println(
-                    TextGetter.getText("redoInstructions", TextGetter.getText("white")));
                 break;
               case AI_PLAYING:
-                System.out.println(TextGetter.getText("ai_playing"));
+                menu.displayMessage(TextGetter.getText("ai_playing"), false, false);
                 break;
               case GAME_RESTART:
-                System.out.println(TextGetter.getText("gameRestart"));
-                System.out.println(TextGetter.getText("welcomeCLI"));
-                System.out.println(TextGetter.getText("welcomeInstructions"));
+                menu.displayMessage(TextGetter.getText("gameRestart"), false, false);
                 if (board != null) {
                   board.updateBoard();
                 }
@@ -329,12 +328,7 @@ public class GuiView implements View {
 
   @Override
   public void onErrorEvent(Exception exception) {
-    // TODO: manage errors
-    /*
-    throw new UnsupportedOperationException(
-        "Method not implemented in " + this.getClass().getName());
-
-     */
+    Platform.runLater(() -> menu.displayMessage(exception.getMessage(), true, false));
   }
 
   public boolean isInit() {
