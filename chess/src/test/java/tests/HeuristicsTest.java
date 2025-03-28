@@ -370,7 +370,7 @@ public class HeuristicsTest {
     board.movePiece(initBlackKingPos, e6);
 
     // Expected score
-    float expectedScore = -50;
+    float expectedScore = -100;
     assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
@@ -472,7 +472,7 @@ public class HeuristicsTest {
     board.movePiece(initWhiteKingPos, e4);
     board.movePiece(initBlackKingPos, c6);
     // Expected score in this position
-    float expectedScore = -25f;
+    float expectedScore = -50f;
     assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 

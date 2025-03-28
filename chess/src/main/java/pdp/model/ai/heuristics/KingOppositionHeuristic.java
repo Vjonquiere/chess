@@ -10,8 +10,8 @@ import pdp.utils.Position;
  */
 public class KingOppositionHeuristic implements Heuristic {
   private static final float SCORE_CAP = 100;
-  private static final float OPPOSITION_SCORE = -(SCORE_CAP / 2);
-  private static final float DIAGONAL_SCORE = -(SCORE_CAP / 4);
+  private static final float OPPOSITION_SCORE = -SCORE_CAP;
+  private static final float DIAGONAL_SCORE = -(SCORE_CAP / 2);
 
   /**
    * Computes a score according to the (un)balance of the kings position. The more the kings are in
