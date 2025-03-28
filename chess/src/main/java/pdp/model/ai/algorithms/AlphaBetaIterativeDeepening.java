@@ -136,7 +136,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
       try {
         move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
-        AiMove currMove =
+        final AiMove currMove =
             alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer, null);
         game.previousState();
         if (currentPlayer == originalPlayer) { // Maximizing

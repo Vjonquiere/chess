@@ -221,7 +221,6 @@ public final class CommandLineOptions {
         if (option == OptionType.LANG) {
           if (value.equals("en")) {
             debug(LOGGER, "Language = English (already set by default)");
-            // TODO: de-comment when french file finished
           } else if (value.equals("fr")) {
             debug(LOGGER, "Language = French");
             TextGetter.setLocale("fr");
@@ -242,7 +241,7 @@ public final class CommandLineOptions {
     if (activatedOptions.containsKey(OptionType.CONTEST)) {
       String contestFile = activatedOptions.get(OptionType.CONTEST);
       if (contestFile == null || contestFile.isEmpty()) {
-        System.err.println("Error: --contest option requires a valid file path.");
+        error("Error: --contest option requires a valid file path.");
         activatedOptions.remove(OptionType.CONTEST);
       } else {
         debug(LOGGER, "Contest mode activated with file: " + contestFile);

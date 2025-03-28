@@ -1,7 +1,6 @@
 package pdp.model;
 
-import static pdp.utils.Logging.debug;
-import static pdp.utils.Logging.print;
+import static pdp.utils.Logging.*;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
@@ -19,7 +18,6 @@ import pdp.events.EventObserver;
 import pdp.events.EventType;
 import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
-import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Move;
@@ -75,6 +73,7 @@ public final class Game extends GameAbstract {
   /** Boolean value used to know if Ai played its move (contest Mode). */
   private boolean aiPlayedItsLastMove;
 
+  /** Map containing th options of the game and their values. */
   private final HashMap<OptionType, String> options;
 
   /** Lock of the view, to avoid desynchronization between the view and the model. */
@@ -176,10 +175,20 @@ public final class Game extends GameAbstract {
     return super.getGameState().getMoveTimer();
   }
 
+  /**
+   * Retrieves the lock of the view.
+   *
+   * @return field viewLock
+   */
   public Lock getViewLock() {
     return this.viewLock;
   }
 
+  /**
+   * Retrieves the Condition corresponding to the field workingView.
+   *
+   * @return field workingView;
+   */
   public Condition getWorkingViewCondition() {
     return this.workingView;
   }
@@ -227,19 +236,19 @@ public final class Game extends GameAbstract {
   /**
    * Assigns boolean value to whiteAi attribute field. Method used in GameInitializer.
    *
-   * @param ai true if white is AI. false otherwise.
+   * @param whiteAi true if white is AI. false otherwise.
    */
-  public void setWhiteAi(boolean ai) {
-    this.whiteAi = ai;
+  public void setWhiteAi(final boolean whiteAi) {
+    this.whiteAi = whiteAi;
   }
 
   /**
    * Assigns boolean value to blakAi attribute field. Method used in GameInitializer.
    *
-   * @param ai true if black is AI. false otherwise.
+   * @param blackAi true if black is AI. false otherwise.
    */
-  public void setBlackAi(boolean ai) {
-    this.blackAi = ai;
+  public void setBlackAi(final boolean blackAi) {
+    this.blackAi = blackAi;
   }
 
   /**
@@ -265,7 +274,7 @@ public final class Game extends GameAbstract {
    *
    * @param solver The new solver to assign to white.
    */
-  public void setWhiteSolver(Solver solver) {
+  public void setWhiteSolver(final Solver solver) {
     this.solverWhite = solver;
   }
 
@@ -274,7 +283,7 @@ public final class Game extends GameAbstract {
    *
    * @param solver The new solver to assign to black.
    */
-  public void setBlackSolver(Solver solver) {
+  public void setBlackSolver(final Solver solver) {
     this.solverBlack = solver;
   }
 
@@ -345,7 +354,7 @@ public final class Game extends GameAbstract {
    *
    * @return true if AI finished computing moves. false otherwise.
    */
-  public boolean aiPlayedItsLastMove() {
+  public boolean hasAiPlayedItsLastMove() {
     return this.aiPlayedItsLastMove;
   }
 
@@ -353,7 +362,7 @@ public final class Game extends GameAbstract {
    * Method used in Solver.playAIMove(this) to indicate when AI finished computing. Used to know
    * when the game can be saved when loading or contest mode.
    */
-  public void setAiPlayedItsLastMove(boolean lastMove) {
+  public void setAiPlayedItsLastMove(final boolean lastMove) {
     this.aiPlayedItsLastMove = lastMove;
   }
 
@@ -363,7 +372,7 @@ public final class Game extends GameAbstract {
    *
    * @param mode boolean to indicate if contest mode is on or off.
    */
-  public void setContestModeOnOrOff(boolean mode) {
+  public void setContestModeOnOrOff(final boolean mode) {
     this.contestModeOn = mode;
   }
 
@@ -510,7 +519,7 @@ public final class Game extends GameAbstract {
    * @throws IllegalMoveException If the move is not legal.
    */
   @Override
-  public void playMove(final Move move) throws IllegalMoveException, InvalidPromoteFormatException {
+  public void playMove(final Move move) {
     final Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
     final Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
@@ -524,7 +533,7 @@ public final class Game extends GameAbstract {
         super.getGameState().getBoard().getAvailableMoves(sourcePosition);
     final Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
-    Move moveToProcess = move;
+    final Move moveToProcess;
     if (classicalMove.isPresent()) {
       moveToProcess = classicalMove.get();
       super.processMove(super.getGameState(), moveToProcess);
@@ -588,35 +597,29 @@ public final class Game extends GameAbstract {
 
     debug(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase()) {
-      if (this.solverWhite != null) {
+      if (this.solverWhite != null
+          && (!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+          && (this.solverWhite.getCurrentHeuristic() != this.solverWhite.getEndgameHeuristic())) {
         // Set endgame heuristic only once and only if endgame phase
-        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getCurrentHeuristic()
-                == this.solverWhite.getEndgameHeuristic())) {
-          this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
-        }
+        this.solverWhite.setHeuristic(this.solverWhite.getEndgameHeuristic());
       }
-      if (this.solverBlack != null) {
-        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getCurrentHeuristic()
-                == this.solverWhite.getEndgameHeuristic())) {
-          this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
-        }
+      if (this.solverBlack != null
+          && (!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+          && (this.solverBlack.getCurrentHeuristic() != this.solverWhite.getEndgameHeuristic())) {
+        this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
       }
     }
 
     if (!isEndGamePhase()) {
-      if (this.solverWhite != null) {
-        if ((!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverWhite.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
-          this.solverWhite.setHeuristic(this.solverWhite.getStartHeuristic());
-        }
+      if (this.solverWhite != null
+          && (!(this.solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch))
+          && (this.solverWhite.getCurrentHeuristic() != this.solverWhite.getStartHeuristic())) {
+        this.solverWhite.setHeuristic(this.solverWhite.getStartHeuristic());
       }
-      if (this.solverBlack != null) {
-        if ((!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-            && !(this.solverBlack.getCurrentHeuristic() == this.solverWhite.getStartHeuristic())) {
-          this.solverBlack.setHeuristic(this.solverBlack.getStartHeuristic());
-        }
+      if (this.solverBlack != null
+          && (!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
+          && (this.solverBlack.getCurrentHeuristic() != this.solverWhite.getStartHeuristic())) {
+        this.solverBlack.setHeuristic(this.solverBlack.getStartHeuristic());
       }
     }
     debug(LOGGER, "Checking game status...");
@@ -626,7 +629,7 @@ public final class Game extends GameAbstract {
     if (!isLoadedFromFile()) {
       super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
     } else {
-      if (!aiPlayedItsLastMove()) {
+      if (!hasAiPlayedItsLastMove()) {
         if (isBlackAi() || isWhiteAi()) {
           super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
         } else {
@@ -659,7 +662,7 @@ public final class Game extends GameAbstract {
         try {
           workingView.await();
         } catch (InterruptedException e) {
-          e.printStackTrace();
+          error(e.toString());
         } finally {
           viewLock.unlock();
         }
@@ -684,7 +687,7 @@ public final class Game extends GameAbstract {
     final Optional<HistoryNode> currentNode = this.getHistory().getCurrentMove();
 
     if (loadingFileHasHistory()) {
-      final Optional<HistoryNode> nextNode = currentNode.get().getNext();
+      final Optional<HistoryNode> nextNode = currentNode.flatMap(HistoryNode::getNext);
       HistoryState nextState = null;
       if (nextNode.isPresent()) {
         nextState = nextNode.get().getState();
@@ -748,7 +751,7 @@ public final class Game extends GameAbstract {
    * @param path The path to the file to write to.
    * @throws FailedSaveException If the file cannot be written to.
    */
-  public void saveGame(final String path) throws FailedSaveException {
+  public void saveGame(final String path) {
     final boolean[] castlingRights = getBoard().getCastlingRights();
     final String board =
         BoardSaver.saveBoard(
@@ -769,7 +772,6 @@ public final class Game extends GameAbstract {
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
       writer.write(game);
-      writer.close();
     } catch (IOException e) {
       debug(LOGGER, "Error writing to file: " + e.getMessage());
       throw new FailedSaveException(path);
@@ -781,7 +783,7 @@ public final class Game extends GameAbstract {
   /**
    * Retrieves the history of moves in the current game as a formatted string.
    *
-   * @return A string representation of the game's movverify(model).previousState();e history.
+   * @return A string representation of the game's move history.
    */
   public String getStringHistory() {
     return super.getHistory().toString();
@@ -837,8 +839,7 @@ public final class Game extends GameAbstract {
       final Solver solverWhite,
       final Solver solverBlack,
       final Timer timer,
-      final HashMap<OptionType, String> options)
-      throws IllegalMoveException {
+      final HashMap<OptionType, String> options) {
     instance =
         new Game(
             isWhiteAi,
@@ -882,25 +883,23 @@ public final class Game extends GameAbstract {
       stringBuilder.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
     }
 
-    stringBuilder.append("\n");
+    stringBuilder.append('\n');
 
     final int size = board.length;
 
     for (int row = 0; row < size; row++) {
       stringBuilder.append(size - row).append(" | ");
       for (int col = 0; col < size; col++) {
-        stringBuilder.append(board[row][col]).append(" ");
+        stringBuilder.append(board[row][col]).append(' ');
       }
-      stringBuilder.append("\n");
+      stringBuilder.append('\n');
     }
 
     stringBuilder.append("    "); // Offset for row numbers
-    for (int i = 0; i < size; i++) {
-      stringBuilder.append("-").append(" ");
-    }
+    stringBuilder.append("- ".repeat(size));
     stringBuilder.append("\n    ");
     for (char c = 'A'; c < 'A' + size; c++) {
-      stringBuilder.append(c).append(" ");
+      stringBuilder.append(c).append(' ');
     }
     stringBuilder.append("\n\n");
 
@@ -915,7 +914,7 @@ public final class Game extends GameAbstract {
       stringBuilder.append(TextGetter.getText("gameOver"));
     }
 
-    stringBuilder.append("\n");
+    stringBuilder.append('\n');
 
     return stringBuilder.toString();
   }
@@ -926,7 +925,7 @@ public final class Game extends GameAbstract {
    * @return The single instance of Game.
    * @throws IllegalStateException If the Game has not been initialized.
    */
-  public static Game getInstance() throws IllegalStateException {
+  public static Game getInstance() {
     if (instance == null) {
       throw new IllegalStateException("Game has not been initialized");
     }

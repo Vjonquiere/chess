@@ -18,17 +18,18 @@ import pdp.view.gui.popups.YesNoPopUp;
 /** GUI representation for history display. */
 public class HistoryPanel extends VBox {
 
-  private ListView<String> list = new ListView<String>();
+  /** List containing the moves written as strings. */
+  private final ListView<String> list = new ListView<>();
 
   /** Construct a new panel. */
   public HistoryPanel() {
+    super();
+    final ObservableList<String> items = FXCollections.observableArrayList();
 
-    ObservableList<String> items = FXCollections.observableArrayList();
-
-    ObservableList<String> currentItems = this.list.getItems();
+    final ObservableList<String> currentItems = this.list.getItems();
     items.addAll(currentItems);
 
-    History history = Game.getInstance().getHistory();
+    final History history = Game.getInstance().getHistory();
 
     HistoryNode currentNode = history.getCurrentMove().orElse(null);
     while (currentNode != null) {
@@ -53,13 +54,13 @@ public class HistoryPanel extends VBox {
   /** Update displayed information of the panel. */
   public void updateHistoryPanel() {
 
-    ObservableList<String> items = FXCollections.observableArrayList();
+    final ObservableList<String> items = FXCollections.observableArrayList();
 
-    History history = Game.getInstance().getHistory();
+    final History history = Game.getInstance().getHistory();
 
     HistoryNode currentNode = history.getCurrentMove().orElse(null);
 
-    Stack<HistoryNode> stack = new Stack<>();
+    final Stack<HistoryNode> stack = new Stack<>();
 
     while (currentNode != null) {
       stack.push(currentNode);

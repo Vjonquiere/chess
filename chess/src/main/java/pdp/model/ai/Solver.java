@@ -64,7 +64,7 @@ public class Solver {
   /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
 
-  /** The last move reflexion time in nanoseconds */
+  /** The last move reflexion time in nanoseconds. */
   private long lastMoveTime;
 
   /**
@@ -101,7 +101,7 @@ public class Solver {
    *
    * @param algorithm The algorithm to use.
    */
-  public void setAlgorithm(AlgorithmType algorithm) {
+  public void setAlgorithm(final AlgorithmType algorithm) {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);

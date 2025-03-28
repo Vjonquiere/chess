@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Parser to translate a configuration file into a map of options/ configurations. */
-public class IniParser {
+public final class IniParser {
 
   /** Private constructor to avoid instanciation. */
   private IniParser() {}
