@@ -349,6 +349,8 @@ public class BitboardRepresentation implements BoardRepresentation {
       // Move rook
       this.movePiece(h1Square, f1Square);
 
+      this.whiteShortCastle = false;
+      this.whiteLongCastle = false;
     } else {
       Position e8Square = new Position(4, 7);
       Position f8Square = new Position(5, 7);
@@ -358,6 +360,9 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.movePiece(e8Square, g8Square);
       // Move rook
       this.movePiece(h8Square, f8Square);
+
+      this.blackShortCastle = false;
+      this.blackLongCastle = false;
     }
   }
 
@@ -377,6 +382,9 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.movePiece(e1Square, c1Square);
       // Move rook
       this.movePiece(a1Square, d1Square);
+
+      this.whiteShortCastle = false;
+      this.whiteLongCastle = false;
     } else {
       Position e8Square = new Position(4, 7);
       Position d8Square = new Position(3, 7);
@@ -386,6 +394,9 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.movePiece(e8Square, c8Square);
       // Move rook
       this.movePiece(a8Square, d8Square);
+
+      this.blackShortCastle = false;
+      this.blackLongCastle = false;
     }
   }
 
@@ -425,6 +436,10 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
+    System.out.println("White long : " + whiteLongCastle);
+    System.out.println("White short : " + whiteShortCastle);
+    System.out.println("Black long : " + blackLongCastle);
+    System.out.println("Black short : " + blackShortCastle);
     return BitboardMovesGen.getAvailableMoves(
         x,
         y,

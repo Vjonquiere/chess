@@ -22,16 +22,12 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
-import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
 import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
-import pdp.model.piece.Color;
-import pdp.model.piece.ColoredPiece;
-import pdp.model.piece.Piece;
 import pdp.model.savers.BoardSaver;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
@@ -488,49 +484,6 @@ public final class Game extends GameAbstract {
             new GameState(board, timer),
             new History(),
             options);
-
-    final Board gameBoard = instance.getGameState().getBoard();
-    if (!gameBoard
-        .getBoardRep()
-        .getPieceAt(4, 0)
-        .equals(new ColoredPiece(Piece.KING, Color.WHITE))) {
-      gameBoard.setWhiteLongCastle(false);
-      gameBoard.setWhiteShortCastle(false);
-    } else {
-      if (!gameBoard
-          .getBoardRep()
-          .getPieceAt(0, 0)
-          .equals(new ColoredPiece(Piece.ROOK, Color.WHITE))) {
-        gameBoard.setWhiteLongCastle(false);
-      }
-      if (!gameBoard
-          .getBoardRep()
-          .getPieceAt(7, 0)
-          .equals(new ColoredPiece(Piece.ROOK, Color.WHITE))) {
-        gameBoard.setWhiteShortCastle(false);
-      }
-    }
-
-    if (!gameBoard
-        .getBoardRep()
-        .getPieceAt(4, 7)
-        .equals(new ColoredPiece(Piece.KING, Color.BLACK))) {
-      gameBoard.setWhiteLongCastle(false);
-      gameBoard.setWhiteShortCastle(false);
-    } else {
-      if (!gameBoard
-          .getBoardRep()
-          .getPieceAt(0, 7)
-          .equals(new ColoredPiece(Piece.ROOK, Color.BLACK))) {
-        gameBoard.setWhiteLongCastle(false);
-      }
-      if (!gameBoard
-          .getBoardRep()
-          .getPieceAt(7, 7)
-          .equals(new ColoredPiece(Piece.ROOK, Color.BLACK))) {
-        gameBoard.setBlackShortCastle(false);
-      }
-    }
 
     BagOfCommands.getInstance().setModel(instance);
     if (timer != null) {
