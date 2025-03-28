@@ -15,13 +15,16 @@ import pdp.utils.Position;
  */
 public class BadPawnsHeuristic implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
   /** Penalty for the backward pawns. */
   private static final float PENALTY_FOR_BACKWARDS_PAWN = -4f;
 
+  /** Penalty for the isolated pawns. */
   private static final float PENALTY_FOR_ISOLATED_PAWN = -1f;
 
+  /** Penalty for the doubled pawns. */
   private static final float PENALTY_FOR_DOUBLED_PAWN = -1f;
 
   private static final float MULTIPLIER =

@@ -9,14 +9,18 @@ import pdp.utils.Position;
 /** Heuristic based on the performance of bishops during the endgame phase. */
 public class BishopEndgameHeuristic implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
-  private static final float BAD_BISHOP_SCORE = 5f; // -10
-  private static final float SAME_COLOR_BISHOPS_SAME_PLAYER_SCORE = -10f; // -10
-  private static final float CENTRALIZATION_SCORE_MAX = 10f; // -10
+
+  private static final float BAD_BISHOP_SCORE = 5f;
+  private static final float SAME_COLOR_BISHOPS_SAME_PLAYER_SCORE = -10f;
+  private static final float CENTRALIZATION_SCORE_MAX = 10f;
   private static final float CENTRALIZATION_SCORE_DECREASE_STEP = 2f;
-  private static final float MOBILITY_SCORE = 2f; // -56
+  private static final float MOBILITY_SCORE = 2f;
 
   // maximum calculated for 2 bishops, 14 moves
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
       SCORE_CAP
           / (2 * 14 * MOBILITY_SCORE

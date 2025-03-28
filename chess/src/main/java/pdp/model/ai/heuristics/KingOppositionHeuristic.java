@@ -9,7 +9,10 @@ import pdp.utils.Position;
  * to lead to a draw.
  */
 public class KingOppositionHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100;
+
   private static final float OPPOSITION_SCORE = -SCORE_CAP;
   private static final float DIAGONAL_SCORE = -(SCORE_CAP / 2);
 

@@ -7,8 +7,13 @@ import pdp.utils.Position;
 
 /** Heuristic based on the connection of pawns. The more connected the pawns are, the better. */
 public class PawnChainHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
+
   private static final float REWARD = 5f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER = (SCORE_CAP / (28 * REWARD));
 
   /**

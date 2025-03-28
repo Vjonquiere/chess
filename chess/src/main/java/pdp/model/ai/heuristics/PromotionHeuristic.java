@@ -7,11 +7,15 @@ import pdp.utils.Position;
 
 /** Heuristic based on the closeness of pawn promotion. */
 public class PromotionHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
+
   private static final float SECOND_LAST_RANK_SCORE = 20f;
   private static final float FINAL_PHASE_SCORE = 10f;
   private static final float PROGRESS_SCORE = 10f;
 
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
       (SCORE_CAP / (8 * SECOND_LAST_RANK_SCORE + 8 * PROGRESS_SCORE));
 

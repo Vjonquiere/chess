@@ -6,9 +6,14 @@ import pdp.utils.Position;
 
 /** Heuristic based on the development (advancement) of pieces. */
 public class DevelopmentHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
+
   private static final float BONUS_DEV_PAWN = 1f;
   private static final float BONUS_DEV_PIECE = 3f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
       SCORE_CAP / (15 * BONUS_DEV_PIECE); // all pawns have promoted
 

@@ -9,11 +9,15 @@ import pdp.utils.Position;
 /** Heuristic based on the activity of the king. */
 public class KingActivityHeuristic implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
+
   private static final float ACTIVITY_SCORE = 10f;
   private static final float CENTER_SCORE = 20f;
   private static final float NOT_CENTER_MAX = 15f;
   private static final float CENTER_DISTANCE_DECREASE = 3f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER = SCORE_CAP / (ACTIVITY_SCORE + CENTER_SCORE);
 
   /**

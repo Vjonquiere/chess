@@ -11,6 +11,7 @@ import pdp.utils.Position;
  */
 public class SpaceControlHeuristic implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
   private static final int MAX_MOVES_CONSIDERED = 50;
@@ -18,6 +19,7 @@ public class SpaceControlHeuristic implements Heuristic {
   private static final float BONUS_MOVE_ON_FLANKS = 1.5f;
   private static final float BONUS_MOVE_ELSEWHERE = 0.5f;
 
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER = SCORE_CAP / (MAX_MOVES_CONSIDERED * BONUS_MOVE_ELSEWHERE);
 
   private static final int CENTER_X_MIN = 3, CENTER_X_MAX = 4;

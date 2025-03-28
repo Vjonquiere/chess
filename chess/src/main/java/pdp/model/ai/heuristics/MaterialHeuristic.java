@@ -7,12 +7,16 @@ import pdp.model.board.Board;
 /** Heuristic based on the number of pieces still on the board. */
 public class MaterialHeuristic implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
+
   private static final float PAWN_VALUE = 1f;
   private static final float QUEEN_VALUE = 9f;
   private static final float BISHOP_VALUE = 3f;
   private static final float KNIGHT_VALUE = 3f;
   private static final float ROOK_VALUE = 5f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
       SCORE_CAP / (QUEEN_VALUE * 9 + BISHOP_VALUE * 2 + KNIGHT_VALUE * 2 + ROOK_VALUE * 2);
 

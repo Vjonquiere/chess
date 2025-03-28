@@ -5,7 +5,10 @@ import pdp.model.board.Board;
 
 /** Heuristic based on the number of moves available for each player. */
 public class MobilityHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100;
+
   private static final float MOVE_VALUE = 1;
 
   /**

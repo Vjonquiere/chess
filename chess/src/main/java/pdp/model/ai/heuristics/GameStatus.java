@@ -6,6 +6,7 @@ import pdp.model.piece.Color;
 /** Heuristic adding/ removing points in case of checkmate. */
 public class GameStatus implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100;
 
   /**
