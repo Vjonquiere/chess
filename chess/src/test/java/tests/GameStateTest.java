@@ -142,7 +142,7 @@ public class GameStateTest {
   @Test
   public void testWhiteRequestsDraw() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.whiteWantsToDraw();
+    gameBlitzOff.doesWhiteWantsToDraw();
     assertTrue(gameBlitzOff.hasWhiteRequestedDraw(), "White should have requested a draw !");
     assertFalse(
         gameBlitzOff.isGameOver(), "Game should not be over just because White requested a draw !");
@@ -151,7 +151,7 @@ public class GameStateTest {
   @Test
   public void testBlackRequestsDraw() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.blackWantsToDraw();
+    gameBlitzOff.doesBlackWantsToDraw();
     assertTrue(gameBlitzOff.hasBlackRequestedDraw(), "Black should have requested a draw !");
     assertFalse(
         gameBlitzOff.isGameOver(), "Game should not be over just because Black requested a draw !");
@@ -160,7 +160,7 @@ public class GameStateTest {
   @Test
   public void testWhiteCancelsDrawRequest() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.whiteWantsToDraw();
+    gameBlitzOff.doesWhiteWantsToDraw();
     gameBlitzOff.whiteCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasWhiteRequestedDraw(), "White's draw request should be canceled !");
     assertFalse(gameBlitzOff.isGameOver(), "Canceling draw should not end the game !");
@@ -169,7 +169,7 @@ public class GameStateTest {
   @Test
   public void testBlackCancelsDrawRequest() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.blackWantsToDraw();
+    gameBlitzOff.doesBlackWantsToDraw();
     gameBlitzOff.blackCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasBlackRequestedDraw(), "Black's draw request should be canceled !");
     assertFalse(gameBlitzOff.isGameOver(), "Canceling draw should not end the game !");
@@ -178,8 +178,8 @@ public class GameStateTest {
   @Test
   public void testMutualDrawAgreementShouldEndGame() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.whiteWantsToDraw();
-    gameBlitzOff.blackWantsToDraw();
+    gameBlitzOff.doesWhiteWantsToDraw();
+    gameBlitzOff.doesBlackWantsToDraw();
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over if both players agree to a draw !");
   }
 

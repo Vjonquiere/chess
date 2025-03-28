@@ -31,16 +31,16 @@ import pdp.utils.Timer;
 /** Initializes the game (model) with either the options given in the method initialize. */
 public abstract class GameInitializer {
 
-  private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
+  /** Logger of the class. */
+  private static final Logger LOGGER = Logger.getLogger(GameInitializer.class.getName());
 
-  // TODO Internationalization
   /**
    * Initialize the game with the given options.
    *
    * @param options The options to use to initialize the game.
    * @return A new Game instance.
    */
-  public static Game initialize(HashMap<OptionType, String> options) {
+  public static Game initialize(final HashMap<OptionType, String> options) {
 
     CommandLineOptions.validateAiOptions(options);
 
@@ -93,7 +93,8 @@ public abstract class GameInitializer {
       solverBlack = new Solver();
       if (options.containsKey(OptionType.AI_MODE_W)) {
         try {
-          AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_W));
+          final AlgorithmType algorithmType =
+              AlgorithmType.valueOf(options.get(OptionType.AI_MODE_W));
           solverWhite.setAlgorithm(algorithmType);
         } catch (Exception e) {
           error("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
@@ -104,7 +105,8 @@ public abstract class GameInitializer {
 
       if (options.containsKey(OptionType.AI_MODE_B)) {
         try {
-          AlgorithmType algorithmType = AlgorithmType.valueOf(options.get(OptionType.AI_MODE_B));
+          final AlgorithmType algorithmType =
+              AlgorithmType.valueOf(options.get(OptionType.AI_MODE_B));
           solverBlack.setAlgorithm(algorithmType);
         } catch (Exception e) {
           error("Unknown AI mode option: " + options.get(OptionType.AI_MODE_B));
@@ -118,10 +120,10 @@ public abstract class GameInitializer {
           if (options.containsKey(OptionType.AI_WEIGHT_W)
               && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W))
                   .equals(HeuristicType.STANDARD)) {
-            String weight = options.get(OptionType.AI_WEIGHT_W);
-            String[] weights = weight.split(",");
-            ArrayList<Float> weightsFloats = new ArrayList<>();
-            for (String w : weights) {
+            final String weight = options.get(OptionType.AI_WEIGHT_W);
+            final String[] weights = weight.split(",");
+            final List<Float> weightsFloats = new ArrayList<>();
+            for (final String w : weights) {
               weightsFloats.add(Float.parseFloat(w));
             }
             if (weightsFloats.size() != 7) {
@@ -150,10 +152,10 @@ public abstract class GameInitializer {
           if (options.containsKey(OptionType.AI_WEIGHT_B)
               && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_B))
                   .equals(HeuristicType.STANDARD)) {
-            String weight = options.get(OptionType.AI_WEIGHT_B);
-            String[] weights = weight.split(",");
-            ArrayList<Float> weightsFloats = new ArrayList<>();
-            for (String w : weights) {
+            final String weight = options.get(OptionType.AI_WEIGHT_B);
+            final String[] weights = weight.split(",");
+            final List<Float> weightsFloats = new ArrayList<>();
+            for (final String w : weights) {
               weightsFloats.add(Float.parseFloat(w));
             }
             if (weightsFloats.size() != 7) {
@@ -179,7 +181,8 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_ENDGAME_W)) {
         print(String.valueOf(options));
         try {
-          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_W));
+          final HeuristicType heuristicType =
+              HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_W));
           solverWhite.setEndgameHeuristic(heuristicType);
         } catch (IllegalArgumentException e) {
           error("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_W));
@@ -191,7 +194,8 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_ENDGAME_B)) {
         print(String.valueOf(options));
         try {
-          HeuristicType heuristicType = HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_B));
+          final HeuristicType heuristicType =
+              HeuristicType.valueOf(options.get(OptionType.AI_ENDGAME_B));
           solverBlack.setEndgameHeuristic(heuristicType);
         } catch (IllegalArgumentException e) {
           error("Unknown Heuristic: " + options.get(OptionType.AI_ENDGAME_B));
@@ -203,7 +207,7 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_DEPTH_W)
           && !(solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch)) {
         try {
-          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_W));
+          final int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_W));
           solverWhite.setDepth(depth);
         } catch (Exception e) {
           error("Not an integer for the depth of white AI");
@@ -214,7 +218,7 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_DEPTH_B)
           && !(solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch)) {
         try {
-          int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_B));
+          final int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_B));
           solverBlack.setDepth(depth);
         } catch (Exception e) {
           error("Not an integer for the depth of black AI");
@@ -225,7 +229,7 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_SIMULATION_W)
           && solverWhite.getAlgorithm() instanceof MonteCarloTreeSearch) {
         try {
-          int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
+          final int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
           solverWhite.setMonteCarloAlgorithm(simulations);
         } catch (Exception e) {
           error("Not an integer for the simulations of AI");
@@ -238,7 +242,7 @@ public abstract class GameInitializer {
       if (options.containsKey(OptionType.AI_SIMULATION_B)
           && solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch) {
         try {
-          int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
+          final int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
           solverBlack.setMonteCarloAlgorithm(simulations);
         } catch (Exception e) {
           error("Not an integer for the simulations of AI");
@@ -271,15 +275,15 @@ public abstract class GameInitializer {
     Game model = null;
 
     if (options.containsKey(OptionType.CONTEST)) {
-      String contestFile = options.get(OptionType.CONTEST);
+      final String contestFile = options.get(OptionType.CONTEST);
       if (contestFile == null || contestFile.isEmpty()) {
         error("Error: --contest option requires a valid file path.");
       } else {
         try {
-          InputStream inputStream = new FileInputStream(contestFile);
-          List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
-          List<Move> moves = new ArrayList<>();
-          for (String move : moveStrings) {
+          final InputStream inputStream = new FileInputStream(contestFile);
+          final List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
+          final List<Move> moves = new ArrayList<>();
+          for (final String move : moveStrings) {
             moves.add(Move.fromString(move.replace("x", "-")));
           }
 
@@ -288,9 +292,9 @@ public abstract class GameInitializer {
                   moves, isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
 
           // Init solver according to the current player
-          Solver solver = null;
+          final Solver solver;
           if (model.getGameState().isWhiteTurn()) {
-            Solver whiteSolver = new Solver();
+            final Solver whiteSolver = new Solver();
 
             model.setWhiteSolver(whiteSolver);
             model.setWhiteAi(true);
@@ -303,8 +307,7 @@ public abstract class GameInitializer {
 
             solver = whiteSolver;
           } else {
-            new Solver();
-            Solver blackSolver = new Solver();
+            final Solver blackSolver = new Solver();
 
             model.setBlackSolver(blackSolver);
             model.setBlackAi(true);
@@ -342,14 +345,14 @@ public abstract class GameInitializer {
 
     if (model == null) {
       if (options.containsKey(OptionType.LOAD)) {
-        InputStream inputStream = null;
+        final InputStream inputStream;
         try {
           inputStream = new FileInputStream(options.get(OptionType.LOAD));
 
-          List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
+          final List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
           if (moveStrings.isEmpty()) {
-            BoardFileParser parser = new BoardFileParser();
-            FileBoard board =
+            final BoardFileParser parser = new BoardFileParser();
+            final FileBoard board =
                 parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
             model =
                 Game.initialize(
@@ -359,10 +362,10 @@ public abstract class GameInitializer {
             model.setContestModeOnOrOff(false);
           } else {
 
-            List<Move> moves = new ArrayList<>();
+            final List<Move> moves = new ArrayList<>();
 
             boolean isWhite = true;
-            for (String move : moveStrings) {
+            for (final String move : moveStrings) {
               moves.add(Move.fromString(move.replace("x", "-"), isWhite));
               isWhite = !isWhite;
             }
@@ -401,7 +404,7 @@ public abstract class GameInitializer {
    * @param solver The solver instance for the current player.
    */
   private static void processAiDepthContest(
-      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
+      final HashMap<OptionType, String> options, final boolean whiteTurn, final Solver solver) {
     int depth = 0;
     if (whiteTurn) {
       if (options.containsKey(OptionType.AI_DEPTH_W)) {
@@ -439,7 +442,7 @@ public abstract class GameInitializer {
    * @param solver The solver instance for the current player.
    */
   private static void processAiModeContest(
-      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
+      final HashMap<OptionType, String> options, final boolean whiteTurn, final Solver solver) {
     AlgorithmType algorithmTypeContest = null;
     if (whiteTurn) {
       if (options.containsKey(OptionType.AI_MODE_W)) {
@@ -506,7 +509,7 @@ public abstract class GameInitializer {
    * @param solver The solver instance for the current player.
    */
   private static void processAiEndGameHeuristicContest(
-      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
+      final HashMap<OptionType, String> options, final boolean whiteTurn, final Solver solver) {
     HeuristicType heuristicTypeEndGame = null;
     if (whiteTurn) {
       if (options.containsKey(OptionType.AI_ENDGAME_W)) {
@@ -543,12 +546,13 @@ public abstract class GameInitializer {
    * @param solver The solver instance for the current player.
    */
   private static void processAiHeuristicContest(
-      HashMap<OptionType, String> options, boolean whiteTurn, Solver solver) {
-    OptionType heuristicKey = whiteTurn ? OptionType.AI_HEURISTIC_W : OptionType.AI_HEURISTIC_B;
-    OptionType weightKey = whiteTurn ? OptionType.AI_WEIGHT_W : OptionType.AI_WEIGHT_B;
+      final HashMap<OptionType, String> options, final boolean whiteTurn, final Solver solver) {
+    final OptionType heuristicKey =
+        whiteTurn ? OptionType.AI_HEURISTIC_W : OptionType.AI_HEURISTIC_B;
+    final OptionType weightKey = whiteTurn ? OptionType.AI_WEIGHT_W : OptionType.AI_WEIGHT_B;
 
-    HeuristicType heuristicType = getHeuristicType(options, heuristicKey);
-    ArrayList<Float> weights = getWeights(options, heuristicType, weightKey);
+    final HeuristicType heuristicType = getHeuristicType(options, heuristicKey);
+    final List<Float> weights = getWeights(options, heuristicType, weightKey);
 
     if (weights != null) {
       solver.setHeuristic(heuristicType, weights);
@@ -566,7 +570,7 @@ public abstract class GameInitializer {
    * @return The heuristic type to be used.
    */
   private static HeuristicType getHeuristicType(
-      HashMap<OptionType, String> options, OptionType heuristicKey) {
+      final HashMap<OptionType, String> options, final OptionType heuristicKey) {
     if (options.containsKey(heuristicKey)) {
       try {
         return HeuristicType.valueOf(options.get(heuristicKey));
@@ -587,15 +591,17 @@ public abstract class GameInitializer {
    * @param weightKey The key corresponding to the weight option for the current player.
    * @return A list of float values representing the heuristic weights, or null if unavailable.
    */
-  private static ArrayList<Float> getWeights(
-      HashMap<OptionType, String> options, HeuristicType heuristicType, OptionType weightKey) {
+  private static List<Float> getWeights(
+      final HashMap<OptionType, String> options,
+      final HeuristicType heuristicType,
+      final OptionType weightKey) {
     if (heuristicType.equals(HeuristicType.STANDARD) && options.containsKey(weightKey)) {
       try {
-        String weight = options.get(weightKey);
-        String[] weightsArray = weight.split(",");
-        ArrayList<Float> weightsFloats = new ArrayList<>();
+        final String weight = options.get(weightKey);
+        final String[] weightsArray = weight.split(",");
+        final List<Float> weightsFloats = new ArrayList<>();
 
-        for (String w : weightsArray) {
+        for (final String w : weightsArray) {
           weightsFloats.add(Float.parseFloat(w));
         }
         if (weightsFloats.size() != 7) {

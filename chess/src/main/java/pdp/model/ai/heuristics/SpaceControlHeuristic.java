@@ -22,8 +22,10 @@ public class SpaceControlHeuristic implements Heuristic {
   /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER = SCORE_CAP / (MAX_MOVES_CONSIDERED * BONUS_MOVE_ELSEWHERE);
 
-  private static final int CENTER_X_MIN = 3, CENTER_X_MAX = 4;
-  private static final int CENTER_Y_MIN = 3, CENTER_Y_MAX = 4;
+  private static final int CENTER_X_MIN = 3;
+  private static final int CENTER_X_MAX = 4;
+  private static final int CENTER_Y_MIN = 3;
+  private static final int CENTER_Y_MAX = 4;
   private static final int FLANK_LEFT_MAX_X = 1;
   private static final int FLANK_RIGHT_MIN_X = 6;
 

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * Parser for the history of loaded files. Translates the moves from the history into the string
  * format of the Move class.
  */
-public class MoveHistoryParser {
+public final class MoveHistoryParser {
 
   /** Private constructor to avoid instantiation. */
   private MoveHistoryParser() {}

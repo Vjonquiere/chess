@@ -17,8 +17,13 @@ import pdp.view.GuiView;
 
 /** GUI widget to display player data. */
 public class PlayerInfos extends HBox {
-  private Canvas currentPlayer;
-  private Label timerLabel = new Label();
+  /** Canvas to add a colored circle next to the current Player. */
+  private final Canvas currentPlayer;
+
+  /** Label containing the timer. */
+  private final Label timerLabel = new Label();
+
+  /** Timeline needed to update the timer label every 0.5 second. */
   private Timeline timeline;
 
   /**
@@ -28,10 +33,11 @@ public class PlayerInfos extends HBox {
    * @param isAi The player type.
    * @param isWhite The color of the player.
    */
-  public PlayerInfos(String name, boolean isAi, boolean isWhite) {
+  public PlayerInfos(final String name, final boolean isAi, final boolean isWhite) {
+    super();
     this.setAlignment(Pos.CENTER_LEFT);
     currentPlayer = new Canvas(20, 20);
-    Timer timer = Game.getInstance().getTimer(isWhite);
+    final Timer timer = Game.getInstance().getTimer(isWhite);
     if (timer != null) {
       timerLabel.setText(timer.getTimeRemainingString());
       updateTimer(isWhite);
@@ -46,11 +52,11 @@ public class PlayerInfos extends HBox {
    * @param isAi The player type.
    * @return An image corresponding to the player type
    */
-  public ImageView getPlayerIcon(boolean isAi) {
-    ImageView imageView = new ImageView();
-    String fileName = isAi ? "ai" : "player";
-    String path = "/assets/icons/" + fileName + ".png";
-    Image image = new Image(getClass().getResourceAsStream(path));
+  public ImageView getPlayerIcon(final boolean isAi) {
+    final ImageView imageView = new ImageView();
+    final String fileName = isAi ? "ai" : "player";
+    final String path = "/assets/icons/" + fileName + ".png";
+    final Image image = new Image(getClass().getResourceAsStream(path));
     imageView.setImage(image);
     imageView.setFitWidth(50);
     imageView.setFitHeight(50);
@@ -62,13 +68,13 @@ public class PlayerInfos extends HBox {
    *
    * @param isWhite The player color.
    */
-  public void updateTimer(boolean isWhite) {
+  public void updateTimer(final boolean isWhite) {
     timeline =
         new Timeline(
             new KeyFrame(
                 Duration.seconds(0.5),
                 event -> {
-                  Timer timer = Game.getInstance().getTimer(isWhite);
+                  final Timer timer = Game.getInstance().getTimer(isWhite);
                   if (timer != null) {
                     timerLabel.setText(timer.getTimeRemainingString());
                   }
@@ -81,15 +87,15 @@ public class PlayerInfos extends HBox {
    *
    * @param isCurrent The current player status.
    */
-  public void setCurrentPlayer(boolean isCurrent) {
-    GraphicsContext gc = currentPlayer.getGraphicsContext2D();
-    gc.clearRect(0, 0, currentPlayer.getWidth(), currentPlayer.getHeight());
+  public void setCurrentPlayer(final boolean isCurrent) {
+    final GraphicsContext graphicCtx = currentPlayer.getGraphicsContext2D();
+    graphicCtx.clearRect(0, 0, currentPlayer.getWidth(), currentPlayer.getHeight());
     if (timeline != null) {
       timeline.stop();
     }
     if (isCurrent) {
-      gc.setFill(Color.web(GuiView.getTheme().getAccent()));
-      gc.fillOval(0, 0, 20, 20);
+      graphicCtx.setFill(Color.web(GuiView.getTheme().getAccent()));
+      graphicCtx.fillOval(0, 0, 20, 20);
       if (timeline != null) {
         timeline.play();
       }

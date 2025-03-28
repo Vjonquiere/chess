@@ -177,18 +177,18 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Deprecated
   public BitboardRepresentation(
-      Bitboard whiteKing,
-      Bitboard whiteQueen,
-      Bitboard whiteBishops,
-      Bitboard whiteRooks,
-      Bitboard whiteKnights,
-      Bitboard whitePawns,
-      Bitboard blackKing,
-      Bitboard blackQueen,
-      Bitboard blackBishops,
-      Bitboard blackRooks,
-      Bitboard blackKnights,
-      Bitboard blackPawns) {
+      final Bitboard whiteKing,
+      final Bitboard whiteQueen,
+      final Bitboard whiteBishops,
+      final Bitboard whiteRooks,
+      final Bitboard whiteKnights,
+      final Bitboard whitePawns,
+      final Bitboard blackKing,
+      final Bitboard blackQueen,
+      final Bitboard blackBishops,
+      final Bitboard blackRooks,
+      final Bitboard blackKnights,
+      final Bitboard blackPawns) {
 
     this.isWhite = true;
     this.enPassantPos = null;
@@ -225,7 +225,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (o instanceof BitboardRepresentation obj) {
       if (board.length != obj.board.length) {
         return false;
@@ -255,7 +255,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public BoardRepresentation getCopy() {
-    BitboardRepresentation copy = new BitboardRepresentation();
+    final BitboardRepresentation copy = new BitboardRepresentation();
     for (int i = 0; i < this.board.length; i++) {
       copy.board[i] = this.board[i].getCopy();
     }
@@ -284,9 +284,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return Piece and its Color
    */
   @Override
-  public ColoredPiece getPieceAt(int x, int y) {
-    ColoredPiece piece = null;
-    int square = x + 8 * y;
+  public ColoredPiece getPieceAt(final int x, final int y) {
+    final ColoredPiece piece;
+    final int square = x + 8 * y;
     for (int index = 0; index < board.length; index++) {
       if (board[index].getBit(square)) {
         piece = pieces.getFromKey(index);
@@ -305,11 +305,11 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param to The position to reach
    */
   @Override
-  public void movePiece(Position from, Position to) {
-    ColoredPiece piece = getPieceAt(from.x(), from.y());
-    int fromIndex = from.x() % 8 + from.y() * 8;
-    int toIndex = to.x() % 8 + to.y() * 8;
-    int bitboardIndex =
+  public void movePiece(final Position from, final Position to) {
+    final ColoredPiece piece = getPieceAt(from.x(), from.y());
+    final int fromIndex = from.x() % 8 + from.y() * 8;
+    final int toIndex = to.x() % 8 + to.y() * 8;
+    final int bitboardIndex =
         switch (piece.getPiece()) {
           case KING -> piece.getColor() == Color.WHITE ? 0 : 6;
           case QUEEN -> piece.getColor() == Color.WHITE ? 1 : 7;
@@ -334,17 +334,17 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param newPiece The piece asked by the player that is replacing the promoting pawn
    */
   @Override
-  public void promotePawn(int x, int y, boolean white, Piece newPiece) {
+  public void promotePawn(final int x, final int y, final boolean white, final Piece newPiece) {
     debug(LOGGER, "Promoting pawn at [" + x + ", " + y + "] to " + newPiece);
-    ColoredPiece pieceAtPosition = getPieceAt(x, y);
+    final ColoredPiece pieceAtPosition = getPieceAt(x, y);
     if (pieceAtPosition.getPiece() != Piece.PAWN
         || pieceAtPosition.getColor() != (white ? Color.WHITE : Color.BLACK)) {
       return;
     }
 
-    int boardIndex = white ? 0 : 6;
-    Bitboard newPieceBitBoard = null;
-    Bitboard pawnBitboard = this.board[5 + boardIndex];
+    final int boardIndex = white ? 0 : 6;
+    final Bitboard newPieceBitBoard;
+    final Bitboard pawnBitboard = this.board[5 + boardIndex];
     switch (newPiece) {
       case KNIGHT:
         newPieceBitBoard = this.board[4 + boardIndex];
@@ -363,7 +363,7 @@ public class BitboardRepresentation implements BoardRepresentation {
         return;
     }
 
-    int bitIndex = 8 * y + x;
+    final int bitIndex = 8 * y + x;
     // Change bits
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
@@ -371,7 +371,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
-  public void setSquare(ColoredPiece piece, int squareIndex) {
+  public void setSquare(final ColoredPiece piece, final int squareIndex) {
     board[pieces.getFromValue(piece)].setBit(squareIndex);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
@@ -387,8 +387,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param y The board row
    */
   @Override
-  public void deletePieceAt(int x, int y) {
-    ColoredPiece piece = getPieceAt(x, y);
+  public void deletePieceAt(final int x, final int y) {
+    final ColoredPiece piece = getPieceAt(x, y);
     board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
     debug(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
@@ -402,7 +402,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param y The board row
    * @param piece The type of piece to add
    */
-  protected void addPieceAt(int x, int y, ColoredPiece piece) {
+  protected void addPieceAt(final int x, final int y, final ColoredPiece piece) {
     board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
     debug(LOGGER, "A " + piece.getColor() + " " + piece.getPiece() + " was added to the board");
@@ -414,12 +414,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param color color for which castling move is applied
    */
   @Override
-  public void applyShortCastle(Color color) {
+  public void applyShortCastle(final Color color) {
     if (color == Color.WHITE) {
-      Position e1Square = new Position(4, 0);
-      Position f1Square = new Position(5, 0);
-      Position g1Square = new Position(6, 0);
-      Position h1Square = new Position(7, 0);
+      final Position e1Square = new Position(4, 0);
+      final Position f1Square = new Position(5, 0);
+      final Position g1Square = new Position(6, 0);
+      final Position h1Square = new Position(7, 0);
       // Move king
       this.movePiece(e1Square, g1Square);
       // Move rook
@@ -428,10 +428,10 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.whiteShortCastle = false;
       this.whiteLongCastle = false;
     } else {
-      Position e8Square = new Position(4, 7);
-      Position f8Square = new Position(5, 7);
-      Position g8Square = new Position(6, 7);
-      Position h8Square = new Position(7, 7);
+      final Position e8Square = new Position(4, 7);
+      final Position f8Square = new Position(5, 7);
+      final Position g8Square = new Position(6, 7);
+      final Position h8Square = new Position(7, 7);
       // Move king
       this.movePiece(e8Square, g8Square);
       // Move rook
@@ -448,12 +448,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param color color for which castling move is applied
    */
   @Override
-  public void applyLongCastle(Color color) {
+  public void applyLongCastle(final Color color) {
     if (color == Color.WHITE) {
-      Position e1Square = new Position(4, 0);
-      Position d1Square = new Position(3, 0);
-      Position c1Square = new Position(2, 0);
-      Position a1Square = new Position(0, 0);
+      final Position e1Square = new Position(4, 0);
+      final Position d1Square = new Position(3, 0);
+      final Position c1Square = new Position(2, 0);
+      final Position a1Square = new Position(0, 0);
       // Move king
       this.movePiece(e1Square, c1Square);
       // Move rook
@@ -462,10 +462,10 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.whiteShortCastle = false;
       this.whiteLongCastle = false;
     } else {
-      Position e8Square = new Position(4, 7);
-      Position d8Square = new Position(3, 7);
-      Position c8Square = new Position(2, 7);
-      Position a8Square = new Position(0, 7);
+      final Position e8Square = new Position(4, 7);
+      final Position d8Square = new Position(3, 7);
+      final Position c8Square = new Position(2, 7);
+      final Position a8Square = new Position(0, 7);
       // Move king
       this.movePiece(e8Square, c8Square);
       // Move rook
@@ -485,7 +485,10 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves
    */
   protected List<Move> getKingMoves(
-      Position square, Bitboard unreachableSquares, Bitboard enemies, ColoredPiece piece) {
+      final Position square,
+      final Bitboard unreachableSquares,
+      final Bitboard enemies,
+      final ColoredPiece piece) {
     return BitboardMovesGen.getKingMoves(
         square,
         unreachableSquares,
@@ -511,7 +514,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves (without special cases)
    */
   @Override
-  public List<Move> getAvailableMoves(int x, int y, boolean kingReachable) {
+  public List<Move> getAvailableMoves(final int x, final int y, final boolean kingReachable) {
     return BitboardMovesGen.getAvailableMoves(
         x,
         y,
@@ -533,7 +536,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The list of possible moves (without special cases)
    */
   @Override
-  public List<Move> getAllAvailableMoves(boolean isWhite) {
+  public List<Move> getAllAvailableMoves(final boolean isWhite) {
     return BitboardMovesGen.getAllAvailableMoves(
         isWhite,
         this,
@@ -552,12 +555,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The bitboard containing all possible moves (without special cases)
    */
-  public Bitboard getColorMoveBitboard(boolean isWhite) {
-    Bitboard moves = getColorAttackBitboard(isWhite); // TODO: can delete this function ?
+  public Bitboard getColorMoveBitboard(final boolean isWhite) {
+    // TODO: can delete this function ?
     // Bitboard moves =
     // BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
 
-    return moves;
+    return getColorAttackBitboard(isWhite);
   }
 
   /**
@@ -567,14 +570,14 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param isWhite {true} if pawn is white, {false} if pawn is black
    * @return The bitboard containing all possible moves (without special cases)
    */
-  public Bitboard getColorAttackBitboard(boolean isWhite) {
-    CachedResult cached = cache.getOrCreate(simpleHash);
-    Long attackLong = cached.getAttackBitboard(isWhite);
+  public Bitboard getColorAttackBitboard(final boolean isWhite) {
+    final CachedResult cached = cache.getOrCreate(simpleHash);
+    final Long attackLong = cached.getAttackBitboard(isWhite);
     if (attackLong != null) {
       return new Bitboard(attackLong);
     }
 
-    Bitboard attackBitboard =
+    final Bitboard attackBitboard =
         BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
     cached.setAttackBitboard(isWhite, attackBitboard);
     return attackBitboard;
@@ -589,7 +592,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of the pawns positions for the given color
    */
   @Override
-  public List<Position> getPawns(boolean white) {
+  public List<Position> getPawns(final boolean white) {
     return BitboardPieces.getPawns(white, this);
   }
 
@@ -600,7 +603,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of the rooks positions for the given color
    */
   @Override
-  public List<Position> getRooks(boolean white) {
+  public List<Position> getRooks(final boolean white) {
     return BitboardPieces.getRooks(white, this);
   }
 
@@ -611,7 +614,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of the bishops positions for the given color
    */
   @Override
-  public List<Position> getBishops(boolean white) {
+  public List<Position> getBishops(final boolean white) {
     return BitboardPieces.getBishops(white, this);
   }
 
@@ -622,7 +625,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of the knights positions for the given color
    */
   @Override
-  public List<Position> getKnights(boolean white) {
+  public List<Position> getKnights(final boolean white) {
     return BitboardPieces.getKnights(white, this);
   }
 
@@ -633,7 +636,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list of the queens positions for the given color
    */
   @Override
-  public List<Position> getQueens(boolean white) {
+  public List<Position> getQueens(final boolean white) {
     return BitboardPieces.getQueens(white, this);
   }
 
@@ -644,11 +647,11 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return A list containing the king position for the given color
    */
   @Override
-  public List<Position> getKing(boolean white) {
+  public List<Position> getKing(final boolean white) {
     return BitboardPieces.getKing(white, this);
   }
 
-  public int getKingOpti(boolean white) {
+  public int getKingOpti(final boolean white) {
     return BitboardPieces.getKingOpti(white, this);
   }
 
@@ -691,7 +694,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given square is attacked, False else
    */
   @Override
-  public boolean isAttacked(int x, int y, Color by) {
+  public boolean isAttacked(final int x, final int y, final Color by) {
 
     return BitboardRules.isAttacked(
         x,
@@ -713,8 +716,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in check, False else
    */
   @Override
-  public boolean isCheck(Color color) {
-    CachedResult cached = cache.getOrCreate(simpleHash);
+  public boolean isCheck(final Color color) {
+    final CachedResult cached = cache.getOrCreate(simpleHash);
     Boolean isCheck = cached.isCheck(color);
     if (isCheck != null) {
       return isCheck;
@@ -743,7 +746,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in check after the given move, False else
    */
   @Override
-  public boolean isCheckAfterMove(Color color, Move move) {
+  public boolean isCheckAfterMove(final Color color, final Move move) {
     return BitboardRules.isCheckAfterMove(
         color,
         move,
@@ -764,8 +767,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the given color is in checkMate, False else
    */
   @Override
-  public boolean isCheckMate(Color color) {
-    CachedResult cached = cache.getOrCreate(simpleHash);
+  public boolean isCheckMate(final Color color) {
+    final CachedResult cached = cache.getOrCreate(simpleHash);
     Boolean isCheckMate = cached.isCheckMate(color);
     if (isCheckMate != null) {
       return isCheckMate;
@@ -795,12 +798,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if color {color} is stalemated. false otherwise.
    */
   @Override
-  public boolean isStaleMate(Color color, Color colorTurnToPlay) {
-    Boolean res = cache.getOrCreate(simpleHash).isStaleMate(color);
+  public boolean isStaleMate(final Color color, final Color colorTurnToPlay) {
+    final Boolean res = cache.getOrCreate(simpleHash).isStaleMate(color);
     if (res != null) {
       return res;
     }
-    boolean cacheElt =
+    final boolean cacheElt =
         BitboardRules.isStaleMate(
             color,
             colorTurnToPlay,
@@ -835,7 +838,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if the pawn is being promoted, otherwise false
    */
   @Override
-  public boolean isPawnPromoting(int x, int y, boolean white) {
+  public boolean isPawnPromoting(final int x, final int y, final boolean white) {
     return BitboardRules.isPawnPromoting(x, y, white, this);
   }
 
@@ -850,7 +853,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if the pawn is being promoted with the move, otherwise false
    */
   @Override
-  public boolean isPromotionMove(int xSource, int ySource, int xDest, int yDest, boolean isWhite) {
+  public boolean isPromotionMove(
+      final int xSource,
+      final int ySource,
+      final int xDest,
+      final int yDest,
+      final boolean isWhite) {
     return BitboardRules.isPromotionMove(xSource, ySource, xDest, yDest, isWhite, this);
   }
 
@@ -863,7 +871,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the move is a valid double pawn push, false else
    */
   @Override
-  public boolean isDoublePushPossible(Move move, boolean white) {
+  public boolean isDoublePushPossible(final Move move, final boolean white) {
     return BitboardRules.isDoublePushPossible(move, white, this);
   }
 
@@ -877,7 +885,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return True if the move is a valid en passant capture, false else
    */
   @Override
-  public boolean isEnPassant(int x, int y, Move move, boolean white) {
+  public boolean isEnPassant(final int x, final int y, final Move move, final boolean white) {
     return BitboardRules.isEnPassant(x, y, move, white, this);
   }
 
@@ -886,10 +894,10 @@ public class BitboardRepresentation implements BoardRepresentation {
    * enemy does not have enough material to mate.
    *
    * @param white color of the player we check the material for
-   * @return true if {white} has enouhg material to mate. false otherwise
+   * @return true if {white} has enough material to mate. false otherwise
    */
   @Override
-  public boolean hasEnoughMaterialToMate(boolean white) {
+  public boolean hasEnoughMaterialToMate(final boolean white) {
     return BitboardRules.hasEnoughMaterialToMate(white, this);
   }
 
@@ -900,7 +908,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return the list of moves for the corresponding king
    */
   @Override
-  public List<Move> retrieveKingMoves(boolean white) {
+  public List<Move> retrieveKingMoves(final boolean white) {
     return BitboardMovesGen.retrieveKingMoves(
         white,
         this,
@@ -919,7 +927,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return the list of moves for the corresponding bishops
    */
   @Override
-  public List<Move> retrieveBishopMoves(boolean white) {
+  public List<Move> retrieveBishopMoves(final boolean white) {
     return BitboardMovesGen.retrieveBishopMoves(white, this);
   }
 
@@ -972,7 +980,8 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if the move is a castle move, false otherwise.
    */
   @Override
-  public boolean isCastleMove(ColoredPiece coloredPiece, Position source, Position dest) {
+  public boolean isCastleMove(
+      final ColoredPiece coloredPiece, final Position source, final Position dest) {
     return BitboardRules.isCastleMove(coloredPiece, source, dest);
   }
 
@@ -985,7 +994,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
   @Override
-  public boolean validatePieceOwnership(boolean white, Position sourcePosition) {
+  public boolean validatePieceOwnership(final boolean white, final Position sourcePosition) {
     return BitboardRules.validatePieceOwnership(white, sourcePosition, this);
   }
 
@@ -1008,7 +1017,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if the majority of pawns for the given color are past the middle of the board.
    */
   @Override
-  public boolean pawnsHaveProgressed(boolean isWhite) {
+  public boolean pawnsHaveProgressed(final boolean isWhite) {
     return BitboardStatusCheck.pawnsHaveProgressed(isWhite, this);
   }
 
@@ -1039,7 +1048,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if castle {shortCastle} is possible for player of Color {color}. false otherwise
    */
   @Override
-  public boolean canCastle(Color color, boolean shortCastle) {
+  public boolean canCastle(final Color color, final boolean shortCastle) {
     return BitboardStatusCheck.canCastle(
         color,
         shortCastle,
@@ -1058,7 +1067,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return true if we're in an endgame (according to the chosen criteria)
    */
   @Override
-  public boolean isEndGamePhase(int fullTurn, boolean white) {
+  public boolean isEndGamePhase(final int fullTurn, final boolean white) {
     return BitboardStatusCheck.isEndGamePhase(
         fullTurn,
         white,
@@ -1079,7 +1088,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param squares The list of squares to change to position
    * @return A new list containing the translations
    */
-  protected List<Position> squaresToPosition(List<Integer> squares) {
+  protected List<Position> squaresToPosition(final List<Integer> squares) {
     return BitboardUtils.squaresToPosition(squares);
   }
 
@@ -1089,7 +1098,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param square The square to change to position
    * @return A Position containing the translations
    */
-  protected Position squareToPosition(int square) {
+  protected Position squareToPosition(final int square) {
     return BitboardUtils.squareToPosition(square);
   }
 
@@ -1099,7 +1108,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param bitBoardIndex The bitboard to lookUp
    * @return A list of positions
    */
-  protected List<Position> getOccupiedSquares(int bitBoardIndex) {
+  protected List<Position> getOccupiedSquares(final int bitBoardIndex) {
     return BitboardUtils.getOccupiedSquares(bitBoardIndex, this);
   }
 
@@ -1129,7 +1138,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setPlayer(boolean isWhite) {
+  public void setPlayer(final boolean isWhite) {
     this.isWhite = isWhite;
   }
 
@@ -1139,7 +1148,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setEnPassantPos(Position enPassantPos) {
+  public void setEnPassantPos(final Position enPassantPos) {
     this.enPassantPos = enPassantPos;
   }
 
@@ -1149,7 +1158,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setLastMoveDoublePush(boolean lastMoveDoublePush) {
+  public void setLastMoveDoublePush(final boolean lastMoveDoublePush) {
     isLastMoveDoublePush = lastMoveDoublePush;
   }
 
@@ -1159,7 +1168,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setWhiteShortCastle(boolean whiteShortCastle) {
+  public void setWhiteShortCastle(final boolean whiteShortCastle) {
     this.whiteShortCastle = whiteShortCastle;
   }
 
@@ -1169,7 +1178,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setBlackShortCastle(boolean blackShortCastle) {
+  public void setBlackShortCastle(final boolean blackShortCastle) {
     this.blackShortCastle = blackShortCastle;
   }
 
@@ -1179,7 +1188,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setWhiteLongCastle(boolean whiteLongCastle) {
+  public void setWhiteLongCastle(final boolean whiteLongCastle) {
     this.whiteLongCastle = whiteLongCastle;
   }
 
@@ -1189,7 +1198,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setBlackLongCastle(boolean blackLongCastle) {
+  public void setBlackLongCastle(final boolean blackLongCastle) {
     this.blackLongCastle = blackLongCastle;
   }
 
@@ -1199,7 +1208,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setEnPassantTake(boolean enPassantTake) {
+  public void setEnPassantTake(final boolean enPassantTake) {
     isEnPassantTake = enPassantTake;
   }
 
@@ -1209,7 +1218,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public void setNbMovesWithNoCaptureOrPawn(int newVal) {
+  public void setNbMovesWithNoCaptureOrPawn(final int newVal) {
     this.nbMovesWithNoCaptureOrPawn = newVal;
   }
 
