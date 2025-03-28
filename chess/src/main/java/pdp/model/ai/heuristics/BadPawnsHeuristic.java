@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
@@ -42,7 +41,7 @@ public class BadPawnsHeuristic implements Heuristic {
    * @return a score based on how bad pawns are for the corresponding player
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     score += (doubledPawns(board, true) - doubledPawns(board, false)) * PENALTY_FOR_DOUBLED_PAWN;
     score += (isolatedPawns(board, true) - isolatedPawns(board, false)) * PENALTY_FOR_ISOLATED_PAWN;
@@ -60,7 +59,7 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if the player is White, false if he is black
    * @return number of doubled pawns
    */
-  private int doubledPawns(final Board board, final boolean isWhite) {
+  private int doubledPawns(final BoardRepresentation board, final boolean isWhite) {
     final Map<Integer, Integer> colCount = new HashMap<>();
     int count = 0;
     for (final Position p : board.getBoardRep().getPawns(isWhite)) {
@@ -81,7 +80,7 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if the player is White, false if he is black
    * @return number of isolated pawns
    */
-  private int isolatedPawns(final Board board, final boolean isWhite) {
+  private int isolatedPawns(final BoardRepresentation board, final boolean isWhite) {
     final Set<Integer> occupiedFiles = new HashSet<>();
     final List<Position> pawns = board.getBoardRep().getPawns(isWhite);
     for (final Position p : pawns) {
@@ -110,7 +109,7 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return score based on the number of backward pawns
    */
-  private int backwardsPawns(final Board board, final boolean isWhite) {
+  private int backwardsPawns(final BoardRepresentation board, final boolean isWhite) {
     final BoardRepresentation bitboard = board.getBoardRep();
     final List<Position> pawns = bitboard.getPawns(isWhite);
     final List<Position> enemyPawns = bitboard.getPawns(!isWhite);

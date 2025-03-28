@@ -17,7 +17,7 @@ import pdp.utils.Position;
 
 /** Implementation of BoardRepresentation using bitboards. */
 public class BitboardRepresentation implements BoardRepresentation {
-  private static final int CACHE_SIZE = 100000;
+  private static final int CACHE_SIZE = 10000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
   private static final int NB_COLS = 8;
@@ -1374,5 +1374,10 @@ public class BitboardRepresentation implements BoardRepresentation {
     return new boolean[] {
       isWhiteShortCastle(), isWhiteLongCastle(), isBlackShortCastle(), isBlackLongCastle()
     };
+  }
+
+  @Override
+  public BoardRepresentation getBoardRep() {
+    return this;
   }
 }

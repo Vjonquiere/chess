@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
-import pdp.model.board.Board;
+import pdp.model.board.BitboardRepresentation;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
@@ -17,7 +18,7 @@ import pdp.utils.Timer;
 public class GameState extends Subject {
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
   private static int nMoveRule = 50;
-  private Board board;
+  private BoardRepresentation board;
   private Timer moveTimer;
   private boolean whiteWantsToDraw = false;
   private boolean blackWantsToDraw = false;
@@ -49,7 +50,7 @@ public class GameState extends Subject {
   /** Creates a game state with default parameters. By default, blitz mode is not on */
   public GameState() {
     this.isGameOver = false;
-    this.board = new Board();
+    this.board = new BitboardRepresentation();
     this.moveTimer = null;
     this.fullTurnNumber = 0;
   }
@@ -61,7 +62,7 @@ public class GameState extends Subject {
    */
   public GameState(Timer timer) {
     this.isGameOver = false;
-    this.board = new Board();
+    this.board = new BitboardRepresentation();
     this.moveTimer = timer;
     this.fullTurnNumber = 0;
   }
@@ -73,7 +74,7 @@ public class GameState extends Subject {
    */
   public GameState(FileBoard board) {
     this.isGameOver = false;
-    this.board = new Board(board);
+    this.board = new BitboardRepresentation(board);
     this.moveTimer = null;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
@@ -86,7 +87,7 @@ public class GameState extends Subject {
   public GameState(FileBoard board, Timer timer) {
     Logging.configureLogging(LOGGER);
     this.isGameOver = false;
-    this.board = new Board(board);
+    this.board = new BitboardRepresentation(board);
     this.moveTimer = timer;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
@@ -110,7 +111,7 @@ public class GameState extends Subject {
    *
    * @return current board
    */
-  public Board getBoard() {
+  public BoardRepresentation getBoard() {
     return board;
   }
 

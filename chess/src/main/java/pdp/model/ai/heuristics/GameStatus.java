@@ -1,6 +1,6 @@
 package pdp.model.ai.heuristics;
 
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.piece.Color;
 
 /** Heuristic adding/ removing points in case of checkmate. */
@@ -17,7 +17,7 @@ public class GameStatus implements Heuristic {
    * @return score of the board
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     if (board.getBoardRep().isCheckMate(Color.WHITE)) {
       score -= SCORE_CAP;

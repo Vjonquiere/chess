@@ -14,7 +14,6 @@ import pdp.model.Game;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.Heuristic;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
@@ -59,7 +58,7 @@ public class HeuristicsTest {
   @Test
   public void BadPawnsTest() {
     solver.setHeuristic(HeuristicType.BAD_PAWNS);
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
     assertEquals(0, solver.evaluateBoard(board, true));
     board.makeMove(new Move(new Position(0, 1), new Position(0, 4)));
     board.makeMove(new Move(new Position(2, 1), new Position(2, 3)));

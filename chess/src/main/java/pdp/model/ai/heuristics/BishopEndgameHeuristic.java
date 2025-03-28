@@ -1,7 +1,6 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
@@ -37,7 +36,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     score += evaluateBishopMobility(board, true) - evaluateBishopMobility(board, false);
     score +=
@@ -57,7 +56,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return score based on how many moves bishops can make
    */
-  private float evaluateBishopMobility(final Board board, final boolean isWhite) {
+  private float evaluateBishopMobility(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     final BoardRepresentation bitboard = board.getBoardRep();
     final List<Move> bishopMoves = bitboard.retrieveBishopMoves(isWhite);
@@ -73,7 +72,8 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return Negative score if bishops are on the same color
    */
-  private float evaluateSameColorBishopsSamePlayer(final Board board, final boolean isWhite) {
+  private float evaluateSameColorBishopsSamePlayer(
+      final BoardRepresentation board, final boolean isWhite) {
     final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
     if (bishops.size() < 2) {
       return 0;
@@ -100,7 +100,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return score for bishops that are close to the center
    */
-  private float evaluateCentralization(final Board board, final boolean isWhite) {
+  private float evaluateCentralization(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
     final int noBonus = 0;
@@ -123,7 +123,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return Negative score if bishop is blocked by pawns
    */
-  private float evaluateBadBishop(final Board board, final boolean isWhite) {
+  private float evaluateBadBishop(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
     final List<Position> pawns = board.getBoardRep().getPawns(isWhite);

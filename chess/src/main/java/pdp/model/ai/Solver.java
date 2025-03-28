@@ -31,7 +31,7 @@ import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.ai.heuristics.StandardLightHeuristic;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
@@ -367,7 +367,7 @@ public class Solver {
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public float evaluateBoard(final Board board, final boolean isWhite) {
+  public float evaluateBoard(final BoardRepresentation board, final boolean isWhite) {
     if (board == null) {
       throw new IllegalArgumentException("Board is null");
     }

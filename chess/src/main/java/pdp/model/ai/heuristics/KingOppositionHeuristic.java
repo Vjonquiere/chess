@@ -1,6 +1,5 @@
 package pdp.model.ai.heuristics;
 
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
@@ -25,7 +24,7 @@ public class KingOppositionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     int score = 0;
     score += evaluateKingOpposition(board);
 
@@ -42,7 +41,7 @@ public class KingOppositionHeuristic implements Heuristic {
    * @param board the board of the game
    * @return a score based on the king opposition
    */
-  private float evaluateKingOpposition(final Board board) {
+  private float evaluateKingOpposition(final BoardRepresentation board) {
     final BoardRepresentation bitboard = board.getBoardRep();
     final Position whiteKing = bitboard.getKing(true).get(0);
     final Position blackKing = bitboard.getKing(false).get(0);

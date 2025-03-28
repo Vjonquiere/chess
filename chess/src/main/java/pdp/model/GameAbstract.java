@@ -12,7 +12,7 @@ import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
@@ -134,7 +134,7 @@ public abstract class GameAbstract extends Subject {
    *
    * @return Board of the GameState
    */
-  public Board getBoard() {
+  public BoardRepresentation getBoard() {
     return this.gameState.getBoard();
   }
 
