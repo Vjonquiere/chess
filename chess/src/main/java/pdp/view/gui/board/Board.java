@@ -32,6 +32,7 @@ public class Board extends GridPane {
   private final List<Position> moveSquares = new LinkedList<>();
   private Position checkSquare;
   private Stage stage;
+  private double squareSize;
 
   /**
    * Build a new board from a game and a given stage.
@@ -49,19 +50,25 @@ public class Board extends GridPane {
 
   /** Build the board for the first time. Init all squares and setup them. */
   public void buildBoard() {
+    if (stage != null) {
+      double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
+      double maxHeight = (stage.getHeight() - 75) / 8.0;
+      squareSize = Math.min(maxWidth, maxHeight);
+    }
+
     super.getChildren().clear();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
         ColoredPiece piece = board.getPieceAt(x, boardRows - 1 - y);
         Square sq;
         if (x % 2 == 0 && y % 2 == 0) {
-          sq = new Square(piece, true);
+          sq = new Square(piece, true, squareSize);
         } else if (x % 2 == 0 && y % 2 == 1) {
-          sq = new Square(piece, false);
+          sq = new Square(piece, false, squareSize);
         } else if (x % 2 == 1 && y % 2 == 0) {
-          sq = new Square(piece, false);
+          sq = new Square(piece, false, squareSize);
         } else {
-          sq = new Square(piece, true);
+          sq = new Square(piece, true, squareSize);
         }
         int finaly = boardRows - 1 - y;
         int finalx = x;
@@ -115,22 +122,34 @@ public class Board extends GridPane {
    * @param historyNode The history to extract the move.
    */
   private void movePiece(HistoryNode historyNode) {
+    if (Game.getInstance().getGameState().isWhiteTurn()
+        && Game.getInstance().isBlackAi()
+        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2000000000L) {
+      updateAfterAnimation();
+      return;
+    }
+    if (!Game.getInstance().getGameState().isWhiteTurn()
+        && Game.getInstance().isWhiteAi()
+        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2000000000L) {
+      updateAfterAnimation();
+      return;
+    }
     Move move = historyNode.getState().getMove();
     pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
     pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
 
-    PieceImage piece = new PieceImage(move.getPiece());
-    piece.setLayoutX(move.getSource().x() * 100 + 25);
-    piece.setLayoutY((boardRows - 1 - move.getSource().y()) * 100);
+    PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
+    piece.setLayoutX(move.getSource().x() * squareSize + 25);
+    piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
     super.getChildren().add(piece);
 
     TranslateTransition tt = new TranslateTransition();
     tt.setNode(piece);
     tt.setDuration(javafx.util.Duration.seconds(0.1));
-    tt.setFromX(move.getSource().x() * 100 + 25);
-    tt.setFromY((boardRows - 1 - move.getSource().y()) * 100);
-    tt.setToX(move.getDest().x() * 100 + 25);
-    tt.setToY((boardRows - 1 - move.getDest().y()) * 100);
+    tt.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
+    tt.setFromY((boardRows - 1 - move.getSource().y()) * squareSize);
+    tt.setToX(move.getDest().x() * squareSize + squareSize * 0.25);
+    tt.setToY((boardRows - 1 - move.getDest().y()) * squareSize);
 
     tt.setOnFinished(
         (event) -> {

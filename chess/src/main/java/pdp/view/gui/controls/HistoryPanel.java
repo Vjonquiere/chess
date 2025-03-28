@@ -6,10 +6,14 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
+import pdp.controller.BagOfCommands;
+import pdp.controller.commands.UndoMultipleMoveCommand;
 import pdp.model.Game;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.utils.TextGetter;
+import pdp.view.gui.popups.InfoPopUp;
+import pdp.view.gui.popups.YesNoPopUp;
 
 /** GUI representation for history display. */
 public class HistoryPanel extends VBox {
@@ -67,6 +71,32 @@ public class HistoryPanel extends VBox {
       node = stack.pop();
       items.add(node.getState().toString());
     }
+
+    list.setOnMouseClicked(
+        event -> {
+          if (event.getClickCount() == 2) {
+            int selectedItem = list.getSelectionModel().getSelectedIndex();
+            if (selectedItem != -1) {
+              if (Game.getInstance().getGameState().getFullTurn() > 0) {
+                BagOfCommands.getInstance()
+                    .addCommand(new UndoMultipleMoveCommand(items.size() - selectedItem - 1));
+                if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+                  new YesNoPopUp(
+                      "undoInstructionsGui",
+                      new UndoMultipleMoveCommand(items.size() - selectedItem - 1),
+                      () -> Game.getInstance().getGameState().undoRequestReset());
+                }
+              } else {
+                InfoPopUp.show(TextGetter.getText("notAllowed"));
+              }
+              if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+                InfoPopUp.show(TextGetter.getText("notAllowed"));
+              }
+            }
+          }
+        });
     list.setItems(items);
+    list.scrollTo(items.size() - 1);
+    list.getSelectionModel().select(items.size() - 1);
   }
 }

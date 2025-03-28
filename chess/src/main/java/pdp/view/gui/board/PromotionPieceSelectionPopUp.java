@@ -93,7 +93,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
   }
 
   private VBox pieceImage(ColoredPiece piece, String text) {
-    ImageView imageView = new PieceImage(piece);
+    ImageView imageView = new PieceImage(piece, 50.0);
     VBox result = new VBox(imageView, new Label(text));
     result.setAlignment(Pos.CENTER);
     result.setStyle(
