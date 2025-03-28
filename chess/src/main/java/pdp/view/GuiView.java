@@ -1,7 +1,8 @@
 package pdp.view;
 
 import static pdp.utils.Logging.debug;
-import static pdp.view.gui.themes.ColorTheme.SIMPLE;
+import static pdp.utils.Logging.error;
+import static pdp.view.gui.themes.ColorTheme.GREY;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,15 +29,38 @@ import pdp.view.gui.themes.ColorTheme;
 
 /** Base of our graphical interface. */
 public class GuiView implements View {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(GuiView.class.getName());
-  private BorderPane root;
+
+  /** Root of the application, all components are places inside. */
+  private final BorderPane root;
+
+  /** Stage of the app. */
   private Stage stage;
+
+  /** Scene of the app. */
   private Scene scene;
+
+  /** Representation of the current chess board. */
   private Board board;
+
+  /**
+   * Control panel containing the players and their timers, the history, and buttons to modify thr
+   * game.
+   */
   private ControlPanel controlPanel;
+
+  /**
+   * Menu containing the File, Game Options and About menus and also a place to diplay informative
+   * or error messages during the game.
+   */
   private ChessMenu menu;
-  private static ColorTheme theme = SIMPLE;
-  private boolean init = false;
+
+  /** Color theme of the whole app. Grey by default. */
+  private static ColorTheme theme = GREY;
+
+  /** Boolean to indicate whether the GUI View is initliazed or not. */
+  private boolean initailized;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -48,15 +72,15 @@ public class GuiView implements View {
    *
    * @param scene scene to apply the CSS over
    */
-  public static void applyCss(Scene scene) {
+  public static void applyCss(final Scene scene) {
     String text;
-    String path = "";
+    final String path = "";
     try {
       // TODO: allow user to give his css file
       text = new BoardFileParser().readFile(path);
     } catch (FileNotFoundException e) {
       try {
-        URL filePath = GuiView.class.getClassLoader().getResource("styles/sample.css");
+        final URL filePath = GuiView.class.getClassLoader().getResource("styles/sample.css");
         text = new BoardFileParser().readFile(filePath.getPath());
         text = text.replace("#000001", theme.getPrimary());
         text = text.replace("#000002", theme.getSecondary());
@@ -66,7 +90,7 @@ public class GuiView implements View {
         text = text.replace("#000006", theme.getBackground2());
         text = text.replace("#000007", theme.getText());
         text = text.replace("#000008", theme.getTextInverted());
-        File tempFile = File.createTempFile("theme-", ".css");
+        final File tempFile = File.createTempFile("theme-", ".css");
         tempFile.deleteOnExit();
 
         try (FileWriter writer = new FileWriter(tempFile)) {
@@ -76,28 +100,40 @@ public class GuiView implements View {
         scene.getStylesheets().clear();
         scene.getStylesheets().add(tempFile.toURI().toString());
       } catch (Exception ex) {
-        ex.printStackTrace();
+        error(ex.toString());
       }
     }
   }
 
+  /**
+   * Retrives the current color theme of the app.
+   *
+   * @return field theme
+   */
   public static ColorTheme getTheme() {
     return theme;
   }
 
-  public static void setTheme(ColorTheme newTheme) {
+  /** Defines the new color theme of the app. */
+  public static void setTheme(final ColorTheme newTheme) {
     theme = newTheme;
   }
 
+  /**
+   * Calls apply CSS to modify the sample css with the theme colors and apply it to some components.
+   * Sends a game started event to reload the components of the scene with the new theme.
+   */
   public void updateTheme() {
     applyCss(scene);
     onGameEvent(EventType.GAME_STARTED);
   }
 
+  /** Calls the GameS Started event to reload the Scene to apply the language change. */
   public void updateLanguage() {
     onGameEvent(EventType.GAME_STARTED);
   }
 
+  /** Creates a GUI View by cretaing the root component. */
   public GuiView() {
     root = new BorderPane();
   }
@@ -107,7 +143,7 @@ public class GuiView implements View {
    *
    * @param stage Main stage of the Application.
    */
-  public void init(Stage stage) {
+  public void init(final Stage stage) {
     stage.setTitle(TextGetter.getText("title"));
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);
@@ -131,7 +167,7 @@ public class GuiView implements View {
    */
   @Override
   public Thread start() {
-    Thread guiThread = new Thread(() -> GuiLauncher.launchGui(this));
+    final Thread guiThread = new Thread(() -> GuiLauncher.launchGui(this));
     guiThread.start();
     return guiThread;
   }
@@ -142,11 +178,11 @@ public class GuiView implements View {
    * @param event Notification sent by the model
    */
   @Override
-  public void onGameEvent(EventType event) {
+  public void onGameEvent(final EventType event) {
     debug(LOGGER, "View received event " + event);
-    if (!Platform.isFxApplicationThread() && !isInit()) {
+    if (!Platform.isFxApplicationThread() && !isInitailized()) {
       debug(LOGGER, "Init GUI thread");
-      setInit(true);
+      setInitailized(true);
       Platform.startup(() -> Platform.runLater(() -> this.onGameEvent(event)));
     }
     Platform.runLater(
@@ -175,10 +211,7 @@ public class GuiView implements View {
                 menu = new ChessMenu();
                 root.setTop(menu);
                 if (Game.getInstance().isWhiteAi()) {
-                  menu.displayMessage(
-                      TextGetter.getText("guiStartMessageGameStart"),
-                      false,
-                      true); // TODO: Add in resource bundle
+                  menu.displayMessage(TextGetter.getText("guiStartMessageGameStart"), false, true);
                 } else {
                   menu.displayMessage(TextGetter.getText("guiStartMessagePlayAMove"), false, true);
                 }
@@ -308,7 +341,8 @@ public class GuiView implements View {
                 break;
               case MOVE_HINT:
                 if (board != null) {
-                  List<Integer> hintIntegers = Game.getInstance().getGameState().getHintIntegers();
+                  final List<Integer> hintIntegers =
+                      Game.getInstance().getGameState().getHintIntegers();
                   board.setHintSquares(
                       new Position(hintIntegers.get(0), hintIntegers.get(1)),
                       new Position(hintIntegers.get(2), hintIntegers.get(3)));
@@ -325,16 +359,27 @@ public class GuiView implements View {
         });
   }
 
+  /** When an execption is received, displays the error message in the menu. */
   @Override
-  public void onErrorEvent(Exception exception) {
+  public void onErrorEvent(final Exception exception) {
     Platform.runLater(() -> menu.displayMessage(exception.getMessage(), true, false));
   }
 
-  public boolean isInit() {
-    return init;
+  /**
+   * Retrieves a boolean to indicates whether the GUI View is initailized.
+   *
+   * @return true if the view is initialized, false otherwise.
+   */
+  public boolean isInitailized() {
+    return initailized;
   }
 
-  public void setInit(boolean init) {
-    this.init = init;
+  /**
+   * Sets the boolean of the field initialized.
+   *
+   * @param init true if the view is initialized, false otherwise.
+   */
+  public void setInitailized(final boolean init) {
+    this.initailized = init;
   }
 }

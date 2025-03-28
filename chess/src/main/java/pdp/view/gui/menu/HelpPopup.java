@@ -14,18 +14,19 @@ import pdp.view.GuiView;
 public class HelpPopup extends VBox {
   /** Build a new popup. */
   public HelpPopup() {
-    Stage popupStage = new Stage();
+    super();
+    final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("help.title"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
-    Label manualLabel = getLabel();
+    final Label manualLabel = getLabel();
 
-    Button closeButton = new Button(TextGetter.getText("close"));
+    final Button closeButton = new Button(TextGetter.getText("close"));
     closeButton.setOnAction(e -> popupStage.close());
 
-    VBox layout = new VBox(10, manualLabel, closeButton);
+    final VBox layout = new VBox(10, manualLabel, closeButton);
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
-    Scene scene = new Scene(layout);
+    final Scene scene = new Scene(layout);
     GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
@@ -37,7 +38,7 @@ public class HelpPopup extends VBox {
    * @return A label containing the help message.
    */
   private Label getLabel() {
-    Label manualLabel = new Label(TextGetter.getText("help.message"));
+    final Label manualLabel = new Label(TextGetter.getText("help.message"));
     manualLabel.setWrapText(true);
     return manualLabel;
   }

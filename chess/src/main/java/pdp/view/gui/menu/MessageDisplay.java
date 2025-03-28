@@ -10,12 +10,18 @@ import javafx.util.Duration;
 
 /** A GUI widget to display messages in the menu bar. */
 public class MessageDisplay extends HBox {
+  /** Icon for the error messages. */
   private final ImageView errorIcon;
+
+  /** Icon for the information messages. */
   private final ImageView infoIcon;
-  private final int messageTimeout = 3;
+
+  /** Duration of the display of a finite message. */
+  private static final int messageTimeout = 3;
 
   /** Build a new message display dans load needed assets. */
   public MessageDisplay() {
+    super();
     errorIcon = loadIcon("/assets/icons/error.png");
     infoIcon = loadIcon("/assets/icons/information.png");
     super.setAlignment(Pos.CENTER);
@@ -32,7 +38,7 @@ public class MessageDisplay extends HBox {
    *
    * @param error The error message.
    */
-  public void displayError(String error, boolean infinite) {
+  public void displayError(final String error, final boolean infinite) {
     clearPreviousMessage();
     super.getChildren().addAll(errorIcon, new Label(error));
     if (!infinite) {
@@ -45,7 +51,7 @@ public class MessageDisplay extends HBox {
    *
    * @param information The information message.
    */
-  public void displayInfo(String information, boolean infinite) {
+  public void displayInfo(final String information, final boolean infinite) {
     clearPreviousMessage();
     super.getChildren().addAll(infoIcon, new Label(information));
     if (!infinite) {
@@ -59,9 +65,9 @@ public class MessageDisplay extends HBox {
    * @param path The path of the icon to load.
    * @return An image view corresponding to the icon.
    */
-  public ImageView loadIcon(String path) {
-    Image image = new Image(getClass().getResourceAsStream(path));
-    ImageView img = new ImageView(image);
+  public ImageView loadIcon(final String path) {
+    final Image image = new Image(getClass().getResourceAsStream(path));
+    final ImageView img = new ImageView(image);
     img.setFitWidth(25);
     img.setFitHeight(25);
     return img;
@@ -69,7 +75,7 @@ public class MessageDisplay extends HBox {
 
   /** Automatically remove the message after the defined time. */
   private void autoClearMessage() {
-    PauseTransition pause = new PauseTransition(Duration.seconds(messageTimeout));
+    final PauseTransition pause = new PauseTransition(Duration.seconds(messageTimeout));
     pause.setOnFinished(event -> clearPreviousMessage());
     pause.play();
   }
