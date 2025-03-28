@@ -17,7 +17,7 @@ public class MessageDisplay extends HBox {
   private final ImageView infoIcon;
 
   /** Duration of the display of a finite message. */
-  private static final int messageTimeout = 3;
+  private static final int MESSAGE_TIMEOUT = 3;
 
   /** Build a new message display dans load needed assets. */
   public MessageDisplay() {
@@ -75,7 +75,7 @@ public class MessageDisplay extends HBox {
 
   /** Automatically remove the message after the defined time. */
   private void autoClearMessage() {
-    final PauseTransition pause = new PauseTransition(Duration.seconds(messageTimeout));
+    final PauseTransition pause = new PauseTransition(Duration.seconds(MESSAGE_TIMEOUT));
     pause.setOnFinished(event -> clearPreviousMessage());
     pause.play();
   }

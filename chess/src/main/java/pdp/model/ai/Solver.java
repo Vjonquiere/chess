@@ -101,7 +101,7 @@ public class Solver {
    *
    * @param algorithm The algorithm to use.
    */
-  public void setAlgorithm(AlgorithmType algorithm) {
+  public void setAlgorithm(final AlgorithmType algorithm) {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);

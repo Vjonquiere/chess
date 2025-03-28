@@ -126,7 +126,7 @@ public class ChessMenu extends HBox {
    *
    * @return The path given by the user
    */
-  private String fileSaver() {
+  public static String fileSaver() {
     TextInputDialog dialog = new TextInputDialog();
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.setHeaderText(null);

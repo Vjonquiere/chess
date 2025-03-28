@@ -10,10 +10,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.RestartCommand;
+import pdp.controller.commands.SaveGameCommand;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
+import pdp.view.gui.ChessMenu;
 
 /** GUI popup to display the information about the end of game. */
 public class EndGamePopUp {
@@ -77,11 +79,14 @@ public class EndGamePopUp {
     }
     layout.getChildren().addAll(gameOverLabel, endgameLabel);
 
-    Button analyzeButton = new Button(TextGetter.getText("analyze"));
-    analyzeButton.setId("analyzeButton");
-    analyzeButton.setOnAction(
+    Button saveButton = new Button(TextGetter.getText("save"));
+    saveButton.setId("analyzeButton");
+    saveButton.setOnAction(
         e -> {
-          System.out.println("No game analysis for now");
+          String path = ChessMenu.fileSaver();
+          if (path != null && !path.isEmpty()) {
+            BagOfCommands.getInstance().addCommand(new SaveGameCommand("./" + path));
+          }
         });
 
     Button newGameButton = new Button(TextGetter.getText("newGame"));
@@ -107,7 +112,7 @@ public class EndGamePopUp {
           Runtime.getRuntime().exit(0);
         });
     HBox buttonBox = new HBox();
-    buttonBox.getChildren().addAll(analyzeButton, newGameButton, restartButton, quitButton);
+    buttonBox.getChildren().addAll(saveButton, newGameButton, restartButton, quitButton);
     buttonBox.setAlignment(Pos.CENTER);
     layout.getChildren().add(buttonBox);
     layout.setAlignment(Pos.CENTER);

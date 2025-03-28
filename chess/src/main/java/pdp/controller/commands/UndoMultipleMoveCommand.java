@@ -20,7 +20,7 @@ public class UndoMultipleMoveCommand implements Command {
    *
    * @param nbMoveToUndo Number of moves to undo.
    */
-  public UndoMultipleMoveCommand(int nbMoveToUndo) {
+  public UndoMultipleMoveCommand(final int nbMoveToUndo) {
     this.nbMoveToUndo = nbMoveToUndo;
   }
 

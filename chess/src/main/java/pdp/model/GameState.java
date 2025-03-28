@@ -541,7 +541,7 @@ public class GameState extends Subject {
    * @return A new instance of GameState with the same state as the current object.
    */
   public GameState getCopy() {
-    GameState copy = new GameState();
+    final GameState copy = new GameState();
 
     copy.board = this.board.getCopy();
     copy.whiteWantsToDraw = this.whiteWantsToDraw;
