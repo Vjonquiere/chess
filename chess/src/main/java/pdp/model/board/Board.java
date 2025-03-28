@@ -1,12 +1,9 @@
 package pdp.model.board;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
-import pdp.model.piece.ColoredPiece;
-import pdp.model.piece.Piece;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 
@@ -30,40 +27,11 @@ public class Board {
    * @param board The board state to use
    */
   public Board(FileBoard board) {
-    this.setBoard(board.board());
-    this.setPlayer(board.isWhiteTurn());
-
-    if (board.header() != null) { // Initialize board with header values
-      this.setEnPassantPos(board.header().enPassant());
-      if (this.getEnPassantPos() != null) {
-        this.setLastMoveDoublePush(true);
-      }
-      this.setWhiteShortCastle(board.header().whiteKingCastling());
-      this.setBlackShortCastle(board.header().blackKingCastling());
-      this.setWhiteLongCastle(board.header().whiteQueenCastling());
-      this.setBlackLongCastle(board.header().blackQueenCastling());
-      this.setNbMovesWithNoCaptureOrPawn(board.header().fiftyMoveRule());
-    } else { // No header -> default values
-      this.setEnPassantPos(null);
-      this.setLastMoveDoublePush(false);
-      this.setWhiteShortCastle(
-          board.board().getPieceAt(7, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
-              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
-      this.setBlackShortCastle(
-          board.board().getPieceAt(7, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
-              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
-      this.setWhiteLongCastle(
-          board.board().getPieceAt(0, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
-              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
-      this.setBlackLongCastle(
-          board.board().getPieceAt(0, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
-              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
-      this.setNbMovesWithNoCaptureOrPawn(0);
-    }
+    this.setBoard(new BitboardRepresentation(board));
   }
 
   public List<Move> getAvailableMoves(Position pos) {
-    return getBoardRep().getAvailableMoves(pos.x(), pos.y(), false);
+    return board.getAvailableMoves(pos);
   }
 
   public boolean getPlayer() {
@@ -80,74 +48,7 @@ public class Board {
    * @param move The move to be executed
    */
   public void makeMove(Move move) {
-
-    this.board.setNbMovesWithNoCaptureOrPawn(board.getNbMovesWithNoCaptureOrPawn() + 1);
-    if (getBoardRep().getPieceAt(move.getSource().x(), move.getSource().y()).getPiece()
-        == Piece.PAWN) {
-      // Reset the number of moves with no pawn move
-      this.board.setNbMovesWithNoCaptureOrPawn(0);
-    }
-
-    // TODO REFACTOR EN PASSANT DELETE
-    if (move.isTake()) {
-      // SAVE DELETED PIECE FOR HASHING
-      if (!this.isEnPassantTake()) {
-        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-      }
-      // Reset the number of moves with no capture
-      this.board.setNbMovesWithNoCaptureOrPawn(0);
-    }
-
-    if (this.isEnPassantTake()) {
-      this.setLastMoveDoublePush(false);
-      this.setEnPassantTake(false);
-      if (this.getPlayer()) {
-        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-      } else {
-        getBoardRep().deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-      }
-    }
-
-    getBoardRep().movePiece(move.getSource(), move.getDest());
-
-    if (this.isWhiteLongCastle()
-        && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(0, 0)))) { // rook on a1 and king on e1
-      this.setWhiteLongCastle(false);
-    }
-    if (this.isWhiteShortCastle()
-        && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(7, 0)))) { // rook on h1 and king on e1
-      this.setWhiteShortCastle(false);
-    }
-
-    if (this.isBlackShortCastle()
-        && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(7, 7)))) { // rook on h8 and king on e8
-      this.setBlackShortCastle(false);
-    }
-    if (this.isBlackLongCastle()
-        && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(0, 7)))) { // rook on a8 and king on e8
-      this.setBlackLongCastle(false);
-    }
-    if (getBoardRep().isPawnPromoting(move.getDest().x(), move.getDest().y(), this.getPlayer())) {
-      Piece newPiece = ((PromoteMove) move).getPromPiece();
-      getBoardRep()
-          .promotePawn(
-              move.getDest().x(),
-              move.getDest().y(),
-              this.getPlayer(),
-              newPiece); // replace Piece.QUEEN by newPiece
-    }
-
-    if (isLastMoveDoublePush()) {
-      this.setLastMoveDoublePush(false);
-    }
-
-    if (this.isEnPassantTake()) {
-      this.setLastMoveDoublePush(false);
-    }
+    board.makeMove(move);
   }
 
   /**
@@ -159,16 +60,6 @@ public class Board {
   public Board getCopy() {
     Board copy = new Board();
     copy.setBoard(this.getBoardRep().getCopy());
-    copy.setPlayer(this.getPlayer());
-    copy.setWhiteShortCastle(this.isWhiteShortCastle());
-    copy.setBlackShortCastle(this.isBlackShortCastle());
-    copy.setWhiteLongCastle(this.isWhiteLongCastle());
-    copy.setBlackLongCastle(this.isBlackLongCastle());
-    copy.setEnPassantPos(
-        (this.getEnPassantPos() != null) ? this.getEnPassantPos().getCopy() : null);
-    copy.setLastMoveDoublePush(this.isLastMoveDoublePush());
-    copy.setEnPassantTake(this.isEnPassantTake());
-    copy.setNbMovesWithNoCaptureOrPawn(this.getNbMovesWithNoCaptureOrPawn());
     return copy;
   }
 
@@ -185,55 +76,11 @@ public class Board {
    * @return a 2D array of characters representing the chess board.
    */
   public char[][] getAsciiRepresentation() {
-    int rows = this.getBoardRep().getNbRows();
-    int cols = this.getBoardRep().getNbCols();
-    char[][] charBoard = new char[rows][cols];
-
-    for (int i = 0; i < rows; i++) {
-      Arrays.fill(charBoard[i], Piece.EMPTY.getCharRepresentation(true));
-    }
-
-    for (int i = 0; i < 2; i++) {
-      boolean color = i == 0;
-
-      placePiecesOnBoard(
-          charBoard, this.getBoardRep().getPawns(color), Piece.PAWN.getCharRepresentation(color));
-      placePiecesOnBoard(
-          charBoard, this.getBoardRep().getRooks(color), Piece.ROOK.getCharRepresentation(color));
-      placePiecesOnBoard(
-          charBoard,
-          this.getBoardRep().getKnights(color),
-          Piece.KNIGHT.getCharRepresentation(color));
-      placePiecesOnBoard(
-          charBoard,
-          this.getBoardRep().getBishops(color),
-          Piece.BISHOP.getCharRepresentation(color));
-      placePiecesOnBoard(
-          charBoard, this.getBoardRep().getQueens(color), Piece.QUEEN.getCharRepresentation(color));
-      placePiecesOnBoard(
-          charBoard, this.getBoardRep().getKing(color), Piece.KING.getCharRepresentation(color));
-    }
-
-    return charBoard;
-  }
-
-  /**
-   * Places the pieces on the given board at the given positions. The y-coordinate of the position
-   * is inverted to match the 0-indexed array representation of the board (bottom to top).
-   *
-   * @param board the current ASCII representation of the board
-   * @param positions the positions where the pieces should be placed
-   * @param rep the character to use to represent the pieces
-   */
-  private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {
-    for (Position pos : positions) {
-      board[this.getBoardRep().getNbRows() - 1 - pos.y()][pos.x()] = rep;
-    }
+    return board.getAsciiRepresentation();
   }
 
   public int getNbFullMovesWithNoCaptureOrPawn() {
-    // Divide by 2 because fifty move rule is for full moves
-    return board.getNbMovesWithNoCaptureOrPawn() / 2;
+    return board.getNbFullMovesWithNoCaptureOrPawn();
   }
 
   /**
@@ -256,12 +103,7 @@ public class Board {
    * @param color color for which castling move is applied
    */
   public void applyCastle(Color color, boolean shortCastle) {
-
-    if (shortCastle) {
-      getBoardRep().applyShortCastle(color);
-    } else {
-      getBoardRep().applyLongCastle(color);
-    }
+    board.applyCastle(color, shortCastle);
   }
 
   /**
@@ -270,9 +112,7 @@ public class Board {
    * @return An array that contains castling rights
    */
   public boolean[] getCastlingRights() {
-    return new boolean[] {
-      isWhiteShortCastle(), isWhiteLongCastle(), isBlackShortCastle(), isBlackLongCastle()
-    };
+    return board.getCastlingRights();
   }
 
   private void setBoard(BoardRepresentation board) {
