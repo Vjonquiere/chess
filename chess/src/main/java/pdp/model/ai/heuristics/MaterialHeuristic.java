@@ -14,7 +14,7 @@ public class MaterialHeuristic implements Heuristic {
   private static final float KNIGHT_VALUE = 3f;
   private static final float ROOK_VALUE = 5f;
   private static final float MULTIPLIER =
-      SCORE_CAP / (QUEEN_VALUE * 8 + BISHOP_VALUE * 2 + KNIGHT_VALUE * 2 + ROOK_VALUE * 2);
+      SCORE_CAP / (QUEEN_VALUE * 9 + BISHOP_VALUE * 2 + KNIGHT_VALUE * 2 + ROOK_VALUE * 2);
 
   /**
    * Evaluates the board based on the number of pieces still on the board and returns a score.

@@ -53,10 +53,11 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(4, (int) solver.evaluateBoard(game.getBoard(), false)); // rounded value
+    float expected = 4 * (100f / 103);
+    assertEquals(-expected, solver.evaluateBoard(game.getBoard(), false)); // rounded value
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(4, (int) solver.evaluateBoard(game.getBoard(), true)); // rounded value
+    assertEquals(expected, solver.evaluateBoard(game.getBoard(), true)); // rounded value
   }
 
   @Test

@@ -67,14 +67,11 @@ public class HeuristicsTest {
     board.makeMove(new Move(new Position(4, 1), new Position(4, 3)));
     board.makeMove(new Move(new Position(5, 1), new Position(4, 4)));
 
-    // 2 isolated pawns ( e3 and 4)
-    // 2 doubled pawns --> ({c3-c4} and {e3-e4})
-    // 1 backward pawn
-    // factor -0.5 so (2+2+4)*-0.5
-    assertEquals(-4, solver.evaluateBoard(board, true));
+    float expected = -8 * (100f / 28);
+    assertEquals(expected, solver.evaluateBoard(board, true));
     board.setPlayer(
         false); // to change turn to recalculate (if no change, zobrist takes the previous score)
-    assertEquals(4, solver.evaluateBoard(board, false));
+    assertEquals(-expected, solver.evaluateBoard(board, false));
   }
 
   @Test
@@ -97,7 +94,8 @@ public class HeuristicsTest {
     board.movePiece(new Position(4, 1), new Position(4, 2));
     board.movePiece(new Position(5, 1), new Position(5, 3));
 
-    assertEquals(2, solver.evaluateBoard(game.getBoard(), false));
+    float expected = 4 * (100f / 28);
+    assertEquals(expected, solver.evaluateBoard(game.getBoard(), false));
   }
 
   @Test
@@ -111,7 +109,8 @@ public class HeuristicsTest {
     board.movePiece(new Position(2, 6), new Position(2, 5));
     board.movePiece(new Position(1, 6), new Position(1, 4));
 
-    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
+    float expected = -8 * (100f / 28);
+    assertEquals(expected, solver.evaluateBoard(game.getBoard(), false));
   }
 
   @Test
