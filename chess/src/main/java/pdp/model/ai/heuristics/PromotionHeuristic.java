@@ -7,6 +7,18 @@ import pdp.utils.Position;
 
 /** Heuristic based on the closeness of pawn promotion. */
 public class PromotionHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  private static final float SECOND_LAST_RANK_SCORE = 20f;
+  private static final float FINAL_PHASE_SCORE = 10f;
+  private static final float PROGRESS_SCORE = 10f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLIER =
+      (SCORE_CAP / (8 * SECOND_LAST_RANK_SCORE + 8 * PROGRESS_SCORE));
+
   /**
    * Computes a score according to the closeness of pawns promoting. Heuristic used for endgames.
    *
@@ -16,9 +28,11 @@ public class PromotionHeuristic implements Heuristic {
    */
   @Override
   public float evaluate(final Board board, final boolean isWhite) {
-    int score = 0;
+    float score = 0;
     score += pawnsHaveProgressedScore(board, true) - pawnsHaveProgressedScore(board, false);
     score += pawnsAreCloseToPromotion(board, true) - pawnsAreCloseToPromotion(board, false);
+
+    score *= MULTIPLIER;
 
     return isWhite ? score : -score;
   }
@@ -31,10 +45,10 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score if the pawns were pushed far enough for the majority of them
    */
-  private int pawnsHaveProgressedScore(final Board board, final boolean isWhite) {
-    int score = 0;
+  private float pawnsHaveProgressedScore(final Board board, final boolean isWhite) {
+    float score = 0;
     if (board.getBoardRep().pawnsHaveProgressed(isWhite)) {
-      score += 10;
+      score += PROGRESS_SCORE;
     }
 
     return score;
@@ -47,8 +61,8 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on how many pawns are close to promoting.
    */
-  private int pawnsAreCloseToPromotion(final Board board, final boolean isWhite) {
-    int score = 0;
+  private float pawnsAreCloseToPromotion(final Board board, final boolean isWhite) {
+    float score = 0;
 
     final BoardRepresentation bitboard = board.getBoardRep();
     final List<Position> pawns = bitboard.getPawns(isWhite);
@@ -58,10 +72,10 @@ public class PromotionHeuristic implements Heuristic {
     for (final Position pawn : pawns) {
       if (pawn.y() == secondLastRank) {
         // Pawn one step from promotion
-        score += 20;
+        score += SECOND_LAST_RANK_SCORE;
       } else if ((isWhite && pawn.y() >= 5) || (!isWhite && pawn.y() <= 2)) {
         // Pawn in the final phase of advancement
-        score += 10;
+        score += FINAL_PHASE_SCORE;
       }
     }
 

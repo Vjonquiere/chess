@@ -8,6 +8,14 @@ import pdp.utils.Position;
 /** Heuristic based on the connection of pawns. The more connected the pawns are, the better. */
 public class PawnChainHeuristic implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  private static final float REWARD = 5f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLIER = (SCORE_CAP / (28 * REWARD));
+
   /**
    * Computes a score according to how strong pawns are connected. Heuristic used for endgames.
    *
@@ -17,8 +25,9 @@ public class PawnChainHeuristic implements Heuristic {
    */
   @Override
   public float evaluate(final Board board, final boolean isWhite) {
-    int score = 0;
+    float score = 0;
     score += evaluatePawnChains(board, true) - evaluatePawnChains(board, false);
+    score *= MULTIPLIER;
     return isWhite ? score : -score;
   }
 
@@ -29,9 +38,8 @@ public class PawnChainHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a positive score for pawn chains, 0 otherwise
    */
-  private int evaluatePawnChains(final Board board, final boolean isWhite) {
-    final int reward = 5;
-    int score = 0;
+  private float evaluatePawnChains(final Board board, final boolean isWhite) {
+    float score = 0;
     final BoardRepresentation bitboard = board.getBoardRep();
     final List<Position> pawns = bitboard.getPawns(isWhite);
 
@@ -40,10 +48,11 @@ public class PawnChainHeuristic implements Heuristic {
         if ((Math.abs(otherPawn.x() - pawn.x()) == 1 && Math.abs(otherPawn.y() - (pawn.y())) == 1)
             || (otherPawn.y() == pawn.y() && Math.abs(otherPawn.x() - pawn.x()) == 1)) {
           // Connected pawn
-          score += reward;
+          score += REWARD;
         }
       }
     }
+
     return score;
   }
 }
