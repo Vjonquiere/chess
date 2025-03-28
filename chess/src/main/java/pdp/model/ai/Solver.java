@@ -63,6 +63,9 @@ public class Solver {
   /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
 
+  /** The last move reflexion time in nanoseconds */
+  private long lastMoveTime;
+
   /**
    * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before
    * evaluation.
@@ -320,6 +323,7 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
+    final long startTime = System.nanoTime();
     searchStopped = false;
     isMoveToPlay = true;
     game.setAiPlayedItsLastMove(false);
@@ -328,6 +332,7 @@ public class Solver {
     if (timer != null) {
       timer.stop();
     }
+    lastMoveTime = System.nanoTime() - startTime;
 
     debug(LOGGER, "Best move " + bestMove);
 
@@ -400,5 +405,14 @@ public class Solver {
     }
 
     return score;
+  }
+
+  /**
+   * Get the reflexion time for the last AI move.
+   *
+   * @return A long corresponding to the time in nanoseconds.
+   */
+  public long getLastMoveTime() {
+    return lastMoveTime;
   }
 }

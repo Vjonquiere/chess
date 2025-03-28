@@ -122,6 +122,18 @@ public class Board extends GridPane {
    * @param historyNode The history to extract the move.
    */
   private void movePiece(HistoryNode historyNode) {
+    if (Game.getInstance().getGameState().isWhiteTurn()
+        && Game.getInstance().isBlackAi()
+        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2000000000L) {
+      updateAfterAnimation();
+      return;
+    }
+    if (!Game.getInstance().getGameState().isWhiteTurn()
+        && Game.getInstance().isWhiteAi()
+        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2000000000L) {
+      updateAfterAnimation();
+      return;
+    }
     Move move = historyNode.getState().getMove();
     pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
     pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
@@ -133,7 +145,7 @@ public class Board extends GridPane {
 
     TranslateTransition tt = new TranslateTransition();
     tt.setNode(piece);
-    tt.setDuration(javafx.util.Duration.seconds(5));
+    tt.setDuration(javafx.util.Duration.seconds(0.1));
     tt.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
     tt.setFromY((boardRows - 1 - move.getSource().y()) * squareSize);
     tt.setToX(move.getDest().x() * squareSize + squareSize * 0.25);
