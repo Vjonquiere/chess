@@ -1,0 +1,245 @@
+@startuml
+top to bottom direction
+
+package "Model" #DDDDDD{
+    class Game <<(S,#FF7700)Singleton>>{
+        - Timer timeWhite
+        - Timer timeBlack
+        - boolean isTimed
+        - Board board
+        - History history
+        - Solver solver
+        + boolean isOver()
+        + String getStringHistory()
+        + List<Move> getMovesHistory()
+        + void resetGame()
+    }
+    note left of Game
+        Design Pattern Singleton
+        Design Pattern Observer (Subject)
+    end note
+
+    class History {
+        - Stack<HistoryState> histStack
+        - Stack<HistoryState> revertStack
+        + Optional<HistoryState> getPrevious()
+        + Optional<HistoryState> getNext()
+        + addMove()
+    }
+    
+    class HistoryState {
+      - Board state
+      - Move previousMove
+      + Board getState()
+      + Move getPreviousMove()
+    }
+
+    class Board {
+        - Bitboard[12] board
+        - boolean player
+        - boolean enPassant
+        - boolean whiteShortCastle
+        - boolean blackShortCastle
+        - boolean whiteLongCastle
+        - boolean blackLongCastle
+        + List<Move> getAvailableMoves()
+        + boolean makeMove(Move move)
+        + Board getCopy()
+    }
+
+    class Rules {
+        + {static} List<Move> getAvailableMoves(int x, int y, Board board)
+        + {static} boolean isAttacked(int i, int j, Board board)
+        + {static} boolean isCheck(Board board)
+        + {static} boolean isCheckMate(Board board)
+        + {static} Piece getPieceAt(int i, int j)
+    }
+
+    class Bitboard {
+        - long bitboard
+    }
+
+    class Move {
+        - String move
+        + Piece getPiece()
+        + getOriginalCol()
+        + getOriginalRow()
+        + getTargetCol()
+        + getTargetRow()
+        + Move getReverse()
+        + String toString()
+    }
+
+    interface Piece {
+        + {static} Bitboard getMoveMask(Bitboard pos, Board board)
+    } 
+
+    class Pawn {}
+    class King {}
+    class Queen {}
+    class Rook {}
+    class Bishop {}
+    class Knight {}
+    
+    class Timer {
+        - double timeRemainingGameEvent --> GameEventType
+        + addTime(double time)
+        + startTimer()
+        + stopTimer()
+    }
+
+    package AI {
+        class Solver {
+            - Tree<AINode> aiHistory
+            + Move getBestMove(Board board, String method, String heuristic, double time)
+            - double evaluate(Board board, String heuristic)
+            - Move ab_search(Board board, String heuristic, double time)
+            - Move mtcs_search(Board board, String heuristic, double time)
+        }
+
+        class AINode {
+            - HistoryNode hnode 
+            - double value
+        }
+
+        class HistoryNode {
+        - HistoryState state
+        - HistoryNode parent 
+        - List<HistoryNode> children
+        + addChildren(HistoryNode)
+    }
+    }
+}
+
+package "View" #DDDDDD{
+    interface Vue{
+    + void updateBoard()
+    }
+    class CLIVue implements Vue
+    class GameVue implements Vue
+}
+
+package "Controller" #DDDDDD{
+    class GameController{
+        - model Model
+        - view View
+        - BagOfCommands bagOfCommands
+    }
+  
+    package Commands{
+      interface Command{
+          + execute(GameManager, Controller)
+      }
+        class PlayMoveCommand implements Command{
+            - Position source
+            - Position dest
+        }
+
+        class CancelMoveCommand implements Command{
+        }
+
+        class RestoreMoveCommand implements Command{
+        }
+
+        class RestartGameCommand implements Command{
+        }
+
+        class LoadGameCommand implements Command{
+            - String filepath
+        }
+
+        class SaveGameCommand implements Command{
+            - String filepath
+        }
+    }
+    note bottom of Commands
+        Design Pattern Commands
+    end note
+
+    class BagOfCommands  <<(S,#FF7700)Singleton>>{
+        - BagOfCommands instance
+        - ConcurrentLinkedQueue<Command> commands
+        - GameManager model
+        - Controller controller
+        - boolean isRunning
+        - void processCommands()
+        + BagOfCommands getInstance()
+        + void executeFirst()
+        + void executeAll()
+        + void addCommand(Command)
+        + void setModel(GameManager)
+        + void setController(Controller)
+    }
+    note left of BagOfCommands
+        Design Pattern Bag of Commands
+        Design Pattern Singleton
+    end note
+    
+
+}
+
+package "Events" #DDDDDD{
+    interface Subject {
+        + void addObserver(EventObserver observer)
+        + void removeObserver(EventObserver observer)
+        + void notifyObservers()
+    }
+
+    interface EventObserver {
+        + void onGameEvent()
+    }
+}
+note bottom of Events
+        Design Pattern Observer
+    end note
+
+package "Utils" #DDDDDD{
+
+    class TextGetter <<(S,#FF7700)Singleton>>{
+        - Locale locale
+        - ResourceBundle messages
+        + void init(Locale)
+        + TextGetter getInstance()
+        + String getText(String tag)
+    }
+
+    class Tree<T> {
+        - T root
+    }
+
+    class Position{
+        - int x
+        - int y
+        + int getX()
+        + int getY()
+    }
+}
+
+Main --> GameController
+Game --> History
+Board --> Move
+Game --> Board
+Game --> Solver
+Game --> Timer
+Game ..|> Subject
+Board --> Bitboard
+GameController --> Vue
+GameController --> Game
+History --> HistoryState
+Solver --> Tree
+Solver --> AINode
+Vue ..|> EventObserver
+AINode --> HistoryNode
+Board --> Rules
+
+Piece <|-- Pawn
+Piece <|-- King
+Piece <|-- Queen
+Piece <|-- Rook
+Piece <|-- Bishop
+Piece <|-- Knight
+
+Rules --> Piece
+Piece --> Rules
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml FileSaving
+
+skinparam actorStyle awesome
+"User" as User
+"File System" as FS
+package Chess{
+    usecase "F35. Sauvegarde de l'historique" as F35
+    usecase "F40. Format de fichier simplifié" as F40
+    usecase "F41. Format de l'historique" as F41
+    usecase "F42. Fichier de configuration" as F42
+    usecase "F34. Quitter et sauvegarder une partie" as F34
+    usecase "F36. Naviguer dans l'historique" as F36
+    usecase "F37. Recommencer une partie" as F37
+    usecase "F39. Rejouer une partie" as F39
+    usecase "F51. Affichage des coups joués" as F51
+    usecase "F52. Configuration d'une partie" as F52
+    usecase "F48. Menu Game" as F48
+    usecase "F47. Menu File" as F47
+    usecase "F25. Interface graphique" as F25
+}
+
+User -->F35
+User --> F34
+User --> F36
+User --> F37
+User --> F39
+User --> F52
+
+FS --> F40
+FS--> F41
+FS-->F42
+
+F25 --> F47 : <<include>>
+F25 --> F48 : <<include>>
+F41 --> F35 : <<include>>
+F42 --> F35 : <<include>>
+F40 --> F35 : <<include>>
+
+F35 <.. F34 : <<extend>>
+F35 <.. F36 : <<extend>>
+F35 <.. F37 : <<extend>>
+F35 <.. F39 : <<extend>>
+F35 <.. F51 : <<extend>>
+F35 <.. F52 : <<extend>>
+F35 <.. F48 : <<extend>>
+F35 <.. F47 : <<extend>>
+
+
+@enduml
