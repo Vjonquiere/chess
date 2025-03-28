@@ -173,6 +173,6 @@ public class TreeNodeMonteCarlo {
    */
   public boolean isFullyExpanded() {
     final boolean isWhite = state.isWhiteTurn();
-    return state.getBoard().getBoardRep().getAllAvailableMoves(isWhite).size() == children.size();
+    return state.getBoard().getAllAvailableMoves(isWhite).size() == children.size();
   }
 }

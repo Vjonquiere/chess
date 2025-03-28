@@ -46,7 +46,7 @@ public class PromotionHeuristic implements Heuristic {
    */
   private float pawnsHaveProgressedScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    if (board.getBoardRep().pawnsHaveProgressed(isWhite)) {
+    if (board.pawnsHaveProgressed(isWhite)) {
       score += PROGRESS_SCORE;
     }
 
@@ -63,7 +63,7 @@ public class PromotionHeuristic implements Heuristic {
   private float pawnsAreCloseToPromotion(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
 
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     final List<Position> pawns = bitboard.getPawns(isWhite);
 
     final int secondLastRank = isWhite ? 6 : 1;

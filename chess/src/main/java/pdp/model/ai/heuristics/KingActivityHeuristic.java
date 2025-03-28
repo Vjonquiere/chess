@@ -56,7 +56,7 @@ public class KingActivityHeuristic implements Heuristic {
     final Position posDownLeftCenter = new Position(2, 2);
     final Position posDownRightCenter = new Position(5, 2);
 
-    final Position kingPosition = board.getBoardRep().getKing(isWhite).get(0);
+    final Position kingPosition = board.getKing(isWhite).get(0);
     // Check if the king is close to the center of the board and therefore has easier access to the
     // entire board
     final boolean isKingInCenter =
@@ -91,7 +91,7 @@ public class KingActivityHeuristic implements Heuristic {
    */
   private float kingActivityScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     // Check the activity of the King
     final List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);
     if (kingMoves.size() >= 5) {

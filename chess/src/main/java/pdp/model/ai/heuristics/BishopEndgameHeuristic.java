@@ -58,7 +58,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    */
   private float evaluateBishopMobility(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     final List<Move> bishopMoves = bitboard.retrieveBishopMoves(isWhite);
 
     score += bishopMoves.size() * MOBILITY_SCORE;
@@ -74,7 +74,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    */
   private float evaluateSameColorBishopsSamePlayer(
       final BoardRepresentation board, final boolean isWhite) {
-    final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
+    final List<Position> bishops = board.getBishops(isWhite);
     if (bishops.size() < 2) {
       return 0;
     }
@@ -102,7 +102,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    */
   private float evaluateCentralization(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
+    final List<Position> bishops = board.getBishops(isWhite);
     final int noBonus = 0;
 
     for (final Position bishop : bishops) {
@@ -125,8 +125,8 @@ public class BishopEndgameHeuristic implements Heuristic {
    */
   private float evaluateBadBishop(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final List<Position> bishops = board.getBoardRep().getBishops(isWhite);
-    final List<Position> pawns = board.getBoardRep().getPawns(isWhite);
+    final List<Position> bishops = board.getBishops(isWhite);
+    final List<Position> pawns = board.getPawns(isWhite);
 
     for (final Position bishop : bishops) {
       for (final Position pawn : pawns) {

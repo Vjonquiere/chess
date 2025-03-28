@@ -1375,9 +1375,4 @@ public class BitboardRepresentation implements BoardRepresentation {
       isWhiteShortCastle(), isWhiteLongCastle(), isBlackShortCastle(), isBlackLongCastle()
     };
   }
-
-  @Override
-  public BoardRepresentation getBoardRep() {
-    return this;
-  }
 }

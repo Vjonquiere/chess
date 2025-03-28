@@ -327,12 +327,7 @@ class GameInitializerTest {
 
     assertNotNull(controller);
     assertEquals(
-        controller
-            .getModel()
-            .getBoard()
-            .getBoardRep()
-            .getPieceAt(newPosition.x(), newPosition.y())
-            .getPiece(),
+        controller.getModel().getBoard().getPieceAt(newPosition.x(), newPosition.y()).getPiece(),
         Piece.PAWN);
   }
 
@@ -405,7 +400,7 @@ class GameInitializerTest {
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     options.put(OptionType.LOAD, filePath.getPath());
     GameController controller = GameControllerInit.initialize(options);
-    assertEquals(controller.getModel().getBoard().getBoardRep(), board.board());
+    assertEquals(controller.getModel().getBoard(), board.board());
     assertEquals(controller.getModel().getGameState().isWhiteTurn(), board.isWhiteTurn());
   }
 

@@ -46,11 +46,11 @@ public class DevelopmentHeuristic implements Heuristic {
     final List<List<Position>> currentPlayerPos;
 
     if (isWhite) {
-      initPlayerPos = board.getBoardRep().retrieveInitialWhitePiecesPos();
-      currentPlayerPos = board.getBoardRep().retrieveWhitePiecesPos();
+      initPlayerPos = board.retrieveInitialWhitePiecesPos();
+      currentPlayerPos = board.retrieveWhitePiecesPos();
     } else {
-      initPlayerPos = board.getBoardRep().retrieveInitialBlackPiecesPos();
-      currentPlayerPos = board.getBoardRep().retrieveBlackPiecesPos();
+      initPlayerPos = board.retrieveInitialBlackPiecesPos();
+      currentPlayerPos = board.retrieveBlackPiecesPos();
     }
     // Compare each piece's position to home square position
     // If not on home square, then it is a developed piece

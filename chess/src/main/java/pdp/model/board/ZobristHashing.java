@@ -134,13 +134,13 @@ public class ZobristHashing {
    */
   private long updatePieceHash(
       final long currHash, final BoardRepresentation board, final Move move) {
-    if (!(board.getBoardRep() instanceof BitboardRepresentation)) {
+    if (!(board instanceof BitboardRepresentation)) {
       throw new InvalidBoardException();
     }
     long hash = currHash;
 
-    final int from = move.getSource().x() + move.getSource().y() * board.getBoardRep().getNbRows();
-    final int to = move.getDest().x() + move.getDest().y() * board.getBoardRep().getNbCols();
+    final int from = move.getSource().x() + move.getSource().y() * board.getNbRows();
+    final int to = move.getDest().x() + move.getDest().y() * board.getNbCols();
 
     // Remove piece from its source and add it to the destination
     hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(move.getPiece())][to];
@@ -161,7 +161,7 @@ public class ZobristHashing {
    * @return hash corresponding to the board given in parameters
    */
   public long generateHashFromBitboards(final BoardRepresentation board) {
-    long hash = generatePieceHash(board.getBoardRep());
+    long hash = generatePieceHash(board);
     prevCastlingIndex = translateCastling(board);
     if (prevCastlingIndex != -1) {
       hash ^= CASTLING[prevCastlingIndex];

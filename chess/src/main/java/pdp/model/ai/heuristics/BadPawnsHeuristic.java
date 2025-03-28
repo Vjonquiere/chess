@@ -62,7 +62,7 @@ public class BadPawnsHeuristic implements Heuristic {
   private int doubledPawns(final BoardRepresentation board, final boolean isWhite) {
     final Map<Integer, Integer> colCount = new HashMap<>();
     int count = 0;
-    for (final Position p : board.getBoardRep().getPawns(isWhite)) {
+    for (final Position p : board.getPawns(isWhite)) {
       colCount.put(p.x(), colCount.getOrDefault(p.x(), 0) + 1);
     }
     for (final int c : colCount.keySet()) {
@@ -82,7 +82,7 @@ public class BadPawnsHeuristic implements Heuristic {
    */
   private int isolatedPawns(final BoardRepresentation board, final boolean isWhite) {
     final Set<Integer> occupiedFiles = new HashSet<>();
-    final List<Position> pawns = board.getBoardRep().getPawns(isWhite);
+    final List<Position> pawns = board.getPawns(isWhite);
     for (final Position p : pawns) {
       occupiedFiles.add(p.x());
     }
@@ -110,7 +110,7 @@ public class BadPawnsHeuristic implements Heuristic {
    * @return score based on the number of backward pawns
    */
   private int backwardsPawns(final BoardRepresentation board, final boolean isWhite) {
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     final List<Position> pawns = bitboard.getPawns(isWhite);
     final List<Position> enemyPawns = bitboard.getPawns(!isWhite);
 

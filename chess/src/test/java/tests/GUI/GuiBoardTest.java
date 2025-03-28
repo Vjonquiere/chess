@@ -60,18 +60,15 @@ public class GuiBoardTest extends ApplicationTest {
     Game.initialize(false, false, null, null, null, options);
     Platform.runLater(() -> board.updateBoard());
     assertEquals(
-        new ColoredPiece(Piece.PAWN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 1));
+        new ColoredPiece(Piece.PAWN, Color.WHITE), Game.getInstance().getBoard().getPieceAt(0, 1));
     Square square1 = lookup("#square01").query();
     Square square2 = lookup("#square02").query();
     clickOn(square1);
     clickOn(square2);
     assertEquals(
-        new ColoredPiece(Piece.EMPTY, Color.EMPTY),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 1));
+        new ColoredPiece(Piece.EMPTY, Color.EMPTY), Game.getInstance().getBoard().getPieceAt(0, 1));
     assertEquals(
-        new ColoredPiece(Piece.PAWN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 2));
+        new ColoredPiece(Piece.PAWN, Color.WHITE), Game.getInstance().getBoard().getPieceAt(0, 2));
   }
 
   /*@Test
@@ -85,17 +82,17 @@ public class GuiBoardTest extends ApplicationTest {
     clickOn(square02);
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 6));
+        Game.getInstance().getBoard().getPieceAt(0, 6));
     Square square1 = lookup("#square06").query();
     Square square2 = lookup("#square03").query();
     clickOn(square1);
     clickOn(square2);
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 6));
+        Game.getInstance().getBoard().getPieceAt(0, 6));
     assertEquals(
         new ColoredPiece(Piece.EMPTY, Color.EMPTY),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 3));
+        Game.getInstance().getBoard().getPieceAt(0, 3));
   }
 
   @Test
@@ -105,28 +102,28 @@ public class GuiBoardTest extends ApplicationTest {
     Platform.runLater(() -> board.updateBoard());
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(5, 1));
+        Game.getInstance().getBoard().getPieceAt(5, 1));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 1));
+        Game.getInstance().getBoard().getPieceAt(6, 1));
     Square square1 = lookup("#square51").query();
     Square square2 = lookup("#square61").query();
     clickOn(square1);
     clickOn(square2);
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(5, 1));
+        Game.getInstance().getBoard().getPieceAt(5, 1));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 1));
+        Game.getInstance().getBoard().getPieceAt(6, 1));
     Square square3 = lookup("#square63").query();
     clickOn(square3);
     assertEquals(
         new ColoredPiece(Piece.EMPTY, Color.EMPTY),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 1));
+        Game.getInstance().getBoard().getPieceAt(6, 1));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 3));
+        Game.getInstance().getBoard().getPieceAt(6, 3));
   }
 
   @Test
@@ -139,28 +136,28 @@ public class GuiBoardTest extends ApplicationTest {
 
     assertEquals(
         new ColoredPiece(Piece.ROOK, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 7));
+        Game.getInstance().getBoard().getPieceAt(0, 7));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 6));
+        Game.getInstance().getBoard().getPieceAt(6, 6));
     Square square1 = lookup("#square07").query();
     Square square2 = lookup("#square66").query();
     clickOn(square1);
     clickOn(square2);
     assertEquals(
         new ColoredPiece(Piece.ROOK, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(0, 7));
+        Game.getInstance().getBoard().getPieceAt(0, 7));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 6));
+        Game.getInstance().getBoard().getPieceAt(6, 6));
     Square square3 = lookup("#square65").query();
     clickOn(square3);
     assertEquals(
         new ColoredPiece(Piece.EMPTY, Color.EMPTY),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 6));
+        Game.getInstance().getBoard().getPieceAt(6, 6));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 5));
+        Game.getInstance().getBoard().getPieceAt(6, 5));
   }
 
   @Test
@@ -172,7 +169,7 @@ public class GuiBoardTest extends ApplicationTest {
     Square square2 = lookup("#square05").query(); // click on empty square
     clickOn(square1);
     clickOn(square2);
-    assertEquals(new BitboardRepresentation(), Game.getInstance().getBoard().getBoardRep());
+    assertEquals(new BitboardRepresentation(), Game.getInstance().getBoard());
   }
 
   @Test
@@ -184,7 +181,7 @@ public class GuiBoardTest extends ApplicationTest {
     Square square2 = lookup("#square05").query(); // click on empty square
     clickOn(square1);
     clickOn(square2);
-    assertEquals(new BitboardRepresentation(), Game.getInstance().getBoard().getBoardRep());
+    assertEquals(new BitboardRepresentation(), Game.getInstance().getBoard());
   }
 
   @Test
@@ -205,7 +202,7 @@ public class GuiBoardTest extends ApplicationTest {
     clickOn(vb);
     assertEquals(
         new ColoredPiece(Piece.ROOK, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 7));
+        Game.getInstance().getBoard().getPieceAt(6, 7));
   }
 
   @Test
@@ -226,7 +223,7 @@ public class GuiBoardTest extends ApplicationTest {
     clickOn(vb);
     assertEquals(
         new ColoredPiece(Piece.BISHOP, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 7));
+        Game.getInstance().getBoard().getPieceAt(6, 7));
   }
 
   @Test
@@ -247,7 +244,7 @@ public class GuiBoardTest extends ApplicationTest {
     clickOn(vb);
     assertEquals(
         new ColoredPiece(Piece.KNIGHT, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 7));
+        Game.getInstance().getBoard().getPieceAt(6, 7));
   }
 
   @Test
@@ -268,7 +265,7 @@ public class GuiBoardTest extends ApplicationTest {
     clickOn(vb);
     assertEquals(
         new ColoredPiece(Piece.QUEEN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(6, 7));
+        Game.getInstance().getBoard().getPieceAt(6, 7));
   }
 
   @Test
@@ -289,7 +286,7 @@ public class GuiBoardTest extends ApplicationTest {
     clickOn(vb);
     assertEquals(
         new ColoredPiece(Piece.QUEEN, Color.WHITE),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(7, 7));
+        Game.getInstance().getBoard().getPieceAt(7, 7));
   }
 
   @Test
@@ -310,6 +307,6 @@ public class GuiBoardTest extends ApplicationTest {
     clickOn(vb);
     assertEquals(
         new ColoredPiece(Piece.QUEEN, Color.BLACK),
-        Game.getInstance().getBoard().getBoardRep().getPieceAt(1, 0));
+        Game.getInstance().getBoard().getPieceAt(1, 0));
   }*/
 }

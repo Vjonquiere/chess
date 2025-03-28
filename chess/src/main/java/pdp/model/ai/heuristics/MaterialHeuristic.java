@@ -29,7 +29,7 @@ public class MaterialHeuristic implements Heuristic {
    */
   @Override
   public float evaluate(final BoardRepresentation board, final boolean isWhite) {
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRep)) {
+    if (!(board instanceof BitboardRepresentation bitboardRep)) {
       throw new InvalidBoardException();
     }
     float score = 0;

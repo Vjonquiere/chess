@@ -243,7 +243,6 @@ public class GameStateTest {
     GameState gameState = spy(new GameState());
     BoardRepresentation board = mock(BoardRepresentation.class);
     when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(board);
     when(board.hasEnoughMaterialToMate(false)).thenReturn(false);
     gameState.playerOutOfTime(true);
 
@@ -257,7 +256,6 @@ public class GameStateTest {
     GameState gameState = spy(new GameState());
     BoardRepresentation board = mock(BoardRepresentation.class);
     when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(board);
     when(board.hasEnoughMaterialToMate(true)).thenReturn(false);
     gameState.playerOutOfTime(false);
 

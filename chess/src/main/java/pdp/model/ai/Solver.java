@@ -384,7 +384,7 @@ public class Solver {
     final Color player = isWhite ? Color.WHITE : Color.BLACK;
 
     if (Game.getInstance().getGameState().isThreefoldRepetition()
-        || board.getBoardRep().isStaleMate(player, player)
+        || board.isStaleMate(player, player)
         || board.getNbFullMovesWithNoCaptureOrPawn() >= 50) {
       score = 0;
     }

@@ -139,6 +139,4 @@ public interface BoardRepresentation {
   void applyCastle(Color color, boolean shortCastle);
 
   boolean[] getCastlingRights();
-
-  BoardRepresentation getBoardRep();
 }

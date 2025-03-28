@@ -753,7 +753,7 @@ public final class Game extends GameAbstract {
     final String board =
         BoardSaver.saveBoard(
             new FileBoard(
-                this.getBoard().getBoardRep(),
+                this.getBoard(),
                 this.getGameState().isWhiteTurn(),
                 new FenHeader(
                     castlingRights[0],

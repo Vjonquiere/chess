@@ -24,7 +24,7 @@ public class MobilityHeuristic implements Heuristic {
     // realistic maximum of moves is 100 (can be more in specific positions)
 
     float score = 0;
-    if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
+    if (board instanceof BitboardRepresentation bitBoard) {
       score +=
           (bitBoard.getColorMoveBitboard(true).bitCount()
                   - bitBoard.getColorMoveBitboard(false).bitCount())
@@ -35,8 +35,7 @@ public class MobilityHeuristic implements Heuristic {
     }
 
     score +=
-        (board.getBoardRep().getAllAvailableMoves(isWhite).size()
-                - board.getBoardRep().getAllAvailableMoves(!isWhite).size())
+        (board.getAllAvailableMoves(isWhite).size() - board.getAllAvailableMoves(!isWhite).size())
             * MOVE_VALUE;
 
     score = Math.min(score, SCORE_CAP); // cap to 100

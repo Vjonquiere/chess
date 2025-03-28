@@ -39,7 +39,7 @@ public class PawnChainHeuristic implements Heuristic {
    */
   private float evaluatePawnChains(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     final List<Position> pawns = bitboard.getPawns(isWhite);
 
     for (final Position pawn : pawns) {

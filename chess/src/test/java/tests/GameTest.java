@@ -67,13 +67,13 @@ public class GameTest {
     BitboardRepresentation bitboards = new BitboardRepresentation();
     game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
     bitboards.movePiece(new Position(0, 1), new Position(0, 2));
-    assertEquals(game.getBoard().getBoardRep(), bitboards);
+    assertEquals(game.getBoard(), bitboards);
 
     // Play move only in game
     game.playMove(new Move(new Position(1, 6), new Position(1, 5)));
-    assertNotEquals(game.getBoard().getBoardRep(), bitboards);
+    assertNotEquals(game.getBoard(), bitboards);
     bitboards.movePiece(new Position(1, 6), new Position(1, 5)); // Play move in bitboards
-    assertEquals(game.getBoard().getBoardRep(), bitboards);
+    assertEquals(game.getBoard(), bitboards);
 
     // Tests to add
     // 6. try a move that is not a classical or special move
@@ -91,7 +91,7 @@ public class GameTest {
     bitboards.deletePieceAt(1, 6);
     bitboards.movePiece(new Position(0, 1), new Position(1, 5));
     bitboards.movePiece(new Position(0, 6), new Position(0, 5));
-    assertEquals(bitboards, game.getBoard().getBoardRep());
+    assertEquals(bitboards, game.getBoard());
   }
 
   @Test
@@ -119,7 +119,7 @@ public class GameTest {
     game.playMove(new Move(new Position(1, 1), new Position(1, 3)));
     BitboardRepresentation bitboards = new BitboardRepresentation();
     bitboards.movePiece(new Position(1, 1), new Position(1, 3));
-    assertEquals(bitboards, game.getBoard().getBoardRep());
+    assertEquals(bitboards, game.getBoard());
   }
 
   @Test
@@ -362,7 +362,7 @@ public class GameTest {
   public void testCheckGameStatusDrawByInsufficientMaterial() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -385,7 +385,7 @@ public class GameTest {
   public void testCheckGameStatusStaleMate() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -430,7 +430,7 @@ public class GameTest {
   public void testCheckGameStatusFiftyMoveRule() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initWhiteRookPos = new Position(7, 0);
@@ -587,7 +587,7 @@ public class GameTest {
     String board =
         BoardSaver.saveBoard(
             new FileBoard(
-                game.getBoard().getBoardRep(),
+                game.getBoard(),
                 game.getBoard().getPlayer(),
                 new FenHeader(true, true, true, true, null, 0, 0)));
 
@@ -613,7 +613,7 @@ public class GameTest {
     String board =
         BoardSaver.saveBoard(
             new FileBoard(
-                game.getBoard().getBoardRep(),
+                game.getBoard(),
                 game.getBoard().getPlayer(),
                 new FenHeader(true, true, true, true, new Position(4, 2), 0, 1)));
 
@@ -644,15 +644,12 @@ public class GameTest {
         game.getGameState().isWhiteTurn(),
         Game.initialize(true, false, s, s, null, new HashMap<>()).getGameState().isWhiteTurn());
     assertNotEquals(
-        game.getGameState().getBoard().getBoardRep(),
-        Game.initialize(true, false, s, s, null, new HashMap<>())
-            .getGameState()
-            .getBoard()
-            .getBoardRep());
-    BitboardRepresentation bitboard = (BitboardRepresentation) game.getBoard().getBoardRep();
+        game.getGameState().getBoard(),
+        Game.initialize(true, false, s, s, null, new HashMap<>()).getGameState().getBoard());
+    BitboardRepresentation bitboard = (BitboardRepresentation) game.getBoard();
     // Ai white and Black's turn
     game.startAi();
-    assertEquals(game.getGameState().getBoard().getBoardRep(), bitboard);
+    assertEquals(game.getGameState().getBoard(), bitboard);
 
     game = Game.initialize(false, true, s, s, null, new HashMap<>());
     game.startAi();
@@ -661,11 +658,8 @@ public class GameTest {
         game.getGameState().isWhiteTurn(),
         Game.initialize(false, true, s, s, null, new HashMap<>()).getGameState().isWhiteTurn());
     assertEquals(
-        game.getGameState().getBoard().getBoardRep(),
-        Game.initialize(false, true, s, s, null, new HashMap<>())
-            .getGameState()
-            .getBoard()
-            .getBoardRep());
+        game.getGameState().getBoard(),
+        Game.initialize(false, true, s, s, null, new HashMap<>()).getGameState().getBoard());
   }
 
   @Test

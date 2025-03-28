@@ -62,7 +62,7 @@ public class Minimax implements SearchAlgorithm {
 
     final boolean isMinimizing = currentPlayer != originalPlayer;
     AiMove bestMove = new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;

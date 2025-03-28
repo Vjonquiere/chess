@@ -308,9 +308,4 @@ public class DummyBoardRepresentation implements BoardRepresentation {
   public boolean[] getCastlingRights() {
     return new boolean[4];
   }
-
-  @Override
-  public BoardRepresentation getBoardRep() {
-    return this;
-  }
 }

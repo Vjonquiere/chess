@@ -54,7 +54,7 @@ public class SpaceControlHeuristic implements Heuristic {
    */
   private float evaluateBoardControl(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
+    final List<Move> allPossibleMoves = board.getAllAvailableMoves(isWhite);
 
     for (final Move move : allPossibleMoves) {
       final Position posDest = move.getDest();

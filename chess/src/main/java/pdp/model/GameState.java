@@ -290,7 +290,7 @@ public class GameState extends Subject {
    * @param isWhite boolean corresponding to the players color
    */
   public void playerOutOfTime(boolean isWhite) {
-    if (!this.getBoard().getBoardRep().hasEnoughMaterialToMate(!isWhite)) {
+    if (!this.getBoard().hasEnoughMaterialToMate(!isWhite)) {
       this.isGameOver = true;
       debug(LOGGER, "End of game : Loss on time + insufficient material, Draw");
       if (isWhite) {
@@ -450,7 +450,7 @@ public class GameState extends Subject {
       return;
     }
     // Checkmate
-    if (board.getBoardRep().isCheckMate(currColor)) {
+    if (board.isCheckMate(currColor)) {
       this.isGameOver = true;
       if (currColor == Color.WHITE) {
         debug(LOGGER, "End of game : Checkmate, Black won");
@@ -464,7 +464,7 @@ public class GameState extends Subject {
       return;
     }
     // Stalemate
-    if (board.getBoardRep().isStaleMate(currColor, currColor)) {
+    if (board.isStaleMate(currColor, currColor)) {
       this.isGameOver = true;
       debug(LOGGER, "End of game : Stale mate, Draw");
       notifyObservers(EventType.STALEMATE);
@@ -472,7 +472,7 @@ public class GameState extends Subject {
       return;
     }
     // Draw by insufficient material
-    if (board.getBoardRep().isDrawByInsufficientMaterial()) {
+    if (board.isDrawByInsufficientMaterial()) {
       debug(LOGGER, "End of game : Insufficient material, Draw");
       this.isGameOver = true;
       notifyObservers(EventType.INSUFFICIENT_MATERIAL);
