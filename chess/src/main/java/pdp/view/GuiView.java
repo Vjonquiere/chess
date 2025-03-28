@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -122,6 +123,23 @@ public class GuiView implements View {
     if (board != null) {
       board.setStage(stage);
     }
+    stage
+        .widthProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              if (board != null) {
+                board.buildBoard();
+              }
+            });
+    stage
+        .heightProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              if (board != null) {
+                board.buildBoard();
+              }
+            });
+
     this.stage = stage;
   }
 
@@ -168,6 +186,7 @@ public class GuiView implements View {
                 }
                 board = new Board(Game.getInstance(), stage);
                 root.setLeft(board);
+                BorderPane.setAlignment(board, Pos.CENTER_LEFT);
                 debug(LOGGER, "Board view initialized");
                 if (controlPanel != null) {
                   root.getChildren().remove(controlPanel);
