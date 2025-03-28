@@ -16,7 +16,11 @@ import pdp.utils.Position;
 public class BadPawnsHeuristic implements Heuristic {
 
   /** Penalty for the backward pawns. */
-  private static final int PENALTY_FOR_BACKWARDS_PAWN = 4;
+  private static final int PENALTY_FOR_BACKWARDS_PAWN = -4;
+
+  private static final int PENALTY_FOR_ISOLATED_PAWN = -1;
+
+  private static final int PENALTY_FOR_DOUBLED_PAWN = -1;
 
   /**
    * Computes a score according to the potential weaknesses in the observed pawn structures.
@@ -28,10 +32,11 @@ public class BadPawnsHeuristic implements Heuristic {
   @Override
   public float evaluate(final Board board, final boolean isWhite) {
     int score = 0;
-    score += doubledPawns(board, true) - doubledPawns(board, false);
-    score += isolatedPawns(board, true) - isolatedPawns(board, false);
-    score += backwardsPawns(board, true) - backwardsPawns(board, false);
-    return isWhite ? (int) (-0.5 * score) : (int) (-0.5 * -score);
+    score += (doubledPawns(board, true) - doubledPawns(board, false)) * PENALTY_FOR_DOUBLED_PAWN;
+    score += (isolatedPawns(board, true) - isolatedPawns(board, false)) * PENALTY_FOR_ISOLATED_PAWN;
+    score +=
+        (backwardsPawns(board, true) - backwardsPawns(board, false)) * PENALTY_FOR_BACKWARDS_PAWN;
+    return isWhite ? score : -score;
   }
 
   /**
@@ -150,6 +155,6 @@ public class BadPawnsHeuristic implements Heuristic {
       }
     }
 
-    return count * PENALTY_FOR_BACKWARDS_PAWN;
+    return count;
   }
 }

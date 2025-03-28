@@ -13,20 +13,13 @@ import org.junit.jupiter.api.Test;
 import pdp.model.Game;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
-import pdp.model.ai.heuristics.BishopEndgameHeuristic;
-import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.ai.heuristics.Heuristic;
-import pdp.model.ai.heuristics.KingActivityHeuristic;
-import pdp.model.ai.heuristics.KingOppositionHeuristic;
-import pdp.model.ai.heuristics.KingSafetyHeuristic;
-import pdp.model.ai.heuristics.PawnChainHeuristic;
-import pdp.model.ai.heuristics.PromotionHeuristic;
 import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
-public class HeuristicTests {
+public class HeuristicsTest {
   Game game;
   Solver solver;
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -234,82 +227,55 @@ public class HeuristicTests {
   public void testPromotionHeuristic() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.PROMOTION);
     Heuristic heuristic = solver.getHeuristic();
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof PromotionHeuristic) {
-          float scoreWhenGameStarts = 0f;
-          assertEquals(scoreWhenGameStarts, Math.abs(h.evaluate(game.getBoard(), true)));
-          assertEquals(scoreWhenGameStarts, Math.abs(h.evaluate(game.getBoard(), false)));
-        }
-      }
-    }
+    float scoreWhenGameStarts = 0f;
+    assertEquals(scoreWhenGameStarts, Math.abs(heuristic.evaluate(game.getBoard(), true)));
+    assertEquals(scoreWhenGameStarts, Math.abs(heuristic.evaluate(game.getBoard(), false)));
   }
 
   @Test
   public void testKingActivityHeuristic() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_ACTIVITY);
     Heuristic heuristic = solver.getHeuristic();
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingActivityHeuristic) {
-          float scoreWhenGameStartsBlack = -10;
-          float scoreWhenGameStartsWhite = 10;
-          assertEquals(scoreWhenGameStartsBlack, h.evaluate(game.getBoard(), false));
-          assertEquals(scoreWhenGameStartsWhite, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    float scoreWhenGameStartsBlack = -10;
+    float scoreWhenGameStartsWhite = 10;
+    assertEquals(scoreWhenGameStartsBlack, heuristic.evaluate(game.getBoard(), false));
+    assertEquals(scoreWhenGameStartsWhite, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testKingSafetyHeuristic() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_SAFETY);
     Heuristic heuristic = solver.getHeuristic();
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingSafetyHeuristic) {
-          float scoreWhenGameStartsIsBalanced = 0f;
-          assertEquals(scoreWhenGameStartsIsBalanced, Math.abs(h.evaluate(game.getBoard(), false)));
-        }
-      }
-    }
+    float scoreWhenGameStartsIsBalanced = 0f;
+    assertEquals(
+        scoreWhenGameStartsIsBalanced, Math.abs(heuristic.evaluate(game.getBoard(), false)));
   }
 
   @Test
   public void testKingSafetyHeuristicToChecks() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_SAFETY);
     Heuristic heuristic = solver.getHeuristic();
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingSafetyHeuristic) {
-          int scoreWhenGameStartsIsBalanced = 0;
-          assertEquals(scoreWhenGameStartsIsBalanced, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    int scoreWhenGameStartsIsBalanced = 0;
+    assertEquals(scoreWhenGameStartsIsBalanced, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testBishopEndgameHeuristic() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -336,80 +302,52 @@ public class HeuristicTests {
     board.movePiece(initWhiteBishopPos, e4);
     board.movePiece(initBlackBishopPos, e5);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof BishopEndgameHeuristic) {
-          // Expected score in this position
-          int expectedScoreBlack = -2;
-          assertEquals(expectedScoreBlack, h.evaluate(game.getBoard(), false));
-        }
-      }
-    }
+    // Expected score in this position
+    float expectedScoreBlack = -2f * (100f / 96);
+    assertEquals(expectedScoreBlack, heuristic.evaluate(game.getBoard(), false));
   }
 
   @Test
   public void testBishopEndgameHeuristicTwoBishops() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof BishopEndgameHeuristic) {
-          // Expected score in this position
-          int expectedScoreWhenGameStartsWhite = 2;
-          assertEquals(expectedScoreWhenGameStartsWhite, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score in this position
+    float expectedScoreWhenGameStartsWhite = 2f * (100f / 96);
+    assertEquals(expectedScoreWhenGameStartsWhite, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testPawnChainsHeuristicWhenGameStarts() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.PAWN_CHAIN);
     Heuristic heuristic = solver.getHeuristic();
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof PawnChainHeuristic) {
-          // Expected score
-          int expectedScoreWhenGameStarts = 0;
-          assertEquals(expectedScoreWhenGameStarts, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score
+    int expectedScoreWhenGameStarts = 0;
+    assertEquals(expectedScoreWhenGameStarts, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testKingOppositionHeuristic() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_OPPOSITION);
     Heuristic heuristic = solver.getHeuristic();
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingOppositionHeuristic) {
-          // Expected score
-          int expectedScore = 0;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score
+    int expectedScore = 0;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testKingOppositionHeuristicStrongOpposition() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_OPPOSITION);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -432,23 +370,16 @@ public class HeuristicTests {
     board.movePiece(initWhiteKingPos, e4);
     board.movePiece(initBlackKingPos, e6);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingOppositionHeuristic) {
-          // Expected score
-          float expectedScore = -50;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score
+    float expectedScore = -50;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testBishopEndgameHeuristicSameColorBishopOpponent() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -475,23 +406,15 @@ public class HeuristicTests {
     board.movePiece(initWhiteBishopPos, e4);
     board.movePiece(initBlackBishopPos, e2);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof BishopEndgameHeuristic) {
-          // Expected score in this position
-          int expectedScore = 4;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    float expectedScore = 4f * (100f / 96);
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testBishopEndgameHeuristicSameColorBishopSamePlayer() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -518,23 +441,16 @@ public class HeuristicTests {
     board.movePiece(initWhiteBishopPos1, e4);
     board.movePiece(initWhiteBishopPos2, e2);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof BishopEndgameHeuristic) {
-          // Expected score in this position
-          int expectedScore = 18;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score in this position
+    float expectedScore = 18f * (100f / 96);
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testKingOppositionHeuristicDiagonal() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_OPPOSITION);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -556,24 +472,16 @@ public class HeuristicTests {
 
     board.movePiece(initWhiteKingPos, e4);
     board.movePiece(initBlackKingPos, c6);
-
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingOppositionHeuristic) {
-          // Expected score in this position
-          float expectedScore = -25f;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score in this position
+    float expectedScore = -25f;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testKingSafetyHeuristicInCenter() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_SAFETY);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -596,23 +504,16 @@ public class HeuristicTests {
     board.movePiece(initWhiteKingPos, e4);
     board.movePiece(initBlackKingPos, e6);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingSafetyHeuristic) {
-          // Expected score in this position
-          int expectedScore = 0;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score in this position
+    int expectedScore = 0;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testKingActivityHeuristicKingHasManyMoves() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.KING_ACTIVITY);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -635,23 +536,16 @@ public class HeuristicTests {
     board.movePiece(initWhiteKingPos, b2);
     board.movePiece(initBlackKingPos, g7);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof KingActivityHeuristic) {
-          // Expected score in this position
-          float expectedScore = 10;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score in this position
+    float expectedScore = 10;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testPawnChainsHeuristic() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.PAWN_CHAIN);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -688,23 +582,16 @@ public class HeuristicTests {
     board.movePiece(e7, e6);
     board.movePiece(g7, g6);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof PawnChainHeuristic) {
-          // Expected score
-          int expectedScore = 0;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score
+    int expectedScore = 0;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
   public void testPawnPromotionHeuristicCloseToPromotion() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver = new Solver();
-    solver.setHeuristic(HeuristicType.ENDGAME);
+    solver.setHeuristic(HeuristicType.PROMOTION);
     Heuristic heuristic = solver.getHeuristic();
 
     BoardRepresentation board = game.getBoard().getBoardRep();
@@ -741,16 +628,9 @@ public class HeuristicTests {
     board.movePiece(f7, f3);
     board.movePiece(h7, h3);
 
-    if (heuristic instanceof EndGameHeuristic) {
-      List<Heuristic> heuristics = ((EndGameHeuristic) heuristic).getHeuristics();
-      for (Heuristic h : heuristics) {
-        if (h instanceof PromotionHeuristic) {
-          // Expected score
-          int expectedScore = 0;
-          assertEquals(expectedScore, h.evaluate(game.getBoard(), true));
-        }
-      }
-    }
+    // Expected score
+    int expectedScore = 0;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test

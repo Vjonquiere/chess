@@ -66,7 +66,6 @@ public class DevelopmentHeuristic implements Heuristic {
       }
     }
 
-    // max score 29
     score *= MULTIPLIER;
 
     return score;
