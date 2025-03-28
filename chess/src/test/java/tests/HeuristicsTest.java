@@ -14,7 +14,6 @@ import pdp.model.Game;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.Heuristic;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
@@ -59,7 +58,7 @@ public class HeuristicsTest {
   @Test
   public void BadPawnsTest() {
     solver.setHeuristic(HeuristicType.BAD_PAWNS);
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
     assertEquals(0, solver.evaluateBoard(board, true));
     board.makeMove(new Move(new Position(0, 1), new Position(0, 4)));
     board.makeMove(new Move(new Position(2, 1), new Position(2, 3)));
@@ -77,7 +76,7 @@ public class HeuristicsTest {
   @Test
   public void BadPawnsTestBackWardsPawnsOnlyOnePawn() {
     solver.setHeuristic(HeuristicType.BAD_PAWNS);
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     board.movePiece(new Position(1, 1), new Position(1, 2));
     board.movePiece(new Position(1, 6), new Position(1, 5));
@@ -88,7 +87,7 @@ public class HeuristicsTest {
   @Test
   public void BadPawnsTestBackWardsPawnsNoDoubledPawns() {
     solver.setHeuristic(HeuristicType.BAD_PAWNS);
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     board.movePiece(new Position(3, 1), new Position(3, 3));
     board.movePiece(new Position(4, 1), new Position(4, 2));
@@ -101,7 +100,7 @@ public class HeuristicsTest {
   @Test
   public void BadPawnsTestBackWardsPawnsTwoForBlack() {
     solver.setHeuristic(HeuristicType.BAD_PAWNS);
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     board.movePiece(new Position(3, 6), new Position(3, 4));
     board.movePiece(new Position(4, 6), new Position(4, 5));
@@ -116,7 +115,7 @@ public class HeuristicsTest {
   @Test
   public void testSpaceControlHeuristicFourPawnsEachSide() {
     solver.setHeuristic(HeuristicType.SPACE_CONTROL);
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -156,7 +155,7 @@ public class HeuristicsTest {
   @Test
   public void testSpaceControlHeuristicBishopsAimCenter() {
     solver.setHeuristic(HeuristicType.SPACE_CONTROL);
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -277,7 +276,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initWhiteBishopPos = new Position(5, 0);
@@ -349,7 +348,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.KING_OPPOSITION);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -381,7 +380,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initWhiteBishopPos = new Position(5, 0);
@@ -416,7 +415,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.BISHOP_ENDGAME);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initWhiteBishopPos1 = new Position(5, 0);
@@ -452,7 +451,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.KING_OPPOSITION);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -483,7 +482,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.KING_SAFETY);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -515,7 +514,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.KING_ACTIVITY);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     Position initWhiteKingPos = new Position(4, 0);
     Position initBlackKingPos = new Position(4, 7);
@@ -547,7 +546,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.PAWN_CHAIN);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     // white pawns
     Position a2 = new Position(0, 1);
@@ -593,7 +592,7 @@ public class HeuristicsTest {
     solver.setHeuristic(HeuristicType.PROMOTION);
     Heuristic heuristic = solver.getHeuristic();
 
-    BoardRepresentation board = game.getBoard().getBoardRep();
+    BoardRepresentation board = game.getBoard();
 
     // white pawns
     Position a2 = new Position(0, 1);

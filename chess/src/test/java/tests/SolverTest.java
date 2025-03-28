@@ -16,7 +16,7 @@ import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.*;
 import pdp.model.board.Move;
 import pdp.utils.Position;
-import tests.helpers.MockBoard;
+import tests.helpers.DummyBoardRepresentation;
 
 public class SolverTest {
   private Solver solver;
@@ -75,7 +75,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationErrorBoardNonBitboardRepresentation() {
-    MockBoard board = new MockBoard();
+    DummyBoardRepresentation board = new DummyBoardRepresentation();
 
     solver.setHeuristic(HeuristicType.MATERIAL);
 

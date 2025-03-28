@@ -1,7 +1,6 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
@@ -24,7 +23,7 @@ public class PawnChainHeuristic implements Heuristic {
    * @return a score depending on the solidity of the pawn chains
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     score += evaluatePawnChains(board, true) - evaluatePawnChains(board, false);
     score *= MULTIPLIER;
@@ -38,9 +37,9 @@ public class PawnChainHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a positive score for pawn chains, 0 otherwise
    */
-  private float evaluatePawnChains(final Board board, final boolean isWhite) {
+  private float evaluatePawnChains(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     final List<Position> pawns = bitboard.getPawns(isWhite);
 
     for (final Position pawn : pawns) {

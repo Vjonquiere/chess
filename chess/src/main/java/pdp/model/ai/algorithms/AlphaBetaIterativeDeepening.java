@@ -57,8 +57,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
     this.stoppedEarly = false;
 
     AiMove bestMove = null;
-    final List<Move> rootMoves =
-        new ArrayList<>(game.getBoard().getBoardRep().getAllAvailableMoves(player));
+    final List<Move> rootMoves = new ArrayList<>(game.getBoard().getAllAvailableMoves(player));
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -119,7 +118,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
 
     List<Move> moves = orderedMoves;
     if (moves == null) {
-      moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+      moves = game.getBoard().getAllAvailableMoves(currentPlayer);
     }
 
     if (orderedMoves == null) {
@@ -165,8 +164,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
   }
 
   private int evaluateMove(final Move move, final Game game) {
-    final ColoredPiece target =
-        game.getBoard().getBoardRep().getPieceAt(move.getDest().x(), move.getDest().y());
+    final ColoredPiece target = game.getBoard().getPieceAt(move.getDest().x(), move.getDest().y());
     int score = 0;
     switch (target.getPiece()) {
       case PAWN:

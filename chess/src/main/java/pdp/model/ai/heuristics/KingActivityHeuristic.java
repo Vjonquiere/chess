@@ -1,7 +1,6 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
@@ -29,7 +28,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @return score according to the activity of the king
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     int score = 0;
     score += kingIsInCenterScore(board, true) - kingIsInCenterScore(board, false);
     score += kingActivityScore(board, true) - kingActivityScore(board, false);
@@ -48,7 +47,7 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the location of the king on the board
    */
-  private float kingIsInCenterScore(final Board board, final boolean isWhite) {
+  private float kingIsInCenterScore(final BoardRepresentation board, final boolean isWhite) {
     final float score;
 
     // Delineate center box
@@ -57,7 +56,7 @@ public class KingActivityHeuristic implements Heuristic {
     final Position posDownLeftCenter = new Position(2, 2);
     final Position posDownRightCenter = new Position(5, 2);
 
-    final Position kingPosition = board.getBoardRep().getKing(isWhite).get(0);
+    final Position kingPosition = board.getKing(isWhite).get(0);
     // Check if the king is close to the center of the board and therefore has easier access to the
     // entire board
     final boolean isKingInCenter =
@@ -90,9 +89,9 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the activity of the king
    */
-  private float kingActivityScore(final Board board, final boolean isWhite) {
+  private float kingActivityScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     // Check the activity of the King
     final List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);
     if (kingMoves.size() >= 5) {

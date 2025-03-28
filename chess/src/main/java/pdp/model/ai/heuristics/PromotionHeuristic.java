@@ -1,7 +1,6 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
@@ -27,7 +26,7 @@ public class PromotionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     score += pawnsHaveProgressedScore(board, true) - pawnsHaveProgressedScore(board, false);
     score += pawnsAreCloseToPromotion(board, true) - pawnsAreCloseToPromotion(board, false);
@@ -45,9 +44,9 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score if the pawns were pushed far enough for the majority of them
    */
-  private float pawnsHaveProgressedScore(final Board board, final boolean isWhite) {
+  private float pawnsHaveProgressedScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    if (board.getBoardRep().pawnsHaveProgressed(isWhite)) {
+    if (board.pawnsHaveProgressed(isWhite)) {
       score += PROGRESS_SCORE;
     }
 
@@ -61,10 +60,10 @@ public class PromotionHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on how many pawns are close to promoting.
    */
-  private float pawnsAreCloseToPromotion(final Board board, final boolean isWhite) {
+  private float pawnsAreCloseToPromotion(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
 
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
     final List<Position> pawns = bitboard.getPawns(isWhite);
 
     final int secondLastRank = isWhite ? 6 : 1;

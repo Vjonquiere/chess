@@ -1,7 +1,7 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
 /** Heuristic based on the development (advancement) of pieces. */
@@ -25,7 +25,7 @@ public class DevelopmentHeuristic implements Heuristic {
    * @return a score based on the development of each player
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     final float score =
         evaluatePiecesDevelopment(board, true) - evaluatePiecesDevelopment(board, false);
     return isWhite ? score : -score;
@@ -39,18 +39,18 @@ public class DevelopmentHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on the development of each player
    */
-  private float evaluatePiecesDevelopment(final Board board, final boolean isWhite) {
+  private float evaluatePiecesDevelopment(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
 
     final List<List<Position>> initPlayerPos;
     final List<List<Position>> currentPlayerPos;
 
     if (isWhite) {
-      initPlayerPos = board.getBoardRep().retrieveInitialWhitePiecesPos();
-      currentPlayerPos = board.getBoardRep().retrieveWhitePiecesPos();
+      initPlayerPos = board.retrieveInitialWhitePiecesPos();
+      currentPlayerPos = board.retrieveWhitePiecesPos();
     } else {
-      initPlayerPos = board.getBoardRep().retrieveInitialBlackPiecesPos();
-      currentPlayerPos = board.getBoardRep().retrieveBlackPiecesPos();
+      initPlayerPos = board.retrieveInitialBlackPiecesPos();
+      currentPlayerPos = board.retrieveBlackPiecesPos();
     }
     // Compare each piece's position to home square position
     // If not on home square, then it is a developed piece

@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
-import pdp.model.board.Board;
+import pdp.model.board.BitboardRepresentation;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
@@ -23,7 +24,7 @@ public class GameState extends Subject {
   private static int nMoveRule = 50;
 
   /** Chess board of the current state. */
-  private Board board;
+  private BoardRepresentation board;
 
   /** Timer for the blitz. */
   private Timer moveTimer;
@@ -96,7 +97,7 @@ public class GameState extends Subject {
   public GameState() {
     super();
     this.gameOver = false;
-    this.board = new Board();
+    this.board = new BitboardRepresentation();
     this.moveTimer = null;
     this.fullTurnNumber = 0;
   }
@@ -109,7 +110,7 @@ public class GameState extends Subject {
   public GameState(final Timer timer) {
     super();
     this.gameOver = false;
-    this.board = new Board();
+    this.board = new BitboardRepresentation();
     this.moveTimer = timer;
     this.fullTurnNumber = 0;
   }
@@ -122,7 +123,7 @@ public class GameState extends Subject {
   public GameState(final FileBoard board) {
     super();
     this.gameOver = false;
-    this.board = new Board(board);
+    this.board = new BitboardRepresentation(board);
     this.moveTimer = null;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
@@ -136,7 +137,7 @@ public class GameState extends Subject {
     super();
     Logging.configureLogging(LOGGER);
     this.gameOver = false;
-    this.board = new Board(board);
+    this.board = new BitboardRepresentation(board);
     this.moveTimer = timer;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
@@ -160,7 +161,7 @@ public class GameState extends Subject {
    *
    * @return current board
    */
-  public Board getBoard() {
+  public BoardRepresentation getBoard() {
     return board;
   }
 
@@ -339,7 +340,7 @@ public class GameState extends Subject {
    * @param isWhite boolean corresponding to the players color
    */
   public void playerOutOfTime(final boolean isWhite) {
-    if (!this.getBoard().getBoardRep().hasEnoughMaterialToMate(!isWhite)) {
+    if (!this.getBoard().hasEnoughMaterialToMate(!isWhite)) {
       this.gameOver = true;
       debug(LOGGER, "End of game : Loss on time + insufficient material, Draw");
       if (isWhite) {
@@ -497,7 +498,7 @@ public class GameState extends Subject {
       return;
     }
     // Checkmate
-    if (board.getBoardRep().isCheckMate(currColor)) {
+    if (board.isCheckMate(currColor)) {
       this.gameOver = true;
       if (currColor == Color.WHITE) {
         debug(LOGGER, "End of game : Checkmate, Black won");
@@ -511,7 +512,7 @@ public class GameState extends Subject {
       return;
     }
     // Stalemate
-    if (board.getBoardRep().isStaleMate(currColor, currColor)) {
+    if (board.isStaleMate(currColor, currColor)) {
       this.gameOver = true;
       debug(LOGGER, "End of game : Stale mate, Draw");
       notifyObservers(EventType.STALEMATE);
@@ -519,7 +520,7 @@ public class GameState extends Subject {
       return;
     }
     // Draw by insufficient material
-    if (board.getBoardRep().isDrawByInsufficientMaterial()) {
+    if (board.isDrawByInsufficientMaterial()) {
       debug(LOGGER, "End of game : Insufficient material, Draw");
       this.gameOver = true;
       notifyObservers(EventType.INSUFFICIENT_MATERIAL);

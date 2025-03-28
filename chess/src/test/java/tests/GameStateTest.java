@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import pdp.events.EventType;
 import pdp.model.*;
 import pdp.model.board.BitboardRepresentation;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
@@ -242,11 +241,9 @@ public class GameStateTest {
   @Test
   public void testWhitePlayerDrawOnTime() {
     GameState gameState = spy(new GameState());
-    Board board = mock(Board.class);
-    BoardRepresentation boardRep = mock(BoardRepresentation.class);
+    BoardRepresentation board = mock(BoardRepresentation.class);
     when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(boardRep);
-    when(boardRep.hasEnoughMaterialToMate(false)).thenReturn(false);
+    when(board.hasEnoughMaterialToMate(false)).thenReturn(false);
     gameState.playerOutOfTime(true);
 
     assertTrue(gameState.isGameOver());
@@ -257,11 +254,9 @@ public class GameStateTest {
   @Test
   public void testBlackPlayerDrawOnTime() {
     GameState gameState = spy(new GameState());
-    Board board = mock(Board.class);
-    BoardRepresentation boardRep = mock(BoardRepresentation.class);
+    BoardRepresentation board = mock(BoardRepresentation.class);
     when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(boardRep);
-    when(boardRep.hasEnoughMaterialToMate(true)).thenReturn(false);
+    when(board.hasEnoughMaterialToMate(true)).thenReturn(false);
     gameState.playerOutOfTime(false);
 
     assertTrue(gameState.isGameOver());

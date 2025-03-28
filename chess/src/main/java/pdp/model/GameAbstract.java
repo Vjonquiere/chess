@@ -12,7 +12,7 @@ import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
@@ -135,7 +135,7 @@ public abstract class GameAbstract extends Subject {
    *
    * @return Board of the GameState
    */
-  public Board getBoard() {
+  public BoardRepresentation getBoard() {
     return this.gameState.getBoard();
   }
 
@@ -188,9 +188,9 @@ public abstract class GameAbstract extends Subject {
     final Position sourcePosition = move.getSource();
     final Position destPosition = move.getDest();
     final ColoredPiece coloredPiece =
-        gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
+        gameState.getBoard().getPieceAt(sourcePosition.x(), sourcePosition.y());
 
-    if (gameState.getBoard().getBoardRep().isCheckAfterMove(currentColor, move)) {
+    if (gameState.getBoard().isCheckAfterMove(currentColor, move)) {
       debug(LOGGER, "Move puts the king in check: " + move);
       throw new IllegalMoveException(move.toString());
     }
@@ -231,10 +231,7 @@ public abstract class GameAbstract extends Subject {
    */
   protected boolean validatePieceOwnership(
       final GameState gameState, final Position sourcePosition) {
-    return gameState
-        .getBoard()
-        .getBoardRep()
-        .validatePieceOwnership(gameState.isWhiteTurn(), sourcePosition);
+    return gameState.getBoard().validatePieceOwnership(gameState.isWhiteTurn(), sourcePosition);
   }
 
   /**
@@ -260,7 +257,7 @@ public abstract class GameAbstract extends Subject {
    */
   protected boolean isCastleMove(
       final ColoredPiece coloredPiece, final Position source, final Position dest) {
-    return getBoard().getBoardRep().isCastleMove(coloredPiece, source, dest);
+    return getBoard().isCastleMove(coloredPiece, source, dest);
   }
 
   /**
@@ -269,9 +266,7 @@ public abstract class GameAbstract extends Subject {
    * @return true if we're in an endgame (according to the chosen criterias)
    */
   public boolean isEndGamePhase() {
-    return getBoard()
-        .getBoardRep()
-        .isEndGamePhase(getGameState().getFullTurn(), getGameState().isWhiteTurn());
+    return getBoard().isEndGamePhase(getGameState().getFullTurn(), getGameState().isWhiteTurn());
   }
 
   /**
@@ -352,7 +347,6 @@ public abstract class GameAbstract extends Subject {
    */
   public boolean isPromotionMove(final Move move) {
     return getBoard()
-        .getBoardRep()
         .isPromotionMove(
             move.getSource().x(),
             move.getSource().y(),

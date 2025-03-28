@@ -1,7 +1,7 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
@@ -38,7 +38,7 @@ public class SpaceControlHeuristic implements Heuristic {
    * @return a score corresponding to the overall control of the board
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     score += evaluateBoardControl(board, true) - evaluateBoardControl(board, false);
 
@@ -54,9 +54,9 @@ public class SpaceControlHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on board control
    */
-  private float evaluateBoardControl(final Board board, final boolean isWhite) {
+  private float evaluateBoardControl(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
+    final List<Move> allPossibleMoves = board.getAllAvailableMoves(isWhite);
 
     for (final Move move : allPossibleMoves) {
       final Position posDest = move.getDest();

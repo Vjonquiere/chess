@@ -1,7 +1,6 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
@@ -25,7 +24,7 @@ public class KingSafetyHeuristic implements Heuristic {
    * @return score according to the safety of the king
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
     score += kingVulnerabilityScore(board, true) - kingVulnerabilityScore(board, false);
     score += kingProtectionScore(board, true) - kingProtectionScore(board, false);
@@ -40,7 +39,7 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a penalty score (negative) if the king is in the center, 0 otherwise
    */
-  private float kingVulnerabilityScore(final Board board, final boolean isWhite) {
+  private float kingVulnerabilityScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
 
     // Define center area
@@ -49,7 +48,7 @@ public class KingSafetyHeuristic implements Heuristic {
     final Position posDownLeftCenter = new Position(2, 2);
     final Position posDownRightCenter = new Position(5, 2);
 
-    final Position kingPosition = board.getBoardRep().getKing(isWhite).get(0);
+    final Position kingPosition = board.getKing(isWhite).get(0);
 
     final boolean isKingInCenter =
         kingPosition.x() >= posDownLeftCenter.x()
@@ -72,9 +71,9 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a positive score if the king has friendly pieces nearby, 0 otherwise
    */
-  private float kingProtectionScore(final Board board, final boolean isWhite) {
+  private float kingProtectionScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
 
     final Position kingPos = bitboard.getKing(isWhite).get(0);
 
@@ -112,10 +111,11 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a negative score if the king can get checked, positive otherwise
    */
-  private float kingSafetyToChecksFromEnemy(final Board board, final boolean isWhite) {
+  private float kingSafetyToChecksFromEnemy(
+      final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
 
-    final BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
 
     if (isWhite) {
       // Test for white king

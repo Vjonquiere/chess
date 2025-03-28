@@ -1,7 +1,7 @@
 package pdp.model.ai.heuristics;
 
 import pdp.model.board.BitboardRepresentation;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 
 /** Heuristic based on the number of moves available for each player. */
 public class MobilityHeuristic implements Heuristic {
@@ -19,12 +19,12 @@ public class MobilityHeuristic implements Heuristic {
    * @return score of the board
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
 
     // realistic maximum of moves is 100 (can be more in specific positions)
 
     float score = 0;
-    if (board.getBoardRep() instanceof BitboardRepresentation bitBoard) {
+    if (board instanceof BitboardRepresentation bitBoard) {
       score +=
           (bitBoard.getColorMoveBitboard(true).bitCount()
                   - bitBoard.getColorMoveBitboard(false).bitCount())
@@ -35,8 +35,7 @@ public class MobilityHeuristic implements Heuristic {
     }
 
     score +=
-        (board.getBoardRep().getAllAvailableMoves(isWhite).size()
-                - board.getBoardRep().getAllAvailableMoves(!isWhite).size())
+        (board.getAllAvailableMoves(isWhite).size() - board.getAllAvailableMoves(!isWhite).size())
             * MOVE_VALUE;
 
     score = Math.min(score, SCORE_CAP); // cap to 100
