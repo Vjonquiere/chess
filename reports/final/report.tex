@@ -85,19 +85,68 @@
 \pagebreak
 \begin{abstract}
     Les images fournies dans le rapport sont parfois petites.
-    Elles sont disponibles dans le dossier \textit{reports/preliminary/res}
+    Elles sont disponibles dans le dossier \textit{reports/final/res}
     sur notre repository GitLab.
  \end{abstract}
-\section{Contexte du sujet}
-\subsection{Sujet choisi}
-Nous avons choisi le sujet '\textit{les échecs}' car nous avons abordé ce jeu
-plusieurs fois et dans différentes disciplines. Nous avions par exemple illustré un 
-cours d'intelligence artificielle au semestre dernier avec celui-ci, mais 
-également un cours d'algorithmie par le passé. Nous avons donc quelques connaissances 
-utiles pour réaliser certains des besoins et qui nous permettent plus généralement de ne pas
-découvrir entièrement le sujet.
 
-\subsection{Existant}
+
+\section{Description de l'existant}
+\subsection{Origine des Échecs}
+Le jeu d’échecs, aussi appelé le jeu des Rois, est un jeu de stratégie dans lequel deux joueurs s’affrontent,
+et le but est de faire échec et mat, c’est-à-dire arriver dans une position où il est possible de capturer
+le Roi adverse et donc gagner la partie après n’importe quel coup joué par notre opposant (hormis capturer notre roi).
+Le jeu d’échecs se joue sur un échiquier, un plateau de 8 lignes et 8 colonnes, 64 cases au total avec des pièces
+caractérisées par certaines propriétés uniques. De manière compétitive, le jeu d'échecs effectue un classement
+basé sur un système de points, appelés "Élo". Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
+à répartir ces joueurs en catégories. Pour donner un ordre d'idée, le champion du monde possède un Élo aux alentours de 2900,
+tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Élos. Ce système d'Élo
+va notamment nous permettre d'approximer le niveau de notre Intelligence Artificielle développée dans le cadre de ce projet.\\
+Les origines de ce jeu sont sombres, mais la légende la plus célèbre raconte que le précepteur d’un jeune prince en Inde
+voulait simplifier les mécanismes de la société et inventa ainsi un échiquier avec des pièces, chacune jouant un rôle précis,
+avec le Roi, la pièce maîtresse. Le prince fut alors émerveillé et en gage de remerciements, il demanda à son précepteur ce
+qu’il souhaitait avoir comme présent. Ce dernier répondit qu’il voulait 1 grain de riz sur la première case, 2 grains de riz
+sur la deuxième, 4 grains de riz sur la troisième, etc. jusqu’à la dernière case. Sur la 64ème case, il avait donc
+2 puissance 63 grains de riz, soit de quoi recouvrir le pays entier avec une couche de riz.
+
+\subsection{Variantes du jeu d'échecs}
+À travers les années, les échecs ont été popularisés et ont donné naissance à de nombreuses variantes. Parmi les plus connues, on trouve :
+\begin{itemize}
+    \item Les échecs aléatoires de Fischer (Chess960) : Une variante inventée par Bobby Fischer où la position initiale des pièces est aléatoire,
+    favorisant la créativité au détriment de la mémorisation des ouvertures.
+    \item Les échecs Capablanca : Une version jouée sur un échiquier plus grand (10x8) avec des pièces supplémentaires comme l'archer et le chancelier.
+    \item Les échecs japonais : Le Shôgi, où contrairement aux échecs occidentaux, la partie se termine dès que le roi est capturé, ou lorsque l'un
+    des deux joueurs abandonne. Il n'y a pas d'échec et mat à proprement parler.
+\end{itemize}
+Notre projet concerne les échecs classiques, ou traditionnels. On peut considérer que l'on admet une variation: celle du Blitz, si ce mode
+est vu comme une variante.
+
+\subsection{L’évolution des chess engines}
+L’intelligence artificielle a pris une place très importante dans le jeu d'échecs, à tel point que les échecs
+sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on retrouve :
+\begin{itemize}
+    \item Deep Blue : Programme célèbre pour avoir battu Garry Kasparov en 1997, marquant la première victoire d'un ordinateur contre un
+    champion du monde des échecs en match officiel.
+    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé sur notamment une évaluation positionnelle
+    grâce à des heuristiques avancées et des optimisations algorithmiques.
+    \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
+    modèle AlphaZero de Google DeepMind.
+\end{itemize}
+Ces chess engines sont aujourd’hui utilisés pour analyser des parties, préparer des parties, et même aider les
+joueurs humains à progresser. Au jeu d'échecs, l'Intelligence Artificielle est notamment connue pour être très agressive.
+Il est aujourd'hui impossible pour un humain de gagner contre le meilleur ordinateur aux échecs (autour des 3600 Élos).
+
+\subsection{Moments clés dans l’histoire des échecs}
+Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment deux très connues que voici :
+\begin{itemize}
+    \item Fischer vs. Spassky (1972) : Ce duel de la Guerre Froide a opposé l’Américain Bobby Fischer au Soviétique
+    Boris Spassky. Fischer a remporté le championnat du monde, mettant fin à l'interminable domination des soviétiques
+    aux échecs. Les États-Unis ressortent ainsi victorieux face à l'URSS.
+    \item Kasparov vs. Karpov (1984-1985) : Un des matchs les plus longs de l’histoire, où Anatoli Karpov et Garry Kasparov
+    se sont affrontés pendant des mois avant que le match soit interrompu sans vainqueur, puis rejoué et remporté par Kasparov.
+\end{itemize}
+Ces événements ont façonné l’histoire du jeu. La perception des échecs dans la culture populaire a changé et de nombreuses
+personnes se sont mises à jouer.
+
 Les échecs étant un jeu universel, ils ont été étudiés et un grand nombre de papiers scientifiques
 sont disponibles. Ceux-ci nous seront très utiles tout au long du projet, car ils concernent des
 besoins différents. Tout d'abord une grande partie des papiers que nous allons utiliser sont en rapport
@@ -113,56 +162,6 @@ nos recherches sur la représentation du jeu d'échecs par les bitmaps (plateau,
 Pour finir, nous avons utilisé un papier plus général, mais contenant des informations sur le développement
 d'un moteur d'échecs en java \cite{PaulDailly}. Nous nous servons également des deux articles présents sur 
 notre repository Gitlab, \cite{Bitboards} et \cite{GameBitboards}, qui concernent aussi les Bitboards.
-
-\subsection{Langage de programmation choisi}
-Avec ce sujet, nous avions 3 choix de langage possibles :
-\begin{itemize}
-    \item Le langage C
-    \item Le Java
-    \item Le Python
-\end{itemize}
-Même si nous avons dû faire un choix rapidement, nous avons d'abord développé les
-avantages et inconvenants de chacun de ces langages. De plus, nous nous étions mis
-d'accord sur quelques besoins essentiels auquel certains des langages ci-dessus 
-n'aurait pas (ou difficilement) pu répondre.
-Tout d'abord nous souhaitions pouvoir développer notre logiciel sous forme de modules
-complémentaires, pour plusieurs raisons.
-\begin{itemize}
-    \item Nous avons convenu de baser les 8 semaines de code en se concentrant sur 
-    des blocs de 2 semaines avec, pour chaque bloc, une liste de 2 ou 3 modules à développer.
-    \item Isoler les bugs dans chaque module afin d'avoir moins de problèmes lors de la fusion
-    des modules.
-    \item Facilité de maintien. Avec 8 semaines de code, il est essentiel que nous possédions
-    un logiciel organisé afin de ne pas avoir à `fouiller' dans le code écrit la première semaine
-    lors de la finalisation du projet.
-    \item Utilisation de la programmation objet. Même s'il n'y a pas d'extension de prévue,
-    ce paradigme est le plus simple et adopté lors du développement d'un jeu.
-\end{itemize}
-
-\subsubsection{Langage C}
-La première option qui nous était proposée été le langage C. Le projet contenant des besoins posant
-des contraintes de performances (cf. besoin), ce langage a donc semblé être une bonne idée, car il est
-de loin celui permettant d'obtenir un logiciel performant. Cependant, celui-ci ne proposant pas de 
-possibilité de développement objet, nous aurions dû faire une grosse concession dès le choix du langage.
-De plus, la gestion de la mémoire étant à la charge du développeur, nous aurions pu rester bloqué un temps
-précieux sur un pointeur mal alloué. Cette gestion de la mémoire apporte également le problème des fuites
-mémoire qui demandent, elle aussi, parfois beaucoup de travail pour être résolues.
-
-\subsubsection{Python}
-Nous pouvions également utiliser \textit{Python} pour réaliser ce projet. Cependant, le fait que ce langage
-soit non typé a vite écarté ce choix. En effet, les types étant vérifiés directement à l'exécution, il est
-beaucoup plus dangereux d'avoir une ligne non couverte par un test (il faut donc un coverage maximal). Il y
-a donc le danger de laisser des erreurs de typages qui ne sont découverte uniquement lorsqu'une partie du code
-est exécutée après la livraison du code.
-
-\subsubsection{Java}
-Nous avons donc fini par opter pour \textit{Java}. En effet, il permet tout comme \textit{Python} de faire
-de la programmation objet, mais avec plus de rigueur. Étant conçu pour le développement objet, il y a moins
-de chance de mélanger plusieurs paradigmes et de se retrouver avec un code mi-objet/mi-impératif. De plus,
-le typage statique permet d'avoir une meilleure stabilité grâce à la détection des erreurs de types à la 
-compilation et permet également d'avoir un code plus prévisible. Enfin, les plus projets réalisés en licence
-et en master étant souvent des projets java, tous les membres du groupe connaissent ce langage ainsi que ses
-outils et environnements de développement. Cela permettra de gagner du temps lors de la mise en place du projet. 
 
 \section{Explication du sujet}
 \subsection{Règles du jeu}
