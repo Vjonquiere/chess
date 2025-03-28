@@ -322,8 +322,8 @@ public class GameTest {
     game.playMove(Move.fromString("f2-f4"));
     game.playMove(Move.fromString("e7-e6"));
 
-    game.getGameState().blackWantsToDraw();
-    game.getGameState().whiteWantsToDraw();
+    game.getGameState().doesBlackWantsToDraw();
+    game.getGameState().doesWhiteWantsToDraw();
 
     game.playMove(Move.fromString("a2-a3"));
 

@@ -76,6 +76,7 @@ public abstract class GameAbstract extends Subject {
    */
   public GameAbstract(
       final GameState gameState, final History history, final Map<Long, Integer> stateCount) {
+    super();
     this.gameState = gameState;
     this.history = history;
     this.stateCount = stateCount;
@@ -94,6 +95,7 @@ public abstract class GameAbstract extends Subject {
       final History history,
       final HashMap<Long, Integer> stateCount,
       final ZobristHashing zobristHashing) {
+    super();
     this.gameState = gameState;
     this.history = history;
     this.stateCount = stateCount;
@@ -122,11 +124,10 @@ public abstract class GameAbstract extends Subject {
         debug(LOGGER, "State with hash " + hash + " has been repeated 3 times");
         return true;
       }
-      return false;
     } else {
       this.stateCount.put(hash, 1);
-      return false;
     }
+    return false;
   }
 
   /**
@@ -181,13 +182,12 @@ public abstract class GameAbstract extends Subject {
    * @param move The move to be executed.
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
-  protected void processMove(final GameState gameState, final Move move)
-      throws IllegalMoveException {
+  protected void processMove(final GameState gameState, final Move move) {
     final Color currentColor = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
 
-    Position sourcePosition = move.getSource();
-    Position destPosition = move.getDest();
-    ColoredPiece coloredPiece =
+    final Position sourcePosition = move.getSource();
+    final Position destPosition = move.getDest();
+    final ColoredPiece coloredPiece =
         gameState.getBoard().getBoardRep().getPieceAt(sourcePosition.x(), sourcePosition.y());
 
     if (gameState.getBoard().getBoardRep().isCheckAfterMove(currentColor, move)) {
@@ -211,7 +211,7 @@ public abstract class GameAbstract extends Subject {
 
     if (coloredPiece.getPiece() == Piece.PAWN
         && Math.abs(destPosition.y() - sourcePosition.y()) == 2) {
-      Position enPassantPos =
+      final Position enPassantPos =
           new Position(destPosition.x(), (sourcePosition.y() + destPosition.y()) / 2);
       gameState.getBoard().setEnPassantPos(enPassantPos);
       gameState.getBoard().setLastMoveDoublePush(true);
@@ -244,7 +244,7 @@ public abstract class GameAbstract extends Subject {
    * @throws InvalidPromoteFormatException If the move is a promotion move but not of PromoteMove
    *     type.
    */
-  protected void validatePromotionMove(final Move move) throws InvalidPromoteFormatException {
+  protected void validatePromotionMove(final Move move) {
     if (this.isPromotionMove(move) && !(move instanceof PromoteMove)) {
       throw new InvalidPromoteFormatException();
     }
@@ -291,16 +291,16 @@ public abstract class GameAbstract extends Subject {
    *
    * @throws FailedUndoException if no previous move exists.
    */
-  public void previousState() throws FailedUndoException {
+  public void previousState() {
     this.gameState.undoRequestReset();
 
     final Optional<HistoryNode> currentNode = this.history.getCurrentMove();
-    if (!currentNode.isPresent()) {
+    if (currentNode.isEmpty()) {
       throw new FailedUndoException();
     }
 
     final Optional<HistoryNode> previousNode = currentNode.get().getPrevious();
-    if (!previousNode.isPresent()) {
+    if (previousNode.isEmpty()) {
       throw new FailedUndoException();
     }
     // update zobrist to avoid threefold
@@ -323,16 +323,16 @@ public abstract class GameAbstract extends Subject {
    *
    * @throws FailedRedoException if no next move exists.
    */
-  public void nextState() throws FailedRedoException {
+  public void nextState() {
     this.gameState.redoRequestReset();
 
     final Optional<HistoryNode> currentNode = this.history.getCurrentMove();
-    if (!currentNode.isPresent()) {
+    if (currentNode.isEmpty()) {
       throw new FailedRedoException();
     }
 
     final Optional<HistoryNode> nextNode = currentNode.get().getNext();
-    if (!nextNode.isPresent()) {
+    if (nextNode.isEmpty()) {
       throw new FailedRedoException();
     }
 

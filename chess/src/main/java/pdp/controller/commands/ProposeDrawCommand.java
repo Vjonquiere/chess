@@ -38,9 +38,9 @@ public class ProposeDrawCommand implements Command {
       return Optional.of(new CommandNotAvailableNowException());
     }
     if (isWhite) {
-      model.getGameState().whiteWantsToDraw();
+      model.getGameState().doesWhiteWantsToDraw();
     } else {
-      model.getGameState().blackWantsToDraw();
+      model.getGameState().doesBlackWantsToDraw();
     }
     return Optional.empty();
   }
