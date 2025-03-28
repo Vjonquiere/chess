@@ -7,10 +7,12 @@ import static pdp.view.gui.themes.ColorTheme.GREY;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.net.URL;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -76,12 +78,17 @@ public class GuiView implements View {
     String text;
     final String path = "";
     try {
-      // TODO: allow user to give his css file
+      // TODO: allow user to give his CSS file
       text = new BoardFileParser().readFile(path);
     } catch (FileNotFoundException e) {
       try {
-        final URL filePath = GuiView.class.getClassLoader().getResource("styles/sample.css");
-        text = new BoardFileParser().readFile(filePath.getPath());
+        InputStream inputStream =
+            GuiView.class.getClassLoader().getResourceAsStream("styles/sample.css");
+        if (inputStream == null) {
+          throw new FileNotFoundException("CSS file not found in resources.");
+        }
+
+        text = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         text = text.replace("#000001", theme.getPrimary());
         text = text.replace("#000002", theme.getSecondary());
         text = text.replace("#000003", theme.getTertiary());
@@ -106,7 +113,7 @@ public class GuiView implements View {
   }
 
   /**
-   * Retrives the current color theme of the app.
+   * Retrieves the current color theme of the app.
    *
    * @return field theme
    */
@@ -152,6 +159,23 @@ public class GuiView implements View {
     if (board != null) {
       board.setStage(stage);
     }
+    stage
+        .widthProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              if (board != null) {
+                board.buildBoard();
+              }
+            });
+    stage
+        .heightProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              if (board != null) {
+                board.buildBoard();
+              }
+            });
+
     this.stage = stage;
   }
 
@@ -180,9 +204,9 @@ public class GuiView implements View {
   @Override
   public void onGameEvent(final EventType event) {
     debug(LOGGER, "View received event " + event);
-    if (!Platform.isFxApplicationThread() && !isInitailized()) {
+    if (!Platform.isFxApplicationThread() && !isInitialized()) {
       debug(LOGGER, "Init GUI thread");
-      setInitailized(true);
+      setInitialized(true);
       Platform.startup(() -> Platform.runLater(() -> this.onGameEvent(event)));
     }
     Platform.runLater(
@@ -198,6 +222,7 @@ public class GuiView implements View {
                 }
                 board = new Board(Game.getInstance(), stage);
                 root.setLeft(board);
+                BorderPane.setAlignment(board, Pos.CENTER_LEFT);
                 debug(LOGGER, "Board view initialized");
                 if (controlPanel != null) {
                   root.getChildren().remove(controlPanel);
@@ -370,7 +395,7 @@ public class GuiView implements View {
    *
    * @return true if the view is initialized, false otherwise.
    */
-  public boolean isInitailized() {
+  public boolean isInitialized() {
     return initailized;
   }
 
@@ -379,7 +404,7 @@ public class GuiView implements View {
    *
    * @param init true if the view is initialized, false otherwise.
    */
-  public void setInitailized(final boolean init) {
+  public void setInitialized(final boolean init) {
     this.initailized = init;
   }
 }

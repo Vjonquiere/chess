@@ -26,6 +26,7 @@ import pdp.model.ai.heuristics.KingSafetyHeuristic;
 import pdp.model.ai.heuristics.MaterialHeuristic;
 import pdp.model.ai.heuristics.MobilityHeuristic;
 import pdp.model.ai.heuristics.PawnChainHeuristic;
+import pdp.model.ai.heuristics.PromotionHeuristic;
 import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
@@ -62,6 +63,9 @@ public class Solver {
 
   /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
+
+  /** The last move reflexion time in nanoseconds. */
+  private long lastMoveTime;
 
   /**
    * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before
@@ -141,6 +145,7 @@ public class Solver {
       case STANDARD -> this.heuristic = new StandardHeuristic();
       case STANDARD_LIGHT -> this.heuristic = new StandardLightHeuristic();
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
+      case PROMOTION -> this.heuristic = new PromotionHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     this.currentHeuristic = heuristic;
@@ -157,29 +162,17 @@ public class Solver {
    * @param heuristic The heuristic to use.
    */
   public void setHeuristic(final HeuristicType heuristic, final List<Float> weight) {
-    switch (heuristic) {
-      case MATERIAL -> this.heuristic = new MaterialHeuristic();
-      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
-      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
-      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
-      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
-      case MOBILITY -> this.heuristic = new MobilityHeuristic();
-      case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
-      case SHANNON -> this.heuristic = new ShannonBasic();
-      case GAME_STATUS -> this.heuristic = new GameStatus();
-      case KING_ACTIVITY -> this.heuristic = new KingActivityHeuristic();
-      case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
-      case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
-      case STANDARD -> this.heuristic = new StandardHeuristic(weight);
-      case ENDGAME -> this.heuristic = new EndGameHeuristic();
-      default -> throw new IllegalArgumentException("No heuristic is set");
+    if (heuristic == HeuristicType.STANDARD) {
+      this.heuristic = new StandardHeuristic(weight);
+      if (this.startHeuristic == null) {
+        this.startHeuristic = heuristic;
+      }
+      evaluatedBoards = new ConcurrentHashMap<>();
+      this.currentHeuristic = heuristic;
+      debug(LOGGER, "Heuristic set to: " + this.heuristic);
+    } else {
+      setHeuristic(heuristic);
     }
-    evaluatedBoards = new ConcurrentHashMap<>();
-    this.currentHeuristic = heuristic;
-    if (this.startHeuristic == null) {
-      this.startHeuristic = heuristic;
-    }
-    debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
   /**
@@ -320,6 +313,7 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
+    final long startTime = System.nanoTime();
     searchStopped = false;
     isMoveToPlay = true;
     game.setAiPlayedItsLastMove(false);
@@ -328,6 +322,7 @@ public class Solver {
     if (timer != null) {
       timer.stop();
     }
+    lastMoveTime = System.nanoTime() - startTime;
 
     debug(LOGGER, "Best move " + bestMove);
 
@@ -400,5 +395,14 @@ public class Solver {
     }
 
     return score;
+  }
+
+  /**
+   * Get the reflexion time for the last AI move.
+   *
+   * @return A long corresponding to the time in nanoseconds.
+   */
+  public long getLastMoveTime() {
+    return lastMoveTime;
   }
 }

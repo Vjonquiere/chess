@@ -52,6 +52,8 @@ public class Board extends GridPane {
   /** Stage containing the Board. */
   private Stage stage;
 
+  private double squareSize;
+
   /**
    * Build a new board from a game and a given stage.
    *
@@ -68,19 +70,25 @@ public class Board extends GridPane {
 
   /** Build the board for the first time. Init all squares and setup them. */
   public void buildBoard() {
+    if (stage != null) {
+      double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
+      double maxHeight = (stage.getHeight() - 75) / 8.0;
+      squareSize = Math.min(maxWidth, maxHeight);
+    }
+
     super.getChildren().clear();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
         final ColoredPiece piece = boardRep.getPieceAt(x, boardRows - 1 - y);
         final Square square;
         if (x % 2 == 0 && y % 2 == 0) {
-          square = new Square(piece, true);
+          square = new Square(piece, true, squareSize);
         } else if (x % 2 == 0 && y % 2 == 1) {
-          square = new Square(piece, false);
+          square = new Square(piece, false, squareSize);
         } else if (x % 2 == 1 && y % 2 == 0) {
-          square = new Square(piece, false);
+          square = new Square(piece, false, squareSize);
         } else {
-          square = new Square(piece, true);
+          square = new Square(piece, true, squareSize);
         }
         final int finalY = boardRows - 1 - y;
         final int finalX = x;
@@ -100,8 +108,7 @@ public class Board extends GridPane {
     cleanHintSquares();
     clearCheckSquare();
     clearLastMoveSquares();
-    // Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece);
-    // // TODO:
+    // Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece); // TODO:
     // Re-activate after tests.
     updateAfterAnimation();
   }
@@ -135,22 +142,34 @@ public class Board extends GridPane {
    * @param historyNode The history to extract the move.
    */
   private void movePiece(final HistoryNode historyNode) {
+    if (Game.getInstance().getGameState().isWhiteTurn()
+        && Game.getInstance().isBlackAi()
+        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2000000000L) {
+      updateAfterAnimation();
+      return;
+    }
+    if (!Game.getInstance().getGameState().isWhiteTurn()
+        && Game.getInstance().isWhiteAi()
+        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2000000000L) {
+      updateAfterAnimation();
+      return;
+    }
     final Move move = historyNode.getState().getMove();
     pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
     pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
 
-    final PieceImage piece = new PieceImage(move.getPiece());
-    piece.setLayoutX(move.getSource().x() * 100 + 25);
-    piece.setLayoutY((boardRows - 1 - move.getSource().y()) * 100);
+    PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
+    piece.setLayoutX(move.getSource().x() * squareSize + 25);
+    piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
     super.getChildren().add(piece);
 
-    final TranslateTransition transition = new TranslateTransition();
+    TranslateTransition transition = new TranslateTransition();
     transition.setNode(piece);
     transition.setDuration(javafx.util.Duration.seconds(0.1));
-    transition.setFromX(move.getSource().x() * 100 + 25);
-    transition.setFromY((boardRows - 1 - move.getSource().y()) * 100);
-    transition.setToX(move.getDest().x() * 100 + 25);
-    transition.setToY((boardRows - 1 - move.getDest().y()) * 100);
+    transition.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
+    transition.setFromY((boardRows - 1 - move.getSource().y()) * squareSize);
+    transition.setToX(move.getDest().x() * squareSize + squareSize * 0.25);
+    transition.setToY((boardRows - 1 - move.getDest().y()) * squareSize);
 
     transition.setOnFinished(
         (event) -> {

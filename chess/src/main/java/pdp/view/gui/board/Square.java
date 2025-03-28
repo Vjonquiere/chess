@@ -32,32 +32,36 @@ public class Square extends StackPane {
   /** Image of the piece to draw. */
   private ImageView pieceImage;
 
+  private double squareSize;
+
   /**
    * Build a square of the given color with the sprite of the given piece.
    *
    * @param piece The piece on the square
    * @param squareColor The default color of the square
    */
-  public Square(final ColoredPiece piece, final boolean squareColor) {
+  public Square(final ColoredPiece piece, final boolean squareColor, double squareSize) {
     super();
+    this.squareSize = squareSize;
+    this.setStyle("-fx-border-width: 0; -fx-padding: 0;");
     baseColor =
         squareColor
             ? Color.web(GuiView.getTheme().getSecondary())
             : Color.web(GuiView.getTheme().getPrimary());
     currentPiece = piece;
-    square = new Canvas(100, 100);
-    reachableSq = new Canvas(100, 100);
-    hintSq = new Canvas(100, 100);
-    checkSq = new Canvas(100, 100);
+    square = new Canvas(squareSize, squareSize);
+    reachableSq = new Canvas(squareSize, squareSize);
+    hintSq = new Canvas(squareSize, squareSize);
+    checkSq = new Canvas(squareSize, squareSize);
     final GraphicsContext graphicCtx = square.getGraphicsContext2D();
     graphicCtx.setFill(baseColor);
-    graphicCtx.fillRect(0, 0, 100, 100);
+    graphicCtx.fillRect(0, 0, squareSize, squareSize);
     super.getChildren().add(square);
     super.getChildren().add(hintSq);
     super.getChildren().add(checkSq);
     super.getChildren().add(reachableSq);
     if (currentPiece != null && currentPiece.getPiece() != Piece.EMPTY) {
-      pieceImage = new PieceImage(piece);
+      pieceImage = new PieceImage(piece, squareSize / 2);
       super.getChildren().add(pieceImage);
     }
   }
@@ -75,7 +79,7 @@ public class Square extends StackPane {
       }
       super.getChildren().remove(pieceImage);
       if (currentPiece != null && currentPiece.getPiece() != Piece.EMPTY) {
-        pieceImage = new PieceImage(piece);
+        pieceImage = new PieceImage(piece, squareSize / 2);
         super.getChildren().add(pieceImage);
       }
     }
@@ -93,7 +97,7 @@ public class Square extends StackPane {
     } else {
       graphicCtx.setFill(baseColor);
     }
-    graphicCtx.fillRect(0, 0, 100, 100);
+    graphicCtx.fillRect(0, 0, squareSize, squareSize);
   }
 
   /**
@@ -108,12 +112,13 @@ public class Square extends StackPane {
 
     if (reachable && !isTake) {
       graphicCtx.setFill(Color.web(GuiView.getTheme().getAccent()));
-      graphicCtx.fillOval(37.5, 37.5, 25, 25);
+      graphicCtx.fillOval(
+          squareSize * 0.375, squareSize * 0.375, squareSize * 0.25, squareSize * 0.25);
     } else if (isTake) {
       graphicCtx.setFill(Color.web(GuiView.getTheme().getAccent()));
-      graphicCtx.fillOval(10, 10, 80, 80);
+      graphicCtx.fillOval(squareSize * 0.1, squareSize * 0.1, squareSize * 0.8, squareSize * 0.8);
       graphicCtx.setFill(baseColor);
-      graphicCtx.fillOval(15, 15, 70, 70);
+      graphicCtx.fillOval(squareSize * 0.15, squareSize * 0.15, squareSize * 0.7, squareSize * 0.7);
     }
   }
 
@@ -127,7 +132,7 @@ public class Square extends StackPane {
     graphicCtx.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
     if (hint) {
       graphicCtx.setFill(Color.web(GuiView.getTheme().getTertiary()));
-      graphicCtx.fillRect(10, 10, 80, 80);
+      graphicCtx.fillRect(squareSize * 0.1, squareSize * 0.1, squareSize * 0.8, squareSize * 0.8);
     }
   }
 
@@ -142,7 +147,7 @@ public class Square extends StackPane {
     graphicCtx.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
     if (isCheck) {
       graphicCtx.setFill(Color.rgb(255, 0, 0, 0.5));
-      graphicCtx.fillRect(0, 0, 100, 100);
+      graphicCtx.fillRect(0, 0, squareSize, squareSize);
     }
   }
 
@@ -157,7 +162,7 @@ public class Square extends StackPane {
     graphicCtx.clearRect(0, 0, hintSq.getWidth(), hintSq.getHeight());
     if (isLastMove) {
       graphicCtx.setFill(Color.rgb(51, 153, 102, 0.5));
-      graphicCtx.fillRect(0, 0, 100, 100);
+      graphicCtx.fillRect(0, 0, squareSize, squareSize);
     }
   }
 }

@@ -56,9 +56,9 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * Retrieves the move leading to other game states.
+   * Retrieves the move leading to this game state.
    *
-   * @return the starting move that leads to other game states
+   * @return the starting move that leads to this game state
    */
   public Move getStartingMove() {
     return this.startingMove;
@@ -151,13 +151,13 @@ public class TreeNodeMonteCarlo {
    */
   public TreeNodeMonteCarlo getChildToExplore(final double exploration) {
     TreeNodeMonteCarlo bestChild = null;
-    // First -inf and upload it later when better child is found
+    // First -inf and update it later when better child is found
     double bestValue = Double.NEGATIVE_INFINITY;
 
     for (final TreeNodeMonteCarlo child : this.children) {
       final double uct = uctValue(child, exploration);
       if (uct > bestValue) {
-        // Upload best child
+        // Update best child
         bestValue = uct;
         bestChild = child;
       }
