@@ -282,4 +282,30 @@ public class DummyBoardRepresentation implements BoardRepresentation {
 
   @Override
   public void setNbMovesWithNoCaptureOrPawn(int newVal) {}
+
+  @Override
+  public List<Move> getAvailableMoves(Position pos) {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public int getNbFullMovesWithNoCaptureOrPawn() {
+    return 0;
+  }
+
+  @Override
+  public void makeMove(Move move) {}
+
+  @Override
+  public char[][] getAsciiRepresentation() {
+    return new char[2][2];
+  }
+
+  @Override
+  public void applyCastle(Color color, boolean shortCastle) {}
+
+  @Override
+  public boolean[] getCastlingRights() {
+    return new boolean[4];
+  }
 }

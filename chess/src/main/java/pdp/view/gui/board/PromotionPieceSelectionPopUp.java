@@ -29,8 +29,9 @@ public class PromotionPieceSelectionPopUp extends VBox {
    * @param from The source position of the move.
    * @param to The destination position of the move.
    */
-  public PromotionPieceSelectionPopUp(Stage stage, Position from, Position to) {
-    Stage popupStage = new Stage();
+  public PromotionPieceSelectionPopUp(final Stage stage, final Position from, final Position to) {
+    super();
+    final Stage popupStage = new Stage();
     // Remove possibility to close
     popupStage.initModality(Modality.APPLICATION_MODAL);
     popupStage.initOwner(stage);
@@ -38,7 +39,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
     popupStage.setResizable(false);
     popupStage.initStyle(StageStyle.UNDECORATED);
 
-    VBox queenButton =
+    final VBox queenButton =
         pieceImage(new ColoredPiece(Piece.QUEEN, Color.WHITE), TextGetter.getText("queen"));
     queenButton.setOnMouseClicked(
         e -> {
@@ -48,7 +49,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
         });
     queenButton.setId("queenButton");
 
-    VBox knightButton =
+    final VBox knightButton =
         pieceImage(new ColoredPiece(Piece.KNIGHT, Color.WHITE), TextGetter.getText("knight"));
     knightButton.setOnMouseClicked(
         e -> {
@@ -58,7 +59,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
         });
     knightButton.setId("knightButton");
 
-    VBox bishopButton =
+    final VBox bishopButton =
         pieceImage(new ColoredPiece(Piece.BISHOP, Color.WHITE), TextGetter.getText("bishop"));
     bishopButton.setOnMouseClicked(
         e -> {
@@ -68,7 +69,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
         });
     bishopButton.setId("bishopButton");
 
-    VBox rookButton =
+    final VBox rookButton =
         pieceImage(new ColoredPiece(Piece.ROOK, Color.WHITE), TextGetter.getText("rook"));
     rookButton.setOnMouseClicked(
         e -> {
@@ -78,7 +79,7 @@ public class PromotionPieceSelectionPopUp extends VBox {
         });
     rookButton.setId("rookButton");
 
-    HBox layout = new HBox(15, queenButton, knightButton, bishopButton, rookButton);
+    final HBox layout = new HBox(15, queenButton, knightButton, bishopButton, rookButton);
     layout.setAlignment(Pos.CENTER);
     layout.setStyle(
         "-fx-padding: 15; -fx-border-color: "
@@ -86,15 +87,15 @@ public class PromotionPieceSelectionPopUp extends VBox {
             + "; -fx-border-width: 5; -fx-background-radius: 10;-fx-background-color: "
             + GuiView.getTheme().getBackground()
             + ";");
-    Scene scene = new Scene(layout, 500, 150);
+    final Scene scene = new Scene(layout, 500, 150);
     popupStage.setScene(scene);
     popupStage.setTitle(TextGetter.getText("promotion"));
     popupStage.showAndWait();
   }
 
-  private VBox pieceImage(ColoredPiece piece, String text) {
-    ImageView imageView = new PieceImage(piece);
-    VBox result = new VBox(imageView, new Label(text));
+  private VBox pieceImage(final ColoredPiece piece, final String text) {
+    final ImageView imageView = new PieceImage(piece, 50.0);
+    final VBox result = new VBox(imageView, new Label(text));
     result.setAlignment(Pos.CENTER);
     result.setStyle(
         "-fx-padding: 15; -fx-background-color: "

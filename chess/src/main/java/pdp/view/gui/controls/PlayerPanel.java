@@ -6,11 +6,15 @@ import pdp.utils.TextGetter;
 
 /** GUI widget to display all the player information. */
 public class PlayerPanel extends VBox {
-  private PlayerInfos whitePlayer;
-  private PlayerInfos blackPlayer;
+  /** Informations concerning the white player. */
+  private final PlayerInfos whitePlayer;
+
+  /** Informations concerning the white player. */
+  private final PlayerInfos blackPlayer;
 
   /** Build a new player panel from current game instance. */
   public PlayerPanel() {
+    super();
     setSpacing(5);
     whitePlayer =
         new PlayerInfos(TextGetter.getText("whitePlayer"), Game.getInstance().isWhiteAi(), true);
@@ -21,7 +25,7 @@ public class PlayerPanel extends VBox {
 
   /** Switch the current player relying on game status. */
   public void switchCurrentPlayer() {
-    boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
+    final boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
     whitePlayer.setCurrentPlayer(isWhiteTurn);
     blackPlayer.setCurrentPlayer(!isWhiteTurn);
   }

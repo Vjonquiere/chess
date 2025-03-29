@@ -2,7 +2,7 @@ package pdp.model.ai.heuristics;
 
 import java.util.ArrayList;
 import java.util.List;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 
 /**
  * Used for design pattern composite : all heuristic composed of several simple heuristics must
@@ -60,7 +60,7 @@ public abstract class AbstractHeuristic implements Heuristic {
    * @return Total score of all the heuristics evaluation
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     int score = 0;
     for (final WeightedHeuristic heuristic : heuristics) {
       score += heuristic.heuristic().evaluate(board, isWhite) * heuristic.weight();

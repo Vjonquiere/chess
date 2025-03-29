@@ -95,10 +95,10 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
     // Draw or game not over.
     int res = 0;
     if (state.isGameOver()) {
-      if (state.getBoard().getBoardRep().isCheckMate(Color.WHITE)) {
+      if (state.getBoard().isCheckMate(Color.WHITE)) {
         // Black wins
         res = -1;
-      } else if (state.getBoard().getBoardRep().isCheckMate(Color.BLACK)) {
+      } else if (state.getBoard().isCheckMate(Color.BLACK)) {
         // White wins
         res = 1;
       }
@@ -136,10 +136,8 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
     }
 
     final List<Move> possibleMoves =
-        node.getGameState()
-            .getBoard()
-            .getBoardRep()
-            .getAllAvailableMoves(node.getGameState().isWhiteTurn());
+        node.getGameState().getBoard().getAllAvailableMoves(node.getGameState().isWhiteTurn());
+
     for (final Move move : possibleMoves) {
       if (solver.isSearchStopped()) {
         return node;
@@ -191,10 +189,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
         return parentNode.getGameState().isWhiteTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
       }
       final List<Move> availableMoves =
-          simulationState
-              .getBoard()
-              .getBoardRep()
-              .getAllAvailableMoves(simulationState.isWhiteTurn());
+          simulationState.getBoard().getAllAvailableMoves(simulationState.isWhiteTurn());
 
       if (availableMoves.isEmpty()) {
         break;

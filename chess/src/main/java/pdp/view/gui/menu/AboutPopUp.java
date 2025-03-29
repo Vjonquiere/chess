@@ -17,7 +17,8 @@ import pdp.view.GuiView;
 public class AboutPopUp extends VBox {
   /** Build a new popup. */
   public AboutPopUp() {
-    Stage popupStage = new Stage();
+    super();
+    final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("about"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
     Label infoLabel = null;
@@ -27,14 +28,14 @@ public class AboutPopUp extends VBox {
 
     }
 
-    Button closeButton = new Button(TextGetter.getText("close"));
+    final Button closeButton = new Button(TextGetter.getText("close"));
     closeButton.setOnAction(e -> popupStage.close());
 
-    VBox layout = new VBox(10, infoLabel, closeButton);
+    final VBox layout = new VBox(10, infoLabel, closeButton);
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
 
-    Scene scene = new Scene(layout);
+    final Scene scene = new Scene(layout);
     GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
@@ -46,10 +47,10 @@ public class AboutPopUp extends VBox {
    * @return A label containing the about message.
    */
   private Label getLabel() throws IOException {
-    Properties properties = new Properties();
+    final Properties properties = new Properties();
     properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
 
-    String aboutText =
+    final String aboutText =
         TextGetter.getText("version")
             + " "
             + properties.getProperty("version")
@@ -62,7 +63,7 @@ public class AboutPopUp extends VBox {
             + " "
             + TextGetter.getText("projectDescription");
 
-    Label aboutLabel = new Label(aboutText);
+    final Label aboutLabel = new Label(aboutText);
     aboutLabel.setWrapText(true);
     return aboutLabel;
   }

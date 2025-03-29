@@ -12,6 +12,7 @@ import pdp.utils.TextGetter;
 
 /** Base of the application. */
 public class Main {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
   /**
@@ -20,8 +21,8 @@ public class Main {
    *
    * @param args Command line arguments.
    */
-  public static void main(String[] args) {
-    HashMap<OptionType, String> options =
+  public static void main(final String[] args) {
+    final HashMap<OptionType, String> options =
         CommandLineOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
     if (!options.containsKey(OptionType.UCI)) {
@@ -29,12 +30,8 @@ public class Main {
       print("options: " + options.toString());
     }
 
-    if (options.containsKey(OptionType.CONTEST)) {
-      // throw new UnsupportedOperationException("Contest mode not implemented");
-    }
-
-    GameController controller = GameControllerInit.initialize(options);
-    Thread viewThread = controller.getView().start();
+    final GameController controller = GameControllerInit.initialize(options);
+    final Thread viewThread = controller.getView().start();
 
     try {
       viewThread.join();

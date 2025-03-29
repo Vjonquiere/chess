@@ -55,7 +55,7 @@ public class AlphaBetaParallel implements SearchAlgorithm {
     final ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
     final List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
-    final List<Move> moves = aiGame.getBoard().getBoardRep().getAllAvailableMoves(player);
+    final List<Move> moves = aiGame.getBoard().getAllAvailableMoves(player);
 
     for (final Move move : moves) {
       futures.add(
@@ -124,7 +124,7 @@ public class AlphaBetaParallel implements SearchAlgorithm {
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
 
     for (Move move : moves) {
       if (solver.isSearchStopped()) {

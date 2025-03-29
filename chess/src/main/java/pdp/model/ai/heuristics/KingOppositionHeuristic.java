@@ -1,6 +1,5 @@
 package pdp.model.ai.heuristics;
 
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
@@ -9,6 +8,12 @@ import pdp.utils.Position;
  * to lead to a draw.
  */
 public class KingOppositionHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100;
+
+  private static final float OPPOSITION_SCORE = -SCORE_CAP;
+  private static final float DIAGONAL_SCORE = -(SCORE_CAP / 2);
 
   /**
    * Computes a score according to the (un)balance of the kings position. The more the kings are in
@@ -19,9 +24,12 @@ public class KingOppositionHeuristic implements Heuristic {
    * @return a score depending on the progress of the pawns
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     int score = 0;
     score += evaluateKingOpposition(board);
+
+    // min score -100 (max 0)
+
     return score;
   }
 
@@ -33,8 +41,8 @@ public class KingOppositionHeuristic implements Heuristic {
    * @param board the board of the game
    * @return a score based on the king opposition
    */
-  private int evaluateKingOpposition(final Board board) {
-    final BoardRepresentation bitboard = board.getBoardRep();
+  private float evaluateKingOpposition(final BoardRepresentation board) {
+    final BoardRepresentation bitboard = board;
     final Position whiteKing = bitboard.getKing(true).get(0);
     final Position blackKing = bitboard.getKing(false).get(0);
 
@@ -44,12 +52,12 @@ public class KingOppositionHeuristic implements Heuristic {
     // If kings are directly opposite with one square between them
     if ((diffX == 2 && diffY == 0) || (diffY == 2 && diffX == 0)) {
       // Strong opposition so more drawish
-      return -10;
+      return OPPOSITION_SCORE;
     }
     // If kings are diagonally close
     if (diffX <= 2 && diffY <= 2) {
       // Marginally drawish cuz slight opposition
-      return -5;
+      return DIAGONAL_SCORE;
     }
     // No real opposition
     return 0;

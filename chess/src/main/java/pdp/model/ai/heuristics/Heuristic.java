@@ -1,6 +1,6 @@
 package pdp.model.ai.heuristics;
 
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 
 /** Common interface for heuristics,to be able to change the solver's heuristic with ease. */
 public interface Heuristic {
@@ -11,5 +11,5 @@ public interface Heuristic {
    * @param isWhite true if the player is white, false otherwise
    * @return score for the given player on the board
    */
-  float evaluate(Board board, boolean isWhite);
+  float evaluate(BoardRepresentation board, boolean isWhite);
 }

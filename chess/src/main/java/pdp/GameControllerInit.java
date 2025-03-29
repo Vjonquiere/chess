@@ -18,11 +18,11 @@ public abstract class GameControllerInit {
    * @param options The options to use to initialize the game.
    * @return A new GameController instance.
    */
-  public static GameController initialize(HashMap<OptionType, String> options) {
+  public static GameController initialize(final HashMap<OptionType, String> options) {
 
-    Game model = GameInitializer.initialize(options);
+    final Game model = GameInitializer.initialize(options);
 
-    View view;
+    final View view;
     if (options.containsKey(OptionType.GUI)) {
       view = new GuiView();
     } else if (options.containsKey(OptionType.UCI)) {
@@ -30,7 +30,7 @@ public abstract class GameControllerInit {
     } else {
       view = new CliView();
     }
-    BagOfCommands bagOfCommands = BagOfCommands.getInstance();
+    final BagOfCommands bagOfCommands = BagOfCommands.getInstance();
     return new GameController(model, view, bagOfCommands);
   }
 }

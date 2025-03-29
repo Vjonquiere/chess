@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.events.Subject;
-import pdp.model.board.Board;
+import pdp.model.board.BitboardRepresentation;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.parsers.FileBoard;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
@@ -15,41 +16,88 @@ import pdp.utils.Timer;
 
 /** State of the game. Can be observed by an observer. */
 public class GameState extends Subject {
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getName());
+
+  /** Number of move for the fifty move rule ( can be more than fifty when playing in UCI). */
   private static int nMoveRule = 50;
-  private Board board;
+
+  /** Chess board of the current state. */
+  private BoardRepresentation board;
+
+  /** Timer for the blitz. */
   private Timer moveTimer;
-  private boolean whiteWantsToDraw = false;
-  private boolean blackWantsToDraw = false;
-  private boolean whiteResigns = false;
-  private boolean blackResigns = false;
-  private int undoRequestTurnNumber = -1;
-  private int redoRequestTurnNumber = -1;
-  private boolean whiteLosesOnTime = false;
-  private boolean blackLosesOnTime = false;
-  private boolean isGameOver = false;
-  private boolean threefoldRepetition = false;
+
+  /** Boolean to indicates whether the white player wants to draw or not. */
+  private boolean whiteWantsToDraw;
+
+  /** Boolean to indicates whether the black player wants to draw or not. */
+  private boolean blackWantsToDraw;
+
+  /** Boolean to indicates whether the white player wants to resign or not. */
+  private boolean whiteHasResigned;
+
+  /** Boolean to indicates whether the black player wants to resign or not. */
+  private boolean blackHasResigned;
+
+  /** Turn when the undo request was made. */
+  private int undoRequestTurnNb = -1;
+
+  /** Turn when the redo request was made. */
+  private int redoRequestTurnNb = -1;
+
+  /** Boolean to indicates whether the white player has lost on time or not. */
+  private boolean whiteLosesOnTime;
+
+  /** Boolean to indicates whether the black player has lost on time or not. */
+  private boolean blackLosesOnTime;
+
+  /** Boolean to indicates whether the game is over or not. */
+  private boolean gameOver;
+
+  /** Boolean to indicates whether a threefold repetition has happened or not. */
+  private boolean threefoldRepetition;
+
+  /** Number of full turn since the start of the game. */
   private int fullTurnNumber;
+
+  /** Zobrist hash corresponding to the current board. */
   private long zobristHashing;
+
+  /** Simplified Zobrist hash corresponding to the current board. */
   private long simplifiedZobristHashing;
+
+  /** List containing hint integers corresponding to the best move. */
   private List<Integer> hintIntegers = new ArrayList<>();
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Retrieves the maximum number of moves for the fifty move rule.
+   *
+   * @return field nMoveRule
+   */
   public static int getFiftyMoveLimit() {
     return nMoveRule;
   }
 
-  public static void setFiftyMoveLimit(int limit) {
+  /**
+   * Sets the value of nMove rule to limit.
+   *
+   * @param limit number of moves for the nMoveRule
+   */
+  public static void setFiftyMoveLimit(final int limit) {
     nMoveRule = limit;
   }
 
   /** Creates a game state with default parameters. By default, blitz mode is not on */
   public GameState() {
-    this.isGameOver = false;
-    this.board = new Board();
+    super();
+    this.gameOver = false;
+    this.board = new BitboardRepresentation();
     this.moveTimer = null;
     this.fullTurnNumber = 0;
   }
@@ -59,9 +107,10 @@ public class GameState extends Subject {
    *
    * @param timer Timer for the blitz
    */
-  public GameState(Timer timer) {
-    this.isGameOver = false;
-    this.board = new Board();
+  public GameState(final Timer timer) {
+    super();
+    this.gameOver = false;
+    this.board = new BitboardRepresentation();
     this.moveTimer = timer;
     this.fullTurnNumber = 0;
   }
@@ -71,9 +120,10 @@ public class GameState extends Subject {
    *
    * @param board The board to use
    */
-  public GameState(FileBoard board) {
-    this.isGameOver = false;
-    this.board = new Board(board);
+  public GameState(final FileBoard board) {
+    super();
+    this.gameOver = false;
+    this.board = new BitboardRepresentation(board);
     this.moveTimer = null;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
@@ -83,10 +133,11 @@ public class GameState extends Subject {
    *
    * @param board The board to use
    */
-  public GameState(FileBoard board, Timer timer) {
+  public GameState(final FileBoard board, final Timer timer) {
+    super();
     Logging.configureLogging(LOGGER);
-    this.isGameOver = false;
-    this.board = new Board(board);
+    this.gameOver = false;
+    this.board = new BitboardRepresentation(board);
     this.moveTimer = timer;
     this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
   }
@@ -110,7 +161,7 @@ public class GameState extends Subject {
    *
    * @return current board
    */
-  public Board getBoard() {
+  public BoardRepresentation getBoard() {
     return board;
   }
 
@@ -161,7 +212,7 @@ public class GameState extends Subject {
    * @return the turn number of the undo request
    */
   public int getUndoRequestTurnNumber() {
-    return this.undoRequestTurnNumber;
+    return this.undoRequestTurnNb;
   }
 
   /**
@@ -170,7 +221,7 @@ public class GameState extends Subject {
    * @return the turn number of the redo request
    */
   public int getRedoRequestTurnNumber() {
-    return this.redoRequestTurnNumber;
+    return this.redoRequestTurnNb;
   }
 
   /**
@@ -187,7 +238,7 @@ public class GameState extends Subject {
    * the undo proposal based on the player's turn.
    */
   public void undoRequest() {
-    this.undoRequestTurnNumber = this.getFullTurn();
+    this.undoRequestTurnNb = this.getFullTurn();
     if (this.isWhiteTurn()) {
       notifyObservers(EventType.WHITE_UNDO_PROPOSAL);
     } else {
@@ -200,7 +251,7 @@ public class GameState extends Subject {
    * no more active undo request.
    */
   public void undoRequestReset() {
-    this.undoRequestTurnNumber = -1;
+    this.undoRequestTurnNb = -1;
   }
 
   /**
@@ -208,7 +259,7 @@ public class GameState extends Subject {
    * about the redo proposal based on the player's turn.
    */
   public void redoRequest() {
-    this.redoRequestTurnNumber = this.getFullTurn();
+    this.redoRequestTurnNb = this.getFullTurn();
     if (this.isWhiteTurn()) {
       notifyObservers(EventType.WHITE_REDO_PROPOSAL);
     } else {
@@ -221,7 +272,7 @@ public class GameState extends Subject {
    * no more active redo request.
    */
   public void redoRequestReset() {
-    this.redoRequestTurnNumber = -1;
+    this.redoRequestTurnNb = -1;
   }
 
   /*
@@ -235,7 +286,7 @@ public class GameState extends Subject {
    *
    * @param newHintIntegers list of integers to add to the field hintIntegers
    */
-  public void setHintIntegers(List<Integer> newHintIntegers) {
+  public void setHintIntegers(final List<Integer> newHintIntegers) {
     this.hintIntegers = newHintIntegers;
     notifyObservers(EventType.MOVE_HINT);
   }
@@ -243,10 +294,10 @@ public class GameState extends Subject {
   /**
    * Sets the field simplified zobrist hashing with the one in the parameters.
    *
-   * @param simplifiedZobristHashing hash corresponding to the simplified zobrist hashing
+   * @param hash hash corresponding to the simplified zobrist hashing
    */
-  public void setSimplifiedZobristHashing(long simplifiedZobristHashing) {
-    this.simplifiedZobristHashing = simplifiedZobristHashing;
+  public void setSimplifiedZobristHashing(final long hash) {
+    this.simplifiedZobristHashing = hash;
   }
 
   /** Changes threefoldstatus for the gamestate when it is observed. */
@@ -255,7 +306,7 @@ public class GameState extends Subject {
   }
 
   /** White requests a draw. */
-  public void whiteWantsToDraw() {
+  public void doesWhiteWantsToDraw() {
     this.whiteWantsToDraw = true;
     if (!checkDrawAgreement()) {
       notifyObservers(EventType.WHITE_DRAW_PROPOSAL);
@@ -263,7 +314,7 @@ public class GameState extends Subject {
   }
 
   /** Black requests a draw. */
-  public void blackWantsToDraw() {
+  public void doesBlackWantsToDraw() {
     this.blackWantsToDraw = true;
     if (!checkDrawAgreement()) {
       notifyObservers(EventType.BLACK_DRAW_PROPOSAL);
@@ -288,9 +339,9 @@ public class GameState extends Subject {
    *
    * @param isWhite boolean corresponding to the players color
    */
-  public void playerOutOfTime(boolean isWhite) {
-    if (!this.getBoard().getBoardRep().hasEnoughMaterialToMate(!isWhite)) {
-      this.isGameOver = true;
+  public void playerOutOfTime(final boolean isWhite) {
+    if (!this.getBoard().hasEnoughMaterialToMate(!isWhite)) {
+      this.gameOver = true;
       debug(LOGGER, "End of game : Loss on time + insufficient material, Draw");
       if (isWhite) {
         notifyObservers(EventType.OUT_OF_TIME_WHITE);
@@ -300,17 +351,15 @@ public class GameState extends Subject {
       notifyObservers(EventType.DRAW);
       return;
     }
-    this.isGameOver = true;
+    this.gameOver = true;
     if (isWhite) {
       debug(LOGGER, "End of game : Loss on time, Black won");
       notifyObservers(EventType.OUT_OF_TIME_WHITE);
       notifyObservers(EventType.WIN_BLACK);
-      return;
     } else {
       debug(LOGGER, "End of game : Loss on time, White won");
       notifyObservers(EventType.OUT_OF_TIME_BLACK);
       notifyObservers(EventType.WIN_WHITE);
-      return;
     }
   }
 
@@ -321,7 +370,7 @@ public class GameState extends Subject {
    */
   private boolean checkDrawAgreement() {
     if (hasWhiteRequestedDraw() && hasBlackRequestedDraw()) {
-      this.isGameOver = true;
+      this.gameOver = true;
       notifyObservers(EventType.DRAW_ACCEPTED);
       notifyObservers(EventType.DRAW);
       return true;
@@ -331,16 +380,16 @@ public class GameState extends Subject {
 
   /** White decides to resign the game, making Black victorious. */
   public void whiteResigns() {
-    this.whiteResigns = true;
-    this.isGameOver = true;
+    this.whiteHasResigned = true;
+    this.gameOver = true;
     notifyObservers(EventType.WHITE_RESIGNS);
     notifyObservers(EventType.WIN_BLACK);
   }
 
   /** Black decides to resign the game, making White victorious. */
   public void blackResigns() {
-    this.blackResigns = true;
-    this.isGameOver = true;
+    this.blackHasResigned = true;
+    this.gameOver = true;
     notifyObservers(EventType.BLACK_RESIGNS);
     notifyObservers(EventType.WIN_WHITE);
   }
@@ -351,7 +400,7 @@ public class GameState extends Subject {
    * @return true if white has resigned, false otherwise
    */
   public boolean hasWhiteResigned() {
-    return this.whiteResigns;
+    return this.whiteHasResigned;
   }
 
   /**
@@ -360,7 +409,7 @@ public class GameState extends Subject {
    * @return true if black has resigned, false otherwise
    */
   public boolean hasBlackResigned() {
-    return this.blackResigns;
+    return this.blackHasResigned;
   }
 
   /**
@@ -405,7 +454,7 @@ public class GameState extends Subject {
    * @return true if the match is over for this state of the , false otherwise
    */
   public boolean isGameOver() {
-    return this.isGameOver;
+    return this.gameOver;
   }
 
   /**
@@ -419,7 +468,7 @@ public class GameState extends Subject {
 
   /** Fifty move rule is observed so change game status to 'Over', it's a draw. */
   public void applyFiftyMoveRule() {
-    this.isGameOver = true;
+    this.gameOver = true;
     notifyObservers(EventType.FIFTY_MOVE_RULE);
     notifyObservers(EventType.DRAW);
   }
@@ -441,7 +490,7 @@ public class GameState extends Subject {
    * game is over. This method is called after every move is played.
    */
   public void checkGameStatus() {
-    Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;
+    final Color currColor = this.isWhiteTurn() ? Color.WHITE : Color.BLACK;
     // Fifty Move rule
     if (isFiftyMoveRule()) {
       debug(LOGGER, "End of game : Fifty move rule, draw");
@@ -449,8 +498,8 @@ public class GameState extends Subject {
       return;
     }
     // Checkmate
-    if (board.getBoardRep().isCheckMate(currColor)) {
-      this.isGameOver = true;
+    if (board.isCheckMate(currColor)) {
+      this.gameOver = true;
       if (currColor == Color.WHITE) {
         debug(LOGGER, "End of game : Checkmate, Black won");
         notifyObservers(EventType.CHECKMATE_BLACK);
@@ -463,24 +512,24 @@ public class GameState extends Subject {
       return;
     }
     // Stalemate
-    if (board.getBoardRep().isStaleMate(currColor, currColor)) {
-      this.isGameOver = true;
+    if (board.isStaleMate(currColor, currColor)) {
+      this.gameOver = true;
       debug(LOGGER, "End of game : Stale mate, Draw");
       notifyObservers(EventType.STALEMATE);
       notifyObservers(EventType.DRAW);
       return;
     }
     // Draw by insufficient material
-    if (board.getBoardRep().isDrawByInsufficientMaterial()) {
+    if (board.isDrawByInsufficientMaterial()) {
       debug(LOGGER, "End of game : Insufficient material, Draw");
-      this.isGameOver = true;
+      this.gameOver = true;
       notifyObservers(EventType.INSUFFICIENT_MATERIAL);
       notifyObservers(EventType.DRAW);
     }
     // Threefold repetition
     if (this.threefoldRepetition) {
       debug(LOGGER, "End of game : Threefold repetition, Draw");
-      this.isGameOver = true;
+      this.gameOver = true;
       notifyObservers(EventType.THREEFOLD_REPETITION);
       notifyObservers(EventType.DRAW);
     }
@@ -493,26 +542,20 @@ public class GameState extends Subject {
    * @return A new instance of GameState with the same state as the current object.
    */
   public GameState getCopy() {
-    GameState copy = new GameState();
+    final GameState copy = new GameState();
 
     copy.board = this.board.getCopy();
     copy.whiteWantsToDraw = this.whiteWantsToDraw;
     copy.blackWantsToDraw = this.blackWantsToDraw;
-    copy.whiteResigns = this.whiteResigns;
-    copy.blackResigns = this.blackResigns;
+    copy.whiteHasResigned = this.whiteHasResigned;
+    copy.blackHasResigned = this.blackHasResigned;
     copy.whiteLosesOnTime = this.whiteLosesOnTime;
     copy.blackLosesOnTime = this.blackLosesOnTime;
-    copy.isGameOver = this.isGameOver;
+    copy.gameOver = this.gameOver;
     copy.threefoldRepetition = this.threefoldRepetition;
     copy.fullTurnNumber = this.fullTurnNumber;
     copy.zobristHashing = this.zobristHashing;
     copy.simplifiedZobristHashing = this.simplifiedZobristHashing;
-
-    /* if (this.moveTimer != null) {
-        copy.moveTimer = this.moveTimer.getCopy();
-    } else {
-        copy.moveTimer = null;
-    } */
 
     return copy;
   }
@@ -522,16 +565,16 @@ public class GameState extends Subject {
    *
    * @param gameState The GameState from which to copy the values.
    */
-  public void updateFrom(GameState gameState) {
+  public void updateFrom(final GameState gameState) {
     this.board = gameState.getBoard();
     this.moveTimer = gameState.getMoveTimer();
     this.whiteWantsToDraw = gameState.hasWhiteRequestedDraw();
     this.blackWantsToDraw = gameState.hasBlackRequestedDraw();
-    this.whiteResigns = gameState.hasWhiteResigned();
-    this.blackResigns = gameState.hasBlackResigned();
+    this.whiteHasResigned = gameState.hasWhiteResigned();
+    this.blackHasResigned = gameState.hasBlackResigned();
     this.whiteLosesOnTime = gameState.hasWhiteLostOnTime();
     this.blackLosesOnTime = gameState.hasBlackLostOnTime();
-    this.isGameOver = gameState.isGameOver();
+    this.gameOver = gameState.isGameOver();
     this.threefoldRepetition = gameState.isThreefoldRepetition();
     this.fullTurnNumber = gameState.getFullTurn();
     this.zobristHashing = gameState.getZobristHashing();

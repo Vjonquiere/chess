@@ -1,6 +1,7 @@
 package pdp.model.board;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** Bitboard structure with all needed treatments. */
 public class Bitboard {
@@ -8,7 +9,7 @@ public class Bitboard {
 
   public Bitboard() {}
 
-  public Bitboard(long bitboard) {
+  public Bitboard(final long bitboard) {
     this.bitboard = bitboard;
   }
 
@@ -17,7 +18,7 @@ public class Bitboard {
    *
    * @param square Position of the bit to set
    */
-  public void setBit(int square) {
+  public void setBit(final int square) {
     bitboard = bitboard | (1L << square);
   }
 
@@ -26,7 +27,7 @@ public class Bitboard {
    *
    * @param square Position of the bit to set
    */
-  public void clearBit(int square) {
+  public void clearBit(final int square) {
     bitboard = bitboard & ~(1L << square);
   }
 
@@ -35,7 +36,7 @@ public class Bitboard {
    *
    * @param square Position of the bit to set
    */
-  public void toggleBit(int square) {
+  public void toggleBit(final int square) {
     bitboard = bitboard ^ (1L << square);
   }
 
@@ -45,7 +46,7 @@ public class Bitboard {
    * @param square Position of the bit
    * @return Value of the given bit
    */
-  public boolean getBit(int square) {
+  public boolean getBit(final int square) {
     return (bitboard & (1L << square)) != 0;
   }
 
@@ -149,8 +150,8 @@ public class Bitboard {
    *
    * @return Array list containing the square set to 1
    */
-  public ArrayList<Integer> getSetBits() {
-    ArrayList<Integer> setBits = new ArrayList<>();
+  public List<Integer> getSetBits() {
+    final List<Integer> setBits = new ArrayList<>();
     for (int square = 0; square < 64; square++) {
       if (getBit(square)) {
         setBits.add(square);
@@ -162,31 +163,31 @@ public class Bitboard {
   /**
    * Make a bitwise AND between the two bitboards.
    *
-   * @param b the second bitboard
+   * @param bitboard2 the second bitboard
    * @return A new bitboard containing the AND operation
    */
-  public Bitboard and(Bitboard b) {
-    return new Bitboard(bitboard & b.getBits());
+  public Bitboard and(final Bitboard bitboard2) {
+    return new Bitboard(this.bitboard & bitboard2.getBits());
   }
 
   /**
    * Make a bitwise OR between the two bitboards.
    *
-   * @param b the second bitboard
+   * @param bitboard2 the second bitboard
    * @return A new bitboard containing the OR operation
    */
-  public Bitboard or(Bitboard b) {
-    return new Bitboard(bitboard | b.getBits());
+  public Bitboard or(final Bitboard bitboard2) {
+    return new Bitboard(bitboard | bitboard2.getBits());
   }
 
   /**
    * Make a bitwise XOR between the two bitboards.
    *
-   * @param b the second bitboard
+   * @param bitboard2 the second bitboard
    * @return A new bitboard containing the XOR operation
    */
-  public Bitboard xor(Bitboard b) {
-    return new Bitboard(bitboard ^ b.getBits());
+  public Bitboard xor(final Bitboard bitboard2) {
+    return new Bitboard(bitboard ^ bitboard2.getBits());
   }
 
   /**
@@ -200,22 +201,22 @@ public class Bitboard {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("Bitboard = 0x").append(Long.toHexString(bitboard)).append("\n");
+    final StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("Bitboard = 0x").append(Long.toHexString(bitboard)).append('\n');
     for (int x = 7; x >= 0; x--) {
       for (int y = 0; y < 8; y++) {
-        sb.append(getBit(x * 8 + y) ? '1' : '0');
+        stringBuilder.append(getBit(x * 8 + y) ? '1' : '0');
         if (y != 7) {
-          sb.append("|");
+          stringBuilder.append('|');
         }
       }
-      sb.append("\n");
+      stringBuilder.append('\n');
     }
-    return sb.toString();
+    return stringBuilder.toString();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (obj instanceof Bitboard) {
       return this.bitboard == ((Bitboard) obj).bitboard;
     }
