@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
@@ -77,7 +76,7 @@ public final class Game extends GameAbstract {
   private final HashMap<OptionType, String> options;
 
   /** Lock of the view, to avoid desynchronization between the view and the model. */
-  private final Lock viewLock = new ReentrantLock();
+  private final ReentrantLock viewLock = new ReentrantLock();
 
   /** Condition of the lock. */
   private final Condition workingView = viewLock.newCondition();
@@ -180,7 +179,7 @@ public final class Game extends GameAbstract {
    *
    * @return field viewLock
    */
-  public Lock getViewLock() {
+  public ReentrantLock getViewLock() {
     return this.viewLock;
   }
 
