@@ -163,13 +163,12 @@ Pour finir, nous avons utilisé un papier plus général, mais contenant des inf
 d'un moteur d'échecs en java \cite{PaulDailly}. Nous nous servons également des deux articles présents sur 
 notre repository Gitlab, \cite{Bitboards} et \cite{GameBitboards}, qui concernent aussi les Bitboards.
 
-\section{Explication du sujet}
-\subsection{Règles du jeu}
+\section{Règles du jeu}
 Le jeu d'échecs contient beaucoup de règles parfois techniques, mais dont l'objectif reste simple à comprendre :
- il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est attaqué 
- mais n'a aucun coup légal pour se défendre de cette attaque.
+il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est attaqué 
+mais n'a aucun coup légal pour se défendre de cette attaque.
 
-\subsubsection{L'échiquier et les pièces}
+\subsection{L'échiquier et les pièces}
 Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces :
 \begin{itemize}
     \item 1 roi
@@ -189,7 +188,7 @@ Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joue
 
 Le joueur avec les pièces blanches commence. Ensuite, chaque joueur joue à tour de rôle, un déplacement de pièce par tour.
 
-\subsubsection{Déplacements des Pièces}
+\subsection{Déplacements des Pièces}
 Les déplacements sont propres à chaque type de pièce :
 \vspace{0.5cm}
 
@@ -278,7 +277,7 @@ Les déplacements sont propres à chaque type de pièce :
 
 Parfois, les déplacements peuvent être limités par des règles spécifiques comme le \textbf{clouage}. Voyons ces règles en détail.
 
-\subsubsection{Règles Spécifiques}
+\subsection{Règles Spécifiques}
 \paragraph{-Clouage} Si une pièce défend une attaque au roi en se positionnant devant cette dernière, on dit qu'elle est \textbf{clouée}
  et ne peut pas bouger. En effet, il est interdit de mettre son roi en échec volontairement par l'une de ses propres actions.
 
@@ -351,7 +350,7 @@ Parfois, les déplacements peuvent être limités par des règles spécifiques c
      \vspace{0.5cm}
  \end{minipage}
 
-\subsubsection{Fin de Partie}
+\subsection{Fin de Partie}
 Une partie d'échecs peut se terminer de plusieurs façons :
 \begin{itemize}
     \item \textbf{Échec et mat} : le roi est attaqué et aucun coup légal ne peut le sauver, ce qui donne la victoire à l'adversaire.
