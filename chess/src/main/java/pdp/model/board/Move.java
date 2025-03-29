@@ -116,12 +116,42 @@ public class Move {
       final ColoredPiece takenPiece,
       final boolean isCheck,
       final boolean isCheckMate) {
+
+    this(source, dest, piece, isTake, takenPiece, dest, isCheck, isCheckMate);
+  }
+
+  /**
+   * Constructs a new Move object with the specified source and destination positions, the piece
+   * being moved, a flag indicating whether the move is a capture, the captured piece (if any), the
+   * take position and flags for check and checkmate.
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   * @param piece The ColoredPiece being moved.
+   * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
+   *     otherwise).
+   * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
+   * @param takeDest The position of the taken piece.
+   * @param isCheck A boolean indicating whether the move results in a check (true if it's a check,
+   *     false otherwise).
+   * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
+   *     checkmate, false otherwise).
+   */
+  private Move(
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final boolean isTake,
+      final ColoredPiece takenPiece,
+      final Position takeDest,
+      final boolean isCheck,
+      final boolean isCheckMate) {
     this.source = source;
     this.dest = dest;
     this.piece = piece;
     this.isTake = isTake;
     this.takenPiece = takenPiece;
-    this.takeDest = takeDest != null ? takeDest : dest;
+    this.takeDest = takeDest;
     this.isCheck = isCheck;
     this.isCheckMate = isCheckMate;
   }
