@@ -95,11 +95,7 @@ public class GameState extends Subject {
 
   /** Creates a game state with default parameters. By default, blitz mode is not on */
   public GameState() {
-    super();
-    this.gameOver = false;
-    this.board = new BitboardRepresentation();
-    this.moveTimer = null;
-    this.fullTurnNumber = 0;
+    this(new BitboardRepresentation(), null, 0);
   }
 
   /**
@@ -108,38 +104,48 @@ public class GameState extends Subject {
    * @param timer Timer for the blitz
    */
   public GameState(final Timer timer) {
-    super();
-    this.gameOver = false;
-    this.board = new BitboardRepresentation();
-    this.moveTimer = timer;
-    this.fullTurnNumber = 0;
+    this(new BitboardRepresentation(), timer, 0);
   }
 
   /**
    * Create a new GameState from a given board.
    *
-   * @param board The board to use
+   * @param board The FileBoard to use
    */
   public GameState(final FileBoard board) {
-    super();
-    this.gameOver = false;
-    this.board = new BitboardRepresentation(board);
-    this.moveTimer = null;
-    this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
+    this(
+        new BitboardRepresentation(board),
+        null,
+        board.header() != null ? board.header().playedMoves() : 0);
   }
 
   /**
    * Create a new GameState from a given board with a timer.
    *
-   * @param board The board to use
+   * @param board The FileBoard to use
+   * @param timer The timer to use
    */
   public GameState(final FileBoard board, final Timer timer) {
+    this(
+        new BitboardRepresentation(board),
+        timer,
+        board.header() != null ? board.header().playedMoves() : 0);
+  }
+
+  /**
+   * Private constructor used by the public ones to create a GameState.
+   *
+   * @param board The board to use
+   * @param moveTimer The timer to use
+   * @param fullTurnNumber The number of full turns
+   */
+  private GameState(
+      final BitboardRepresentation board, final Timer moveTimer, final int fullTurnNumber) {
     super();
-    Logging.configureLogging(LOGGER);
     this.gameOver = false;
-    this.board = new BitboardRepresentation(board);
-    this.moveTimer = timer;
-    this.fullTurnNumber = board.header() != null ? board.header().playedMoves() : 0;
+    this.board = board;
+    this.moveTimer = moveTimer;
+    this.fullTurnNumber = fullTurnNumber;
   }
 
   /**
