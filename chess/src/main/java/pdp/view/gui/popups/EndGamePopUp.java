@@ -1,5 +1,6 @@
 package pdp.view.gui.popups;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -93,7 +94,7 @@ public class EndGamePopUp {
     newGameButton.setId("newGameButton");
     newGameButton.setOnAction(
         e -> {
-          popupStage.close();
+          Platform.runLater(popupStage::close);
           NewGamePopup.show(Game.getInstance().getOptions());
         });
 
