@@ -1,6 +1,8 @@
 package pdp.view;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,11 +76,10 @@ public class UciView implements View {
   @Override
   public void onGameEvent(EventType event) {
     switch (event) {
-      case WIN_BLACK -> System.out.println("Black won!");
-      case WIN_WHITE -> System.out.println("White won!");
-      case THREEFOLD_REPETITION ->
-          System.out.println(Game.getThreeFoldLimit() + " fold repetition!");
-      case FIFTY_MOVE_RULE -> System.out.println(GameState.getFiftyMoveLimit() + " move rule!");
+      case WIN_BLACK -> print("Black won!");
+      case WIN_WHITE -> print("White won!");
+      case THREEFOLD_REPETITION -> print(Game.getThreeFoldLimit() + " fold repetition!");
+      case FIFTY_MOVE_RULE -> print(GameState.getFiftyMoveLimit() + " move rule!");
     }
   }
 
@@ -87,23 +88,22 @@ public class UciView implements View {
    *
    * <p>Stops the game if the exception is not related to handled.
    *
-   * @param e The exception that was thrown.
+   * @param exception The exception that was thrown.
    */
   @Override
-  public void onErrorEvent(Exception e) {
-    if (e instanceof IllegalMoveException
-        || e instanceof MoveParsingException
-        || e instanceof InvalidPositionException
-        || e instanceof FailedSaveException
-        || e instanceof InvalidPromoteFormatException
-        || e instanceof CommandNotAvailableNowException
-        || e instanceof FailedUndoException
-        || e instanceof FailedRedoException) {
-      System.out.println(e.getMessage());
+  public void onErrorEvent(Exception exception) {
+    if (exception instanceof IllegalMoveException
+        || exception instanceof MoveParsingException
+        || exception instanceof InvalidPositionException
+        || exception instanceof FailedSaveException
+        || exception instanceof InvalidPromoteFormatException
+        || exception instanceof CommandNotAvailableNowException
+        || exception instanceof FailedUndoException
+        || exception instanceof FailedRedoException) {
+      error(exception.getMessage());
     } else {
-      System.out.println(Game.getInstance().getGameRepresentation());
-      System.err.println(e);
-      e.printStackTrace();
+      print(Game.getInstance().getGameRepresentation());
+      error(String.valueOf(exception));
       running = false;
     }
   }
@@ -146,19 +146,19 @@ public class UciView implements View {
       Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
-      System.out.println("unknown command: " + input + " received\n");
+      print("unknown command: " + input + " received\n");
     }
   }
 
   private void uciCommand(String args) {
-    System.out.println("Chess 2\nMade by PDP team\nuciok\n");
+    print("Chess 2\nMade by PDP team\nuciok\n");
     // TODO: add ai config
   }
 
   private void positionCommand(String args) {
     String[] args2 = args.split(" ");
     if (args2.length > 2 && args2[0].equals("fen")) {
-      System.out.println("can't handle fen boards");
+      print("can't handle fen boards");
     } else if (args2.length > 2 && args2[0].equals("startpos")) {
       Game.initialize(
           false,
@@ -186,13 +186,13 @@ public class UciView implements View {
     debug(LOGGER, "Searching for best move");
     Move move = solver.getBestMove(Game.getInstance());
     if (move == null) {
-      System.err.println(Game.getInstance().getGameRepresentation());
+      error(Game.getInstance().getGameRepresentation());
     }
-    System.out.println("bestmove " + move.toUciString());
+    print("bestmove " + move.toUciString());
   }
 
   private void isReadyCommand(String args) {
-    System.out.println("readyok");
+    print("readyok");
   }
 
   private void quitCommand(String args) {

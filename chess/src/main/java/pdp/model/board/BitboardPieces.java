@@ -23,14 +23,14 @@ public final class BitboardPieces {
    *
    * @return the bitboard containing all white pieces
    */
-  public static Bitboard getWhiteBoard(BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation
+  public static Bitboard getWhiteBoard(final BitboardRepresentation bitboardRep) {
+    return bitboardRep
         .getBitboards()[0]
-        .or(bitboardRepresentation.getBitboards()[1])
-        .or(bitboardRepresentation.getBitboards()[2])
-        .or(bitboardRepresentation.getBitboards()[3])
-        .or(bitboardRepresentation.getBitboards()[4])
-        .or(bitboardRepresentation.getBitboards()[5]);
+        .or(bitboardRep.getBitboards()[1])
+        .or(bitboardRep.getBitboards()[2])
+        .or(bitboardRep.getBitboards()[3])
+        .or(bitboardRep.getBitboards()[4])
+        .or(bitboardRep.getBitboards()[5]);
   }
 
   /**
@@ -38,14 +38,14 @@ public final class BitboardPieces {
    *
    * @return the bitboard containing all black pieces
    */
-  public static Bitboard getBlackBoard(BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation
+  public static Bitboard getBlackBoard(final BitboardRepresentation bitboardRep) {
+    return bitboardRep
         .getBitboards()[6]
-        .or(bitboardRepresentation.getBitboards()[7])
-        .or(bitboardRepresentation.getBitboards()[8])
-        .or(bitboardRepresentation.getBitboards()[9])
-        .or(bitboardRepresentation.getBitboards()[10])
-        .or(bitboardRepresentation.getBitboards()[11]);
+        .or(bitboardRep.getBitboards()[7])
+        .or(bitboardRep.getBitboards()[8])
+        .or(bitboardRep.getBitboards()[9])
+        .or(bitboardRep.getBitboards()[10])
+        .or(bitboardRep.getBitboards()[11]);
   }
 
   /**
@@ -55,9 +55,9 @@ public final class BitboardPieces {
    * @return A list of the pawns positions for the given color
    */
   public static List<Position> getPawns(
-      boolean white, BitboardRepresentation bitboardRepresentation) {
-    int bitmapIndex = white ? 5 : 11;
-    return bitboardRepresentation.getOccupiedSquares(bitmapIndex);
+      final boolean white, final BitboardRepresentation bitboardRep) {
+    final int bitmapIndex = white ? 5 : 11;
+    return bitboardRep.getOccupiedSquares(bitmapIndex);
   }
 
   /**
@@ -67,9 +67,9 @@ public final class BitboardPieces {
    * @return A list of the rooks positions for the given color
    */
   public static List<Position> getRooks(
-      boolean white, BitboardRepresentation bitboardRepresentation) {
-    int bitmapIndex = white ? 3 : 9;
-    return bitboardRepresentation.getOccupiedSquares(bitmapIndex);
+      final boolean white, final BitboardRepresentation bitboardRep) {
+    final int bitmapIndex = white ? 3 : 9;
+    return bitboardRep.getOccupiedSquares(bitmapIndex);
   }
 
   /**
@@ -79,9 +79,9 @@ public final class BitboardPieces {
    * @return A list of the bishops positions for the given color
    */
   public static List<Position> getBishops(
-      boolean white, BitboardRepresentation bitboardRepresentation) {
-    int bitmapIndex = white ? 2 : 8;
-    return bitboardRepresentation.getOccupiedSquares(bitmapIndex);
+      final boolean white, final BitboardRepresentation bitboardRep) {
+    final int bitmapIndex = white ? 2 : 8;
+    return bitboardRep.getOccupiedSquares(bitmapIndex);
   }
 
   /**
@@ -91,9 +91,9 @@ public final class BitboardPieces {
    * @return A list of the knights positions for the given color
    */
   public static List<Position> getKnights(
-      boolean white, BitboardRepresentation bitboardRepresentation) {
-    int bitmapIndex = white ? 4 : 10;
-    return bitboardRepresentation.getOccupiedSquares(bitmapIndex);
+      final boolean white, final BitboardRepresentation bitboardRep) {
+    final int bitmapIndex = white ? 4 : 10;
+    return bitboardRep.getOccupiedSquares(bitmapIndex);
   }
 
   /**
@@ -103,9 +103,9 @@ public final class BitboardPieces {
    * @return A list of the queens positions for the given color
    */
   public static List<Position> getQueens(
-      boolean white, BitboardRepresentation bitboardRepresentation) {
-    int bitmapIndex = white ? 1 : 7;
-    return bitboardRepresentation.getOccupiedSquares(bitmapIndex);
+      final boolean white, final BitboardRepresentation bitboardRep) {
+    final int bitmapIndex = white ? 1 : 7;
+    return bitboardRep.getOccupiedSquares(bitmapIndex);
   }
 
   /**
@@ -115,21 +115,21 @@ public final class BitboardPieces {
    * @return A list containing the king position for the given color
    */
   public static List<Position> getKing(
-      boolean white, BitboardRepresentation bitboardRepresentation) {
-    int bitmapIndex = white ? 0 : 6;
-    return bitboardRepresentation.getOccupiedSquares(bitmapIndex);
+      final boolean white, final BitboardRepresentation bitboardRep) {
+    final int bitmapIndex = white ? 0 : 6;
+    return bitboardRep.getOccupiedSquares(bitmapIndex);
   }
 
   /**
    * Get the positions of the king. Function optimized with calculations made on bitboards.
    *
    * @param white if true -> white king, if false -> black king
-   * @param bitboardRepresentation bitboard representation of the board
+   * @param bitboardRep bitboard representation of the board
    * @return A list containing the king position for the given color
    */
-  public static int getKingOpti(boolean white, BitboardRepresentation bitboardRepresentation) {
-    int bitmapIndex = white ? 0 : 6;
-    return bitboardRepresentation.getBitboards()[bitmapIndex].getSetBits().get(0);
+  public static int getKingOpti(final boolean white, final BitboardRepresentation bitboardRep) {
+    final int bitmapIndex = white ? 0 : 6;
+    return bitboardRep.getBitboards()[bitmapIndex].getSetBits().get(0);
   }
 
   /**
@@ -137,11 +137,11 @@ public final class BitboardPieces {
    *
    * @return the number of remaining pieces on the board
    */
-  public static int nbPiecesRemaining(BitboardRepresentation bitboardRepresentation) {
+  public static int nbPiecesRemaining(final BitboardRepresentation bitboardRep) {
     int count = 0;
-    int maxBoardIndex = 11;
+    final int maxBoardIndex = 11;
     for (int i = 0; i <= maxBoardIndex; i++) {
-      List<Position> occupiedSquares = bitboardRepresentation.getOccupiedSquares(i);
+      final List<Position> occupiedSquares = bitboardRep.getOccupiedSquares(i);
       count += occupiedSquares.size();
     }
 

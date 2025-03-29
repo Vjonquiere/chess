@@ -1,5 +1,7 @@
 package pdp.controller;
 
+import static pdp.utils.Logging.error;
+
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
@@ -8,12 +10,23 @@ import pdp.utils.Logging;
 
 /** Variation of the design pattern command to execute several commands at once. */
 public final class BagOfCommands {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BagOfCommands.class.getName());
+
+  /** Instance of the class, design pattern singleton. */
   private static BagOfCommands instance;
-  private ConcurrentLinkedQueue<Command> commands = new ConcurrentLinkedQueue<>();
+
+  /** Queue containing the commands to execute. */
+  private final ConcurrentLinkedQueue<Command> commands = new ConcurrentLinkedQueue<>();
+
+  /** Model of the MVC app. */
   private Game model;
+
+  /** Controller of the MVC app. */
   private GameController controller;
-  private boolean isRunning;
+
+  /** Indicates whether the bag of commands is currently executing commands. */
+  private boolean bagRunning;
 
   /**
    * Private constructor needed for design pattern singleton Nothing done inside because every field
@@ -25,15 +38,15 @@ public final class BagOfCommands {
 
   /** Starts a new thread to process all commands in the queue. */
   private void processCommands() {
-    isRunning = true;
-    Thread thread =
+    bagRunning = true;
+    final Thread thread =
         new Thread(
             () -> {
               try {
                 while (!commands.isEmpty()) {
-                  Command command = commands.poll();
+                  final Command command = commands.poll();
                   if (command != null) {
-                    Optional<Exception> exception = command.execute(model, controller);
+                    final Optional<Exception> exception = command.execute(model, controller);
                     if (exception.isPresent() && controller != null) {
                       controller.onErrorEvent(exception.get());
                     }
@@ -41,10 +54,10 @@ public final class BagOfCommands {
                   Thread.sleep(1); // Prevent CPU overuse
                 }
               } catch (Exception e) {
-                System.out.println("Error in processCommands: " + e.getMessage());
+                error("Error in processCommands: " + e.getMessage());
                 e.printStackTrace();
               } finally {
-                isRunning = false;
+                bagRunning = false;
                 // If more commands are added while processing, restart the thread
                 if (!commands.isEmpty()) {
                   processCommands();
@@ -61,9 +74,9 @@ public final class BagOfCommands {
    *
    * @param command The command to add.
    */
-  public void addCommand(Command command) {
+  public void addCommand(final Command command) {
     this.commands.add(command);
-    if (!this.isRunning) {
+    if (!this.bagRunning) {
       processCommands();
     }
   }
@@ -73,7 +86,7 @@ public final class BagOfCommands {
    *
    * @param model The game model to set.
    */
-  public void setModel(Game model) {
+  public void setModel(final Game model) {
     this.model = model;
     if (this.controller != null) {
       this.controller.setModel(model);
@@ -85,7 +98,7 @@ public final class BagOfCommands {
    *
    * @param controller The game controller to set.
    */
-  public void setController(GameController controller) {
+  public void setController(final GameController controller) {
     this.controller = controller;
   }
 
@@ -95,7 +108,7 @@ public final class BagOfCommands {
    * @return isRunning field
    */
   public boolean isRunning() {
-    return this.isRunning;
+    return this.bagRunning;
   }
 
   /**
@@ -111,11 +124,11 @@ public final class BagOfCommands {
   }
 
   /**
-   * Sets the instance of BagOfCommands.
+   * Sets the instance of BagOfCommands. Used for tests.
    *
    * @param instance The instance to be set as the singleton BagOfCommands.
    */
-  public static void setInstance(BagOfCommands instance) {
+  public static void setInstance(final BagOfCommands instance) {
     BagOfCommands.instance = instance;
   }
 }

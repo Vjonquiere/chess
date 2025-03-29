@@ -666,9 +666,24 @@ public enum OptionType {
     }
   };
 
+  /**
+   * Retrieves the short name of the option.
+   *
+   * @return short name of the option
+   */
   public abstract String getShort();
 
+  /**
+   * Retrieves the long name of the option.
+   *
+   * @return long name of the option
+   */
   public abstract String getLong();
 
+  /**
+   * Retrieves the option.
+   *
+   * @return instance of the option
+   */
   public abstract Option getOption();
 }

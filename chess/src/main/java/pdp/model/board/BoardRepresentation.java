@@ -52,6 +52,8 @@ public interface BoardRepresentation {
 
   BoardRepresentation getCopy();
 
+  List<Move> getAvailableMoves(Position pos);
+
   List<Move> getAvailableMoves(int x, int y, boolean kingReachable);
 
   List<Move> getAllAvailableMoves(boolean isWhite);
@@ -126,5 +128,15 @@ public interface BoardRepresentation {
 
   int getNbMovesWithNoCaptureOrPawn();
 
+  int getNbFullMovesWithNoCaptureOrPawn();
+
   void setNbMovesWithNoCaptureOrPawn(int newVal);
+
+  void makeMove(Move move);
+
+  char[][] getAsciiRepresentation();
+
+  void applyCastle(Color color, boolean shortCastle);
+
+  boolean[] getCastlingRights();
 }

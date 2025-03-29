@@ -1,7 +1,7 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
@@ -10,6 +10,24 @@ import pdp.utils.Position;
  * center is important.
  */
 public class SpaceControlHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  private static final int MAX_MOVES_CONSIDERED = 50;
+  private static final float BONUS_MOVE_IN_CENTER = 3f;
+  private static final float BONUS_MOVE_ON_FLANKS = 1.5f;
+  private static final float BONUS_MOVE_ELSEWHERE = 0.5f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLIER = SCORE_CAP / (MAX_MOVES_CONSIDERED * BONUS_MOVE_ELSEWHERE);
+
+  private static final int CENTER_X_MIN = 3;
+  private static final int CENTER_X_MAX = 4;
+  private static final int CENTER_Y_MIN = 3;
+  private static final int CENTER_Y_MAX = 4;
+  private static final int FLANK_LEFT_MAX_X = 1;
+  private static final int FLANK_RIGHT_MIN_X = 6;
 
   /**
    * Gives a score based on how much control over the entire board the players have. Center is
@@ -20,95 +38,54 @@ public class SpaceControlHeuristic implements Heuristic {
    * @return a score corresponding to the overall control of the board
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
-    int score = 0;
-    score += evaluateCenterControl(board, true) - evaluateCenterControl(board, false);
-    score += evaluateFlanksControl(board, true) - evaluateFlanksControl(board, false);
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
+    score += evaluateBoardControl(board, true) - evaluateBoardControl(board, false);
+
+    score = Math.min(score * MULTIPLIER, SCORE_CAP);
+
     return isWhite ? score : -score;
   }
 
   /**
-   * Gives a score based on how much control over the center the corresponding player has.
+   * Evaluates control of the board, giving different weights to different areas.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
-   * @return a score based on center control
+   * @return a score based on board control
    */
-  private int evaluateCenterControl(Board board, boolean isWhite) {
-    int score = 0;
-    int bonusForEachMoveInCenter = 3;
+  private float evaluateBoardControl(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
+    final List<Move> allPossibleMoves = board.getAllAvailableMoves(isWhite);
 
-    List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
-
-    // Delineate center box
-    Position posTopLeftCenter = new Position(2, 5);
-    Position posTopRightCenter = new Position(5, 5);
-    Position posDownLeftCenter = new Position(2, 2);
-    Position posDownRightCenter = new Position(5, 2);
-
-    for (Move move : allPossibleMoves) {
-      Position posDest = move.getDest();
-      // If move is aiming at the center then bonus
-      boolean moveAimsAtCenter =
-          posDest.x() >= posDownLeftCenter.x()
-              && posDest.x() <= posTopRightCenter.x()
-              && posDest.y() >= posDownRightCenter.y()
-              && posDest.y() <= posTopLeftCenter.y();
-      if (moveAimsAtCenter) {
-        score += bonusForEachMoveInCenter;
+    for (final Move move : allPossibleMoves) {
+      final Position posDest = move.getDest();
+      if (isInCenter(posDest)) {
+        score += BONUS_MOVE_IN_CENTER;
+      } else if (isInLeftFlank(posDest) || isInRightFlank(posDest)) {
+        score += BONUS_MOVE_ON_FLANKS;
+      } else {
+        score += BONUS_MOVE_ELSEWHERE;
       }
     }
-
     return score;
   }
 
-  /**
-   * Gives a score based on how much control over the flanks the corresponding player has.
-   *
-   * @param board the board of the game
-   * @param isWhite true if white, false otherwise
-   * @return a score based on flanks control
-   */
-  private int evaluateFlanksControl(Board board, boolean isWhite) {
-    int score = 0;
-    int bonusForEachMoveOnFlanks = 1;
+  /** Checks if a position is in the center region (d4, d5, e4, e5). */
+  private boolean isInCenter(final Position pos) {
+    return pos.x() >= CENTER_X_MIN
+        && pos.x() <= CENTER_X_MAX
+        && pos.y() >= CENTER_Y_MIN
+        && pos.y() <= CENTER_Y_MAX;
+  }
 
-    List<Move> allPossibleMoves = board.getBoardRep().getAllAvailableMoves(isWhite);
+  /** Checks if a position is in the left flank (files a-b). */
+  private boolean isInLeftFlank(final Position pos) {
+    return pos.x() <= FLANK_LEFT_MAX_X;
+  }
 
-    // Left flank
-    Position posTopLeftCenterLeftFlank = new Position(0, 5);
-    Position posTopRightCenterLeftFlank = new Position(1, 5);
-    Position posDownLeftCenterLeftFlank = new Position(0, 2);
-    Position posDownRightCenterLeftFlank = new Position(1, 2);
-
-    // Right flank
-    Position posTopLeftCenterRightFlank = new Position(5, 5);
-    Position posTopRightCenterRightFlank = new Position(6, 5);
-    Position posDownLeftCenterRightFlank = new Position(5, 2);
-    Position posDownRightCenterRightFlank = new Position(6, 2);
-
-    for (Move move : allPossibleMoves) {
-      Position posDest = move.getDest();
-      // If move is aiming at the left flank then bonus
-      boolean moveAimsAtLeftFlank =
-          posDest.x() >= posDownLeftCenterLeftFlank.x()
-              && posDest.x() <= posTopRightCenterLeftFlank.x()
-              && posDest.y() >= posDownRightCenterLeftFlank.y()
-              && posDest.y() <= posTopLeftCenterLeftFlank.y();
-      if (moveAimsAtLeftFlank) {
-        score += bonusForEachMoveOnFlanks;
-      }
-      // If move is aiming at the right flank then bonus
-      boolean moveAimsAtRightFlank =
-          posDest.x() >= posDownLeftCenterRightFlank.x()
-              && posDest.x() <= posTopRightCenterRightFlank.x()
-              && posDest.y() >= posDownRightCenterRightFlank.y()
-              && posDest.y() <= posTopLeftCenterRightFlank.y();
-      if (moveAimsAtRightFlank) {
-        score += bonusForEachMoveOnFlanks;
-      }
-    }
-
-    return score;
+  /** Checks if a position is in the right flank (files g-h). */
+  private boolean isInRightFlank(final Position pos) {
+    return pos.x() >= FLANK_RIGHT_MIN_X;
   }
 }

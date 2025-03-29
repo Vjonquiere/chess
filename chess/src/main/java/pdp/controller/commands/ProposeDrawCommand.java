@@ -12,9 +12,15 @@ import pdp.model.Game;
  */
 public class ProposeDrawCommand implements Command {
 
+  /** Player who proposed the draw. */
   private final boolean isWhite;
 
-  public ProposeDrawCommand(boolean isWhite) {
+  /**
+   * Creates the proposal of draw command. Will then propose a draw from the given player.
+   *
+   * @param isWhite true if the player is white, false otherwise
+   */
+  public ProposeDrawCommand(final boolean isWhite) {
     this.isWhite = isWhite;
   }
 
@@ -27,14 +33,14 @@ public class ProposeDrawCommand implements Command {
    * @return an Optional containing an exception if an error occured, otherwise an empty Optional.
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }
     if (isWhite) {
-      model.getGameState().whiteWantsToDraw();
+      model.getGameState().doesWhiteWantsToDraw();
     } else {
-      model.getGameState().blackWantsToDraw();
+      model.getGameState().doesBlackWantsToDraw();
     }
     return Optional.empty();
   }

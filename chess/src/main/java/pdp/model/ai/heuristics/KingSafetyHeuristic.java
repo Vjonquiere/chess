@@ -1,7 +1,6 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
@@ -25,8 +24,8 @@ public class KingSafetyHeuristic implements Heuristic {
    * @return score according to the safety of the king
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
-    int score = 0;
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
     score += kingVulnerabilityScore(board, true) - kingVulnerabilityScore(board, false);
     score += kingProtectionScore(board, true) - kingProtectionScore(board, false);
     score += kingSafetyToChecksFromEnemy(board, true) - kingSafetyToChecksFromEnemy(board, false);
@@ -40,18 +39,18 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a penalty score (negative) if the king is in the center, 0 otherwise
    */
-  private int kingVulnerabilityScore(Board board, boolean isWhite) {
-    int score = 0;
+  private float kingVulnerabilityScore(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
 
     // Define center area
-    Position posTopLeftCenter = new Position(2, 5);
-    Position posTopRightCenter = new Position(5, 5);
-    Position posDownLeftCenter = new Position(2, 2);
-    Position posDownRightCenter = new Position(5, 2);
+    final Position posTopLeftCenter = new Position(2, 5);
+    final Position posTopRightCenter = new Position(5, 5);
+    final Position posDownLeftCenter = new Position(2, 2);
+    final Position posDownRightCenter = new Position(5, 2);
 
-    Position kingPosition = board.getBoardRep().getKing(isWhite).get(0);
+    final Position kingPosition = board.getKing(isWhite).get(0);
 
-    boolean isKingInCenter =
+    final boolean isKingInCenter =
         kingPosition.x() >= posDownLeftCenter.x()
             && kingPosition.x() <= posTopRightCenter.x()
             && kingPosition.y() >= posDownRightCenter.y()
@@ -72,28 +71,28 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a positive score if the king has friendly pieces nearby, 0 otherwise
    */
-  private int kingProtectionScore(Board board, boolean isWhite) {
-    int score = 0;
-    BoardRepresentation bitboard = board.getBoardRep();
+  private float kingProtectionScore(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
+    final BoardRepresentation bitboard = board;
 
-    Position kingPos = bitboard.getKing(isWhite).get(0);
+    final Position kingPos = bitboard.getKing(isWhite).get(0);
 
     // Squares around the king
-    int[][] directions = {
+    final int[][] directions = {
       {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, /*King pos*/ {0, 1}, {1, -1}, {1, 0}, {1, 1}
     };
+    Position newPos;
+    for (final int[] dir : directions) {
+      final int newX = kingPos.x() + dir[0];
+      final int newY = kingPos.y() + dir[1];
 
-    for (int[] dir : directions) {
-      int newX = kingPos.x() + dir[0];
-      int newY = kingPos.y() + dir[1];
-
-      Position newPos = new Position(newX, newY);
+      newPos = new Position(newX, newY);
 
       if (newPos.isValid()) {
-        ColoredPiece piece = bitboard.getPieceAt(newX, newY);
+        final ColoredPiece piece = bitboard.getPieceAt(newX, newY);
         if (piece.getPiece() != Piece.EMPTY) {
-          Color colorPiece = piece.getColor();
-          boolean white = colorPiece == Color.WHITE;
+          final Color colorPiece = piece.getColor();
+          final boolean white = colorPiece == Color.WHITE;
           if (white == isWhite) {
             // Protection from piece of the same color
             score += 5;
@@ -112,23 +111,24 @@ public class KingSafetyHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a negative score if the king can get checked, positive otherwise
    */
-  private int kingSafetyToChecksFromEnemy(Board board, boolean isWhite) {
-    int score = 0;
+  private float kingSafetyToChecksFromEnemy(
+      final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
 
-    BoardRepresentation bitboard = board.getBoardRep();
+    final BoardRepresentation bitboard = board;
 
     if (isWhite) {
       // Test for white king
-      List<List<Position>> posBlackPieces = bitboard.retrieveBlackPiecesPos();
-      Position whiteKingPosition = bitboard.getKing(true).get(0);
+      final List<List<Position>> posBlackPieces = bitboard.retrieveBlackPiecesPos();
+      final Position whiteKingPosition = bitboard.getKing(true).get(0);
 
-      for (List<Position> posList : posBlackPieces) {
-        for (Position posBlackPiece : posList) {
+      for (final List<Position> posList : posBlackPieces) {
+        for (final Position posBlackPiece : posList) {
           // Must not be king
           if (bitboard.getPieceAt(posBlackPiece.x(), posBlackPiece.y()).getPiece() != Piece.KING) {
-            List<Move> movesForPiece =
+            final List<Move> movesForPiece =
                 bitboard.getAvailableMoves(posBlackPiece.x(), posBlackPiece.y(), true);
-            for (Move move : movesForPiece) {
+            for (final Move move : movesForPiece) {
               if (move.getDest().x() == whiteKingPosition.x()
                   && move.getDest().y() == whiteKingPosition.y()) {
                 // Check is possible from black
@@ -140,16 +140,16 @@ public class KingSafetyHeuristic implements Heuristic {
       }
     } else {
       // Test for black king
-      List<List<Position>> posWhitePieces = bitboard.retrieveWhitePiecesPos();
-      Position blackKingPosition = bitboard.getKing(false).get(0);
+      final List<List<Position>> posWhitePieces = bitboard.retrieveWhitePiecesPos();
+      final Position blackKingPosition = bitboard.getKing(false).get(0);
 
-      for (List<Position> posList : posWhitePieces) {
-        for (Position posWhitePiece : posList) {
+      for (final List<Position> posList : posWhitePieces) {
+        for (final Position posWhitePiece : posList) {
           // Must not be king
           if (bitboard.getPieceAt(posWhitePiece.x(), posWhitePiece.y()).getPiece() != Piece.KING) {
-            List<Move> movesForPiece =
+            final List<Move> movesForPiece =
                 bitboard.getAvailableMoves(posWhitePiece.x(), posWhitePiece.y(), true);
-            for (Move move : movesForPiece) {
+            for (final Move move : movesForPiece) {
               if (move.getDest().x() == blackKingPosition.x()
                   && move.getDest().y() == blackKingPosition.y()) {
                 // Check is possible from white

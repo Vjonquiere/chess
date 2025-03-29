@@ -18,7 +18,7 @@ import pdp.utils.Logging;
 
 /** Algorithm of artificial intelligence Alpha beta pruning. */
 public class AlphaBeta implements SearchAlgorithm {
-  /** Solver used for calling the evaluation of the board once depth si reached or time is up. */
+  /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 
   /** Logger of the class. */
@@ -102,7 +102,7 @@ public class AlphaBeta implements SearchAlgorithm {
     }
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
+    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
     for (Move move : moves) {
       if (solver.isSearchStopped()) {
         break;

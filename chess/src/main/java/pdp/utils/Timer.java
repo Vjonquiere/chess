@@ -9,12 +9,25 @@ import java.util.logging.Logger;
  * the timer is over.
  */
 public class Timer implements Runnable {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Timer.class.getName());
-  private final long duration; // In milliseconds
+
+  /** Duration of the timer, in milliseconds. */
+  private final long duration;
+
+  /** Remaining time in the timer. */
   private long remaining;
-  private boolean running = false;
+
+  /** Boolean to indicate whether the timer is currently running. */
+  private boolean running;
+
+  /** Thread to run the timer on. */
   private Thread thread;
+
+  /** Callback when the timer is over. */
   private Runnable timeOverCallback;
+
+  /** Time when the timer was started. */
   private long startTime;
 
   static {
@@ -27,7 +40,7 @@ public class Timer implements Runnable {
    * @param time duration of the timer
    * @param timeOverCallback callback when the timer is over.
    */
-  public Timer(long time, Runnable timeOverCallback) {
+  public Timer(final long time, final Runnable timeOverCallback) {
     this.duration = time;
     this.remaining = this.duration;
     this.timeOverCallback = timeOverCallback;
@@ -38,7 +51,7 @@ public class Timer implements Runnable {
    *
    * @param time duration of the timer
    */
-  public Timer(long time) {
+  public Timer(final long time) {
     this.duration = time;
     this.remaining = this.duration;
   }
@@ -48,7 +61,7 @@ public class Timer implements Runnable {
    *
    * @param timeOverCallback The Runnable to be executed when the time is over.
    */
-  public void setCallback(Runnable timeOverCallback) {
+  public void setCallback(final Runnable timeOverCallback) {
     this.timeOverCallback = timeOverCallback;
   }
 
@@ -66,7 +79,7 @@ public class Timer implements Runnable {
       if (running && this.timeOverCallback != null) {
         this.timeOverCallback.run();
       }
-    } catch (Exception e) {
+    } catch (Exception ignored) {
       // System.err.println(e.getMessage());
     }
     running = false;
@@ -98,7 +111,7 @@ public class Timer implements Runnable {
    */
   public long getTimeRemaining() {
     if (running) {
-      long elapsed = System.currentTimeMillis() - this.startTime;
+      final long elapsed = System.currentTimeMillis() - this.startTime;
       return Math.max(this.remaining - elapsed, 0);
     } else {
       return this.remaining;
@@ -112,16 +125,16 @@ public class Timer implements Runnable {
    * @return A string representation of the time remaining on the timer.
    */
   public String getTimeRemainingString() {
-    long totalSeconds = getTimeRemaining() / 1000;
+    final long totalSeconds = getTimeRemaining() / 1000;
 
-    if (this.duration < 3600000) {
-      long minutes = totalSeconds / 60;
-      long seconds = totalSeconds % 60;
+    if (this.duration < 3_600_000) {
+      final long minutes = totalSeconds / 60;
+      final long seconds = totalSeconds % 60;
       return String.format("%02d:%02d", minutes, seconds);
     } else {
-      long hours = totalSeconds / 3600;
-      long minutes = (totalSeconds % 3600) / 60;
-      long seconds = totalSeconds % 60;
+      final long hours = totalSeconds / 3600;
+      final long minutes = totalSeconds % 3600 / 60;
+      final long seconds = totalSeconds % 60;
       return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
   }

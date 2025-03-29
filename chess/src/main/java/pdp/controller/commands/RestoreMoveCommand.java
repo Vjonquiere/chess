@@ -9,6 +9,7 @@ import pdp.model.Game;
  * Part of Command Design pattern. Creates a command to replay the last move. Corresponds to a redo.
  */
 public class RestoreMoveCommand implements Command {
+
   /**
    * Reverts the last cancelled move in the game model if possible.
    *
@@ -17,7 +18,7 @@ public class RestoreMoveCommand implements Command {
    * @return An Optional containing an exception if an error occurred or empty if successful.
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(final Game model, GameController controller) {
     try {
       if (model.getGameState().getRedoRequestTurnNumber() == model.getGameState().getFullTurn()) {
         model.nextState();

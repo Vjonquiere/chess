@@ -2,10 +2,23 @@ package pdp.model.ai.heuristics;
 
 import pdp.exceptions.InvalidBoardException;
 import pdp.model.board.BitboardRepresentation;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 
 /** Heuristic based on the number of pieces still on the board. */
 public class MaterialHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  private static final float PAWN_VALUE = 1f;
+  private static final float QUEEN_VALUE = 9f;
+  private static final float BISHOP_VALUE = 3f;
+  private static final float KNIGHT_VALUE = 3f;
+  private static final float ROOK_VALUE = 5f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLIER =
+      SCORE_CAP / (QUEEN_VALUE * 9 + BISHOP_VALUE * 2 + KNIGHT_VALUE * 2 + ROOK_VALUE * 2);
 
   /**
    * Evaluates the board based on the number of pieces still on the board and returns a score.
@@ -15,30 +28,22 @@ public class MaterialHeuristic implements Heuristic {
    * @return score of the board
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
-    int score = 0;
-    if (!(board.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation)) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
+    if (!(board instanceof BitboardRepresentation bitboardRep)) {
       throw new InvalidBoardException();
     }
+    float score = 0;
+    score += (bitboardRep.getPawns(true).size() - bitboardRep.getPawns(false).size()) * PAWN_VALUE;
     score +=
-        bitboardRepresentation.getPawns(true).size()
-            - bitboardRepresentation.getPawns(false).size();
+        (bitboardRep.getQueens(true).size() - bitboardRep.getQueens(false).size()) * QUEEN_VALUE;
     score +=
-        (bitboardRepresentation.getQueens(true).size()
-                - bitboardRepresentation.getQueens(false).size())
-            * 9;
+        (bitboardRep.getBishops(true).size() - bitboardRep.getBishops(false).size()) * BISHOP_VALUE;
     score +=
-        (bitboardRepresentation.getBishops(true).size()
-                - bitboardRepresentation.getBishops(false).size())
-            * 3;
-    score +=
-        (bitboardRepresentation.getKnights(true).size()
-                - bitboardRepresentation.getKnights(false).size())
-            * 3;
-    score +=
-        (bitboardRepresentation.getRooks(true).size()
-                - bitboardRepresentation.getRooks(false).size())
-            * 5;
+        (bitboardRep.getKnights(true).size() - bitboardRep.getKnights(false).size()) * KNIGHT_VALUE;
+    score += (bitboardRep.getRooks(true).size() - bitboardRep.getRooks(false).size()) * ROOK_VALUE;
+
+    score *= MULTIPLIER;
+
     return isWhite ? score : -score;
   }
 }

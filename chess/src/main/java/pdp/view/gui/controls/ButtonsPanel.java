@@ -18,92 +18,93 @@ import pdp.view.gui.popups.YesNoPopUp;
 
 /** GUI Buttons panel for game commands. */
 public class ButtonsPanel extends GridPane {
-  private Button drawButton;
-  private Button undoButton;
-  private Button redoButton;
-  private Button resignButton;
-  private Button undrawButton;
-  private Button restartButton;
 
   /**
    * Creates the buttons panel to simplify the user experience. Allows the user to ask for draw
    * proposal and remove it, resign, restart, undo and redo a move.
    */
   public ButtonsPanel() {
+    super();
     setPadding(new Insets(10));
     setHgap(10);
     setVgap(10);
     setAlignment(Pos.CENTER);
 
-    initResignButton();
-    initDrawButton();
-    initUndrawButton();
-    initRedoButton();
-    initUndoButton();
-    initRestartButton();
+    add(createDrawButton(), 0, 0);
+    add(createUndoButton(), 1, 0);
+    add(createResignButton(), 2, 0);
 
-    add(drawButton, 0, 0);
-    add(undoButton, 1, 0);
-    add(resignButton, 2, 0);
-
-    add(undrawButton, 0, 1);
-    add(redoButton, 1, 1);
-    add(restartButton, 2, 1);
+    add(createUndrawButton(), 0, 1);
+    add(createRedoButton(), 1, 1);
+    add(createRestartButton(), 2, 1);
   }
 
   /**
-   * Initializes the undo button and sets its action. When clicked, the button allows the player to
-   * undo the last move. If neither player is controlled by AI, a confirmation popup appears, and
-   * the move is undone if the player accepts.
+   * Creates the undo button and sets its action. When clicked, the button allows the player to undo
+   * the last move. If neither player is controlled by AI, a confirmation popup appears, and the
+   * move is undone if the player accepts.
    */
-  private void initUndoButton() {
-    undoButton = new Button(TextGetter.getText("undo"));
+  private Button createUndoButton() {
+    final Button undoButton = new Button(TextGetter.getText("undo"));
     undoButton.setMinWidth(100);
     undoButton.setOnAction(
         event -> {
-          BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
-            new YesNoPopUp(
-                "undoInstructionsGui",
-                new CancelMoveCommand(),
-                () -> Game.getInstance().getGameState().undoRequestReset());
+          if (Game.getInstance().getGameState().getFullTurn() > 0) {
+            BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
+            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+              new YesNoPopUp(
+                  "undoInstructionsGui",
+                  new CancelMoveCommand(),
+                  () -> Game.getInstance().getGameState().undoRequestReset());
+            }
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
-              InfoPopUp.show(TextGetter.getText("notAllowed"));
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
+          }
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
+    return undoButton;
   }
 
   /**
-   * Initializes the redo button and sets its action. When clicked, the button allows the player to
-   * redo the last undone move. If neither player is controlled by AI, a confirmation popup appears,
-   * and the move is redone if the player accepts.
+   * Creates the redo button and sets its action. When clicked, the button allows the player to redo
+   * the last undone move. If neither player is controlled by AI, a confirmation popup appears, and
+   * the move is redone if the player accepts.
    */
-  private void initRedoButton() {
-    redoButton = new Button(TextGetter.getText("redo"));
+  private Button createRedoButton() {
+    final Button redoButton = new Button(TextGetter.getText("redo"));
     redoButton.setMinWidth(100);
     redoButton.setOnAction(
         event -> {
-          BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
-            new YesNoPopUp(
-                "redoInstructionsGui",
-                new RestoreMoveCommand(),
-                () -> Game.getInstance().getGameState().redoRequestReset());
+          if (Game.getInstance().getHistory().getCurrentMove().orElse(null) != null
+              && Game.getInstance().getHistory().getCurrentMove().get().getNext().orElse(null)
+                  != null) {
+            BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
+            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+              new YesNoPopUp(
+                  "redoInstructionsGui",
+                  new RestoreMoveCommand(),
+                  () -> Game.getInstance().getGameState().redoRequestReset());
+            }
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
-              InfoPopUp.show(TextGetter.getText("notAllowed"));
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
+          }
+
+          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+            InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
+    return redoButton;
   }
 
   /**
-   * Initializes the draw button and sets its action. When clicked, the button allows the player to
+   * Creates the draw button and sets its action. When clicked, the button allows the player to
    * propose a draw. A confirmation popup appears for the player to confirm their proposal before
    * sending it.
    */
-  private void initDrawButton() {
-    drawButton = new Button(TextGetter.getText("draw"));
+  private Button createDrawButton() {
+    final Button drawButton = new Button(TextGetter.getText("draw"));
     drawButton.setMinWidth(100);
     drawButton.setOnAction(
         event -> {
@@ -113,19 +114,21 @@ public class ButtonsPanel extends GridPane {
                 new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
+    return drawButton;
   }
 
   /**
-   * Initializes the undraw button and sets its action. When clicked, the button allows the player
-   * to cancel their draw proposal. A confirmation popup appears for the player to confirm the
+   * Creates the undraw button and sets its action. When clicked, the button allows the player to
+   * cancel their draw proposal. A confirmation popup appears for the player to confirm the
    * cancellation.
    */
-  private void initUndrawButton() {
-    undrawButton = new Button(TextGetter.getText("undraw"));
+  private Button createUndrawButton() {
+    final Button undrawButton = new Button(TextGetter.getText("undraw"));
     undrawButton.setMinWidth(100);
     undrawButton.setOnAction(
         event -> {
@@ -135,19 +138,21 @@ public class ButtonsPanel extends GridPane {
                 new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
+    return undrawButton;
   }
 
   /**
-   * Initializes the resign button and sets its action. When clicked, the button allows the player
-   * to resign from the game. A confirmation popup appears for the player to confirm their
-   * resignation before ending the game.
+   * Creates the resign button and sets its action. When clicked, the button allows the player to
+   * resign from the game. A confirmation popup appears for the player to confirm their resignation
+   * before ending the game.
    */
-  private void initResignButton() {
-    resignButton = new Button(TextGetter.getText("resign"));
+  private Button createResignButton() {
+    final Button resignButton = new Button(TextGetter.getText("resign"));
     resignButton.setMinWidth(100);
     resignButton.setOnAction(
         event -> {
@@ -157,23 +162,26 @@ public class ButtonsPanel extends GridPane {
                 new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi())
+            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
+            }
           }
         });
+    return resignButton;
   }
 
   /**
-   * Initializes the restart button and sets its action. When clicked, the button allows the player
-   * to restart the game. A confirmation popup appears for the player to confirm the restart before
-   * the game is reset.
+   * Creates the restart button and sets its action. When clicked, the button allows the player to
+   * restart the game. A confirmation popup appears for the player to confirm the restart before the
+   * game is reset.
    */
-  private void initRestartButton() {
-    restartButton = new Button(TextGetter.getText("restart"));
+  private Button createRestartButton() {
+    final Button restartButton = new Button(TextGetter.getText("restart"));
     restartButton.setMinWidth(100);
     restartButton.setOnAction(
         event -> {
           new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
         });
+    return restartButton;
   }
 }

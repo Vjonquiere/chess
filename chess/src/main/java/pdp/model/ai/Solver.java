@@ -1,6 +1,7 @@
 package pdp.model.ai;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,11 +27,12 @@ import pdp.model.ai.heuristics.KingSafetyHeuristic;
 import pdp.model.ai.heuristics.MaterialHeuristic;
 import pdp.model.ai.heuristics.MobilityHeuristic;
 import pdp.model.ai.heuristics.PawnChainHeuristic;
+import pdp.model.ai.heuristics.PromotionHeuristic;
 import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.ai.heuristics.StandardLightHeuristic;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
@@ -62,6 +64,9 @@ public class Solver {
 
   /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
+
+  /** The last move reflexion time in nanoseconds. */
+  private long lastMoveTime;
 
   /**
    * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before
@@ -97,7 +102,7 @@ public class Solver {
    *
    * @param algorithm The algorithm to use.
    */
-  public void setAlgorithm(AlgorithmType algorithm) {
+  public void setAlgorithm(final AlgorithmType algorithm) {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
@@ -142,6 +147,7 @@ public class Solver {
       case STANDARD -> this.heuristic = new StandardHeuristic();
       case STANDARD_LIGHT -> this.heuristic = new StandardLightHeuristic();
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
+      case PROMOTION -> this.heuristic = new PromotionHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     this.currentHeuristic = heuristic;
@@ -158,29 +164,17 @@ public class Solver {
    * @param heuristic The heuristic to use.
    */
   public void setHeuristic(final HeuristicType heuristic, final List<Float> weight) {
-    switch (heuristic) {
-      case MATERIAL -> this.heuristic = new MaterialHeuristic();
-      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
-      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
-      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
-      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
-      case MOBILITY -> this.heuristic = new MobilityHeuristic();
-      case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
-      case SHANNON -> this.heuristic = new ShannonBasic();
-      case GAME_STATUS -> this.heuristic = new GameStatus();
-      case KING_ACTIVITY -> this.heuristic = new KingActivityHeuristic();
-      case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
-      case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
-      case STANDARD -> this.heuristic = new StandardHeuristic(weight);
-      case ENDGAME -> this.heuristic = new EndGameHeuristic();
-      default -> throw new IllegalArgumentException("No heuristic is set");
+    if (heuristic == HeuristicType.STANDARD) {
+      this.heuristic = new StandardHeuristic(weight);
+      if (this.startHeuristic == null) {
+        this.startHeuristic = heuristic;
+      }
+      evaluatedBoards = new ConcurrentHashMap<>();
+      this.currentHeuristic = heuristic;
+      debug(LOGGER, "Heuristic set to: " + this.heuristic);
+    } else {
+      setHeuristic(heuristic);
     }
-    evaluatedBoards = new ConcurrentHashMap<>();
-    this.currentHeuristic = heuristic;
-    if (this.startHeuristic == null) {
-      this.startHeuristic = heuristic;
-    }
-    debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
   /**
@@ -205,7 +199,7 @@ public class Solver {
     this.startHeuristic = heuristic;
   }
 
-  public HeuristicType getStartHeurisic() {
+  public HeuristicType getStartHeuristic() {
     return this.startHeuristic;
   }
 
@@ -214,7 +208,7 @@ public class Solver {
    *
    * @return current heuristic
    */
-  public HeuristicType getCurrentHeurisic() {
+  public HeuristicType getCurrentHeuristic() {
     return this.currentHeuristic;
   }
 
@@ -321,12 +315,16 @@ public class Solver {
     if (timer != null) {
       timer.start();
     }
+    final long startTime = System.nanoTime();
     searchStopped = false;
     isMoveToPlay = true;
+    game.setAiPlayedItsLastMove(false);
     final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
+    game.setAiPlayedItsLastMove(true);
     if (timer != null) {
       timer.stop();
     }
+    lastMoveTime = System.nanoTime() - startTime;
 
     debug(LOGGER, "Best move " + bestMove);
 
@@ -336,9 +334,8 @@ public class Solver {
       try {
         game.playMove(bestMove.move());
       } catch (Exception e) {
-        e.printStackTrace();
         game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
-        System.err.println(e.getMessage());
+        error(e.getMessage());
         if (game.getGameState().isWhiteTurn()) {
           game.getGameState().whiteResigns();
         } else {
@@ -377,7 +374,7 @@ public class Solver {
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public float evaluateBoard(final Board board, final boolean isWhite) {
+  public float evaluateBoard(final BoardRepresentation board, final boolean isWhite) {
     if (board == null) {
       throw new IllegalArgumentException("Board is null");
     }
@@ -394,11 +391,20 @@ public class Solver {
     final Color player = isWhite ? Color.WHITE : Color.BLACK;
 
     if (Game.getInstance().getGameState().isThreefoldRepetition()
-        || board.getBoardRep().isStaleMate(player, player)
+        || board.isStaleMate(player, player)
         || board.getNbFullMovesWithNoCaptureOrPawn() >= 50) {
       score = 0;
     }
 
     return score;
+  }
+
+  /**
+   * Get the reflexion time for the last AI move.
+   *
+   * @return A long corresponding to the time in nanoseconds.
+   */
+  public long getLastMoveTime() {
+    return lastMoveTime;
   }
 }

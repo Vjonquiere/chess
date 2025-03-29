@@ -11,11 +11,22 @@ import pdp.model.board.Move;
  * the number of visits for this node.
  */
 public class TreeNodeMonteCarlo {
+  /** Game state of this node. */
   private final GameState state;
+
+  /** Parent node, for backpropagation. */
   private final TreeNodeMonteCarlo parent;
-  private List<TreeNodeMonteCarlo> children;
+
+  /** Children nodes, to go down the tree. */
+  private final List<TreeNodeMonteCarlo> children;
+
+  /** Number of registered wins. */
   private int wins;
+
+  /** Number of visits of the node. */
   private int nbVisits;
+
+  /** Move leading to this state. */
   private final Move startingMove;
 
   /**
@@ -25,7 +36,8 @@ public class TreeNodeMonteCarlo {
    * @param parent parent node in the tree
    * @param move move done from the parent to arrive to this node
    */
-  public TreeNodeMonteCarlo(GameState state, TreeNodeMonteCarlo parent, Move move) {
+  public TreeNodeMonteCarlo(
+      final GameState state, final TreeNodeMonteCarlo parent, final Move move) {
     this.state = state;
     this.parent = parent;
     this.children = new ArrayList<>();
@@ -44,9 +56,9 @@ public class TreeNodeMonteCarlo {
   }
 
   /**
-   * Retrieves the move leading to other game states.
+   * Retrieves the move leading to this game state.
    *
-   * @return the starting move that leads to other game states
+   * @return the starting move that leads to this game state
    */
   public Move getStartingMove() {
     return this.startingMove;
@@ -57,7 +69,7 @@ public class TreeNodeMonteCarlo {
    *
    * @param nbNewWins the number of new wins
    */
-  public void incrementNbWinsBy(int nbNewWins) {
+  public void incrementNbWinsBy(final int nbNewWins) {
     this.wins += nbNewWins;
   }
 
@@ -114,7 +126,7 @@ public class TreeNodeMonteCarlo {
    * @param exploration the exploration factor (c value in formula)
    * @return The UCT value
    */
-  private double uctValue(TreeNodeMonteCarlo node, double exploration) {
+  private double uctValue(final TreeNodeMonteCarlo node, final double exploration) {
     if (node.nbVisits == 0) {
       return Double.MAX_VALUE;
     }
@@ -127,7 +139,7 @@ public class TreeNodeMonteCarlo {
    *
    * @param child the child node wer want to add to the tree
    */
-  public void addChildToTree(TreeNodeMonteCarlo child) {
+  public void addChildToTree(final TreeNodeMonteCarlo child) {
     children.add(child);
   }
 
@@ -137,15 +149,15 @@ public class TreeNodeMonteCarlo {
    * @param exploration the exploration parameter (c value in formula)
    * @return the best child node in the tree (current node is root)
    */
-  public TreeNodeMonteCarlo getChildToExplore(double exploration) {
+  public TreeNodeMonteCarlo getChildToExplore(final double exploration) {
     TreeNodeMonteCarlo bestChild = null;
-    // First -inf and upload it later when better child is found
+    // First -inf and update it later when better child is found
     double bestValue = Double.NEGATIVE_INFINITY;
 
-    for (TreeNodeMonteCarlo child : this.children) {
-      double uct = uctValue(child, exploration);
+    for (final TreeNodeMonteCarlo child : this.children) {
+      final double uct = uctValue(child, exploration);
       if (uct > bestValue) {
-        // Upload best child
+        // Update best child
         bestValue = uct;
         bestChild = child;
       }
@@ -160,7 +172,7 @@ public class TreeNodeMonteCarlo {
    * @return true if a node is fully explored, false otherwise
    */
   public boolean isFullyExpanded() {
-    boolean isWhite = state.isWhiteTurn();
-    return state.getBoard().getBoardRep().getAllAvailableMoves(isWhite).size() == children.size();
+    final boolean isWhite = state.isWhiteTurn();
+    return state.getBoard().getAllAvailableMoves(isWhite).size() == children.size();
   }
 }

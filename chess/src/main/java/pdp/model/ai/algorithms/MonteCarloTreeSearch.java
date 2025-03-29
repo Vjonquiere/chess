@@ -13,6 +13,10 @@ import pdp.model.piece.Color;
 
 /** Algorithm of artificial intelligence Monte Carlo Tree search. */
 public class MonteCarloTreeSearch implements SearchAlgorithm {
+  /**
+   * Solver used for calling the evaluation of the board once the number of iterations is reached or
+   * time is up.
+   */
   private final Solver solver;
 
   /** c value. */
@@ -31,7 +35,7 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param solver Solver to save into the field.
    * @param nbIterations max number of simulations
    */
-  public MonteCarloTreeSearch(Solver solver, int nbIterations) {
+  public MonteCarloTreeSearch(final Solver solver, final int nbIterations) {
     this.solver = solver;
     simulationLimit = nbIterations;
   }
@@ -41,9 +45,9 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    *
    * @param solver Solver to save into the field.
    */
-  public MonteCarloTreeSearch(Solver solver) {
+  public MonteCarloTreeSearch(final Solver solver) {
     this.solver = solver;
-    simulationLimit = 100; // 100 by default
+    simulationLimit = 150; // 150 by default
   }
 
   /**
@@ -59,28 +63,26 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * Determines the "best move" using the MonteCarloTreeSearch algorithm.
    *
    * @param game The current game state
-   * @param depth The number of moves to look ahead
+   * @param depth Not needed in MCTS.
    * @param player The current player (true for white, false for black)
    * @return The best move for the player
    */
   @Override
-  public AiMove findBestMove(Game game, int depth, boolean player) {
-    GameAi aiGame = GameAi.fromGame(game);
-    GameState gameStateCopy = aiGame.getGameState().getCopy();
+  public AiMove findBestMove(final Game game, int depth, boolean player) {
+    final GameAi aiGame = GameAi.fromGame(game);
+    final GameState gameStateCopy = aiGame.getGameState().getCopy();
     // Give the root a copy of the game state to work on new ones
-    TreeNodeMonteCarlo root = new TreeNodeMonteCarlo(gameStateCopy, null, null);
+    final TreeNodeMonteCarlo root = new TreeNodeMonteCarlo(gameStateCopy, null, null);
 
     // Run MonteCarloTreeSearch for a fixed number of simulations
     for (int i = 0; i < simulationLimit; i++) {
-      TreeNodeMonteCarlo selectedNode = select(root);
-      TreeNodeMonteCarlo expandedNode = expand(aiGame, selectedNode);
-      int simulationResult = simulate(aiGame, expandedNode);
-      backpropagate(aiGame, expandedNode, simulationResult);
+      final TreeNodeMonteCarlo selectedNode = select(root);
+      final TreeNodeMonteCarlo expandedNode = expand(aiGame, selectedNode);
+      final int simulationResult = simulate(aiGame, expandedNode);
+      backpropagate(expandedNode, simulationResult);
     }
 
-    AiMove move = getBestMove(aiGame, root);
-
-    return move;
+    return getBestMove(root);
   }
 
   /**
@@ -89,20 +91,19 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param state the state of the game
    * @return the result of the simulation. -1 if black wins, 1 if white wins and 0 if draw
    */
-  private int evaluateSimulation(GameState state) {
+  private int evaluateSimulation(final GameState state) {
+    // Draw or game not over.
+    int res = 0;
     if (state.isGameOver()) {
-      if (state.getBoard().getBoardRep().isCheckMate(Color.WHITE)) {
+      if (state.getBoard().isCheckMate(Color.WHITE)) {
         // Black wins
-        return -1;
-      }
-      if (state.getBoard().getBoardRep().isCheckMate(Color.BLACK)) {
+        res = -1;
+      } else if (state.getBoard().isCheckMate(Color.BLACK)) {
         // White wins
-        return 1;
+        res = 1;
       }
-      // Draw
-      return 0;
     }
-    return 0;
+    return res;
   }
 
   /**
@@ -128,30 +129,25 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param node the current node in the algorithm
    * @return the expanded node
    */
-  private TreeNodeMonteCarlo expand(GameAi game, TreeNodeMonteCarlo node) {
-    if (solver.isSearchStopped()) {
-      return node;
-    }
-    if (node.getGameState().isGameOver()) {
+  private TreeNodeMonteCarlo expand(final GameAi game, final TreeNodeMonteCarlo node) {
+    if (solver.isSearchStopped() || node.getGameState().isGameOver()) {
       // No expansion if game over
       return node;
     }
 
-    List<Move> possibleMoves =
-        node.getGameState()
-            .getBoard()
-            .getBoardRep()
-            .getAllAvailableMoves(node.getGameState().isWhiteTurn());
-    for (Move move : possibleMoves) {
+    final List<Move> possibleMoves =
+        node.getGameState().getBoard().getAllAvailableMoves(node.getGameState().isWhiteTurn());
+
+    for (final Move move : possibleMoves) {
       if (solver.isSearchStopped()) {
         return node;
       }
       try {
-        move = AlgorithmHelpers.promoteMove(move);
-        GameState nextState = node.getGameState().getCopy();
-        game.playMoveOtherGameState(nextState, move);
+        final Move promoteMovemove = AlgorithmHelpers.promoteMove(move);
+        final GameState nextState = node.getGameState().getCopy();
+        game.playMoveOtherGameState(nextState, promoteMovemove);
         // Add node to tree
-        node.addChildToTree(new TreeNodeMonteCarlo(nextState, node, move));
+        node.addChildToTree(new TreeNodeMonteCarlo(nextState, node, promoteMovemove));
       } catch (Exception e) {
         // Illegal move was caught
         continue;
@@ -173,52 +169,49 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param node the current node in the algorithm
    * @return the evaluation of the simulated sequence of moves from current node
    */
-  private int simulate(GameAi game, TreeNodeMonteCarlo node) {
+  private int simulate(final GameAi game, final TreeNodeMonteCarlo node) {
     if (solver.isSearchStopped()) {
-      TreeNodeMonteCarlo parentNode = node.getParentNode();
+      final TreeNodeMonteCarlo parentNode = node.getParentNode();
       if (parentNode == null) {
         return 0;
       }
       return parentNode.getGameState().isWhiteTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
     }
 
-    GameState simulationState = node.getGameState().getCopy();
+    final GameState simulationState = node.getGameState().getCopy();
 
     while (!simulationState.isGameOver()) {
       if (solver.isSearchStopped()) {
-        TreeNodeMonteCarlo parentNode = node.getParentNode();
+        final TreeNodeMonteCarlo parentNode = node.getParentNode();
         if (parentNode == null) {
           return 0;
         }
         return parentNode.getGameState().isWhiteTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
       }
-      List<Move> availableMoves =
-          simulationState
-              .getBoard()
-              .getBoardRep()
-              .getAllAvailableMoves(simulationState.isWhiteTurn());
+      final List<Move> availableMoves =
+          simulationState.getBoard().getAllAvailableMoves(simulationState.isWhiteTurn());
 
       if (availableMoves.isEmpty()) {
         break;
       }
 
       // Filter only legal moves
-      List<Move> legalMoves = new ArrayList<>();
-      for (Move move : availableMoves) {
+      final List<Move> legalMoves = new ArrayList<>();
+      for (final Move move : availableMoves) {
         if (solver.isSearchStopped()) {
-          TreeNodeMonteCarlo parentNode = node.getParentNode();
+          final TreeNodeMonteCarlo parentNode = node.getParentNode();
           if (parentNode == null) {
             return 0;
           }
           return parentNode.getGameState().isWhiteTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         }
         try {
-          Move promotedMove = AlgorithmHelpers.promoteMove(move);
+          final Move promotedMove = AlgorithmHelpers.promoteMove(move);
           // Copy GameState and try to play the move to see if move is valid and legal
-          GameState testState = simulationState.getCopy();
+          final GameState testState = simulationState.getCopy();
           game.playMoveOtherGameState(testState, promotedMove);
           legalMoves.add(promotedMove);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
           // Caught illegal move, pursue
         }
       }
@@ -227,11 +220,11 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
         break;
       }
 
-      Move randomMove = selectRandomMove(legalMoves);
+      final Move randomMove = selectRandomMove(legalMoves);
 
       try {
         game.playMoveOtherGameState(simulationState, randomMove);
-      } catch (Exception e) {
+      } catch (Exception ignored) {
         // Exception occured when trying to play the randomly selected move
       }
     }
@@ -245,18 +238,17 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
    * @param moves the list of possible moves
    * @return A randomly chosen move
    */
-  private Move selectRandomMove(List<Move> moves) {
+  private Move selectRandomMove(final List<Move> moves) {
     return moves.get(this.random.nextInt(moves.size()));
   }
 
   /**
    * Back propagate the obtained result during the algorithm to the root node.
    *
-   * @param game the current ongoing game
    * @param node the current tree node in the algorithm
    * @param result the obtained result after simulation
    */
-  private void backpropagate(GameAi game, TreeNodeMonteCarlo node, int result) {
+  private void backpropagate(TreeNodeMonteCarlo node, final int result) {
     while (node != null) {
       node.incrementNbVisits();
       node.incrementNbWinsBy(result);
@@ -270,11 +262,10 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
   /**
    * Returns the move that's considered best, namely the one that has the highest winrate.
    *
-   * @param game the current ongoing game
    * @param root the root node in the tree representing the initial game state
    * @return the best computed move based on winrate of the move
    */
-  private AiMove getBestMove(GameAi game, TreeNodeMonteCarlo root) {
+  private AiMove getBestMove(final TreeNodeMonteCarlo root) {
     if (root.getChildrenNodes().isEmpty()) {
       return new AiMove(null, 0);
     }
@@ -283,9 +274,9 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
     int maxVisits = -1;
 
     // Find the most visited child node
-    List<TreeNodeMonteCarlo> childrenNodes = root.getChildrenNodes();
-    for (TreeNodeMonteCarlo child : childrenNodes) {
-      int visits = child.getNbVisits();
+    final List<TreeNodeMonteCarlo> childrenNodes = root.getChildrenNodes();
+    for (final TreeNodeMonteCarlo child : childrenNodes) {
+      final int visits = child.getNbVisits();
       if (visits > maxVisits) {
         maxVisits = visits;
         bestNode = child;
@@ -296,8 +287,8 @@ public class MonteCarloTreeSearch implements SearchAlgorithm {
       return new AiMove(null, 0);
     }
 
-    Move bestMove = bestNode.getStartingMove();
-    double winRate = (double) bestNode.getNbWins() / bestNode.getNbVisits();
+    final Move bestMove = bestNode.getStartingMove();
+    final double winRate = (double) bestNode.getNbWins() / bestNode.getNbVisits();
 
     return new AiMove(bestMove, (int) winRate);
   }

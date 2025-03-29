@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Parser to translate a configuration file into a map of options/ configurations. */
-public class IniParser {
+public final class IniParser {
+
+  /** Private constructor to avoid instanciation. */
+  private IniParser() {}
 
   /**
    * Parses an INI-formatted file given as an InputStream.
@@ -26,13 +29,14 @@ public class IniParser {
    * @return the parsed INI file as a map of maps
    * @throws IOException if an error occurs while reading the input stream
    */
-  public static Map<String, Map<String, String>> parseIni(InputStream stream) throws IOException {
-    Map<String, Map<String, String>> iniMap = new HashMap<>();
+  public static Map<String, Map<String, String>> parseIni(final InputStream stream)
+      throws IOException {
+    final Map<String, Map<String, String>> iniMap = new HashMap<>();
     Map<String, String> currentSection = null;
 
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
       String line;
-      String currentSectionName = null;
+      String currentSectionName;
 
       while ((line = reader.readLine()) != null) {
         line = line.trim();
@@ -45,7 +49,7 @@ public class IniParser {
           currentSection = new HashMap<>();
           iniMap.put(currentSectionName, currentSection);
         } else if (currentSection != null && line.contains("=")) {
-          String[] parts = line.split("=", 2);
+          final String[] parts = line.split("=", 2);
           currentSection.put(parts[0].trim(), parts[1].trim());
         }
       }

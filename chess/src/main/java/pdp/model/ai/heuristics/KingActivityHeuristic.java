@@ -1,13 +1,23 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
 /** Heuristic based on the activity of the king. */
 public class KingActivityHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  private static final float ACTIVITY_SCORE = 10f;
+  private static final float CENTER_SCORE = 20f;
+  private static final float NOT_CENTER_MAX = 15f;
+  private static final float CENTER_DISTANCE_DECREASE = 3f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLIER = SCORE_CAP / (ACTIVITY_SCORE + CENTER_SCORE);
 
   /**
    * Checks the activity of the king and returns a score accordingly. King is close to the center?
@@ -18,10 +28,14 @@ public class KingActivityHeuristic implements Heuristic {
    * @return score according to the activity of the king
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
     int score = 0;
     score += kingIsInCenterScore(board, true) - kingIsInCenterScore(board, false);
     score += kingActivityScore(board, true) - kingActivityScore(board, false);
+
+    // max score 30
+
+    score *= MULTIPLIER;
 
     return isWhite ? score : -score;
   }
@@ -33,35 +47,36 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the location of the king on the board
    */
-  private int kingIsInCenterScore(Board board, boolean isWhite) {
-    int score = 0;
+  private float kingIsInCenterScore(final BoardRepresentation board, final boolean isWhite) {
+    final float score;
 
     // Delineate center box
-    Position posTopLeftCenter = new Position(2, 5);
-    Position posTopRightCenter = new Position(5, 5);
-    Position posDownLeftCenter = new Position(2, 2);
-    Position posDownRightCenter = new Position(5, 2);
+    final Position posTopLeftCenter = new Position(2, 5);
+    final Position posTopRightCenter = new Position(5, 5);
+    final Position posDownLeftCenter = new Position(2, 2);
+    final Position posDownRightCenter = new Position(5, 2);
 
-    Position kingPosition = board.getBoardRep().getKing(isWhite).get(0);
+    final Position kingPosition = board.getKing(isWhite).get(0);
     // Check if the king is close to the center of the board and therefore has easier access to the
     // entire board
-    boolean isKingInCenter =
+    final boolean isKingInCenter =
         kingPosition.x() >= posDownLeftCenter.x()
             && kingPosition.x() <= posTopRightCenter.x()
             && kingPosition.y() >= posDownRightCenter.y()
             && kingPosition.y() <= posTopLeftCenter.y();
 
     if (isKingInCenter) {
-      score = 20;
+      score = CENTER_SCORE;
     } else {
       // Compute Manhattan distance to center
-      int centerX = (posTopLeftCenter.x() + posTopRightCenter.x()) / 2;
-      int centerY = (posDownLeftCenter.y() + posTopLeftCenter.y()) / 2;
+      final int centerX = (posTopLeftCenter.x() + posTopRightCenter.x()) / 2;
+      final int centerY = (posDownLeftCenter.y() + posTopLeftCenter.y()) / 2;
 
-      int distance = Math.abs(kingPosition.x() - centerX) + Math.abs(kingPosition.y() - centerY);
-      int noBonus = 0;
+      final int distance =
+          Math.abs(kingPosition.x() - centerX) + Math.abs(kingPosition.y() - centerY);
+      final int noBonus = 0;
       // King more or less far from the center
-      score = Math.max(noBonus, 15 - (distance * 3));
+      score = Math.max(noBonus, NOT_CENTER_MAX - (distance * CENTER_DISTANCE_DECREASE));
     }
 
     return score;
@@ -74,13 +89,13 @@ public class KingActivityHeuristic implements Heuristic {
    * @param isWhite true if this is for white, false otherwise
    * @return score according to the activity of the king
    */
-  private int kingActivityScore(Board board, boolean isWhite) {
-    int score = 0;
-    BoardRepresentation bitboard = board.getBoardRep();
+  private float kingActivityScore(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
+    final BoardRepresentation bitboard = board;
     // Check the activity of the King
-    List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);
+    final List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);
     if (kingMoves.size() >= 5) {
-      score += 10;
+      score += ACTIVITY_SCORE;
     }
 
     return score;

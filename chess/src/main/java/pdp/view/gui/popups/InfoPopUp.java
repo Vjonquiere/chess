@@ -10,7 +10,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import pdp.view.GuiView;
 
+/** Creates a pop-up that fades away in 2 seconds. */
 public class InfoPopUp {
+  /**
+   * Displays a pop-up during 2 seconds, that fades into the background. It displays the given
+   * message.
+   *
+   * @param message String to display in a popup
+   */
   public static void show(String message) {
     Stage popupStage = new Stage();
 

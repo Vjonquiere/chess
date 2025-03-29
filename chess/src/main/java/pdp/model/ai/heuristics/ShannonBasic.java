@@ -21,6 +21,7 @@ public class ShannonBasic extends AbstractHeuristic {
 
   /** Creates a composite heuristic with material, mobility and bad pawn structure heuristics. */
   public ShannonBasic() {
+    super();
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), 1));

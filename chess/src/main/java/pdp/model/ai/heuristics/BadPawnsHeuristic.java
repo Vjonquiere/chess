@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
@@ -15,7 +14,24 @@ import pdp.utils.Position;
  */
 public class BadPawnsHeuristic implements Heuristic {
 
-  private static final int PENALTY_FOR_BACKWARDS_PAWN = 4;
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  /** Penalty for the backward pawns. */
+  private static final float PENALTY_FOR_BACKWARDS_PAWN = -4f;
+
+  /** Penalty for the isolated pawns. */
+  private static final float PENALTY_FOR_ISOLATED_PAWN = -1f;
+
+  /** Penalty for the doubled pawns. */
+  private static final float PENALTY_FOR_DOUBLED_PAWN = -1f;
+
+  private static final float MULTIPLIER =
+      SCORE_CAP
+          / Math.abs(
+              PENALTY_FOR_BACKWARDS_PAWN * 4
+                  + PENALTY_FOR_DOUBLED_PAWN * 4
+                  + PENALTY_FOR_ISOLATED_PAWN * 8);
 
   /**
    * Computes a score according to the potential weaknesses in the observed pawn structures.
@@ -25,12 +41,15 @@ public class BadPawnsHeuristic implements Heuristic {
    * @return a score based on how bad pawns are for the corresponding player
    */
   @Override
-  public float evaluate(Board board, boolean isWhite) {
-    int score = 0;
-    score += doubledPawns(board, true) - doubledPawns(board, false);
-    score += isolatedPawns(board, true) - isolatedPawns(board, false);
-    score += backwardsPawns(board, true) - backwardsPawns(board, false);
-    return isWhite ? (int) (-0.5 * score) : (int) (-0.5 * -score);
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
+    score += (doubledPawns(board, true) - doubledPawns(board, false)) * PENALTY_FOR_DOUBLED_PAWN;
+    score += (isolatedPawns(board, true) - isolatedPawns(board, false)) * PENALTY_FOR_ISOLATED_PAWN;
+    score +=
+        (backwardsPawns(board, true) - backwardsPawns(board, false)) * PENALTY_FOR_BACKWARDS_PAWN;
+
+    score *= MULTIPLIER;
+    return isWhite ? score : -score;
   }
 
   /**
@@ -40,13 +59,13 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if the player is White, false if he is black
    * @return number of doubled pawns
    */
-  private int doubledPawns(Board board, boolean isWhite) {
-    Map<Integer, Integer> colCount = new HashMap<>();
+  private int doubledPawns(final BoardRepresentation board, final boolean isWhite) {
+    final Map<Integer, Integer> colCount = new HashMap<>();
     int count = 0;
-    for (Position p : board.getBoardRep().getPawns(isWhite)) {
+    for (final Position p : board.getPawns(isWhite)) {
       colCount.put(p.x(), colCount.getOrDefault(p.x(), 0) + 1);
     }
-    for (int c : colCount.keySet()) {
+    for (final int c : colCount.keySet()) {
       if (colCount.get(c) > 1) {
         count++;
       }
@@ -61,17 +80,17 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if the player is White, false if he is black
    * @return number of isolated pawns
    */
-  private int isolatedPawns(Board board, boolean isWhite) {
-    Set<Integer> occupiedFiles = new HashSet<>();
-    List<Position> pawns = board.getBoardRep().getPawns(isWhite);
-    for (Position p : pawns) {
+  private int isolatedPawns(final BoardRepresentation board, final boolean isWhite) {
+    final Set<Integer> occupiedFiles = new HashSet<>();
+    final List<Position> pawns = board.getPawns(isWhite);
+    for (final Position p : pawns) {
       occupiedFiles.add(p.x());
     }
     int count = 0;
-    for (Position pos : pawns) {
-      int file = pos.x();
-      boolean hasLeft = occupiedFiles.contains(file - 1);
-      boolean hasRight = occupiedFiles.contains(file + 1);
+    for (final Position pos : pawns) {
+      final int file = pos.x();
+      final boolean hasLeft = occupiedFiles.contains(file - 1);
+      final boolean hasRight = occupiedFiles.contains(file + 1);
 
       if (!hasLeft && !hasRight) {
         count++;
@@ -90,17 +109,17 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return score based on the number of backward pawns
    */
-  private int backwardsPawns(Board board, boolean isWhite) {
-    BoardRepresentation bitboard = board.getBoardRep();
-    List<Position> pawns = bitboard.getPawns(isWhite);
-    List<Position> enemyPawns = bitboard.getPawns(!isWhite);
+  private int backwardsPawns(final BoardRepresentation board, final boolean isWhite) {
+    final BoardRepresentation bitboard = board;
+    final List<Position> pawns = bitboard.getPawns(isWhite);
+    final List<Position> enemyPawns = bitboard.getPawns(!isWhite);
 
     int count = 0;
 
     // Track the most advanced friendly pawn in each file
-    Map<Integer, Integer> highestPawnRank = new HashMap<>();
-    for (Position p : pawns) {
-      int currentY = p.y();
+    final Map<Integer, Integer> highestPawnRank = new HashMap<>();
+    for (final Position p : pawns) {
+      final int currentY = p.y();
       if (isWhite) {
         highestPawnRank.put(p.x(), Math.max(highestPawnRank.getOrDefault(p.x(), 0), currentY));
       } else {
@@ -109,9 +128,9 @@ public class BadPawnsHeuristic implements Heuristic {
     }
 
     // Track the closest enemy pawn in each file// Should be equal
-    Map<Integer, Integer> closestEnemyRank = new HashMap<>();
-    for (Position p : enemyPawns) {
-      int currentY = p.y();
+    final Map<Integer, Integer> closestEnemyRank = new HashMap<>();
+    for (final Position p : enemyPawns) {
+      final int currentY = p.y();
       if (isWhite) {
         closestEnemyRank.put(p.x(), Math.min(closestEnemyRank.getOrDefault(p.x(), 8), currentY));
       } else {
@@ -119,17 +138,17 @@ public class BadPawnsHeuristic implements Heuristic {
       }
     }
 
-    for (Position pawn : pawns) {
-      int x = pawn.x();
-      int y = pawn.y();
+    for (final Position pawn : pawns) {
+      final int x = pawn.x();
+      final int y = pawn.y();
 
       // Check if this is the most backward pawn in its file
-      boolean isMostBackwards;
+      final boolean isMostBackwards;
       // Check if there are enemy pawns ahead in the same file
-      boolean enemyIsAhead;
+      final boolean enemyIsAhead;
       // Check potential pawn support from left and from right
-      boolean hasLeftSupport;
-      boolean hasRightSupport;
+      final boolean hasLeftSupport;
+      final boolean hasRightSupport;
 
       if (isWhite) {
         hasLeftSupport = highestPawnRank.getOrDefault(x - 1, -1) <= y;
@@ -149,6 +168,6 @@ public class BadPawnsHeuristic implements Heuristic {
       }
     }
 
-    return count * PENALTY_FOR_BACKWARDS_PAWN;
+    return count;
   }
 }

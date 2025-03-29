@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.*;
 import pdp.model.board.Move;
 import pdp.utils.Position;
-import tests.helpers.MockBoard;
+import tests.helpers.DummyBoardRepresentation;
 
 public class SolverTest {
   private Solver solver;
@@ -51,10 +53,11 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
+    float expected = 4 * (100f / 103);
+    assertEquals(-expected, solver.evaluateBoard(game.getBoard(), false)); // rounded value
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(expected, solver.evaluateBoard(game.getBoard(), true)); // rounded value
   }
 
   @Test
@@ -72,7 +75,7 @@ public class SolverTest {
 
   @Test
   public void testEvaluationErrorBoardNonBitboardRepresentation() {
-    MockBoard board = new MockBoard();
+    DummyBoardRepresentation board = new DummyBoardRepresentation();
 
     solver.setHeuristic(HeuristicType.MATERIAL);
 
@@ -172,5 +175,92 @@ public class SolverTest {
     assertInstanceOf(BishopEndgameHeuristic.class, solver.getHeuristic());
     solver.setHeuristic(HeuristicType.KING_OPPOSITION);
     assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.STANDARD);
+    assertInstanceOf(StandardHeuristic.class, solver.getHeuristic());
+    solver.setHeuristic(HeuristicType.STANDARD_LIGHT);
+    assertInstanceOf(StandardLightHeuristic.class, solver.getHeuristic());
+  }
+
+  @Test
+  public void testGetBestMove() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    game.playMove(new Move(new Position(4, 1), new Position(4, 3))); // white pawn
+    game.playMove(new Move(new Position(3, 6), new Position(3, 4))); // black pawn
+    game.playMove(new Move(new Position(6, 0), new Position(5, 2))); // white knight
+
+    solver.setHeuristic(HeuristicType.MATERIAL);
+    Move materialBestMove = solver.getBestMove(game);
+    assertNotNull(materialBestMove);
+
+    solver.setHeuristic(HeuristicType.KING_SAFETY);
+    Move kingSafetyBestMove = solver.getBestMove(game);
+    assertNotNull(kingSafetyBestMove);
+
+    solver.setDepth(3);
+    Move bestMoveAtDepth3 = solver.getBestMove(game);
+    assertNotNull(bestMoveAtDepth3);
+  }
+
+  @Test
+  public void testGetBestMoveWithTimer() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    solver.setTime(5);
+
+    Move bestMove = solver.getBestMove(game);
+    assertNotNull(bestMove);
+
+    assertNotNull(solver.getTimer());
+  }
+
+  @Test
+  public void testSetHeuristicWithWeights() {
+    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f);
+
+    solver.setHeuristic(HeuristicType.STANDARD, weights);
+    assertInstanceOf(StandardHeuristic.class, solver.getHeuristic());
+    assertEquals(HeuristicType.STANDARD, solver.getCurrentHeuristic());
+
+    List<HeuristicType> heuristicsToTest =
+        Arrays.asList(
+            HeuristicType.MATERIAL,
+            HeuristicType.KING_SAFETY,
+            HeuristicType.SPACE_CONTROL,
+            HeuristicType.DEVELOPMENT,
+            HeuristicType.PAWN_CHAIN,
+            HeuristicType.MOBILITY,
+            HeuristicType.BAD_PAWNS,
+            HeuristicType.SHANNON,
+            HeuristicType.GAME_STATUS,
+            HeuristicType.KING_ACTIVITY,
+            HeuristicType.BISHOP_ENDGAME,
+            HeuristicType.KING_OPPOSITION,
+            HeuristicType.ENDGAME);
+
+    for (HeuristicType heuristic : heuristicsToTest) {
+      solver.setHeuristic(heuristic, weights);
+
+      switch (heuristic) {
+        case MATERIAL -> assertInstanceOf(MaterialHeuristic.class, solver.getHeuristic());
+        case KING_SAFETY -> assertInstanceOf(KingSafetyHeuristic.class, solver.getHeuristic());
+        case SPACE_CONTROL -> assertInstanceOf(SpaceControlHeuristic.class, solver.getHeuristic());
+        case DEVELOPMENT -> assertInstanceOf(DevelopmentHeuristic.class, solver.getHeuristic());
+        case PAWN_CHAIN -> assertInstanceOf(PawnChainHeuristic.class, solver.getHeuristic());
+        case MOBILITY -> assertInstanceOf(MobilityHeuristic.class, solver.getHeuristic());
+        case BAD_PAWNS -> assertInstanceOf(BadPawnsHeuristic.class, solver.getHeuristic());
+        case SHANNON -> assertInstanceOf(ShannonBasic.class, solver.getHeuristic());
+        case GAME_STATUS -> assertInstanceOf(GameStatus.class, solver.getHeuristic());
+        case KING_ACTIVITY -> assertInstanceOf(KingActivityHeuristic.class, solver.getHeuristic());
+        case BISHOP_ENDGAME ->
+            assertInstanceOf(BishopEndgameHeuristic.class, solver.getHeuristic());
+        case KING_OPPOSITION ->
+            assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
+        case ENDGAME -> assertInstanceOf(EndGameHeuristic.class, solver.getHeuristic());
+        default -> throw new IllegalArgumentException("Unexpected value: " + heuristic);
+      }
+
+      assertEquals(heuristic, solver.getCurrentHeuristic());
+    }
   }
 }
