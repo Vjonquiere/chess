@@ -363,6 +363,11 @@ Une partie d'échecs peut se terminer de plusieurs façons :
     \item \textbf{Dépassement de temps} : un joueur perd si son chronomètre s'écoule avant qu'il ne joue, sauf si l'adversaire n'a pas assez de matériel pour mater.
 \end{itemize}
 
+
+
+\section{Structures de données}
+\label{DataStruct}
+
 \subsection{Plateau sous forme de bitmaps}
 Un échiquier est finalement une matrice 8x8 (64 cases donc) sur lesquelles il y a une pièce, ou non. On voit ici une
 notion de binaire. Pour une pièce: "Blanche ou Noire", "Présente ou Non" (pour les cases). Une méthode existe pour
@@ -374,7 +379,7 @@ Encodons le fait qu'une case soit occupée par 1 et le fait qu'une case soit vid
 Donc, en attribuant un indice à chaque case (de 0 à 63), on va pouvoir chiffrer l'échiquier par un entier de 64 bits.
 Chaque bit de cet entier est à 0 ou à 1. S'il est à 0 pour l'indice i, alors la case i est libre. S'il est à 1, alors la
 case i est occupée. Un entier n'est cependant pas suffisant, car il faut pouvoir différencier les types de pièce, ainsi
-que la couleur des pièces (noire ou blanche). Il y a au total 6 types de pièces aux échecs: le Pion, le Cavalier, le Fou,
+que la couleur des pièces (noires ou blanches). Il y a au total 6 types de pièces aux échecs: le Pion, le Cavalier, le Fou,
 la Tour, la Dame, le Roi. Donc finalement, on aura besoin de 12 entiers codés sur 64 bits, car 6 pour les types de pièces
 blanches et 6 pour les types de pièces noires.
 \\Il est important de noter que cela n'est pas réalisable pour des ordinateurs qui possèdent une architecture en 32 bits.
@@ -396,7 +401,7 @@ est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendr
     on a besoin de 27 bits. Mais il s'agit de 27 bits de chaque côté car il y a les blancs et les noirs. Donc au total, 54 bits ici.
     \item Règle des 50 coups: Pour le nombre de coups sans capture ou mouvement de pion, on se sert de 6 bits (entre 0 et 50).
     \item Nombre de "FullMoves": Pour se souvenir du nombre de coups total de la partie, on va prendre large et utiliser 10 bits,
-    ce qui nous donne la possibilité d'avoir 1000 coups.
+    ce qui nous donne la possibilité d'avoir 1000 coups.\\
 \end{itemize}
 
 Si l'on effectue le total, une position est codée sur 12*64 + 5 + 4 + 54 + 6 + 10 = 847 bits.
@@ -404,84 +409,30 @@ C'est un gain très conséquent qui va notamment nous permettre par exemple de c
 Intelligence Artificielle. Il y a quelques détails en ce qui concerne les performances dans les parties \ref{DataStruct} Structures de données et
 \ref{AI} Intelligence Artificielle dans le rapport notamment.
 
-\subsection{Structures de données}
-\label{DataStruct}
-\subsubsection{Historique des coups}
+\subsection{Historique des coups}
 \par Le groupe s'est posé la question de quelles structures de données utiliser pour stocker l'historique des coups d'une
 partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, la ou les difficultés d'implémentation,
 la compatibilité avec les bitboards pour représenter le plateau de jeu, ainsi que les ajouts potentiels de fonctionnalités.
-\\La première idée fut une pile. En effet, cette structure est très simple d'utilisation et parfaitement adaptée pour stocker
-des coups, tout en ayant la possibilité d'en enlever et d'en rajouter. La complexité en temps et en espace est en O(n) si n 
-correspond au nombre de coups de la partie. Pour revenir au tout début de la partie, c'est-à-dire avec les pièces positionnées
-sur leurs cases initiales, il suffit de dépiler les n coups stackés et les empiler dans une seconde pile qui s'occupera de sauvegarder
-ces coups pour pouvoir revenir au dernier coup joué avant d'avoir repris tous les coups. Ainsi, en utilisant la pile comme structure 
-de données, on garde n coups en mémoire, et revenir à une certaine position de la partie est linéaire en fonction de ce nombre de coups.
-Avec une interface graphique, on pourrait cliquer sur un certain coup pour savoir combien de coups dépiler, car un coup peut arriver
-plusieurs fois dans une partie donc sa représentation ne suffit pas. En ce qui concerne le jeu en CLI, il faudrait indiquer le numéro
-du coup, ainsi que sa notation pour, encore une fois, savoir combien de coups il faut reprendre.\\
-Avec la GUI, cela se présenterait comme ceci (remarquez les coups surlignés en bleu à droite sur les images):
+La liste (doublement) chaînée a été choisie par le groupe. En effet, l'insertion et la suppression sont des opérations
+réalisables en O(1). L'historique est alors plus flexible et les modifications sur l'historique sont assez efficaces.
+Pour revenir à un certain coup de la partie, qu'il s'agisse d'un undo ou redo, nous sommes en O(n), n étant le nombre de coups.
+En revanche, il y a certains cas où cette approche n'est pas très optimale. Par exemple, pour les parties (très) longues.
+En effet, la surcharge en mémoire (due aux références) et le coût en temps pour parcourir la liste peuvent
+devenir problématiques. Notons néanmoins que c'est un problème pour quasiment toutes les structures de données pour ce cas-là.
+Grâce au chaînage, se promener dans l'historique devient très pratique et plutôt performant. Cependant, cette solution comporte
+l'inconvénient d'une complexité plus élevée en termes de maintenance et de gestion de la mémoire. \'A titre d'exemple,
+trois classes différentes dans le code ont dues être créées afin d'implémenter cette solution avec liste doublement chaînée.
+En bref, chaque noeud (ou élément) de la liste est représenté par une configuration de la partie, soit un GameState.
+Ces noeuds sont reliés entre eux par des coups, permettant de jouer ou annuler un coup afin de traverser les états de jeu
+de la partie.\\
+Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
 
 \newpage
 \begin{figure}[h]
     \caption{Exemple historique de coups}
     \centering
-    \includegraphics[width=\textwidth,height=7.0cm,keepaspectratio]{pile-historique-coups}
+    \includegraphics[width=\textwidth,height=7.0cm,keepaspectratio]{historique-coups}
 \end{figure}
-
-S'il n'y a pas de fonctionnalité de game review ou de game analysis, et que l'on part du principe qu'il y a écrasement de l'historique
-lorsque l'on joue des coups différents de ceux joués initialement, alors la pile est un très bon choix.\\
-
-\par Le groupe a ensuite réfléchi à d'autres structures de données. Rapidement, nous avons noté les listes chaînées, les tableaux,
-ainsi que les arbres.
-Les listes (doublement) chaînées peuvent être une solution dans certains cas. En effet, l'insertion et la suppression sont des opérations
-réalisables en O(1). L'historique est alors plus flexible et les modifications sont assez efficaces. Comme la pile, pour revenir à un
-certain coup de la partie, nous sommes en O(n). En revanche, il y a certains cas où cette approche n'est pas très optimale. Par exemple,
-pour les parties (très) longues. En effet, la surcharge en mémoire (due aux références) et le coût en temps pour parcourir la liste peuvent
-devenir problématiques. Aussi, s'il y a régulièrement un accès à différents coups (précédents comme futurs), cela est moins rapide que des
-structures indexées. Finalement, les listes chaînées sont très similaires aux piles sur beaucoup d'aspects (complexité notamment). Cependant,
-nous pensons qu'il s'agit d'une solution moins "élégante" et plus "coûteuse" en dette technique et maintenabilité.\\
-Nous avons également porté notre attention sur les tableaux, spécialement efficaces pour l'accès à des éléments (O(1)). C'est aussi plutôt
-simple et rapide à mettre en oeuvre. Toutefois, on doit avoir une taille fixe pour cela. Ou alors, il faudrait effectuer des réallocations,
-qui peuvent devenir coûteuses sur le long terme. De même, pour réécrire l'historique, cela peut prendre O(n) en temps, sans compter que
-l'espace mémoire a pu être alloué "pour rien" au sens où l'on aurait au bout du compte pas eu besoin d'autant de mémoire.\\
-Finalement, les arbres auraient aussi pu être intéressants dans le cas où il y aurait des variations (branchement), car ils offrent une complexité
-assez valable en temps. En effet, lorsque l'on déroule les branches ou variations de coups,
-l'arbre est en fait la structure de données naturelle dont on va se servir. C'est d'ailleurs ce que l'IA utilisera dans le cadre de la recherche
-du meilleur coup.\\
-Remarquons que sans les branchements (dans notre cas donc), utiliser un arbre revient à utiliser une liste chaînée.
-Regardons un exemple pour ensuite discuter les avantages et les inconvénients des arbres:\\
-\begin{center}
-    \includegraphics[height=6.0cm]{arbres-branchement-coups.png}
-\end{center}
-
-Dans notre exemple, les nœuds représentent les positions
-et les arêtes représentent les coups. Si l'on est au nœud rouge, et que l'on souhaite revenir au nœud vert pour aller vers le nœud bleu,
-alors la nouvelle branche "main" pour l'historique des coups va du nœud R (Root) jusqu'au nœud bleu. Avant, il allait du nœud R jusqu'au
-nœud rouge. \'A chaque nœud de branchement (ici nœud vert), on aurait la possibilité de changer de branche. C'est-à-dire que si l'on revient
-au nœud vert, on pourrait retourner au nœud bleu, comme on pourrait retourner au nœud rouge, ou comme on pourrait explorer d'autres coups,
-créant ainsi une nouvelle variation depuis ce nœud de branchement.
-
-En terme de performance, au niveau de la complexité en temps, cela serait imbattable, car on pourrait revenir à une position en O(1) (noeuds de branchement).
-En effet, en se servant d'une Java HashMap\textless Integer, Node\textgreater. On obtiendrait ainsi une référence à partir d'un entier en se servant de
-l'interface graphique (valable seulement pour la GUI):\\
-\begin{center}
-    \includegraphics[height=6.0cm]{arbres-reprise-coups.png}
-\end{center}
-
-
-En ce qui concerne la complexité en espace, cela devient un petit peu plus délicat si l'on souhaite être précis. Avant tout, pour permettre de
-revenir dans l'ordre en O(1), il faut conserver toutes les références des nœuds de cet arbre. Cela signifie que l'on garde en mémoire n+1 positions 
-si n est le nombre de coups joués au total (branches comprises). Comme nous l'avons vu précédemment, une position est encodée par 847 bits.
-Finalement, on se retrouve avec une complexité de O(847*n) bits. Pour donner un ordre d'idée, si une partie a enregistré 300 coups, alors en mémoire,
-on aura un peu moins de 52KB. Ce n'est donc pas très coûteux en ce qui concerne une partie. En revanche, pour la partie Intelligence Artificielle,
-où l'on va tester des milliers de branchements, cela peut devenir assez lourd. Il faudra certainement faire des tests et limiter les opérations
-sur ces arbres de jeu afin de ne pas causer de problème.
-
-\par Nous avons donc observé que les arbres sont de manière générale très avantageux dans le cas de branchement, et bien plus que les piles, pour lesquelles
-il aurait fallu faire un nombre indécent de copies et donc coûter cher.
-Maintenant, les variations et game reviews sont hypothétiques, donc le groupe préfère ne pas prendre de risque et se servira des piles pour stocker
-l'historique des coups d'une partie. Cela est bien plus simple à maintenir et à mettre en oeuvre. Aussi, en ce qui concerne la notation de l'historique
-dans les fichiers, cela est plus adapté.
 
 \subsection{Intelligence Artificielle} \label{AI}
 \subsubsection{Heuristiques}
@@ -511,6 +462,8 @@ Seulement ceux-là sont cités ici, mais en réalité, il y a plus de 20 points 
 Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. Puisque c'est un jeu à somme nulle,
 c'est la marche à suivre. 
 
+PARLER BRIEVEMENT DU COMPOSITE PATTERN (CAR ARCHI ?) ET EXPLIQUER STANDARD ET ENDGAME.
+
 \subsubsection{Algorithmes}
 Dans cette partie Intelligence Artificielle, on va essentiellement se servir des 3 algorithmes suivants (dont 2 vus au dernier semestre):
 \begin{itemize}
@@ -520,19 +473,43 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les nœuds de
     l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des nœuds va être une évaluation. La complexité en espace ne change pas, mais
     en temps nous sommes donc en O($b^p$) où p = d/2.
-    \item Monte Carlo Tree Search: Celui-ci peut se décomposer en quatres étapes: "Selection",
-    "Expansion","Simulation","BackPropagation". Pour faire simple,
-    on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup,
-    ou encore des nœuds qui n'ont pas encore été explorés. Ensuite, après avoir choisi la branche, on se positionne à la feuille de cette branche,
+    \item \subsection{Monte Carlo Tree Search}
+    Celui-ci peut se décomposer en quatre étapes : \textbf{Selection}, \textbf{Expansion}, \textbf{Simulation}, et \textbf{BackPropagation}. Pour faire simple, on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup, ou encore des nœuds qui n'ont pas encore été explorés. Il s'agit de l'UCT (Upper Confidence bound applied to Trees).\
+    L'UCT est une formule permettant d'équilibrer l'exploration et l'exploitation dans la sélection des coups :
+    \begin{equation}
+    UCT = \frac{w(i)}{s(i)} + C \sqrt{\frac{\ln(N)}{s(i)}}
+    \end{equation}
+    où :
+    \begin{itemize}
+        \item $w(i)$ est le nombre de victoires du nœud $i$.
+        \item $s(i)$ est le nombre total de simulations passées par ce nœud.
+        \item $N$ est le nombre total de simulations effectuées depuis la racine de l'arbre.
+        \item $C$ est un coefficient ajustable permettant de pondérer l'exploration.\
+    \end{itemize} 
+
+    L’UCT permet ainsi d’équilibrer l’exploration de nouveaux coups et l’exploitation des meilleurs coups déjà identifiés.
+    Cela permet à l’algorithme MCTS de converger vers des coups optimaux tout en continuant à explorer de nouvelles options lorsque cela est nécessaire.
+    Ensuite, après avoir choisi la branche, on se positionne à la feuille de cette branche,
     puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau nœud, on simule une partie ou une pseudo-partie
     aléatoirement pour estimer le résultat potentiel. Finalement, lorsque l'on obtient un résultat, on fait remonter l'évaluation (BackPropagation)
     et/ou les informations importantes vers le haut de l'arbre pour plus tard agir en conséquence. En temps, on se rapproche de O(n*d), où n est le
-    nombre de simulations effectuées, et d la profondeur moyenne. En espace, on est en O(n*847) où n est le nombre de nœuds au total, et 847 le
-    nombre de bits (la taille) d'un nœud.
+    nombre de simulations effectuées, et d la profondeur moyenne. En espace, COMPLETER PAR LA COMPLEXITE CORRECTE.\\
+    En ce qui concerne la partie structures de données, le MCTS se base une classe Java, appelée dans le code 'TreeNodeMonteCarlo'.
+    Comme son nom l'indique, il s'agit d'un objet représentant un noeud de l'arbre sur lequel l'algorithme va se dérouler.
+    Essentiellement, cet objet va contenir les informations suivantes:
+    \begin{itemize}
+        \item GameState représentant la configuration de la partie
+        \item Noeud parent (objet de même type)
+        \item Noeuds enfants (objets de même type)
+        \item Le nombre de victoires constatées depuis ce noeud
+        \item Le nombre de visites de ce noeud (pour l'UCT et le winrate d'un coup)
+        \item Le coup qui a amené à ce noeud depuis une configuration précédente
+    \end{itemize}
+    En reliant ces noeuds par des coups, on arrive à contruire un (pseudo-)arbre et à appliquer l'algorithme du Monte Carlo Tree Search dessus.
 \end{itemize}
 
-\par Notons que tous les algorithmes s'effectuent sur des arbres et se servent d'une heuristique pour évaluer chaque position. Pour optimiser ces algorithmes, 
-on utilisera surtout deux techniques: le Forward-prunig et la Reduction.
+\par Notons que tous les algorithmes s'effectuent sur des arbres, et AlphaBeta ainsi que MiniMax se servent d'une heuristique pour évaluer chaque position.
+PARLER DES OPTIMISATIONS D'IA MISES EN PLACES ET PEUT-ETRE CELLES ENVISAGÉES OU POSSIBLES;
 
 \subsection{Zobrist hashing} \label{Zobrist}
 Le hachage Zobrist est une fonction utilisée en particulier dans les jeux comme les échecs ou le go, où le but est d'attribuer un codage "complexe" à
