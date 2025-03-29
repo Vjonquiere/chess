@@ -16,8 +16,7 @@ public class PromoteMove extends Move {
    * @param promPiece The piece that this move promotes to.
    */
   public PromoteMove(Position source, Position dest, Piece promPiece) {
-    super(source, dest);
-    this.promPiece = promPiece;
+    this(source, dest, promPiece, null, false, null);
   }
 
   public PromoteMove(

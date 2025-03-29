@@ -7,7 +7,9 @@ import java.util.List;
 public class Bitboard {
   private long bitboard;
 
-  public Bitboard() {}
+  public Bitboard() {
+    this(0L);
+  }
 
   public Bitboard(final long bitboard) {
     this.bitboard = bitboard;
