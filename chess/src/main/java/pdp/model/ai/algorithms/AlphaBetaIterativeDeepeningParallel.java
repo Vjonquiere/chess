@@ -21,19 +21,42 @@ import pdp.model.board.PromoteMove;
 import pdp.model.piece.ColoredPiece;
 import pdp.utils.Logging;
 
+/**
+ * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) and
+ * iterative deepening to have more efficient search.
+ */
 public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
+
+  /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private Solver solver;
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+
+  /** Boolean to indicate whether the search has been stopped before reaching the depth asked. */
   private AtomicBoolean stoppedEarly = new AtomicBoolean(false);
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
+  /**
+   * Initializes the field solver with the one given in parameter.
+   *
+   * @param solver Solver needed to call the evaluation
+   */
   public AlphaBetaIterativeDeepeningParallel(Solver solver) {
     this.solver = solver;
   }
 
+  /**
+   * Determines the best move using the AlphaBeta algorithm with iterative deepening.
+   *
+   * @param game The current game state.
+   * @param depth The number of moves to look ahead.
+   * @param player The current player (true for white, false for black).
+   * @return The best move for the player.
+   */
   @Override
   public AiMove findBestMove(Game game, int maxDepth, boolean player) {
     stoppedEarly.set(false);
@@ -113,6 +136,20 @@ public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
     return bestMove;
   }
 
+  /**
+   * Finds the best move for the given player. It cuts the uninteresting branches with the
+   * AlphaBetaPruning.
+   *
+   * <p>The method evaluates recursively the game state to select the optimal move.
+   *
+   * @param game The current game
+   * @param depth The number of moves remaining in the search
+   * @param currentPlayer The current player (true for white, false for black).
+   * @param alpha The best option for the maximizing player
+   * @param beta The best option for the minimizing player
+   * @param originalPlayer The player at root
+   * @return The best move with its evaluated score.
+   */
   private AiMove alphaBeta(
       GameAi game,
       int depth,
@@ -172,10 +209,34 @@ public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
     return bestMove;
   }
 
+  /**
+   * Sorts the moves list based on the score of each move. The score is determined by the
+   * evaluateMove function.
+   *
+   * @param moves The list of moves to be sorted.
+   * @param game The game state.
+   */
   private void sortMoves(List<Move> moves, GameAi game) {
     moves.sort(Comparator.comparingInt((Move m) -> -evaluateMove(m, game)));
   }
 
+  /**
+   * Evaluates the given move by giving a score based on the captured piece. The score is as
+   * follows:
+   *
+   * <ul>
+   *   <li>Pawn: 1
+   *   <li>Knights and Bishops: 3
+   *   <li>Rooks: 5
+   *   <li>Queens: 9
+   * </ul>
+   *
+   * If the move is a promotion, an additional 100 points is given.
+   *
+   * @param move The move to be evaluated.
+   * @param game The current game state.
+   * @return The score of the move.
+   */
   private int evaluateMove(Move move, GameAi game) {
     ColoredPiece target =
         game.getBoard().getBoardRep().getPieceAt(move.getDest().x(), move.getDest().y());
