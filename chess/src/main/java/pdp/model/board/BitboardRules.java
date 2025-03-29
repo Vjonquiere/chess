@@ -194,7 +194,9 @@ public final class BitboardRules {
       return false;
     }
     Bitboard pieces =
-        color == Color.WHITE ? bitboardRepresentation.getWhiteBoard() : bitboardRep.getBlackBoard();
+        color == Color.WHITE
+            ? bitboardRepresentation.getWhiteBoard()
+            : bitboardRepresentation.getBlackBoard();
     for (Integer i : pieces.getSetBits()) {
       Position piecePosition = bitboardRepresentation.squareToPosition(i);
       List<Move> availableMoves =
