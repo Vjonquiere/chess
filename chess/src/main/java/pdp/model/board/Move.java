@@ -34,8 +34,7 @@ public class Move {
    * @param dest The destination Position of the move.
    */
   public Move(final Position source, final Position dest) {
-    this.source = source;
-    this.dest = dest;
+    this(source, dest, null, false, null, dest, false, false);
   }
 
   /**
@@ -48,11 +47,7 @@ public class Move {
    */
   public Move(
       final Position source, final Position dest, final ColoredPiece piece, final boolean isTake) {
-    this.source = source;
-    this.dest = dest;
-    this.piece = piece;
-    this.isTake = isTake;
-    this.takeDest = dest;
+    this(source, dest, piece, isTake, null, dest, false, false);
   }
 
   /**
@@ -73,12 +68,7 @@ public class Move {
       final ColoredPiece piece,
       final boolean isTake,
       final ColoredPiece takenPiece) {
-    this.source = source;
-    this.dest = dest;
-    this.piece = piece;
-    this.isTake = isTake;
-    this.takenPiece = takenPiece;
-    this.takeDest = dest;
+    this(source, dest, piece, isTake, takenPiece, dest, false, false);
   }
 
   /**
@@ -99,12 +89,7 @@ public class Move {
       final boolean isTake,
       final ColoredPiece takenPiece,
       final Position takeDest) {
-    this.source = source;
-    this.dest = dest;
-    this.piece = piece;
-    this.isTake = isTake;
-    this.takenPiece = takenPiece;
-    this.takeDest = takeDest;
+    this(source, dest, piece, isTake, takenPiece, takeDest, false, false);
   }
 
   /**
@@ -136,9 +121,9 @@ public class Move {
     this.piece = piece;
     this.isTake = isTake;
     this.takenPiece = takenPiece;
+    this.takeDest = takeDest != null ? takeDest : dest;
     this.isCheck = isCheck;
     this.isCheckMate = isCheckMate;
-    this.takeDest = dest;
   }
 
   /**
