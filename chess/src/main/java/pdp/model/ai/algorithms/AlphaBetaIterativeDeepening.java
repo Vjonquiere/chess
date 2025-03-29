@@ -5,7 +5,6 @@ import static pdp.utils.Logging.debug;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
@@ -29,7 +28,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
       Logger.getLogger(AlphaBetaIterativeDeepening.class.getName());
 
   /** Boolean to indicate whether the search has been stopped before reaching the depth asked. */
-  private AtomicBoolean stoppedEarly;
+  private boolean stoppedEarly;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -55,7 +54,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
   @Override
   public AiMove findBestMove(final Game game, final int maxDepth, final boolean player) {
 
-    stoppedEarly.set(false);
+    this.stoppedEarly = false;
 
     AiMove bestMove = null;
     final List<Move> rootMoves = new ArrayList<>(game.getBoard().getAllAvailableMoves(player));
@@ -72,7 +71,7 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
 
       final AiMove currentBest =
           alphaBeta(game, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player, rootMoves);
-      if (currentBest != null && !this.stoppedEarly.get()) {
+      if (currentBest != null && !this.stoppedEarly) {
         bestMove = currentBest;
       }
     }
