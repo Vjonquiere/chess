@@ -1,9 +1,7 @@
 package pdp.model.ai.heuristics;
 
-import java.util.List;
 import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
-import pdp.model.board.Move;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
@@ -116,8 +114,28 @@ public class KingSafetyHeuristic implements Heuristic {
     int score = 0;
 
     final BoardRepresentation bitboard = board.getBoardRep();
-
     if (isWhite) {
+      Position king = bitboard.getKing(isWhite).get(0);
+      for (int i = king.x() - 1; i < king.x() + 2; i++) {
+        for (int j = king.y() - 1; j < king.y() + 2; j++) {
+          if (bitboard.isAttacked(i, j, Color.BLACK)) {
+            score -= 30;
+          }
+        }
+      }
+    }
+    if (!isWhite) {
+      Position king = bitboard.getKing(!isWhite).get(0);
+      for (int i = king.x() - 1; i < king.x() + 2; i++) {
+        for (int j = king.y() - 1; j < king.y() + 2; j++) {
+          if (bitboard.isAttacked(i, j, Color.WHITE)) {
+            score -= 30;
+          }
+        }
+      }
+    }
+
+    /*if (isWhite) {
       // Test for white king
       final List<List<Position>> posBlackPieces = bitboard.retrieveBlackPiecesPos();
       final Position whiteKingPosition = bitboard.getKing(true).get(0);
@@ -159,7 +177,7 @@ public class KingSafetyHeuristic implements Heuristic {
           }
         }
       }
-    }
+    }*/
 
     // No checks available from enemy so good score
     if (score == 0) {

@@ -110,16 +110,7 @@ public final class BitboardRules {
       bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
     }
     bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
-    boolean isCheckAfterMove =
-        isCheck(
-            color,
-            bitboardRepresentation,
-            enPassantPos,
-            isLastMoveDoublePush,
-            isWhiteLongCastle,
-            isWhiteShortCastle,
-            isBlackLongCastle,
-            isBlackShortCastle);
+    boolean isCheckAfterMove = bitboardRepresentation.isCheck(color);
     bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // undo move
     if (move.isTake()) {
       bitboardRepresentation.addPieceAt(
@@ -223,16 +214,7 @@ public final class BitboardRules {
           bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
         }
         bitboardRepresentation.movePiece(move.getSource(), move.getDest()); // Play move
-        boolean isStillCheck =
-            isCheck(
-                color,
-                bitboardRepresentation,
-                enPassantPos,
-                isLastMoveDoublePush,
-                isWhiteLongCastle,
-                isWhiteShortCastle,
-                isBlackLongCastle,
-                isBlackShortCastle);
+        boolean isStillCheck = bitboardRepresentation.isCheck(color);
         bitboardRepresentation.movePiece(move.getDest(), move.getSource()); // Undo move
         if (move.isTake()) {
           bitboardRepresentation.addPieceAt(

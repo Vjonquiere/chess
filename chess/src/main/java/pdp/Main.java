@@ -1,6 +1,5 @@
 package pdp;
 
-import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
 import java.util.HashMap;
@@ -22,8 +21,6 @@ public class Main {
    * @param args Command line arguments.
    */
   public static void main(String[] args) {
-
-    error("test");
     HashMap<OptionType, String> options =
         CommandLineOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
