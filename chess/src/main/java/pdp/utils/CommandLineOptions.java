@@ -219,21 +219,18 @@ public final class CommandLineOptions {
         debug(LOGGER, option.getLong() + " option activated");
 
         if (option == OptionType.LANG) {
-          if (value.equals("en")) {
-            debug(LOGGER, "Language = English (already set by default)");
-          } else if (value.equals("fr")) {
-            debug(LOGGER, "Language = French");
-            TextGetter.setLocale("fr");
-          } else {
-            error(
-                "Language "
-                    + cmd.getOptionValue(option.getLong(), "")
-                    + " not supported, language = english");
+          switch (value) {
+            case "en" -> debug(LOGGER, "Language = English (already set by default)");
+            case "fr" -> {
+              debug(LOGGER, "Language = French");
+              TextGetter.setLocale("fr");
+            }
+            default ->
+                error(
+                    "Language "
+                        + cmd.getOptionValue(option.getLong(), "")
+                        + " not supported, language = english");
           }
-        }
-
-        if (!isFeatureImplemented(option)) {
-          error(option.getLong() + " not implemented yet");
         }
       }
     }
@@ -369,20 +366,5 @@ public final class CommandLineOptions {
         activatedOptions.put(OptionType.AI_TIME, "5");
       }
     }
-  }
-
-  /**
-   * Returns whether the given option is implemented in the program or not.
-   *
-   * <p>This method is used to check if a given option is implemented in the program in order to
-   * warn the user.
-   *
-   * @param option The option to check.
-   * @return Whether the given option is implemented.
-   */
-  private static boolean isFeatureImplemented(final OptionType option) {
-    return switch (option) {
-      default -> true;
-    };
   }
 }

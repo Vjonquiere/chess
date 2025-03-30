@@ -149,7 +149,8 @@ public class ZobristHashing {
     final ColoredPiece capturedPiece = move.getPieceTaken();
     // delete the captured piece
     if (capturedPiece != null) {
-      hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(capturedPiece)][to];
+      final int toTake = move.getTakeDest().x() + move.getTakeDest().y() * board.getNbCols();
+      hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(capturedPiece)][toTake];
     }
     return hash;
   }
