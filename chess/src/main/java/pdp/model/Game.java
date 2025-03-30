@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
@@ -77,7 +76,7 @@ public final class Game extends GameAbstract {
   private final HashMap<OptionType, String> options;
 
   /** Lock of the view, to avoid desynchronization between the view and the model. */
-  private final Lock viewLock = new ReentrantLock();
+  private final ReentrantLock viewLock = new ReentrantLock();
 
   /** Condition of the lock. */
   private final Condition workingView = viewLock.newCondition();
@@ -180,7 +179,7 @@ public final class Game extends GameAbstract {
    *
    * @return field viewLock
    */
-  public Lock getViewLock() {
+  public ReentrantLock getViewLock() {
     return this.viewLock;
   }
 
@@ -442,26 +441,7 @@ public final class Game extends GameAbstract {
       final Solver solverBlack,
       final Timer timer,
       final HashMap<OptionType, String> options) {
-    debug(LOGGER, "Initializing Game...");
-    instance =
-        new Game(
-            isWhiteAi,
-            isBlackAi,
-            solverWhite,
-            solverBlack,
-            new GameState(timer),
-            new History(),
-            options);
-    BagOfCommands.getInstance().setModel(instance);
-    if (timer != null) {
-      timer.setCallback(instance::outOfTimeCallback);
-      if (!instance.isCurrentPlayerAi()) {
-        timer.start();
-      }
-    }
-    debug(LOGGER, "Game initialized!");
-    instance.notifyObservers(EventType.GAME_STARTED);
-    return instance;
+    return initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, null, options);
   }
 
   /**
@@ -483,27 +463,55 @@ public final class Game extends GameAbstract {
       final Timer timer,
       final FileBoard board,
       final HashMap<OptionType, String> options) {
-    debug(LOGGER, "Initializing Game from given board...");
+    debug(LOGGER, board == null ? "Initializing Game..." : "Initializing Game from given board...");
     instance =
-        new Game(
-            isWhiteAi,
-            isBlackAi,
-            solverWhite,
-            solverBlack,
-            new GameState(board, timer),
-            new History(),
-            options);
+        createGameInstance(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
+    setupTimer(timer);
+    debug(LOGGER, "Game initialized!");
+    instance.notifyObservers(EventType.GAME_STARTED);
+    return instance;
+  }
 
-    BagOfCommands.getInstance().setModel(instance);
+  /**
+   * Creates a new instance of the Game class with the given parameters.
+   *
+   * @param isWhiteAi Whether the white player is an AI.
+   * @param isBlackAi Whether the black player is an AI.
+   * @param solverWhite The solver to use for White AI moves.
+   * @param solverBlack The solver to use for Black AI moves.
+   * @param timer The timer to use for the game.
+   * @param board The board state to use, or null for a default board.
+   * @param options Options given in command line or by default.
+   * @return The newly created instance of Game.
+   */
+  private static Game createGameInstance(
+      final boolean isWhiteAi,
+      final boolean isBlackAi,
+      final Solver solverWhite,
+      final Solver solverBlack,
+      final Timer timer,
+      final FileBoard board,
+      final HashMap<OptionType, String> options) {
+    GameState gameState = (board == null) ? new GameState(timer) : new GameState(board, timer);
+    Game game =
+        new Game(isWhiteAi, isBlackAi, solverWhite, solverBlack, gameState, new History(), options);
+    BagOfCommands.getInstance().setModel(game);
+    return game;
+  }
+
+  /**
+   * Sets up the timer for the game. If the timer is not null, it assigns a callback for when the
+   * timer runs out and starts the timer if the current player is not an AI.
+   *
+   * @param timer The timer to be set up for the game.
+   */
+  private static void setupTimer(Timer timer) {
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
       if (!instance.isCurrentPlayerAi()) {
         timer.start();
       }
     }
-    debug(LOGGER, "Game initialized!");
-    instance.notifyObservers(EventType.GAME_STARTED);
-    return instance;
   }
 
   /** When out of time, the callback will be sent and the game will end. */

@@ -45,7 +45,10 @@ public class AlphaBetaTest {
 
   static Stream<AlgorithmType> algorithmProvider() {
     return Stream.of(
-        AlgorithmType.ALPHA_BETA, AlgorithmType.ALPHA_BETA_PARALLEL, AlgorithmType.ALPHA_BETA_ID);
+        AlgorithmType.ALPHA_BETA,
+        AlgorithmType.ALPHA_BETA_PARALLEL,
+        AlgorithmType.ALPHA_BETA_ID,
+        AlgorithmType.ALPHA_BETA_ID_PARALLEL);
   }
 
   @ParameterizedTest

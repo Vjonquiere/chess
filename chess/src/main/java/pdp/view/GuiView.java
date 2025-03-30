@@ -377,9 +377,11 @@ public class GuiView implements View {
                 debug(LOGGER, "Received unknown game event: " + event);
                 break;
             }
-            Game.getInstance().getWorkingViewCondition().signal();
           } finally {
-            Game.getInstance().getViewLock().unlock();
+            if (Game.getInstance().getViewLock().isLocked()) {
+              Game.getInstance().getWorkingViewCondition().signal();
+              Game.getInstance().getViewLock().unlock();
+            }
           }
         });
   }
