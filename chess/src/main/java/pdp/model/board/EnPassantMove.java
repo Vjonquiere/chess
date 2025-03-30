@@ -1,12 +1,10 @@
 package pdp.model.board;
 
 import pdp.model.piece.ColoredPiece;
-import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
-/** Special move representation for pawn promotion. */
-public class PromoteMove extends Move {
-  private Piece promPiece;
+/** Special move representation for en passant moves. */
+public class EnPassantMove extends Move {
 
   /**
    * Constructs a new PromoteMove object with the specified source, destination and promoted piece.
@@ -15,19 +13,13 @@ public class PromoteMove extends Move {
    * @param dest The destination Position of the move.
    * @param promPiece The piece that this move promotes to.
    */
-  public PromoteMove(Position source, Position dest, Piece promPiece) {
-    this(source, dest, promPiece, null, false, null);
-  }
-
-  public PromoteMove(
+  public EnPassantMove(
       Position source,
       Position dest,
-      Piece promPiece,
       ColoredPiece piece,
-      boolean isTake,
+      Position takeDest,
       ColoredPiece takenPiece) {
-    super(source, dest, piece, isTake, takenPiece);
-    this.promPiece = promPiece;
+    this(source, dest, piece, takeDest, takenPiece, false, false);
   }
 
   /**
@@ -46,26 +38,15 @@ public class PromoteMove extends Move {
    * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
    *     checkmate, false otherwise).
    */
-  public PromoteMove(
+  public EnPassantMove(
       Position source,
       Position dest,
-      Piece promPiece,
       ColoredPiece piece,
-      boolean isTake,
+      Position takeDest,
       ColoredPiece takenPiece,
       boolean isCheck,
       boolean isCheckMate) {
-    super(source, dest, piece, isTake, takenPiece, isCheck, isCheckMate);
-    this.promPiece = promPiece;
-  }
-
-  /**
-   * Gets the piece that this move promotes to.
-   *
-   * @return The promoted piece.
-   */
-  public Piece getPromPiece() {
-    return promPiece;
+    super(source, dest, piece, true, takenPiece, isCheck, isCheckMate);
   }
 
   /**
@@ -77,19 +58,14 @@ public class PromoteMove extends Move {
   public String toAlgebraicString() {
     String sourceStr = positionToString(this.getSource());
     String destinationStr = positionToString(this.getDest());
-    String separator = this.isTake() ? "x" : "-";
+    String separator = "x";
     String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
 
-    return sourceStr
-        + separator
-        + destinationStr
-        + "="
-        + this.promPiece.getCharRepresentation(true)
-        + annotation;
+    return sourceStr + separator + destinationStr + annotation;
   }
 
   public String toUciString() {
-    return super.toUciString() + this.promPiece.getCharRepresentation(true);
+    return super.toUciString();
   }
 
   /**

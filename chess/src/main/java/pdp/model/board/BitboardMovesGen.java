@@ -130,11 +130,11 @@ public final class BitboardMovesGen {
     final List<Move> moves = new ArrayList<>();
     for (final Integer i : moveBitboard.getSetBits()) {
 
+      Position dest = bitboardRep.squareToPosition(i);
+
       boolean isTake = false;
       ColoredPiece capturedPiece = null;
       boolean isPromotion = false;
-      boolean isCastle = false;
-
       if (enemies.getBit(i)) { // move is capture
         for (int j = 0; j < bitboardRep.getBitboards().length; j++) {
           if (bitboardRep.getBitboards()[j].getBit(i)) {
@@ -143,13 +143,14 @@ public final class BitboardMovesGen {
             moves.add(
                 new Move(
                     source,
-                    bitboardRep.squareToPosition(i),
+                    dest,
                     piece,
                     true,
                     BitboardRepresentation.getPiecesMap().getFromKey(j)));
             break;
           }
         }
+        continue;
       }
 
       if (piece.getPiece() == Piece.PAWN
@@ -163,14 +164,9 @@ public final class BitboardMovesGen {
             new ColoredPiece(
                 Piece.PAWN, piece.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
 
-        moves.add(
-            new Move(
-                source,
-                bitboardRep.squareToPosition(i),
-                piece,
-                true,
-                capturedPiece,
-                capturedPawnPos));
+        moves.add(new EnPassantMove(source, dest, piece, capturedPawnPos, capturedPiece));
+
+        continue;
       }
 
       if (piece.getPiece() == Piece.PAWN) {
@@ -183,43 +179,28 @@ public final class BitboardMovesGen {
       }
 
       if (isPromotion) {
-        moves.add(
-            new PromoteMove(
-                source,
-                bitboardRep.squareToPosition(i),
-                Piece.QUEEN,
-                piece,
-                isTake,
-                capturedPiece));
-        moves.add(
-            new PromoteMove(
-                source,
-                bitboardRep.squareToPosition(i),
-                Piece.KNIGHT,
-                piece,
-                isTake,
-                capturedPiece));
-        moves.add(
-            new PromoteMove(
-                source, bitboardRep.squareToPosition(i), Piece.ROOK, piece, isTake, capturedPiece));
-        moves.add(
-            new PromoteMove(
-                source,
-                bitboardRep.squareToPosition(i),
-                Piece.BISHOP,
-                piece,
-                isTake,
-                capturedPiece));
+        moves.add(new PromoteMove(source, dest, Piece.QUEEN, piece, isTake, capturedPiece));
+        moves.add(new PromoteMove(source, dest, Piece.KNIGHT, piece, isTake, capturedPiece));
+        moves.add(new PromoteMove(source, dest, Piece.ROOK, piece, isTake, capturedPiece));
+        moves.add(new PromoteMove(source, dest, Piece.BISHOP, piece, isTake, capturedPiece));
+
+        continue;
       }
 
-      if (piece.getPiece() == Piece.KING
-          && Math.abs(source.x() - bitboardRep.squareToPosition(i).x()) == 2) {
-        isCastle = true;
+      if (piece.getPiece() == Piece.KING && Math.abs(source.x() - dest.x()) == 2) {
+
+        boolean isShortCastle;
+        if (dest.x() > source.x()) {
+          isShortCastle = true;
+        } else {
+          isShortCastle = false;
+        }
+        moves.add(new CastlingMove(source, dest, piece, isShortCastle));
+
+        continue;
       }
 
-      moves.add(
-          new Move(
-              source, bitboardRep.squareToPosition(i), piece, isTake, capturedPiece, isCastle));
+      moves.add(new Move(source, dest, piece, isTake, capturedPiece));
     }
 
     return moves;
