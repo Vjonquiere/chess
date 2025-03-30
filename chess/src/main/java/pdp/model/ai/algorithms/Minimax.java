@@ -88,4 +88,9 @@ public class Minimax implements SearchAlgorithm {
     }
     return bestMove;
   }
+
+  @Override
+  public String toString() {
+    return "Minimax";
+  }
 }

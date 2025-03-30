@@ -134,4 +134,9 @@ public class AlphaBeta implements SearchAlgorithm {
     }
     return bestMove;
   }
+
+  @Override
+  public String toString() {
+    return "Alpha-Beta";
+  }
 }

@@ -36,4 +36,9 @@ public class StandardHeuristic extends AbstractHeuristic {
     super.addHeuristic(new WeightedHeuristic(new DevelopmentHeuristic(), weight.get(6)));
     // super.addHeuristic(new SpaceControlHeuristic());
   }
+
+  @Override
+  public String toString() {
+    return "Standard";
+  }
 }

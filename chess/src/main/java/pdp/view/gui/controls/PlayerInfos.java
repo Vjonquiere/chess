@@ -6,14 +6,17 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import pdp.model.Game;
+import pdp.model.ai.Solver;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
+import pdp.view.gui.popups.InfoPopUp;
 
 /** GUI widget to display player data. */
 public class PlayerInfos extends HBox {
@@ -42,7 +45,22 @@ public class PlayerInfos extends HBox {
       timerLabel.setText(timer.getTimeRemainingString());
       updateTimer(isWhite);
     }
-    this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
+    ImageView info = getInfoIcon();
+    if (isAi) {
+      Solver solver;
+      if (isWhite) {
+        solver = Game.getInstance().getWhiteSolver();
+      } else {
+        solver = Game.getInstance().getBlackSolver();
+      }
+      info.setOnMouseClicked(
+          event -> {
+            InfoPopUp.show(solver.toString());
+          });
+      Tooltip.install(info, new Tooltip(solver.toString()));
+    }
+    this.getChildren()
+        .addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer, info);
     this.setSpacing(10);
   }
 
@@ -60,6 +78,16 @@ public class PlayerInfos extends HBox {
     imageView.setImage(image);
     imageView.setFitWidth(50);
     imageView.setFitHeight(50);
+    return imageView;
+  }
+
+  public ImageView getInfoIcon() {
+    final ImageView imageView = new ImageView();
+    final String path = "/assets/icons/information.png";
+    final Image image = new Image(getClass().getResourceAsStream(path));
+    imageView.setImage(image);
+    imageView.setFitWidth(25);
+    imageView.setFitHeight(25);
     return imageView;
   }
 

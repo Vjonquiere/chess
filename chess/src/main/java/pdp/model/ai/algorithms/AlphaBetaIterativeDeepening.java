@@ -189,4 +189,9 @@ public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
 
     return score;
   }
+
+  @Override
+  public String toString() {
+    return "Alpha-Beta Iterative Deepening";
+  }
 }

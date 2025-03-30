@@ -160,4 +160,9 @@ public class AlphaBetaParallel implements SearchAlgorithm {
 
     return bestMove;
   }
+
+  @Override
+  public String toString() {
+    return "Alpha-Beta Parallel";
+  }
 }

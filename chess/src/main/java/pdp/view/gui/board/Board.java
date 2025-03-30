@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javafx.animation.TranslateTransition;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
@@ -19,6 +22,7 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
+import pdp.view.GuiView;
 
 /** GUI representation of game board. */
 public class Board extends GridPane {
@@ -70,6 +74,8 @@ public class Board extends GridPane {
 
   /** Build the board for the first time. Init all squares and setup them. */
   public void buildBoard() {
+    char letter = 65;
+    char number = 56;
     if (stage != null) {
       double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
       double maxHeight = (stage.getHeight() - 75) / 8.0;
@@ -99,6 +105,28 @@ public class Board extends GridPane {
         square.setId("square" + finalX + finalY);
         pieces.put(new Position(x, boardRows - 1 - y), square);
         super.add(square, x, y);
+        if (boardRows - 1 - y == 0) {
+          Label label = new Label(String.valueOf(letter));
+          label.setStyle(
+              "-fx-text-fill: "
+                  + GuiView.getTheme().getText()
+                  + ";-fx-padding: 0 10 0 0;-fx-font-weight: bold;");
+          GridPane.setHalignment(label, HPos.RIGHT);
+          GridPane.setValignment(label, VPos.BOTTOM);
+          super.add(label, x, y);
+          letter++;
+        }
+        if (x == 7) {
+          Label label = new Label(String.valueOf(number));
+          label.setStyle(
+              "-fx-text-fill: "
+                  + GuiView.getTheme().getText()
+                  + ";-fx-padding: 0 10 0 0;-fx-font-weight: bold;");
+          GridPane.setHalignment(label, HPos.RIGHT);
+          GridPane.setValignment(label, VPos.BOTTOM);
+          super.add(label, x, y);
+          number--;
+        }
       }
     }
   }

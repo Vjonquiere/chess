@@ -407,4 +407,24 @@ public class Solver {
   public long getLastMoveTime() {
     return lastMoveTime;
   }
+
+  @Override
+  public String toString() {
+    if (algorithm instanceof MonteCarloTreeSearch) {
+      return "Solver configuration: algorithm="
+          + algorithm
+          + ", simulations="
+          + ((MonteCarloTreeSearch) algorithm).getSimulationLimit()
+          + ", time="
+          + time;
+    }
+    return "Solver configuration: algorithm="
+        + algorithm
+        + ", depth="
+        + depth
+        + ", time="
+        + time
+        + ", heuristic="
+        + heuristic;
+  }
 }
