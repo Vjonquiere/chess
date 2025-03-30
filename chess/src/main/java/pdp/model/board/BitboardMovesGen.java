@@ -133,6 +133,7 @@ public final class BitboardMovesGen {
       boolean isTake = false;
       ColoredPiece capturedPiece = null;
       boolean isPromotion = false;
+      boolean isCastle = false;
 
       if (enemies.getBit(i)) { // move is capture
         for (int j = 0; j < bitboardRep.getBitboards().length; j++) {
@@ -209,12 +210,16 @@ public final class BitboardMovesGen {
                 piece,
                 isTake,
                 capturedPiece));
-      } else {
-        moves.add(new Move(source, bitboardRep.squareToPosition(i), piece, isTake, capturedPiece));
       }
 
-      // TODO: save the captured piece
-      // enemies.getBit(i) ? true : false -> capture ?
+      if (piece.getPiece() == Piece.KING
+          && Math.abs(source.x() - bitboardRep.squareToPosition(i).x()) == 2) {
+        isCastle = true;
+      }
+
+      moves.add(
+          new Move(
+              source, bitboardRep.squareToPosition(i), piece, isTake, capturedPiece, isCastle));
     }
 
     return moves;
