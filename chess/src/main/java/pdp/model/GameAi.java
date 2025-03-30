@@ -37,7 +37,7 @@ public final class GameAi extends GameAbstract {
    * @throws IllegalMoveException If the move is not legal.
    */
   @Override
-  public void playMove(final Move move) {
+  public void playMove(Move move) {
     final Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
     final Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
@@ -51,10 +51,9 @@ public final class GameAi extends GameAbstract {
         super.getGameState().getBoard().getAvailableMoves(sourcePosition);
     final Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
-    final Move moveToProcess;
     if (classicalMove.isPresent()) {
-      moveToProcess = classicalMove.get();
-      super.processMove(super.getGameState(), moveToProcess);
+      move = classicalMove.get();
+      super.processMove(super.getGameState(), move);
     } else {
       throw new IllegalMoveException(move.toString());
     }
