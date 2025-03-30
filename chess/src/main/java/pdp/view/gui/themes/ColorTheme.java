@@ -17,14 +17,14 @@ public enum ColorTheme {
   private String textInverted;
 
   ColorTheme(
-      String primary,
-      String secondary,
-      String tertiary,
-      String accent,
-      String background,
-      String background2,
-      String text,
-      String textInverted) {
+      final String primary,
+      final String secondary,
+      final String tertiary,
+      final String accent,
+      final String background,
+      final String background2,
+      final String text,
+      final String textInverted) {
     this.primary = primary;
     this.secondary = secondary;
     this.tertiary = tertiary;
@@ -80,14 +80,14 @@ public enum ColorTheme {
    * @param textInverted The inverted text color.
    */
   public static void setCustom(
-      String primary,
-      String secondary,
-      String tertiary,
-      String accent,
-      String background,
-      String background2,
-      String text,
-      String textInverted) {
+      final String primary,
+      final String secondary,
+      final String tertiary,
+      final String accent,
+      final String background,
+      final String background2,
+      final String text,
+      final String textInverted) {
     CUSTOM.primary = primary;
     CUSTOM.secondary = secondary;
     CUSTOM.tertiary = tertiary;

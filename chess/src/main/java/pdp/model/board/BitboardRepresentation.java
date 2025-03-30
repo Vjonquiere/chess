@@ -17,7 +17,7 @@ import pdp.utils.Position;
 
 /** Implementation of BoardRepresentation using bitboards. */
 public class BitboardRepresentation implements BoardRepresentation {
-  private static final int CACHE_SIZE = 10000;
+  private static final int CACHE_SIZE = 10_000;
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
   private Bitboard[] board;
   private static final int NB_COLS = 8;
@@ -90,15 +90,15 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[2] = new Bitboard(36L); // WB
     board[3] = new Bitboard(129L); // WR
     board[4] = new Bitboard(66L); // WKn
-    board[5] = new Bitboard(65280L); // WP
-    board[6] = new Bitboard(1152921504606846976L); // BKi
-    board[7] = new Bitboard(576460752303423488L); // BQ
-    board[8] = new Bitboard(2594073385365405696L); // BB
+    board[5] = new Bitboard(65_280L); // WP
+    board[6] = new Bitboard(1_152_921_504_606_846_976L); // BKi
+    board[7] = new Bitboard(576_460_752_303_423_488L); // BQ
+    board[8] = new Bitboard(2_594_073_385_365_405_696L); // BB
     board[9] = new Bitboard(); // BR // TODO: Find why overflow ???
     board[9].setBit(56);
     board[9].setBit(63);
-    board[10] = new Bitboard(4755801206503243776L); // BKi
-    board[11] = new Bitboard(71776119061217280L);
+    board[10] = new Bitboard(4_755_801_206_503_243_776L); // BKi
+    board[11] = new Bitboard(71_776_119_061_217_280L);
 
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
@@ -111,38 +111,38 @@ public class BitboardRepresentation implements BoardRepresentation {
   public BitboardRepresentation(FileBoard board) {
 
     this();
-    this.setPlayer(board.isWhiteTurn());
+    this.isWhite = board.isWhiteTurn();
 
     if (board.header() != null) {
-      this.setEnPassantPos(board.header().enPassant());
-      if (this.getEnPassantPos() != null) {
-        this.setLastMoveDoublePush(true);
+      this.enPassantPos = board.header().enPassant();
+      if (this.enPassantPos != null) {
+        this.isLastMoveDoublePush = true;
       }
 
-      this.setWhiteShortCastle(board.header().whiteKingCastling());
-      this.setBlackShortCastle(board.header().blackKingCastling());
-      this.setWhiteLongCastle(board.header().whiteQueenCastling());
-      this.setBlackLongCastle(board.header().blackQueenCastling());
+      this.whiteShortCastle = board.header().whiteKingCastling();
+      this.blackShortCastle = board.header().blackKingCastling();
+      this.whiteLongCastle = board.header().whiteQueenCastling();
+      this.blackLongCastle = board.header().blackQueenCastling();
 
-      this.setNbMovesWithNoCaptureOrPawn(board.header().fiftyMoveRule());
+      this.nbMovesWithNoCaptureOrPawn = board.header().fiftyMoveRule();
     } else {
-      this.setEnPassantPos(null);
-      this.setLastMoveDoublePush(false);
+      this.enPassantPos = null;
+      this.isLastMoveDoublePush = false;
 
-      this.setWhiteShortCastle(
+      this.whiteShortCastle =
           board.board().getPieceAt(7, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
-              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
-      this.setBlackShortCastle(
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE));
+      this.blackShortCastle =
           board.board().getPieceAt(7, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
-              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
-      this.setWhiteLongCastle(
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK));
+      this.whiteLongCastle =
           board.board().getPieceAt(0, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
-              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
-      this.setBlackLongCastle(
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE));
+      this.blackLongCastle =
           board.board().getPieceAt(0, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
-              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK));
 
-      this.setNbMovesWithNoCaptureOrPawn(0);
+      this.nbMovesWithNoCaptureOrPawn = 0;
     }
 
     for (int y = 0; y < board.board().getNbRows(); y++) {

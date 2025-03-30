@@ -4,10 +4,10 @@ import java.util.Objects;
 
 /** Combination of piece and color to represent a chess piece. */
 public class ColoredPiece {
-  private Piece piece;
-  private Color color;
+  private final Piece piece;
+  private final Color color;
 
-  public ColoredPiece(Piece piece, Color color) {
+  public ColoredPiece(final Piece piece, final Color color) {
     this.piece = piece;
     this.color = color;
   }
@@ -26,7 +26,7 @@ public class ColoredPiece {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (o instanceof ColoredPiece other) {
       return piece.equals(other.piece) && color.equals(other.color);
     }

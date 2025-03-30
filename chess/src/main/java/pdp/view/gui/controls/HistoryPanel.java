@@ -76,7 +76,7 @@ public class HistoryPanel extends VBox {
     list.setOnMouseClicked(
         event -> {
           if (event.getClickCount() == 2) {
-            int selectedItem = list.getSelectionModel().getSelectedIndex();
+            final int selectedItem = list.getSelectionModel().getSelectedIndex();
             if (selectedItem != -1) {
               if (Game.getInstance().getGameState().getFullTurn() > 0) {
                 BagOfCommands.getInstance()

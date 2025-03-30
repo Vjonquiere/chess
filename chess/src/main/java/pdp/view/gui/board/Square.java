@@ -40,7 +40,7 @@ public class Square extends StackPane {
    * @param piece The piece on the square
    * @param squareColor The default color of the square
    */
-  public Square(final ColoredPiece piece, final boolean squareColor, double squareSize) {
+  public Square(final ColoredPiece piece, final boolean squareColor, final double squareSize) {
     super();
     this.squareSize = squareSize;
     this.setStyle("-fx-border-width: 0; -fx-padding: 0;");

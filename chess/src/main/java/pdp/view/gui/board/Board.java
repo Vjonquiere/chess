@@ -71,8 +71,8 @@ public class Board extends GridPane {
   /** Build the board for the first time. Init all squares and setup them. */
   public void buildBoard() {
     if (stage != null) {
-      double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
-      double maxHeight = (stage.getHeight() - 75) / 8.0;
+      final double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
+      final double maxHeight = (stage.getHeight() - 75) / 8.0;
       squareSize = Math.min(maxWidth, maxHeight);
     }
 
@@ -144,13 +144,13 @@ public class Board extends GridPane {
   private void movePiece(final HistoryNode historyNode) {
     if (Game.getInstance().getGameState().isWhiteTurn()
         && Game.getInstance().isBlackAi()
-        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2000000000L) {
+        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
       updateAfterAnimation();
       return;
     }
     if (!Game.getInstance().getGameState().isWhiteTurn()
         && Game.getInstance().isWhiteAi()
-        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2000000000L) {
+        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
       updateAfterAnimation();
       return;
     }
@@ -158,12 +158,12 @@ public class Board extends GridPane {
     pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
     pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
 
-    PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
+    final PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
     piece.setLayoutX(move.getSource().x() * squareSize + 25);
     piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
     super.getChildren().add(piece);
 
-    TranslateTransition transition = new TranslateTransition();
+    final TranslateTransition transition = new TranslateTransition();
     transition.setNode(piece);
     transition.setDuration(javafx.util.Duration.seconds(0.1));
     transition.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
