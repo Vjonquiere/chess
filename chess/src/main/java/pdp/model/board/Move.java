@@ -178,7 +178,7 @@ public class Move {
    *     false otherwise).
    * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
    *     checkmate, false otherwise).
-   * @param isCastle A boolean indicating wheter the move is a castle.
+   * @param isCastle A boolean indicating whether the move is a castle.
    */
   private Move(
       final Position source,
@@ -443,7 +443,7 @@ public class Move {
   /**
    * Checks if the move is a capture.
    *
-   * @return true if the move is a capture,f alse otherwise.
+   * @return true if the move is a capture,false otherwise.
    */
   public boolean isTake() {
     return isTake;
@@ -538,10 +538,9 @@ public class Move {
     if (this == obj) {
       return true;
     }
-    if (obj == null || !(obj instanceof Move)) {
+    if (!(obj instanceof Move move)) {
       return false;
     }
-    final Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }
 

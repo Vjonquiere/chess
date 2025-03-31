@@ -93,10 +93,7 @@ public class Board extends GridPane {
         }
         final int finalY = boardRows - 1 - y;
         final int finalX = x;
-        square.setOnMouseClicked(
-            event -> {
-              switchSelectedSquare(finalX, finalY);
-            });
+        square.setOnMouseClicked(event -> switchSelectedSquare(finalX, finalY));
         square.setId("square" + finalX + finalY);
         pieces.put(new Position(x, boardRows - 1 - y), square);
         super.add(square, x, y);
@@ -131,10 +128,9 @@ public class Board extends GridPane {
     game.getHistory()
         .getCurrentMove()
         .ifPresent(
-            (move) -> {
-              setLastMoveSquares(
-                  move.getState().getMove().getSource(), move.getState().getMove().getDest());
-            });
+            (move) ->
+                setLastMoveSquares(
+                    move.getState().getMove().getSource(), move.getState().getMove().getDest()));
   }
 
   /**

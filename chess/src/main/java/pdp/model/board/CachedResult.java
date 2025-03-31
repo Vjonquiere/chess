@@ -33,7 +33,7 @@ public class CachedResult {
    * Checks whether the king is in check in this cache instance.
    *
    * @param color Color of the king to check
-   * @return true if the king is check, false otherwise
+   * @return true if the king is in check, false otherwise
    */
   public Boolean isCheck(Color color) {
     return color == Color.WHITE ? isCheckWhite : isCheckBlack;
@@ -42,7 +42,7 @@ public class CachedResult {
   /**
    * Sets the field representing the check status of the king given in parameters.
    *
-   * @param check true if the king is check, false otherwise
+   * @param check true if the king is in check, false otherwise
    * @param color Color of the king to set
    */
   public void setCheck(boolean check, Color color) {

@@ -17,7 +17,7 @@ import pdp.utils.Position;
 /** Class that use parser generator class to generate boards from parsing trees. */
 public class BoardLoaderListener extends BoardLoaderBaseListener {
   /** Map making correspond a string and the piece it represents. */
-  private static final Map<String, ColoredPiece> pieces =
+  private static final Map<String, ColoredPiece> PIECES =
       Map.ofEntries(
           entry("K", new ColoredPiece(Piece.KING, Color.WHITE)),
           entry("Q", new ColoredPiece(Piece.QUEEN, Color.WHITE)),
@@ -107,7 +107,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
       x++;
       return;
     }
-    ColoredPiece piece = pieces.get(ctx.getText());
+    ColoredPiece piece = PIECES.get(ctx.getText());
     int square = (x + (y * 8));
     if (piece == null) {
       throw new RuntimeException(

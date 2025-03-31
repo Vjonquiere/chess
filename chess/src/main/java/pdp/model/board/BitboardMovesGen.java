@@ -241,8 +241,6 @@ public final class BitboardMovesGen {
       final Bitboard enemies,
       final ColoredPiece piece,
       final BitboardRepresentation bitboardRep,
-      final Position enPassantPos,
-      final boolean isLastMoveDoublePush,
       final boolean isWhiteLongCastle,
       final boolean isWhiteShortCastle,
       final boolean isBlackLongCastle,
@@ -251,11 +249,8 @@ public final class BitboardMovesGen {
         getKingMoveBitboard(
             square,
             unreachableSq,
-            enemies,
             piece,
             bitboardRep,
-            enPassantPos,
-            isLastMoveDoublePush,
             isWhiteLongCastle,
             isWhiteShortCastle,
             isBlackLongCastle,
@@ -272,15 +267,10 @@ public final class BitboardMovesGen {
    *
    * @param square Position of the piece
    * @param unreachableSq unreachable squares bitboard
-   * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
   public static Bitboard getKingAttackBitboard(
-      final Position square,
-      final Bitboard unreachableSq,
-      Bitboard enemies,
-      ColoredPiece piece,
-      BitboardRepresentation bitboardRep) {
+      final Position square, final Bitboard unreachableSq) {
     final Bitboard position = new Bitboard();
     final int squareIndex = square.x() % 8 + square.y() * 8;
     position.setBit(squareIndex);
@@ -304,23 +294,19 @@ public final class BitboardMovesGen {
    *
    * @param square Position of the piece
    * @param unreachableSq unreachable squares bitboard
-   * @param enemies Enemies occupation bitboard
    * @return The list of possible moves
    */
   public static Bitboard getKingMoveBitboard(
       final Position square,
       final Bitboard unreachableSq,
-      final Bitboard enemies,
       final ColoredPiece piece,
       final BitboardRepresentation bitboardRep,
-      final Position enPassantPos,
-      final boolean isLastMoveDoublePush,
       final boolean isWhiteLongCastle,
       final boolean isWhiteShortCastle,
       final boolean isBlackLongCastle,
       final boolean isBlackShortCastle) {
 
-    final Bitboard move = getKingAttackBitboard(square, unreachableSq, enemies, piece, bitboardRep);
+    final Bitboard move = getKingAttackBitboard(square, unreachableSq);
 
     if (isWhiteLongCastle && piece.getColor() == Color.WHITE) {
       if (!bitboardRep.isAttacked(2, 0, Color.BLACK)
@@ -641,8 +627,6 @@ public final class BitboardMovesGen {
               enemies,
               piece,
               bitboardRep,
-              enPassantPos,
-              isLastMoveDoublePush,
               isWhiteLongCastle,
               isWhiteShortCastle,
               isBlackLongCastle,
@@ -717,9 +701,7 @@ public final class BitboardMovesGen {
             + kingReachable
             + ")");
     return switch (piece.getPiece()) {
-      case KING ->
-          getKingAttackBitboard(
-              new Position(x, y), unreachableSquares, enemies, piece, bitboardRep);
+      case KING -> getKingAttackBitboard(new Position(x, y), unreachableSquares);
       case QUEEN ->
           getInlineMoves(new Position(x, y), unreachableSquares, enemies)
               .or(getDiagonalMoves(new Position(x, y), unreachableSquares, enemies));
@@ -817,8 +799,6 @@ public final class BitboardMovesGen {
   public static List<Move> retrieveKingMoves(
       final boolean white,
       final BitboardRepresentation bitboardRepresentation,
-      final Position enPassantPos,
-      final boolean isLastMoveDoublePush,
       final boolean isWhiteLongCastle,
       final boolean isWhiteShortCastle,
       final boolean isBlackLongCastle,
@@ -839,8 +819,6 @@ public final class BitboardMovesGen {
           bitboardRepresentation.getBlackBoard(),
           whiteKing,
           bitboardRepresentation,
-          enPassantPos,
-          isLastMoveDoublePush,
           isWhiteLongCastle,
           isWhiteShortCastle,
           isBlackLongCastle,
@@ -863,8 +841,6 @@ public final class BitboardMovesGen {
           bitboardRepresentation.getWhiteBoard(),
           blackKing,
           bitboardRepresentation,
-          enPassantPos,
-          isLastMoveDoublePush,
           isWhiteLongCastle,
           isWhiteShortCastle,
           isBlackLongCastle,

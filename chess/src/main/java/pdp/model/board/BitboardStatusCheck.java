@@ -68,14 +68,7 @@ public final class BitboardStatusCheck {
    *
    * @return true if kings are somewhat active. false otherwise
    */
-  public static boolean areKingsActive(
-      BitboardRepresentation bitboardRepresentation,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean whiteLongCastle,
-      boolean whiteShortCastle,
-      boolean blackLongCastle,
-      boolean blackShortCastle) {
+  public static boolean areKingsActive(BitboardRepresentation bitboardRepresentation) {
     int nbMovesConsideringKingActive = 4;
 
     Position blackKingPos = bitboardRepresentation.getKing(false).get(0);
@@ -129,9 +122,7 @@ public final class BitboardStatusCheck {
       boolean whiteLongCastle,
       boolean blackShortCastle,
       boolean blackLongCastle,
-      BitboardRepresentation bitboardRepresentation,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush) {
+      BitboardRepresentation bitboardRepresentation) {
     if (color == Color.WHITE) {
       if (shortCastle && !whiteShortCastle) {
         return false;
@@ -155,11 +146,9 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.WHITE)
-            || bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
-            || bitboardRepresentation.isAttacked(6, 0, Color.BLACK)) {
-          return false;
-        }
+        return !bitboardRepresentation.isCheck(Color.WHITE)
+            && !bitboardRepresentation.isAttacked(5, 0, Color.BLACK)
+            && !bitboardRepresentation.isAttacked(6, 0, Color.BLACK);
       } else {
         if ((bitboardRepresentation.getPieceAt(d1Square.x(), d1Square.y()).getPiece()
                 != Piece.EMPTY)
@@ -170,13 +159,10 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.WHITE)
-            || bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
-            || bitboardRepresentation.isAttacked(2, 0, Color.BLACK)) {
-          return false;
-        }
+        return !bitboardRepresentation.isCheck(Color.WHITE)
+            && !bitboardRepresentation.isAttacked(3, 0, Color.BLACK)
+            && !bitboardRepresentation.isAttacked(2, 0, Color.BLACK);
       }
-      return true;
     } else {
       if (shortCastle && !blackShortCastle) {
         return false;
@@ -200,11 +186,9 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.BLACK)
-            || bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
-            || bitboardRepresentation.isAttacked(6, 7, Color.WHITE)) {
-          return false;
-        }
+        return !bitboardRepresentation.isCheck(Color.BLACK)
+            && !bitboardRepresentation.isAttacked(5, 7, Color.WHITE)
+            && !bitboardRepresentation.isAttacked(6, 7, Color.WHITE);
       } else {
         if ((bitboardRepresentation.getPieceAt(d8Square.x(), d8Square.y()).getPiece()
                 != Piece.EMPTY)
@@ -215,13 +199,10 @@ public final class BitboardStatusCheck {
           return false;
         }
         // Squares are empty so now ensure king is not in check and does not move through check
-        if (bitboardRepresentation.isCheck(Color.BLACK)
-            || bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
-            || bitboardRepresentation.isAttacked(2, 7, Color.WHITE)) {
-          return false;
-        }
+        return !bitboardRepresentation.isCheck(Color.BLACK)
+            && !bitboardRepresentation.isAttacked(3, 7, Color.WHITE)
+            && !bitboardRepresentation.isAttacked(2, 7, Color.WHITE);
       }
-      return true;
     }
   }
 
@@ -231,15 +212,7 @@ public final class BitboardStatusCheck {
    * @return true if we're in an endgame (according to the chosen criteria)
    */
   public static boolean isEndGamePhase(
-      int fullTurn,
-      boolean white,
-      BitboardRepresentation bitboardRepresentation,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean isWhiteLongCastle,
-      boolean isWhiteShortCastle,
-      boolean isBlackLongCastle,
-      boolean isBlackShortCastle) {
+      int fullTurn, boolean white, BitboardRepresentation bitboardRepresentation) {
     final int nbRequiredConditions = 4;
     int nbFilledConditions = 0;
 

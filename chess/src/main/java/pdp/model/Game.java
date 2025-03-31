@@ -243,7 +243,7 @@ public final class Game extends GameAbstract {
   }
 
   /**
-   * Assigns boolean value to blakAi attribute field. Method used in GameInitializer.
+   * Assigns boolean value to blackAi attribute field. Method used in GameInitializer.
    *
    * @param blackAi true if black is AI. false otherwise.
    */

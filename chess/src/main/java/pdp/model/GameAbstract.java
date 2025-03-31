@@ -263,7 +263,7 @@ public abstract class GameAbstract extends Subject {
   /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
-   * @return true if we're in an endgame (according to the chosen criterias)
+   * @return true if we're in an endgame (according to the chosen criteria)
    */
   public boolean isEndGamePhase() {
     return getBoard().isEndGamePhase(getGameState().getFullTurn(), getGameState().isWhiteTurn());

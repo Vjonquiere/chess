@@ -37,16 +37,7 @@ public final class BitboardRules {
    * @return True if the given square is attacked, False else
    */
   public static boolean isAttacked(
-      final int x,
-      final int y,
-      final Color by,
-      final BitboardRepresentation bitboardRep,
-      final Position enPassantPos,
-      final boolean isLastMoveDoublePush,
-      final boolean isWhiteLongCastle,
-      final boolean isWhiteShortCastle,
-      final boolean isBlackLongCastle,
-      final boolean isBlackShortCastle) {
+      final int x, final int y, final Color by, final BitboardRepresentation bitboardRep) {
     final Bitboard square = new Bitboard();
     square.setBit((x % 8) + (y * 8));
     return (square.getBits() & bitboardRep.getColorAttackBitboard(by == Color.WHITE).getBits())
@@ -59,28 +50,10 @@ public final class BitboardRules {
    * @param color The piece color you want to know check status
    * @return True if the given color is in check, False else
    */
-  public static boolean isCheck(
-      final Color color,
-      final BitboardRepresentation bitboardRep,
-      final Position enPassantPos,
-      final boolean isLastMoveDoublePush,
-      final boolean isWhiteLongCastle,
-      final boolean isWhiteShortCastle,
-      final boolean isBlackLongCastle,
-      final boolean isBlackShortCastle) {
+  public static boolean isCheck(final Color color, final BitboardRepresentation bitboardRep) {
     final int kingPosition = bitboardRep.getKingOpti(color == Color.WHITE);
     final Color attacker = color == Color.WHITE ? Color.BLACK : Color.WHITE;
-    return isAttacked(
-        kingPosition % 8,
-        kingPosition / 8,
-        attacker,
-        bitboardRep,
-        enPassantPos,
-        isLastMoveDoublePush,
-        isWhiteLongCastle,
-        isWhiteShortCastle,
-        isBlackLongCastle,
-        isBlackShortCastle);
+    return isAttacked(kingPosition % 8, kingPosition / 8, attacker, bitboardRep);
   }
 
   /**
@@ -91,15 +64,7 @@ public final class BitboardRules {
    * @return True if the given color is in check after the given move, False else
    */
   public static boolean isCheckAfterMove(
-      Color color,
-      Move move,
-      BitboardRepresentation bitboardRep,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean isWhiteLongCastle,
-      boolean isWhiteShortCastle,
-      boolean isBlackLongCastle,
-      boolean isBlackShortCastle) {
+      Color color, Move move, BitboardRepresentation bitboardRep) {
     debug(LOGGER, "Checking if " + color + " is check after move (" + move + ")");
     ColoredPiece removedPiece = null;
     if (move.getTakeDest() == null) {
@@ -110,16 +75,7 @@ public final class BitboardRules {
       bitboardRep.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
     }
     bitboardRep.movePiece(move.getSource(), move.getDest()); // Play move
-    boolean isCheckAfterMove =
-        isCheck(
-            color,
-            bitboardRep,
-            enPassantPos,
-            isLastMoveDoublePush,
-            isWhiteLongCastle,
-            isWhiteShortCastle,
-            isBlackLongCastle,
-            isBlackShortCastle);
+    boolean isCheckAfterMove = isCheck(color, bitboardRep);
     bitboardRep.movePiece(move.getDest(), move.getSource()); // undo move
     if (move.isTake()) {
       bitboardRep.addPieceAt(move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
@@ -137,15 +93,7 @@ public final class BitboardRules {
    * @param color The piece color you want to know checkMate status
    * @return True if the given color is in checkMate, False else
    */
-  public static boolean isCheckMate(
-      Color color,
-      BitboardRepresentation bitboardRep,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean isWhiteLongCastle,
-      boolean isWhiteShortCastle,
-      boolean isBlackLongCastle,
-      boolean isBlackShortCastle) {
+  public static boolean isCheckMate(Color color, BitboardRepresentation bitboardRep) {
     debug(LOGGER, "Checking if " + color + " is check mate");
     if (!bitboardRep.isCheck(color)) {
       return false;
@@ -190,15 +138,7 @@ public final class BitboardRules {
    * @return true if color {color} is stalemated. false otherwise.
    */
   public static boolean isStaleMate(
-      Color color,
-      Color colorTurnToPlay,
-      BitboardRepresentation bitboardRep,
-      Position enPassantPos,
-      boolean isLastMoveDoublePush,
-      boolean isWhiteLongCastle,
-      boolean isWhiteShortCastle,
-      boolean isBlackLongCastle,
-      boolean isBlackShortCastle) {
+      Color color, Color colorTurnToPlay, BitboardRepresentation bitboardRep) {
     if (bitboardRep.isCheck(color)) {
       return false;
     }
@@ -215,16 +155,7 @@ public final class BitboardRules {
           bitboardRep.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
         }
         bitboardRep.movePiece(move.getSource(), move.getDest()); // Play move
-        boolean isStillCheck =
-            isCheck(
-                color,
-                bitboardRep,
-                enPassantPos,
-                isLastMoveDoublePush,
-                isWhiteLongCastle,
-                isWhiteShortCastle,
-                isBlackLongCastle,
-                isBlackShortCastle);
+        boolean isStillCheck = isCheck(color, bitboardRep);
         bitboardRep.movePiece(move.getDest(), move.getSource()); // Undo move
         if (move.isTake()) {
           bitboardRep.addPieceAt(move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
@@ -242,9 +173,9 @@ public final class BitboardRules {
   }
 
   /**
-   * Checks if draw by insufficient material is observed (both colors each case) Cases: King vs King
-   * King and Bishop vs King King and Knight vs King King and Bishop vs King and Bishop (same
-   * colored Bishops).
+   * Checks if draw by insufficient material is observed (both colors each case) Cases: King vs
+   * King, King and Bishop vs King, King and Knight vs King, King and Bishop vs King and Bishop
+   * (same colored Bishops).
    *
    * @return true if a draw by insufficient material is observed
    */
@@ -315,9 +246,7 @@ public final class BitboardRules {
       Position whiteBishop = posWhiteBishops.get(0);
       Position blackBishop = posBlackBishops.get(0);
       // Check if bishops are on the same color square to know if same color
-      if ((whiteBishop.x() + whiteBishop.y()) % 2 == (blackBishop.x() + blackBishop.y()) % 2) {
-        return true;
-      }
+      return (whiteBishop.x() + whiteBishop.y()) % 2 == (blackBishop.x() + blackBishop.y()) % 2;
     }
 
     return false;
@@ -400,7 +329,7 @@ public final class BitboardRules {
     }
 
     int boardIndex = white ? 0 : 6;
-    Bitboard newPieceBitBoard = null;
+    Bitboard newPieceBitBoard;
     Bitboard pawnBitboard = bitboardRep.getBitboards()[5 + boardIndex];
     switch (newPiece) {
       case KNIGHT:
@@ -483,15 +412,12 @@ public final class BitboardRules {
             || (move.getSource().x() == (x + 1) && move.getSource().y() == (y - 1)))) {
       return true;
     }
-    if (!white
+    return !white
         && piece.getPiece() == Piece.PAWN
         && move.getDest().x() == x
         && move.getDest().y() == y
         && ((move.getSource().x() == (x + 1) && move.getSource().y() == (y + 1))
-            || (move.getSource().x() == (x - 1) && move.getSource().y() == (y + 1)))) {
-      return true;
-    }
-    return false;
+            || (move.getSource().x() == (x - 1) && move.getSource().y() == (y + 1)));
   }
 
   /**
@@ -499,7 +425,7 @@ public final class BitboardRules {
    * enemy does not have enough material to mate.
    *
    * @param white color of the player we check the material for
-   * @return true if {white} has enouhg material to mate. false otherwise
+   * @return true if {white} has enough material to mate. false otherwise
    */
   public static boolean hasEnoughMaterialToMate(boolean white, BitboardRepresentation bitboardRep) {
     // Pawn can promote
@@ -543,10 +469,7 @@ public final class BitboardRules {
       return true;
     }
     // Mate with bishop and knight
-    if (bishopsPos.size() == 1 && knightsPos.size() == 1) {
-      return true;
-    }
-    return false;
+    return bishopsPos.size() == 1 && knightsPos.size() == 1;
   }
 
   /**

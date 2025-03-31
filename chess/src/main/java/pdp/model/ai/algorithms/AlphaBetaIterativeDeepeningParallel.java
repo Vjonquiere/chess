@@ -28,7 +28,7 @@ import pdp.utils.Logging;
 public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
 
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
-  private Solver solver;
+  private final Solver solver;
 
   /** Logger of the class. */
   private static final Logger LOGGER =

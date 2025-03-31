@@ -88,7 +88,7 @@ public class HistoryState {
             .append(this.move.toAlgebraicString())
             .append(" ");
       } else {
-        sb.append("B ").append(this.move.toString());
+        sb.append("B ").append(this.move);
       }
     }
 
@@ -112,12 +112,9 @@ public class HistoryState {
     StringBuilder sb = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
-        sb.append(this.gameState.getFullTurn())
-            .append(". W ")
-            .append(this.move.toString())
-            .append(" ");
+        sb.append(this.gameState.getFullTurn()).append(". W ").append(this.move).append(" ");
       } else {
-        sb.append("B ").append(this.move.toString());
+        sb.append("B ").append(this.move);
       }
     }
 
