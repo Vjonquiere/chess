@@ -62,6 +62,11 @@ public class CastlingMove extends Move {
     return moveString + annotation;
   }
 
+  public boolean isShortCastle() {
+
+    return this.isShortCastle;
+  }
+
   public String toUciString() {
     return super.toUciString();
   }

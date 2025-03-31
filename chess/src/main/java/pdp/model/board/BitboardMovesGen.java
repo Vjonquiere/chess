@@ -135,39 +135,6 @@ public final class BitboardMovesGen {
       boolean isTake = false;
       ColoredPiece capturedPiece = null;
       boolean isPromotion = false;
-      if (enemies.getBit(i)) { // move is capture
-        for (int j = 0; j < bitboardRep.getBitboards().length; j++) {
-          if (bitboardRep.getBitboards()[j].getBit(i)) {
-            isTake = true;
-            capturedPiece = BitboardRepresentation.getPiecesMap().getFromKey(j);
-            moves.add(
-                new Move(
-                    source,
-                    dest,
-                    piece,
-                    true,
-                    BitboardRepresentation.getPiecesMap().getFromKey(j)));
-            break;
-          }
-        }
-        continue;
-      }
-
-      if (piece.getPiece() == Piece.PAWN
-          && bitboardRep.getEnPassantPos() != null
-          && i == bitboardRep.getEnPassantPos().x() + bitboardRep.getEnPassantPos().y() * 8) {
-
-        final Position capturedPawnPos =
-            new Position(bitboardRep.getEnPassantPos().x(), source.y());
-
-        capturedPiece =
-            new ColoredPiece(
-                Piece.PAWN, piece.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
-
-        moves.add(new EnPassantMove(source, dest, piece, capturedPawnPos, capturedPiece));
-
-        continue;
-      }
 
       if (piece.getPiece() == Piece.PAWN) {
         if (piece.getColor() == Color.WHITE && i >= 7 * 8) {
@@ -176,6 +143,52 @@ public final class BitboardMovesGen {
         if (piece.getColor() == Color.BLACK && i <= 7) {
           isPromotion = true;
         }
+      }
+
+      if (enemies.getBit(i)) { // move is capture
+        for (int j = 0; j < bitboardRep.getBitboards().length; j++) {
+          if (bitboardRep.getBitboards()[j].getBit(i)) {
+            isTake = true;
+            capturedPiece = BitboardRepresentation.getPiecesMap().getFromKey(j);
+            if (!isPromotion) {
+              moves.add(
+                  new Move(
+                      source,
+                      dest,
+                      piece,
+                      true,
+                      BitboardRepresentation.getPiecesMap().getFromKey(j)));
+            }
+            break;
+          }
+        }
+        if (!isPromotion) {
+          continue;
+        }
+      }
+
+      if (piece.getPiece() == Piece.PAWN
+          && bitboardRep.getEnPassantPos() != null
+          && i == bitboardRep.getEnPassantPos().x() + bitboardRep.getEnPassantPos().y() * 8) {
+
+        final Position capturedPawnPos;
+        if (piece.getColor() == Color.WHITE) {
+          capturedPawnPos =
+              new Position(
+                  bitboardRep.getEnPassantPos().x(), bitboardRep.getEnPassantPos().y() - 1);
+        } else {
+          capturedPawnPos =
+              new Position(
+                  bitboardRep.getEnPassantPos().x(), bitboardRep.getEnPassantPos().y() + 1);
+        }
+
+        capturedPiece =
+            new ColoredPiece(
+                Piece.PAWN, piece.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
+
+        moves.add(new EnPassantMove(source, dest, piece, capturedPawnPos, capturedPiece));
+
+        continue;
       }
 
       if (isPromotion) {
@@ -202,7 +215,6 @@ public final class BitboardMovesGen {
 
       moves.add(new Move(source, dest, piece, isTake, capturedPiece));
     }
-
     return moves;
   }
 

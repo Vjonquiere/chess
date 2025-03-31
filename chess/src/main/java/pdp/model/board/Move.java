@@ -137,7 +137,7 @@ public class Move {
    * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
    *     checkmate, false otherwise).
    */
-  private Move(
+  public Move(
       final Position source,
       final Position dest,
       final ColoredPiece piece,

@@ -46,7 +46,7 @@ public class EnPassantMove extends Move {
       ColoredPiece takenPiece,
       boolean isCheck,
       boolean isCheckMate) {
-    super(source, dest, piece, true, takenPiece, isCheck, isCheckMate);
+    super(source, dest, piece, true, takenPiece, takeDest, isCheck, isCheckMate);
   }
 
   /**
