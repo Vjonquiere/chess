@@ -110,7 +110,7 @@ public class Board extends GridPane {
           label.setStyle(
               "-fx-text-fill: "
                   + GuiView.getTheme().getText()
-                  + ";-fx-padding: 0 10 0 0;-fx-font-weight: bold;");
+                  + ";-fx-padding: 0 5 0 0;-fx-font-weight: bold;");
           GridPane.setHalignment(label, HPos.RIGHT);
           GridPane.setValignment(label, VPos.BOTTOM);
           super.add(label, x, y);
@@ -121,9 +121,9 @@ public class Board extends GridPane {
           label.setStyle(
               "-fx-text-fill: "
                   + GuiView.getTheme().getText()
-                  + ";-fx-padding: 0 10 0 0;-fx-font-weight: bold;");
+                  + ";-fx-padding: 0 5 0 0;-fx-font-weight: bold;");
           GridPane.setHalignment(label, HPos.RIGHT);
-          GridPane.setValignment(label, VPos.BOTTOM);
+          GridPane.setValignment(label, VPos.TOP);
           super.add(label, x, y);
           number--;
         }
@@ -136,9 +136,9 @@ public class Board extends GridPane {
     cleanHintSquares();
     clearCheckSquare();
     clearLastMoveSquares();
-    // Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece); // TODO:
+    Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece); // TODO:
     // Re-activate after tests.
-    updateAfterAnimation();
+    // updateAfterAnimation();
   }
 
   /** Used to update the board after the move animation finished. */

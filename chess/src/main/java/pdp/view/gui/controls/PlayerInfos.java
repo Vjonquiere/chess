@@ -45,8 +45,9 @@ public class PlayerInfos extends HBox {
       timerLabel.setText(timer.getTimeRemainingString());
       updateTimer(isWhite);
     }
-    ImageView info = getInfoIcon();
+
     if (isAi) {
+      ImageView info = getInfoIcon();
       Solver solver;
       if (isWhite) {
         solver = Game.getInstance().getWhiteSolver();
@@ -58,9 +59,12 @@ public class PlayerInfos extends HBox {
             InfoPopUp.show(solver.toString());
           });
       Tooltip.install(info, new Tooltip(solver.toString()));
+      this.getChildren()
+          .addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer, info);
+    } else {
+      this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
     }
-    this.getChildren()
-        .addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer, info);
+
     this.setSpacing(10);
   }
 
