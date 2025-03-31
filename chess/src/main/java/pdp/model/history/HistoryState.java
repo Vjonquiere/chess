@@ -7,8 +7,13 @@ import pdp.utils.Logging;
 
 /** Data structure use in History node to represent a game state. */
 public class HistoryState {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(HistoryState.class.getName());
+
+  /** GameState of the node. */
   private final GameState gameState;
+
+  /** Move made to get to this game state. */
   private final Move move;
 
   static {
@@ -21,7 +26,7 @@ public class HistoryState {
    * @param move The move played.
    * @param gameState a copy of the gameState after the move played.
    */
-  public HistoryState(Move move, GameState gameState) {
+  public HistoryState(final Move move, final GameState gameState) {
     this.move = move;
     this.gameState = gameState;
   }
@@ -75,7 +80,7 @@ public class HistoryState {
    * @return A string representing the move in algebraic notation.
    */
   public String toAlgebraicString() {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
         sb.append(this.gameState.getFullTurn())
@@ -83,7 +88,7 @@ public class HistoryState {
             .append(this.move.toAlgebraicString())
             .append(" ");
       } else {
-        sb.append("B ").append(this.move.toString());
+        sb.append("B ").append(this.move);
       }
     }
 
@@ -103,16 +108,14 @@ public class HistoryState {
    *
    * @return A string representing the move in the given format.
    */
+  @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
-        sb.append(this.gameState.getFullTurn())
-            .append(". W ")
-            .append(this.move.toString())
-            .append(" ");
+        sb.append(this.gameState.getFullTurn()).append(". W ").append(this.move).append(" ");
       } else {
-        sb.append("B ").append(this.move.toString());
+        sb.append("B ").append(this.move);
       }
     }
 

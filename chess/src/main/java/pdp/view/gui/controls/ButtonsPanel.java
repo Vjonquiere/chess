@@ -147,9 +147,9 @@ public class ButtonsPanel extends GridPane {
   }
 
   /**
-   * Creates the resign button and sets its action. When clicked, the button allows the player to
-   * resign from the game. A confirmation popup appears for the player to confirm their resignation
-   * before ending the game.
+   * Creates the resignation button and sets its action. When clicked, the button allows the player
+   * to resign from the game. A confirmation popup appears for the player to confirm their
+   * resignation before ending the game.
    */
   private Button createResignButton() {
     final Button resignButton = new Button(TextGetter.getText("resign"));
@@ -179,9 +179,7 @@ public class ButtonsPanel extends GridPane {
     final Button restartButton = new Button(TextGetter.getText("restart"));
     restartButton.setMinWidth(100);
     restartButton.setOnAction(
-        event -> {
-          new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
-        });
+        event -> new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null));
     return restartButton;
   }
 }

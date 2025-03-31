@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
+import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
@@ -16,6 +18,7 @@ import pdp.utils.Position;
 
 /** Specific implementation of game for AI players. */
 public final class GameAi extends GameAbstract {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(GameAi.class.getName());
 
   static {
@@ -59,7 +62,7 @@ public final class GameAi extends GameAbstract {
       throw new IllegalMoveException(move.toString());
     }
 
-    this.updateGameStateAfterMove(move, classicalMove.isPresent());
+    this.updateGameStateAfterMove(moveToProcess);
   }
 
   /**
@@ -78,13 +81,13 @@ public final class GameAi extends GameAbstract {
    *   <li>Notifying observers that a move has been played.
    * </ul>
    */
-  private void updateGameStateAfterMove(final Move move, final boolean isSpecialMove) {
+  private void updateGameStateAfterMove(final Move move) {
     if (super.getGameState().isWhiteTurn()) {
       super.getGameState().incrementsFullTurn();
     }
 
     super.getGameState().switchPlayerTurn();
-    if (isSpecialMove) {
+    if (move instanceof CastlingMove || move instanceof PromoteMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(
               super.getZobristHasher()

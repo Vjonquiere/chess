@@ -13,6 +13,7 @@ import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.model.board.BoardRepresentation;
+import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
@@ -195,11 +196,11 @@ public abstract class GameAbstract extends Subject {
       throw new IllegalMoveException(move.toString());
     }
 
-    if (isCastleMove(coloredPiece, sourcePosition, destPosition)) {
-      final boolean shortCastle = destPosition.x() > sourcePosition.x();
+    if (move instanceof CastlingMove) {
+      final CastlingMove castlingMove = (CastlingMove) move;
       final Color color = gameState.isWhiteTurn() ? Color.WHITE : Color.BLACK;
-      if (gameState.getBoard().canCastle(color, shortCastle)) {
-        gameState.getBoard().applyCastle(color, shortCastle);
+      if (gameState.getBoard().canCastle(color, castlingMove.isShortCastle())) {
+        gameState.getBoard().applyCastle(color, castlingMove.isShortCastle());
       } else {
         debug(LOGGER, "Castle is not possible: " + move);
         throw new IllegalMoveException(move.toString());
@@ -263,7 +264,7 @@ public abstract class GameAbstract extends Subject {
   /**
    * Checks if the Game is in an end game phase. Used to know when to switch heuristics.
    *
-   * @return true if we're in an endgame (according to the chosen criterias)
+   * @return true if we're in an endgame (according to the chosen criteria)
    */
   public boolean isEndGamePhase() {
     return getBoard().isEndGamePhase(getGameState().getFullTurn(), getGameState().isWhiteTurn());

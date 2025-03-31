@@ -1,6 +1,8 @@
 package pdp.model;
 
-import static pdp.utils.Logging.*;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
@@ -19,7 +21,9 @@ import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
+import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
@@ -242,7 +246,7 @@ public final class Game extends GameAbstract {
   }
 
   /**
-   * Assigns boolean value to blakAi attribute field. Method used in GameInitializer.
+   * Assigns boolean value to blackAi attribute field. Method used in GameInitializer.
    *
    * @param blackAi true if black is AI. false otherwise.
    */
@@ -492,8 +496,9 @@ public final class Game extends GameAbstract {
       final Timer timer,
       final FileBoard board,
       final HashMap<OptionType, String> options) {
-    GameState gameState = (board == null) ? new GameState(timer) : new GameState(board, timer);
-    Game game =
+    final GameState gameState =
+        (board == null) ? new GameState(timer) : new GameState(board, timer);
+    final Game game =
         new Game(isWhiteAi, isBlackAi, solverWhite, solverBlack, gameState, new History(), options);
     BagOfCommands.getInstance().setModel(game);
     return game;
@@ -505,7 +510,7 @@ public final class Game extends GameAbstract {
    *
    * @param timer The timer to be set up for the game.
    */
-  private static void setupTimer(Timer timer) {
+  private static void setupTimer(final Timer timer) {
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
       if (!instance.isCurrentPlayerAi()) {
@@ -549,7 +554,7 @@ public final class Game extends GameAbstract {
       throw new IllegalMoveException(move.toString());
     }
 
-    this.updateGameStateAfterMove(moveToProcess, classicalMove.isPresent());
+    this.updateGameStateAfterMove(moveToProcess);
   }
 
   /**
@@ -568,7 +573,7 @@ public final class Game extends GameAbstract {
    *   <li>Notifying observers that a move has been played.
    * </ul>
    */
-  private void updateGameStateAfterMove(final Move move, final boolean isSpecialMove) {
+  private void updateGameStateAfterMove(final Move move) {
 
     if (super.getGameState().getMoveTimer() != null
         && !this.isCurrentPlayerAi()
@@ -583,7 +588,7 @@ public final class Game extends GameAbstract {
     }
 
     super.getGameState().switchPlayerTurn();
-    if (isSpecialMove) {
+    if (move instanceof CastlingMove || move instanceof PromoteMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(
               super.getZobristHasher()

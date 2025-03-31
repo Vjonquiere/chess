@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
+import pdp.model.GameState;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
 import pdp.model.ai.algorithms.AlphaBetaIterativeDeepeningParallel;
@@ -32,7 +33,6 @@ import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.ai.heuristics.StandardLightHeuristic;
-import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
@@ -370,29 +370,29 @@ public class Solver {
    * Evaluates the board based on the chosen heuristic. Use Zobrist Hashing to avoid recalculating
    * scores.
    *
-   * @param board Current board to evaluate
+   * @param gameState Current gameState to evaluate
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public float evaluateBoard(final BoardRepresentation board, final boolean isWhite) {
-    if (board == null) {
+  public float evaluateBoard(final GameState gameState, final boolean isWhite) {
+    if (gameState == null || gameState.getBoard() == null) {
       throw new IllegalArgumentException("Board is null");
     }
 
-    final long hash = zobristHashing.generateHashFromBitboards(board);
+    final long hash = zobristHashing.generateHashFromBitboards(gameState.getBoard());
     float score;
     if (evaluatedBoards.containsKey(hash)) {
       score = evaluatedBoards.get(hash);
     } else {
-      score = heuristic.evaluate(board, isWhite);
+      score = heuristic.evaluate(gameState.getBoard(), isWhite);
       evaluatedBoards.put(hash, score);
     }
 
     final Color player = isWhite ? Color.WHITE : Color.BLACK;
 
-    if (Game.getInstance().getGameState().isThreefoldRepetition()
-        || board.isStaleMate(player, player)
-        || board.getNbFullMovesWithNoCaptureOrPawn() >= 50) {
+    if (gameState.isThreefoldRepetition()
+        || gameState.getBoard().isStaleMate(player, player)
+        || gameState.getBoard().getNbFullMovesWithNoCaptureOrPawn() >= 50) {
       score = 0;
     }
 

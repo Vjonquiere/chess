@@ -219,27 +219,24 @@ public final class CommandLineOptions {
         debug(LOGGER, option.getLong() + " option activated");
 
         if (option == OptionType.LANG) {
-          if (value.equals("en")) {
-            debug(LOGGER, "Language = English (already set by default)");
-          } else if (value.equals("fr")) {
-            debug(LOGGER, "Language = French");
-            TextGetter.setLocale("fr");
-          } else {
-            error(
-                "Language "
-                    + cmd.getOptionValue(option.getLong(), "")
-                    + " not supported, language = english");
+          switch (value) {
+            case "en" -> debug(LOGGER, "Language = English (already set by default)");
+            case "fr" -> {
+              debug(LOGGER, "Language = French");
+              TextGetter.setLocale("fr");
+            }
+            default ->
+                error(
+                    "Language "
+                        + cmd.getOptionValue(option.getLong(), "")
+                        + " not supported, language = english");
           }
-        }
-
-        if (!isFeatureImplemented(option)) {
-          error(option.getLong() + " not implemented yet");
         }
       }
     }
 
     if (activatedOptions.containsKey(OptionType.CONTEST)) {
-      String contestFile = activatedOptions.get(OptionType.CONTEST);
+      final String contestFile = activatedOptions.get(OptionType.CONTEST);
       if (contestFile == null || contestFile.isEmpty()) {
         error("Error: --contest option requires a valid file path.");
         activatedOptions.remove(OptionType.CONTEST);
@@ -258,7 +255,7 @@ public final class CommandLineOptions {
     }
 
     if (activatedOptions.containsKey(OptionType.AI)
-        && activatedOptions.get(OptionType.AI).equals("")) {
+        && activatedOptions.get(OptionType.AI).isEmpty()) {
       activatedOptions.put(OptionType.AI, "W");
     }
 
@@ -365,24 +362,9 @@ public final class CommandLineOptions {
       activatedOptions.remove(OptionType.AI_HEURISTIC);
 
       if (activatedOptions.containsKey(OptionType.AI_TIME)
-          && activatedOptions.get(OptionType.AI_TIME).equals("")) {
+          && activatedOptions.get(OptionType.AI_TIME).isEmpty()) {
         activatedOptions.put(OptionType.AI_TIME, "5");
       }
     }
-  }
-
-  /**
-   * Returns whether the given option is implemented in the program or not.
-   *
-   * <p>This method is used to check if a given option is implemented in the program in order to
-   * warn the user.
-   *
-   * @param option The option to check.
-   * @return Whether the given option is implemented.
-   */
-  private static boolean isFeatureImplemented(final OptionType option) {
-    return switch (option) {
-      default -> true;
-    };
   }
 }

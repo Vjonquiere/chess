@@ -23,16 +23,14 @@ public class Square extends StackPane {
   /** Canvas drawn if the square is a hint. */
   private final Canvas hintSq;
 
-  /** Canvas drawn if the square is check. */
-  private final Canvas checkSq;
-
   /** Piece to draw on the square. */
   private ColoredPiece currentPiece;
 
   /** Image of the piece to draw. */
   private ImageView pieceImage;
 
-  private double squareSize;
+  /** Size of the square to draw. */
+  private final double squareSize;
 
   /**
    * Build a square of the given color with the sprite of the given piece.
@@ -40,7 +38,7 @@ public class Square extends StackPane {
    * @param piece The piece on the square
    * @param squareColor The default color of the square
    */
-  public Square(final ColoredPiece piece, final boolean squareColor, double squareSize) {
+  public Square(final ColoredPiece piece, final boolean squareColor, final double squareSize) {
     super();
     this.squareSize = squareSize;
     this.setStyle("-fx-border-width: 0; -fx-padding: 0;");
@@ -52,7 +50,7 @@ public class Square extends StackPane {
     square = new Canvas(squareSize, squareSize);
     reachableSq = new Canvas(squareSize, squareSize);
     hintSq = new Canvas(squareSize, squareSize);
-    checkSq = new Canvas(squareSize, squareSize);
+    final Canvas checkSq = new Canvas(squareSize, squareSize);
     final GraphicsContext graphicCtx = square.getGraphicsContext2D();
     graphicCtx.setFill(baseColor);
     graphicCtx.fillRect(0, 0, squareSize, squareSize);
@@ -74,7 +72,7 @@ public class Square extends StackPane {
   public void updatePiece(final ColoredPiece piece) {
     if (!(piece.equals(currentPiece))) {
       currentPiece = piece;
-      if (pieceImage != null && super.getChildren().contains(pieceImage)) {
+      if (pieceImage != null) {
         super.getChildren().remove(pieceImage);
       }
       super.getChildren().remove(pieceImage);
@@ -140,7 +138,7 @@ public class Square extends StackPane {
    * Draw a red rectangle on the king's square if he is in check or clear the square if he isn't in
    * check anymore.
    *
-   * @param isCheck true if the king is check, false otherwise
+   * @param isCheck true if the king is in check, false otherwise
    */
   public void setCheck(final boolean isCheck) {
     final GraphicsContext graphicCtx = hintSq.getGraphicsContext2D();

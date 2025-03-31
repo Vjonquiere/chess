@@ -34,7 +34,7 @@ import pdp.utils.Timer;
 
 /** View implementation to play in the terminal. */
 public class CliView implements View {
-  /** Boolean to indaicate whether the view is running or not. */
+  /** Boolean to indicate whether the view is running or not. */
   private boolean running;
 
   /** Map of commands mapping a text to its description and action. */

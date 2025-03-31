@@ -13,15 +13,32 @@ import pdp.utils.Position;
 
 /** Move representation for all move types. */
 public class Move {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
+
+  /** Positon of the source of the move. */
   private final Position source;
+
+  /** Positon of the destination of the move. */
   private final Position dest;
+
+  /** Positon of the piece taken. */
   private Position takeDest;
+
+  /** Piece making the move. */
   private ColoredPiece piece;
+
+  /** Piece taken during the move. */
   private ColoredPiece takenPiece;
-  private boolean isTake = false;
-  private boolean isCheck = false;
-  private boolean isCheckMate = false;
+
+  /** Boolean to indicate if the move is a capture. */
+  private boolean isTake;
+
+  /** Boolean to indicate if the move result in a check. */
+  private final boolean isCheck;
+
+  /** Boolean to indicate if the move result in a checkmate. */
+  private final boolean isCheckMate;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -137,7 +154,7 @@ public class Move {
    * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
    *     checkmate, false otherwise).
    */
-  private Move(
+  public Move(
       final Position source,
       final Position dest,
       final ColoredPiece piece,
@@ -255,8 +272,8 @@ public class Move {
       throw new InvalidPositionException(move);
     }
 
-    int x = colLetter - 'a';
-    int y = rowNumber - 1;
+    final int x = colLetter - 'a';
+    final int y = rowNumber - 1;
 
     return new Position(x, y);
   }
@@ -342,6 +359,11 @@ public class Move {
     return dest;
   }
 
+  /**
+   * Retrieves the position of the piece taken during this move.
+   *
+   * @return Position of the taken piece
+   */
   public Position getTakeDest() {
     return this.takeDest;
   }
@@ -372,6 +394,11 @@ public class Move {
     return takenPiece;
   }
 
+  /**
+   * Sets the piece taken during the move to the given piece.
+   *
+   * @param pieceTaken value to put in the field pieceTaken
+   */
   public void setPieceTaken(final ColoredPiece pieceTaken) {
     this.takenPiece = pieceTaken;
   }
@@ -379,7 +406,7 @@ public class Move {
   /**
    * Checks if the move is a capture.
    *
-   * @return true if the move is a capture,f alse otherwise.
+   * @return true if the move is a capture,false otherwise.
    */
   public boolean isTake() {
     return isTake;
@@ -474,10 +501,9 @@ public class Move {
     if (this == obj) {
       return true;
     }
-    if (obj == null || !(obj instanceof Move)) {
+    if (!(obj instanceof Move move)) {
       return false;
     }
-    final Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }
 
