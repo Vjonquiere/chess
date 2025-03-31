@@ -846,7 +846,11 @@ encadrés violets représentent les non-fonctionnels.
 
 \begin{needbox}[F22: Mode \textit{Contest}]
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’-c FILENAME’, ’–-contest FILENAME’ permet de
+        lancer le programme en mode ’contest’ en chargeant une
+        partie depuis un fichier ’FILENAME’ (si fichier au bon format).
+        Le programme affiche alors le joueur qui doit jouer ainsi que
+        le coup à jouer.
     \end{justificationbox}
 \end{needbox}
 
@@ -895,7 +899,7 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F29: En passant]
     Gestion du coup en passant des deux côtés.
     \begin{justificationbox}
-        COMPLETER.
+        Le programme gère la prise en passant des deux côtés lorsque le coup est possible.
     \end{justificationbox}
 \end{needbox}
 
@@ -916,7 +920,8 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F32: Abandon]
     Le programme devra permettre à un joueur d'abandonner la partie en cours de jeu.
     \begin{justificationbox}
-        COMPLETER.
+        Le programme permet à un joueur d’abandonner
+        la partie en cours de jeu s'il le souhaite.
     \end{justificationbox}
 \end{needbox}
 
@@ -931,20 +936,25 @@ encadrés violets représentent les non-fonctionnels.
 
 \begin{needbox}[F34. Quitter et sauvegarder une partie]
     \begin{justificationbox}
-        COMPLETER.
+        Le programme permet de quitter une partie en
+        cours et de la sauvegarder dans un fichier.
+        L'utilisateur choisit le nom du fichier.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F35. Sauvegarde de l’historique]
     \begin{justificationbox}
-        COMPLETER.
+        Le programme peut sauvegarder l’historique des
+        coups joués dans un fichier à la demande de l’utilisateur.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F36: Naviguer dans l'historique]
     Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
     \begin{justificationbox}
-        COMPLETER.
+        Il est possible de revenir en arrière ("Undo") ou d’aller en avant
+        ("Redo") dans l’historique des coups joués si tous les joueurs humains
+        sont d’accord.
     \end{justificationbox}
 \end{needbox}
 
@@ -965,7 +975,10 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F39: Rejouer une partie]
     Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
     \begin{justificationbox}
-        COMPLETER.
+        L'utilisateur a la possibilité de charger une partie depuis un fichier,
+        naviguer dans l'historique la partie et la reprendre depuis un certain
+        coup. L'utilisateur doit demander la sauvegarde de cette nouvelle partie
+        s'il souhaite ne pas la perdre.
     \end{justificationbox}
 \end{needbox}
 
@@ -996,13 +1009,15 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F43: Plateau de jeu]
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
     \begin{justificationbox}
-        COMPLETER.
+        Des bitboards sont utilisés pour représenter l’état du plateau
+        de jeu à chaque instant.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F44. Module bitboard]
     \begin{justificationbox}
-        COMPLETER.
+        Un module bitboard rassemble les fonctions qui
+        permettent de manipuler les bitboards.
     \end{justificationbox}
 \end{needbox}
 
@@ -1031,28 +1046,35 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F48: Menu 'Game']
     Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
     \begin{justificationbox}
-        COMPLETER.
+        L’interface graphique comporte un menu de jeu qui
+        permet de demander un conseil (’Hint’), naviguer dans
+        l’historique (revenir en arrière, aller en avant, etc).
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F49: Menu 'About']
     Menu 'About' permettant d'afficher quelques informations sur le Projet.
     \begin{justificationbox}
-        COMPLETER.
+        L’interface graphique comporte un menu d’options 'About'
+        qui permet de consulter des informations sur le programme
+        (version, auteurs, ...).
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F50: Affichage d'une partie en cours]
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
     \begin{justificationbox}
-        COMPLETER.
+        L’interface graphique affiche le plateau de jeu de la partie
+        en cours ainsi que les informations habituellement présentes
+        sur l’interface en ligne de commandes.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F51: Affichage des coups joués]
     Affiche l'historique des coups joués sur l'interface graphique.
     \begin{justificationbox}
-        COMPLETER.
+        L’interface graphique affiche sur un côté de l’interface,
+        les coups joués lors de la partie en les numérotant.
     \end{justificationbox}
 \end{needbox}
 
@@ -1091,7 +1113,8 @@ encadrés violets représentent les non-fonctionnels.
 
 \begin{needbox}[F56: Monte Carlo Tree Search]
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’–-ai-mode mcts’ remplace l’algorithme d’exploration
+        par défaut par un algorithme de Monte Carlo Tree Search (MCTS).
     \end{justificationbox}
 \end{needbox}
 
@@ -1103,20 +1126,27 @@ encadrés violets représentent les non-fonctionnels.
 
 \begin{needbox}[F58: Choix des heuristiques]
     \begin{justificationbox}
-        COMPLETER.
+        Il est possible de gérer plusieurs heuristiques d’évaluation
+        de position. L’option ’–-ai-heuristic HEURISTIC’
+        permet de spécifier l’heuristique choisie parmi celles
+        qui sont mises à disposition.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F59: Heuristiques de fin de partie]
     \begin{justificationbox}
-        COMPLETER.
+        Plusieurs heuristiques de fin de partie pour ont été créées
+        afin d'optimiser l’évaluation des positions.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F60: Temps de réflexion borné]
     Permet de paramétrer la durée de "réflexion" de l'IA.
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’–-ai-time TIME’ permet de spécifier le temps
+        de réflexion de l’algorithme de recherche. Si le temps est écoulé,
+        le programme joue le meilleur coup trouvé jusqu’à présent.
+        Par défaut, le temps de réflexion est de 5 secondes.
     \end{justificationbox}
 \end{needbox}
 
