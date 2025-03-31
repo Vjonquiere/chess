@@ -246,7 +246,7 @@ public class Board extends GridPane {
         pieces.get(move.getDest()).setReachable(true, move.isTake());
         reachableSquares.add(move.getDest());
       } catch (Exception ignored) {
-        // e.printStackTrace();
+        // Illegal move
       }
     }
   }
