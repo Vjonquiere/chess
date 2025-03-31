@@ -19,7 +19,7 @@ import pdp.utils.Logging;
  * Algorithm of artificial intelligence Alpha beta pruning, with iterative deepening to have more
  * efficient search.
  */
-public class AlphaBetaIterativeDeepening implements SearchAlgorithm {
+public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 

@@ -25,7 +25,7 @@ import pdp.utils.Logging;
  * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) and
  * iterative deepening to have more efficient search.
  */
-public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
+public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
 
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private Solver solver;

@@ -8,7 +8,7 @@ import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 
 /** Algorithm of artificial intelligence Minimax. */
-public class Minimax implements SearchAlgorithm {
+public class Minimax extends SearchAlgorithm {
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 

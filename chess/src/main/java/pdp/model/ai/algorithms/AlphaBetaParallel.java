@@ -20,7 +20,7 @@ import pdp.utils.Logging;
  * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) to have
  * more efficient search.
  */
-public class AlphaBetaParallel implements SearchAlgorithm {
+public class AlphaBetaParallel extends SearchAlgorithm {
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 
@@ -90,6 +90,9 @@ public class AlphaBetaParallel implements SearchAlgorithm {
 
     executor.shutdown();
     debug(LOGGER, "Best move: " + bestMove);
+    long visitedNodes = getVisitedNodes();
+    clearNode();
+    debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
   }
 
@@ -114,6 +117,7 @@ public class AlphaBetaParallel implements SearchAlgorithm {
       float alpha,
       float beta,
       final boolean originalPlayer) {
+    addNode();
     if (solver.isSearchStopped()) {
       return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
@@ -124,7 +128,8 @@ public class AlphaBetaParallel implements SearchAlgorithm {
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
+    List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
+    MoveOrdering.moveOrder(moves);
 
     for (Move move : moves) {
       if (solver.isSearchStopped()) {

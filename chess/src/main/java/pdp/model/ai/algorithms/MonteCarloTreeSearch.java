@@ -12,7 +12,7 @@ import pdp.model.board.Move;
 import pdp.model.piece.Color;
 
 /** Algorithm of artificial intelligence Monte Carlo Tree search. */
-public class MonteCarloTreeSearch implements SearchAlgorithm {
+public class MonteCarloTreeSearch extends SearchAlgorithm {
   /**
    * Solver used for calling the evaluation of the board once the number of iterations is reached or
    * time is up.
