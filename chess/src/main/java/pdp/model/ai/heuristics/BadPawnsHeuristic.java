@@ -26,6 +26,7 @@ public class BadPawnsHeuristic implements Heuristic {
   /** Penalty for the doubled pawns. */
   private static final float PENALTY_FOR_DOUBLED_PAWN = -1f;
 
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
       SCORE_CAP
           / Math.abs(

@@ -15,6 +15,8 @@ import pdp.utils.Position;
 
 /** Utility class to remove complexity for BitboardRepresentation. */
 public final class BitboardMovesGen {
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BitboardMovesGen.class.getName());
 
   /** Private constructor to avoid instantiation. */

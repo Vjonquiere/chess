@@ -24,35 +24,37 @@ public class ThemePopUp {
    * the application's theme.
    */
   public static void show() {
-    Stage popupStage = new Stage();
+    final Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
     popupStage.setTitle(TextGetter.getText("theme.title"));
 
-    VBox layout = new VBox(10);
+    final VBox layout = new VBox(10);
     layout.setId("vbox");
     final Label primary = new Label(TextGetter.getText("theme.primary"));
-    ColorPicker cpPrimary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getPrimary()));
+    final ColorPicker cpPrimary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getPrimary()));
     cpPrimary.setId("primary");
     final Label secondary = new Label(TextGetter.getText("theme.secondary"));
-    ColorPicker cpSecondary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getSecondary()));
+    final ColorPicker cpSecondary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getSecondary()));
     cpSecondary.setId("secondary");
     final Label tertiary = new Label(TextGetter.getText("theme.tertiary"));
-    ColorPicker cpTertiary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTertiary()));
+    final ColorPicker cpTertiary = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTertiary()));
     cpTertiary.setId("tertiary");
     final Label accent = new Label(TextGetter.getText("theme.accent"));
-    ColorPicker cpAccent = new ColorPicker(Color.web(ColorTheme.CUSTOM.getAccent()));
+    final ColorPicker cpAccent = new ColorPicker(Color.web(ColorTheme.CUSTOM.getAccent()));
     cpAccent.setId("accent");
     final Label background = new Label(TextGetter.getText("theme.background"));
-    ColorPicker cpBackground = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground()));
+    final ColorPicker cpBackground = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground()));
     cpBackground.setId("background");
     final Label background2 = new Label(TextGetter.getText("theme.background2"));
-    ColorPicker cpBackground2 = new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground2()));
+    final ColorPicker cpBackground2 =
+        new ColorPicker(Color.web(ColorTheme.CUSTOM.getBackground2()));
     cpBackground2.setId("background2");
     final Label text = new Label(TextGetter.getText("theme.text"));
-    ColorPicker cpText = new ColorPicker(Color.web(ColorTheme.CUSTOM.getText()));
+    final ColorPicker cpText = new ColorPicker(Color.web(ColorTheme.CUSTOM.getText()));
     cpText.setId("text");
     final Label textInverted = new Label(TextGetter.getText("theme.textInverted"));
-    ColorPicker cpTextInverted = new ColorPicker(Color.web(ColorTheme.CUSTOM.getTextInverted()));
+    final ColorPicker cpTextInverted =
+        new ColorPicker(Color.web(ColorTheme.CUSTOM.getTextInverted()));
     cpTextInverted.setId("textInverted");
     layout
         .getChildren()
@@ -74,7 +76,7 @@ public class ThemePopUp {
             textInverted,
             cpTextInverted);
 
-    Button saveButton = new Button(TextGetter.getText("save"));
+    final Button saveButton = new Button(TextGetter.getText("save"));
     saveButton.setId("saveButtonThemes");
     saveButton.setOnAction(
         e -> {
@@ -95,19 +97,19 @@ public class ThemePopUp {
           }
         });
 
-    Button cancelButton = new Button(TextGetter.getText("cancel"));
+    final Button cancelButton = new Button(TextGetter.getText("cancel"));
     cancelButton.setId("cancelButtonThemes");
     cancelButton.setOnAction(
         e -> {
           popupStage.close();
         });
-    HBox buttonBox = new HBox();
+    final HBox buttonBox = new HBox();
     buttonBox.getChildren().addAll(saveButton, cancelButton);
     buttonBox.setSpacing(10);
     buttonBox.setAlignment(Pos.CENTER);
     layout.getChildren().add(buttonBox);
 
-    Scene scene = new Scene(layout, 400, 700);
+    final Scene scene = new Scene(layout, 400, 700);
     GuiView.applyCss(scene);
     layout.setStyle("; -fx-padding: 10; -fx-alignment: center;");
     popupStage.setScene(scene);
@@ -121,7 +123,7 @@ public class ThemePopUp {
    * @param color Color of the color picker.
    * @return String corresponding to the translation of a color to hexadecimal string.
    */
-  public static String toHexString(Color color) {
+  public static String toHexString(final Color color) {
     return String.format(
         "#%02X%02X%02X",
         (int) (color.getRed() * 255),

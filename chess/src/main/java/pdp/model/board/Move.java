@@ -13,15 +13,32 @@ import pdp.utils.Position;
 
 /** Move representation for all move types. */
 public class Move {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
+
+  /** Positon of the source of the move. */
   private final Position source;
+
+  /** Positon of the destination of the move. */
   private final Position dest;
+
+  /** Positon of the piece taken. */
   private Position takeDest;
+
+  /** Piece making the move. */
   private ColoredPiece piece;
+
+  /** Piece taken during the move. */
   private ColoredPiece takenPiece;
-  private boolean isTake = false;
-  private boolean isCheck = false;
-  private boolean isCheckMate = false;
+
+  /** Boolean to indicate if the move is a capture. */
+  private boolean isTake;
+
+  /** Boolean to indicate if the move result in a check. */
+  private final boolean isCheck;
+
+  /** Boolean to indicate if the move result in a checkmate. */
+  private final boolean isCheckMate;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -342,6 +359,11 @@ public class Move {
     return dest;
   }
 
+  /**
+   * Retrieves the position of the piece taken during this move.
+   *
+   * @return Position of the taken piece
+   */
   public Position getTakeDest() {
     return this.takeDest;
   }
@@ -372,6 +394,11 @@ public class Move {
     return takenPiece;
   }
 
+  /**
+   * Sets the piece taken during the move to the given piece.
+   *
+   * @param pieceTaken value to put in the field pieceTaken
+   */
   public void setPieceTaken(final ColoredPiece pieceTaken) {
     this.takenPiece = pieceTaken;
   }

@@ -15,6 +15,8 @@ import pdp.utils.Position;
 
 /** Specification of the BitboardRepresentation. All methods are static because it is a util. */
 public final class BitboardRules {
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BitboardRules.class.getName());
 
   /** Private constructor to avoid instantiation. */
@@ -490,16 +492,6 @@ public final class BitboardRules {
       return true;
     }
     return false;
-  }
-
-  public static void setSquare(
-      ColoredPiece piece, int squareIndex, BitboardRepresentation bitboardRep) {
-    bitboardRep.getBitboards()[BitboardRepresentation.getPiecesMap().getFromValue(piece)].setBit(
-        squareIndex);
-  }
-
-  public static Bitboard[] getBitboards(BitboardRepresentation bitboardRep) {
-    return bitboardRep.getBitboards();
   }
 
   /**

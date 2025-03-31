@@ -82,7 +82,7 @@ public class GuiView implements View {
       text = new BoardFileParser().readFile(path);
     } catch (FileNotFoundException e) {
       try {
-        InputStream inputStream =
+        final InputStream inputStream =
             GuiView.class.getClassLoader().getResourceAsStream("styles/sample.css");
         if (inputStream == null) {
           throw new FileNotFoundException("CSS file not found in resources.");

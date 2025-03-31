@@ -10,7 +10,10 @@ public class DevelopmentHeuristic implements Heuristic {
   /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
+  /** Bonus score for having developed pawn. */
   private static final float BONUS_DEV_PAWN = 1f;
+
+  /** Bonus score for having developed pieces. */
   private static final float BONUS_DEV_PIECE = 3f;
 
   /** The multiplier used to keep the values under SCORE_CAP. */
