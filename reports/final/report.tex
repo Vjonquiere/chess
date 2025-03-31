@@ -90,6 +90,10 @@
  \end{abstract}
 
 
+ \section{Bibliographie}
+ \bibliographystyle{plain}
+ \bibliography{references}
+
 \section{Description de l'existant}
 \subsection{Origine des Échecs}
 Le jeu d’échecs, aussi appelé le jeu des Rois, est un jeu de stratégie dans lequel deux joueurs s’affrontent,
@@ -563,6 +567,47 @@ COMPLETER.
 \subsection{Code propre}
 COMPLETER.
 
+
+\section{Architecture du projet}
+Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que d'extensibilité.
+
+Les différents modules principaux de notre projet sont les suivants : \textbf{Model}, \textbf{Controller}, \textbf{Vue}, \textbf{Events}, \textbf{Utils}
+et \textbf{Exceptions}. 
+
+Voici l'architecture UML du projet : 
+
+\begin{center}
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{archiUML}
+\end{center}
+
+
+\subsubsection{Description des Modules}
+
+\begin{itemize}
+    \item \textbf{Model} : Gère la logique métier du jeu, incluant l'état de la partie, les règles d'échecs et les fonctionnalités comme l'historique et le timer, et même l'Intelligence Artificielle.
+    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les événements utilisateurs et orchestre les interactions entre les différentes couches.
+    \item \textbf{Vue} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
+    \item \textbf{Events} : Implémente un système d'observateurs pour gérer les notifications et la communication asynchrone entre les modules.
+    \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et les algorithmes d'intelligence artificielle pour le jeu.
+    \item \textbf{Exceptions} : Contient les types d'exceptions personnalisées qui peuvent survenir dans le programme et nous permettant d'agir en conséquence.
+\end{itemize}
+
+\subsubsection{Design Patterns Utilisés}
+
+Les différents design patterns utilisés dans ce projet sont les suivants : 
+\begin{itemize}
+    \item \textbf{Singleton} : Utilisé pour la classe \texttt{Game} pour s'assurer qu'une seule instance de la partie est présente.
+    La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes ne soit gérée que par un seul bag.
+    \item \textbf{MVC} : L'architecture principale du projet, séparant clairement la logique métier, l'affichage et la gestion des événements. C'est un MVC modifié,
+ grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleur flexibilité dans la
+ gestion d'évènements.
+    \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
+    \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
+    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourons gérer l'ajout de plusieurs commandes en parallèle.
+    \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle.
+\end{itemize}
+
+
 \section{Performances et Limitations}
 \subsection{Traces}
 PRINT TRACES.
@@ -578,7 +623,7 @@ JavaFX, bien que pratique pour développer des GUI en Java, présente des limite
 la fluidité et les animations. En effectuant quelques recherches, on se rend compte que l'engine de rendu du framework repose principalement
 sur Java2D et utilise une pipeline GPU limitée, ce qui peut causer des ralentissements, surtout pour les logiciels nécessitant du refresh
 fréquent. Java est globalement un langage rapide, mais il est limité. Si le projet avait été développé en C++, avec notamment
-l'aide d'OpenGL, la vue serait bien plus efficace. Sinon, en comparaison, l'utilisation d'un engine dédié comme Unity ou Godot permettrait
+l'aide d'OpenMP, la vue serait bien plus efficace. Sinon, en comparaison, l'utilisation d'un engine dédié comme Unity ou Godot permettrait
 un meilleur rendu général, tandis qu'une approche basée sur les technologies web (HTML, CSS, WebGL) offrirait une meilleure portabilité et une
 optimisation native des performances. Finalement, JavaFx se trouve être une solution pour l'interface graphique dans notre cas, et même si
 pratique et bien architecturé, reste limité en termes de performances graphiques.
@@ -587,13 +632,15 @@ pratique et bien architecturé, reste limité en termes de performances graphiqu
 Ce projet a été décomposé en une soixantaine de besoins afin d'être réalisé. Même si cette réalisation a été plutôt atteignaible, il est important de
 faire part des points faibles de l'application, de ses points forts, et potentiellement des nouvelles fonctionnalités ou améliorations qui pourraient ou 
 auraient pu voir le jour dans le cadre de cette U.E.
-\subsection{Critiques}
+\subsection{Critiques Négatives}
 \subsubsection{MonteCarloTreeSearch}
 Le Monte Carlo Tree Search (MCTS) est largement utilisé dans les jeux de stratégie tels que le Go, où la non-présence d'heuristiques efficaces rend les méthodes classiques d'IA comme AlphaBeta moins adaptées. Cependant, aux échecs, MCTS est rarement employé à cause d'une multitude de limitations.
 Premièrement, les échecs bénéficient d'évaluations positionnelles efficaces et d'une base théorique bien établie, ce qui permet aux algorithmes classiques comme Minimax avec AlphaBeta d'explorer l'arbre de jeu de manière plus efficace. Contrairement à des derniers, MCTS ne se base pas sur des critères d'évaluation et d'optimisations. Ensuite, MCTS est intrinsèquement plus lent que les méthodes basées sur Minimax. En effet, sans optimisation spécifique, il doit effectuer un grand nombre de simulations pour obtenir une estimation intéressante de la valeur d'un GameState. Dans un jeu comme les échecs, où le facteur de branchement moyen est élevé, MCTS a besoin d'un (très) grand nombre d'itérations pour converger vers des décisions "optimales" comparables à celles d'Alpha-Beta Pruning. La simulation de coups est très "Brute-Force", surtout sans optimisation, car le choix des coups par l'algorithme s'effectue de manière complètement aléatoire (pour la partie simulations).
 Enfin, les engines d'échecs modernes tirent parti d'optimisations telles que le move ordering, des bibliothèques d'ouvertures, améliorant ainsi les performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par des techniques spécifiques d'IA comme les réseaux de neuronnes, son efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs. Maintenant, le groupe admet que son implémentation du MCTS est 
 lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState
 Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité sans optimisation.
+\subsection{Critiques positives}
+COMPLETER ICI PAR DES CRITIQUES POSITIVES.
 
 \subsection{Perspectives}
 \subsubsection{Mode Multi-joueur}
@@ -721,177 +768,6 @@ L'utilisateur peut choisir de l'utiliser grâce aux options en ligne de commande
 Elle doit permettre d'utiliser les fonctions de base que nous avons implémenté pour le jeu en ligne de commande. Nous devons 
 pouvoir afficher la partie en cours, les coups joués, ainsi que des messages selon le mode utilisé (Verbose ou Debug, voir figure \ref{fig:needs_options}).
 L'utilisateur doit également pouvoir utiliser différents menus afin de pouvoir paramétrer ou sauvegarder sa partie (voir figure \ref{fig:needs_files}) ou obtenir des informations sur le jeu.
-
-\section{Agenda prévisionnel}
-\label{agenda}
-
-Nous avons décidé de séparer le temps de programmation en quatre parties. Les trois premières seront rythmées besoin par besoin, et la dernière quant à elle sera dédiée à la finalisation du projet et la préparation d'un livrable.
-Une partie des besoins sera également suivie tout au long du projet afin de maintenir une base cohérente.
-
-\subsection{Tout au long du projet}
-
-Gestion des aspects fondamentaux et comme le style de codage, les tests, les performances, et la documentation pour garantir la cohérence et la qualité globale du code.
-
-\begin{itemize}
-    \item F1. Langage de programmation
-    \item F2. Style de codage
-    \item F3. Langue par défaut dans le code
-    \item F4. Système cible
-    \item F5. Documentation
-    \item F6. Tests
-    \item F10. Frameworks de tests
-    \item F7. Bugs
-    \item F8. Performances
-    \item F9. Build-system
-    \item F14. Nom de l'exécutable principal
-    \item F15. Usage général
-\end{itemize}
-
-\subsection{Semaines 0-2}
-
-Mise en place des fonctionnalités essentielles pour le jeu en ligne de commande, telles que la gestion des options CLI, les règles de jeu, et l'affichage de l'échiquier.
-
-\begin{itemize}
-    \item \textbf{Options CLI :}
-    \begin{itemize}
-        \item F11. Gestion des options
-        \item F16. Aide en ligne de commande
-        \item F17. Version
-        \item F18. Mode verbose
-        \item F19. Mode debug
-        \item F13. Internationalisation
-    \end{itemize}
-    \item \textbf{Gestion du jeu :}
-    \begin{itemize}
-        \item F43. Plateau de jeu
-        \item F44. Module bitboard
-        \item F45. État du jeu
-    \end{itemize}
-    \item \textbf{Règles :}
-    \begin{itemize}
-        \item F29. Prise en passant
-        \item F30. Roque
-        \item F31. Promotion du pion
-        \item F38. Fin de partie
-    \end{itemize}
-    \item \textbf{Jeu CLI :}
-    \begin{itemize}
-        \item F24. Interface en ligne de commande
-        \item F26. Affichage de l'échiquier
-        \item F27. Notation des coups
-        \item F28. Représentation de l'historique
-        \item F33. Affichage des messages
-    \end{itemize}
-\end{itemize}
-
-\subsection{Semaines 2-4}
-
-Développement de l'IA, avec des algorithmes comme Minimax et Monte Carlo, et ajout de fonctionnalités avancées comme la sauvegarde, la navigation dans l'historique, et le fichier de configuration.
-
-\begin{itemize}
-    \item \textbf{IA :}
-    \begin{itemize}
-        \item F23. Mode IA
-        \item F53. Heuristique d'évaluation de position
-        \item F54. Algorithme de recherche Minimax
-        \item F55. $\alpha\beta$-pruning
-        \item F56. Monte Carlo Tree Search
-        \item F57. Profondeur de recherche
-        \item F59. Heuristique de fin de partie
-        \item F60. Temps de réflexion borné
-    \end{itemize}
-    \item \textbf{Fonctionnalités :}
-    \begin{itemize}
-        \item F32. Abandon
-        \item F34. Quitter et sauvegarde une partie
-        \item F35. Sauvegarde de l'historique
-        \item F36. Naviguer dans l'historique
-        \item F37. Recommencer une partie
-        \item F40. Format de fichier simplifié
-        \item F41. Format de l'historique
-        \item F42. Fichier de configuration
-    \end{itemize}
-\end{itemize}
-
-\subsection{Semaines 4-6}
-
-Création de l'interface graphique et finalisation des fonctionnalités utilisateurs, incluant les menus interactifs, la gestion des parties, et les modes spéciaux comme le mode blitz et contest.
-
-\begin{itemize}
-    \item \textbf{Interface graphique :}
-    \begin{itemize}
-        \item F12. Bibliothèque graphique
-        \item F25. Interface graphique
-        \item F46. Fonctions de base
-        \item F47. Menu 'File'
-        \item F48. Menu 'Game'
-        \item F49. Menu 'About'
-        \item F50. Affichage d'une partie en cours
-        \item F51. Affichage des coups joués
-        \item F52. Configuration d'une nouvelle partie
-    \end{itemize}
-    \item \textbf{Fonctionnalités :}
-    \begin{itemize}
-        \item F20. Mode blitz
-        \item F21. Durée du blitz
-        \item F22. Mode contest
-        \item F39. Rejouer une partie
-        \item F58. Choix des heuristiques
-    \end{itemize}
-\end{itemize}
-
-
-
-Le premier diagramme de Gantt schématise notre agenda prévisionnel. Le deuxième contient les sous-besoins détaillés. 
-Pour plus d'informations voir la section \ref{Spec}. Nous avons réparti les besoins par personnes,
-chacun avec une couleur différente (voir légende en bas du graphique). Les dates de rendu de chaque besoin ainsi que 
-la/les personne(s) assignée(s) sont également disponibles dans les besoins étendus. Si une tâche est moins/plus longue
-que prévu, nous reverrons la distribution pour la rendre plus égale.
-
-\begin{center}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt}
-\end{center}
-\begin{center}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{gantt3}
-\end{center}
-\section{Architecture visée pour le projet}
-Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que pour l'amélioration future du projet.
-
-Les différents modules de notre projet sont les suivants : \textbf{Model}, \textbf{Controller}, \textbf{Vue}, \textbf{Events} et \textbf{Utils}. 
-
-Voici l'architecture UML du projet : 
-
-\begin{center}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{archiUML}
-\end{center}
-
-
-
-
-\subsubsection{Description des Modules}
-
-\begin{itemize}
-    \item \textbf{Model} : Gère la logique métier du jeu, incluant l'état de la partie, les règles d'échecs et les fonctionnalités comme l'historique et le timer.
-    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les événements utilisateurs et orchestre les interactions entre les différentes couches.
-    \item \textbf{Vue} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
-    \item \textbf{Events} : Implémente un système d'observateurs pour gérer les notifications et la communication asynchrone entre les modules.
-    \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et les algorithmes d'intelligence artificielle pour le jeu.
-\end{itemize}
-
-\subsubsection{Design Patterns Utilisés}
-
-Les différents design patterns utilisés dans ce projet sont les suivants : 
-\begin{itemize}
-    \item \textbf{Singleton} : Utilisé pour le module \texttt{Utils/TextGetter} afin de centraliser l'accès aux ressources de texte. Il sera également utilisé pour
-la classe \texttt{Game} pour s'assurer qu'une seule instance de game est présente. La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes
-ne soit gérée que par un seul bag.
-    \item \textbf{MVC} : L'architecture principale du projet, séparant clairement la logique métier, l'affichage et la gestion des événements. C'est un MVC modifié,
- grace au design pattern observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela rend le code plus simple et digeste.
-    \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
-    \item \textbf{State} : Utilisé pour gérer l'état de la partie, comme le statut du jeu (en cours, échec et mat, pat, etc.).
-    \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
-    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourons gérer l'ajout de plusieurs commandes en parallèle.
-\end{itemize}
 
 
 \section{Spécifications étendues}
@@ -2289,10 +2165,5 @@ entre les membres du groupe).
     \end{subneedbox}
 \end{needbox}
 
-
-\pagebreak
-\section{Bibliographie}
-\bibliographystyle{plain}
-\bibliography{references}
 
 \end{document}
