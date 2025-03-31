@@ -38,10 +38,10 @@ public class BitboardRepresentation implements BoardRepresentation {
   private static final BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
 
   /** Cache instance. */
-  private static final BitboardCache cache;
+  private static final BitboardCache CACHE;
 
   /** Zobrist hashing instance used to generate the hash. */
-  private static ZobristHashing zobristHashing = new ZobristHashing();
+  private static final ZobristHashing ZOBRIST_HASHING;
 
   /** Zobrist simple hash generated for the board at a given moment. */
   private long simpleHash;
@@ -100,9 +100,9 @@ public class BitboardRepresentation implements BoardRepresentation {
     pieces.put(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK));
     pieces.put(11, new ColoredPiece(Piece.PAWN, Color.BLACK));
 
-    zobristHashing = new ZobristHashing();
+    ZOBRIST_HASHING = new ZobristHashing();
 
-    cache = new BitboardCache(CACHE_SIZE);
+    CACHE = new BitboardCache(CACHE_SIZE);
   }
 
   /*
@@ -148,7 +148,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[10] = new Bitboard(4_755_801_206_503_243_776L); // BKi
     board[11] = new Bitboard(71_776_119_061_217_280L);
 
-    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -156,7 +156,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    *
    * @param board The board state to use
    */
-  public BitboardRepresentation(FileBoard board) {
+  public BitboardRepresentation(final FileBoard board) {
 
     this();
     this.isWhite = board.isWhiteTurn();
@@ -193,15 +193,15 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.nbMovesWithNoCaptureOrPawn = 0;
     }
 
-    for (int y = 0; y < board.board().getNbRows(); y++) {
-      for (int x = 0; x < board.board().getNbCols(); x++) {
-        ColoredPiece piece = board.board().getPieceAt(x, y);
-        ColoredPiece current = this.getPieceAt(x, y);
+    for (int y = 0; y < NB_ROWS; y++) {
+      for (int x = 0; x < NB_COLS; x++) {
+        final ColoredPiece piece = board.board().getPieceAt(x, y);
+        final ColoredPiece current = this.getPieceAt(x, y);
         if (current.getPiece() != Piece.EMPTY) {
           this.deletePieceAt(x, y);
         }
         if (piece.getPiece() != Piece.EMPTY) {
-          this.setSquare(piece, x + y * this.getNbCols());
+          this.setSquare(piece, x + y * NB_COLS);
         }
       }
     }
@@ -375,7 +375,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[bitboardIndex].clearBit(fromIndex);
     board[bitboardIndex].setBit(toIndex);
 
-    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -421,7 +421,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
 
-    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -432,7 +432,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   public void setSquare(final ColoredPiece piece, final int squareIndex) {
     board[pieces.getFromValue(piece)].setBit(squareIndex);
-    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -454,7 +454,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public void deletePieceAt(final int x, final int y) {
     final ColoredPiece piece = getPieceAt(x, y);
     board[pieces.getFromValue(piece)].clearBit(x % 8 + y * 8);
-    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
     debug(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
@@ -468,7 +468,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected void addPieceAt(final int x, final int y, final ColoredPiece piece) {
     board[pieces.getFromValue(piece)].setBit(x % 8 + y * 8);
-    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
     debug(LOGGER, "A " + piece.getColor() + " " + piece.getPiece() + " was added to the board");
   }
 
@@ -559,8 +559,6 @@ public class BitboardRepresentation implements BoardRepresentation {
         enemies,
         piece,
         this,
-        enPassantPos,
-        isLastMoveDoublePush,
         whiteLongCastle,
         whiteShortCastle,
         blackLongCastle,
@@ -635,7 +633,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @return The bitboard containing all possible moves (without special cases)
    */
   public Bitboard getColorAttackBitboard(final boolean isWhite) {
-    final CachedResult cached = cache.getOrCreate(simpleHash);
+    final CachedResult cached = CACHE.getOrCreate(simpleHash);
     final Long attackLong = cached.getAttackBitboard(isWhite);
     if (attackLong != null) {
       return new Bitboard(attackLong);
@@ -767,17 +765,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   @Override
   public boolean isAttacked(final int x, final int y, final Color by) {
 
-    return BitboardRules.isAttacked(
-        x,
-        y,
-        by,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
+    return BitboardRules.isAttacked(x, y, by, this);
   }
 
   /**
@@ -788,22 +776,13 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheck(final Color color) {
-    final CachedResult cached = cache.getOrCreate(simpleHash);
+    final CachedResult cached = CACHE.getOrCreate(simpleHash);
     Boolean isCheck = cached.isCheck(color);
     if (isCheck != null) {
       return isCheck;
     }
 
-    isCheck =
-        BitboardRules.isCheck(
-            color,
-            this,
-            enPassantPos,
-            isLastMoveDoublePush,
-            whiteLongCastle,
-            whiteShortCastle,
-            blackLongCastle,
-            blackShortCastle);
+    isCheck = BitboardRules.isCheck(color, this);
     cached.setCheck(isCheck, color);
 
     return isCheck;
@@ -818,16 +797,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckAfterMove(final Color color, final Move move) {
-    return BitboardRules.isCheckAfterMove(
-        color,
-        move,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
+    return BitboardRules.isCheckAfterMove(color, move, this);
   }
 
   /**
@@ -839,22 +809,13 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isCheckMate(final Color color) {
-    final CachedResult cached = cache.getOrCreate(simpleHash);
+    final CachedResult cached = CACHE.getOrCreate(simpleHash);
     Boolean isCheckMate = cached.isCheckMate(color);
     if (isCheckMate != null) {
       return isCheckMate;
     }
 
-    isCheckMate =
-        BitboardRules.isCheckMate(
-            color,
-            this,
-            enPassantPos,
-            isLastMoveDoublePush,
-            whiteLongCastle,
-            whiteShortCastle,
-            blackLongCastle,
-            blackShortCastle);
+    isCheckMate = BitboardRules.isCheckMate(color, this);
 
     cached.setCheckMate(isCheckMate, color);
     return isCheckMate;
@@ -870,22 +831,12 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isStaleMate(final Color color, final Color colorTurnToPlay) {
-    final Boolean res = cache.getOrCreate(simpleHash).isStaleMate(color);
+    final Boolean res = CACHE.getOrCreate(simpleHash).isStaleMate(color);
     if (res != null) {
       return res;
     }
-    final boolean cacheElt =
-        BitboardRules.isStaleMate(
-            color,
-            colorTurnToPlay,
-            this,
-            enPassantPos,
-            isLastMoveDoublePush,
-            whiteLongCastle,
-            whiteShortCastle,
-            blackLongCastle,
-            blackShortCastle);
-    cache.getOrCreate(simpleHash).setStaleMate(cacheElt, color);
+    final boolean cacheElt = BitboardRules.isStaleMate(color, colorTurnToPlay, this);
+    CACHE.getOrCreate(simpleHash).setStaleMate(cacheElt, color);
     return cacheElt;
   }
 
@@ -981,14 +932,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   @Override
   public List<Move> retrieveKingMoves(final boolean white) {
     return BitboardMovesGen.retrieveKingMoves(
-        white,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
+        white, this, whiteLongCastle, whiteShortCastle, blackLongCastle, blackShortCastle);
   }
 
   /**
@@ -1099,14 +1043,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean areKingsActive() {
-    return BitboardStatusCheck.areKingsActive(
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
+    return BitboardStatusCheck.areKingsActive(this);
   }
 
   /**
@@ -1127,9 +1064,7 @@ public class BitboardRepresentation implements BoardRepresentation {
         whiteLongCastle,
         blackShortCastle,
         blackLongCastle,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush);
+        this);
   }
 
   /**
@@ -1139,16 +1074,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public boolean isEndGamePhase(final int fullTurn, final boolean white) {
-    return BitboardStatusCheck.isEndGamePhase(
-        fullTurn,
-        white,
-        this,
-        enPassantPos,
-        isLastMoveDoublePush,
-        whiteLongCastle,
-        whiteShortCastle,
-        blackLongCastle,
-        blackShortCastle);
+    return BitboardStatusCheck.isEndGamePhase(fullTurn, white, this);
   }
 
   // ________________________ BitboardUtils
@@ -1294,7 +1220,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   }
 
   @Override
-  public List<Move> getAvailableMoves(Position pos) {
+  public List<Move> getAvailableMoves(final Position pos) {
     return this.getAvailableMoves(pos.x(), pos.y(), false);
   }
 
@@ -1310,7 +1236,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param move The move to be executed
    */
   @Override
-  public void makeMove(Move move) {
+  public void makeMove(final Move move) {
 
     this.setNbMovesWithNoCaptureOrPawn(this.getNbMovesWithNoCaptureOrPawn() + 1);
     if (this.getPieceAt(move.getSource().x(), move.getSource().y()).getPiece() == Piece.PAWN) {
@@ -1362,12 +1288,8 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.setBlackLongCastle(false);
     }
     if (this.isPawnPromoting(move.getDest().x(), move.getDest().y(), this.getPlayer())) {
-      Piece newPiece = ((PromoteMove) move).getPromPiece();
-      this.promotePawn(
-          move.getDest().x(),
-          move.getDest().y(),
-          this.getPlayer(),
-          newPiece); // replace Piece.QUEEN by newPiece
+      final Piece newPiece = ((PromoteMove) move).getPromPiece();
+      this.promotePawn(move.getDest().x(), move.getDest().y(), this.getPlayer(), newPiece);
     }
 
     if (isLastMoveDoublePush()) {
@@ -1389,16 +1311,16 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   @Override
   public char[][] getAsciiRepresentation() {
-    int rows = this.getNbRows();
-    int cols = this.getNbCols();
-    char[][] charBoard = new char[rows][cols];
+    final int rows = this.getNbRows();
+    final int cols = this.getNbCols();
+    final char[][] charBoard = new char[rows][cols];
 
     for (int i = 0; i < rows; i++) {
       Arrays.fill(charBoard[i], Piece.EMPTY.getCharRepresentation(true));
     }
 
     for (int i = 0; i < 2; i++) {
-      boolean color = i == 0;
+      final boolean color = i == 0;
 
       placePiecesOnBoard(charBoard, this.getPawns(color), Piece.PAWN.getCharRepresentation(color));
       placePiecesOnBoard(charBoard, this.getRooks(color), Piece.ROOK.getCharRepresentation(color));
@@ -1422,8 +1344,9 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param positions the positions where the pieces should be placed
    * @param rep the character to use to represent the pieces
    */
-  private void placePiecesOnBoard(char[][] board, List<Position> positions, char rep) {
-    for (Position pos : positions) {
+  private void placePiecesOnBoard(
+      final char[][] board, final List<Position> positions, final char rep) {
+    for (final Position pos : positions) {
       board[this.getNbRows() - 1 - pos.y()][pos.x()] = rep;
     }
   }
@@ -1436,7 +1359,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    * @param isShortCastle If the castle to apply is short (true) or long (false)
    */
   @Override
-  public void applyCastle(Color color, boolean isShortCastle) {
+  public void applyCastle(final Color color, final boolean isShortCastle) {
     if (isShortCastle) {
       this.applyShortCastle(color);
     } else {

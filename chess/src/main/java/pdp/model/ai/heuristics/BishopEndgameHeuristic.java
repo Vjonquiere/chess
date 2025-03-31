@@ -87,7 +87,7 @@ public class BishopEndgameHeuristic implements Heuristic {
       return 0;
     }
     // if at least one bishop.
-    boolean sameColorBishops =
+    final boolean sameColorBishops =
         (bishops.get(0).x() + bishops.get(0).y()) % 2
             == (bishops.get(1).x() + bishops.get(1).y()) % 2;
 

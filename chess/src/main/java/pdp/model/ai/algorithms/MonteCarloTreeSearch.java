@@ -147,9 +147,8 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
         game.playMoveOtherGameState(nextState, move);
         // Add node to tree
         node.addChildToTree(new TreeNodeMonteCarlo(nextState, node, move));
-      } catch (Exception e) {
+      } catch (Exception ignored) {
         // Illegal move was caught
-        continue;
       }
     }
 
@@ -223,7 +222,7 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
       try {
         game.playMoveOtherGameState(simulationState, randomMove);
       } catch (Exception ignored) {
-        // Exception occured when trying to play the randomly selected move
+        // Exception occurred when trying to play the randomly selected move
       }
     }
 

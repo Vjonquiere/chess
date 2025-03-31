@@ -6,7 +6,8 @@ import pdp.utils.Position;
 /** Special move representation for castling moves. */
 public class CastlingMove extends Move {
 
-  boolean isShortCastle;
+  /** Boolean to indicate whether the move is a short castle or not. */
+  private final boolean isShortCastle;
 
   /**
    * Constructs a new CastlingMove object with the specified source, destination and castling flags.
@@ -15,10 +16,12 @@ public class CastlingMove extends Move {
    * @param dest The destination Position of the move.
    * @param isShortCastle A boolean indicating whether the move is a short castle (true if it's a
    *     short castle, false if it's a long castle).
-   * @param isWhite A boolean indicating whether the move is a white castle (true if it's a white
-   *     castle, false if it's a black castle).
    */
-  public CastlingMove(Position source, Position dest, ColoredPiece piece, boolean isShortCastle) {
+  public CastlingMove(
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final boolean isShortCastle) {
     this(source, dest, piece, isShortCastle, false, false);
   }
 
@@ -30,20 +33,18 @@ public class CastlingMove extends Move {
    * @param dest The destination Position of the move.
    * @param isShortCastle A boolean indicating whether the move is a short castle (true if it's a
    *     short castle, false if it's a long castle).
-   * @param isWhite A boolean indicating whether the move is a white castle (true if it's a white
-   *     castle, false if it's a black castle).
    * @param isCheck A boolean indicating whether the move results in a check (true if it's a check,
    *     false otherwise).
    * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
    *     checkmate, false otherwise).
    */
   public CastlingMove(
-      Position source,
-      Position dest,
-      ColoredPiece piece,
-      boolean isShortCastle,
-      boolean isCheck,
-      boolean isCheckMate) {
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final boolean isShortCastle,
+      final boolean isCheck,
+      final boolean isCheckMate) {
     super(source, dest, piece, false, null, isCheck, isCheckMate);
     this.isShortCastle = isShortCastle;
   }
@@ -56,17 +57,23 @@ public class CastlingMove extends Move {
   @Override
   public String toAlgebraicString() {
 
-    String moveString = isShortCastle ? "O-O" : "O-O-O";
-    String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
+    final String moveString = isShortCastle ? "O-O" : "O-O-O";
+    final String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
 
     return moveString + annotation;
   }
 
+  /**
+   * Retrieves a boolean to indicate if the move is a short or long castle.
+   *
+   * @return true for a short castle, false for a long caste.
+   */
   public boolean isShortCastle() {
 
     return this.isShortCastle;
   }
 
+  @Override
   public String toUciString() {
     return super.toUciString();
   }
