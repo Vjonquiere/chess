@@ -41,7 +41,7 @@
   sharp corners=all
 }
 
-\newtcolorbox{subneedbox}[1][]{
+\newtcolorbox{justificationbox}[1][]{
   colframe=subneedcolor,
   colback=subneedcolor!10,
   coltitle=white,
@@ -51,18 +51,6 @@
   enhanced,
   sharp corners=all
 }
-
-\newtcolorbox{duedatebox}[1][]{
-  colframe=duedateassigncolor,
-  colback=duedateassigncolor!10,
-  coltitle=white,
-  fonttitle=\bfseries,
-  title=#1,
-  enhanced,
-  sharp corners=all,
-  left=2mm, right=2mm, top=2mm, bottom=2mm
-}
-
 
 \author{
     Valentin Jonquière,
@@ -369,7 +357,7 @@ Une partie d'échecs peut se terminer de plusieurs façons :
 
 
 
-\section{Structures de données}
+\section{Structures de données et Algorithmes}
 \label{DataStruct}
 
 \subsection{Plateau sous forme de bitmaps}
@@ -680,1489 +668,456 @@ Cela ressemblerait à quelque chose du style :\\
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{surlignage-coups}
 \end{figure}
 
-\section{Besoins visés}
-\subsection{Quels besoins ?}
-Dans le sujet donné, il y avait une liste de 60 besoins.
-Nous avons pris la décision ambitieuse de répondre à tous ces besoins. C'est un travail conséquent,
-mais avec une équipe de 5 personnes, codant pendant huit semaines,
-nous pensons que cet objectif est atteignable.
 
-Nous avons tout de même classé ces besoins par ordre de priorité (voir \nameref{agenda}), afin de garantir
-la jouabilité projet même si nous n'arrivons pas à tout implémenter à temps.
-Nous voulons rendre un jeu cohérent et fonctionnel avec des modules entièrement
-terminés (même s'il en manque) plutôt qu'un projet avec des règles manquantes,
-une intelligence artificielle bâclée et une interface graphique peu fonctionnelle.
-
-\subsection{Dépendances entre les besoins}
-\subsubsection{Gestion des options}
-La première dépendance que nous avons concerne la gestion des options (Figure \ref{fig:needs_options}).
-
-\begin{figure}[h]
-    \caption{Besoins concernant la gestion d'options}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_options}
-    \label{fig:needs_options}
-\end{figure} 
-
-L'implémentation de la \textit{gestion des options }permettra de rajouter de nombreuses fonctionnalités.
-En effet, ceci nous permettra d'implémenter le Mode contest, la version du jeu ou l'aide en ligne de commande. Nous pourrons également gérer les messages affichés grâce au mode verbose ou au mode debug.
-Lorsque cela sera implémenté, l'utilisateur aura également le choix entre afficher le jeu en ligne de commande ou avec une interface graphique.
-Le mode Blitz inclura le besoin Durée du blitz afin de paramétrer ce mode.
-Le mode IA, qui a besoin de la gestion des options, possède quant à lui de nombreuses extensions. En effet, nous pourrons paramétrer
-notre intelligence artificielle grâce à d'autres options, que nous verrons cela plus en détail à la section \ref{IA}.
-
-
-\subsubsection{Sauvegarde de l'historique}
-La gestion de l'historique est un besoin indispensable pour notre jeu (Figure \ref{fig:needs_files}).
-Beaucoup de besoins dépendent de cette fonctionnalité.
-\begin{figure}[h]
-    \caption{Besoins concernant la sauvegarde de l'historique}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_files}
-    \label{fig:needs_files}
-\end{figure}
-
-Avant de pouvoir implémenter la gestion de l'historique, il faudra d'abord choisir les formats de fichiers.
-Pour cela, il faudra remplir les besoins suivants: \textit{Format de fichier simplifié}, \textit{Format de l'historique} et \textit{Fichier de Configuration}.
-Une fois ces besoins implémentés, la sauvegarde de l'historique sera donc possible.
-Des besoins utiles au bon déroulement du jeu en dépendent. Grâce à cela, l'utilisateur pourra sauvegarder
-sa partie, rejouer ou recommencer une partie. Il pourra également configurer sa partie en modifiant les données du fichier de configuration.
-Cela permettrait aussi d'afficher les coups précédemment joués, et même de remonter dans l'historique pour annuler un coup et revenir en arrière.
-Certains menus de l'interface graphique permettront également de gérer ces fichiers de sauvegarde et de configuration (voir figure \ref{fig:needs_gui}).
-
-\subsubsection{Intelligence artificielle}
-\label{IA}
-L'implémentation d'une intelligence artificielle est un autre besoin central du jeu. En effet, cela pourra
-permettre à l'utilisateur de jouer contre une machine. Cela pourrait également permettre de donner des
-indications sur les meilleurs coups à jouer pour le joueur.
-
-\begin{figure}[h]
-    \caption{Besoins concernant l'intelligence artificielle}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_ai}
-    \label{fig:needs_ai}
-\end{figure}
-
-Comme affiché Figure \ref{fig:needs_ai}, nous pouvons voir que de nombreux besoins
-concernent l'intelligence artificielle.
-La plupart des besoins affichés sont également présent dans la Figure \ref{fig:needs_options}, car ils sont paramétrables
-en ligne de commande.
-Le mode IA contient différentes fonctionnalités concernant les heuristiques. Nous devons implémenter différentes \textit{heuristiques}
-d'évaluation de position, mais également au moins une heuristique de fin de partie. Ces heuristiques permettront "d'aider" le joueur IA
-à jouer. Ces heuristiques pourront être utilisées avec l'\textit{algorithme de recherche Minimax} mais également lors de l'\textit{AlphaBeta pruning} 
-et le \textit{Monte Carlo Tree Search}. Ces algorithmes dépendent tous de l'option \textit{Profondeur de recherche}. En effet, le jeu des échecs est bien 
-trop complexe pour simuler une partie entière, et nous devons nous limiter à une certaine profondeur de recherche (nombre de coups à jouer puis analyser).
-Borner le temps de "réflexion" de l'IA est aussi un moyen de limiter les calculs de ces algorithmes. Cela pourrait permettre à l'utilisateur de jouer une partie contre
-un joueur IA plus ou moins efficace ou d'attendre plus ou moins longtemps entre ses tours.
-\subsubsection{Interface graphique}
-Les derniers besoins que nous avons rassemblés sont ceux concernant l'interface graphique (Figure \ref{fig:needs_gui}).
-\begin{figure}[h]
-    \caption{Besoins concernant l'interface graphique}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{needs_gui}
-    \label{fig:needs_gui}
-\end{figure}
-
-L'interface graphique dépend de la \textit{bibliothèque graphique} choisie, ici elle est imposée, il s'agit de \textit{JavaFX}.
-L'utilisateur peut choisir de l'utiliser grâce aux options en ligne de commande (Figure \ref{fig:needs_options}).
-Elle doit permettre d'utiliser les fonctions de base que nous avons implémenté pour le jeu en ligne de commande. Nous devons 
-pouvoir afficher la partie en cours, les coups joués, ainsi que des messages selon le mode utilisé (Verbose ou Debug, voir figure \ref{fig:needs_options}).
-L'utilisateur doit également pouvoir utiliser différents menus afin de pouvoir paramétrer ou sauvegarder sa partie (voir figure \ref{fig:needs_files}) ou obtenir des informations sur le jeu.
-
-
-\section{Spécifications étendues}
+\section{Besoins réalisés}
 \label{Spec}
 
-Afin de visualiser au mieux les besoins et sous-besoins que nous avons identifiés, nous les avons présentés comme ci-dessous.
-Les encadrés bleus représentent les besoins fonctionnels et on retrouve pour chacun les sous-besoins dans des cadres verts.
-Nous utilisons le même principe pour les besoins non fonctionnels (à l'exception que l'encadré est violet). Chaque besoin
-contient également la/les personne(s) assignée(s) ainsi que la date de rendu prévisionnelle dans un cadre orange. Pour visualiser
-au mieux les dépendances entre les besoins, le mieux et de regarder l'agenda prévisionnel (il contient également la répartition
-entre les membres du groupe).
+Voici la liste exhaustive des besoins qui ont été réalisés lors de ce projet. Pour chaque besoin, on retrouve une justification rapide de
+pourquoi nous le considérons réalisé. Afin de visualiser au mieux les besoins, nous les avons présentés comme lors du premier rapport,
+à l'exception que les sous-besoins précédemment identifiés n'y sont pas. Les encadrés bleus représentent les besoins fonctionnels et les
+encadrés violets représentent les non-fonctionnels.
 
 \begin{needbox}[F?: Titre]
     Template pour les besoins fonctionnels
-    \begin{duedatebox}
-        Date de rendu:\\
-        Assigné:
-    \end{duedatebox}
-    \begin{subneedbox}[F?.?: Titre]
-        sous besoin 
-    \end{subneedbox}
+    \begin{justificationbox}[Justification de réalisation]
+        Explication justifiant la réalisation du besoin
+    \end{justificationbox}
 \end{needbox}
 
 \begin{nonfunctionnalneedbox}[F?: Titre]
     Template pour les besoins non fonctionnels
-    \begin{duedatebox}
-        Date de rendu:\\
-        Assigné:
-    \end{duedatebox}
-    \begin{subneedbox}[F?.?: Titre]
-        sous besoin
-    \end{subneedbox}
+    \begin{justificationbox}[Justification de réalisation]
+        Explication justifiant la réalisation du besoin
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \subsection{Généralités}
 
 \begin{nonfunctionnalneedbox}[F1. Langage de programmation]
     Le langage de programmation du projet devra être Java et utiliser la spécification Java SE 17+.
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F2: Style de codage]
     Le coding style du programme doit respecter le coding style de Google.
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
-    \begin{subneedbox}[F2.1: Formattage automatique]
-        Lors du push d'un nouveau commit, appliquer automatiquement le coding style défini.
-    \end{subneedbox}
-    \begin{subneedbox}[F2.2: Rejet des commits non formatés]
-        Ajouter une étape d'intégration continue vérifiant que le code est correctement formaté.
-        Si ce n'est pas le cas, faire échouer la pipeline.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
     La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F4. Système cible]
-    Le programme devra fonctionner sur des systèmes d’exploitation GNU/Linux. \\
-    \textbf{Test:} Vérifier la compatibilité sur Ubuntu 22.04 et Fedora 36
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
+    Le programme devra fonctionner sur des systèmes d’exploitation GNU/Linux.
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F5. Documentation]
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
-    \begin{subneedbox}[F5.1: Option -h]
-        Implémenter une option -h (besoin F16).
-
-        \textbf{Prérequis:} F16.
-
-        \textbf{Test:} Vérifier que l'option -h affiche bien l'aide en ligne.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F5.2: Rédiger un guide utilisateur]
-        Rédiger un guide utilisateur pour l'exécutable.
-
-        \textbf{Test:} Vérifier que le guide couvre toutes les fonctionnalités principales.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F5.3: Ajouter des commentaires au code source]
-        Ajouter des commentaires au code source (JavaDoc).
-
-        \textbf{Test:} Vérifier que chaque fonction et classe possède des commentaires explicites.
-    \end{subneedbox}
+    Le programme et le code source devra être documenté : manuel utilisateur,
+    option d’aide en ligne de commande et commentaires dans le code source.
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F6. Tests]
     Tester et valider le programme avec une couverture suffisante.
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
-    \begin{subneedbox}[F6.1 Tests]
-        Implémenter des tests unitaires sur l'ensemble du projet.
-    \end{subneedbox}
-
-    \begin{subneedbox}[F6.2 Coverage]
-        Les test effectués devront couvrir au minimum 80\% du code.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F7: Bugs]
     Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées et les erreurs doivent générer des messages d'erreur.
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F8: Performances]
     Evaluer des performances du programme de manière générale et pour différentes options et différentes configurations de jeu
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
-    \begin{subneedbox}[F8.1: IA]
-        Estimer précisément les performances de la partie IA, notamment les complexités en temps en en espace en fonction des heuristiques.
-    \end{subneedbox}
-    \begin{subneedbox}[F8.1: GUI]
-        Estimer précisément les performances pour la partie GUI.
-    \end{subneedbox}
-    \begin{subneedbox}[F8.1: Structures de données]
-        Estimer précisément et rendre compte des performances pour la partie structures de données.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F9: Build-system]
     Établir un système de build pour le programme avec l'outil Maven pour Java. 
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet (mise en place avant le 01/02)\\
-        Assigné: Toute l'équipe (mise en place par Iwen)
-    \end{duedatebox}
-    \begin{subneedbox}[F9.1: Programme seulement]
-        Construire un build pour le programme, en écartant les tests et différents autre modes de compilation.
-    \end{subneedbox}
-    \begin{subneedbox}[F9.2: Tests]
-        Construire un build pour les tests (isolés).
-    \end{subneedbox}
-    \begin{subneedbox}[F9.3: Exécution]
-        Construire une commande afin d'exécuter le programme une fois compilé.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \subsection{Bibliothèques et outils}
 
 \begin{nonfunctionnalneedbox}[F10. Frameworks de test]
     Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet (mise en place avant le 03/02)\\
-        Assigné: Toute l'équipe (mise en place par Iwen)
-    \end{duedatebox}
-    \begin{subneedbox}[F10.1 Utiliser JUnit]
-        Implémenter des tests unitaires.
-    \end{subneedbox}
-
-    \begin{subneedbox}[F10.2 Utiliser Jacoco pour la couverture de code]
-        Vérifier la couverture de code régulièrement pour maintenir les 80\% de couverture
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F11. Gestion des options]
     La gestion des options sera basée sur la bibliothèque \textit{commons-cli}.
-    \begin{duedatebox}
-        Date de rendu: 06/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
-    La bibliothèque graphique utilisée sera basé sur JavaFx
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet\\
-        Assigné: Toute l'équipe
-    \end{duedatebox}
-    \begin{subneedbox}[F12.1: Mise en place d'un environnement de test]
-        Mettre en place TestFx afin de pouvoir tester l'interface graphique
-    \end{subneedbox}
+    La bibliothèque graphique utilisée sera basée sur JavaFx
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F13: Internationalisation]
     Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
-    \begin{duedatebox}
-        Date de rendu: Tout au long du projet (mise en place avant le 13/02)\\
-        Assigné: Toute l'équipe (mise en place par Mathilde)
-    \end{duedatebox}
-    \begin{subneedbox}[F13.1: Accessibilité du changement de langue]
-        Le changement de langue doit pouvoir être effectué en seulement 3 cliques
-        sur l'interface graphique.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \subsection{Options en ligne de commande}
 
-\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal ]
+\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal]
     L’exécutable principal doit s’appeler "chess" et permettre de lancer tout le programme.
-    \textbf{Test:} Vérifier que le programme se lance correctement avec le nom 'chess'.
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{needbox}[F15. Usage général]
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F15.1: Forme et nom du programme ]
-        Le programme devra s’appeler chess et devra s'exécuter de la manière suivante :  
-        \texttt{\#> chess [OPTIONS] [FILENAME]}
-
-        \textbf{Test:} Vérifier que le programme se lance correctement avec les options spécifiées.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F15.2: Gestion des options en ligne de commande ]
-        Vérifier si les options sont correctes. En cas d'erreur, afficher un message d'erreur (stderr) et l’aide en ligne de commande -h.
-
-        \textbf{Prérequis:} F5.1.
-
-        \textbf{Test:} Tester différentes combinaisons d'options valides et invalides.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F15.3: Démarrage/Chargement d’une partie à partir d’un fichier]
-        Si un nom de fichier est donné, charger depuis le fichier. Sinon, démarrer une nouvelle partie avec les options par défaut.
-
-        \textbf{Test:} Vérifier le comportement avec et sans fichier en paramètre.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F15.4: Gestion des sorties standard et des erreurs]
-        Les messages d’erreurs doivent être affichés sur stderr et les messages utilisateur sur stdout.
-
-        \textbf{Test:} Simuler des erreurs et vérifier les messages sur les sorties appropriées.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F15.5: Codes de retour du programme]
-        Le code de retour devra être EXIT\_SUCCESS en cas de succès et EXIT\_FAILURE en cas d’erreur.
-
-        \textbf{Test:} Tester les retours en cas de paramètres valides et invalides.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F16: Aide en ligne de commande ]
     L'option '-h', '--help' affiche l'aide puis quitte.
-
-    \textbf{Prériquis:} F11
-    \begin{duedatebox}
-        Date de rendu: 06/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F16.1: Texte]
-        Rédaction du message d'aide destiné à l'utilisateur.
-    \end{subneedbox}
-    \begin{subneedbox}[F16.2: Affichage]
-        Affichage du message d'aide lorsque l'option \textit{-h} ou \textit{--help} est utilisée.\\
-        \textbf{Test:} Vérifier que le message d'aide s'affiche.
-    \end{subneedbox}
-    \begin{subneedbox}[F16.3: Quitter]
-        Quitter le programme après l'affichage effectué.\\
-        \textbf{Test:} Le programme doit se fermer avec un code de sortie EXIT\_SUCCESS.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F17: Version ]
     L'option '-V', '--version' affiche la version puis quitte.
-
-    \textbf{Prériquis:} F11
-    \begin{duedatebox}
-        Date de rendu: 06/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F17.1: Texte]
-        Rédaction du message de version actuelle.
-    \end{subneedbox}
-    \begin{subneedbox}[F17.2: Affichage]
-        Affichage du message de version lorsque l'option \textit{-V} ou \textit{--version} est utilisée.\\
-        \textbf{Test:} Vérifier que le message de version s'affiche.
-    \end{subneedbox}
-    \begin{subneedbox}[F17.3: Quitter]
-        Quitter le programme après l'affichage effectué.\\
-        \textbf{Test:} Le programme doit se fermer avec un code de sortie EXIT\_SUCCESS.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F18: Mode verbose ]
-    Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).\\
-    \textbf{Test:} S'assurer que toutes les informations sont apportées aux joueurs lorsque l'option
-    verbose est choisie.\\
-    \textbf{Prériquis:} F11
-    \begin{duedatebox}
-        Date de rendu: 06/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F18.1: Temps par coup]
-        Indiquer à l'utilisateur le temps qui a été pris par un des côtés pour jouer le dernier coup.
-    \end{subneedbox}
-    \begin{subneedbox}[F18.2: Evaluation de la postion contre l'IA]
-        Indiquer à l'utilisateur qui des noirs ou des blancs a l'avantage (s'il y a avantage).
-    \end{subneedbox}
-    \begin{subneedbox}[F18.3: Moment de la partie]
-        Indiquer à l'utilisateur si l'on se trouve plutôt en début, milieu, ou fin de partie.
-    \end{subneedbox}
-    \begin{subneedbox}[F18.4: Règles spécifiques]
-        Indiquer à l'utilisateur les règles spécifiques encore possibles pour chaque état de la partie.
-    \end{subneedbox}
+    Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
     
 \begin{needbox}[F19: Mode debug ]
-    Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.\\
-    \textbf{Test:} S'assurer que toutes les informations sont apportées aux développeurs lorsque l'option
-    debug est choisie.\\
-    \textbf{Prériquis:} F11
-    \begin{duedatebox}
-        Date de rendu: 06/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F19.1: Etat de la partie]
-        Indiquer aux développeurs la représentation de chaque position, avec les bitmaps et chaînes de bits pour les
-        règles spécifiques.
-    \end{subneedbox}
-    \begin{subneedbox}[F19.2: Structures de données]
-        Indiquer aux développeurs l'état des structures de données à tout moment, en particulier le contenu de la pile pour chaque position.
-    \end{subneedbox}
-    \begin{subneedbox}[F19.3: Zobrist hashing]
-        Indiquer aux développeurs s'il y a des collisions en ce qui concerne le hashing des positions.
-    \end{subneedbox}
-    \begin{subneedbox}[F19.4: IA]
-        Indiquer aux développeurs l'utilisation de la mémoire, la mise à jour du meilleur coup et le nombre de branches visitées pour l'IA.
-    \end{subneedbox}
+    Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F20. Mode Blitz ]
     Permet de lancer le jeu en mode Blitz.
-
-    \textbf{Prérequis:} F11
-    \begin{duedatebox}
-        Date de rendu: 13/03\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F20.1: Activation du mode]
-        Ajouter \textit{-b} et \textit{--blitz} à la gestion des options.
-
-        \textbf{Test:} Lancer le programme avec \textit{-b} et \textit{--blitz} et vérifier que le mode blitz se lance.
-    \end{subneedbox}
-    \begin{subneedbox}[F20.2: Limiter le temps d'un tour]
-        Ajouter un timer de tour avec une durée par défaut.
-
-        \textbf{Test:} Lancer le mode et vérifier que le timer se remette à zéro à chaque tour.
-    \end{subneedbox}
-    \begin{subneedbox}[F20.3: Fin de partie si temps écoulé]
-        Ajouter un scénario de fin de partie si le joueur met trop de temps à jouer.
-
-        \textbf{Test:} Lancer le mode et dépasser le temps limite. Vérifier que le joueur perd la partie.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F21. Durée du Blitz ]
     Permet de définir la durée du Blitz.
-
-    \textbf{Prérequis:} F11 et F20
-    \begin{duedatebox}
-        Date de rendu: 13/03\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F21.1: Activation du mode]
-        Ajouter \textit{-t TIME} et \textit{--time TIME} à la gestion des options.
-
-        \textbf{Test:} Lancer le programme avec \textit{-t TIME} et \textit{--time TIME} (en ayant activé le mode blitz)
-        et vérifier que le mode blitz se lance avec le timer correspondant à TIME.
-    \end{subneedbox}
-    \begin{subneedbox}[F21.2: Limiter le temps d'un tour]
-        Si l'option est activée, remplace le temps par défaut (30 minutes) du timer par le temps donné.
-
-        \textbf{Test:} Lancer le mode et vérifier que le timer ait bien la durée passée en option.
-    \end{subneedbox}
-    \begin{subneedbox}[F21.3: Avertissement si mauvais usage]
-        Ignorer l'option si le mode blitz n'est pas activé, mais affiche un message d'avertissement
-
-        \textbf{Test:} Donner l'option sans donner l'option Blitz (F20). Vérifier d'un avertissement s'affiche
-        et que le jeu se lance sans le mode blitz.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F22: Mode \textit{contest}]
-    ?
+\begin{needbox}[F22: Mode \textit{Contest}]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F23: Mode IA ]
     Permet de lancer le programme en mode joueur artificiel.
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Mathilde + Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F23.1: Gérer les options (dépend de F11)]
-        \begin{enumerate}
-            \item -a[COLOR]
-            \item --ai[=COLOR]
-        \end{enumerate}
-        Le jeu se lance en mode joueur artificiel, celui-ci est de la couleur
-        définie par \textit{COLOR} (`W', `B', `A' (pour les deux)). L'option 
-        par défaut est W.
-
-        \textbf{Test:} Vérifier que le bon nombre de joueurs artificiels est créé. 
-        S'il n'y a qu'un joueur artificiel, vérifier qu'on lui a bien attribué la bonne
-        couleur.
-    \end{subneedbox}
-    \begin{subneedbox}[F23.2: Équilibrer le nombre de joueurs]
-        Si l'on utilise un ou des joueurs artificiels il est nécessaire de retirer
-        des joueurs physiques. Il ne peut pas y avoir plus des deux joueurs au total.
-        Il faudra donc empêcher le joueur de toucher aux pions blanc si on possède Un
-        joueur artificiel jouant les pions blancs.
-
-        \textbf{Test:} Lorsque l'on lance le jeu avec deux joueurs artificiels il ne 
-        devrait pas être possible de jouer de coup sur le plateau.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \subsection{Interface utilisateur}
 
-\begin{needbox}[F24. Interface en ligne de commande ]
-
-    \textbf{Prériquis:} F45
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F24.1: Lancement de l'interface textuelle par défaut]
-        Le programme doit lancer l'interface textuelle en l'absence d'option -g ou --gui.
-
-        \textbf{Prérequis:} F15.2.
-
-        \textbf{Test:} Vérifier que l'interface textuelle est bien lancée.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F24.2: Saisie des commandes utilisateur]
-        Développer un système pour lire et valider les commandes saisies par l'utilisateur (ex: "--help", (move)"h4 h2").
-
-        \textbf{Test:} Vérifier que les commandes de base fonctionnent comme attendu.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F24.3: Gestion des erreurs de commande]
-        Afficher un message d'erreur pour une commande invalide et l’aide (-h).
-
-        \textbf{Test:} Entrer des commandes invalides et vérifier les messages d'erreur.
-    \end{subneedbox}
+\begin{needbox}[F24. Interface en ligne de commande]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F25. Interface graphique]
-    \begin{duedatebox}
-        Date de rendu: 20/03\\
-        Assigné: Iwen + Mathilde + Denis + Valentin (voir agenda pour la répartition)
-    \end{duedatebox}
-    \begin{subneedbox}[F25.1: Lancement de l'interface graphique en option]
-        Implémenter la détection des options -g ou --gui pour lancer l'interface graphique.
-
-        \textbf{Prérequis:} F15.2.
-
-        \textbf{Test:} Vérifier que l'interface graphique est bien lancée avec les options.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F25.2: Représentation de l’échiquier et des pièces]
-        Créer un échiquier graphique avec des cases alternant deux couleurs et des images pour les pièces.
-
-        \textbf{Prérequis:} F25.1.
-
-        \textbf{Test:} Vérifier l'affichage de l'échiquier et des pièces.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F25.3: Move avec un clic]
-        Permettre le déplacement des pièces via clic.
-
-        \textbf{Prérequis:} F25.2.
-
-        \textbf{Test:} Tester les déplacements avec un clic pour chaque type de pièce.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F26: Affichage de l'échiquier ]
+\begin{needbox}[F26: Affichage de l'échiquier]
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
-
-    \textbf{Prériquis:} F45
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F26.1: Echiquier]
-        Affichage de l'état de l'échiquier en format ASCII : les pièces noires seront en minuscules et les pièces blanches en majuscules. Les cases vides seront représentées par des '\_'. Le Roi sera représenté par 'K/k' (King), la Reine par 'Q/q' (Queen), les Tours par 'R/r' (Rook), les Fous par 'B/b' (Bishop), les Cavaliers par 'N/n' (kNights) et les Pions par 'P/p' (Pawn).\\
-        \textbf{Test:} Jouer un coup et vérifier que l'échiquier s'affiche.
-    \end{subneedbox}
-    \begin{subneedbox}[F26.2: Temps restant]
-        Affichage du temps restant (si le format Blitz est utilisé).\\
-        \textbf{Test:} Jouer un coup en mode Blitz et vérifier que le temps s'affiche.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F27: Notation des coups ]
+\begin{needbox}[F27: Notation des coups]
     Utilisation d'une notation codifiée pour les coups.
-
-    \textbf{Prériquis:} F45
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F27.1: Reconnaissance du coup ]
-        Chaque case de l'échiquier est repérée par une colonne (de 'a' à 'h') et une ligne (de '1' à '8'). Par exemple, la case en bas à gauche est 'a1' et celle en haut à droite est 'h8'. Les coups seront notés en utilisant la notation algébrique. Par exemple, le coup 'e2-e4' déplace le pion de la case 'e2' à la case 'e4'. Et, lorsqu'une pièce est prise dans le mouvement, le coup sera noté 'e2xe4'.\\
-        \textbf{Test:} Jouer un coup et vérifer que le bon coup a été effectué.
-    \end{subneedbox}
-    \begin{subneedbox}[F27.2: Vérification du coup ]
-        Vérification que le coup demandé par l'utilisateur est un coup légal.\\
-        \textbf{Test:} Jouer des coups légaux et des coups illégaux. Vérifier que seuls les coups légaux sont acceptés.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F28: Représentation de l'historique ]
-    Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.\\
-    \textbf{Test:} Vérifier que la Vue affiche correctement l'historique contenu dans la pile de coups (numéro des coups,
-    notation des coups, joueur qui a joué, en lignes, etc.).\\
-    \textbf{Prériquis:} F27
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Denis
-    \end{duedatebox}
+\begin{needbox}[F28: Représentation de l'historique]
+    Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F29: En passant ]
-    Gestion du coup en passant des deux côtés.\\
-    \textbf{Prérequis:} F45, F27 et F28
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F29.1: Observer le dernier coup joué]
-        Regarder si la dernière pièce jouée était un pion, et que ce dernier a avancé de deux cases.
-    \end{subneedbox}
-    \begin{subneedbox}[F29.2: S'assurer que la capture est légale]
-        Capturer le pion qui a bougé le cas échéant ne doit pas nous mettre en échec.\\
-        \textbf{Test:} Placer une pièce qui nous mettrait en échec si l'on capturait le pion.
-    \end{subneedbox}
-    \begin{subneedbox}[F29.3: Indiquer que la prise est réalisable]
-        Changer l'information dans les chaînes de bits pour les règles spécifiques et indiquer quel pion
-        est capturable et quelle est la case cible.\\
-        \textbf{Test:} S'assurer que les bits ne sont pas changés lorsqu'un pion ne bouge que d'une case.
-    \end{subneedbox}
+\begin{needbox}[F29: En passant]
+    Gestion du coup en passant des deux côtés.
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F30. Roque ]
-    Le jeu devra gérer le petit et grand roque.
-
-    \textbf{Prérequis:} F45, F27 et F28
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F30.1: Vérifier que le roi et la Tour n'ont pas bougé]
-        Garder en mémoire un booléen pour le petit et le grand roque.
-        Si le roi ou une tour a bougé, la mettre à false pour rendre le roque impossible.
-
-        \textbf{Test:} Faire bouger puis revenir à sa position de départ
-         le roi ou une tour. Essayer de faire un roque : vérifier que ce n'est pas possible.
-    \end{subneedbox}
-    \begin{subneedbox}[F30.2: Espace libre entre le roi et la tour]
-        Pour pouvoir effectuer le grand roque, les cases b1, c1, d1 doivent être libres.
-        Pour le petit roque, il faut que les cases f1 et g1 soient libres.
-
-        \textbf{Test:} Essayer de faire un roque alors que des pièces sont entre
-        le roi et la tour. Vérifier que ce n'est pas possible.
-    \end{subneedbox}
-    \begin{subneedbox}[F30.3:Le roi ne passe pas par une case attaquée par l'ennemi]
-        Aucune pièce ennemi ne doit pouvoir attaquer le roi sur les cases b1, c1, d1 
-        et e1 pour le grand roque ou sur les cases e1,f1, g1 pour le petit roque.
-
-        \textbf{Test:} Mettre des pions adverses en position pour attaquer le roi sur une des cases
-        par lesquelles il doit passer. Le moouvement ne doit pas être possible.
-    \end{subneedbox}
-    \begin{subneedbox}[F30.4: Implémenter le petit roque]
-        Le roi se déplace vers la tour la plus éloignée. Le roi arrive en g1 et 
-        la tour en f1. Les deux pièces doivent se déplacer.
-
-        \textbf{Test:} Si toutes les ocnditions sont remplies, vérifier que l'on
-         peut effectuer le petit roque.
-    \end{subneedbox}
-    \begin{subneedbox}[F30.5: Implémenter le grand roque]
-        Le roi se déplace vers la tour la plus éloignée. Le roi arrive en b1 et la tour en c1.
-
-        \textbf{Test:} Si toutes les conditions sont remplies, vérifier que l'on peut faire
-        un grand roque.
-    \end{subneedbox}
+\begin{needbox}[F30. Roque]
+    Le jeu devra gérer le petit et grand roque des deux côtés.
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F31: Promotion du pion ]
+\begin{needbox}[F31: Promotion du pion]
     Gérer la promotion du pion.
-
-    \textbf{Prérequis:} F45, F27 et F28
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F31.1: Pouvoir remplacer le pion par une autre pièce.]
-        Si le pion a atteint la rangée la plus éloignée de sa position d'origine, pouvoir le remplacer par
-        une dame, un fou, un cavalier ou une tour.
-
-        \textbf{Test:} Arriver à la dernière case et vérifier que l'on peut bien remplacer le pion. 
-        Vérifier que les mouvements possibles sont ceux de la pièce choisie.
-    \end{subneedbox}
-    \begin{subneedbox}[F31.2: Seul le pion peut être promu]
-        Les autres types de pièces ne peuvent pas être promues
-
-        \textbf{Test:} Faire atteindre la dernière ligne à chaque autre type de pièces
-         et vérifier qu'aucune ne peut être promue.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F32: Abandon ]
+\begin{needbox}[F32: Abandon]
     Le programme devra permettre à un joueur d'abandonner la partie en cours de jeu.
-    \begin{duedatebox}
-        Date de rendu: 20/02\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F32.1: Gagnant]
-        Le joueur courant est désigné comme celui ayant abandonné.
-        Il est donc considéré comme le joueur perdant et son adversaire
-        est quant à lui considéré comme gagnant.
-
-        \textbf{Test:} Lancer une partie et abandonner, vérifier que le joueur ayant
-        abandonné n'est pas le gagnant de la partie.
-    \end{subneedbox}
-    \begin{subneedbox}[F32.2: Effet sur la partie]
-        Le jeu se retrouve dans le même état que lorsqu'un des joueurs
-        gagne ou le jeu fini en nul. Il est donc possible de redémarrer
-        une nouvelle partie.
-
-        \textbf{Test:} Vérifier qu'il est possible de relancer une partie après
-        la partie abandonnée.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F33: Affichage des messages ]
+\begin{needbox}[F33: Affichage des messages]
     Le programme devra afficher des messages d'information
     pendant la partie en fonction du mode dans lequel il est
     (default, verbose, debug).
-
-    \textbf{Prériquis:} F45
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F33.1: Detection du mode actif (dépend de F11)]
-        À l'aide de la gestion des options, déterminer quels messages doivent être affichés.
-
-        \textbf{Test:} Sur certaines fonctions, vérifier qu'uniquement les messages devant
-        être affichés le sont (uniquement les messages debug par exemple).
-    \end{subneedbox}
-    \begin{subneedbox}[F33.2: Format d'affichage des messages]
-        Chaque message affiché doit contenir un retour à la ligne en dernier caractère.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F34. Quitter et sauvegarder une partie ]
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Valentin
-    \end{duedatebox}
-    \begin{subneedbox}[F34.1:Quitter une partie en cours]
-        Le joueur doit avoir la possibilité de quitter une partie en cours 
-        et de sauvegarder sa progression.
-    \end{subneedbox}
-
-    \textbf{Prérequis:} F35
-
-    \textbf{Test:} Vérifier qu'une partie est sauvegardée correctement avant de quitter.
+\begin{needbox}[F34. Quitter et sauvegarder une partie]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F35. Sauvegarde de l’historique ]
-
-    \textbf{Prériquis:} F42
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F35.1: Multi-interfaces]
-        La sauvegarde doit fonctionner sur toutes les interfaces.
-
-        \textbf{Test:} Tester la sauvegarde en mode graphique et en ligne de commande.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F35.2: Gestion des erreurs]
-        En cas d’échec, afficher un message d’erreur. En cas de succès, un message de validation.
-
-        \textbf{Test:} Simuler une sauvegarde réussie et échouée.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F35.3: Tests]
-        \begin{itemize}
-            \item Tester sur une partie finie
-            \item Tester sur une partie en cours.
-        \end{itemize}
-
-        \textbf{Test:} Vérifier la sauvegarde dans les conditions mentionnées.
-    \end{subneedbox}
+\begin{needbox}[F35. Sauvegarde de l’historique]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F36: Naviguer dans l'historique ]
+\begin{needbox}[F36: Naviguer dans l'historique]
     Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
-
-    \textbf{Prériquis:} F35
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Iwen + Valentin + Denis (voir agenda pour répartition)
-    \end{duedatebox}
-    \begin{subneedbox}[F36.1: Sauvegarde des coups joués]
-        Sauvegarder les mouvements effectués dans la partie en cours.\\
-        \textbf{Test:} Jouer plusieurs coups et verifier que ceux-ci sont enregistrés.
-    \end{subneedbox}
-    \begin{subneedbox}[F36.2: Sauvegarde des coups annulés]
-        Sauvegarder les mouvements annulés tant qu'un nouveau mouvement n'est pas joué.\\
-        \textbf{Test:} Annuler plusieurs coups et vérifier que ceux-ci sont enregistrés.
-    \end{subneedbox}
-    \begin{subneedbox}[F36.3: Perte des coups annulés]
-        Effacer les coups annulés si une nouvelle ligne de jeu est joués.\\
-        \textbf{Test:} Jouer un nouveau coup après avoir annulé un coup précédent. Vérifier que le rétablissement est impossible.
-    \end{subneedbox}
-    \begin{subneedbox}[F36.4: Annulation/Rétablissement]
-        Donner la possibilité aux joueurs humain de proposer l'annulation ou le rétablissement d'un coup.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F37: Recommencer une partie ]
+\begin{needbox}[F37: Recommencer une partie]
     À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F37.1: Suppression de la partie en cours]
-        Supprimer l'instance de la partie de la mémoire.\\
-        \textbf{Test:} Vérifier que l'instance de base n'est plus accessible.
-    \end{subneedbox}
-    \begin{subneedbox}[F37.2: Création d'une nouvelle partie]
-        Créer une nouvelle instance de partie avec la position par défaut.\\
-        \textbf{Test:} vérifier que l'échiquier est réinitialisé à la position de départ.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F38: Fin de partie ]
+\begin{needbox}[F38: Fin de partie]
     Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
-    \begin{duedatebox}
-        Date de rendu: 13/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F38.1: Mat]
-        Détecter si la partie se solde sur un Mat.\\
-        \textbf{Test:} S'assurer qu'aucun coup ne soit légal pour le joueur qui est maté.
-    \end{subneedbox}
-    \begin{subneedbox}[F38.2: Pat]
-        Détecter si la partie se solde sur un Pat.\\
-        \textbf{Test:} S'assurer qu'aucun coup ne soit légal pour le joueur qui est paté.
-    \end{subneedbox}
-    \begin{subneedbox}[F38.3: Egalité par manque de matériel]
-        Détecter si la partie se solde sur une égalité par manque de matériel.\\
-        \textbf{Test:} Vérifier que l'état du jeu correspond à un des cas d'égalité par manque de matériel. 
-    \end{subneedbox}
-    \begin{subneedbox}[F38.4: Perte au temps]
-        Détecter si la partie se solde sur une perte à la pendule si le temps est écoulé pour l'un des joueurs.\\
-        \textbf{Test:} Valider l'écoulement de la pendule (pour le bon joueur si les deux côtés ont très peu de temps).
-    \end{subneedbox}
-    \begin{subneedbox}[F38.5: Egalité par accord mutuel]
-        Détecter si la partie se solde sur une égalité parce que les deux côtés ont souhaité faire égalité et finir la partie.\\
-        \textbf{Test:} S'assurer qu'Event renvoie correctement l'évènement "égalité par accord mutuel".
-    \end{subneedbox}
-    \begin{subneedbox}[F38.6: Perte par abandon]
-        Détecter si la partie se solde sur une défaite parce que l'un des joueurs a abandonné.\\
-        \textbf{Test:} S'assurer qu'Event renvoie correctement l'évènement "perte par abandon".
-    \end{subneedbox}
-    \begin{subneedbox}[F38.7: Egalité par règle des 50 coups]
-        Détecter si la partie se solde par une égalité pour la règle des 50 coups.\\
-        \textbf{Test:} S'assurer qu'aucun coup de pion n'a été joué et que le nombre de coups sans capture est au nombre de 50
-        (ni plus ni moins).
-    \end{subneedbox}
-    \begin{subneedbox}[F38.8: Egalité par la règle des trois répétitions]
-        Détecter si la partie se solde sur une égalité parce que la même configuration a été constatée trois fois dans la même partie.\\
-        \textbf{Test:} Vérifier que la détection des trois répétitions gère le cas des règles spécifiques et des droits pour
-        les états du jeu (en passant, roques, etc.).
-    \end{subneedbox}
-    \begin{subneedbox}[F38.9: Egalité par perte au temps et manque de matériel]
-        Détecter si la partie se solde sur une égalité par perte au temps avec manque de matériel.\\
-        \textbf{Test:} Tester l'écoulement du temps et un cas de non-possibilité de Mat pour le joueur qui a perdu au temps.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F39: Rejouer une partie ]
+\begin{needbox}[F39: Rejouer une partie]
     Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
-    \begin{duedatebox}
-        Date de rendu: 13/03\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F39.1: Vérification du fichier]
-        S'assurer que le fichier est au bon format et est correctement formé.\\
-        \textbf{Test:} Contrôler la notation des coups ainsi que l'extension du fichier.
-    \end{subneedbox}
-    \begin{subneedbox}[F39.2: Se placer à la dernière position]
-        Rejouer la partie en chargeant le fichier pour se placer au dernier coup joué dans l'historique.\\
-        \textbf{Test:} Vérifier si les règles sont valides tout au cours du chargement de la partie, s'assurer
-        que la partie soit bien initialisée et observer la pile de l'historique de coups.
-    \end{subneedbox}
-    \begin{subneedbox}[F39.3: Navigation dans l'historique]
-        Il doit être possible de naviguer dans l'historique en reprenant un ou plusieurs coups et en rejouant
-        un ou plusieurs coups.\\
-        \textbf{Test:} Vérifier si les coups sont correctement repris et rejoués et que les règles spécifiques sont valides.
-    \end{subneedbox}
-    \begin{subneedbox}[F39.4: Ecrasement de l'historique]
-        Le fichier se voit être modifié lorsque l'on joue des coups différents de ceux chargés. On a donc un historique correspondant
-        à la dernière variation jouée.\\
-        \textbf{Test:} S'assurer que le nouveau fichier est correctement formé et contient le nouvel historique.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \subsection{Format d'entrée/sortie}
 
-\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié ]
+\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié]
     Permettre au joueur de sauvegarder et restaurer des fichires de jeu.
-    \begin{duedatebox}
-        Date de rendu: 20/02\\
-        Assigné: Valentin
-    \end{duedatebox}
-    \begin{subneedbox}[F40.1: Représentation du plateau de jeu]
-        Le plateau de jeu et le joueur courant devra être représenté en format ASCII simplifié.
-    \end{subneedbox}
-    \begin{subneedbox}[F40.2: Sauvegarde du jeu]
-        On devra pouvoir sauvegarder le plateau de jeu dans le format définit, avec le joueur
-         courant et le plateau de jeu (et historique avec F41).
-
-        \textbf{Test:} Sauvegarder la partie à plusieurs moments du jeu. Vérifier que le fichier sauvegardé
-        correspond à l'état courant du jeu.
-    \end{subneedbox}
-    \begin{subneedbox}[F40.3: Chargement d'un fichier]
-        On devra pouvoir charger un fichier de jeu, contenant le plateau et le joueur courant,
-        afin de continuer une partie.
-
-        \textbf{Test:} Restaurer un fichier et vérifier que le plateau affiché corresponde à celui
-        enregistré dans le fichier.
-    \end{subneedbox}
-    \begin{subneedbox}[F40.4: Gestion des erreurs de lecture]
-        Une erreur de lecture dans le fichier devra être signalée à l'utilisateur en précisant l'erreur et
-        la ligne. Le programme devra s'arrêter avec un \textit{EXIT\_FAILURE}. On devra vérifer qu'il y a
-        le bon nombre de pièces dans chaque camp (16 au maximum) et un roi de chaque côté.
-
-        \textbf{Test:} Créer un fichier avec au moins une erreur et vérifier que le programme afficher l'erreur
-        avant de s'arrêter. Vérifier que le code de retour est bien \textit{EXIT\_FAILURE}.
-    \end{subneedbox}
-
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F41: Format de l'historique ]
+\begin{nonfunctionnalneedbox}[F41: Format de l'historique]
     Lecture et écriture de l'historique de jeu.
-
-    \textbf{Prérequis:} F28
-    \begin{duedatebox}
-        Date de rendu: 20/02\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F41.1: Sauvegarder les coups joués]
-        Permet à l'utilisateur de sauvegarder l'historique des coups joués dans la partie.
-
-        \textbf{Test:} Jouer une partie. Sauvegarder les données dans un fichier. Vérifier
-        que les coups joués sont bien affichés.
-    \end{subneedbox}
-    \begin{subneedbox}[F41.2: Charger les coups joués]
-        Permet à l'utilisateur de charger une partie commencée, avec l'historique des coups joués.
-
-        \textbf{Test:} Écrire une liste de coups à jouer. Lancer le jeu à partir de la sauvegarde et
-        vérifier qu'ils ont bien été joués.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
-\begin{nonfunctionnalneedbox}[F42: Fichier de configuration ]
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F42.1: Utiliser le format INI]
-        Les options du jeu doivent être sauvegardées au format \textit{INI}.
-
-        \textbf{Test:} Tester avec plusieurs fichiers (certains mal formés) et vérifier 
-        que seuls les fichiers corrects permettent de lancer le jeu avec ces options.
-    \end{subneedbox}
-    \begin{subneedbox}[F42.2: extension de fichier \textit{.chessrc}]
-        Le fichier option doit obligatoirement contenir l'extension \textit{.chessrc}.
-        Dans le cas contraire, le programme se ferme en retournant \textit{EXIT\_FAILURE}.
-
-        \textbf{Test:} Essayer de charger un fichier bien formé, mais ne possédant
-        pas la bonne extension.
-    \end{subneedbox}
-    \begin{subneedbox}[F42.3: fichier d'option non valide]
-        Si un fichier ne correspond par au format \textit{INI} ou contient une 
-        option non reconnue, le programme se ferme en retournant \textit{EXIT\_FAILURE}
-    \end{subneedbox}
-    
+\begin{nonfunctionnalneedbox}[F42: Fichier de configuration]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \subsection{Structures internes}
 
-\begin{needbox}[F43: Plateau de jeu ]
+\begin{needbox}[F43: Plateau de jeu]
     Les bitboards seront utilisées pour représenter l'état du plateau de jeu
-    \begin{duedatebox}
-        Date de rendu: 05/02\\
-        Assigné: Valentin
-    \end{duedatebox}
-    \begin{subneedbox}[F43.1: Nombre de bitboards]
-        Il est nécessaire de posséder 12 bitboards de 64-bits pour représenter un
-        plateau d'échecs complet.
-
-        \textbf{Test:} Vérifier que les deux camps possède bien 6 bitboards (une pour chaque type de pièce) 
-    \end{subneedbox}
-    \begin{subneedbox}[F43.2: Opérations sur les bitboards]
-        Afin d'implémenter les opérations de base sur le plateau de jeu (case vide, mouvement de pièce)
-        il est nécessaire d'intégrer les opérateurs binaires de base (Union, Complément, Xor, Or, Intersection)
-
-        \textbf{Test:} Vérifier l'implémentation de chacune des opérations binaires indépendamment
-    \end{subneedbox}
-    \begin{subneedbox}[F43.3: Opérations des échecs à l'aide des bitboards]
-        Il est nécessaire que les fonctions de base du jeu d'échec soient disponibles.
-        \textit{getAvailableMoves()}, \textit{makeMove()}, \textit{getPieceAt()} et toutes 
-        les autres fonctions du plateau de jeu doivent être implémentées avec les 12 bitboards.
-
-        \textbf{Test:} Pour chacune des fonctions, un jeu de donné représentatif. On appelle la fonction
-        en connaissant à l'avance l'effet produit sur les bitboards, puis on regarde si les bitboards sont
-        bien dans l'état attendu.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F44. Module bitboard ]
-    \begin{duedatebox}
-        Date de rendu: 03/02\\
-        Assigné: Valentin
-    \end{duedatebox}
-    \begin{subneedbox}[F44.1: Initialisation des bitboards]
-        Implémenter des fonctions pour initialiser ou réinitialiser les bitboards.
-
-        \textbf{Prériquis:} F14
-        \textbf{Test:} Tester l'initialisation et la réinitialisation des bitboards.
-    \end{subneedbox}
-
-    \begin{subneedbox}[F44.2: Manipulation des bits]
-        Créer des fonctions pour activer, désactiver, inverser, vérifier et compter les bits.
-
-        \textbf{Test:} Tester chaque fonction utilitaire avec des cas spécifiques.
-    \end{subneedbox}
-
-    \textbf{Prérequis:} F43.
+\begin{needbox}[F44. Module bitboard]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F45. État du jeu ]
-    \textbf{Prériquis:} F43
-    \begin{duedatebox}
-        Date de rendu: 06/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-
-
-    L’état du jeu doit être stocké dans uns structue de donnée et doit inclure au moins les informations suivantes : \\
-    \begin{itemize}
-        \item Joueur courant.
-        \item Temps restant pour chaque camp (si blitz).
-        \item L’état de l’échiquier.  
-        \item L’historique.
-    \end{itemize}
-
-    \textbf{Test:} Vérifier que l’état du jeu est mis à jour après chaque mouvement.
+\begin{needbox}[F45. État du jeu]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \subsection{Interface graphique}
 
-\begin{needbox}[F46: Fonctions de base ]
+\begin{needbox}[F46: Fonctions de base]
     Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
-
-    \textbf{Prériquis:} F25
-    \begin{duedatebox}
-        Date de rendu: 20/03\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F46.1: Prise en passant]
-        \textbf{Prérequis:} F29.\\
-        Implementation graphique du besoin F29. Prise en passant.
-    \end{subneedbox}
-    \begin{subneedbox}[F46.2: Roque]
-        \textbf{Prérequis:} F30.\\
-        Implementation graphique du besoin F30. Roque.
-    \end{subneedbox}
-    \begin{subneedbox}[F46.3: Promotion]
-        \textbf{Prérequis:} F31.\\
-        Implementation graphique du besoin F31. Promotion du pion.
-    \end{subneedbox}
-    \begin{subneedbox}[F46.4: Abandon]
-        \textbf{Prérequis:} F32.\\
-        Implementation graphique du besoin F32. Abandon.
-    \end{subneedbox}
-    \begin{subneedbox}[F46.5: Fin de partie]
-        \textbf{Prérequis:} F38.\\
-        Implementation graphique du besoin F38. Fin de partie.
-    \end{subneedbox}
-    \begin{subneedbox}[F46.6: Mode blitz]
-        \textbf{Prérequis:} F20.\\
-        Implementation graphique du besoin F20. Mode blitz.
-    \end{subneedbox}
-    \begin{subneedbox}[F46.7: Mode contest]
-        \textbf{Prérequis:} F22.\\
-        Implementation graphique du besoin F22 Mode contest.
-    \end{subneedbox}
-    \begin{subneedbox}[F46.8: Mode IA]
-        \textbf{Prérequis:} F23.\\
-        Implementation graphique du besoin F23. Mode IA.
-    \end{subneedbox}
-    
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F47: Menu 'File' ]
+\begin{needbox}[F47: Menu 'File']
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
-
-    \textbf{Prériquis:} F46
-    \begin{duedatebox}
-        Date de rendu: 13/03\\
-        Assigné: Valentin
-    \end{duedatebox}
-    \begin{subneedbox}[F47.1: New Game]
-        \textbf{Prérequis:} F37.\\
-        Ajout d'un bouton 'New Game' pemettant de lancer une nouvelle partie.
-    \end{subneedbox}
-    \begin{subneedbox}[F47.2: Load Game]
-        \textbf{Prérequis:} F35.\\
-        Ajout d'un bouton 'Load Game' pemettant de charger une partie depuis un fichier.
-    \end{subneedbox}
-    \begin{subneedbox}[F47.3: Save Game]
-        \textbf{Prérequis:} F35.\\
-        Ajout d'un bouton 'Save Game' pemettant de sauvegarder la partie en cours dans un fichier.
-    \end{subneedbox}
-    \begin{subneedbox}[F47.4: Quit]
-        \textbf{Prérequis:} F34.\\
-        Ajout d'un bouton 'Quit' pemettant de quitter le programme.
-    \end{subneedbox}
-    \begin{subneedbox}[F47.5: Help]
-        Ajout d'un bouton 'Help' pemettant d'afficher le message d'aide.
-    \end{subneedbox}
-    \begin{subneedbox}[F47.6: Settings]
-        \textbf{Prérequis:} F42.\\
-        Ajout d'un bouton 'Settings' pemettant d'éditer la configuration par défaut.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F48: Menu 'Game' ]
+\begin{needbox}[F48: Menu 'Game']
     Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
-
-    \textbf{Prériquis:} F46
-    \begin{duedatebox}
-        Date de rendu: 13/03\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F48.1: Navigation dans l'historique de coups]
-        Ajout des options 'Aller en avant', 'Aller en arrière', 'Aller au début' et 'Aller à la fin' afin de naviguer dans
-        les coups de la partie.
-    \end{subneedbox}
-    \begin{subneedbox}[F48.2: Indice]
-        Ajout d'une option 'Indice' pemettant à l'utilisateur de connaître le meilleur coup à jouer lorsqu'il
-        affronte une IA.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F49: Menu 'About' ]
+\begin{needbox}[F49: Menu 'About']
     Menu 'About' permettant d'afficher quelques informations sur le Projet.
-
-    \textbf{Prériquis:} F46
-    \begin{duedatebox}
-        Date de rendu: 20/03\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F49.1: Auteurs]
-        Ajout d'une option 'Authors' afin d'afficher l'équipe de développeurs.
-    \end{subneedbox}
-    \begin{subneedbox}[F49.2: Version et dernière mise à jour]
-        Ajout d'une option 'Version' pemettant d'afficher la version du jeu (X.X.X) et la date de dernière mise à jour.
-    \end{subneedbox}
-    \begin{subneedbox}[F49.3: Dépôt du projet]
-        Ajout d'une option 'Project repository' pemettant de donner un lien vers le dépôt Git du projet.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F50: Affichage d'une partie en cours ]
+\begin{needbox}[F50: Affichage d'une partie en cours]
     Affiche le plateau courant et permet au joueur de bouger ses pièces.
-    
-    \textbf{Prérequis:} F25, F26, F33, F46
-    \begin{duedatebox}
-        Date de rendu: 20/03\\
-        Assigné: Valentin
-    \end{duedatebox}
-    \begin{subneedbox}[F50.1: Affichage du plateau]
-        Afficher le plateau et rendre les cases cliquables afin de sélectionner et 
-        bouger une pièce.
-
-        \textbf{Test:} Uiliser un FXRobot afin de cliquer sur des cases et effectuer des moves.
-        Vérifier que la pièce a bougé si le coup est légal.
-    \end{subneedbox}
-    \begin{subneedbox}[F50.2: Affichage du temps du Blitz]
-        Afficher le temps restant au joueur pour jouer son coup si le mode Blitz est activé (et implémenté).
-
-        \textbf{Test:} Lancer le programme avec le mode Blitz et vérifier que le temps s'écoule correctement.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F51: Affichage des coups joués ]
+\begin{needbox}[F51: Affichage des coups joués]
     Affiche l'historique des coups joués sur l'interface graphique.
-
-    \textbf{Prérequis:} F25, F26, F28, F33, F46
-    \begin{duedatebox}
-        Date de rendu: 20/03\\
-        Assigné: Denis
-    \end{duedatebox}
-    \begin{subneedbox}[F50.1: Affichage les coups joués]
-        Afficher les coups joués en les numérotant. Les coups les plus récents se trouveront
-        en haut de la pile des coups. Il faut envisager d'avoir un espace scrollable, si la partie
-        contient de nombreux coups
-
-        \textbf{Test:} Jouer un coup et vérifier que le coup est bien affiché.
-    \end{subneedbox}
-    \begin{subneedbox}[F50.2: Afficher les coups supprimés]
-        S'il est possible d'annuler des coups, les noter d'une autre couleur. Une fois d'un
-        nouveau coup à été joué, les coups annulés sont effacés.
-
-        \textbf{Test:} Lancer le programme, jouer des coups puis revenir en arrière.
-        Vérifier que les coups annulés sont d'une autre couleur. Jouer des nouveaux coups et vérifier que les anciens coups ne soient pas affichés et remplacés par les nouveaux coups.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 
-\begin{needbox}[F52: Configuration d'une nouvelle partie ]
+\begin{needbox}[F52: Configuration d'une nouvelle partie]
     L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
     de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
-    non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'. 
-
-    \textbf{Prériquis:} F46
-    \begin{duedatebox}
-        Date de rendu: 20/03\\
-        Assigné: Iwen
-    \end{duedatebox}
-    \begin{subneedbox}[F52.1: Configuration mode \textit{blitz}]
-        L'utilisateur doit pouvoir cocher une option \textit{blitz}.
-        Si celui-ci est coché, l'utilisateur peut alors modifier une entrée
-        de texte permettant de définir le temps du blitz. Par défaut, l'entrée de texte
-        contient la valeur par défaut du mode blitz (30 minutes).
-
-        \textbf{Test:} Vérifier la présence de tout les éléments graphiques pour configurer le blitz
-    \end{subneedbox}
-    \begin{subneedbox}[F52.2: Configuration du mode IA]
-        L'utilisateur doit pouvoir cocher une option IA permettant d'ajouter
-        un ou deux joueurs artificiels à la partie. Si l'option est sélectionnée,
-        il peut alors choisir le nombre de joueurs artificiels à inclure dans la partie,
-        ainsi que la couleur des pièces qu'il jouera (seulement s'il n'y a qu'un unique
-        joueur IA).
-        Il sera également possible de choisir pour chaque IA l'heuristique à utiliser pour
-        estimer la valeur d'un plateau, son algorithme de recherche (AlphaBeta ou MonteCarlo),
-        sa profondeur de recherche, mais également la possibilité de borner son temps de refléxion.
-
-        \textbf{Test:} Vérifier la présence de tout les éléments graphiques pour configurer l'ia
-    \end{subneedbox}
-    \begin{subneedbox}[F52.3: Mode debug et verbose]
-        Deux options cochables permettant d'activer ou non le mode debug et verbose
-        durant la partie.
-
-        \textbf{Test:} Vérifier la présence de tout les éléments graphiques pour configurer le mode d'affichage
-    \end{subneedbox}
-    \begin{subneedbox}[F52.4: Paramètres par défaut]
-        Les paramètres par défaut seront ceux du fichier \textit{.chessrc}.
-
-        \textbf{Test:} Vérifier que lorsqu'on lance une partie sans changer la configuration de base,
-        les paramètres sont bien ceux du fichier \textit{.chessrc}
-    \end{subneedbox}
-
+    non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'.
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \subsection{Joueur artificiel}
 
-\begin{needbox}[F53: Heuristique d'évaluation de position ]
+\begin{needbox}[F53: Heuristique d'évaluation de position]
     Le programme devra comporter au moins une fonction
     capable de prendre un état du jeu et de lui donner un score en
     fonction de différents critères qui vous sembleront pertinents.
-    
-    \textbf{Test:} Faire des tests de performance afin de voir combien
-    de noeuds l'on peut explorer en un temps imparti. Il faudra également
-    faire des tests pour voir si la méthode d'évaluation est la bonne. 
-    \begin{duedatebox}
-        Date de rendu: 20/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F53.1: Méthode de calcul global]
-        Trouver une heuristique permettant de représenter, avec un 
-        maximum de justesse, l'état du plateau pour chaque joueur.
-
-        \textbf{Test:} Vérifier que l'heuristique s'adapte bien au joueur
-        courant (les deux doivent pouvoir l'utiliser à tour de rôle)
-    \end{subneedbox}
-    \begin{subneedbox}[F53.2: Éléments à prendre en compte]
-        Il est necéssaire que l'heuristique repose sur: la position des pièces, 
-        le contrôle du plateau, les menaces directes, \ldots .
-        Il faudra également nuancer ces éléments (pondération).
-
-        \textbf{Test:} Faire du benchmarking pour observer si les changements
-        dans l'heuristique menent à un meilleur winrate en donnant deux heuristiques
-        différentes à deux joueurs artificiels.
-    \end{subneedbox}
-    \begin{subneedbox}[F53.3: Cas particuliers]
-        Ajouter de quoi gérer les cas particuliers, par exemple les coups
-        qui pourraient mettre fin à la partie. Il faut donc ajouter des cas
-        pour les plateaux gagnants, perdants et nuls.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F54. Algorithme de recherche Minimax ]
-
-    \textbf{Prériquis:} F53
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F54.1: Activer Minimax par défaut si AlphaBeta-pruning n'est pas implémenté]
-        Utiliser l'option --ai-mode mm pour activer l'algorithme.
-
-        \textbf{Test:} Vérifier que l'option est bien active seulement si AlphaBeta-pruning n'est pas implémenté.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F54.2: Implémentation de base]
-        Implémenter la version de base de l’algorithme Minimax.
-
-        \textbf{Test:} Vérifier que Minimax calcule les meilleurs mouvements pour différents scénarios.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F54.3: Gestion des niveaux de profondeur]
-        Ajouter la gestion des niveaux de profondeur pour limiter les calculs.
-
-        \textbf{Test:} Vérifier les performances à différentes profondeur.
-    \end{subneedbox}
+\begin{needbox}[F54. Algorithme de recherche Minimax]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F55. AlphaBeta-pruning ]
-
-    \textbf{Prériquis:} F53 et F54.
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Mathilde
-    \end{duedatebox}
-    \begin{subneedbox}[F55.1: Option actif par défaut]
-        Si l'algorithme AlphaBeta-pruning est implémenté, il doit être activé par défaut pour les décisions de l'IA.
-        Utiliser l'option --ai-mode ab pour activer l’algorithme.
-
-        \textbf{Test:} Vérifier que l'option active l'algorithme correctement.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F55.2: Implémentation de base]
-        Implémenter la version de base de l’algorithme AlphaBeta-pruning.
-
-        \textbf{Test:} Vérifier les performances comparées à Minimax sans AlphaBeta-pruning.
-    \end{subneedbox}
-    
-    \begin{subneedbox}[F55.3: Gestion des niveaux de profondeur]
-        Ajouter la gestion des niveaux de profondeur pour limiter les calculs.
-
-        \textbf{Test:} Vérifier les performances à différentes profondeurs avec AlphaBeta-pruning.
-    \end{subneedbox}
+\begin{needbox}[F55. AlphaBeta-pruning]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F56: Monte Carlo Tree Search ]
-    \textbf{Prérequis:} F23 et F53.
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F56.1: Activation du mode]
-        Ajouter \textit{--ai-mode mcts} à la gestion des options.\\
-        \textbf{Test:} Vérifier que l'option active l'algorithme correctement.
-    \end{subneedbox}
-
-    \begin{subneedbox}[F56.2: Implémentation de MCTS]
-        Développer un algorithme MCTS comprenant :
-        \begin{itemize}
-            \item Une fonction \textit{selection()} pour choisir un nœud.
-            \item Une fonction \textit{expansion()} pour ajouter un ou plusieurs nœuds enfants à un nœud sélectionné.
-            \item Une fonction \textit{simulation()} pour effectuer une simulation aléatoire à partir d'un état donné.
-            \item Une fonction \textit{backpropagation()} pour propager les résultats de la simulation le long du chemin parcouru.
-        \end{itemize}
-        \textbf{Test:} Vérifier que l'algorithme fonctionne correctement et renvoie un coup optimal.
-    \end{subneedbox}
+\begin{needbox}[F56: Monte Carlo Tree Search]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F57: Profondeur de recherche ]
-    \textbf{Prérequis:} F54, F55, F56.
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F57.1: Activation du mode]
-        Ajouter \textit{--ai-depth DEPTH} à la gestion des options.\\
-        \textbf{Test:} Vérifier que l'option paramètre la profondeur correctement.
-    \end{subneedbox}
-    \begin{subneedbox}[F57.2: Limitation de la profondeur]
-        Ajouter un limitateur de profondeur de recherche au joueur artificiel.\\
-        \textbf{Test:} Générer un coup depuis le plateau initial et vérifier que la profondeur de recherche est respectée (coup optimal différent en fonction de la profondeur).
-    \end{subneedbox}
+\begin{needbox}[F57: Profondeur de recherche]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F58: Choix des heuristiques]
-    \begin{duedatebox}
-        Date de rendu: 20/03\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F58.1: Types d'heuristiques]
-        Trier les heuristiques en fonction de leur groupe d'appartenance.\\
-        Pour l'instant:
-        \begin{itemize}
-            \item Matérielles
-            \item Positionnelles
-            \item Avancées
-        \end{itemize}
-    \end{subneedbox}
-    \begin{subneedbox}[F58.2: Documentation des heuristiques]
-        Ajouter une documentation pour chaque heuristique pour préciser ce qu'elle calcule, sur quoi 
-        elle se base, etc.\\
-        \textbf{Test:} S'assurer que la documentation de chaque heuristique précise correctement à quelle groupe elle appartient.
-    \end{subneedbox}
-
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F59: Heuristiques de fin de partie ]
-    
-    \textbf{Prériquis:} F23
-    \begin{duedatebox}
-        Date de rendu: 20/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F59.1: Types d'heuristiques]
-        Détecter lorsque l'on se trouve en fin de partie.\\
-        On peut se baser notamment sur:
-        \begin{itemize}
-            \item Le nombre de pièces sur le plateau
-            \item Présence ou non des Dames 
-            \item Nombre de coups joués 
-            \item Nombre de coups possibles
-        \end{itemize}
-        \textbf{Test:} Valider chaque élément ci-dessus qui constitue un facteur de fin de partie.
-    \end{subneedbox}
-    \begin{subneedbox}[F59.2: Eléments pour les heuristiques]
-        Chercher des éléments afin d'optimiser les heursitiques et les adpater aux fins de partie.\\
-        Par exemple:
-        \begin{itemize}
-            \item Promotions de pions
-            \item Activité des pièces
-            \item Sécurité du Roi
-            \item Nombre de coups légaux
-            \item Matériel
-            \item Facteurs spécifiques aux fins de partie (fous de couleur différente,...)
-        \end{itemize}
-        \textbf{Test:} Valider chaque élément ci-dessus qui fait partie d'une heuristique de fin de partie.
-    \end{subneedbox}
+\begin{needbox}[F59: Heuristiques de fin de partie]
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
-\begin{needbox}[F60: Temps de réflexion borné ]
+\begin{needbox}[F60: Temps de réflexion borné]
     Permet de paramétrer la durée de "réflexion" de l'IA.
-
-    \textbf{Prérequis:} F11 et F56
-    \begin{duedatebox}
-        Date de rendu: 27/02\\
-        Assigné: Jonathan
-    \end{duedatebox}
-    \begin{subneedbox}[F60.1: Activation du mode]
-        Ajouter \textit{--ai-time TIME} à la gestion des options.
-
-        \textbf{Test:} Lancer le programme avec \textit{--ai-time TIME} et vérifier que
-        le temps de réflexion de l'algorithme de recherche du meilleur coup est bien de TIME.
-    \end{subneedbox}
-    \begin{subneedbox}[F60.2: Limiter le temps de réflexion d'IA]
-        Ajouter un timer au joueur artificiel avec une durée par défaut de 5 secondes.
-
-        \textbf{Test:} Lancer le mode et vérifier que le timer se remette à zéro à chaque tour.
-         Vérifier que l'IA joue un coup avant l'écoulement du timer.
-    \end{subneedbox}
+    \begin{justificationbox}
+        COMPLETER.
+    \end{justificationbox}
 \end{needbox}
 
 
