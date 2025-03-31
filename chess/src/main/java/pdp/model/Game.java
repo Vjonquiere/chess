@@ -493,8 +493,9 @@ public final class Game extends GameAbstract {
       final Timer timer,
       final FileBoard board,
       final HashMap<OptionType, String> options) {
-    GameState gameState = (board == null) ? new GameState(timer) : new GameState(board, timer);
-    Game game =
+    final GameState gameState =
+        (board == null) ? new GameState(timer) : new GameState(board, timer);
+    final Game game =
         new Game(isWhiteAi, isBlackAi, solverWhite, solverBlack, gameState, new History(), options);
     BagOfCommands.getInstance().setModel(game);
     return game;
@@ -506,7 +507,7 @@ public final class Game extends GameAbstract {
    *
    * @param timer The timer to be set up for the game.
    */
-  private static void setupTimer(Timer timer) {
+  private static void setupTimer(final Timer timer) {
     if (timer != null) {
       timer.setCallback(instance::outOfTimeCallback);
       if (!instance.isCurrentPlayerAi()) {

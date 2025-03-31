@@ -26,7 +26,7 @@ public class HistoryState {
    * @param move The move played.
    * @param gameState a copy of the gameState after the move played.
    */
-  public HistoryState(Move move, GameState gameState) {
+  public HistoryState(final Move move, final GameState gameState) {
     this.move = move;
     this.gameState = gameState;
   }
@@ -80,7 +80,7 @@ public class HistoryState {
    * @return A string representing the move in algebraic notation.
    */
   public String toAlgebraicString() {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
         sb.append(this.gameState.getFullTurn())
@@ -109,7 +109,7 @@ public class HistoryState {
    * @return A string representing the move in the given format.
    */
   public String toString() {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
         sb.append(this.gameState.getFullTurn()).append(". W ").append(this.move).append(" ");

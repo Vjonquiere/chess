@@ -300,8 +300,8 @@ public class Move {
       throw new InvalidPositionException(move);
     }
 
-    int x = colLetter - 'a';
-    int y = rowNumber - 1;
+    final int x = colLetter - 'a';
+    final int y = rowNumber - 1;
 
     return new Position(x, y);
   }

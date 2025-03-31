@@ -35,7 +35,7 @@ public class CachedResult {
    * @param color Color of the king to check
    * @return true if the king is in check, false otherwise
    */
-  public Boolean isCheck(Color color) {
+  public Boolean isCheck(final Color color) {
     return color == Color.WHITE ? isCheckWhite : isCheckBlack;
   }
 
@@ -45,7 +45,7 @@ public class CachedResult {
    * @param check true if the king is in check, false otherwise
    * @param color Color of the king to set
    */
-  public void setCheck(boolean check, Color color) {
+  public void setCheck(final boolean check, final Color color) {
     if (color == Color.WHITE) {
       isCheckWhite = check;
     } else {
@@ -59,7 +59,7 @@ public class CachedResult {
    * @param color Color of the king
    * @return true if the king is checkmate, false otherwise
    */
-  public Boolean isCheckMate(Color color) {
+  public Boolean isCheckMate(final Color color) {
     return color == Color.WHITE ? isCheckMateWhite : isCheckMateBlack;
   }
 
@@ -69,7 +69,7 @@ public class CachedResult {
    * @param color Color of the king
    * @return true if the king is checkmate, false otherwise
    */
-  public Boolean isStaleMate(Color color) {
+  public Boolean isStaleMate(final Color color) {
     return color == Color.WHITE ? isStalemateWhite : isStalemateBlack;
   }
 
@@ -79,7 +79,7 @@ public class CachedResult {
    * @param staleMate true if the king is stalemate, false otherwise
    * @param color Color of the king to set
    */
-  public void setStaleMate(boolean staleMate, Color color) {
+  public void setStaleMate(final boolean staleMate, final Color color) {
     if (color == Color.WHITE) {
       isStalemateWhite = staleMate;
     } else {
@@ -93,7 +93,7 @@ public class CachedResult {
    * @param checkMate true if the king is checkmate, false otherwise
    * @param color Color of the king to set
    */
-  public void setCheckMate(boolean checkMate, Color color) {
+  public void setCheckMate(final boolean checkMate, final Color color) {
     if (color == Color.WHITE) {
       isCheckMateWhite = checkMate;
     } else {
@@ -108,7 +108,7 @@ public class CachedResult {
    * @param white true if the player is white, false otherwise.
    * @param bitboard bitboard to save in whiteAttackBitboards/blackAttackBitboards
    */
-  public void setAttackBitboard(boolean white, Bitboard bitboard) {
+  public void setAttackBitboard(final boolean white, final Bitboard bitboard) {
     if (white) {
       this.whiteAttackBitboard = bitboard.getBits();
     } else {
@@ -122,7 +122,7 @@ public class CachedResult {
    * @param white true if the player is white, false otherwise.
    * @return attack bitboard of the side given in arguments
    */
-  public Long getAttackBitboard(boolean white) {
+  public Long getAttackBitboard(final boolean white) {
     if (white) {
       return this.whiteAttackBitboard;
     } else {
