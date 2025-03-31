@@ -58,24 +58,40 @@ public class AlphaBetaParallel extends SearchAlgorithm {
     final List<Move> moves = aiGame.getBoard().getAllAvailableMoves(player);
     MoveOrdering.moveOrder(moves);
 
-    for (final Move move : moves) {
-      futures.add(
-          executor.submit(
-              () -> {
-                final GameAi gameCopy = aiGame.copy();
-                try {
-                  gameCopy.playMove(move);
-                  final AiMove result =
-                      alphaBeta(
-                          gameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
-                  return new AiMove(move, result.score());
-                } catch (IllegalMoveException e) {
-                  return new AiMove(null, -Float.MAX_VALUE);
-                }
-              }));
-    }
+    AiMove bestMove = new AiMove(moves.get(0), -Float.MAX_VALUE);
 
-    AiMove bestMove = new AiMove(null, -Float.MAX_VALUE);
+    if (!moves.isEmpty()) {
+      Move firstMove = moves.get(0);
+      try {
+        GameAi firstGameCopy = aiGame.copy();
+        firstGameCopy.playMove(firstMove);
+        AiMove firstResult =
+            alphaBeta(firstGameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
+        bestMove = new AiMove(firstMove, firstResult.score());
+      } catch (IllegalMoveException e) {
+        // Illegal move, normal search
+      }
+
+      final float initialAlpha = bestMove.score();
+
+      for (int i = 1; i < moves.size(); i++) {
+        final Move move = moves.get(i);
+        futures.add(
+            executor.submit(
+                () -> {
+                  final GameAi gameCopy = aiGame.copy();
+                  try {
+                    gameCopy.playMove(move);
+                    final AiMove result =
+                        alphaBeta(
+                            gameCopy, depth - 1, !player, initialAlpha, Float.MAX_VALUE, player);
+                    return new AiMove(move, result.score());
+                  } catch (IllegalMoveException e) {
+                    return new AiMove(null, -Float.MAX_VALUE);
+                  }
+                }));
+      }
+    }
 
     try {
       for (final Future<AiMove> future : futures) {

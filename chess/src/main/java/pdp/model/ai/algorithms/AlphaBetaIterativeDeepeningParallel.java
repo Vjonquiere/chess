@@ -3,7 +3,6 @@ package pdp.model.ai.algorithms;
 import static pdp.utils.Logging.debug;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -17,8 +16,6 @@ import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
-import pdp.model.board.PromoteMove;
-import pdp.model.piece.ColoredPiece;
 import pdp.utils.Logging;
 
 /**
@@ -78,6 +75,8 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
       int numThreads = Runtime.getRuntime().availableProcessors() / 2;
       ExecutorService executor = Executors.newFixedThreadPool(numThreads);
       List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
+
+      AiMove bestMove = new AiMove(null, -Float.MAX_VALUE);
 
       for (Move move : rootMoves) {
         final int currentDepth = depth; // Create a final copy of depth
@@ -168,7 +167,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     }
 
     List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
-    sortMoves(moves, game);
+    MoveOrdering.moveOrder(moves);
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
@@ -205,64 +204,5 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     }
 
     return bestMove;
-  }
-
-  /**
-   * Sorts the moves list based on the score of each move. The score is determined by the
-   * evaluateMove function.
-   *
-   * @param moves The list of moves to be sorted.
-   * @param game The game state.
-   */
-  private void sortMoves(List<Move> moves, GameAi game) {
-    moves.sort(Comparator.comparingInt((Move m) -> -evaluateMove(m, game)));
-  }
-
-  /**
-   * Evaluates the given move by giving a score based on the captured piece. The score is as
-   * follows:
-   *
-   * <ul>
-   *   <li>Pawn: 1
-   *   <li>Knights and Bishops: 3
-   *   <li>Rooks: 5
-   *   <li>Queens: 9
-   * </ul>
-   *
-   * <p>If the move is a promotion, an additional 100 points is given.
-   *
-   * @param move The move to be evaluated.
-   * @param game The current game state.
-   * @return The score of the move.
-   */
-  private int evaluateMove(Move move, GameAi game) {
-    ColoredPiece target = game.getBoard().getPieceAt(move.getDest().x(), move.getDest().y());
-    int score = 0;
-
-    if (target != null) {
-      switch (target.getPiece()) {
-        case PAWN:
-          score += 1;
-          break;
-        case KNIGHT:
-        case BISHOP:
-          score += 3;
-          break;
-        case ROOK:
-          score += 5;
-          break;
-        case QUEEN:
-          score += 9;
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (move instanceof PromoteMove) {
-      score += 100;
-    }
-
-    return score;
   }
 }

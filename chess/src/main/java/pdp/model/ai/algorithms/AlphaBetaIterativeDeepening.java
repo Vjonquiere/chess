@@ -3,7 +3,6 @@ package pdp.model.ai.algorithms;
 import static pdp.utils.Logging.debug;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
@@ -11,8 +10,6 @@ import pdp.model.Game;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
-import pdp.model.board.PromoteMove;
-import pdp.model.piece.ColoredPiece;
 import pdp.utils.Logging;
 
 /**
@@ -66,6 +63,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
 
       if (bestMove != null && bestMove.move() != null) {
         rootMoves.remove(bestMove.move());
+        MoveOrdering.moveOrder(rootMoves);
         rootMoves.add(0, bestMove.move());
       }
 
@@ -119,10 +117,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
     List<Move> moves = orderedMoves;
     if (moves == null) {
       moves = game.getBoard().getAllAvailableMoves(currentPlayer);
-    }
-
-    if (orderedMoves == null) {
-      sortMoves(moves, game);
+      MoveOrdering.moveOrder(moves);
     }
 
     AiMove bestMove =
@@ -156,36 +151,5 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
       }
     }
     return bestMove;
-  }
-
-  private void sortMoves(final List<Move> moves, final Game game) {
-    moves.sort(Comparator.comparingInt((Move m) -> -evaluateMove(m, game)));
-  }
-
-  private int evaluateMove(final Move move, final Game game) {
-    final ColoredPiece target = game.getBoard().getPieceAt(move.getDest().x(), move.getDest().y());
-    int score = 0;
-    switch (target.getPiece()) {
-      case PAWN:
-        score += 1;
-        break;
-      case KNIGHT, BISHOP:
-        score += 3;
-        break;
-      case ROOK:
-        score += 5;
-        break;
-      case QUEEN:
-        score += 9;
-        break;
-      default:
-        break;
-    }
-
-    if (move instanceof PromoteMove) {
-      score += 100;
-    }
-
-    return score;
   }
 }
