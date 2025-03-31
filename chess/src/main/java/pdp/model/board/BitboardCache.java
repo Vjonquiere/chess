@@ -6,8 +6,16 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 /** Class used to store cache composed of bitboards to avoid recalculating too many methods. */
 public class BitboardCache {
+  /** Maximum number of elements in the cache. */
   private final int maxNb;
+
+  /** Map storing a hash of a board and a cache result. Structure used for the cache. */
   private final AbstractMap<Long, CachedResult> cache = new ConcurrentHashMap<>();
+
+  /**
+   * Queue to store the access to the different cache elements. Helps for the replacement of values
+   * in the cache.
+   */
   private final ConcurrentLinkedDeque<Long> accessOrder = new ConcurrentLinkedDeque<>();
 
   /**

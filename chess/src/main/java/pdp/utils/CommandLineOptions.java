@@ -236,7 +236,7 @@ public final class CommandLineOptions {
     }
 
     if (activatedOptions.containsKey(OptionType.CONTEST)) {
-      String contestFile = activatedOptions.get(OptionType.CONTEST);
+      final String contestFile = activatedOptions.get(OptionType.CONTEST);
       if (contestFile == null || contestFile.isEmpty()) {
         error("Error: --contest option requires a valid file path.");
         activatedOptions.remove(OptionType.CONTEST);

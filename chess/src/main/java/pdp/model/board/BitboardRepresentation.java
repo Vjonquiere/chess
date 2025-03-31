@@ -17,24 +17,72 @@ import pdp.utils.Position;
 
 /** Implementation of BoardRepresentation using bitboards. */
 public class BitboardRepresentation implements BoardRepresentation {
-  private static final int CACHE_SIZE = 10000;
+  /** Size of the cache. */
+  private static final int CACHE_SIZE = 10_000;
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BitboardRepresentation.class.getName());
-  private Bitboard[] board;
+
+  /**
+   * Array of bitboard representing the placement of each piece type for white and black players.
+   */
+  private final Bitboard[] board;
+
+  /** Number of columns on a chess board. */
   private static final int NB_COLS = 8;
+
+  /** Number of rows on a chess board. */
   private static final int NB_ROWS = 8;
-  private static BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
-  private static BitboardCache cache;
+
+  /** Bidirectional map associating each bitmap to the type of piece stored inside. */
+  private static final BiDirectionalMap<Integer, ColoredPiece> pieces = new BiDirectionalMap<>();
+
+  /** Cache instance. */
+  private static final BitboardCache cache;
+
+  /** Zobrist hashing instance used to generate the hash. */
   private static ZobristHashing zobristHashing = new ZobristHashing();
+
+  /** Zobrist simple hash generated for the board at a given moment. */
   private long simpleHash;
 
+  /** Position where an en passant could happen in the next turn. */
   private Position enPassantPos;
+
+  /** Boolean to indicate whether the last move was a double push or not. */
   private boolean isLastMoveDoublePush;
+
+  /**
+   * Boolean to indicate whether a white long castle is still possible to make (the tower and king
+   * didn't move).
+   */
   private boolean whiteLongCastle;
+
+  /**
+   * Boolean to indicate whether a white short castle is still possible to make (the tower and king
+   * didn't move).
+   */
   private boolean whiteShortCastle;
+
+  /**
+   * Boolean to indicate whether a black long castle is still possible to make (the tower and king
+   * didn't move).
+   */
   private boolean blackLongCastle;
+
+  /**
+   * Boolean to indicate whether a black short castle is still possible to make (the tower and king
+   * didn't move).
+   */
   private boolean blackShortCastle;
+
+  /** Boolean to indicate whether the current player is white or black. */
   private boolean isWhite;
+
+  /** Boolean to indicate if the capture was an en passant take. */
   private boolean isEnPassantTake;
+
+  /** Counter of move made without a pawn moved or a piece captured. */
   private int nbMovesWithNoCaptureOrPawn;
 
   static {
@@ -90,15 +138,15 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[2] = new Bitboard(36L); // WB
     board[3] = new Bitboard(129L); // WR
     board[4] = new Bitboard(66L); // WKn
-    board[5] = new Bitboard(65280L); // WP
-    board[6] = new Bitboard(1152921504606846976L); // BKi
-    board[7] = new Bitboard(576460752303423488L); // BQ
-    board[8] = new Bitboard(2594073385365405696L); // BB
+    board[5] = new Bitboard(65_280L); // WP
+    board[6] = new Bitboard(1_152_921_504_606_846_976L); // BKi
+    board[7] = new Bitboard(576_460_752_303_423_488L); // BQ
+    board[8] = new Bitboard(2_594_073_385_365_405_696L); // BB
     board[9] = new Bitboard(); // BR // TODO: Find why overflow ???
     board[9].setBit(56);
     board[9].setBit(63);
-    board[10] = new Bitboard(4755801206503243776L); // BKi
-    board[11] = new Bitboard(71776119061217280L);
+    board[10] = new Bitboard(4_755_801_206_503_243_776L); // BKi
+    board[11] = new Bitboard(71_776_119_061_217_280L);
 
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
@@ -111,38 +159,38 @@ public class BitboardRepresentation implements BoardRepresentation {
   public BitboardRepresentation(FileBoard board) {
 
     this();
-    this.setPlayer(board.isWhiteTurn());
+    this.isWhite = board.isWhiteTurn();
 
     if (board.header() != null) {
-      this.setEnPassantPos(board.header().enPassant());
-      if (this.getEnPassantPos() != null) {
-        this.setLastMoveDoublePush(true);
+      this.enPassantPos = board.header().enPassant();
+      if (this.enPassantPos != null) {
+        this.isLastMoveDoublePush = true;
       }
 
-      this.setWhiteShortCastle(board.header().whiteKingCastling());
-      this.setBlackShortCastle(board.header().blackKingCastling());
-      this.setWhiteLongCastle(board.header().whiteQueenCastling());
-      this.setBlackLongCastle(board.header().blackQueenCastling());
+      this.whiteShortCastle = board.header().whiteKingCastling();
+      this.blackShortCastle = board.header().blackKingCastling();
+      this.whiteLongCastle = board.header().whiteQueenCastling();
+      this.blackLongCastle = board.header().blackQueenCastling();
 
-      this.setNbMovesWithNoCaptureOrPawn(board.header().fiftyMoveRule());
+      this.nbMovesWithNoCaptureOrPawn = board.header().fiftyMoveRule();
     } else {
-      this.setEnPassantPos(null);
-      this.setLastMoveDoublePush(false);
+      this.enPassantPos = null;
+      this.isLastMoveDoublePush = false;
 
-      this.setWhiteShortCastle(
+      this.whiteShortCastle =
           board.board().getPieceAt(7, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
-              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
-      this.setBlackShortCastle(
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE));
+      this.blackShortCastle =
           board.board().getPieceAt(7, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
-              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
-      this.setWhiteLongCastle(
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK));
+      this.whiteLongCastle =
           board.board().getPieceAt(0, 0).equals(new ColoredPiece(Piece.ROOK, Color.WHITE))
-              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE)));
-      this.setBlackLongCastle(
+              && board.board().getPieceAt(4, 0).equals(new ColoredPiece(Piece.KING, Color.WHITE));
+      this.blackLongCastle =
           board.board().getPieceAt(0, 7).equals(new ColoredPiece(Piece.ROOK, Color.BLACK))
-              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK)));
+              && board.board().getPieceAt(4, 7).equals(new ColoredPiece(Piece.KING, Color.BLACK));
 
-      this.setNbMovesWithNoCaptureOrPawn(0);
+      this.nbMovesWithNoCaptureOrPawn = 0;
     }
 
     for (int y = 0; y < board.board().getNbRows(); y++) {
@@ -215,6 +263,11 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[11] = blackPawns;
   }
 
+  /**
+   * Retrieves the bidirectional map mapping a bitboard to the type of pieces it represents.
+   *
+   * @return field pieces.
+   */
   public static BiDirectionalMap<Integer, ColoredPiece> getPiecesMap() {
     return pieces;
   }
@@ -371,11 +424,22 @@ public class BitboardRepresentation implements BoardRepresentation {
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
+  /**
+   * Sets the given squareIndex in the bitboard corresponding to piece.
+   *
+   * @param piece type of piece to update in the bitboards.
+   * @param squareIndex position to set in the bitboard.
+   */
   public void setSquare(final ColoredPiece piece, final int squareIndex) {
     board[pieces.getFromValue(piece)].setBit(squareIndex);
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
+  /**
+   * Retrieves the bitboards representing the current chess board.
+   *
+   * @return field board.
+   */
   protected Bitboard[] getBitboards() {
     return this.board;
   }
@@ -651,6 +715,13 @@ public class BitboardRepresentation implements BoardRepresentation {
     return BitboardPieces.getKing(white, this);
   }
 
+  /**
+   * Retrieves index in the bitmap of the king of the given color. Optimized with bitboards so more
+   * efficient.
+   *
+   * @param white if true -> white king, if false -> black king
+   * @return An int corresponding to the king position for the given color
+   */
   public int getKingOpti(final boolean white) {
     return BitboardPieces.getKingOpti(white, this);
   }

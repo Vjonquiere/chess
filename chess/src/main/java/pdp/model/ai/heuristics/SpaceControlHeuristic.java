@@ -14,19 +14,37 @@ public class SpaceControlHeuristic implements Heuristic {
   /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
+  /** Maximum number of moves considered in the evaluation. */
   private static final int MAX_MOVES_CONSIDERED = 50;
+
+  /** Bonus score for a move in the center of the board. */
   private static final float BONUS_MOVE_IN_CENTER = 3f;
+
+  /** Bonus score for a move on the flanks (edges of the board). */
   private static final float BONUS_MOVE_ON_FLANKS = 1.5f;
+
+  /** Bonus score for a move elsewhere on the board. */
   private static final float BONUS_MOVE_ELSEWHERE = 0.5f;
 
   /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER = SCORE_CAP / (MAX_MOVES_CONSIDERED * BONUS_MOVE_ELSEWHERE);
 
+  /** Minimum x-coordinate for the center region. */
   private static final int CENTER_X_MIN = 3;
+
+  /** Maximum x-coordinate for the center region. */
   private static final int CENTER_X_MAX = 4;
+
+  /** Minimum y-coordinate for the center region. */
   private static final int CENTER_Y_MIN = 3;
+
+  /** Maximum y-coordinate for the center region. */
   private static final int CENTER_Y_MAX = 4;
+
+  /** Maximum x-coordinate for the left flank region. */
   private static final int FLANK_LEFT_MAX_X = 1;
+
+  /** Minimum x-coordinate for the right flank region. */
   private static final int FLANK_RIGHT_MIN_X = 6;
 
   /**

@@ -22,6 +22,7 @@ import pdp.utils.Logging;
 
 /** Parser that produce board objects from given file format (support FEN header). */
 public class BoardFileParser {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BoardFileParser.class.getName());
 
   static {

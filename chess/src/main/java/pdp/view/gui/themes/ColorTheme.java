@@ -7,24 +7,40 @@ public enum ColorTheme {
   SIMPLE("#6D6FD9", "#DAE0F2", "#272727", "#F9CFF2", "#EDE7E3", "#DAE0F2", "#000000", "#FFFFFF"),
   GREY("#415a77", "#778da9", "#0d1b2a", "#1d3557", "#e0e1dd", "#F2F4F3", "#000000", "#FFFFFF"),
   CUSTOM("#5B5F97", "#B8B8D1", "#FF6B6C", "#FFC145", "#FFFFFB", "#FFFFF0", "#000000", "#FFFFFF");
+
+  /** String corresponding to the primary color, in hexadecimal format. */
   private String primary;
+
+  /** String corresponding to the secondary color, in hexadecimal format. */
   private String secondary;
+
+  /** String corresponding to the tertiary color, in hexadecimal format. */
   private String tertiary;
+
+  /** String corresponding to the accent color, in hexadecimal format. */
   private String accent;
+
+  /** String corresponding to the background color, in hexadecimal format. */
   private String background;
+
+  /** String corresponding to the second background color, in hexadecimal format. */
   private String background2;
+
+  /** String corresponding to the text color, in hexadecimal format. */
   private String text;
+
+  /** String corresponding to the second text color, in hexadecimal format. */
   private String textInverted;
 
   ColorTheme(
-      String primary,
-      String secondary,
-      String tertiary,
-      String accent,
-      String background,
-      String background2,
-      String text,
-      String textInverted) {
+      final String primary,
+      final String secondary,
+      final String tertiary,
+      final String accent,
+      final String background,
+      final String background2,
+      final String text,
+      final String textInverted) {
     this.primary = primary;
     this.secondary = secondary;
     this.tertiary = tertiary;
@@ -80,14 +96,14 @@ public enum ColorTheme {
    * @param textInverted The inverted text color.
    */
   public static void setCustom(
-      String primary,
-      String secondary,
-      String tertiary,
-      String accent,
-      String background,
-      String background2,
-      String text,
-      String textInverted) {
+      final String primary,
+      final String secondary,
+      final String tertiary,
+      final String accent,
+      final String background,
+      final String background2,
+      final String text,
+      final String textInverted) {
     CUSTOM.primary = primary;
     CUSTOM.secondary = secondary;
     CUSTOM.tertiary = tertiary;

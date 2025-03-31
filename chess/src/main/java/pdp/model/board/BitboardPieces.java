@@ -7,6 +7,7 @@ import pdp.utils.Position;
 
 /** Utility class to remove complexity for BitboardRepresentation. */
 public final class BitboardPieces {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BitboardPieces.class.getName());
 
   /** Private constructor to avoid instantiation. */

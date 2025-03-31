@@ -31,7 +31,8 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
   private Solver solver;
 
   /** Logger of the class. */
-  private static final Logger LOGGER = Logger.getLogger(Solver.class.getName());
+  private static final Logger LOGGER =
+      Logger.getLogger(AlphaBetaIterativeDeepeningParallel.class.getName());
 
   /** Boolean to indicate whether the search has been stopped before reaching the depth asked. */
   private AtomicBoolean stoppedEarly = new AtomicBoolean(false);
@@ -53,7 +54,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
    * Determines the best move using the AlphaBeta algorithm with iterative deepening.
    *
    * @param game The current game state.
-   * @param depth The number of moves to look ahead.
+   * @param maxDepth The number of moves to look ahead.
    * @param player The current player (true for white, false for black).
    * @return The best move for the player.
    */
@@ -230,7 +231,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
    *   <li>Queens: 9
    * </ul>
    *
-   * If the move is a promotion, an additional 100 points is given.
+   * <p>If the move is a promotion, an additional 100 points is given.
    *
    * @param move The move to be evaluated.
    * @param game The current game state.
