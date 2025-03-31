@@ -138,7 +138,7 @@ public class AlphaBetaParallel extends SearchAlgorithm {
       return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 

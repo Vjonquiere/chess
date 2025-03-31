@@ -107,10 +107,11 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
 
     if (solver.isSearchStopped()) {
       this.stoppedEarly = true;
-      return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
+      return new AiMove(
+          null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 

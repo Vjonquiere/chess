@@ -56,7 +56,7 @@ public class Minimax extends SearchAlgorithm {
       return new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 

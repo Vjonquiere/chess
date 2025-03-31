@@ -69,6 +69,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
 
       if (bestMove != null && bestMove.move() != null) {
         rootMoves.remove(bestMove.move());
+        MoveOrdering.moveOrder(rootMoves);
         rootMoves.add(0, bestMove.move());
       }
 
@@ -76,9 +77,26 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
       ExecutorService executor = Executors.newFixedThreadPool(numThreads);
       List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
-      AiMove bestMove = new AiMove(null, -Float.MAX_VALUE);
+      AiMove currentBest = new AiMove(null, -Float.MAX_VALUE);
 
-      for (Move move : rootMoves) {
+      if (!rootMoves.isEmpty()) {
+        Move firstMove = rootMoves.get(0);
+        try {
+          GameAi firstGameCopy = gameAi.copy();
+          firstGameCopy.playMove(firstMove);
+          AiMove firstResult =
+              alphaBeta(
+                  firstGameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
+          currentBest = new AiMove(firstMove, firstResult.score());
+        } catch (IllegalMoveException e) {
+          // Illegal move, normal search
+        }
+      }
+
+      final float initialAlpha = currentBest.score();
+
+      for (int i = 1; i < rootMoves.size(); i++) {
+        final Move move = rootMoves.get(i);
         final int currentDepth = depth; // Create a final copy of depth
         futures.add(
             executor.submit(
@@ -91,24 +109,21 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
                             gameCopy,
                             currentDepth - 1,
                             !player,
-                            -Float.MAX_VALUE,
+                            initialAlpha,
                             Float.MAX_VALUE,
                             player);
                     return new AiMove(move, result.score());
                   } catch (IllegalMoveException e) {
-                    return new AiMove(null, player ? -Float.MAX_VALUE : Float.MAX_VALUE);
+                    return new AiMove(null, -Float.MAX_VALUE);
                   }
                 }));
       }
 
-      AiMove currentBest = null;
       for (Future<AiMove> future : futures) {
         try {
           AiMove candidate = future.get();
           if (candidate.move() != null) {
-            if (currentBest == null
-                || (player && candidate.score() > currentBest.score())
-                || (!player && candidate.score() < currentBest.score())) {
+            if (currentBest == null || candidate.score() > currentBest.score()) {
               currentBest = candidate;
             }
           }
@@ -158,11 +173,11 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
 
     if (solver.isSearchStopped()) {
       stoppedEarly.set(true);
-      return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
+      return new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
 
     if (depth == 0 || game.isOver()) {
-      float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 
