@@ -3,7 +3,6 @@ package pdp.model.ai.algorithms;
 import static pdp.utils.Logging.debug;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -17,15 +16,13 @@ import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
-import pdp.model.board.PromoteMove;
-import pdp.model.piece.ColoredPiece;
 import pdp.utils.Logging;
 
 /**
  * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) and
  * iterative deepening to have more efficient search.
  */
-public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
+public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
 
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
@@ -72,6 +69,7 @@ public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
 
       if (bestMove != null && bestMove.move() != null) {
         rootMoves.remove(bestMove.move());
+        MoveOrdering.moveOrder(rootMoves);
         rootMoves.add(0, bestMove.move());
       }
 
@@ -79,38 +77,53 @@ public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
       final ExecutorService executor = Executors.newFixedThreadPool(numThreads);
       final List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
-      for (final Move move : rootMoves) {
+      AiMove currentBest = new AiMove(null, -Float.MAX_VALUE);
+
+      if (!rootMoves.isEmpty()) {
+        Move firstMove = rootMoves.get(0);
+        try {
+          GameAi firstGameCopy = gameAi.copy();
+          firstGameCopy.playMove(firstMove);
+          AiMove firstResult =
+              alphaBeta(
+                  firstGameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
+          currentBest = new AiMove(firstMove, firstResult.score());
+        } catch (IllegalMoveException e) {
+          // Illegal move, normal search
+        }
+      }
+
+      final float initialAlpha = currentBest.score();
+
+      for (int i = 1; i < rootMoves.size(); i++) {
+        final Move move = rootMoves.get(i);
         final int currentDepth = depth; // Create a final copy of depth
         futures.add(
             executor.submit(
                 () -> {
                   final GameAi gameCopy = gameAi.copy();
                   try {
-                    final Move promotedMove = AlgorithmHelpers.promoteMove(move);
-                    gameCopy.playMove(promotedMove);
+                    gameCopy.playMove(move);
                     final AiMove result =
                         alphaBeta(
                             gameCopy,
                             currentDepth - 1,
                             !player,
-                            -Float.MAX_VALUE,
+                            initialAlpha,
                             Float.MAX_VALUE,
                             player);
-                    return new AiMove(promotedMove, result.score());
+                    return new AiMove(move, result.score());
                   } catch (IllegalMoveException e) {
-                    return new AiMove(null, player ? -Float.MAX_VALUE : Float.MAX_VALUE);
+                    return new AiMove(null, -Float.MAX_VALUE);
                   }
                 }));
       }
 
-      AiMove currentBest = null;
       for (final Future<AiMove> future : futures) {
         try {
           final AiMove candidate = future.get();
           if (candidate.move() != null) {
-            if (currentBest == null
-                || (player && candidate.score() > currentBest.score())
-                || (!player && candidate.score() < currentBest.score())) {
+            if (currentBest == null || candidate.score() > currentBest.score()) {
               currentBest = candidate;
             }
           }
@@ -160,16 +173,16 @@ public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
 
     if (solver.isSearchStopped()) {
       stoppedEarly.set(true);
-      return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
+      return new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
 
     if (depth == 0 || game.isOver()) {
-      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 
     final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
-    sortMoves(moves, game);
+    MoveOrdering.moveOrder(moves);
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
@@ -181,7 +194,6 @@ public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
       }
 
       try {
-        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         final AiMove currMove =
             alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
@@ -208,64 +220,5 @@ public class AlphaBetaIterativeDeepeningParallel implements SearchAlgorithm {
     }
 
     return bestMove;
-  }
-
-  /**
-   * Sorts the moves list based on the score of each move. The score is determined by the
-   * evaluateMove function.
-   *
-   * @param moves The list of moves to be sorted.
-   * @param game The game state.
-   */
-  private void sortMoves(final List<Move> moves, final GameAi game) {
-    moves.sort(Comparator.comparingInt((Move m) -> -evaluateMove(m, game)));
-  }
-
-  /**
-   * Evaluates the given move by giving a score based on the captured piece. The score is as
-   * follows:
-   *
-   * <ul>
-   *   <li>Pawn: 1
-   *   <li>Knights and Bishops: 3
-   *   <li>Rooks: 5
-   *   <li>Queens: 9
-   * </ul>
-   *
-   * <p>If the move is a promotion, an additional 100 points is given.
-   *
-   * @param move The move to be evaluated.
-   * @param game The current game state.
-   * @return The score of the move.
-   */
-  private int evaluateMove(final Move move, final GameAi game) {
-    final ColoredPiece target = game.getBoard().getPieceAt(move.getDest().x(), move.getDest().y());
-    int score = 0;
-
-    if (target != null) {
-      switch (target.getPiece()) {
-        case PAWN:
-          score += 1;
-          break;
-        case KNIGHT:
-        case BISHOP:
-          score += 3;
-          break;
-        case ROOK:
-          score += 5;
-          break;
-        case QUEEN:
-          score += 9;
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (move instanceof PromoteMove) {
-      score += 100;
-    }
-
-    return score;
   }
 }
