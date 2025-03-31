@@ -563,6 +563,76 @@ COMPLETER.
 \subsection{Code propre}
 COMPLETER.
 
+\section{Performances et Limitations}
+\subsection{Traces}
+PRINT TRACES.
+
+\subsection{Optimisations Intelligence Artificielle}
+COMPARAISON ALPHA\_BETA, ALPHA\_BETA\_PARALLEL, ALPHA\_BETA\_IT
+
+\subsection{Profondeur de recherche}
+d = 6+ très long.
+
+\subsection{Vue}
+JavaFX, bien que pratique pour développer des GUI en Java, présente des limites en termes de performance, en particulier en ce qui concerne
+la fluidité et les animations. En effectuant quelques recherches, on se rend compte que l'engine de rendu du framework repose principalement
+sur Java2D et utilise une pipeline GPU limitée, ce qui peut causer des ralentissements, surtout pour les logiciels nécessitant du refresh
+fréquent. Java est globalement un langage rapide, mais il est limité. Si le projet avait été développé en C++, avec notamment
+l'aide d'OpenGL, la vue serait bien plus efficace. Sinon, en comparaison, l'utilisation d'un engine dédié comme Unity ou Godot permettrait
+un meilleur rendu général, tandis qu'une approche basée sur les technologies web (HTML, CSS, WebGL) offrirait une meilleure portabilité et une
+optimisation native des performances. Finalement, JavaFx se trouve être une solution pour l'interface graphique dans notre cas, et même si
+pratique et bien architecturé, reste limité en termes de performances graphiques.
+
+\section{Critiques et Perspectives}
+Ce projet a été décomposé en une soixantaine de besoins afin d'être réalisé. Même si cette réalisation a été plutôt atteignaible, il est important de
+faire part des points faibles de l'application, de ses points forts, et potentiellement des nouvelles fonctionnalités ou améliorations qui pourraient ou 
+auraient pu voir le jour dans le cadre de cette U.E.
+\subsection{Critiques}
+\subsubsection{MonteCarloTreeSearch}
+Le Monte Carlo Tree Search (MCTS) est largement utilisé dans les jeux de stratégie tels que le Go, où la non-présence d'heuristiques efficaces rend les méthodes classiques d'IA comme AlphaBeta moins adaptées. Cependant, aux échecs, MCTS est rarement employé à cause d'une multitude de limitations.
+Premièrement, les échecs bénéficient d'évaluations positionnelles efficaces et d'une base théorique bien établie, ce qui permet aux algorithmes classiques comme Minimax avec AlphaBeta d'explorer l'arbre de jeu de manière plus efficace. Contrairement à des derniers, MCTS ne se base pas sur des critères d'évaluation et d'optimisations. Ensuite, MCTS est intrinsèquement plus lent que les méthodes basées sur Minimax. En effet, sans optimisation spécifique, il doit effectuer un grand nombre de simulations pour obtenir une estimation intéressante de la valeur d'un GameState. Dans un jeu comme les échecs, où le facteur de branchement moyen est élevé, MCTS a besoin d'un (très) grand nombre d'itérations pour converger vers des décisions "optimales" comparables à celles d'Alpha-Beta Pruning. La simulation de coups est très "Brute-Force", surtout sans optimisation, car le choix des coups par l'algorithme s'effectue de manière complètement aléatoire (pour la partie simulations).
+Enfin, les engines d'échecs modernes tirent parti d'optimisations telles que le move ordering, des bibliothèques d'ouvertures, améliorant ainsi les performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par des techniques spécifiques d'IA comme les réseaux de neuronnes, son efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs. Maintenant, le groupe admet que son implémentation du MCTS est 
+lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState
+Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité sans optimisation.
+
+\subsection{Perspectives}
+\subsubsection{Mode Multi-joueur}
+Certainement l'amélioration la plus intrigante serait un mode multi-joueur, dans le même style que chess.com ou lichess.org pour ne citer qu'eux.
+Le projet prendrait néanmoins une toute autre direction puisque les joueurs devraient se connecter à un serveur afin de jouer en temps réel. Autrement,
+par Peer-To-Peer, même si soultion "bancale" de par la nécessité d'encryption etc.
+
+\subsubsection{Tourner l'échiquier}
+Dans notre application, c'est toujours les pièces blanches qui sont situées en bas. Une amélioration graphique serait la possibilité d'inverser le plateau
+de jeu en pleine partie de telle sorte que les pièces noires seraient en bas. Cela deviendrait plus pratique pour les utilisateurs qui jouent les Noirs.
+
+\subsubsection{Historique interactif}
+Une fonctionnalité additionnelle et assez pratique concernerait la possibilité de cliquer sur un coup dans l'historique afin de revenir au moment de la 
+partie correspondant. De cette manière, on peut reprendre un nombre de coups conséquent sans avoir à cliquer sur un boutton "Undo" N fois, N étant le nombre 
+de coups que l'on souhaite reprendre.
+
+\subsubsection{Historique scrollable}
+Une nouvelle fois, en ce qui concerne l'interface utilisateur, une option supplémentaire serait un historique scrollable. C'est-à-dire que l'utilisateur 
+verrait par défaut les derniers coups de la partie. En effet, lorsqu'il y a un nombre conséquent de coups joués dans une partie, l'historique peut prendre 
+de la place. Donc, on purrait ajouter la possibilité de scroller dans l'historique en haut et en bas.
+
+\subsubsection{Coups préparés}
+Lorsque le joueur joue contre une IA, il pourrait effectuer un 'pre-move', c'est-à-dire préparer un coup sur l'échiquier avant que l'IA n'ait joué. Dès que 
+le joueur IA jouerait son coup, le coup préparé par l'utilisateur serait immédiatement joué. Ceci peut être pratique en début de partie ou en fin de partie 
+ou plus souvent lorsqu'il n'y a pas nécessité de réflexion pendant longtemps.
+
+\subsubsection{Analyser des parties}
+Une fonctionnalité supplémentaire pourrait concerner la Game Review. L'utilisateur serait capable à la fin d'une partie (ou lancer depuis un fichier en mode 
+analyse) de se balader dans la partie, dérouler les coups notamment pour voir les erreurs ou les brillances qu'un joueur aurait faites.
+
+\subsubsection{Surligner des coups}
+L'utilisateur aurait la possibilité de "surligner" des coups afin de montrer des déroulements de partie ou d'y voir plus clair dans sa réflexion.
+Cela ressemblerait à quelque chose du style :\\
+\begin{figure}[h]
+    \caption{Exemple surlignage de coups}
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{surlignage-coups}
+\end{figure}
+
 \section{Besoins visés}
 \subsection{Quels besoins ?}
 Dans le sujet donné, il y avait une liste de 60 besoins.
