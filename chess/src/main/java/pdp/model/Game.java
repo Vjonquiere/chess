@@ -134,6 +134,13 @@ public final class Game extends GameAbstract {
     this.aiPlayedItsLastMove = false;
 
     if (instance != null) {
+      if (instance.getTimer(true) != null) {
+        instance.getTimer(true).stop();
+      }
+      if (instance.getTimer(false) != null) {
+        instance.getTimer(false).stop();
+      }
+
       if (instance.getBlackSolver() != null) {
         instance.getBlackSolver().stopSearch(false);
       }
