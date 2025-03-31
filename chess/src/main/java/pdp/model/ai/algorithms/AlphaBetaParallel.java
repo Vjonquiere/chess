@@ -56,6 +56,7 @@ public class AlphaBetaParallel extends SearchAlgorithm {
     final List<Future<AiMove>> futures = new CopyOnWriteArrayList<>();
 
     final List<Move> moves = aiGame.getBoard().getAllAvailableMoves(player);
+    MoveOrdering.moveOrder(moves);
 
     for (final Move move : moves) {
       futures.add(
@@ -63,12 +64,11 @@ public class AlphaBetaParallel extends SearchAlgorithm {
               () -> {
                 final GameAi gameCopy = aiGame.copy();
                 try {
-                  final Move promoteMove = AlgorithmHelpers.promoteMove(move);
-                  gameCopy.playMove(promoteMove);
+                  gameCopy.playMove(move);
                   final AiMove result =
                       alphaBeta(
                           gameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
-                  return new AiMove(promoteMove, result.score());
+                  return new AiMove(move, result.score());
                 } catch (IllegalMoveException e) {
                   return new AiMove(null, -Float.MAX_VALUE);
                 }
@@ -136,7 +136,6 @@ public class AlphaBetaParallel extends SearchAlgorithm {
         break;
       }
       try {
-        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         final AiMove currMove =
             alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);

@@ -68,7 +68,6 @@ public class Minimax extends SearchAlgorithm {
         break;
       }
       try {
-        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         final AiMove currMove = minimax(game, depth - 1, !currentPlayer, originalPlayer);
         game.previousState();

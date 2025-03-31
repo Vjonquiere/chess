@@ -86,8 +86,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
                 () -> {
                   GameAi gameCopy = gameAi.copy();
                   try {
-                    Move promotedMove = AlgorithmHelpers.promoteMove(move);
-                    gameCopy.playMove(promotedMove);
+                    gameCopy.playMove(move);
                     AiMove result =
                         alphaBeta(
                             gameCopy,
@@ -96,7 +95,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
                             -Float.MAX_VALUE,
                             Float.MAX_VALUE,
                             player);
-                    return new AiMove(promotedMove, result.score());
+                    return new AiMove(move, result.score());
                   } catch (IllegalMoveException e) {
                     return new AiMove(null, player ? -Float.MAX_VALUE : Float.MAX_VALUE);
                   }
@@ -181,7 +180,6 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
       }
 
       try {
-        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         AiMove currMove = alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
         game.previousState();

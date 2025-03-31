@@ -143,11 +143,10 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
         return node;
       }
       try {
-        final Move promoteMovemove = AlgorithmHelpers.promoteMove(move);
         final GameState nextState = node.getGameState().getCopy();
-        game.playMoveOtherGameState(nextState, promoteMovemove);
+        game.playMoveOtherGameState(nextState, move);
         // Add node to tree
-        node.addChildToTree(new TreeNodeMonteCarlo(nextState, node, promoteMovemove));
+        node.addChildToTree(new TreeNodeMonteCarlo(nextState, node, move));
       } catch (Exception e) {
         // Illegal move was caught
         continue;
@@ -206,11 +205,10 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
           return parentNode.getGameState().isWhiteTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         }
         try {
-          final Move promotedMove = AlgorithmHelpers.promoteMove(move);
           // Copy GameState and try to play the move to see if move is valid and legal
           final GameState testState = simulationState.getCopy();
-          game.playMoveOtherGameState(testState, promotedMove);
-          legalMoves.add(promotedMove);
+          game.playMoveOtherGameState(testState, move);
+          legalMoves.add(move);
         } catch (Exception ignored) {
           // Caught illegal move, pursue
         }

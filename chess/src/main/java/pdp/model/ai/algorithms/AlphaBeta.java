@@ -113,8 +113,6 @@ public class AlphaBeta extends SearchAlgorithm {
         break;
       }
       try {
-
-        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         final AiMove currMove =
             alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
