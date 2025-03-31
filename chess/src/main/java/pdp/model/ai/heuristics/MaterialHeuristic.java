@@ -10,10 +10,19 @@ public class MaterialHeuristic implements Heuristic {
   /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
+  /** Bonus score for having a pawn on the board. */
   private static final float PAWN_VALUE = 1f;
+
+  /** Bonus score for having a queen on the board. */
   private static final float QUEEN_VALUE = 9f;
+
+  /** Bonus score for having a bishop on the board. */
   private static final float BISHOP_VALUE = 3f;
+
+  /** Bonus score for having a knight on the board. */
   private static final float KNIGHT_VALUE = 3f;
+
+  /** Bonus score for having a rook on the board. */
   private static final float ROOK_VALUE = 5f;
 
   /** The multiplier used to keep the values under SCORE_CAP. */

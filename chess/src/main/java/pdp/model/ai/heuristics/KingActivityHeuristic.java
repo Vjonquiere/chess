@@ -11,9 +11,16 @@ public class KingActivityHeuristic implements Heuristic {
   /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
+  /** Score obtained when the king has more than five moves available. */
   private static final float ACTIVITY_SCORE = 10f;
+
+  /** Score obtained when the king is in the center of the board. */
   private static final float CENTER_SCORE = 20f;
+
+  /** Score obtained when the king is not in the center. */
   private static final float NOT_CENTER_MAX = 15f;
+
+  /** Score penalty calculated based on the distance between the king and the center. */
   private static final float CENTER_DISTANCE_DECREASE = 3f;
 
   /** The multiplier used to keep the values under SCORE_CAP. */
@@ -91,9 +98,8 @@ public class KingActivityHeuristic implements Heuristic {
    */
   private float kingActivityScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board;
     // Check the activity of the King
-    final List<Move> kingMoves = bitboard.retrieveKingMoves(isWhite);
+    final List<Move> kingMoves = board.retrieveKingMoves(isWhite);
     if (kingMoves.size() >= 5) {
       score += ACTIVITY_SCORE;
     }

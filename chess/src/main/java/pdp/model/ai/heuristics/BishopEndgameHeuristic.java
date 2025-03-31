@@ -11,10 +11,19 @@ public class BishopEndgameHeuristic implements Heuristic {
   /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
+  /** Score penalty for a bad bishop (a bishop blocked by its own pawns). */
   private static final float BAD_BISHOP_SCORE = 5f;
+
+  /** Score penalty for having two bishops on the same color squares. */
   private static final float SAME_COLOR_BISHOPS_SAME_PLAYER_SCORE = -10f;
+
+  /** Maximum score for bishop centralization. */
   private static final float CENTRALIZATION_SCORE_MAX = 10f;
+
+  /** Decrease step for centralization score based on distance from center. */
   private static final float CENTRALIZATION_SCORE_DECREASE_STEP = 2f;
+
+  /** Score per possible bishop move (mobility evaluation). */
   private static final float MOBILITY_SCORE = 2f;
 
   // maximum calculated for 2 bishops, 14 moves
@@ -58,8 +67,7 @@ public class BishopEndgameHeuristic implements Heuristic {
    */
   private float evaluateBishopMobility(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board;
-    final List<Move> bishopMoves = bitboard.retrieveBishopMoves(isWhite);
+    final List<Move> bishopMoves = board.retrieveBishopMoves(isWhite);
 
     score += bishopMoves.size() * MOBILITY_SCORE;
     return score;
@@ -78,13 +86,10 @@ public class BishopEndgameHeuristic implements Heuristic {
     if (bishops.size() < 2) {
       return 0;
     }
-
-    boolean sameColorBishops = false;
-    if (bishops.size() > 0) {
-      sameColorBishops =
-          (bishops.get(0).x() + bishops.get(0).y()) % 2
-              == (bishops.get(1).x() + bishops.get(1).y()) % 2;
-    }
+    // if at least one bishop.
+    boolean sameColorBishops =
+        (bishops.get(0).x() + bishops.get(0).y()) % 2
+            == (bishops.get(1).x() + bishops.get(1).y()) % 2;
 
     if (sameColorBishops) {
       return SAME_COLOR_BISHOPS_SAME_PLAYER_SCORE;

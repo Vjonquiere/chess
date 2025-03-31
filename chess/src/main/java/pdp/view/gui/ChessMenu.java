@@ -37,7 +37,8 @@ import pdp.view.gui.themes.ColorTheme;
 
 /** Menu of the application. */
 public class ChessMenu extends HBox {
-  private MessageDisplay messageDisplay;
+  /** Place to display messages for the user in the menu. */
+  private final MessageDisplay messageDisplay;
 
   /**
    * Creates the menu of out application. Composed of different menus : File, Game, About and

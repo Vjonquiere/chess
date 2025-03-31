@@ -30,9 +30,16 @@ import pdp.utils.Logging;
 
 /** View used to communicate with other chess engines. */
 public class UciView implements View {
+  /** Boolean to indicate whether the view is running or not. */
   private boolean running = false;
+
+  /** Map making a correspondance between a string and the command it represents. */
   private final Map<String, CommandEntry> commands = new HashMap<>();
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(UciView.class.getName());
+
+  /** Solver to make the moves against another AI. */
   private final Solver solver = new Solver();
 
   static {

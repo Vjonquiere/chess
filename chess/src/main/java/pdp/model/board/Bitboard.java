@@ -5,12 +5,19 @@ import java.util.List;
 
 /** Bitboard structure with all needed treatments. */
 public class Bitboard {
+  /** Long int representing a bitboard state. */
   private long bitboard;
 
+  /** Create an empty bitboard. */
   public Bitboard() {
     this(0L);
   }
 
+  /**
+   * Create a bitboard equal to the number given in arguments.
+   *
+   * @param bitboard valut to initialize the field bitboard to
+   */
   public Bitboard(final long bitboard) {
     this.bitboard = bitboard;
   }

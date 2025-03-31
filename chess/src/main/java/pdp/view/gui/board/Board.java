@@ -37,7 +37,7 @@ public class Board extends GridPane {
   /** Map mapping the postions of the boardRep to a square. */
   private final Map<Position, Square> pieces = new HashMap<>();
 
-  /** List containing the positions of the squares reachable from the the selected squares. */
+  /** List containing the positions of the squares reachable from the selected squares. */
   private List<Position> reachableSquares;
 
   /** List containing the position of the hint move. */
@@ -46,12 +46,13 @@ public class Board extends GridPane {
   /** List containing the positions of the last move played. */
   private final List<Position> moveSquares = new LinkedList<>();
 
-  /** Position of the square where the king is check. */
+  /** Position of the square where the king is in check. */
   private Position checkSquare;
 
   /** Stage containing the Board. */
   private Stage stage;
 
+  /** Size of the square to draw. */
   private double squareSize;
 
   /**

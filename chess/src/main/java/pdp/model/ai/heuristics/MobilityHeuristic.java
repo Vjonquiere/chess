@@ -9,6 +9,7 @@ public class MobilityHeuristic implements Heuristic {
   /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100;
 
+  /** Value of a move. */
   private static final float MOVE_VALUE = 1;
 
   /**

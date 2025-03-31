@@ -23,7 +23,7 @@ public class Square extends StackPane {
   /** Canvas drawn if the square is a hint. */
   private final Canvas hintSq;
 
-  /** Canvas drawn if the square is check. */
+  /** Canvas drawn if the square is in check. */
   private final Canvas checkSq;
 
   /** Piece to draw on the square. */
@@ -32,7 +32,8 @@ public class Square extends StackPane {
   /** Image of the piece to draw. */
   private ImageView pieceImage;
 
-  private double squareSize;
+  /** Size of the square to draw. */
+  private final double squareSize;
 
   /**
    * Build a square of the given color with the sprite of the given piece.

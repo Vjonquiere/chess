@@ -7,8 +7,13 @@ import pdp.utils.Logging;
 
 /** Data structure use in History node to represent a game state. */
 public class HistoryState {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(HistoryState.class.getName());
+
+  /** GameState of the node. */
   private final GameState gameState;
+
+  /** Move made to get to this game state. */
   private final Move move;
 
   static {

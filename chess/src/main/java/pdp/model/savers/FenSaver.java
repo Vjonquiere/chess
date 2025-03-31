@@ -11,7 +11,6 @@ import pdp.model.piece.Piece;
 
 /** Save boards to the universal FEN format. */
 public class FenSaver {
-  private int empty = 0;
 
   /**
    * Generate the FEN string representing the current board position.
