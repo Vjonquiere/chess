@@ -23,7 +23,7 @@ public class Square extends StackPane {
   /** Canvas drawn if the square is a hint. */
   private final Canvas hintSq;
 
-  /** Canvas drawn if the square is check. */
+  /** Canvas drawn if the square is in check. */
   private final Canvas checkSq;
 
   /** Piece to draw on the square. */
@@ -32,7 +32,8 @@ public class Square extends StackPane {
   /** Image of the piece to draw. */
   private ImageView pieceImage;
 
-  private double squareSize;
+  /** Size of the square to draw. */
+  private final double squareSize;
 
   /**
    * Build a square of the given color with the sprite of the given piece.
@@ -40,7 +41,7 @@ public class Square extends StackPane {
    * @param piece The piece on the square
    * @param squareColor The default color of the square
    */
-  public Square(final ColoredPiece piece, final boolean squareColor, double squareSize) {
+  public Square(final ColoredPiece piece, final boolean squareColor, final double squareSize) {
     super();
     this.squareSize = squareSize;
     this.setStyle("-fx-border-width: 0; -fx-padding: 0;");

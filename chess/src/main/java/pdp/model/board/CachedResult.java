@@ -4,13 +4,29 @@ import pdp.model.piece.Color;
 
 /** Structure of the elements present in bitboard cache. Avoid recalculating expensive methods. */
 public class CachedResult {
+
+  /** Boolean to indicate whether the white player is in check. */
   private Boolean isCheckWhite = null;
+
+  /** Boolean to indicate whether the white player is checkmate. */
   private Boolean isCheckMateWhite = null;
+
+  /** Boolean to indicate whether the black player is in check. */
   private Boolean isCheckBlack = null;
+
+  /** Boolean to indicate whether the black player is checkmate. */
   private Boolean isCheckMateBlack = null;
+
+  /** Boolean to indicate whether the white player is stalemate. */
   private Boolean isStalemateWhite = null;
+
+  /** Boolean to indicate whether the black player is stalemate. */
   private Boolean isStalemateBlack = null;
+
+  /** Attack bitboard of the white player. */
   private Long whiteAttackBitboard = null;
+
+  /** Attack bitboard of the black player. */
   private Long blackAttackBitboard = null;
 
   /**

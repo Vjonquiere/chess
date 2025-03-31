@@ -23,14 +23,14 @@ public class YesNoPopUp extends VBox {
    * @param action The action to be executed if the refuse button is clicked or the popup is closed.
    *     Can be null.
    */
-  public YesNoPopUp(String title, Command command, Runnable action) {
-    Stage popupStage = new Stage();
+  public YesNoPopUp(final String title, final Command command, final Runnable action) {
+    final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText(title));
     popupStage.initModality(Modality.APPLICATION_MODAL);
 
-    Button acceptButton = new Button(TextGetter.getText("accept"));
+    final Button acceptButton = new Button(TextGetter.getText("accept"));
 
-    Button refuseButton = new Button(TextGetter.getText("refuse"));
+    final Button refuseButton = new Button(TextGetter.getText("refuse"));
 
     acceptButton.setOnAction(
         e -> {
@@ -56,14 +56,14 @@ public class YesNoPopUp extends VBox {
           popupStage.close();
         });
 
-    HBox buttonContainer = new HBox(10, acceptButton, refuseButton);
+    final HBox buttonContainer = new HBox(10, acceptButton, refuseButton);
     buttonContainer.setAlignment(Pos.CENTER);
 
-    VBox layout = new VBox(15, buttonContainer);
+    final VBox layout = new VBox(15, buttonContainer);
     layout.setAlignment(Pos.CENTER);
     layout.setStyle("-fx-padding: 20;");
 
-    Scene scene = new Scene(layout, 300, 150);
+    final Scene scene = new Scene(layout, 300, 150);
     GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();

@@ -17,6 +17,7 @@ import pdp.utils.Position;
 
 /** Specific implementation of game for AI players. */
 public final class GameAi extends GameAbstract {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(GameAi.class.getName());
 
   static {

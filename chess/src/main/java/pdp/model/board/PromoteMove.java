@@ -6,7 +6,8 @@ import pdp.utils.Position;
 
 /** Special move representation for pawn promotion. */
 public class PromoteMove extends Move {
-  private Piece promPiece;
+  /** Piece for the pawn to be promoted to. */
+  private final Piece promPiece;
 
   /**
    * Constructs a new PromoteMove object with the specified source, destination and promoted piece.
@@ -19,6 +20,17 @@ public class PromoteMove extends Move {
     this(source, dest, promPiece, null, false, null);
   }
 
+  /**
+   * Constructs a new PromoteMove object with the specified source, destination, promoted piece,
+   * piece to promote, boolean to indicate if the move is a capture and the piece taken and .
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   * @param promPiece The piece that this move promotes to.
+   * @param piece Piece making the move.
+   * @param isTake True if a piece ius taken during the move.
+   * @param takenPiece Piece taken during the move
+   */
   public PromoteMove(
       Position source,
       Position dest,

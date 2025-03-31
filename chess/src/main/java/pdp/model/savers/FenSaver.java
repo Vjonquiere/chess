@@ -11,7 +11,6 @@ import pdp.model.piece.Piece;
 
 /** Save boards to the universal FEN format. */
 public class FenSaver {
-  private int empty = 0;
 
   /**
    * Generate the FEN string representing the current board position.
@@ -19,14 +18,14 @@ public class FenSaver {
    * @param board The board and current player to save
    * @return The FEN string
    */
-  public static String saveBoard(FileBoard board) {
-    StringBuilder sb = new StringBuilder();
-    BoardRepresentation representation = board.board();
+  public static String saveBoard(final FileBoard board) {
+    final StringBuilder sb = new StringBuilder();
+    final BoardRepresentation representation = board.board();
 
     for (int y = 7; y >= 0; y--) {
       int emptyCount = 0;
       for (int x = 0; x <= 7; x++) {
-        ColoredPiece piece = representation.getPieceAt(x, y);
+        final ColoredPiece piece = representation.getPieceAt(x, y);
         if (Objects.equals(piece, new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
           emptyCount++;
         } else {
@@ -48,7 +47,7 @@ public class FenSaver {
     sb.append(" ").append(board.isWhiteTurn() ? "w" : "b");
 
     if (board.header() != null) {
-      FenHeader header = board.header();
+      final FenHeader header = board.header();
       String castling = "";
       if (header.whiteKingCastling()) {
         castling += "K";
