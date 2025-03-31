@@ -427,11 +427,10 @@ Ces noeuds sont reliés entre eux par des coups, permettant de jouer ou annuler 
 de la partie.\\
 Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
 
-\newpage
 \begin{figure}[h]
     \caption{Exemple historique de coups}
     \centering
-    \includegraphics[width=\textwidth,height=7.0cm,keepaspectratio]{historique-coups}
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{historique-coups}
 \end{figure}
 
 \subsection{Intelligence Artificielle} \label{AI}
@@ -455,14 +454,28 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
     \item La structure de pions: Plus on aura une structure de pions solide, plus on aura de potentiel d'attaque et de défense puisque les pions sont
     des pièces "faibles" lorsqu'ils sont seuls et/ou non défendus.
     \item La promotion: Plus on a de pions avancés, plus on a de chance d'atteindre la dernière rangée et changer notre pion en une pièce plus importante,
-    comme la Dame par exemple, nous donnant plus d'options.
+    comme la Dame par exemple, nous donnant plus d'options.\\
 \end{itemize}
 
 Seulement ceux-là sont cités ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
 Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. Puisque c'est un jeu à somme nulle,
-c'est la marche à suivre. 
-
-PARLER BRIEVEMENT DU COMPOSITE PATTERN (CAR ARCHI ?) ET EXPLIQUER STANDARD ET ENDGAME.
+c'est la marche à suivre. \\
+Dans ce projet, le groupe a développé une multitude d'heuristiques permettant d'évaluer des positions. Essentiellement, elles peuvent être regroupées
+en deux catégories: Heuristiques "STANDARD" et Heuristiques "ENDGAME" ("Fin de partie"). En se servant du design pattern Composite, on combine les
+heuristiques codées afin de se baser sur "beaucoup" de facteurs dans le but d'obtenir une évaluation d'une position la plus précise possible. Ainsi,
+l'Intelligence Artificielle (MiniMax et AlphaBeta) utilise ces évaluations pour en déduire un "meilleur coup". STANDARD et ENDGAME sont les 
+heuristiques par défaut lorsque l'IA est lancée. Le programme vérifie à tout moment (après chaque coup joué ou après chaque coup repris)
+si le jeu se trouve être dans un stade de fin de partie ou non. Si la configuration est considérée être une fin de partie, alors l'heuristique utilisée
+parl'IA devient ENDGAME, afin de prendre en compte des facteurs propres aux fins de partie. Autrement, elle utilise la STANDARD.\\
+Voici quelques exemples d'heuristiques que le groupe a pu développer:
+\begin{itemize}
+    \item KingSafetyHeuristic : Une heuristique évaluant la sécurité du Roi.
+    \item MaterialHeuristic : Une heuristique évaluant le matériel disponible de chaque côté.
+    \item SpaceControlHeuristic : Une heuristique évaluant le contrôle de l'échiquier en se basant notamment sur le nombre
+    de coups possibles.
+    \item DevelopmentHeuristic : Une heuristique évaluant le développement des pièces sur l'échiquier.
+    \item KingActivityHeuristic : Une heuristique évaluant l'activité du Roi (utilisée pour les fins de partie).
+\end{itemize}
 
 \subsubsection{Algorithmes}
 Dans cette partie Intelligence Artificielle, on va essentiellement se servir des 3 algorithmes suivants (dont 2 vus au dernier semestre):
@@ -473,7 +486,7 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les nœuds de
     l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des nœuds va être une évaluation. La complexité en espace ne change pas, mais
     en temps nous sommes donc en O($b^p$) où p = d/2.
-    \item \subsection{Monte Carlo Tree Search}
+    \item MonteCarloTreeSearch:
     Celui-ci peut se décomposer en quatre étapes : \textbf{Selection}, \textbf{Expansion}, \textbf{Simulation}, et \textbf{BackPropagation}. Pour faire simple, on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup, ou encore des nœuds qui n'ont pas encore été explorés. Il s'agit de l'UCT (Upper Confidence bound applied to Trees).\
     L'UCT est une formule permettant d'équilibrer l'exploration et l'exploitation dans la sélection des coups :
     \begin{equation}
@@ -493,7 +506,9 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau nœud, on simule une partie ou une pseudo-partie
     aléatoirement pour estimer le résultat potentiel. Finalement, lorsque l'on obtient un résultat, on fait remonter l'évaluation (BackPropagation)
     et/ou les informations importantes vers le haut de l'arbre pour plus tard agir en conséquence. En temps, on se rapproche de O(n*d), où n est le
-    nombre de simulations effectuées, et d la profondeur moyenne. En espace, COMPLETER PAR LA COMPLEXITE CORRECTE.\\
+    nombre de simulations effectuées, et d la profondeur moyenne. En espace, dans le pire des cas, on peut se trouver en O(N) où N est le nombre
+    de simulations jouées. Maintenant, dans le cas moyen, on est en O($b^p$) avec d la profondeur et b le facteur de branchement.
+    Cependant, dans le cadre de ce projet, MCTS n'est pas borné par une profondeur. On peut donc dire que l'on se trouve en O(N).\\
     En ce qui concerne la partie structures de données, le MCTS se base une classe Java, appelée dans le code 'TreeNodeMonteCarlo'.
     Comme son nom l'indique, il s'agit d'un objet représentant un noeud de l'arbre sur lequel l'algorithme va se dérouler.
     Essentiellement, cet objet va contenir les informations suivantes:
@@ -520,7 +535,7 @@ supplémentaires pour les règles spécifiques. Pour chaque combinaison case-pi�
 de plateaux vont être rencontrées. Le hachage va consister à combiner toutes ces chaînes de bits pour chaque configuration avec l'opérateur XOR,
 pour à la fin obtenir un hachage final pour chaque position. Ainsi, en utilisant une HashMap, on va conserver tous les hachages représantant toutes les
 configurations possibles pour les utiliser plus tard. Par exemple, pour la règle "Threefold repetition", il faut vérifier si dans cette table de hachage
-il existe un hachage H tel que H >= 3. Si c'est le cas, alors la partie se termine en égalité.
+il existe un hachage H tel que H $\ge$ 3. Si c'est le cas, alors la partie se termine en égalité.
 \\Donc, dans notre cas, on aura quelque chose de la sorte:\\
 \begin{itemize}
     \item ZobristBoardTable[64][12]
@@ -535,6 +550,18 @@ un coup, donc que l'on change l'état du jeu, il n'y a pas à tout recalculer. D
 sa case de départ, puis celui pour la case d'arrivée de cette pièce, et éventuellement changer les bits pour les règles spécifiques.
 Pour l'IA, cette méthode sera clé car elle fera gagner en performance, car les états de jeu peuvent se répéter un grand nombre de fois (même si pas
 toujours dans le même ordre).
+
+\subsection{Cache}
+Afin que le programme soit plus performant, un système de "cache" a été mis en place. COMPLETER.
+
+\subsection{Bidirectional Map}
+COMPLETER.
+
+\subsection{Iterative Deepening}
+COMPLETER.
+
+\subsection{Code propre}
+COMPLETER.
 
 \section{Besoins visés}
 \subsection{Quels besoins ?}
