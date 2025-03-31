@@ -6,10 +6,10 @@ import pdp.utils.TextGetter;
 
 /** GUI widget to display all the player information. */
 public class PlayerPanel extends VBox {
-  /** Informations concerning the white player. */
+  /** Information concerning the white player. */
   private final PlayerInfos whitePlayer;
 
-  /** Informations concerning the white player. */
+  /** Information concerning the white player. */
   private final PlayerInfos blackPlayer;
 
   /** Build a new player panel from current game instance. */

@@ -272,8 +272,8 @@ public class Move {
       throw new InvalidPositionException(move);
     }
 
-    int x = colLetter - 'a';
-    int y = rowNumber - 1;
+    final int x = colLetter - 'a';
+    final int y = rowNumber - 1;
 
     return new Position(x, y);
   }
@@ -406,7 +406,7 @@ public class Move {
   /**
    * Checks if the move is a capture.
    *
-   * @return true if the move is a capture,f alse otherwise.
+   * @return true if the move is a capture,false otherwise.
    */
   public boolean isTake() {
     return isTake;
@@ -501,10 +501,9 @@ public class Move {
     if (this == obj) {
       return true;
     }
-    if (obj == null || !(obj instanceof Move)) {
+    if (!(obj instanceof Move move)) {
       return false;
     }
-    final Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }
 

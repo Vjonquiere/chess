@@ -47,7 +47,7 @@ public abstract class GameInitializer {
     debug(LOGGER, "Initializing game with options: " + options);
 
     Timer timer = null;
-    Integer blitzTime = 30 * 60;
+    int blitzTime = 30 * 60;
     if (options.containsKey(OptionType.BLITZ)) {
       if (!options.containsKey(OptionType.TIME)) {
         options.put(OptionType.TIME, "30");
@@ -322,11 +322,7 @@ public abstract class GameInitializer {
           }
 
           model.setLoadedFromFile();
-          if (moves.isEmpty()) {
-            model.setLoadingFileHasHistory(false);
-          } else {
-            model.setLoadingFileHasHistory(true);
-          }
+          model.setLoadingFileHasHistory(!moves.isEmpty());
           model.setContestModeOnOrOff(true);
           debug(LOGGER, "Game was init with contest mode");
 
