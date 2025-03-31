@@ -1,6 +1,8 @@
 package pdp.model;
 
-import static pdp.utils.Logging.*;
+import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
@@ -19,6 +21,7 @@ import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
+import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.history.History;
@@ -585,7 +588,7 @@ public final class Game extends GameAbstract {
     }
 
     super.getGameState().switchPlayerTurn();
-    if (move.isCastle() || move instanceof PromoteMove) {
+    if (move instanceof CastlingMove || move instanceof PromoteMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(
               super.getZobristHasher()

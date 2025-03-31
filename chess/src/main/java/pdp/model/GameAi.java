@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
+import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
@@ -86,7 +87,7 @@ public final class GameAi extends GameAbstract {
     }
 
     super.getGameState().switchPlayerTurn();
-    if (move.isCastle() || move instanceof PromoteMove) {
+    if (move instanceof CastlingMove || move instanceof PromoteMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(
               super.getZobristHasher()

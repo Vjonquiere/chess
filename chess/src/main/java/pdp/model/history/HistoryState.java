@@ -108,6 +108,7 @@ public class HistoryState {
    *
    * @return A string representing the move in the given format.
    */
+  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
