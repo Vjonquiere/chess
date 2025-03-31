@@ -17,8 +17,8 @@ public class BoardSaver {
    * @param board The board and current player to save
    * @return The board and current player String
    */
-  public static String saveBoard(FileBoard board) {
-    StringBuilder sb = new StringBuilder();
+  public static String saveBoard(final FileBoard board) {
+    final StringBuilder sb = new StringBuilder();
     // Save current player
     if (board.isWhiteTurn()) {
       sb.append("W\n");
@@ -27,7 +27,7 @@ public class BoardSaver {
     }
 
     if (board.header() != null) {
-      FenHeader header = board.header();
+      final FenHeader header = board.header();
       if (header.whiteKingCastling()) {
         sb.append("K");
       }
@@ -59,10 +59,10 @@ public class BoardSaver {
       sb.append("\n");
     }
 
-    BoardRepresentation representation = board.board();
+    final BoardRepresentation representation = board.board();
     for (int y = 7; y >= 0; y--) {
       for (int x = 0; x <= 7; x++) {
-        ColoredPiece piece = representation.getPieceAt(x, y);
+        final ColoredPiece piece = representation.getPieceAt(x, y);
         sb.append(piece.getPiece().getCharRepresentation(piece.getColor() == Color.WHITE))
             .append(" ");
       }

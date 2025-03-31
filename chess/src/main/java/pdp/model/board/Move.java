@@ -13,16 +13,32 @@ import pdp.utils.Position;
 
 /** Move representation for all move types. */
 public class Move {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Move.class.getName());
+
+  /** Positon of the source of the move. */
   private final Position source;
+
+  /** Positon of the destination of the move. */
   private final Position dest;
+
+  /** Positon of the piece taken. */
   private Position takeDest;
+
+  /** Piece making the move. */
   private ColoredPiece piece;
+
+  /** Piece taken during the move. */
   private ColoredPiece takenPiece;
-  private boolean isTake = false;
-  private boolean isCheck = false;
-  private boolean isCheckMate = false;
-  private boolean isCastle = false;
+
+  /** Boolean to indicate if the move is a capture. */
+  private boolean isTake;
+
+  /** Boolean to indicate if the move result in a check. */
+  private final boolean isCheck;
+
+  /** Boolean to indicate if the move result in a checkmate. */
+  private final boolean isCheckMate;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -35,7 +51,7 @@ public class Move {
    * @param dest The destination Position of the move.
    */
   public Move(final Position source, final Position dest) {
-    this(source, dest, null, false, null, dest, false, false, false);
+    this(source, dest, null, false, null, dest, false, false);
   }
 
   /**
@@ -48,7 +64,7 @@ public class Move {
    */
   public Move(
       final Position source, final Position dest, final ColoredPiece piece, final boolean isTake) {
-    this(source, dest, piece, isTake, null, dest, false, false, false);
+    this(source, dest, piece, isTake, null, dest, false, false);
   }
 
   /**
@@ -69,29 +85,7 @@ public class Move {
       final ColoredPiece piece,
       final boolean isTake,
       final ColoredPiece takenPiece) {
-    this(source, dest, piece, isTake, takenPiece, dest, false, false, false);
-  }
-
-  /**
-   * Constructs a new {@code Move} object with the specified source and destination positions, the
-   * piece being moved, a flag indicating whether the move is a capture, and the captured piece (if
-   * any).
-   *
-   * @param source The starting Position of the move.
-   * @param dest The destination Position of the move.
-   * @param piece The ColoredPiece being moved.
-   * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
-   *     otherwise).
-   * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
-   */
-  public Move(
-      final Position source,
-      final Position dest,
-      final ColoredPiece piece,
-      final boolean isTake,
-      final ColoredPiece takenPiece,
-      final boolean isCastle) {
-    this(source, dest, piece, isTake, takenPiece, dest, false, false, isCastle);
+    this(source, dest, piece, isTake, takenPiece, dest, false, false);
   }
 
   /**
@@ -112,7 +106,7 @@ public class Move {
       final boolean isTake,
       final ColoredPiece takenPiece,
       final Position takeDest) {
-    this(source, dest, piece, isTake, takenPiece, takeDest, false, false, false);
+    this(source, dest, piece, isTake, takenPiece, takeDest, false, false);
   }
 
   /**
@@ -140,7 +134,7 @@ public class Move {
       final boolean isCheck,
       final boolean isCheckMate) {
 
-    this(source, dest, piece, isTake, takenPiece, dest, isCheck, isCheckMate, false);
+    this(source, dest, piece, isTake, takenPiece, dest, isCheck, isCheckMate);
   }
 
   /**
@@ -159,9 +153,8 @@ public class Move {
    *     false otherwise).
    * @param isCheckMate A boolean indicating whether the move results in a checkmate (true if it's a
    *     checkmate, false otherwise).
-   * @param isCastle A boolean indicating wheter the move is a castle.
    */
-  private Move(
+  public Move(
       final Position source,
       final Position dest,
       final ColoredPiece piece,
@@ -169,8 +162,7 @@ public class Move {
       final ColoredPiece takenPiece,
       final Position takeDest,
       final boolean isCheck,
-      final boolean isCheckMate,
-      final boolean isCastle) {
+      final boolean isCheckMate) {
     this.source = source;
     this.dest = dest;
     this.piece = piece;
@@ -179,7 +171,6 @@ public class Move {
     this.takeDest = takeDest;
     this.isCheck = isCheck;
     this.isCheckMate = isCheckMate;
-    this.isCastle = isCastle;
   }
 
   /**
@@ -281,8 +272,8 @@ public class Move {
       throw new InvalidPositionException(move);
     }
 
-    int x = colLetter - 'a';
-    int y = rowNumber - 1;
+    final int x = colLetter - 'a';
+    final int y = rowNumber - 1;
 
     return new Position(x, y);
   }
@@ -368,12 +359,13 @@ public class Move {
     return dest;
   }
 
+  /**
+   * Retrieves the position of the piece taken during this move.
+   *
+   * @return Position of the taken piece
+   */
   public Position getTakeDest() {
     return this.takeDest;
-  }
-
-  public boolean isCastle() {
-    return this.isCastle;
   }
 
   public void setTakeDest(final Position takeDest) {
@@ -402,6 +394,11 @@ public class Move {
     return takenPiece;
   }
 
+  /**
+   * Sets the piece taken during the move to the given piece.
+   *
+   * @param pieceTaken value to put in the field pieceTaken
+   */
   public void setPieceTaken(final ColoredPiece pieceTaken) {
     this.takenPiece = pieceTaken;
   }
@@ -409,7 +406,7 @@ public class Move {
   /**
    * Checks if the move is a capture.
    *
-   * @return true if the move is a capture,f alse otherwise.
+   * @return true if the move is a capture,false otherwise.
    */
   public boolean isTake() {
     return isTake;
@@ -504,10 +501,9 @@ public class Move {
     if (this == obj) {
       return true;
     }
-    if (obj == null || !(obj instanceof Move)) {
+    if (!(obj instanceof Move move)) {
       return false;
     }
-    final Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }
 

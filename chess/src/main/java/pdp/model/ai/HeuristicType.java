@@ -17,5 +17,5 @@ public enum HeuristicType {
   STANDARD_LIGHT,
   GAME_STATUS,
   PROMOTION,
-  ENDGAME;
+  ENDGAME
 }

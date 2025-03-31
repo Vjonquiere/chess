@@ -26,6 +26,7 @@ public class BadPawnsHeuristic implements Heuristic {
   /** Penalty for the doubled pawns. */
   private static final float PENALTY_FOR_DOUBLED_PAWN = -1f;
 
+  /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
       SCORE_CAP
           / Math.abs(
@@ -110,9 +111,8 @@ public class BadPawnsHeuristic implements Heuristic {
    * @return score based on the number of backward pawns
    */
   private int backwardsPawns(final BoardRepresentation board, final boolean isWhite) {
-    final BoardRepresentation bitboard = board;
-    final List<Position> pawns = bitboard.getPawns(isWhite);
-    final List<Position> enemyPawns = bitboard.getPawns(!isWhite);
+    final List<Position> pawns = board.getPawns(isWhite);
+    final List<Position> enemyPawns = board.getPawns(!isWhite);
 
     int count = 0;
 

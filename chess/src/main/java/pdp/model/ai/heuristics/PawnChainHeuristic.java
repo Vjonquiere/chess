@@ -10,6 +10,7 @@ public class PawnChainHeuristic implements Heuristic {
   /** Score cap for the heuristic (absolute value cap). */
   private static final float SCORE_CAP = 100f;
 
+  /** Bonus score added when pawns are connected. */
   private static final float REWARD = 5f;
 
   /** The multiplier used to keep the values under SCORE_CAP. */
@@ -39,8 +40,7 @@ public class PawnChainHeuristic implements Heuristic {
    */
   private float evaluatePawnChains(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board;
-    final List<Position> pawns = bitboard.getPawns(isWhite);
+    final List<Position> pawns = board.getPawns(isWhite);
 
     for (final Position pawn : pawns) {
       for (final Position otherPawn : pawns) {

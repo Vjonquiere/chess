@@ -55,7 +55,6 @@ public final class BagOfCommands {
                 }
               } catch (Exception e) {
                 error("Error in processCommands: " + e.getMessage());
-                e.printStackTrace();
               } finally {
                 bagRunning = false;
                 // If more commands are added while processing, restart the thread

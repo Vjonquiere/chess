@@ -281,12 +281,6 @@ public class GameState extends Subject {
     this.redoRequestTurnNb = -1;
   }
 
-  /*
-  public void setZobristHashing(long zobristHashing) {
-    this.zobristHashing = zobristHashing;
-  }
-    */
-
   /**
    * Sets the hint integers corresponding to the best move for the current Game State.
    *
@@ -457,7 +451,7 @@ public class GameState extends Subject {
   /**
    * Retrieves a boolean to indicate whether the game is over.
    *
-   * @return true if the match is over for this state of the , false otherwise
+   * @return true if the match is over for this state of the game, false otherwise
    */
   public boolean isGameOver() {
     return this.gameOver;

@@ -37,7 +37,7 @@ public class Board extends GridPane {
   /** Map mapping the postions of the boardRep to a square. */
   private final Map<Position, Square> pieces = new HashMap<>();
 
-  /** List containing the positions of the squares reachable from the the selected squares. */
+  /** List containing the positions of the squares reachable from the selected squares. */
   private List<Position> reachableSquares;
 
   /** List containing the position of the hint move. */
@@ -46,12 +46,13 @@ public class Board extends GridPane {
   /** List containing the positions of the last move played. */
   private final List<Position> moveSquares = new LinkedList<>();
 
-  /** Position of the square where the king is check. */
+  /** Position of the square where the king is in check. */
   private Position checkSquare;
 
   /** Stage containing the Board. */
   private Stage stage;
 
+  /** Size of the square to draw. */
   private double squareSize;
 
   /**
@@ -71,8 +72,8 @@ public class Board extends GridPane {
   /** Build the board for the first time. Init all squares and setup them. */
   public void buildBoard() {
     if (stage != null) {
-      double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
-      double maxHeight = (stage.getHeight() - 75) / 8.0;
+      final double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
+      final double maxHeight = (stage.getHeight() - 75) / 8.0;
       squareSize = Math.min(maxWidth, maxHeight);
     }
 
@@ -92,10 +93,7 @@ public class Board extends GridPane {
         }
         final int finalY = boardRows - 1 - y;
         final int finalX = x;
-        square.setOnMouseClicked(
-            event -> {
-              switchSelectedSquare(finalX, finalY);
-            });
+        square.setOnMouseClicked(event -> switchSelectedSquare(finalX, finalY));
         square.setId("square" + finalX + finalY);
         pieces.put(new Position(x, boardRows - 1 - y), square);
         super.add(square, x, y);
@@ -130,10 +128,9 @@ public class Board extends GridPane {
     game.getHistory()
         .getCurrentMove()
         .ifPresent(
-            (move) -> {
-              setLastMoveSquares(
-                  move.getState().getMove().getSource(), move.getState().getMove().getDest());
-            });
+            (move) ->
+                setLastMoveSquares(
+                    move.getState().getMove().getSource(), move.getState().getMove().getDest()));
   }
 
   /**
@@ -144,13 +141,13 @@ public class Board extends GridPane {
   private void movePiece(final HistoryNode historyNode) {
     if (Game.getInstance().getGameState().isWhiteTurn()
         && Game.getInstance().isBlackAi()
-        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2000000000L) {
+        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
       updateAfterAnimation();
       return;
     }
     if (!Game.getInstance().getGameState().isWhiteTurn()
         && Game.getInstance().isWhiteAi()
-        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2000000000L) {
+        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
       updateAfterAnimation();
       return;
     }
@@ -158,12 +155,12 @@ public class Board extends GridPane {
     pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
     pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
 
-    PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
+    final PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
     piece.setLayoutX(move.getSource().x() * squareSize + 25);
     piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
     super.getChildren().add(piece);
 
-    TranslateTransition transition = new TranslateTransition();
+    final TranslateTransition transition = new TranslateTransition();
     transition.setNode(piece);
     transition.setDuration(javafx.util.Duration.seconds(0.1));
     transition.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
@@ -245,7 +242,7 @@ public class Board extends GridPane {
         pieces.get(move.getDest()).setReachable(true, move.isTake());
         reachableSquares.add(move.getDest());
       } catch (Exception ignored) {
-        // e.printStackTrace();
+        // Illegal move
       }
     }
   }
