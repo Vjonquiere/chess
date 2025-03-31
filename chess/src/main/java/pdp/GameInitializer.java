@@ -381,7 +381,7 @@ public abstract class GameInitializer {
             | IllegalMoveException
             | InvalidPositionException
             | MoveParsingException e) {
-          error("Error while parsing file: " + e.getMessage()); // TODO use Internationalization
+          error("Error while parsing file: " + e.getMessage());
           error("Using the default game start");
           model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
         }
