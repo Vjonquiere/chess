@@ -71,16 +71,14 @@ public final class BitboardRules {
       move.setTakeDest(move.getDest());
     }
     if (move.isTake()) {
-      removedPiece =
-          bitboardRepresentation.getPieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-      bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
+      removedPiece = bitboardRep.getPieceAt(move.getTakeDest().x(), move.getTakeDest().y());
+      bitboardRep.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
     }
     bitboardRep.movePiece(move.getSource(), move.getDest()); // Play move
     final boolean isCheckAfterMove = isCheck(color, bitboardRep);
     bitboardRep.movePiece(move.getDest(), move.getSource()); // undo move
     if (move.isTake()) {
-      bitboardRepresentation.addPieceAt(
-          move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
+      bitboardRep.addPieceAt(move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
     }
     if (isCheckAfterMove) {
       debug(LOGGER, color.toString() + "will be checked after move");
@@ -153,16 +151,14 @@ public final class BitboardRules {
       for (final Move move : availableMoves) {
         ColoredPiece removedPiece = null;
         if (move.isTake()) {
-          removedPiece =
-              bitboardRepresentation.getPieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-          bitboardRepresentation.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
+          removedPiece = bitboardRep.getPieceAt(move.getTakeDest().x(), move.getTakeDest().y());
+          bitboardRep.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
         }
         bitboardRep.movePiece(move.getSource(), move.getDest()); // Play move
         final boolean isStillCheck = isCheck(color, bitboardRep);
         bitboardRep.movePiece(move.getDest(), move.getSource()); // Undo move
         if (move.isTake()) {
-          bitboardRepresentation.addPieceAt(
-              move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
+          bitboardRep.addPieceAt(move.getTakeDest().x(), move.getTakeDest().y(), removedPiece);
         }
         if (!isStillCheck) {
           debug(LOGGER, color.toString() + " is not stalemate");
