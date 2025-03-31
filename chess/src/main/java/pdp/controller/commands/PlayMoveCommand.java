@@ -1,5 +1,7 @@
 package pdp.controller.commands;
 
+import static pdp.utils.Logging.error;
+
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
@@ -36,7 +38,7 @@ public class PlayMoveCommand implements Command {
       model.playMove(Move.fromString(this.move, Game.getInstance().getGameState().isWhiteTurn()));
       return Optional.empty();
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      error(e.getMessage());
       return Optional.of(e);
     }
   }

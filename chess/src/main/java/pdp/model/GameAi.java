@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
-import pdp.exceptions.InvalidPromoteFormatException;
+import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
@@ -17,6 +18,7 @@ import pdp.utils.Position;
 
 /** Specific implementation of game for AI players. */
 public final class GameAi extends GameAbstract {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(GameAi.class.getName());
 
   static {
@@ -38,7 +40,7 @@ public final class GameAi extends GameAbstract {
    * @throws IllegalMoveException If the move is not legal.
    */
   @Override
-  public void playMove(Move move) throws IllegalMoveException, InvalidPromoteFormatException {
+  public void playMove(final Move move) {
     final Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
     final Position destPosition = new Position(move.getDest().x(), move.getDest().y());
     debug(LOGGER, "Trying to play move [" + sourcePosition + ", " + destPosition + "]");
@@ -52,14 +54,15 @@ public final class GameAi extends GameAbstract {
         super.getGameState().getBoard().getAvailableMoves(sourcePosition);
     final Optional<Move> classicalMove = move.isMoveClassical(availableMoves);
 
+    final Move moveToProcess;
     if (classicalMove.isPresent()) {
-      move = classicalMove.get();
-      super.processMove(super.getGameState(), move);
+      moveToProcess = classicalMove.get();
+      super.processMove(super.getGameState(), moveToProcess);
     } else {
       throw new IllegalMoveException(move.toString());
     }
 
-    this.updateGameStateAfterMove(move, classicalMove.isPresent());
+    this.updateGameStateAfterMove(moveToProcess);
   }
 
   /**
@@ -78,13 +81,13 @@ public final class GameAi extends GameAbstract {
    *   <li>Notifying observers that a move has been played.
    * </ul>
    */
-  private void updateGameStateAfterMove(final Move move, final boolean isSpecialMove) {
+  private void updateGameStateAfterMove(final Move move) {
     if (super.getGameState().isWhiteTurn()) {
       super.getGameState().incrementsFullTurn();
     }
 
     super.getGameState().switchPlayerTurn();
-    if (isSpecialMove) {
+    if (move instanceof CastlingMove || move instanceof PromoteMove) {
       super.getGameState()
           .setSimplifiedZobristHashing(
               super.getZobristHasher()
@@ -117,8 +120,7 @@ public final class GameAi extends GameAbstract {
    * @param move The move to be executed
    * @throws IllegalMoveException If the move is not legal
    */
-  public void playMoveOtherGameState(final GameState gameState, final Move move)
-      throws IllegalMoveException, InvalidPromoteFormatException {
+  public void playMoveOtherGameState(final GameState gameState, final Move move) {
 
     final Position sourcePosition = new Position(move.getSource().x(), move.getSource().y());
     final Position destPosition = new Position(move.getDest().x(), move.getDest().y());
@@ -137,7 +139,7 @@ public final class GameAi extends GameAbstract {
     } else {
       throw new IllegalMoveException(move.toString());
     }
-    updateOtherGameStateAfterMove(gameState, move);
+    updateOtherGameStateAfterMove(gameState);
   }
 
   /**
@@ -153,7 +155,7 @@ public final class GameAi extends GameAbstract {
    *   <li>Checking the game status, which may end the game.
    * </ul>
    */
-  private void updateOtherGameStateAfterMove(final GameState gameState, final Move move) {
+  private void updateOtherGameStateAfterMove(final GameState gameState) {
     if (gameState.isWhiteTurn()) {
       gameState.incrementsFullTurn();
     }

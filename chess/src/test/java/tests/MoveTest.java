@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPositionException;
 import pdp.model.Game;
 import pdp.model.board.Move;
+import pdp.model.board.PromoteMove;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
@@ -235,5 +236,53 @@ public class MoveTest {
 
     assertEquals(
         game.getHistory().getCurrentMove().get().getState().getMove().isCheckMate(), false);
+  }
+
+  @Test
+  public void testMoveToUCI() {
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    assertEquals("e2e4", move.toUciString());
+    assertNotEquals(move.toString(), move.toUciString());
+
+    move = new Move(new Position(4, 6), new Position(4, 4));
+    assertEquals("e7e5", move.toUciString());
+  }
+
+  @Test
+  public void testPromoteMoveToUCI() {
+    Move move = new PromoteMove(new Position(4, 6), new Position(4, 7), Piece.ROOK);
+    assertEquals("e7e8R", move.toUciString());
+
+    move = new PromoteMove(new Position(4, 1), new Position(4, 0), Piece.ROOK);
+    assertEquals("e2e1R", move.toUciString());
+    assertNotEquals(move.toString(), move.toUciString());
+  }
+
+  @Test
+  public void testMoveFromUCIString() {
+    Move move = Move.fromUciString("e2e4");
+    assertEquals(new Position(4, 1), move.getSource());
+    assertEquals(new Position(4, 3), move.getDest());
+    assertEquals(Move.fromString("e2-e4"), move);
+
+    move = Move.fromUciString("e7e5");
+    assertEquals(new Position(4, 6), move.getSource());
+    assertEquals(new Position(4, 4), move.getDest());
+    assertEquals(Move.fromString("e7-e5"), move);
+
+    assertThrows(InvalidPositionException.class, () -> Move.fromUciString("j7e8R"));
+  }
+
+  @Test
+  public void testPromoteMoveFromUCIString() {
+    Move move = Move.fromUciString("e2e4Q");
+    assertEquals(new Position(4, 1), move.getSource());
+    assertEquals(new Position(4, 3), move.getDest());
+    assertEquals(Move.fromString("e2-e4"), move);
+
+    /*move = Move.fromUciString("e7e8R");
+    assertEquals(new Position(4, 6), move.getSource());
+    assertEquals(new Position(4, 4), move.getDest());
+    assertEquals(Move.fromString("e7-e5"), move);*/
   }
 }

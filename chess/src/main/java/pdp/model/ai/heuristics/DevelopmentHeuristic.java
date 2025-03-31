@@ -1,11 +1,24 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
 /** Heuristic based on the development (advancement) of pieces. */
 public class DevelopmentHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  /** Bonus score for having developed pawn. */
+  private static final float BONUS_DEV_PAWN = 1f;
+
+  /** Bonus score for having developed pieces. */
+  private static final float BONUS_DEV_PIECE = 3f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLIER =
+      SCORE_CAP / (15 * BONUS_DEV_PIECE); // all pawns have promoted
 
   /**
    * Computes and returns a score corresponding to the level of development for each player.
@@ -15,8 +28,8 @@ public class DevelopmentHeuristic implements Heuristic {
    * @return a score based on the development of each player
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
-    final int score =
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
+    final float score =
         evaluatePiecesDevelopment(board, true) - evaluatePiecesDevelopment(board, false);
     return isWhite ? score : -score;
   }
@@ -29,20 +42,18 @@ public class DevelopmentHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return a score based on the development of each player
    */
-  private int evaluatePiecesDevelopment(final Board board, final boolean isWhite) {
-    int score = 0;
-    final int bonusDevPiece = 3;
-    final int bonusDevPawn = 1;
+  private float evaluatePiecesDevelopment(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
 
     final List<List<Position>> initPlayerPos;
     final List<List<Position>> currentPlayerPos;
 
     if (isWhite) {
-      initPlayerPos = board.getBoardRep().retrieveInitialWhitePiecesPos();
-      currentPlayerPos = board.getBoardRep().retrieveWhitePiecesPos();
+      initPlayerPos = board.retrieveInitialWhitePiecesPos();
+      currentPlayerPos = board.retrieveWhitePiecesPos();
     } else {
-      initPlayerPos = board.getBoardRep().retrieveInitialBlackPiecesPos();
-      currentPlayerPos = board.getBoardRep().retrieveBlackPiecesPos();
+      initPlayerPos = board.retrieveInitialBlackPiecesPos();
+      currentPlayerPos = board.retrieveBlackPiecesPos();
     }
     // Compare each piece's position to home square position
     // If not on home square, then it is a developed piece
@@ -54,14 +65,16 @@ public class DevelopmentHeuristic implements Heuristic {
         if (!initialPositions.contains(pos)) {
           // Pawns for index 5
           if (i == 5) {
-            score += bonusDevPawn;
+            score += BONUS_DEV_PAWN;
           } else if (i != 0) {
             // King for index 0
-            score += bonusDevPiece;
+            score += BONUS_DEV_PIECE;
           }
         }
       }
     }
+
+    score *= MULTIPLIER;
 
     return score;
   }

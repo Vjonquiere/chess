@@ -1,5 +1,6 @@
 package pdp.view.gui.popups;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,10 +11,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.RestartCommand;
+import pdp.controller.commands.SaveGameCommand;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
+import pdp.view.gui.ChessMenu;
 
 /** GUI popup to display the information about the end of game. */
 public class EndGamePopUp {
@@ -23,18 +26,18 @@ public class EndGamePopUp {
    *
    * @param event Notification corresponding to the way the game ended
    */
-  public static void show(EventType event) {
-    Stage popupStage = new Stage();
+  public static void show(final EventType event) {
+    final Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
     popupStage.setTitle(TextGetter.getText("endgame.title"));
 
-    VBox layout = new VBox(10);
+    final VBox layout = new VBox(10);
     layout.setStyle(
         "-fx-background-color: "
             + GuiView.getTheme().getBackground()
             + "; -fx-padding: 10; -fx-text-fill: black;");
 
-    Label gameOverLabel = new Label(TextGetter.getText("gameOver"));
+    final Label gameOverLabel = new Label(TextGetter.getText("gameOver"));
     Label endgameLabel = new Label();
     switch (event) {
       case DRAW_ACCEPTED ->
@@ -77,42 +80,45 @@ public class EndGamePopUp {
     }
     layout.getChildren().addAll(gameOverLabel, endgameLabel);
 
-    Button analyzeButton = new Button(TextGetter.getText("analyze"));
-    analyzeButton.setId("analyzeButton");
-    analyzeButton.setOnAction(
+    final Button saveButton = new Button(TextGetter.getText("save"));
+    saveButton.setId("analyzeButton");
+    saveButton.setOnAction(
         e -> {
-          System.out.println("No game analysis for now");
+          final String path = ChessMenu.fileSaver();
+          if (path != null && !path.isEmpty()) {
+            BagOfCommands.getInstance().addCommand(new SaveGameCommand("./" + path));
+          }
         });
 
-    Button newGameButton = new Button(TextGetter.getText("newGame"));
+    final Button newGameButton = new Button(TextGetter.getText("newGame"));
     newGameButton.setId("newGameButton");
     newGameButton.setOnAction(
         e -> {
-          popupStage.close();
+          Platform.runLater(popupStage::close);
           NewGamePopup.show(Game.getInstance().getOptions());
         });
 
-    Button restartButton = new Button(TextGetter.getText("restart"));
+    final Button restartButton = new Button(TextGetter.getText("restart"));
     restartButton.setId("restartButton");
     restartButton.setOnAction(
         e -> {
           popupStage.close();
           BagOfCommands.getInstance().addCommand(new RestartCommand());
         });
-    Button quitButton = new Button(TextGetter.getText("quit"));
+    final Button quitButton = new Button(TextGetter.getText("quit"));
     quitButton.setId("quitButton");
     quitButton.setOnAction(
         e -> {
           popupStage.close();
           Runtime.getRuntime().exit(0);
         });
-    HBox buttonBox = new HBox();
-    buttonBox.getChildren().addAll(analyzeButton, newGameButton, restartButton, quitButton);
+    final HBox buttonBox = new HBox();
+    buttonBox.getChildren().addAll(saveButton, newGameButton, restartButton, quitButton);
     buttonBox.setAlignment(Pos.CENTER);
     layout.getChildren().add(buttonBox);
     layout.setAlignment(Pos.CENTER);
 
-    Scene scene = new Scene(layout, 600, 300);
+    final Scene scene = new Scene(layout, 600, 300);
     GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();

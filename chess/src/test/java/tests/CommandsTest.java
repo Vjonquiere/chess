@@ -85,7 +85,7 @@ public class CommandsTest {
 
     Optional<Exception> result = command.execute(model, controller);
 
-    verify(gameState).whiteWantsToDraw();
+    verify(gameState).doesWhiteWantsToDraw();
     assertTrue(result.isEmpty());
   }
 
@@ -95,7 +95,7 @@ public class CommandsTest {
 
     Optional<Exception> result = command.execute(model, controller);
 
-    verify(gameState).blackWantsToDraw();
+    verify(gameState).doesBlackWantsToDraw();
     assertTrue(result.isEmpty());
   }
 

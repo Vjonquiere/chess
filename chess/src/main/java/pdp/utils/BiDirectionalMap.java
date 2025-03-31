@@ -10,7 +10,10 @@ import java.util.Map;
  * @param <V> class of the values
  */
 public class BiDirectionalMap<K, V> {
+  /** Map mapping the first type (K) to the second (V). */
   private final Map<K, V> forwardMap = new HashMap<>();
+
+  /** Map mapping the second type (V) to the first (K). */
   private final Map<V, K> reverseMap = new HashMap<>();
 
   /**
@@ -19,7 +22,7 @@ public class BiDirectionalMap<K, V> {
    * @param key element's key
    * @param value element's value
    */
-  public void put(K key, V value) {
+  public void put(final K key, final V value) {
     if (forwardMap.containsKey(key) || reverseMap.containsKey(value)) {
       throw new IllegalArgumentException("Duplicate key or value not allowed");
     }
@@ -33,7 +36,7 @@ public class BiDirectionalMap<K, V> {
    * @param key key of the element
    * @return value of the key.
    */
-  public V getFromKey(K key) {
+  public V getFromKey(final K key) {
     return forwardMap.get(key);
   }
 
@@ -43,7 +46,7 @@ public class BiDirectionalMap<K, V> {
    * @param value value of the element
    * @return key of the value
    */
-  public K getFromValue(V value) {
+  public K getFromValue(final V value) {
     return reverseMap.get(value);
   }
 
@@ -52,8 +55,8 @@ public class BiDirectionalMap<K, V> {
    *
    * @param key key to find and remove.
    */
-  public void removeByKey(K key) {
-    V value = forwardMap.remove(key);
+  public void removeByKey(final K key) {
+    final V value = forwardMap.remove(key);
     if (value != null) {
       reverseMap.remove(value);
     }
@@ -64,8 +67,8 @@ public class BiDirectionalMap<K, V> {
    *
    * @param value value to find and remove.
    */
-  public void removeByValue(V value) {
-    K key = reverseMap.remove(value);
+  public void removeByValue(final V value) {
+    final K key = reverseMap.remove(value);
     if (key != null) {
       forwardMap.remove(key);
     }

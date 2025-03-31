@@ -1,6 +1,8 @@
 package pdp.view;
 
 import static pdp.utils.Logging.debug;
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +30,16 @@ import pdp.utils.Logging;
 
 /** View used to communicate with other chess engines. */
 public class UciView implements View {
+  /** Boolean to indicate whether the view is running or not. */
   private boolean running = false;
+
+  /** Map making a correspondance between a string and the command it represents. */
   private final Map<String, CommandEntry> commands = new HashMap<>();
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(UciView.class.getName());
+
+  /** Solver to make the moves against another AI. */
   private final Solver solver = new Solver();
 
   static {
@@ -72,13 +81,12 @@ public class UciView implements View {
    * @param event The type of event that occurred.
    */
   @Override
-  public void onGameEvent(EventType event) {
+  public void onGameEvent(final EventType event) {
     switch (event) {
-      case WIN_BLACK -> System.out.println("Black won!");
-      case WIN_WHITE -> System.out.println("White won!");
-      case THREEFOLD_REPETITION ->
-          System.out.println(Game.getThreeFoldLimit() + " fold repetition!");
-      case FIFTY_MOVE_RULE -> System.out.println(GameState.getFiftyMoveLimit() + " move rule!");
+      case WIN_BLACK -> print("Black won!");
+      case WIN_WHITE -> print("White won!");
+      case THREEFOLD_REPETITION -> print(Game.getThreeFoldLimit() + " fold repetition!");
+      case FIFTY_MOVE_RULE -> print(GameState.getFiftyMoveLimit() + " move rule!");
     }
   }
 
@@ -90,7 +98,7 @@ public class UciView implements View {
    * @param exception The exception that was thrown.
    */
   @Override
-  public void onErrorEvent(Exception exception) {
+  public void onErrorEvent(final Exception exception) {
     if (exception instanceof IllegalMoveException
         || exception instanceof MoveParsingException
         || exception instanceof InvalidPositionException
@@ -99,11 +107,10 @@ public class UciView implements View {
         || exception instanceof CommandNotAvailableNowException
         || exception instanceof FailedUndoException
         || exception instanceof FailedRedoException) {
-      System.out.println(exception.getMessage());
+      error(exception.getMessage());
     } else {
-      System.out.println(Game.getInstance().getGameRepresentation());
-      System.err.println(exception);
-      exception.printStackTrace();
+      print(Game.getInstance().getGameRepresentation());
+      error(String.valueOf(exception));
       running = false;
     }
   }
@@ -114,12 +121,12 @@ public class UciView implements View {
    * @return The thread that listens for user input.
    */
   private Thread startUserInputListener() {
-    Thread inputThread =
+    final Thread inputThread =
         new Thread(
             () -> {
-              Scanner scanner = new Scanner(System.in);
+              final Scanner scanner = new Scanner(System.in);
               while (running) {
-                String input = scanner.nextLine();
+                final String input = scanner.nextLine();
                 handleUserInput(input);
               }
               scanner.close();
@@ -138,27 +145,27 @@ public class UciView implements View {
    */
   private void handleUserInput(String input) {
     input = input.trim();
-    String[] parts = input.split(" ", 2);
+    final String[] parts = input.split(" ", 2);
 
-    CommandEntry ce = commands.get(parts[0]);
+    final CommandEntry ce = commands.get(parts[0]);
 
     if (ce != null) {
-      Consumer<String> command = commands.get(parts[0]).action();
+      final Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
-      System.out.println("unknown command: " + input + " received\n");
+      print("unknown command: " + input + " received\n");
     }
   }
 
-  private void uciCommand(String args) {
-    System.out.println("Chess 2\nMade by PDP team\nuciok\n");
+  private void uciCommand(final String args) {
+    print("Chess 2\nMade by PDP team\nuciok\n");
     // TODO: add ai config
   }
 
-  private void positionCommand(String args) {
-    String[] args2 = args.split(" ");
+  private void positionCommand(final String args) {
+    final String[] args2 = args.split(" ");
     if (args2.length > 2 && args2[0].equals("fen")) {
-      System.out.println("can't handle fen boards");
+      print("can't handle fen boards");
     } else if (args2.length > 2 && args2[0].equals("startpos")) {
       Game.initialize(
           false,
@@ -184,15 +191,15 @@ public class UciView implements View {
 
   private void goCommand(String args) {
     debug(LOGGER, "Searching for best move");
-    Move move = solver.getBestMove(Game.getInstance());
+    final Move move = solver.getBestMove(Game.getInstance());
     if (move == null) {
-      System.err.println(Game.getInstance().getGameRepresentation());
+      error(Game.getInstance().getGameRepresentation());
     }
-    System.out.println("bestmove " + move.toUciString());
+    print("bestmove " + move.toUciString());
   }
 
   private void isReadyCommand(String args) {
-    System.out.println("readyok");
+    print("readyok");
   }
 
   private void quitCommand(String args) {

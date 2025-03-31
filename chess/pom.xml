@@ -149,7 +149,7 @@
                 <rulesets>
                     <!-- If you want to start small, take only this line -->
                     <!-- <ruleset>/rulesets/java/quickstart.xml</ruleset> -->
-                    <!-- All the rulesets -->
+                    <!-- All the rulesets
                     <ruleset>/category/java/bestpractices.xml</ruleset>
                     <ruleset>/category/java/codestyle.xml</ruleset>
                     <ruleset>/category/java/design.xml</ruleset>
@@ -157,7 +157,8 @@
                     <ruleset>/category/java/errorprone.xml</ruleset>
                     <ruleset>/category/java/multithreading.xml</ruleset>
                     <ruleset>/category/java/performance.xml</ruleset>
-                    <ruleset>/category/java/security.xml</ruleset>
+                    <ruleset>/category/java/security.xml</ruleset>-->
+                    <ruleset>pmd-rules.xml</ruleset>
                 </rulesets>
                 </configuration>
             </plugin>

@@ -200,7 +200,6 @@ public class HistoryTest {
             .getState()
             .getGameState()
             .getBoard()
-            .getBoardRep()
             .getPieceAt(4, 3)
             .getPiece());
   }
@@ -222,7 +221,6 @@ public class HistoryTest {
             .getState()
             .getGameState()
             .getBoard()
-            .getBoardRep()
             .getPieceAt(4, 4)
             .getPiece());
     assertEquals(
@@ -233,7 +231,6 @@ public class HistoryTest {
             .getState()
             .getGameState()
             .getBoard()
-            .getBoardRep()
             .getPieceAt(4, 6)
             .getPiece());
 
@@ -247,7 +244,6 @@ public class HistoryTest {
             .getState()
             .getGameState()
             .getBoard()
-            .getBoardRep()
             .getPieceAt(4, 4)
             .getPiece());
     assertEquals(
@@ -258,7 +254,6 @@ public class HistoryTest {
             .getState()
             .getGameState()
             .getBoard()
-            .getBoardRep()
             .getPieceAt(4, 6)
             .getPiece());
   }
