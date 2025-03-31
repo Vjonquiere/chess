@@ -326,6 +326,9 @@ public abstract class GameInitializer {
           model.setContestModeOnOrOff(true);
           debug(LOGGER, "Game was init with contest mode");
 
+          String currPlayer = model.getGameState().isWhiteTurn() ? "W" : "B";
+          print("Player's turn : " + currPlayer);
+
           solver.playAiMove(model);
           debug(LOGGER, "AI move played and recorded in: " + contestFile);
         } catch (IOException

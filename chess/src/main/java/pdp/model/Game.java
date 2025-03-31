@@ -618,7 +618,7 @@ public final class Game extends GameAbstract {
       }
       if (this.solverBlack != null
           && (!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-          && (this.solverBlack.getCurrentHeuristic() != this.solverWhite.getEndgameHeuristic())) {
+          && (this.solverBlack.getCurrentHeuristic() != this.solverBlack.getEndgameHeuristic())) {
         this.solverBlack.setHeuristic(this.solverBlack.getEndgameHeuristic());
       }
     }
@@ -631,7 +631,7 @@ public final class Game extends GameAbstract {
       }
       if (this.solverBlack != null
           && (!(this.solverBlack.getAlgorithm() instanceof MonteCarloTreeSearch))
-          && (this.solverBlack.getCurrentHeuristic() != this.solverWhite.getStartHeuristic())) {
+          && (this.solverBlack.getCurrentHeuristic() != this.solverBlack.getStartHeuristic())) {
         this.solverBlack.setHeuristic(this.solverBlack.getStartHeuristic());
       }
     }
@@ -709,6 +709,7 @@ public final class Game extends GameAbstract {
         // End of history already, so add new move and save
         super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
         if (isContestModeOn()) {
+          print("Contest move : " + move);
           saveGame(getContestFile());
           debug(
               LOGGER,
@@ -722,6 +723,7 @@ public final class Game extends GameAbstract {
         if (!move.equals(nextState.getMove())) {
           if (isContestModeOn()) {
             super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+            print("Contest move : " + move);
             saveGame(getContestFile());
             debug(
                 LOGGER,
@@ -746,6 +748,7 @@ public final class Game extends GameAbstract {
       super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
       if (isContestModeOn()) {
         print("LOADING FILE : " + getContestFile());
+        print("Contest move : " + move);
         saveGame(getContestFile());
         debug(
             LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
