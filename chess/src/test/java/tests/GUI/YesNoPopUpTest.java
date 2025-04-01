@@ -2,118 +2,97 @@ package tests.GUI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Optional;
+import java.util.HashMap;
 import javafx.application.Platform;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.testfx.framework.junit5.ApplicationTest;
-import pdp.controller.Command;
-import pdp.controller.GameController;
+import pdp.controller.BagOfCommands;
+import pdp.controller.commands.CancelMoveCommand;
 import pdp.model.Game;
+import pdp.model.board.Move;
+import pdp.utils.Position;
+import pdp.utils.TextGetter;
 import pdp.view.gui.popups.YesNoPopUp;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class YesNoPopUpTest extends ApplicationTest {
 
-  @BeforeAll
-  public void setup() {
-    Platform.startup(() -> {}); // Initialiser JavaFX
+  private Game game;
+  private Move move;
+  private Move move2;
+
+  @BeforeEach
+  void setUp() {
+    game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+    move2 = new Move(new Position(4, 6), new Position(4, 4));
+    game.playMove(move2);
+
+    BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
   }
 
   @Override
   public void start(Stage stage) {
-    // On crée la popup ici avec des IDs définis sur les boutons
-    Platform.runLater(
+    // On ne démarre pas l'UI complète, chaque test affichera sa propre popup
+
+  }
+
+  @Test
+  void testUndoAccept() {
+
+    runFx(
         () -> {
-          YesNoPopUp popup =
-              new YesNoPopUp("hint", null, null); // Pass null for the command and action
-          Button acceptButton = (Button) popup.lookup("#acceptButton");
-          Button refuseButton = (Button) popup.lookup("#refuseButton");
-
-          assertNotNull(acceptButton);
-          assertNotNull(refuseButton);
+          Platform.runLater(
+              () -> {
+                new YesNoPopUp(
+                    "undoInstructionsGui",
+                    new CancelMoveCommand(),
+                    () -> game.getGameState().undoRequestReset());
+              });
         });
-  }
 
-  // Classe mock pour tester si la commande est exécutée
-  static class MockCommand implements Command {
-    private boolean executed = false;
+    sleep(500);
+    clickOn(TextGetter.getText("accept"));
 
-    public Optional execute(Game game, GameController gameController) {
-      executed = true; // Simuler l'exécution de la commande
-      return null;
-    }
-
-    public boolean isExecuted() {
-      return executed;
-    }
+    assertEquals(
+        game.getHistory().getCurrentMove().get().getState().getMove().getSource(),
+        move.getSource());
+    assertEquals(
+        game.getHistory().getCurrentMove().get().getState().getMove().getDest(), move.getDest());
   }
 
   @Test
-  @Tag("gui")
-  public void testPopupOpens() {
-    Platform.runLater(
+  void testUndoRefuse() {
+
+    runFx(
         () -> {
-          YesNoPopUp popup = new YesNoPopUp("hint", null, null);
-          Window popupWindow = popup.getScene().getWindow();
-          assertTrue(popupWindow.isShowing());
+          Platform.runLater(
+              () -> {
+                new YesNoPopUp(
+                    "undoInstructionsGui",
+                    new CancelMoveCommand(),
+                    () -> game.getGameState().undoRequestReset());
+              });
         });
+
+    sleep(500);
+    clickOn(TextGetter.getText("refuse"));
+
+    assertEquals(
+        game.getHistory().getCurrentMove().get().getState().getMove().getSource(),
+        move2.getSource());
+    assertEquals(
+        game.getHistory().getCurrentMove().get().getState().getMove().getDest(), move2.getDest());
+
+    assertEquals(-1, game.getGameState().getUndoRequestTurnNumber());
   }
 
-  @Test
-  @Tag("gui")
-  public void testCommandExecutedOnAccept() {
-    MockCommand mockCommand = new MockCommand();
-
-    Platform.runLater(() -> new YesNoPopUp("hint", mockCommand, null));
-
-    // Vérifier que la commande n'a pas encore été exécutée
-    assertFalse(mockCommand.isExecuted());
-
-    // Simuler un clic sur "Accept"
-    clickOn("#acceptButton");
-
-    // Vérifier que la commande a bien été exécutée
-    assertTrue(mockCommand.isExecuted());
-  }
-
-  @Test
-  @Tag("gui")
-  public void testActionExecutedOnRefuse() {
-    final boolean[] actionExecuted = {false};
-
-    Platform.runLater(() -> new YesNoPopUp("hint", null, () -> actionExecuted[0] = true));
-
-    // Vérifier que l'action n'a pas encore été exécutée
-    assertFalse(actionExecuted[0]);
-
-    // Simuler un clic sur "Refuse"
-    clickOn("#refuseButton");
-
-    // Vérifier que l'action a bien été exécutée
-    assertTrue(actionExecuted[0]);
-  }
-
-  @Test
-  @Tag("gui")
-  public void testPopupClosesOnAction() {
-    Platform.runLater(
-        () -> {
-          YesNoPopUp popup = new YesNoPopUp("hint", null, null);
-          Window popupWindow = popup.getScene().getWindow();
-
-          assertTrue(popupWindow.isShowing());
-
-          // Simuler un clic sur "Accept"
-          clickOn("#acceptButton");
-
-          // Vérifier que la fenêtre est fermée
-          assertFalse(popupWindow.isShowing());
-        });
+  private void runFx(Runnable action) {
+    interact(action);
   }
 }
