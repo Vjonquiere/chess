@@ -29,4 +29,9 @@ public class PlayerPanel extends VBox {
     whitePlayer.setCurrentPlayer(isWhiteTurn);
     blackPlayer.setCurrentPlayer(!isWhiteTurn);
   }
+
+  public void updateTimersOnce() {
+    whitePlayer.updateTimerOnce(true);
+    blackPlayer.updateTimerOnce(false);
+  }
 }
