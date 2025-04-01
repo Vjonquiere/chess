@@ -1,5 +1,8 @@
 package pdp.view.gui.themes;
 
+import static pdp.utils.Logging.error;
+import static pdp.utils.Logging.print;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,47 +23,67 @@ public enum ColorTheme implements ColorThemeInterface {
   SIMPLE("#6D6FD9", "#DAE0F2", "#272727", "#F9CFF2", "#EDE7E3", "#DAE0F2", "#000000", "#FFFFFF"),
   GREY("#415a77", "#778da9", "#0d1b2a", "#1d3557", "#e0e1dd", "#F2F4F3", "#000000", "#FFFFFF");
 
+  /** Location of the basic csv file in the resources. */
   private static final String PACKAGE_THEMES_FILE = "/styles/custom_themes.csv";
+
+  /** Place to save the custom themes of the users. */
   private static final String USER_THEMES_FILE =
       System.getProperty("user.home") + "/.chessThemes/custom_themes.csv";
-  private static final Map<String, ColorThemeInterface> themes = new HashMap<>();
+
+  /** Map containing the themes of the application (from enum and loaded from the csv). */
+  private static final Map<String, ColorThemeInterface> THEMES = new HashMap<>();
+
+  /** File to load with the custom themes. */
   private static File loadFile;
-  private static boolean fileWritable = false;
+
+  /** Boolean to indicate whether the file is writeable or not. */
+  private static boolean fileWritable;
 
   static {
-    for (ColorTheme theme : values()) {
-      themes.put(theme.name(), theme);
+    for (final ColorTheme theme : values()) {
+      THEMES.put(theme.name(), theme);
     }
 
     setThemeFile();
-    System.out.println("Theme file: " + loadFile);
     loadCustomThemes();
   }
 
   /** String corresponding to the primary color, in hexadecimal format. */
-  private String primary;
+  private final String primary;
 
   /** String corresponding to the secondary color, in hexadecimal format. */
-  private String secondary;
+  private final String secondary;
 
   /** String corresponding to the tertiary color, in hexadecimal format. */
-  private String tertiary;
+  private final String tertiary;
 
   /** String corresponding to the accent color, in hexadecimal format. */
-  private String accent;
+  private final String accent;
 
   /** String corresponding to the background color, in hexadecimal format. */
-  private String background;
+  private final String background;
 
   /** String corresponding to the second background color, in hexadecimal format. */
-  private String background2;
+  private final String background2;
 
   /** String corresponding to the text color, in hexadecimal format. */
-  private String text;
+  private final String text;
 
   /** String corresponding to the second text color, in hexadecimal format. */
-  private String textInverted;
+  private final String textInverted;
 
+  /**
+   * Creates the elements of the enum.
+   *
+   * @param primary primary color (in string format)
+   * @param secondary secondary color (in string format)
+   * @param tertiary tertiary color (in string format)
+   * @param accent accent color (in string format)
+   * @param background primary background color (in string format)
+   * @param background2 secondary background color (in string format)
+   * @param text primary text color (in string format)
+   * @param textInverted secondary text color (in string format)
+   */
   ColorTheme(
       final String primary,
       final String secondary,
@@ -80,76 +103,84 @@ public enum ColorTheme implements ColorThemeInterface {
     this.textInverted = textInverted;
   }
 
+  @Override
   public String getPrimary() {
     return primary;
   }
 
+  @Override
   public String getSecondary() {
     return secondary;
   }
 
+  @Override
   public String getTertiary() {
     return tertiary;
   }
 
+  @Override
   public String getAccent() {
     return accent;
   }
 
+  @Override
   public String getBackground() {
     return background;
   }
 
+  @Override
   public String getBackground2() {
     return background2;
   }
 
+  @Override
   public String getText() {
     return text;
   }
 
+  @Override
   public String getTextInverted() {
     return textInverted;
   }
 
   /** Loads custom themes from the CSV file and updates the map. */
   public static void loadCustomThemes() {
-    try (InputStream is =
-            (fileWritable)
+    try (InputStream inputStream =
+            fileWritable
                 ? new FileInputStream(loadFile)
                 : ColorTheme.class.getResourceAsStream(loadFile.getAbsolutePath());
         BufferedReader reader =
-            new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)))) {
+            new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))) {
 
       String line;
       while ((line = reader.readLine()) != null) {
-        String[] parts = line.split(",");
+        final String[] parts = line.split(",");
         if (parts.length == 9) {
-          String name = parts[0].trim().toUpperCase();
-          CustomColorTheme customTheme =
+          final String name = parts[0].trim().toUpperCase();
+          final CustomColorTheme customTheme =
               new CustomColorTheme(
                   name, parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7],
                   parts[8]);
-          themes.put(name, customTheme);
+          THEMES.put(name, customTheme);
         }
       }
     } catch (IOException | NullPointerException e) {
-      System.err.println("Failed to load custom themes: " + e.getMessage());
+      error("Failed to load custom themes: " + e.getMessage());
       e.printStackTrace();
     }
   }
 
   private static void setThemeFile() {
-    File file = new File(USER_THEMES_FILE);
-    File parentDir = file.getParentFile();
+    final File file = new File(USER_THEMES_FILE);
+    final File parentDir = file.getParentFile();
     if (parentDir != null && !parentDir.exists()) {
       parentDir.mkdirs();
     }
 
     if (!file.exists()) {
-      try (InputStream is = ColorTheme.class.getResourceAsStream(PACKAGE_THEMES_FILE);
+      try (InputStream inputStream = ColorTheme.class.getResourceAsStream(PACKAGE_THEMES_FILE);
           BufferedReader reader =
-              new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
+              new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
           BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 
         String line;
@@ -157,9 +188,9 @@ public enum ColorTheme implements ColorThemeInterface {
           writer.write(line);
           writer.newLine();
         }
-        System.out.println("Custom theme file created at: " + file.getAbsolutePath());
+        print("Custom theme file created at: " + file.getAbsolutePath());
       } catch (IOException | NullPointerException e) {
-        System.err.println("Failed to copy theme file: " + e.getMessage());
+        error("Failed to copy theme file: " + e.getMessage());
         loadFile = new File(PACKAGE_THEMES_FILE);
         fileWritable = false;
       }
@@ -175,28 +206,40 @@ public enum ColorTheme implements ColorThemeInterface {
    * @param name The theme name (case-insensitive).
    * @return The corresponding ColorThemeInterface or null if not found.
    */
-  public static ColorThemeInterface getTheme(String name) {
-    return themes.get(name.toUpperCase());
+  public static ColorThemeInterface getTheme(final String name) {
+    return THEMES.get(name.toUpperCase());
   }
 
   /**
+   * Retrieves all the saved themes in the field THEMES.
+   *
    * @return An unmodifiable map of all available themes.
    */
   public static Map<String, ColorThemeInterface> getAllThemes() {
-    return Collections.unmodifiableMap(themes);
+    return Collections.unmodifiableMap(THEMES);
   }
 
-  public static void addTheme(String name, ColorThemeInterface theme) {
-    themes.put(name.toUpperCase(), theme);
+  /**
+   * Adds a new theme to the list containing all themes.
+   *
+   * @param name name of the theme.
+   * @param theme color theme.
+   */
+  public static void addTheme(final String name, final ColorThemeInterface theme) {
+    THEMES.put(name.toUpperCase(), theme);
 
     if (fileWritable) {
       saveThemeToFile(name, theme);
     }
   }
 
-  private static void saveThemeToFile(String name, ColorThemeInterface theme) {
-    ;
-
+  /**
+   * Saves the given theme to a csv file.
+   *
+   * @param name name of the given theme.
+   * @param theme theme to save.
+   */
+  private static void saveThemeToFile(final String name, final ColorThemeInterface theme) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(loadFile, true))) {
       writer.write(
           String.format(
@@ -211,7 +254,7 @@ public enum ColorTheme implements ColorThemeInterface {
               theme.getText(),
               theme.getTextInverted()));
     } catch (IOException e) {
-      System.err.println("Failed to save custom theme: " + e.getMessage());
+      error("Failed to save custom theme: " + e.getMessage());
     }
   }
 }
