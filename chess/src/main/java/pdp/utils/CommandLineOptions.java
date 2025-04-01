@@ -241,6 +241,8 @@ public final class CommandLineOptions {
         error("Error: --contest option requires a valid file path.");
         activatedOptions.remove(OptionType.CONTEST);
       } else {
+        activatedOptions.put(OptionType.AI, "A");
+        activatedOptions.put(OptionType.LOAD, contestFile);
         debug(LOGGER, "Contest mode activated with file: " + contestFile);
       }
     }

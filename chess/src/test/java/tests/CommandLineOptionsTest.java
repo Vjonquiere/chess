@@ -372,7 +372,8 @@ public class CommandLineOptionsTest {
     Map<OptionType, String> expectedMap = new HashMap<>();
     expectedMap.put(OptionType.BLITZ, "");
     expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
-    expectedMap.put(OptionType.AI, "W");
+    expectedMap.put(OptionType.LOAD, "myfile.chessrc"); // Contest file put as load
+    expectedMap.put(OptionType.AI, "A"); // Contest mode so switching to All IAs
     expectedMap.put(OptionType.CONFIG, "default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
     expectedMap.put(OptionType.AI_DEPTH_B, "3");

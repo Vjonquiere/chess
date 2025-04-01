@@ -21,9 +21,7 @@ import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
-import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
-import pdp.model.board.PromoteMove;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
@@ -70,7 +68,7 @@ public final class Game extends GameAbstract {
   /** Boolean to indicate whether the game was load from a file which had a history or not. */
   private boolean loadingFileWithHistory;
 
-  /** Map containing the different options to parametrize the game and their values. */
+  /** Boolean to indicate whether the game is in contest mode or not. */
   private boolean contestModeOn;
 
   /** Boolean value used to know if Ai played its move (contest Mode). */
@@ -403,6 +401,9 @@ public final class Game extends GameAbstract {
     if (whiteAi && this.getGameState().isWhiteTurn()) {
       this.notifyObservers(EventType.AI_PLAYING);
       solverWhite.playAiMove(this);
+    } else if (blackAi && !this.getGameState().isWhiteTurn()) {
+      this.notifyObservers(EventType.AI_PLAYING);
+      solverBlack.playAiMove(this);
     }
   }
 
@@ -580,7 +581,8 @@ public final class Game extends GameAbstract {
    *   <li>Notifying observers that a move has been played.
    * </ul>
    */
-  private void updateGameStateAfterMove(final Move move) {
+  @Override
+  protected void updateGameStateAfterMove(final Move move) {
 
     if (super.getGameState().getMoveTimer() != null
         && !this.isCurrentPlayerAi()
@@ -590,30 +592,7 @@ public final class Game extends GameAbstract {
       super.getGameState().getMoveTimer().stop();
     }
 
-    if (super.getGameState().isWhiteTurn()) {
-      super.getGameState().incrementsFullTurn();
-    }
-
-    super.getGameState().switchPlayerTurn();
-    if (move instanceof CastlingMove || move instanceof PromoteMove) {
-      super.getGameState()
-          .setSimplifiedZobristHashing(
-              super.getZobristHasher()
-                  .updateSimplifiedHashFromBitboards(
-                      super.getGameState().getSimplifiedZobristHashing(), getBoard(), move));
-    } else {
-      super.getGameState()
-          .setSimplifiedZobristHashing(
-              super.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
-    }
-
-    debug(LOGGER, "Checking threefold repetition...");
-    final boolean threefoldRep =
-        super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
-
-    if (threefoldRep) {
-      super.getGameState().activateThreefold();
-    }
+    super.updateGameStateAfterMove(move);
 
     debug(LOGGER, "Checking phase of the game (endgame, middle game, etc.)...");
     if (isEndGamePhase()) {
@@ -642,8 +621,6 @@ public final class Game extends GameAbstract {
         this.solverBlack.setHeuristic(this.solverBlack.getStartHeuristic());
       }
     }
-    debug(LOGGER, "Checking game status...");
-    super.getGameState().checkGameStatus();
 
     // Check for history overwrite
     if (!isLoadedFromFile()) {
@@ -673,6 +650,7 @@ public final class Game extends GameAbstract {
     if (!explorationAi
         && !isInitializing
         && !isOver()
+        && !isContestModeOn()
         && ((super.getGameState().isWhiteTurn() && whiteAi)
             || (!super.getGameState().isWhiteTurn() && blackAi))) {
 

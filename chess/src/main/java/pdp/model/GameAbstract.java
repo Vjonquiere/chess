@@ -355,4 +355,50 @@ public abstract class GameAbstract extends Subject {
             move.getDest().y(),
             getGameState().isWhiteTurn());
   }
+
+  /**
+   * Updates the game state after a move is played.
+   *
+   * <p>The game state is updated by:
+   *
+   * <ul>
+   *   <li>Incrementing the full turn number if the move was made by white.
+   *   <li>Adding the move to the history.
+   *   <li>Switching the current player turn.
+   *   <li>Updating the board player.
+   *   <li>Updating the simplified zobrist hashing.
+   *   <li>Checking for threefold repetition.
+   *   <li>Checking the game status, which may end the game.
+   *   <li>Notifying observers that a move has been played.
+   * </ul>
+   */
+  protected void updateGameStateAfterMove(final Move move) {
+    if (this.getGameState().isWhiteTurn()) {
+      this.getGameState().incrementsFullTurn();
+    }
+
+    this.getGameState().switchPlayerTurn();
+    if (move instanceof CastlingMove || move instanceof PromoteMove) {
+      this.getGameState()
+          .setSimplifiedZobristHashing(
+              this.getZobristHasher()
+                  .updateSimplifiedHashFromBitboards(
+                      this.getGameState().getSimplifiedZobristHashing(), getBoard(), move));
+    } else {
+      this.getGameState()
+          .setSimplifiedZobristHashing(
+              this.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
+    }
+
+    debug(LOGGER, "Checking threefold repetition...");
+    final boolean threefoldRep =
+        this.addStateToCount(this.getGameState().getSimplifiedZobristHashing());
+
+    if (threefoldRep) {
+      this.getGameState().activateThreefold();
+    }
+
+    debug(LOGGER, "Checking game status...");
+    this.getGameState().checkGameStatus();
+  }
 }
