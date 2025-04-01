@@ -37,7 +37,7 @@ public enum ColorTheme implements ColorThemeInterface {
   private static File loadFile;
 
   /** Boolean to indicate whether the file is writeable or not. */
-  private static boolean fileWritable;
+  private static boolean isUserFile;
 
   static {
     for (final ColorTheme theme : values()) {
@@ -146,7 +146,7 @@ public enum ColorTheme implements ColorThemeInterface {
   /** Loads custom themes from the CSV file and updates the map. */
   public static void loadCustomThemes() {
     try (InputStream inputStream =
-            fileWritable
+            isUserFile
                 ? new FileInputStream(loadFile)
                 : ColorTheme.class.getResourceAsStream(loadFile.getAbsolutePath());
         BufferedReader reader =
@@ -171,7 +171,7 @@ public enum ColorTheme implements ColorThemeInterface {
   }
 
   private static void setThemeFile() {
-    final File file = new File(USER_THEMES_FILE);
+    File file = new File(USER_THEMES_FILE);
     final File parentDir = file.getParentFile();
     if (parentDir != null && !parentDir.exists()) {
       parentDir.mkdirs();
@@ -189,13 +189,14 @@ public enum ColorTheme implements ColorThemeInterface {
           writer.newLine();
         }
         print("Custom theme file created at: " + file.getAbsolutePath());
+        isUserFile = true;
       } catch (IOException | NullPointerException e) {
         error("Failed to copy theme file: " + e.getMessage());
-        loadFile = new File(PACKAGE_THEMES_FILE);
-        fileWritable = false;
+        file = new File(PACKAGE_THEMES_FILE);
+        isUserFile = false;
       }
     } else {
-      fileWritable = true;
+      isUserFile = true;
     }
     loadFile = file;
   }
@@ -228,7 +229,7 @@ public enum ColorTheme implements ColorThemeInterface {
   public static void addTheme(final String name, final ColorThemeInterface theme) {
     THEMES.put(name.toUpperCase(), theme);
 
-    if (fileWritable) {
+    if (isUserFile) {
       saveThemeToFile(name, theme);
     }
   }
