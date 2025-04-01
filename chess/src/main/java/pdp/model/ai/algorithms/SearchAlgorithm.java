@@ -40,6 +40,10 @@ public abstract class SearchAlgorithm {
     return totalNodes / visitedNodeList.size();
   }
 
+  public List<Long> getVisitedNodeList() {
+    return visitedNodeList;
+  }
+
   public long getVisitedNodes() {
     return visitedNodes.get();
   }

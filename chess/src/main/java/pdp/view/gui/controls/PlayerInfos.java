@@ -4,19 +4,24 @@ import java.text.DecimalFormat;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import pdp.model.Game;
 import pdp.model.ai.Solver;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
+import pdp.view.gui.popups.AiMonitor;
 import pdp.view.gui.popups.InfoPopUp;
 
 /** GUI widget to display player data. */
@@ -31,6 +36,8 @@ public class PlayerInfos extends HBox {
   private Timeline timeline;
 
   private Label lastNodeInfo = new Label();
+
+  AiMonitor aiMonitor = new AiMonitor();
 
   /**
    * Build a player infos widget from given information.
@@ -59,7 +66,7 @@ public class PlayerInfos extends HBox {
       }
       info.setOnMouseClicked(
           event -> {
-            InfoPopUp.show(solver.toString());
+            aiMonitor.show();
           });
       Tooltip.install(info, new Tooltip(solver.toString()));
       lastNodeInfo = new Label();
@@ -162,5 +169,6 @@ public class PlayerInfos extends HBox {
               + formatNumber(exploratedNodes)
               + " explored)");
     }
+    aiMonitor.update(true);
   }
 }
