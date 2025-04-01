@@ -817,6 +817,13 @@ public final class Game extends GameAbstract {
 
     debug(LOGGER, "Restarting game");
 
+    if (instance.getTimer(true) != null) {
+      instance.getTimer(true).stop();
+    }
+    if (instance.getTimer(false) != null) {
+      instance.getTimer(false).stop();
+    }
+
     super.getGameState().updateFrom(new GameState(super.getGameState().getMoveTimer()));
     super.getHistory().clear();
 
@@ -834,6 +841,12 @@ public final class Game extends GameAbstract {
     this.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
 
     this.notifyObservers(EventType.GAME_RESTART);
+
+    if (super.getGameState().getMoveTimer() != null) {
+      if (!instance.isCurrentPlayerAi()) {
+        super.getGameState().getMoveTimer().start();
+      }
+    }
 
     this.startAi();
 
