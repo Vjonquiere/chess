@@ -253,11 +253,11 @@ public class ChessMenu extends HBox {
   private Menu createThemeMenuItem() {
     final Menu themes = new Menu(TextGetter.getText("theme"), null);
 
-    for (final ColorTheme c : ColorTheme.values()) {
-      final MenuItem theme = new MenuItem(c.name());
+    for (final String name : ColorTheme.getAllThemes().keySet()) {
+      final MenuItem theme = new MenuItem(name);
       theme.setOnAction(
           e -> {
-            GuiView.setTheme(c);
+            GuiView.setTheme(ColorTheme.getTheme(name));
             BagOfCommands.getInstance().addCommand(new ChangeTheme());
           });
       themes.getItems().add(theme);
