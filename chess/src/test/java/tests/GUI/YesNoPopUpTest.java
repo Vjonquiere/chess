@@ -6,6 +6,7 @@ import java.util.HashMap;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -43,6 +44,7 @@ public class YesNoPopUpTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   void testUndoAccept() {
 
     runFx(
@@ -67,6 +69,7 @@ public class YesNoPopUpTest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   void testUndoRefuse() {
 
     runFx(
@@ -94,5 +97,37 @@ public class YesNoPopUpTest extends ApplicationTest {
 
   private void runFx(Runnable action) {
     interact(action);
+  }
+
+  @Test
+  @Tag("gui")
+  void testWithoutCommandRefuse() {
+
+    runFx(
+        () -> {
+          Platform.runLater(
+              () -> {
+                new YesNoPopUp("undoInstructionsGui", null, null);
+              });
+        });
+
+    sleep(500);
+    clickOn(TextGetter.getText("refuse"));
+  }
+
+  @Test
+  @Tag("gui")
+  void testWithoutCommandAccept() {
+
+    runFx(
+        () -> {
+          Platform.runLater(
+              () -> {
+                new YesNoPopUp("undoInstructionsGui", null, null);
+              });
+        });
+
+    sleep(500);
+    clickOn(TextGetter.getText("accept"));
   }
 }
