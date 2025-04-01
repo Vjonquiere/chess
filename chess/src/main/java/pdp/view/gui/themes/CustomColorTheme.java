@@ -1,7 +1,12 @@
 package pdp.view.gui.themes;
 
+import java.util.regex.Pattern;
+
 /** Class representing custom themes */
 public class CustomColorTheme implements ColorThemeInterface {
+
+  private static final Pattern HEX_PATTERN = Pattern.compile("^#[A-Fa-f0-9]{6}$");
+
   private final String name;
   private final String primary;
   private final String secondary;
@@ -22,6 +27,18 @@ public class CustomColorTheme implements ColorThemeInterface {
       String background2,
       String text,
       String textInverted) {
+
+    if (!isValidHex(primary)
+        || !isValidHex(secondary)
+        || !isValidHex(tertiary)
+        || !isValidHex(accent)
+        || !isValidHex(background)
+        || !isValidHex(background2)
+        || !isValidHex(text)
+        || !isValidHex(textInverted)) {
+      throw new IllegalArgumentException("All color values must be in #RRGGBB format.");
+    }
+
     this.name = name;
     this.primary = primary;
     this.secondary = secondary;
@@ -31,6 +48,10 @@ public class CustomColorTheme implements ColorThemeInterface {
     this.background2 = background2;
     this.text = text;
     this.textInverted = textInverted;
+  }
+
+  private static boolean isValidHex(String color) {
+    return color != null && HEX_PATTERN.matcher(color).matches();
   }
 
   public String getName() {
