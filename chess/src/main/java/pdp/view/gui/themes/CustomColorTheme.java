@@ -82,10 +82,11 @@ public class CustomColorTheme implements ColorThemeInterface {
   }
 
   /**
-  * Checks if the string is a valid hexadecimal color.
-  *
-  * @param color the string representing the color
-  * @return true if the string is valid, false otherwise
+   * Checks if the string is a valid hexadecimal color.
+   *
+   * @param color the string representing the color
+   * @return true if the string is valid, false otherwise
+   */
   private static boolean isValidHex(String color) {
     return color != null && HEX_PATTERN.matcher(color).matches();
   }

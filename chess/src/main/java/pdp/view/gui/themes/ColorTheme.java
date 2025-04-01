@@ -160,7 +160,7 @@ public enum ColorTheme implements ColorThemeInterface {
                 new CustomColorTheme(
                     name, parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7],
                     parts[8]);
-            themes.put(name, customTheme);
+            THEMES.put(name, customTheme);
           } catch (IllegalArgumentException e) {
             System.err.println("Failed to load custom theme " + name + " : " + e.getMessage());
           }
