@@ -27,7 +27,7 @@ import pdp.view.gui.ControlPanel;
 import pdp.view.gui.GuiLauncher;
 import pdp.view.gui.board.Board;
 import pdp.view.gui.popups.EndGamePopUp;
-import pdp.view.gui.themes.ColorTheme;
+import pdp.view.gui.themes.ColorThemeInterface;
 
 /** Base of our graphical interface. */
 public class GuiView implements View {
@@ -59,7 +59,7 @@ public class GuiView implements View {
   private ChessMenu menu;
 
   /** Color theme of the whole app. Grey by default. */
-  private static ColorTheme theme = GREY;
+  private static ColorThemeInterface theme = GREY;
 
   /** Boolean to indicate whether the GUI View is initialized or not. */
   private boolean initialized;
@@ -117,12 +117,12 @@ public class GuiView implements View {
    *
    * @return field theme
    */
-  public static ColorTheme getTheme() {
+  public static ColorThemeInterface getTheme() {
     return theme;
   }
 
   /** Defines the new color theme of the app. */
-  public static void setTheme(final ColorTheme newTheme) {
+  public static void setTheme(final ColorThemeInterface newTheme) {
     theme = newTheme;
   }
 
