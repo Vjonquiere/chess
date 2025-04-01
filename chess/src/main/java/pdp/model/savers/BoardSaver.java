@@ -18,56 +18,57 @@ public class BoardSaver {
    * @return The board and current player String
    */
   public static String saveBoard(final FileBoard board) {
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     // Save current player
     if (board.isWhiteTurn()) {
-      sb.append("W\n");
+      builder.append("W\n");
     } else {
-      sb.append("B\n");
+      builder.append("B\n");
     }
 
     if (board.header() != null) {
       final FenHeader header = board.header();
       if (header.whiteKingCastling()) {
-        sb.append("K");
+        builder.append('K');
       }
       if (header.whiteQueenCastling()) {
-        sb.append("Q");
+        builder.append('Q');
       }
       if (header.blackKingCastling()) {
-        sb.append("k");
+        builder.append('k');
       }
       if (header.blackQueenCastling()) {
-        sb.append("q");
+        builder.append('q');
       }
       if (!header.whiteKingCastling()
           && !header.whiteQueenCastling()
           && !header.blackKingCastling()
           && !header.blackQueenCastling()) {
-        sb.append("-");
+        builder.append('-');
       }
-      sb.append(" ");
+      builder.append(' ');
 
       if (header.enPassant() != null) {
-        sb.append(Move.positionToString(header.enPassant()));
+        builder.append(Move.positionToString(header.enPassant()));
       } else {
-        sb.append("-");
+        builder.append('-');
       }
-      sb.append(" ");
-      sb.append(header.fiftyMoveRule()).append(" ");
-      sb.append(header.playedMoves()).append(" ");
-      sb.append("\n");
+      builder.append(' ');
+      builder.append(header.fiftyMoveRule()).append(' ');
+      builder.append(header.playedMoves()).append(' ');
+      builder.append('\n');
     }
 
     final BoardRepresentation representation = board.board();
     for (int y = 7; y >= 0; y--) {
       for (int x = 0; x <= 7; x++) {
         final ColoredPiece piece = representation.getPieceAt(x, y);
-        sb.append(piece.getPiece().getCharRepresentation(piece.getColor() == Color.WHITE))
-            .append(" ");
+        builder
+            .append(piece.getPiece().getCharRepresentation(piece.getColor() == Color.WHITE))
+            .append(' ');
       }
-      sb.append("\n");
+      builder.append('\n');
     }
-    return sb.toString();
+    return builder.toString();
   }
 }

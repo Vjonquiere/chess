@@ -80,12 +80,12 @@ public class ThemePopUp {
     saveButton.setOnAction(
         e -> {
           try {
-            String themeName =
+            final String themeName =
                 themeNameField.getText().trim().isEmpty()
                     ? "Custom Theme"
                     : themeNameField.getText().trim();
 
-            CustomColorTheme newTheme =
+            final CustomColorTheme newTheme =
                 new CustomColorTheme(
                     themeName,
                     toHexString(cpPrimary.getValue()),

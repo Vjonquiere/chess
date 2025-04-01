@@ -80,19 +80,20 @@ public class HistoryState {
    * @return A string representing the move in algebraic notation.
    */
   public String toAlgebraicString() {
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
-        sb.append(this.gameState.getFullTurn())
+        builder
+            .append(this.gameState.getFullTurn())
             .append(". W ")
             .append(this.move.toAlgebraicString())
-            .append(" ");
+            .append(' ');
       } else {
-        sb.append("B ").append(this.move);
+        builder.append("B ").append(this.move);
       }
     }
 
-    return sb.toString();
+    return builder.toString();
   }
 
   /**
@@ -110,15 +111,15 @@ public class HistoryState {
    */
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     if (!(this.move.getSource().x() == -1)) {
       if (!this.isWhite()) {
-        sb.append(this.gameState.getFullTurn()).append(". W ").append(this.move).append(" ");
+        builder.append(this.gameState.getFullTurn()).append(". W ").append(this.move).append(' ');
       } else {
-        sb.append("B ").append(this.move);
+        builder.append("B ").append(this.move);
       }
     }
 
-    return sb.toString();
+    return builder.toString();
   }
 }

@@ -70,7 +70,7 @@ public class Square extends StackPane {
    * @param piece The piece to display
    */
   public void updatePiece(final ColoredPiece piece) {
-    if (!(piece.equals(currentPiece))) {
+    if (!piece.equals(currentPiece)) {
       currentPiece = piece;
       if (pieceImage != null) {
         super.getChildren().remove(pieceImage);

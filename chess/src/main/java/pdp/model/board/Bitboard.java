@@ -74,7 +74,7 @@ public class Bitboard {
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveUp() {
-    return new Bitboard((bitboard << 8));
+    return new Bitboard(bitboard << 8);
   }
 
   /**
@@ -83,7 +83,7 @@ public class Bitboard {
    * @return A new bitboard with the bits correctly sets
    */
   public Bitboard moveDown() {
-    return new Bitboard((bitboard >>> 8));
+    return new Bitboard(bitboard >>> 8);
   }
 
   /**

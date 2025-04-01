@@ -19,7 +19,7 @@ public class FenSaver {
    * @return The FEN string
    */
   public static String saveBoard(final FileBoard board) {
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     final BoardRepresentation representation = board.board();
 
     for (int y = 7; y >= 0; y--) {
@@ -30,21 +30,21 @@ public class FenSaver {
           emptyCount++;
         } else {
           if (emptyCount > 0) {
-            sb.append(emptyCount);
+            builder.append(emptyCount);
             emptyCount = 0;
           }
-          sb.append(piece.getPiece().getCharRepresentation(piece.getColor() == Color.WHITE));
+          builder.append(piece.getPiece().getCharRepresentation(piece.getColor() == Color.WHITE));
         }
       }
       if (emptyCount > 0) {
-        sb.append(emptyCount);
+        builder.append(emptyCount);
       }
       if (y > 0) {
-        sb.append("/");
+        builder.append('/');
       }
     }
 
-    sb.append(" ").append(board.isWhiteTurn() ? "w" : "b");
+    builder.append(' ').append(board.isWhiteTurn() ? 'w' : 'b');
 
     if (board.header() != null) {
       final FenHeader header = board.header();
@@ -61,16 +61,17 @@ public class FenSaver {
       if (header.blackQueenCastling()) {
         castling += "q";
       }
-      sb.append(" ").append(castling.isEmpty() ? "-" : castling);
+      builder.append(' ').append(castling.isEmpty() ? '-' : castling);
 
-      sb.append(" ")
-          .append(header.enPassant() != null ? Move.positionToString(header.enPassant()) : "-");
+      builder
+          .append(' ')
+          .append(header.enPassant() != null ? Move.positionToString(header.enPassant()) : '-');
 
-      sb.append(" ").append(header.fiftyMoveRule()).append(" ").append(header.playedMoves());
+      builder.append(' ').append(header.fiftyMoveRule()).append(' ').append(header.playedMoves());
     } else {
-      sb.append(" - - 0 1");
+      builder.append(" - - 0 1");
     }
 
-    return sb.toString();
+    return builder.toString();
   }
 }

@@ -43,7 +43,7 @@ public class BoardFileParser {
     final Scanner myReader = new Scanner(myObj);
     while (myReader.hasNextLine()) {
       fileContent.append(myReader.nextLine());
-      fileContent.append("\n");
+      fileContent.append('\n');
     }
     myReader.close();
     verbose(LOGGER, "File content: " + fileContent);
