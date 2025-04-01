@@ -24,7 +24,6 @@ public enum ColorTheme implements ColorThemeInterface {
   private static final String USER_THEMES_FILE =
       System.getProperty("user.home") + "/.chessThemes/custom_themes.csv";
   private static final Map<String, ColorThemeInterface> themes = new HashMap<>();
-  private static File loadFile;
   private static boolean isUserFile = false;
 
   static {
@@ -33,7 +32,7 @@ public enum ColorTheme implements ColorThemeInterface {
     }
 
     setThemeFile();
-    System.out.println("Theme file: " + loadFile);
+    System.out.println("Theme file: " + (isUserFile ? USER_THEMES_FILE : PACKAGE_THEMES_FILE));
     loadCustomThemes();
   }
 
@@ -116,8 +115,8 @@ public enum ColorTheme implements ColorThemeInterface {
   public static void loadCustomThemes() {
     try (InputStream is =
             (isUserFile)
-                ? new FileInputStream(loadFile)
-                : ColorTheme.class.getResourceAsStream(loadFile.getAbsolutePath());
+                ? new FileInputStream(new File(USER_THEMES_FILE))
+                : ColorTheme.class.getResourceAsStream(PACKAGE_THEMES_FILE);
         BufferedReader reader =
             new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)))) {
 
@@ -161,13 +160,11 @@ public enum ColorTheme implements ColorThemeInterface {
         isUserFile = true;
       } catch (IOException | NullPointerException e) {
         System.err.println("Failed to copy theme file: " + e.getMessage());
-        file = new File(PACKAGE_THEMES_FILE);
         isUserFile = false;
       }
     } else {
       isUserFile = true;
     }
-    loadFile = file;
   }
 
   /**
@@ -198,7 +195,8 @@ public enum ColorTheme implements ColorThemeInterface {
   private static void saveThemeToFile(String name, ColorThemeInterface theme) {
     ;
 
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(loadFile, true))) {
+    try (BufferedWriter writer =
+        new BufferedWriter(new FileWriter(new File(USER_THEMES_FILE), true))) {
       writer.write(
           String.format(
               "%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
