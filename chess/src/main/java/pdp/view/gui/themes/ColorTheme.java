@@ -25,7 +25,7 @@ public enum ColorTheme implements ColorThemeInterface {
       System.getProperty("user.home") + "/.chessThemes/custom_themes.csv";
   private static final Map<String, ColorThemeInterface> themes = new HashMap<>();
   private static File loadFile;
-  private static boolean fileWritable = false;
+  private static boolean isUserFile = false;
 
   static {
     for (ColorTheme theme : values()) {
@@ -115,7 +115,7 @@ public enum ColorTheme implements ColorThemeInterface {
   /** Loads custom themes from the CSV file and updates the map. */
   public static void loadCustomThemes() {
     try (InputStream is =
-            (fileWritable)
+            (isUserFile)
                 ? new FileInputStream(loadFile)
                 : ColorTheme.class.getResourceAsStream(loadFile.getAbsolutePath());
         BufferedReader reader =
@@ -158,13 +158,14 @@ public enum ColorTheme implements ColorThemeInterface {
           writer.newLine();
         }
         System.out.println("Custom theme file created at: " + file.getAbsolutePath());
+        isUserFile = true;
       } catch (IOException | NullPointerException e) {
         System.err.println("Failed to copy theme file: " + e.getMessage());
-        loadFile = new File(PACKAGE_THEMES_FILE);
-        fileWritable = false;
+        file = new File(PACKAGE_THEMES_FILE);
+        isUserFile = false;
       }
     } else {
-      fileWritable = true;
+      isUserFile = true;
     }
     loadFile = file;
   }
@@ -189,7 +190,7 @@ public enum ColorTheme implements ColorThemeInterface {
   public static void addTheme(String name, ColorThemeInterface theme) {
     themes.put(name.toUpperCase(), theme);
 
-    if (fileWritable) {
+    if (isUserFile) {
       saveThemeToFile(name, theme);
     }
   }
