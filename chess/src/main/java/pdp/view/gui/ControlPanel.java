@@ -4,7 +4,6 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import pdp.events.EventType;
-import pdp.model.Game;
 import pdp.view.GuiView;
 import pdp.view.gui.controls.ButtonsPanel;
 import pdp.view.gui.controls.HistoryPanel;
@@ -90,17 +89,5 @@ public class ControlPanel extends VBox {
    */
   public void update(EventType type) {
     playerPanel.switchCurrentPlayer();
-    if (type == EventType.MOVE_PLAYED) {
-      if (Game.getInstance().getGameState().isWhiteTurn() && Game.getInstance().isBlackAi()) {
-        playerPanel.setAiStats(
-            Game.getInstance().getBlackSolver().getAlgorithm().getLastVisitedNodeCount(),
-            Game.getInstance().getBlackSolver().getLastMoveTime());
-      } else if (!Game.getInstance().getGameState().isWhiteTurn()
-          && Game.getInstance().isWhiteAi()) {
-        playerPanel.setAiStats(
-            Game.getInstance().getWhiteSolver().getAlgorithm().getLastVisitedNodeCount(),
-            Game.getInstance().getWhiteSolver().getLastMoveTime());
-      }
-    }
   }
 }

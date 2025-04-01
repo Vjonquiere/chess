@@ -1,28 +1,21 @@
 package pdp.view.gui.controls;
 
-import java.text.DecimalFormat;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import pdp.model.Game;
 import pdp.model.ai.Solver;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
-import pdp.view.gui.popups.AiMonitor;
-import pdp.view.gui.popups.InfoPopUp;
 
 /** GUI widget to display player data. */
 public class PlayerInfos extends HBox {
@@ -34,10 +27,6 @@ public class PlayerInfos extends HBox {
 
   /** Timeline needed to update the timer label every 0.5 second. */
   private Timeline timeline;
-
-  private Label lastNodeInfo = new Label();
-
-  AiMonitor aiMonitor = new AiMonitor();
 
   /**
    * Build a player infos widget from given information.
@@ -56,6 +45,8 @@ public class PlayerInfos extends HBox {
       updateTimer(isWhite);
     }
 
+    this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
+
     if (isAi) {
       ImageView info = getInfoIcon();
       Solver solver;
@@ -64,19 +55,9 @@ public class PlayerInfos extends HBox {
       } else {
         solver = Game.getInstance().getBlackSolver();
       }
-      info.setOnMouseClicked(
-          event -> {
-            aiMonitor.show();
-          });
       Tooltip.install(info, new Tooltip(solver.toString()));
-      lastNodeInfo = new Label();
-      this.getChildren()
-          .addAll(
-              getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer, info, lastNodeInfo);
-    } else {
-      this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
+      this.getChildren().add(info);
     }
-
     this.setSpacing(10);
   }
 
@@ -144,31 +125,5 @@ public class PlayerInfos extends HBox {
         timeline.play();
       }
     }
-  }
-
-  public static String formatNumber(long number) {
-    if (number < 1_000) {
-      return String.valueOf(number);
-    } else if (number < 10_000) {
-      return (number / 100) / 10 + "k";
-    } else if (number < 1_000_000) {
-      return (number / 1_000) + "k";
-    } else if (number < 10_000_000) {
-      return new DecimalFormat("#.##").format(number / 1_000_000.0) + "M";
-    } else {
-      return (number / 1_000_000) + "M";
-    }
-  }
-
-  public void setAiStats(long exploratedNodes, long explorationTime) {
-    if (lastNodeInfo != null) {
-      if (explorationTime / 1000000000 == 0) return;
-      lastNodeInfo.setText(
-          formatNumber(exploratedNodes / (explorationTime / 1000000000))
-              + " Nodes/s ("
-              + formatNumber(exploratedNodes)
-              + " explored)");
-    }
-    aiMonitor.update(true);
   }
 }

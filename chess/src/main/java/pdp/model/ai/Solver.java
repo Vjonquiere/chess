@@ -5,6 +5,7 @@ import static pdp.utils.Logging.error;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
@@ -65,8 +66,8 @@ public class Solver {
   /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
 
-  /** The last move reflexion time in nanoseconds. */
-  private long lastMoveTime;
+  /** The move reflexion time in nanoseconds. */
+  private List<Long> moveTimes;
 
   /**
    * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before
@@ -95,6 +96,7 @@ public class Solver {
     evaluatedBoards = new ConcurrentHashMap<>();
     this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
+    this.moveTimes = new CopyOnWriteArrayList<>();
   }
 
   /**
@@ -324,7 +326,7 @@ public class Solver {
     if (timer != null) {
       timer.stop();
     }
-    lastMoveTime = System.nanoTime() - startTime;
+    moveTimes.add(System.nanoTime() - startTime);
 
     debug(LOGGER, "Best move " + bestMove);
 
@@ -405,20 +407,29 @@ public class Solver {
    * @return A long corresponding to the time in nanoseconds.
    */
   public long getLastMoveTime() {
-    return lastMoveTime;
+    return moveTimes.get(moveTimes.size() - 1);
+  }
+
+  /**
+   * Get all the reflexion time of the game.
+   *
+   * @return A list containing all the reflexion times in nanoseconds.
+   */
+  public List<Long> getMoveTimes() {
+    return moveTimes;
   }
 
   @Override
   public String toString() {
     if (algorithm instanceof MonteCarloTreeSearch) {
-      return "Solver configuration: algorithm="
+      return "algorithm="
           + algorithm
           + ", simulations="
           + ((MonteCarloTreeSearch) algorithm).getSimulationLimit()
           + ", time="
           + time;
     }
-    return "Solver configuration: algorithm="
+    return "algorithm="
         + algorithm
         + ", depth="
         + depth

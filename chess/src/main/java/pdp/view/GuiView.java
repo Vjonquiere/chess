@@ -14,9 +14,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import pdp.events.EventType;
 import pdp.model.Game;
@@ -28,6 +26,7 @@ import pdp.view.gui.ChessMenu;
 import pdp.view.gui.ControlPanel;
 import pdp.view.gui.GuiLauncher;
 import pdp.view.gui.board.Board;
+import pdp.view.gui.popups.AiMonitor;
 import pdp.view.gui.popups.EndGamePopUp;
 import pdp.view.gui.themes.ColorTheme;
 
@@ -67,6 +66,9 @@ public class GuiView implements View {
 
   /** Boolean to indicate whether the GUI View is initialized or not. */
   private boolean initialized;
+
+  AiMonitor WhiteAiMonitor;
+  AiMonitor BlackAiMonitor;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -179,7 +181,6 @@ public class GuiView implements View {
                 board.buildBoard();
               }
             });
-
     this.stage = stage;
   }
 
@@ -245,6 +246,21 @@ public class GuiView implements View {
                   menu.displayMessage(TextGetter.getText("guiStartMessagePlayAMove"), false, true);
                 }
 
+                if (WhiteAiMonitor != null) {
+                  WhiteAiMonitor.hide();
+                }
+                if (BlackAiMonitor != null) {
+                  BlackAiMonitor.hide();
+                }
+                if (Game.getInstance().isWhiteAi()) {
+                  WhiteAiMonitor = new AiMonitor(true);
+                  WhiteAiMonitor.show();
+                }
+                if (Game.getInstance().isBlackAi()) {
+                  BlackAiMonitor = new AiMonitor(false);
+                  BlackAiMonitor.show();
+                }
+
                 break;
               case MOVE_PLAYED:
                 if (board != null) {
@@ -256,6 +272,18 @@ public class GuiView implements View {
                     controlPanel.getHistoryPanel().updateHistoryPanel();
                   }
                 }
+                if (Game.getInstance().isWhiteAi()
+                    && WhiteAiMonitor != null
+                    && WhiteAiMonitor.isShowing()) {
+                  WhiteAiMonitor.update();
+                }
+
+                if (Game.getInstance().isBlackAi()
+                    && BlackAiMonitor != null
+                    && BlackAiMonitor.isShowing()) {
+                  BlackAiMonitor.update();
+                }
+
                 break;
               case DRAW_ACCEPTED,
                   INSUFFICIENT_MATERIAL,
