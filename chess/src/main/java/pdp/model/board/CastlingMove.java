@@ -7,7 +7,7 @@ import pdp.utils.Position;
 public class CastlingMove extends Move {
 
   /** Boolean to indicate whether the move is a short castle or not. */
-  private final boolean isShortCastle;
+  private final boolean shortCastle;
 
   /**
    * Constructs a new CastlingMove object with the specified source, destination and castling flags.
@@ -46,7 +46,7 @@ public class CastlingMove extends Move {
       final boolean isCheck,
       final boolean isCheckMate) {
     super(source, dest, piece, false, null, isCheck, isCheckMate);
-    this.isShortCastle = isShortCastle;
+    this.shortCastle = isShortCastle;
   }
 
   /**
@@ -57,8 +57,8 @@ public class CastlingMove extends Move {
   @Override
   public String toAlgebraicString() {
 
-    final String moveString = isShortCastle ? "O-O" : "O-O-O";
-    final String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
+    final String moveString = shortCastle ? "O-O" : "O-O-O";
+    final String annotation = this.isCheckMate() ? "#" : this.isCheck() ? "+" : "";
 
     return moveString + annotation;
   }
@@ -70,7 +70,7 @@ public class CastlingMove extends Move {
    */
   public boolean isShortCastle() {
 
-    return this.isShortCastle;
+    return this.shortCastle;
   }
 
   @Override

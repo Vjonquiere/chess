@@ -143,7 +143,7 @@ public class KingSafetyHeuristic implements Heuristic {
 
     Position newPos;
     if (isWhite) {
-      Position king = board.getKing(isWhite).get(0);
+      final Position king = board.getKing(isWhite).get(0);
       for (int i = king.x() - 1; i < king.x() + 2; i++) {
         for (int j = king.y() - 1; j < king.y() + 2; j++) {
           newPos = new Position(i, j);
@@ -156,7 +156,7 @@ public class KingSafetyHeuristic implements Heuristic {
       }
     }
     if (!isWhite) {
-      Position king = board.getKing(!isWhite).get(0);
+      final Position king = board.getKing(!isWhite).get(0);
       for (int i = king.x() - 1; i < king.x() + 2; i++) {
         for (int j = king.y() - 1; j < king.y() + 2; j++) {
           newPos = new Position(i, j);

@@ -28,8 +28,8 @@ public final class BitboardUtils {
    * @return A list of positions
    */
   public static List<Position> getOccupiedSquares(
-      final int bitBoardIndex, final BitboardRepresentation bitboardRepresentation) {
-    return squaresToPosition(bitboardRepresentation.getBitboards()[bitBoardIndex].getSetBits());
+      final int bitBoardIndex, final BitboardRepresentation bitboardRep) {
+    return squaresToPosition(bitboardRep.getBitboards()[bitBoardIndex].getSetBits());
   }
 
   /**
@@ -61,8 +61,8 @@ public final class BitboardUtils {
    *
    * @return The horizontal size of the board
    */
-  public static int getNbCols(final BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation.getNbCols();
+  public static int getNbCols(final BitboardRepresentation bitboardRep) {
+    return bitboardRep.getNbCols();
   }
 
   /**
@@ -70,7 +70,7 @@ public final class BitboardUtils {
    *
    * @return The vertical size of the board
    */
-  public static int getNbRows(final BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation.getNbRows();
+  public static int getNbRows(final BitboardRepresentation bitboardRep) {
+    return bitboardRep.getNbRows();
   }
 }

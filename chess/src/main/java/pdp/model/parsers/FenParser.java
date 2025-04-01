@@ -73,7 +73,7 @@ public final class FenParser {
           x += Character.getNumericValue(c); // Skip empty squares
         } else {
           final ColoredPiece piece = PIECES.get(String.valueOf(c));
-          BITBOARD_REP.setSquare(piece, (x + y * 8));
+          BITBOARD_REP.setSquare(piece, x + y * 8);
           x++;
         }
       }
