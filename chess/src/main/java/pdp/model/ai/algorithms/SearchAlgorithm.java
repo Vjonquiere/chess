@@ -43,4 +43,8 @@ public abstract class SearchAlgorithm {
   public long getVisitedNodes() {
     return visitedNodes.get();
   }
+
+  public long getLastVisitedNodeCount() {
+    return visitedNodeList.get(visitedNodeList.size() - 1);
+  }
 }

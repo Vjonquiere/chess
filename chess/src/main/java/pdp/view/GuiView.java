@@ -61,6 +61,8 @@ public class GuiView implements View {
   /** Color theme of the whole app. Grey by default. */
   private static ColorTheme theme = GREY;
 
+  public static boolean ANIMATION_ENABLED = true;
+
   /** Boolean to indicate whether the GUI View is initialized or not. */
   private boolean initialized;
 
@@ -244,7 +246,7 @@ public class GuiView implements View {
                 break;
               case MOVE_PLAYED:
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(true);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -302,7 +304,7 @@ public class GuiView implements View {
               case MOVE_UNDO:
                 menu.displayMessage(TextGetter.getText("moveUndone"), false, false);
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -313,7 +315,7 @@ public class GuiView implements View {
                 break;
               case WHITE_UNDO_PROPOSAL:
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -321,7 +323,7 @@ public class GuiView implements View {
                 break;
               case BLACK_UNDO_PROPOSAL:
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -330,7 +332,7 @@ public class GuiView implements View {
               case MOVE_REDO:
                 menu.displayMessage(TextGetter.getText("moveRedone"), false, false);
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -349,7 +351,7 @@ public class GuiView implements View {
               case GAME_RESTART:
                 menu.displayMessage(TextGetter.getText("gameRestart"), false, false);
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);

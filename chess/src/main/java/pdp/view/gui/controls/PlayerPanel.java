@@ -29,4 +29,13 @@ public class PlayerPanel extends VBox {
     whitePlayer.setCurrentPlayer(isWhiteTurn);
     blackPlayer.setCurrentPlayer(!isWhiteTurn);
   }
+
+  public void setAiStats(long exploratedNodes, long explorationTime) {
+    final boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
+    if (isWhiteTurn) {
+      blackPlayer.setAiStats(exploratedNodes, explorationTime);
+    } else {
+      whitePlayer.setAiStats(exploratedNodes, explorationTime);
+    }
+  }
 }

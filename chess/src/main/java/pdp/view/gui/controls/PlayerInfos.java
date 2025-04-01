@@ -1,5 +1,6 @@
 package pdp.view.gui.controls;
 
+import java.text.DecimalFormat;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
@@ -28,6 +29,8 @@ public class PlayerInfos extends HBox {
 
   /** Timeline needed to update the timer label every 0.5 second. */
   private Timeline timeline;
+
+  private Label lastNodeInfo = new Label();
 
   /**
    * Build a player infos widget from given information.
@@ -59,8 +62,10 @@ public class PlayerInfos extends HBox {
             InfoPopUp.show(solver.toString());
           });
       Tooltip.install(info, new Tooltip(solver.toString()));
+      lastNodeInfo = new Label();
       this.getChildren()
-          .addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer, info);
+          .addAll(
+              getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer, info, lastNodeInfo);
     } else {
       this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
     }
@@ -131,6 +136,31 @@ public class PlayerInfos extends HBox {
       if (timeline != null) {
         timeline.play();
       }
+    }
+  }
+
+  public static String formatNumber(long number) {
+    if (number < 1_000) {
+      return String.valueOf(number);
+    } else if (number < 10_000) {
+      return (number / 100) / 10 + "k";
+    } else if (number < 1_000_000) {
+      return (number / 1_000) + "k";
+    } else if (number < 10_000_000) {
+      return new DecimalFormat("#.##").format(number / 1_000_000.0) + "M";
+    } else {
+      return (number / 1_000_000) + "M";
+    }
+  }
+
+  public void setAiStats(long exploratedNodes, long explorationTime) {
+    if (lastNodeInfo != null) {
+      if (explorationTime / 1000000000 == 0) return;
+      lastNodeInfo.setText(
+          formatNumber(exploratedNodes / (explorationTime / 1000000000))
+              + " Nodes/s ("
+              + formatNumber(exploratedNodes)
+              + " explored)");
     }
   }
 }
