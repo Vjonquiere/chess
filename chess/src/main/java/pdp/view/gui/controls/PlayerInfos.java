@@ -82,6 +82,13 @@ public class PlayerInfos extends HBox {
     timeline.setCycleCount(Timeline.INDEFINITE);
   }
 
+  public void updateTimerOnce(final boolean isWhite) {
+    final Timer timer = Game.getInstance().getTimer(isWhite);
+    if (timer != null) {
+      timerLabel.setText(timer.getTimeRemainingString());
+    }
+  }
+
   /**
    * Update the current player.
    *

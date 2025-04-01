@@ -353,6 +353,7 @@ public class GuiView implements View {
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
+                  controlPanel.updateTimersOnce();
                   if (controlPanel.getHistoryPanel() != null) {
                     controlPanel.getHistoryPanel().updateHistoryPanel();
                   }

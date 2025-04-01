@@ -90,4 +90,9 @@ public class ControlPanel extends VBox {
   public void update(EventType type) {
     playerPanel.switchCurrentPlayer();
   }
+
+  /** Updates the timers once. */
+  public void updateTimersOnce() {
+    playerPanel.updateTimersOnce();
+  }
 }
