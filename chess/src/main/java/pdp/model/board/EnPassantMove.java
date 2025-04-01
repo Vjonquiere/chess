@@ -56,7 +56,7 @@ public class EnPassantMove extends Move {
     final String sourceStr = positionToString(this.getSource());
     final String destinationStr = positionToString(this.getDest());
     final String separator = "x";
-    final String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
+    final String annotation = this.isCheckMate() ? "#" : this.isCheck() ? "+" : "";
 
     return sourceStr + separator + destinationStr + annotation;
   }

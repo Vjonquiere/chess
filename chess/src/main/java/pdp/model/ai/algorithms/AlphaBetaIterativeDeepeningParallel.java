@@ -80,11 +80,11 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
       AiMove currentBest = new AiMove(null, -Float.MAX_VALUE);
 
       if (!rootMoves.isEmpty()) {
-        Move firstMove = rootMoves.get(0);
+        final Move firstMove = rootMoves.get(0);
         try {
-          GameAi firstGameCopy = gameAi.copy();
+          final GameAi firstGameCopy = gameAi.copy();
           firstGameCopy.playMove(firstMove);
-          AiMove firstResult =
+          final AiMove firstResult =
               alphaBeta(
                   firstGameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
           currentBest = new AiMove(firstMove, firstResult.score());
@@ -187,7 +187,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
 
-    for (Move move : moves) {
+    for (final Move move : moves) {
       if (solver.isSearchStopped()) {
         stoppedEarly.set(true);
         break;

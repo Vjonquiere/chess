@@ -76,7 +76,7 @@ public class History {
    * @return A string representing the history of moves.
    */
   public String toAlgebraicString() {
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     HistoryNode current = currentMove;
     final Stack<HistoryNode> stack = new Stack<>();
 
@@ -87,14 +87,14 @@ public class History {
 
     while (!stack.isEmpty()) {
       final HistoryNode node = stack.pop();
-      sb.append(node.getState().toString());
+      builder.append(node.getState().toString());
 
       if (node.getState().isWhite()) {
-        sb.append("\n");
+        builder.append('\n');
       }
     }
 
-    return sb.toString().trim();
+    return builder.toString().trim();
   }
 
   /**
@@ -104,7 +104,7 @@ public class History {
    */
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     HistoryNode current = currentMove;
     final Stack<HistoryNode> stack = new Stack<>();
 
@@ -115,14 +115,14 @@ public class History {
 
     while (!stack.isEmpty()) {
       final HistoryNode node = stack.pop();
-      sb.append(node.getState().toString());
+      builder.append(node.getState().toString());
 
       if (node.getState().isWhite()) {
-        sb.append("\n");
+        builder.append('\n');
       }
     }
 
-    return sb.toString().trim();
+    return builder.toString().trim();
   }
 
   /**

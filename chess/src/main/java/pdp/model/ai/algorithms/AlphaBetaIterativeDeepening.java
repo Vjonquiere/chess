@@ -123,7 +123,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE);
-    for (Move move : moves) {
+    for (final Move move : moves) {
       if (solver.isSearchStopped()) {
         this.stoppedEarly = true;
         break;

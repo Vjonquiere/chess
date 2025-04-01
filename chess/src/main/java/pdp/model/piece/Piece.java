@@ -51,5 +51,5 @@ public enum Piece {
    * @param white if true -> white piece, if false -> black piece
    * @return The character representation of the piece
    */
-  public abstract char getCharRepresentation(final boolean white);
+  public abstract char getCharRepresentation(boolean white);
 }
