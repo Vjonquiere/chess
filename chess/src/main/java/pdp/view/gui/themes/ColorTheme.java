@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import pdp.utils.TextGetter;
 
 /** Enum containing all pre-built themes. */
 public enum ColorTheme implements ColorThemeInterface {
@@ -32,9 +33,6 @@ public enum ColorTheme implements ColorThemeInterface {
 
   /** Map containing the themes of the application (from enum and loaded from the csv). */
   private static final Map<String, ColorThemeInterface> THEMES = new HashMap<>();
-
-  /** File to load with the custom themes. */
-  private static File loadFile;
 
   /** Boolean to indicate whether the file is writeable or not. */
   private static boolean isUserFile;
@@ -147,8 +145,8 @@ public enum ColorTheme implements ColorThemeInterface {
   public static void loadCustomThemes() {
     try (InputStream inputStream =
             isUserFile
-                ? new FileInputStream(loadFile)
-                : ColorTheme.class.getResourceAsStream(loadFile.getAbsolutePath());
+                ? new FileInputStream(new File(USER_THEMES_FILE))
+                : ColorTheme.class.getResourceAsStream(PACKAGE_THEMES_FILE);
         BufferedReader reader =
             new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))) {
 
@@ -156,7 +154,7 @@ public enum ColorTheme implements ColorThemeInterface {
       while ((line = reader.readLine()) != null) {
         final String[] parts = line.split(",");
         if (parts.length == 9) {
-          final String name = parts[0].trim().toUpperCase();
+          final String name = parts[0].trim().toUpperCase(TextGetter.getLocale());
           final CustomColorTheme customTheme =
               new CustomColorTheme(
                   name, parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7],
@@ -171,7 +169,7 @@ public enum ColorTheme implements ColorThemeInterface {
   }
 
   private static void setThemeFile() {
-    File file = new File(USER_THEMES_FILE);
+    final File file = new File(USER_THEMES_FILE);
     final File parentDir = file.getParentFile();
     if (parentDir != null && !parentDir.exists()) {
       parentDir.mkdirs();
@@ -192,13 +190,11 @@ public enum ColorTheme implements ColorThemeInterface {
         isUserFile = true;
       } catch (IOException | NullPointerException e) {
         error("Failed to copy theme file: " + e.getMessage());
-        file = new File(PACKAGE_THEMES_FILE);
         isUserFile = false;
       }
     } else {
       isUserFile = true;
     }
-    loadFile = file;
   }
 
   /**
@@ -208,7 +204,7 @@ public enum ColorTheme implements ColorThemeInterface {
    * @return The corresponding ColorThemeInterface or null if not found.
    */
   public static ColorThemeInterface getTheme(final String name) {
-    return THEMES.get(name.toUpperCase());
+    return THEMES.get(name.toUpperCase(TextGetter.getLocale()));
   }
 
   /**
@@ -227,7 +223,7 @@ public enum ColorTheme implements ColorThemeInterface {
    * @param theme color theme.
    */
   public static void addTheme(final String name, final ColorThemeInterface theme) {
-    THEMES.put(name.toUpperCase(), theme);
+    THEMES.put(name.toUpperCase(TextGetter.getLocale()), theme);
 
     if (isUserFile) {
       saveThemeToFile(name, theme);
@@ -241,7 +237,8 @@ public enum ColorTheme implements ColorThemeInterface {
    * @param theme theme to save.
    */
   private static void saveThemeToFile(final String name, final ColorThemeInterface theme) {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(loadFile, true))) {
+    try (BufferedWriter writer =
+        new BufferedWriter(new FileWriter(new File(USER_THEMES_FILE), true))) {
       writer.write(
           String.format(
               "%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
