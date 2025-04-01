@@ -1244,24 +1244,14 @@ public class BitboardRepresentation implements BoardRepresentation {
       this.setNbMovesWithNoCaptureOrPawn(0);
     }
 
-    // TODO REFACTOR EN PASSANT DELETE
-    if (move.isTake()) {
-      // SAVE DELETED PIECE FOR HASHING
-      if (!this.isEnPassantTake()) {
-        this.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-      }
-      // Reset the number of moves with no capture
-      this.setNbMovesWithNoCaptureOrPawn(0);
-    }
-
-    if (this.isEnPassantTake()) {
+    if (move.isTake() || this.isEnPassantTake()) {
       this.setLastMoveDoublePush(false);
       this.setEnPassantTake(false);
-      if (this.getPlayer()) {
-        this.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-      } else {
-        this.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
-      }
+      // SAVE DELETED PIECE FOR HASHING
+
+      this.deletePieceAt(move.getTakeDest().x(), move.getTakeDest().y());
+      // Reset the number of moves with no capture
+      this.setNbMovesWithNoCaptureOrPawn(0);
     }
 
     this.movePiece(move.getSource(), move.getDest());

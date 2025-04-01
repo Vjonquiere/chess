@@ -1,4 +1,4 @@
-package tests;
+package tests.GUI;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
