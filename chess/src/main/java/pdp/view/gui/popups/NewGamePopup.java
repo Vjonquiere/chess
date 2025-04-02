@@ -2,6 +2,7 @@ package pdp.view.gui.popups;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -64,13 +65,13 @@ public class NewGamePopup {
         .addListener(
             (obs, oldVal, newVal) -> {
               options.put(modeType, newVal);
-              depthContainer.setVisible(newVal != AlgorithmType.MCTS.toString());
-              depthContainer.setManaged(newVal != AlgorithmType.MCTS.toString());
-              heuristicContainer.setVisible(newVal != AlgorithmType.MCTS.toString());
-              heuristicContainer.setManaged(newVal != AlgorithmType.MCTS.toString());
+              depthContainer.setVisible(!Objects.equals(newVal, AlgorithmType.MCTS.toString()));
+              depthContainer.setManaged(!Objects.equals(newVal, AlgorithmType.MCTS.toString()));
+              heuristicContainer.setVisible(!Objects.equals(newVal, AlgorithmType.MCTS.toString()));
+              heuristicContainer.setManaged(!Objects.equals(newVal, AlgorithmType.MCTS.toString()));
 
-              simulationContainer.setVisible(newVal == AlgorithmType.MCTS.toString());
-              simulationContainer.setManaged(newVal == AlgorithmType.MCTS.toString());
+              simulationContainer.setVisible(Objects.equals(newVal, AlgorithmType.MCTS.toString()));
+              simulationContainer.setManaged(Objects.equals(newVal, AlgorithmType.MCTS.toString()));
             });
 
     aiContainer.getChildren().add(aiModeDropdown);
@@ -94,16 +95,15 @@ public class NewGamePopup {
 
     heuristicDropdown
         .valueProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(heuristicType, newVal);
-            });
+        .addListener((obs, oldVal, newVal) -> options.put(heuristicType, newVal));
 
     heuristicContainer.setId(colorTag + "HeuristicContainer");
     heuristicContainer.setVisible(
-        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+        options.containsKey(modeType)
+            && !Objects.equals(options.get(modeType), AlgorithmType.MCTS.toString()));
     heuristicContainer.setManaged(
-        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+        options.containsKey(modeType)
+            && !Objects.equals(options.get(modeType), AlgorithmType.MCTS.toString()));
 
     heuristicContainer.getChildren().add(heuristicDropdown);
 
@@ -125,10 +125,7 @@ public class NewGamePopup {
 
     endgameHeuristicDropdown
         .valueProperty()
-        .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(egHeuristicType, newVal);
-            });
+        .addListener((obs, oldVal, newVal) -> options.put(egHeuristicType, newVal));
 
     heuristicContainer.getChildren().add(endgameHeuristicDropdown);
 
@@ -136,9 +133,11 @@ public class NewGamePopup {
 
     depthContainer.setId(colorTag + "DepthContainer");
     depthContainer.setVisible(
-        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+        options.containsKey(modeType)
+            && !Objects.equals(options.get(modeType), AlgorithmType.MCTS.toString()));
     depthContainer.setManaged(
-        options.containsKey(modeType) && options.get(modeType) != AlgorithmType.MCTS.toString());
+        options.containsKey(modeType)
+            && !Objects.equals(options.get(modeType), AlgorithmType.MCTS.toString()));
 
     depthContainer.getChildren().add(new Label(TextGetter.getText("aiDepthLabel", colorText)));
     final Slider depthSlider = new Slider(1, 10, 3);
@@ -152,9 +151,7 @@ public class NewGamePopup {
     depthSlider
         .valueProperty()
         .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(depthType, String.valueOf(newVal.intValue()));
-            });
+            (obs, oldVal, newVal) -> options.put(depthType, String.valueOf(newVal.intValue())));
 
     if (options.containsKey(depthType)) {
       depthSlider.setValue(Integer.parseInt(options.get(depthType)));
@@ -166,9 +163,11 @@ public class NewGamePopup {
 
     simulationContainer.setId(colorTag + "SimulationContainer");
     simulationContainer.setVisible(
-        options.containsKey(modeType) && options.get(modeType) == AlgorithmType.MCTS.toString());
+        options.containsKey(modeType)
+            && Objects.equals(options.get(modeType), AlgorithmType.MCTS.toString()));
     simulationContainer.setManaged(
-        options.containsKey(modeType) && options.get(modeType) == AlgorithmType.MCTS.toString());
+        options.containsKey(modeType)
+            && Objects.equals(options.get(modeType), AlgorithmType.MCTS.toString()));
 
     simulationContainer
         .getChildren()
@@ -185,9 +184,8 @@ public class NewGamePopup {
     simulationSlider
         .valueProperty()
         .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(simulationsType, String.valueOf(newVal.intValue()));
-            });
+            (obs, oldVal, newVal) ->
+                options.put(simulationsType, String.valueOf(newVal.intValue())));
 
     if (options.containsKey(simulationsType)) {
       simulationSlider.setValue(Integer.parseInt(options.get(simulationsType)));
@@ -231,9 +229,8 @@ public class NewGamePopup {
     aiTimeSlider
         .valueProperty()
         .addListener(
-            (obs, oldVal, newVal) -> {
-              options.put(OptionType.AI_TIME, String.valueOf(newVal.intValue()));
-            });
+            (obs, oldVal, newVal) ->
+                options.put(OptionType.AI_TIME, String.valueOf(newVal.intValue())));
 
     if (options.containsKey(OptionType.AI_TIME)) {
       aiTimeSlider.setValue(Integer.parseInt(options.get(OptionType.AI_TIME)));
@@ -329,11 +326,7 @@ public class NewGamePopup {
     aiDropdown.getItems().add("B");
     aiDropdown.getItems().add("A");
 
-    if (options.containsKey(OptionType.AI)) {
-      aiDropdown.setValue(options.get(OptionType.AI));
-    } else {
-      aiDropdown.setValue("None");
-    }
+    aiDropdown.setValue(options.getOrDefault(OptionType.AI, "None"));
     layout.getChildren().add(new Label(TextGetter.getText("newGame.aiPlayers")));
     layout.getChildren().add(aiDropdown);
 
@@ -369,7 +362,7 @@ public class NewGamePopup {
               aiWhiteContainer.setManaged(selectedWhite);
               aiBlackContainer.setVisible(selectedBlack);
               aiBlackContainer.setManaged(selectedBlack);
-              if (newVal != "None") {
+              if (!newVal.equals("None")) {
                 aiTimeContainer.setVisible(true);
                 aiTimeContainer.setManaged(true);
                 options.put(OptionType.AI, newVal);

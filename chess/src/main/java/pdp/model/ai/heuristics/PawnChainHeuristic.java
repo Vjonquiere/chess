@@ -14,7 +14,7 @@ public class PawnChainHeuristic implements Heuristic {
   private static final float REWARD = 5f;
 
   /** The multiplier used to keep the values under SCORE_CAP. */
-  private static final float MULTIPLIER = (SCORE_CAP / (28 * REWARD));
+  private static final float MULTIPLIER = SCORE_CAP / (28 * REWARD);
 
   /**
    * Computes a score according to how strong pawns are connected. Heuristic used for endgames.
@@ -44,7 +44,7 @@ public class PawnChainHeuristic implements Heuristic {
 
     for (final Position pawn : pawns) {
       for (final Position otherPawn : pawns) {
-        if ((Math.abs(otherPawn.x() - pawn.x()) == 1 && Math.abs(otherPawn.y() - (pawn.y())) == 1)
+        if ((Math.abs(otherPawn.x() - pawn.x()) == 1 && Math.abs(otherPawn.y() - pawn.y()) == 1)
             || (otherPawn.y() == pawn.y() && Math.abs(otherPawn.x() - pawn.x()) == 1)) {
           // Connected pawn
           score += REWARD;

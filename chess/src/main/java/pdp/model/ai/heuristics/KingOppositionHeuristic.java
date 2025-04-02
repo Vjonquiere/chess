@@ -45,9 +45,8 @@ public class KingOppositionHeuristic implements Heuristic {
    * @return a score based on the king opposition
    */
   private float evaluateKingOpposition(final BoardRepresentation board) {
-    final BoardRepresentation bitboard = board;
-    final Position whiteKing = bitboard.getKing(true).get(0);
-    final Position blackKing = bitboard.getKing(false).get(0);
+    final Position whiteKing = board.getKing(true).get(0);
+    final Position blackKing = board.getKing(false).get(0);
 
     final int diffX = Math.abs(whiteKing.x() - blackKing.x());
     final int diffY = Math.abs(whiteKing.y() - blackKing.y());

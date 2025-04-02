@@ -30,7 +30,7 @@ public class ProposeDrawCommand implements Command {
    *
    * @param model the Game model on which the command is executed.
    * @param controller the GameController managing the game commands.
-   * @return an Optional containing an exception if an error occured, otherwise an empty Optional.
+   * @return an Optional containing an exception if an error occurred, otherwise an empty Optional.
    */
   @Override
   public Optional<Exception> execute(final Game model, GameController controller) {

@@ -12,7 +12,7 @@ import pdp.view.gui.controls.PlayerPanel;
 /** Control panel for GUI view. Contains player infos, history and buttons. */
 public class ControlPanel extends VBox {
 
-  /** Panel containing the players informations. */
+  /** Panel containing the players' information. */
   private PlayerPanel playerPanel;
 
   /** Panel containing the history. */
@@ -21,7 +21,7 @@ public class ControlPanel extends VBox {
   /** Panel containing the different buttons. */
   private ButtonsPanel buttonsPanel;
 
-  /** Style of the boder of each component of the panel. */
+  /** Style of the coder of each component of the panel. */
   private final String borderStyle =
       "-fx-border-color: "
           + GuiView.getTheme().getPrimary()
@@ -89,5 +89,10 @@ public class ControlPanel extends VBox {
    */
   public void update(EventType type) {
     playerPanel.switchCurrentPlayer();
+  }
+
+  /** Updates the timers once. */
+  public void updateTimersOnce() {
+    playerPanel.updateTimersOnce();
   }
 }

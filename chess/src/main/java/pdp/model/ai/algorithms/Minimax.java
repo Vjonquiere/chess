@@ -8,7 +8,7 @@ import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 
 /** Algorithm of artificial intelligence Minimax. */
-public class Minimax implements SearchAlgorithm {
+public class Minimax extends SearchAlgorithm {
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 
@@ -56,19 +56,18 @@ public class Minimax implements SearchAlgorithm {
       return new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
       return new AiMove(null, evaluation);
     }
 
     final boolean isMinimizing = currentPlayer != originalPlayer;
     AiMove bestMove = new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
     final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
-    for (Move move : moves) {
+    for (final Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
       }
       try {
-        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         final AiMove currMove = minimax(game, depth - 1, !currentPlayer, originalPlayer);
         game.previousState();

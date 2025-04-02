@@ -119,6 +119,6 @@ public class CompositeHeuristicTest {
     score += pawnChainHeuristic.evaluate(game.getBoard(), false);
     score += developmentHeuristic.evaluate(game.getBoard(), false) * 3;
     score += KingSafetyHeuristic.evaluate(game.getBoard(), false);
-    assertEquals(score, solver.evaluateBoard(game.getBoard(), false));
+    assertEquals(score, solver.evaluateBoard(game.getGameState(), false));
   }
 }

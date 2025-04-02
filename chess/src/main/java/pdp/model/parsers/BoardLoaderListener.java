@@ -17,7 +17,7 @@ import pdp.utils.Position;
 /** Class that use parser generator class to generate boards from parsing trees. */
 public class BoardLoaderListener extends BoardLoaderBaseListener {
   /** Map making correspond a string and the piece it represents. */
-  private static final Map<String, ColoredPiece> pieces =
+  private static final Map<String, ColoredPiece> PIECES =
       Map.ofEntries(
           entry("K", new ColoredPiece(Piece.KING, Color.WHITE)),
           entry("Q", new ColoredPiece(Piece.QUEEN, Color.WHITE)),
@@ -33,7 +33,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
           entry("p", new ColoredPiece(Piece.PAWN, Color.BLACK)));
 
   /** Bitboard to initialize when parsing a file. */
-  private final BitboardRepresentation bitboardRepresentation =
+  private final BitboardRepresentation bitboardRep =
       new BitboardRepresentation(
           new Bitboard(0L),
           new Bitboard(0L),
@@ -87,39 +87,39 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
    * @return The board and current player parsed
    */
   public FileBoard getResult() {
-    return new FileBoard(bitboardRepresentation, whiteTurn, fenHeader);
+    return new FileBoard(bitboardRep, whiteTurn, fenHeader);
   }
 
   @Override
-  public void enterPlayer(BoardLoaderParser.PlayerContext ctx) {
+  public void enterPlayer(final BoardLoaderParser.PlayerContext ctx) {
     whiteTurn = Objects.equals(ctx.PLAYER_COLOR().getText(), "W");
   }
 
   @Override
-  public void enterBoardLine(BoardLoaderParser.BoardLineContext ctx) {
+  public void enterBoardLine(final BoardLoaderParser.BoardLineContext ctx) {
     y--;
     x = 0;
   }
 
   @Override
-  public void enterPiece(BoardLoaderParser.PieceContext ctx) {
+  public void enterPiece(final BoardLoaderParser.PieceContext ctx) {
     if (ctx.getText().equals("_")) {
       x++;
       return;
     }
-    ColoredPiece piece = pieces.get(ctx.getText());
-    int square = (x + (y * 8));
+    final ColoredPiece piece = PIECES.get(ctx.getText());
+    final int square = x + (y * 8);
     if (piece == null) {
       throw new RuntimeException(
           "Piece `" + ctx.getText() + "` at square " + square + " is not recognized");
     } else {
-      bitboardRepresentation.setSquare(piece, square);
+      bitboardRep.setSquare(piece, square);
     }
     x++;
   }
 
   @Override
-  public void enterCastling(BoardLoaderParser.CastlingContext ctx) {
+  public void enterCastling(final BoardLoaderParser.CastlingContext ctx) {
     whiteKingCastling = ctx.WHITE_KING() != null;
     whiteQueenCastling = ctx.WHITE_QUEEN() != null;
     blackKingCastling = ctx.BLACK_KING() != null;
@@ -127,7 +127,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
   }
 
   @Override
-  public void enterFen(BoardLoaderParser.FenContext ctx) {
+  public void enterFen(final BoardLoaderParser.FenContext ctx) {
     enPassant =
         ctx.CHESS_SQUARE() == null ? null : Move.stringToPosition(ctx.CHESS_SQUARE().getText());
     fiftyMoveRule = ctx.INT(0) == null ? 0 : Integer.parseInt(ctx.INT(0).getText());
@@ -135,7 +135,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
   }
 
   @Override
-  public void exitFen(BoardLoaderParser.FenContext ctx) {
+  public void exitFen(final BoardLoaderParser.FenContext ctx) {
     fenHeader =
         new FenHeader(
             whiteKingCastling,

@@ -111,9 +111,8 @@ public class BadPawnsHeuristic implements Heuristic {
    * @return score based on the number of backward pawns
    */
   private int backwardsPawns(final BoardRepresentation board, final boolean isWhite) {
-    final BoardRepresentation bitboard = board;
-    final List<Position> pawns = bitboard.getPawns(isWhite);
-    final List<Position> enemyPawns = bitboard.getPawns(!isWhite);
+    final List<Position> pawns = board.getPawns(isWhite);
+    final List<Position> enemyPawns = board.getPawns(!isWhite);
 
     int count = 0;
 

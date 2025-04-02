@@ -48,7 +48,7 @@ public class History {
    *
    * @param currentMove the HistoryNode representing the current move in the history.
    */
-  public void setCurrentMove(HistoryNode currentMove) {
+  public void setCurrentMove(final HistoryNode currentMove) {
     this.currentMove = currentMove;
   }
 
@@ -58,7 +58,7 @@ public class History {
    * @param state A HistoryState containing the move played in algebraic notation, the turn number,
    *     and the color played.
    */
-  public void addMove(HistoryState state) {
+  public void addMove(final HistoryState state) {
     debug(LOGGER, "Adding new state to History");
     debug(LOGGER, state.getMove().toString());
     debug(LOGGER, state.isWhite() + " " + state.getFullTurn());
@@ -76,9 +76,9 @@ public class History {
    * @return A string representing the history of moves.
    */
   public String toAlgebraicString() {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     HistoryNode current = currentMove;
-    Stack<HistoryNode> stack = new Stack<>();
+    final Stack<HistoryNode> stack = new Stack<>();
 
     while (current != null) {
       stack.push(current);
@@ -86,15 +86,15 @@ public class History {
     }
 
     while (!stack.isEmpty()) {
-      HistoryNode node = stack.pop();
-      sb.append(node.getState().toString());
+      final HistoryNode node = stack.pop();
+      builder.append(node.getState().toString());
 
       if (node.getState().isWhite()) {
-        sb.append("\n");
+        builder.append('\n');
       }
     }
 
-    return sb.toString().trim();
+    return builder.toString().trim();
   }
 
   /**
@@ -104,9 +104,9 @@ public class History {
    */
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     HistoryNode current = currentMove;
-    Stack<HistoryNode> stack = new Stack<>();
+    final Stack<HistoryNode> stack = new Stack<>();
 
     while (current != null) {
       stack.push(current);
@@ -114,15 +114,15 @@ public class History {
     }
 
     while (!stack.isEmpty()) {
-      HistoryNode node = stack.pop();
-      sb.append(node.getState().toString());
+      final HistoryNode node = stack.pop();
+      builder.append(node.getState().toString());
 
       if (node.getState().isWhite()) {
-        sb.append("\n");
+        builder.append('\n');
       }
     }
 
-    return sb.toString().trim();
+    return builder.toString().trim();
   }
 
   /**

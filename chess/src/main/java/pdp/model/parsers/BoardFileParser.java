@@ -36,14 +36,14 @@ public class BoardFileParser {
    * @return The content of the given file has a String
    * @throws FileNotFoundException if the path is not valid
    */
-  public String readFile(String path) throws FileNotFoundException {
+  public String readFile(final String path) throws FileNotFoundException {
     debug(LOGGER, "Loading file: " + path);
-    StringBuilder fileContent = new StringBuilder();
-    File myObj = new File(path);
-    Scanner myReader = new Scanner(myObj);
+    final StringBuilder fileContent = new StringBuilder();
+    final File myObj = new File(path);
+    final Scanner myReader = new Scanner(myObj);
     while (myReader.hasNextLine()) {
       fileContent.append(myReader.nextLine());
-      fileContent.append("\n");
+      fileContent.append('\n');
     }
     myReader.close();
     verbose(LOGGER, "File content: " + fileContent);
@@ -58,7 +58,7 @@ public class BoardFileParser {
    * @param fileName The file path
    * @return The corresponding board and current player
    */
-  public FileBoard parseGameFile(String fileName, Runtime runtime) {
+  public FileBoard parseGameFile(final String fileName, final Runtime runtime) {
     String content;
     try {
       content = readFile(fileName);
@@ -70,20 +70,20 @@ public class BoardFileParser {
     content = content.split("\\d+\\.")[0].trim(); // Removing history if present
     try {
       debug(LOGGER, "Converting file to charStream...");
-      CharStream charStream = CharStreams.fromString(content);
+      final CharStream charStream = CharStreams.fromString(content);
       debug(LOGGER, "Lexing...");
-      BoardLoaderLexer lexer = new BoardLoaderLexer(charStream);
-      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      final BoardLoaderLexer lexer = new BoardLoaderLexer(charStream);
+      final CommonTokenStream tokens = new CommonTokenStream(lexer);
       debug(LOGGER, "Parsing...");
-      BoardLoaderParser parser = new BoardLoaderParser(tokens);
+      final BoardLoaderParser parser = new BoardLoaderParser(tokens);
       parser.setErrorHandler(new BailErrorStrategy()); // force parser to throw error
-      ParseTree tree = parser.board();
+      final ParseTree tree = parser.board();
       debug(LOGGER, "Building board...");
-      ParseTreeWalker walker = new ParseTreeWalker();
-      BoardLoaderListener listener = new BoardLoaderListener();
+      final ParseTreeWalker walker = new ParseTreeWalker();
+      final BoardLoaderListener listener = new BoardLoaderListener();
       walker.walk(listener, tree);
       debug(LOGGER, "Board built successfully");
-      FileBoard result = listener.getResult();
+      final FileBoard result = listener.getResult();
       if (result.board().getKing(true).size() != 1
           || result.board().getKing(false).size() != 1
           || result.board().isCheckMate(Color.WHITE)

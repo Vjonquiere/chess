@@ -27,7 +27,7 @@ public class Main {
     Logging.configureLogging(LOGGER);
     if (!options.containsKey(OptionType.UCI)) {
       print(TextGetter.getText("title"));
-      print("options: " + options.toString());
+      print("options: " + options);
     }
 
     final GameController controller = GameControllerInit.initialize(options);

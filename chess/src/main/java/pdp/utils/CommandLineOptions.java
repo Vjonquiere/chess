@@ -238,9 +238,13 @@ public final class CommandLineOptions {
     if (activatedOptions.containsKey(OptionType.CONTEST)) {
       final String contestFile = activatedOptions.get(OptionType.CONTEST);
       if (contestFile == null || contestFile.isEmpty()) {
-        error("Error: --contest option requires a valid file path.");
+        error(
+            "Error: --contest option requires a valid file path."); // TODO Quit when empty CONTEST
+        // ?
         activatedOptions.remove(OptionType.CONTEST);
       } else {
+        activatedOptions.put(OptionType.AI, "A");
+        activatedOptions.remove(OptionType.LOAD);
         debug(LOGGER, "Contest mode activated with file: " + contestFile);
       }
     }
@@ -255,7 +259,7 @@ public final class CommandLineOptions {
     }
 
     if (activatedOptions.containsKey(OptionType.AI)
-        && activatedOptions.get(OptionType.AI).equals("")) {
+        && activatedOptions.get(OptionType.AI).isEmpty()) {
       activatedOptions.put(OptionType.AI, "W");
     }
 
@@ -362,7 +366,7 @@ public final class CommandLineOptions {
       activatedOptions.remove(OptionType.AI_HEURISTIC);
 
       if (activatedOptions.containsKey(OptionType.AI_TIME)
-          && activatedOptions.get(OptionType.AI_TIME).equals("")) {
+          && activatedOptions.get(OptionType.AI_TIME).isEmpty()) {
         activatedOptions.put(OptionType.AI_TIME, "5");
       }
     }

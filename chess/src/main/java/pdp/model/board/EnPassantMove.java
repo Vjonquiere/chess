@@ -11,14 +11,13 @@ public class EnPassantMove extends Move {
    *
    * @param source The starting Position of the move.
    * @param dest The destination Position of the move.
-   * @param promPiece The piece that this move promotes to.
    */
   public EnPassantMove(
-      Position source,
-      Position dest,
-      ColoredPiece piece,
-      Position takeDest,
-      ColoredPiece takenPiece) {
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final Position takeDest,
+      final ColoredPiece takenPiece) {
     this(source, dest, piece, takeDest, takenPiece, false, false);
   }
 
@@ -30,8 +29,6 @@ public class EnPassantMove extends Move {
    * @param source The starting Position of the move.
    * @param dest The destination Position of the move.
    * @param piece The ColoredPiece being moved.
-   * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
-   *     otherwise).
    * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
    * @param isCheck A boolean indicating whether the move results in a check (true if it's a check,
    *     false otherwise).
@@ -39,13 +36,13 @@ public class EnPassantMove extends Move {
    *     checkmate, false otherwise).
    */
   public EnPassantMove(
-      Position source,
-      Position dest,
-      ColoredPiece piece,
-      Position takeDest,
-      ColoredPiece takenPiece,
-      boolean isCheck,
-      boolean isCheckMate) {
+      final Position source,
+      final Position dest,
+      final ColoredPiece piece,
+      final Position takeDest,
+      final ColoredPiece takenPiece,
+      final boolean isCheck,
+      final boolean isCheckMate) {
     super(source, dest, piece, true, takenPiece, takeDest, isCheck, isCheckMate);
   }
 
@@ -56,14 +53,15 @@ public class EnPassantMove extends Move {
    */
   @Override
   public String toAlgebraicString() {
-    String sourceStr = positionToString(this.getSource());
-    String destinationStr = positionToString(this.getDest());
-    String separator = "x";
-    String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
+    final String sourceStr = positionToString(this.getSource());
+    final String destinationStr = positionToString(this.getDest());
+    final String separator = "x";
+    final String annotation = this.isCheckMate() ? "#" : this.isCheck() ? "+" : "";
 
     return sourceStr + separator + destinationStr + annotation;
   }
 
+  @Override
   public String toUciString() {
     return super.toUciString();
   }

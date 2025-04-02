@@ -32,13 +32,13 @@ public class Move {
   private ColoredPiece takenPiece;
 
   /** Boolean to indicate if the move is a capture. */
-  private boolean isTake;
+  private boolean take;
 
   /** Boolean to indicate if the move result in a check. */
-  private final boolean isCheck;
+  private final boolean check;
 
   /** Boolean to indicate if the move result in a checkmate. */
-  private final boolean isCheckMate;
+  private final boolean checkMate;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -166,11 +166,11 @@ public class Move {
     this.source = source;
     this.dest = dest;
     this.piece = piece;
-    this.isTake = isTake;
+    this.take = isTake;
     this.takenPiece = takenPiece;
     this.takeDest = takeDest;
-    this.isCheck = isCheck;
-    this.isCheckMate = isCheckMate;
+    this.check = isCheck;
+    this.checkMate = isCheckMate;
   }
 
   /**
@@ -272,8 +272,8 @@ public class Move {
       throw new InvalidPositionException(move);
     }
 
-    int x = colLetter - 'a';
-    int y = rowNumber - 1;
+    final int x = colLetter - 'a';
+    final int y = rowNumber - 1;
 
     return new Position(x, y);
   }
@@ -330,10 +330,10 @@ public class Move {
                   move.dest,
                   ((PromoteMove) this).getPromPiece(),
                   move.piece,
-                  move.isTake,
+                  move.take,
                   move.takenPiece,
-                  move.isCheck,
-                  move.isCheckMate));
+                  move.check,
+                  move.checkMate));
         }
         return Optional.of(move);
       }
@@ -406,10 +406,10 @@ public class Move {
   /**
    * Checks if the move is a capture.
    *
-   * @return true if the move is a capture,f alse otherwise.
+   * @return true if the move is a capture,false otherwise.
    */
   public boolean isTake() {
-    return isTake;
+    return take;
   }
 
   /**
@@ -418,7 +418,7 @@ public class Move {
    * @param isTake A boolean indicating whether the move is a capture.
    */
   public void setTake(final boolean isTake) {
-    this.isTake = isTake;
+    this.take = isTake;
   }
 
   /**
@@ -427,7 +427,7 @@ public class Move {
    * @return true if the move results in a check, false otherwise.
    */
   public boolean isCheck() {
-    return isCheck;
+    return check;
   }
 
   /**
@@ -436,7 +436,7 @@ public class Move {
    * @return true if the move results in a checkmate, false otherwise.
    */
   public boolean isCheckMate() {
-    return isCheckMate;
+    return checkMate;
   }
 
   /**
@@ -455,8 +455,8 @@ public class Move {
     }
     final String sourceStr = positionToString(this.source);
     final String destinationStr = positionToString(this.dest);
-    final String separator = this.isTake ? "x" : "-";
-    final String annotation = this.isCheckMate ? "#" : (this.isCheck ? "+" : "");
+    final String separator = this.take ? "x" : "-";
+    final String annotation = this.checkMate ? "#" : this.check ? "+" : "";
 
     return piece + sourceStr + separator + destinationStr + annotation;
   }
@@ -484,7 +484,7 @@ public class Move {
   public String toString() {
     final String sourceStr = positionToString(this.source);
     final String destinationStr = positionToString(this.dest);
-    final String separator = this.isTake ? "x" : "-";
+    final String separator = this.take ? "x" : "-";
 
     return sourceStr + separator + destinationStr;
   }
@@ -501,10 +501,9 @@ public class Move {
     if (this == obj) {
       return true;
     }
-    if (obj == null || !(obj instanceof Move)) {
+    if (!(obj instanceof Move move)) {
       return false;
     }
-    final Move move = (Move) obj;
     return source.equals(move.source) && dest.equals(move.dest);
   }
 

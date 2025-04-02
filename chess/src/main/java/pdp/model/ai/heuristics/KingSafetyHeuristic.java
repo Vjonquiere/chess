@@ -1,18 +1,39 @@
 package pdp.model.ai.heuristics;
 
-import java.util.List;
 import pdp.model.board.BoardRepresentation;
-import pdp.model.board.Move;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 /**
- * Heuristic based on the safety of the king (not in center, pieces around to protect him, checks
- * available).
+ * Heuristic based on the safety of the king (not in center, pieces around to protect him, neighbors
+ * attacked).
  */
 public class KingSafetyHeuristic implements Heuristic {
+
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
+  /** Score obtained for each piece protecting the king. */
+  private static final float PROTECTION_BONUS = 5f;
+
+  /** Score obtained when an adjacent piece to the king is attacked. */
+  private static final float ADJACENT_ATTACK_SCORE = 10f;
+
+  /** Score obtained when the king has no adjacent pieces attacked. */
+  private static final float NO_ADJACENT_ATTACK_BONUS = 20f;
+
+  /** Score obtained when the king is in the center. */
+  private static final float IN_CENTER_SCORE = 20f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLER =
+      SCORE_CAP
+          / (8 * PROTECTION_BONUS
+              + 8 * ADJACENT_ATTACK_SCORE
+              + NO_ADJACENT_ATTACK_BONUS
+              + IN_CENTER_SCORE);
 
   /**
    * Assigns a score to a player according to the safety of his king. Checks: if king is in the
@@ -29,6 +50,9 @@ public class KingSafetyHeuristic implements Heuristic {
     score += kingVulnerabilityScore(board, true) - kingVulnerabilityScore(board, false);
     score += kingProtectionScore(board, true) - kingProtectionScore(board, false);
     score += kingSafetyToChecksFromEnemy(board, true) - kingSafetyToChecksFromEnemy(board, false);
+
+    score *= MULTIPLER;
+
     return isWhite ? score : -score;
   }
 
@@ -58,7 +82,7 @@ public class KingSafetyHeuristic implements Heuristic {
 
     if (isKingInCenter) {
       // Penalize king in the center
-      score = -20;
+      score = -IN_CENTER_SCORE;
     }
 
     return score;
@@ -73,9 +97,8 @@ public class KingSafetyHeuristic implements Heuristic {
    */
   private float kingProtectionScore(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
-    final BoardRepresentation bitboard = board;
 
-    final Position kingPos = bitboard.getKing(isWhite).get(0);
+    final Position kingPos = board.getKing(isWhite).get(0);
 
     // Squares around the king
     final int[][] directions = {
@@ -89,15 +112,17 @@ public class KingSafetyHeuristic implements Heuristic {
       newPos = new Position(newX, newY);
 
       if (newPos.isValid()) {
-        final ColoredPiece piece = bitboard.getPieceAt(newX, newY);
+        final ColoredPiece piece = board.getPieceAt(newX, newY);
         if (piece.getPiece() != Piece.EMPTY) {
           final Color colorPiece = piece.getColor();
           final boolean white = colorPiece == Color.WHITE;
           if (white == isWhite) {
             // Protection from piece of the same color
-            score += 5;
+            score += PROTECTION_BONUS;
           }
         }
+      } else {
+        score += PROTECTION_BONUS;
       }
     }
 
@@ -105,56 +130,39 @@ public class KingSafetyHeuristic implements Heuristic {
   }
 
   /**
-   * Returns a positive or negative score according to the number of possible checks from the enemy.
+   * Returns a positive or negative score according to the number of neighbors attacked by the
+   * enemy.
    *
    * @param board the board of the game
    * @param isWhite true if white, false otherwise
-   * @return a negative score if the king can get checked, positive otherwise
+   * @return a negative score if the king's neighbors can get attacked, positive otherwise
    */
   private float kingSafetyToChecksFromEnemy(
       final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
 
-    final BoardRepresentation bitboard = board;
-
+    Position newPos;
     if (isWhite) {
-      // Test for white king
-      final List<List<Position>> posBlackPieces = bitboard.retrieveBlackPiecesPos();
-      final Position whiteKingPosition = bitboard.getKing(true).get(0);
-
-      for (final List<Position> posList : posBlackPieces) {
-        for (final Position posBlackPiece : posList) {
-          // Must not be king
-          if (bitboard.getPieceAt(posBlackPiece.x(), posBlackPiece.y()).getPiece() != Piece.KING) {
-            final List<Move> movesForPiece =
-                bitboard.getAvailableMoves(posBlackPiece.x(), posBlackPiece.y(), true);
-            for (final Move move : movesForPiece) {
-              if (move.getDest().x() == whiteKingPosition.x()
-                  && move.getDest().y() == whiteKingPosition.y()) {
-                // Check is possible from black
-                score -= 30;
-              }
+      final Position king = board.getKing(isWhite).get(0);
+      for (int i = king.x() - 1; i < king.x() + 2; i++) {
+        for (int j = king.y() - 1; j < king.y() + 2; j++) {
+          newPos = new Position(i, j);
+          if (newPos.isValid()) {
+            if (board.isAttacked(i, j, Color.BLACK)) {
+              score -= ADJACENT_ATTACK_SCORE;
             }
           }
         }
       }
-    } else {
-      // Test for black king
-      final List<List<Position>> posWhitePieces = bitboard.retrieveWhitePiecesPos();
-      final Position blackKingPosition = bitboard.getKing(false).get(0);
-
-      for (final List<Position> posList : posWhitePieces) {
-        for (final Position posWhitePiece : posList) {
-          // Must not be king
-          if (bitboard.getPieceAt(posWhitePiece.x(), posWhitePiece.y()).getPiece() != Piece.KING) {
-            final List<Move> movesForPiece =
-                bitboard.getAvailableMoves(posWhitePiece.x(), posWhitePiece.y(), true);
-            for (final Move move : movesForPiece) {
-              if (move.getDest().x() == blackKingPosition.x()
-                  && move.getDest().y() == blackKingPosition.y()) {
-                // Check is possible from white
-                score -= 30;
-              }
+    }
+    if (!isWhite) {
+      final Position king = board.getKing(!isWhite).get(0);
+      for (int i = king.x() - 1; i < king.x() + 2; i++) {
+        for (int j = king.y() - 1; j < king.y() + 2; j++) {
+          newPos = new Position(i, j);
+          if (newPos.isValid()) {
+            if (board.isAttacked(i, j, Color.WHITE)) {
+              score -= ADJACENT_ATTACK_SCORE;
             }
           }
         }
@@ -163,7 +171,7 @@ public class KingSafetyHeuristic implements Heuristic {
 
     // No checks available from enemy so good score
     if (score == 0) {
-      score += 20;
+      score += NO_ADJACENT_ATTACK_BONUS;
     }
 
     return score;

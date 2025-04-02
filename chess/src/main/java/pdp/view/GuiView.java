@@ -27,7 +27,7 @@ import pdp.view.gui.ControlPanel;
 import pdp.view.gui.GuiLauncher;
 import pdp.view.gui.board.Board;
 import pdp.view.gui.popups.EndGamePopUp;
-import pdp.view.gui.themes.ColorTheme;
+import pdp.view.gui.themes.ColorThemeInterface;
 
 /** Base of our graphical interface. */
 public class GuiView implements View {
@@ -53,16 +53,16 @@ public class GuiView implements View {
   private ControlPanel controlPanel;
 
   /**
-   * Menu containing the File, Game Options and About menus and also a place to diplay informative
+   * Menu containing the File, Game Options and About menus and also a place to display informative
    * or error messages during the game.
    */
   private ChessMenu menu;
 
   /** Color theme of the whole app. Grey by default. */
-  private static ColorTheme theme = GREY;
+  private static ColorThemeInterface theme = GREY;
 
-  /** Boolean to indicate whether the GUI View is initliazed or not. */
-  private boolean initailized;
+  /** Boolean to indicate whether the GUI View is initialized or not. */
+  private boolean initialized;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -117,12 +117,12 @@ public class GuiView implements View {
    *
    * @return field theme
    */
-  public static ColorTheme getTheme() {
+  public static ColorThemeInterface getTheme() {
     return theme;
   }
 
   /** Defines the new color theme of the app. */
-  public static void setTheme(final ColorTheme newTheme) {
+  public static void setTheme(final ColorThemeInterface newTheme) {
     theme = newTheme;
   }
 
@@ -140,7 +140,7 @@ public class GuiView implements View {
     onGameEvent(EventType.GAME_STARTED);
   }
 
-  /** Creates a GUI View by cretaing the root component. */
+  /** Creates a GUI View by creating the root component. */
   public GuiView() {
     root = new BorderPane();
   }
@@ -353,6 +353,7 @@ public class GuiView implements View {
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
+                  controlPanel.updateTimersOnce();
                   if (controlPanel.getHistoryPanel() != null) {
                     controlPanel.getHistoryPanel().updateHistoryPanel();
                   }
@@ -386,27 +387,27 @@ public class GuiView implements View {
         });
   }
 
-  /** When an execption is received, displays the error message in the menu. */
+  /** When an execution is received, displays the error message in the menu. */
   @Override
   public void onErrorEvent(final Exception exception) {
     Platform.runLater(() -> menu.displayMessage(exception.getMessage(), true, false));
   }
 
   /**
-   * Retrieves a boolean to indicates whether the GUI View is initailized.
+   * Retrieves a boolean to indicates whether the GUI View is initialized.
    *
    * @return true if the view is initialized, false otherwise.
    */
   public boolean isInitialized() {
-    return initailized;
+    return initialized;
   }
 
   /**
-   * Sets the boolean of the field initialized.
+   * Sets the field initialized.
    *
    * @param init true if the view is initialized, false otherwise.
    */
   public void setInitialized(final boolean init) {
-    this.initailized = init;
+    this.initialized = init;
   }
 }

@@ -21,7 +21,7 @@ public class PromotionHeuristic implements Heuristic {
 
   /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
-      (SCORE_CAP / (8 * SECOND_LAST_RANK_SCORE + 8 * PROGRESS_SCORE));
+      SCORE_CAP / (8 * SECOND_LAST_RANK_SCORE + 8 * PROGRESS_SCORE);
 
   /**
    * Computes a score according to the closeness of pawns promoting. Heuristic used for endgames.
