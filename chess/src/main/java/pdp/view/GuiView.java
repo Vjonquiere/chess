@@ -69,6 +69,42 @@ public class GuiView implements View {
   }
 
   /**
+   * Retrieves the scene of the view. (USed for tests)
+   *
+   * @return field scene
+   */
+  public Scene getScene() {
+    return scene;
+  }
+
+  /**
+   * Retrieves the board of the view. (USed for tests)
+   *
+   * @return field board
+   */
+  public Board getBoard() {
+    return board;
+  }
+
+  /**
+   * Retrieves the controlPanel of the view. (USed for tests)
+   *
+   * @return field controlPanel
+   */
+  public ControlPanel getControlPanel() {
+    return controlPanel;
+  }
+
+  /**
+   * Retrieves the menu of the view. (USed for tests)
+   *
+   * @return field menu
+   */
+  public ChessMenu getMenu() {
+    return menu;
+  }
+
+  /**
    * Takes the CSS in resources, transforms it with the color theme of the app and applies it to the
    * scene.
    *

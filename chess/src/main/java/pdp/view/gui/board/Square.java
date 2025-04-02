@@ -33,6 +33,15 @@ public class Square extends StackPane {
   private final double squareSize;
 
   /**
+   * Retrieves the piece on the square.
+   *
+   * @return field curentPiece
+   */
+  public ColoredPiece getCurrentPiece() {
+    return currentPiece;
+  }
+
+  /**
    * Build a square of the given color with the sprite of the given piece.
    *
    * @param piece The piece on the square
