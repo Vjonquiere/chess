@@ -6,7 +6,9 @@ import java.util.HashMap;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 import pdp.events.EventType;
@@ -19,6 +21,7 @@ import pdp.utils.Position;
 import pdp.view.GuiView;
 import pdp.view.gui.board.Square;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GUITest extends ApplicationTest {
 
   private GuiView guiView;
@@ -26,21 +29,26 @@ public class GUITest extends ApplicationTest {
   @Override
   public void start(Stage stage) {
     Game.initialize(false, false, null, null, null, new HashMap<>());
-    guiView = new GuiView();
-
-    guiView.init(stage);
-    guiView.show();
+    Platform.runLater(
+        () -> {
+          guiView = new GuiView();
+          guiView.init(stage);
+          guiView.show();
+        });
   }
 
   @Test
+  @Tag("gui")
   public void testAppLaunches() {
     Scene scene = guiView.getScene();
     assertNotNull(scene, "Scene should be initialized");
   }
 
   @Test
+  @Tag("gui")
   public void testGameEventProcessing() {
     Platform.runLater(() -> guiView.onGameEvent(EventType.GAME_STARTED));
+
     WaitForAsyncUtils.waitForFxEvents();
     assertNotNull(guiView.getBoard());
     assertNotNull(guiView.getControlPanel());
@@ -48,8 +56,10 @@ public class GUITest extends ApplicationTest {
   }
 
   @Test
+  @Tag("gui")
   public void testMovePlayed() {
     Platform.runLater(() -> guiView.onGameEvent(EventType.GAME_STARTED));
+
     WaitForAsyncUtils.waitForFxEvents();
     Square square1 = lookup("#square41").query();
     assertEquals(new ColoredPiece(Piece.PAWN, Color.WHITE), square1.getCurrentPiece());
