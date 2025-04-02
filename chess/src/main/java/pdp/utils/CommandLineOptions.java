@@ -193,6 +193,7 @@ public final class CommandLineOptions {
         if (path == null || path.isEmpty()) {
           error("Error: --" + type.getLong() + " option requires a valid file path.");
           error("Use '-h' option for a list of available options.");
+          activatedOptions.remove(type);
           runtime.exit(1);
         }
       }
