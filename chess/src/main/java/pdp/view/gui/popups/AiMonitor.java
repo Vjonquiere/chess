@@ -14,24 +14,36 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import pdp.model.Game;
 import pdp.model.ai.Solver;
+import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
 /** A Stage to monitor the performances of AI. */
 public class AiMonitor extends Stage {
 
-  ObservableList<MonitorEntry> data = FXCollections.observableArrayList();
-  TableView<MonitorEntry> table;
-  Solver solver;
-  Label average;
+  /** Content of the list to display. */
+  private final ObservableList<MonitorEntry> data = FXCollections.observableArrayList();
+
+  /** Table to display Ai data. */
+  private final TableView<MonitorEntry> table;
+
+  /** The solver to lookup. */
+  private final Solver solver;
+
+  /** Label to display average values. */
+  private final Label average;
 
   /**
    * Constructor to create a monitor from the Ai color.
    *
    * @param isWhite The Ai color to monitor.
    */
-  public AiMonitor(boolean isWhite) {
-    String title = isWhite ? "White" : "Black";
-    this.setTitle(title + " AI Monitor");
+  public AiMonitor(final boolean isWhite) {
+    super();
+    final String title =
+        isWhite
+            ? TextGetter.getText("monitoringWhiteWindowTitle")
+            : TextGetter.getText("monitoringBlackWindowTitle");
+    this.setTitle(title);
 
     solver = isWhite ? Game.getInstance().getWhiteSolver() : Game.getInstance().getBlackSolver();
 
@@ -39,18 +51,22 @@ public class AiMonitor extends Stage {
 
     table = new TableView<>();
 
-    TableColumn<MonitorEntry, Integer> turnColumn = new TableColumn<>("Turn");
+    final TableColumn<MonitorEntry, Integer> turnColumn =
+        new TableColumn<>(TextGetter.getText("turn"));
     turnColumn.setCellValueFactory(new PropertyValueFactory<>("turn"));
 
-    TableColumn<MonitorEntry, String> nodesColumn = new TableColumn<>("Visited Nodes");
+    final TableColumn<MonitorEntry, String> nodesColumn =
+        new TableColumn<>(TextGetter.getText("visitedNodes"));
     nodesColumn.setCellValueFactory(new PropertyValueFactory<>("visitedNodes"));
     nodesColumn.setMinWidth(125);
 
-    TableColumn<MonitorEntry, String> timeColumn = new TableColumn<>("Search Time (ms)");
+    final TableColumn<MonitorEntry, String> timeColumn =
+        new TableColumn<>(TextGetter.getText("searchTime"));
     timeColumn.setCellValueFactory(new PropertyValueFactory<>("searchTime"));
     timeColumn.setMinWidth(150);
 
-    TableColumn<MonitorEntry, String> rateColumn = new TableColumn<>("Nodes/Second");
+    final TableColumn<MonitorEntry, String> rateColumn =
+        new TableColumn<>(TextGetter.getText("nodesSecond"));
     rateColumn.setCellValueFactory(new PropertyValueFactory<>("nodesPerSecond"));
     rateColumn.setMinWidth(150);
 
@@ -58,11 +74,11 @@ public class AiMonitor extends Stage {
 
     table.getColumns().addAll(turnColumn, nodesColumn, timeColumn, rateColumn);
 
-    Label config = new Label(solver.toString());
-    VBox layout = new VBox(config, average, table);
+    final Label config = new Label(solver.toString());
+    final VBox layout = new VBox(config, average, table);
     layout.setAlignment(Pos.TOP_CENTER);
 
-    Scene secondaryScene = new Scene(layout, 600, 200);
+    final Scene secondaryScene = new Scene(layout, 600, 200);
     GuiView.applyCss(secondaryScene);
     this.setScene(secondaryScene);
   }
@@ -73,7 +89,7 @@ public class AiMonitor extends Stage {
    * @param number The number to transform.
    * @return A String corresponding to the number.
    */
-  public static String formatNumber(long number) {
+  public static String formatNumber(final long number) {
     if (number < 1_000) {
       return String.valueOf(number);
     } else if (number < 10_000) {
@@ -90,13 +106,13 @@ public class AiMonitor extends Stage {
   /** Update the displayed data. */
   public void update() {
     data.clear();
-    List<Long> times = solver.getMoveTimes();
-    List<Long> nodes = solver.getAlgorithm().getVisitedNodeList();
-    long totalNodes = 0;
-    long totalTime = 0;
+    final List<Long> times = solver.getMoveTimes();
+    final List<Long> nodes = solver.getAlgorithm().getVisitedNodeList();
     if (nodes.isEmpty() || nodes.size() != times.size()) {
       return;
     }
+    long totalNodes = 0;
+    long totalTime = 0;
     for (int i = 0; i < nodes.size(); i++) {
       data.add(new MonitorEntry(i, nodes.get(i), times.get(i)));
       totalNodes += nodes.get(i);
@@ -106,7 +122,7 @@ public class AiMonitor extends Stage {
         "Avg visited nodes:"
             + formatNumber(totalNodes / nodes.size())
             + " time:"
-            + (totalTime / times.size() / 1000000)
+            + (totalTime / times.size() / 1_000_000)
             + " Nd/s:"
             + formatNumber((totalNodes * 1_000_000_000) / totalTime));
     table.scrollTo(data.size() - 1);
@@ -115,9 +131,16 @@ public class AiMonitor extends Stage {
 
   /** A class to serialize the data for display./ */
   public static class MonitorEntry {
+    /** Number of visited nodes. */
     private final long visitedNodes;
+
+    /** The time that was necessary to complete the search. */
     private final long searchTime;
+
+    /** The turn number. */
     private final long turn;
+
+    /** The number of nodes that can be explored each second. */
     private final long nodesPerSecond;
 
     /**
@@ -127,7 +150,7 @@ public class AiMonitor extends Stage {
      * @param visitedNodes The number of visited nodes.
      * @param searchTime The search time.
      */
-    public MonitorEntry(int turn, long visitedNodes, long searchTime) {
+    public MonitorEntry(final int turn, final long visitedNodes, final long searchTime) {
       this.turn = turn;
       this.visitedNodes = visitedNodes;
       this.searchTime = searchTime;
@@ -143,7 +166,7 @@ public class AiMonitor extends Stage {
     }
 
     public long getSearchTime() {
-      return searchTime / 1000000;
+      return searchTime / 1_000_000;
     }
 
     public String getNodesPerSecond() {

@@ -227,11 +227,10 @@ public class ChessMenu extends HBox {
    */
   private Menu createOptionsMenu() {
     final Menu optionsMenu = new Menu(TextGetter.getText("options"));
-    RadioMenuItem monitor = new RadioMenuItem("monitor");
+    RadioMenuItem monitor = new RadioMenuItem(TextGetter.getText("monitor"));
     monitor.setSelected(GuiView.getMonitoringStatus());
     monitor.setOnAction(
         event -> {
-          System.out.println("monitor toggled");
           GuiView.toggleMonitoring();
         });
     optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu(), monitor);
