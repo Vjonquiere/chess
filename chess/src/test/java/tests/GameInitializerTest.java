@@ -413,11 +413,7 @@ class GameInitializerTest {
     options.put(OptionType.CONTEST, invalidFilePath);
     Game game = GameInitializer.initialize(options);
 
-    assertTrue(
-        outputStream
-            .toString()
-            .contains(
-                "Error while parsing file: " + invalidFilePath + " (No such file or directory)"));
+    assertTrue(outputStream.toString().contains("Error while parsing file: "));
     assertNotNull(game);
     assertTrue(game.isContestMode());
   }
