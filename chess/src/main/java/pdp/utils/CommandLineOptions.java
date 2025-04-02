@@ -255,7 +255,7 @@ public final class CommandLineOptions {
 
     handlePathInput(activatedOptions, runtime);
 
-    if (activatedOptions.containsKey(OptionType.CONFIG)) {
+    if (activatedOptions.containsKey(OptionType.CONTEST)) {
       activatedOptions.put(OptionType.AI, "A");
       activatedOptions.remove(OptionType.LOAD);
       debug(
