@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -184,6 +185,20 @@ public final class CommandLineOptions {
     return false;
   }
 
+  private static void handlePathInput(
+      HashMap<OptionType, String> activatedOptions, Runtime runtime) {
+    for (OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
+      if (activatedOptions.containsKey(type)) {
+        final String path = activatedOptions.get(type);
+        if (path == null || path.isEmpty()) {
+          error("Error: --" + type.getLong() + " option requires a valid file path.");
+          error("Use '-h' option for a list of available options.");
+          runtime.exit(1);
+        }
+      }
+    }
+  }
+
   /**
    * Processes the command line general options and the default arguments to build a map of the
    * activated options. The map contains the option name as the key and the option value as the
@@ -237,35 +252,13 @@ public final class CommandLineOptions {
       }
     }
 
-    if (activatedOptions.containsKey(OptionType.CONTEST)) {
-      final String contestFile = activatedOptions.get(OptionType.CONTEST);
-      if (contestFile == null || contestFile.isEmpty()) {
-        error("Error: --contest option requires a valid file path.");
-        error("Use '-h' option for a list of available options.");
-        runtime.exit(1);
-      } else {
-        activatedOptions.put(OptionType.AI, "A");
-        activatedOptions.remove(OptionType.LOAD);
-        debug(LOGGER, "Contest mode activated with file: " + contestFile);
-      }
-    }
-
-    if (activatedOptions.containsKey(OptionType.LOAD)) {
-      final String loadFile = activatedOptions.get(OptionType.LOAD);
-      if (loadFile == null || loadFile.isEmpty()) {
-        error("Error: --load option requires a valid file path.");
-        error("Use '-h' option for a list of available options.");
-        runtime.exit(1);
-      }
-    }
+    handlePathInput(activatedOptions, runtime);
 
     if (activatedOptions.containsKey(OptionType.CONFIG)) {
-      final String loadFile = activatedOptions.get(OptionType.CONFIG);
-      if (loadFile == null || loadFile.isEmpty()) {
-        error("Error: --config option requires a valid file path.");
-        error("Use '-h' option for a list of available options.");
-        runtime.exit(1);
-      }
+      activatedOptions.put(OptionType.AI, "A");
+      activatedOptions.remove(OptionType.LOAD);
+      debug(
+          LOGGER, "Contest mode activated with file: " + activatedOptions.get(OptionType.CONTEST));
     }
 
     if (activatedOptions.containsKey(OptionType.TIME)
