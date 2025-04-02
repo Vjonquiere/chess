@@ -25,7 +25,6 @@ class InfoPopUpTest extends ApplicationTest {
 
     // Wait for the popup to disappear after 3.5 seconds (safety margin)
     sleep(3500);
-    WaitForAsyncUtils.waitForFxEvents();
     popupWindow = findPopupWindow();
     assertFalse(popupWindow.isPresent(), "The popup should be closed after the animation");
   }
