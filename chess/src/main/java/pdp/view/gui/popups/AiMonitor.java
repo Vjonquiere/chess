@@ -6,7 +6,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -33,7 +35,6 @@ public class AiMonitor extends Stage {
 
     solver = isWhite ? Game.getInstance().getWhiteSolver() : Game.getInstance().getBlackSolver();
 
-    Label config = new Label(solver.toString());
     average = new Label();
 
     table = new TableView<>();
@@ -57,6 +58,7 @@ public class AiMonitor extends Stage {
 
     table.getColumns().addAll(turnColumn, nodesColumn, timeColumn, rateColumn);
 
+    Label config = new Label(solver.toString());
     VBox layout = new VBox(config, average, table);
     layout.setAlignment(Pos.TOP_CENTER);
 
@@ -111,7 +113,7 @@ public class AiMonitor extends Stage {
     table.getSelectionModel().select(data.size() - 1);
   }
 
-  /** A class to serialize the data for display/ */
+  /** A class to serialize the data for display./ */
   public static class MonitorEntry {
     private final long visitedNodes;
     private final long searchTime;

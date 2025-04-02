@@ -78,6 +78,11 @@ public class PlayerInfos extends HBox {
     return imageView;
   }
 
+  /**
+   * Get the info icon from resources.
+   *
+   * @return An image corresponding to the info icon.
+   */
   public ImageView getInfoIcon() {
     final ImageView imageView = new ImageView();
     final String path = "/assets/icons/information.png";
