@@ -28,12 +28,13 @@ public class GUITest extends ApplicationTest {
 
   @Override
   public void start(Stage stage) {
+
     Game.initialize(false, false, null, null, null, new HashMap<>());
     Platform.runLater(
         () -> {
           guiView = new GuiView();
           guiView.init(stage);
-          guiView.show();
+          guiView.setInitialized(true);
         });
   }
 
@@ -47,7 +48,7 @@ public class GUITest extends ApplicationTest {
   @Test
   @Tag("gui")
   public void testGameEventProcessing() {
-    Platform.runLater(() -> guiView.onGameEvent(EventType.GAME_STARTED));
+    guiView.onGameEvent(EventType.GAME_STARTED);
 
     WaitForAsyncUtils.waitForFxEvents();
     assertNotNull(guiView.getBoard());
@@ -58,16 +59,16 @@ public class GUITest extends ApplicationTest {
   @Test
   @Tag("gui")
   public void testMovePlayed() {
-    Platform.runLater(() -> guiView.onGameEvent(EventType.GAME_STARTED));
+    guiView.onGameEvent(EventType.GAME_STARTED);
 
     WaitForAsyncUtils.waitForFxEvents();
-    Square square1 = lookup("#square41").query();
+    Square square1 = from(guiView.getBoard()).lookup("#square41").query();
     assertEquals(new ColoredPiece(Piece.PAWN, Color.WHITE), square1.getCurrentPiece());
     Game.getInstance().playMove(new Move(new Position(4, 1), new Position(4, 2)));
-    Platform.runLater(() -> guiView.onGameEvent(EventType.MOVE_PLAYED));
+    guiView.onGameEvent(EventType.MOVE_PLAYED);
     WaitForAsyncUtils.waitForFxEvents();
-    square1 = lookup("#square41").query();
-    Square square2 = lookup("#square42").query();
+    square1 = from(guiView.getBoard()).lookup("#square41").query();
+    Square square2 = from(guiView.getBoard()).lookup("#square42").query();
     assertEquals(new ColoredPiece(Piece.EMPTY, Color.EMPTY), square1.getCurrentPiece());
     assertEquals(new ColoredPiece(Piece.PAWN, Color.WHITE), square2.getCurrentPiece());
     assertNotNull(guiView.getBoard());
