@@ -67,11 +67,29 @@ public class GuiView implements View {
   /** Boolean to indicate whether the GUI View is initialized or not. */
   private boolean initialized;
 
-  AiMonitor WhiteAiMonitor;
-  AiMonitor BlackAiMonitor;
+  private static AiMonitor WhiteAiMonitor;
+  private static AiMonitor BlackAiMonitor;
+
+  private static boolean monitoring = false;
 
   static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public static void toggleMonitoring() {
+    monitoring = !monitoring;
+    if (WhiteAiMonitor != null && BlackAiMonitor != null && !monitoring) {
+      WhiteAiMonitor.hide();
+      BlackAiMonitor.hide();
+    }
+    if (WhiteAiMonitor != null && BlackAiMonitor != null && monitoring) {
+      WhiteAiMonitor.show();
+      BlackAiMonitor.show();
+    }
+  }
+
+  public static boolean getMonitoringStatus() {
+    return monitoring;
   }
 
   /**
@@ -254,10 +272,15 @@ public class GuiView implements View {
                 }
                 if (Game.getInstance().isWhiteAi()) {
                   WhiteAiMonitor = new AiMonitor(true);
+                }
+                if (Game.getInstance().isWhiteAi() && monitoring) {
                   WhiteAiMonitor.show();
                 }
                 if (Game.getInstance().isBlackAi()) {
                   BlackAiMonitor = new AiMonitor(false);
+                  // BlackAiMonitor.show();
+                }
+                if (Game.getInstance().isBlackAi() && monitoring) {
                   BlackAiMonitor.show();
                 }
 
