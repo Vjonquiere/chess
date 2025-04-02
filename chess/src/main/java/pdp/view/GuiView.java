@@ -18,7 +18,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pdp.events.EventType;
 import pdp.model.Game;
-import pdp.model.parsers.BoardFileParser;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -76,39 +75,33 @@ public class GuiView implements View {
    */
   public static void applyCss(final Scene scene) {
     String text;
-    final String path = "";
     try {
-      // TODO: allow user to give his CSS file
-      text = new BoardFileParser().readFile(path);
-    } catch (FileNotFoundException e) {
-      try {
-        final InputStream inputStream =
-            GuiView.class.getClassLoader().getResourceAsStream("styles/sample.css");
-        if (inputStream == null) {
-          throw new FileNotFoundException("CSS file not found in resources.");
-        }
-
-        text = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        text = text.replace("#000001", theme.getPrimary());
-        text = text.replace("#000002", theme.getSecondary());
-        text = text.replace("#000003", theme.getTertiary());
-        text = text.replace("#000004", theme.getAccent());
-        text = text.replace("#000005", theme.getBackground());
-        text = text.replace("#000006", theme.getBackground2());
-        text = text.replace("#000007", theme.getText());
-        text = text.replace("#000008", theme.getTextInverted());
-        final File tempFile = File.createTempFile("theme-", ".css");
-        tempFile.deleteOnExit();
-
-        try (FileWriter writer = new FileWriter(tempFile)) {
-          writer.write(text);
-        }
-
-        scene.getStylesheets().clear();
-        scene.getStylesheets().add(tempFile.toURI().toString());
-      } catch (Exception ex) {
-        error(ex.toString());
+      final InputStream inputStream =
+          GuiView.class.getClassLoader().getResourceAsStream("styles/sample.css");
+      if (inputStream == null) {
+        throw new FileNotFoundException("CSS file not found in resources.");
       }
+
+      text = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+      text = text.replace("#000001", theme.getPrimary());
+      text = text.replace("#000002", theme.getSecondary());
+      text = text.replace("#000003", theme.getTertiary());
+      text = text.replace("#000004", theme.getAccent());
+      text = text.replace("#000005", theme.getBackground());
+      text = text.replace("#000006", theme.getBackground2());
+      text = text.replace("#000007", theme.getText());
+      text = text.replace("#000008", theme.getTextInverted());
+      final File tempFile = File.createTempFile("theme-", ".css");
+      tempFile.deleteOnExit();
+
+      try (FileWriter writer = new FileWriter(tempFile)) {
+        writer.write(text);
+      }
+
+      scene.getStylesheets().clear();
+      scene.getStylesheets().add(tempFile.toURI().toString());
+    } catch (Exception ex) {
+      error(ex.toString());
     }
   }
 
