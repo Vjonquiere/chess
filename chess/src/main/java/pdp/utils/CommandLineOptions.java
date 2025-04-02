@@ -259,6 +259,15 @@ public final class CommandLineOptions {
       }
     }
 
+    if (activatedOptions.containsKey(OptionType.CONFIG)) {
+      final String loadFile = activatedOptions.get(OptionType.CONFIG);
+      if (loadFile == null || loadFile.isEmpty()) {
+        error("Error: --config option requires a valid file path.");
+        error("Use '-h' option for a list of available options.");
+        runtime.exit(1);
+      }
+    }
+
     if (activatedOptions.containsKey(OptionType.TIME)
         && !activatedOptions.containsKey(OptionType.BLITZ)) {
       error("The TIME option can't be used without BLITZ activated : option ignored.");
