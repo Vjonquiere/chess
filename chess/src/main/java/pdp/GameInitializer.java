@@ -274,22 +274,25 @@ public abstract class GameInitializer {
 
     Game model = null;
 
-    if (options.containsKey(OptionType.LOAD)) {
+    if (options.containsKey(OptionType.LOAD) || options.containsKey(OptionType.CONTEST)) {
+      final String path =
+          options.containsKey(OptionType.CONTEST)
+              ? options.get(OptionType.CONTEST)
+              : options.get(OptionType.LOAD);
       final InputStream inputStream;
       try {
-        inputStream = new FileInputStream(options.get(OptionType.LOAD));
+        inputStream = new FileInputStream(path);
 
         final List<String> moveStrings = MoveHistoryParser.parseHistoryFile(inputStream);
         if (moveStrings.isEmpty()) {
           final BoardFileParser parser = new BoardFileParser();
-          final FileBoard board =
-              parser.parseGameFile(options.get(OptionType.LOAD), Runtime.getRuntime());
+          final FileBoard board = parser.parseGameFile(path, Runtime.getRuntime());
           model =
               Game.initialize(
                   isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
           model.setLoadedFromFile();
           model.setLoadingFileHasHistory(false);
-          model.setContestModeOnOrOff(options.containsKey(OptionType.CONTEST));
+          model.setContestMode(options.containsKey(OptionType.CONTEST));
         } else {
 
           final List<Move> moves = new ArrayList<>();
@@ -305,7 +308,7 @@ public abstract class GameInitializer {
                   moves, isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
           model.setLoadedFromFile();
           model.setLoadingFileHasHistory(true);
-          model.setContestModeOnOrOff(options.containsKey(OptionType.CONTEST));
+          model.setContestMode(options.containsKey(OptionType.CONTEST));
         }
 
       } catch (IOException
@@ -317,7 +320,7 @@ public abstract class GameInitializer {
         model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
         model.setLoadedFromFile();
         model.setLoadingFileHasHistory(true);
-        model.setContestModeOnOrOff(options.containsKey(OptionType.CONTEST));
+        model.setContestMode(options.containsKey(OptionType.CONTEST));
       }
     } else {
       model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);

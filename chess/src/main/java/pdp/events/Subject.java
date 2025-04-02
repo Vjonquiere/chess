@@ -5,7 +5,6 @@ import static pdp.utils.Logging.debug;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import pdp.model.Game;
 import pdp.utils.Logging;
 
 /** Part of design pattern observer. */
@@ -77,10 +76,8 @@ public abstract class Subject {
    */
   public void notifyObservers(final EventType event) {
     debug(LOGGER, "Notifying observers with event " + event);
-    if (!Game.getInstance().isAiExploring()) {
-      for (final EventObserver observer : observers) {
-        notifyObserver(observer, event);
-      }
+    for (final EventObserver observer : observers) {
+      notifyObserver(observer, event);
     }
   }
 
@@ -90,10 +87,8 @@ public abstract class Subject {
    * @param exception The exception that occurred.
    */
   public void notifyErrorObservers(final Exception exception) {
-    if (!Game.getInstance().isAiExploring()) {
-      for (final EventObserver observer : errorObservers) {
-        observer.onErrorEvent(exception);
-      }
+    for (final EventObserver observer : errorObservers) {
+      observer.onErrorEvent(exception);
     }
   }
 

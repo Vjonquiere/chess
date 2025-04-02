@@ -29,7 +29,7 @@ public abstract class GameControllerInit {
     } else if (options.containsKey(OptionType.UCI)) {
       view = new UciView();
     } else if (options.containsKey(OptionType.CONTEST)) {
-      view = new ContestView(options.get(OptionType.CONTEST));
+      view = new ContestView();
     } else {
       view = new CliView();
     }

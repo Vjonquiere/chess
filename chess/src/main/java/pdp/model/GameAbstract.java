@@ -19,6 +19,7 @@ import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
+import pdp.model.history.HistoryState;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
@@ -400,5 +401,7 @@ public abstract class GameAbstract extends Subject {
 
     debug(LOGGER, "Checking game status...");
     this.getGameState().checkGameStatus();
+
+    this.getHistory().addMove(new HistoryState(move, this.getGameState().getCopy()));
   }
 }

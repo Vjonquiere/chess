@@ -5,7 +5,6 @@ import static pdp.utils.Logging.print;
 
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.SaveGameCommand;
 import pdp.controller.commands.StartGameCommand;
 import pdp.events.EventType;
 import pdp.exceptions.CommandNotAvailableNowException;
@@ -28,8 +27,6 @@ public class ContestView implements View {
 
   private boolean running = false;
 
-  private final String contestFile;
-
   static {
     Logging.configureLogging(LOGGER);
   }
@@ -39,8 +36,7 @@ public class ContestView implements View {
    * move rule and threefold repetition. The other chess engine use a 5-fold repetition and a 75
    * move rule, we adapt our game the same way.
    */
-  public ContestView(String contestFile) {
-    this.contestFile = contestFile;
+  public ContestView() {
     GameAbstract.setThreeFoldLimit(3);
     GameState.setFiftyMoveLimit(50);
   }
@@ -64,13 +60,6 @@ public class ContestView implements View {
                 } catch (InterruptedException e) {
                   Thread.currentThread().interrupt();
                 }
-              }
-
-              BagOfCommands.getInstance().addCommand(new SaveGameCommand(this.contestFile));
-              try {
-                Thread.sleep(500);
-              } catch (InterruptedException e) {
-                e.printStackTrace();
               }
             });
 

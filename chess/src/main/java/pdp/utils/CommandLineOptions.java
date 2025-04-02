@@ -238,11 +238,13 @@ public final class CommandLineOptions {
     if (activatedOptions.containsKey(OptionType.CONTEST)) {
       final String contestFile = activatedOptions.get(OptionType.CONTEST);
       if (contestFile == null || contestFile.isEmpty()) {
-        error("Error: --contest option requires a valid file path.");
+        error(
+            "Error: --contest option requires a valid file path."); // TODO Quit when empty CONTEST
+        // ?
         activatedOptions.remove(OptionType.CONTEST);
       } else {
         activatedOptions.put(OptionType.AI, "A");
-        activatedOptions.put(OptionType.LOAD, contestFile);
+        activatedOptions.remove(OptionType.LOAD);
         debug(LOGGER, "Contest mode activated with file: " + contestFile);
       }
     }

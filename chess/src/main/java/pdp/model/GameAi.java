@@ -66,7 +66,6 @@ public final class GameAi extends GameAbstract {
   @Override
   protected void updateGameStateAfterMove(final Move move) {
     super.updateGameStateAfterMove(move);
-    this.getHistory().addMove(new HistoryState(move, this.getGameState().getCopy()));
   }
 
   /**

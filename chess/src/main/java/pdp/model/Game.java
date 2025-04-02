@@ -2,7 +2,6 @@ package pdp.model;
 
 import static pdp.utils.Logging.debug;
 import static pdp.utils.Logging.error;
-import static pdp.utils.Logging.print;
 import static pdp.utils.OptionType.GUI;
 
 import java.io.BufferedWriter;
@@ -23,7 +22,6 @@ import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Move;
 import pdp.model.history.History;
-import pdp.model.history.HistoryNode;
 import pdp.model.history.HistoryState;
 import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
@@ -54,11 +52,6 @@ public final class Game extends GameAbstract {
   /** Boolean to indicate whether the black player is an AI or not. */
   private boolean blackAi;
 
-  /**
-   * Boolean to indicate whether an AI is searching for a move, avoid sending message to the view.
-   */
-  private boolean explorationAi;
-
   /** Boolean to indicate whether the game instance is initializing or is ready to use. */
   private boolean isInitializing;
 
@@ -69,10 +62,7 @@ public final class Game extends GameAbstract {
   private boolean loadingFileWithHistory;
 
   /** Boolean to indicate whether the game is in contest mode or not. */
-  private boolean contestModeOn;
-
-  /** Boolean value used to know if Ai played its move (contest Mode). */
-  private boolean aiPlayedItsLastMove;
+  private boolean isContestMode;
 
   /** Map containing th options of the game and their values. */
   private final HashMap<OptionType, String> options;
@@ -126,10 +116,8 @@ public final class Game extends GameAbstract {
     this.viewOnOtherThread = options.containsKey(GUI);
     this.whiteAi = whiteAi;
     this.blackAi = blackAi;
-    this.explorationAi = false;
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
-    this.aiPlayedItsLastMove = false;
 
     if (instance != null) {
       if (instance.getTimer(true) != null) {
@@ -296,24 +284,6 @@ public final class Game extends GameAbstract {
   }
 
   /**
-   * Sets the exploration field to the given boolean. Use it in the solver.
-   *
-   * @param exploration boolean corresponding to the new rights of explorationAI.
-   */
-  public void setExploration(final boolean exploration) {
-    this.explorationAi = exploration;
-  }
-
-  /**
-   * Indicates whether the AI is exploring (playing moves in its algorithm).
-   *
-   * @return True if it is exploring, False otherwise
-   */
-  public boolean isAiExploring() {
-    return this.explorationAi;
-  }
-
-  /**
    * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
    * file. Boolean value is used in playMove() to know if history has to be overwritten.
    */
@@ -358,30 +328,13 @@ public final class Game extends GameAbstract {
   }
 
   /**
-   * Used in updateGameStateAfterMove() method to know how to handle game save.
-   *
-   * @return true if AI finished computing moves. false otherwise.
-   */
-  public boolean hasAiPlayedItsLastMove() {
-    return this.aiPlayedItsLastMove;
-  }
-
-  /**
-   * Method used in Solver.playAIMove(this) to indicate when AI finished computing. Used to know
-   * when the game can be saved when loading or contest mode.
-   */
-  public void setAiPlayedItsLastMove(final boolean lastMove) {
-    this.aiPlayedItsLastMove = lastMove;
-  }
-
-  /**
    * Method used in GameInitializer to set boolean value to indicate if the game was loaded from a
    * file with contest mode on.
    *
    * @param mode boolean to indicate if contest mode is on or off.
    */
-  public void setContestModeOnOrOff(final boolean mode) {
-    this.contestModeOn = mode;
+  public void setContestMode(final boolean mode) {
+    this.isContestMode = mode;
   }
 
   /**
@@ -389,8 +342,8 @@ public final class Game extends GameAbstract {
    *
    * @return true if the game was loaded from a file with contest mode enabled. false otherwise.
    */
-  public boolean isContestModeOn() {
-    return this.contestModeOn;
+  public boolean isContestMode() {
+    return this.isContestMode;
   }
 
   /**
@@ -586,7 +539,6 @@ public final class Game extends GameAbstract {
 
     if (super.getGameState().getMoveTimer() != null
         && !this.isCurrentPlayerAi()
-        && !explorationAi
         && !isInitializing
         && !super.getGameState().isGameOver()) {
       super.getGameState().getMoveTimer().stop();
@@ -622,35 +574,24 @@ public final class Game extends GameAbstract {
       }
     }
 
-    // Check for history overwrite
-    if (!isLoadedFromFile()) {
-      super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-    } else {
-      if (!hasAiPlayedItsLastMove()) {
-        if (isBlackAi() || isWhiteAi()) {
-          super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-        } else {
-          checkAndOverwriteHistory(move);
-        }
-      } else {
-        checkAndOverwriteHistory(move);
+    if (!isInitializing) {
+      if (this.isContestMode()) {
+        saveGame(getContestFile());
       }
-    }
-
-    if (!explorationAi && !isInitializing) {
       this.notifyObservers(EventType.MOVE_PLAYED);
+      if (this.isContestMode()) {
+        return;
+      }
     }
     if (super.getGameState().getMoveTimer() != null
         && !this.isCurrentPlayerAi()
-        && !explorationAi
         && !super.getGameState().isGameOver()) {
       super.getGameState().getMoveTimer().start();
     }
 
-    if (!explorationAi
-        && !isInitializing
+    if (!isInitializing
         && !isOver()
-        && !isContestModeOn()
+        && !isContestMode()
         && ((super.getGameState().isWhiteTurn() && whiteAi)
             || (!super.getGameState().isWhiteTurn() && blackAi))) {
 
@@ -671,74 +612,6 @@ public final class Game extends GameAbstract {
         solverWhite.playAiMove(this);
       } else {
         solverBlack.playAiMove(this);
-      }
-    }
-  }
-
-  /**
-   * Checks if the move in parameter (the one we would like to play) matches or not the next move in
-   * history. If not, overwrite history. This is used for games that are loaded from files.
-   *
-   * @param move the move we want to play in the game.
-   */
-  private void checkAndOverwriteHistory(final Move move) {
-    final Optional<HistoryNode> currentNode = this.getHistory().getCurrentMove();
-
-    if (loadingFileHasHistory()) {
-      final Optional<HistoryNode> nextNode = currentNode.flatMap(HistoryNode::getNext);
-      HistoryState nextState = null;
-      if (nextNode.isPresent()) {
-        nextState = nextNode.get().getState();
-      }
-      if (nextState == null) {
-        // End of history already, so add new move and save
-        super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-        if (isContestModeOn()) {
-          print("Contest move : " + move);
-          saveGame(getContestFile());
-          debug(
-              LOGGER,
-              "Move differs from history. Overwriting history for file :" + getContestFile());
-        } else {
-          debug(LOGGER, "Move differs from history. Overwriting history");
-        }
-      } else {
-        // Check if move we want to play is the same as the next one. If not, overwrite history and
-        // save
-        if (!move.equals(nextState.getMove())) {
-          if (isContestModeOn()) {
-            super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-            print("Contest move : " + move);
-            saveGame(getContestFile());
-            debug(
-                LOGGER,
-                "Move differs from history. Overwriting history for file :" + getContestFile());
-          } else {
-            // Truncate history by adding a new move from this point forward
-            super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-            debug(LOGGER, "Move differs from history. Overwriting history");
-          }
-
-        } else {
-          // If same move, just forward by one in the history
-          super.getGameState().updateFrom(nextNode.get().getState().getGameState().getCopy());
-          super.getHistory().setCurrentMove(currentNode.get().getNext().get());
-          final long currBoardZobrist = super.getGameState().getSimplifiedZobristHashing();
-          this.getStateCount()
-              .put(currBoardZobrist, this.getStateCount().getOrDefault(currBoardZobrist, 0) + 1);
-        }
-      }
-    } else {
-      // If no history just add the move
-      super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
-      if (isContestModeOn()) {
-        print("LOADING FILE : " + getContestFile());
-        print("Contest move : " + move);
-        saveGame(getContestFile());
-        debug(
-            LOGGER, "Move differs from history. Overwriting history for file :" + getContestFile());
-      } else {
-        debug(LOGGER, "Move differs from history. Overwriting history");
       }
     }
   }
