@@ -624,6 +624,6 @@ public class CommandLineOptionsTest {
     activatedOptions = CommandLineOptions.parseOptions(new String[] {"--contest="}, mockRuntime);
     assertFalse(activatedOptions.containsKey(OptionType.CONTEST));
 
-    verify(mockRuntime).exit(0);
+    verify(mockRuntime).exit(1);
   }
 }
