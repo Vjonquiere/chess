@@ -185,6 +185,14 @@ public final class CommandLineOptions {
     return false;
   }
 
+  /**
+   * Handles the command line options that require a valid file path. This method checks for the
+   * presence of the --contest, --load, and --config options and if the path provided is null or
+   * empty.
+   *
+   * @param activatedOptions The map of activated command line options.
+   * @param runtime The runtime to exit.
+   */
   private static void handlePathInput(
       HashMap<OptionType, String> activatedOptions, Runtime runtime) {
     for (OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
