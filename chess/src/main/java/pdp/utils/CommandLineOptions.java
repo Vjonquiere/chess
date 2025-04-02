@@ -59,7 +59,7 @@ public final class CommandLineOptions {
       if (handleImmediateExitOptions(cmd, options, runtime)) {
         return null;
       }
-      processOptions(cmd, defaultArgs, activatedOptions);
+      processOptions(cmd, defaultArgs, activatedOptions, options, runtime);
 
       if (!cmd.getArgList().isEmpty()) {
         final String loadFile = cmd.getArgList().get(0);
@@ -196,7 +196,9 @@ public final class CommandLineOptions {
   private static void processOptions(
       final CommandLine cmd,
       final Map<String, String> defaultArgs,
-      final HashMap<OptionType, String> activatedOptions) {
+      final HashMap<OptionType, String> activatedOptions,
+      final Options options,
+      final Runtime runtime) {
     for (final OptionType option : OptionType.values()) {
 
       if (option == OptionType.CONFIG) {
@@ -238,14 +240,22 @@ public final class CommandLineOptions {
     if (activatedOptions.containsKey(OptionType.CONTEST)) {
       final String contestFile = activatedOptions.get(OptionType.CONTEST);
       if (contestFile == null || contestFile.isEmpty()) {
-        error(
-            "Error: --contest option requires a valid file path."); // TODO Quit when empty CONTEST
-        // ?
-        activatedOptions.remove(OptionType.CONTEST);
+        error("Error: --contest option requires a valid file path.");
+        error("Use '-h' option for a list of available options.");
+        runtime.exit(1);
       } else {
         activatedOptions.put(OptionType.AI, "A");
         activatedOptions.remove(OptionType.LOAD);
         debug(LOGGER, "Contest mode activated with file: " + contestFile);
+      }
+    }
+
+    if (activatedOptions.containsKey(OptionType.LOAD)) {
+      final String loadFile = activatedOptions.get(OptionType.LOAD);
+      if (loadFile == null || loadFile.isEmpty()) {
+        error("Error: --load option requires a valid file path.");
+        error("Use '-h' option for a list of available options.");
+        runtime.exit(1);
       }
     }
 
