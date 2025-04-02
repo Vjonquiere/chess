@@ -1,6 +1,9 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -372,7 +375,7 @@ public class CommandLineOptionsTest {
     Map<OptionType, String> expectedMap = new HashMap<>();
     expectedMap.put(OptionType.BLITZ, "");
     expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
-    expectedMap.put(OptionType.AI, "W");
+    expectedMap.put(OptionType.AI, "A"); // Contest mode so switching to All IAs
     expectedMap.put(OptionType.CONFIG, "default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
     expectedMap.put(OptionType.AI_DEPTH_B, "3");
@@ -593,5 +596,35 @@ public class CommandLineOptionsTest {
     assertNull(OptionType.LOAD.getShort());
     assertNull(OptionType.CONFIG.getShort());
     assertNull(OptionType.LANG.getShort());
+  }
+
+  @Test
+  void testGameInitializationContestModeMissingFilePath() {
+
+    outputStream.reset();
+
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CommandLineOptions.parseOptions(new String[] {"--contest"}, mockRuntime);
+    assertFalse(activatedOptions.containsKey(OptionType.CONTEST));
+
+    assertTrue(
+        outputStream
+            .toString()
+            .contains("Parsing failed.  Reason: Missing argument for option: c"));
+  }
+
+  @Test
+  void testGameInitializationContestModeEmptyFilePath() {
+
+    outputStream.reset();
+
+    Runtime mockRuntime = mock(Runtime.class);
+    HashMap<OptionType, String> activatedOptions;
+    activatedOptions = CommandLineOptions.parseOptions(new String[] {"--contest="}, mockRuntime);
+    assertFalse(activatedOptions.containsKey(OptionType.CONTEST));
+
+    assertTrue(
+        outputStream.toString().contains("Error: --contest option requires a valid file path."));
   }
 }

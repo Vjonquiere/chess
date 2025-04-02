@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
-import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
-import pdp.model.board.PromoteMove;
 import pdp.model.board.ZobristHashing;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
@@ -65,52 +63,9 @@ public final class GameAi extends GameAbstract {
     this.updateGameStateAfterMove(moveToProcess);
   }
 
-  /**
-   * Updates the game state after a move is played.
-   *
-   * <p>The game state is updated by:
-   *
-   * <ul>
-   *   <li>Incrementing the full turn number if the move was made by white.
-   *   <li>Adding the move to the history.
-   *   <li>Switching the current player turn.
-   *   <li>Updating the board player.
-   *   <li>Updating the simplified zobrist hashing.
-   *   <li>Checking for threefold repetition.
-   *   <li>Checking the game status, which may end the game.
-   *   <li>Notifying observers that a move has been played.
-   * </ul>
-   */
-  private void updateGameStateAfterMove(final Move move) {
-    if (super.getGameState().isWhiteTurn()) {
-      super.getGameState().incrementsFullTurn();
-    }
-
-    super.getGameState().switchPlayerTurn();
-    if (move instanceof CastlingMove || move instanceof PromoteMove) {
-      super.getGameState()
-          .setSimplifiedZobristHashing(
-              super.getZobristHasher()
-                  .updateSimplifiedHashFromBitboards(
-                      super.getGameState().getSimplifiedZobristHashing(), getBoard(), move));
-    } else {
-      super.getGameState()
-          .setSimplifiedZobristHashing(
-              super.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
-    }
-
-    debug(LOGGER, "Checking threefold repetition...");
-    final boolean threefoldRep =
-        super.addStateToCount(super.getGameState().getSimplifiedZobristHashing());
-
-    if (threefoldRep) {
-      super.getGameState().activateThreefold();
-    }
-
-    debug(LOGGER, "Checking game status...");
-    super.getGameState().checkGameStatus();
-
-    super.getHistory().addMove(new HistoryState(move, super.getGameState().getCopy()));
+  @Override
+  protected void updateGameStateAfterMove(final Move move) {
+    super.updateGameStateAfterMove(move);
   }
 
   /**
