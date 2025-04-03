@@ -56,6 +56,15 @@ public class ChessMenu extends HBox {
   }
 
   /**
+   * Retrieves the message display. Used for tests.
+   *
+   * @return messageDisplay
+   */
+  public MessageDisplay getMessageDisplay() {
+    return messageDisplay;
+  }
+
+  /**
    * Creates the File menu. Composed of the following items : New game, Save Game, Load Game, Help,
    * Settings and Quit.
    *
