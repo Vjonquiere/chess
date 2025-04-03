@@ -61,6 +61,7 @@ public class GuiView implements View {
   /** Color theme of the whole app. Grey by default. */
   private static ColorThemeInterface theme = GREY;
 
+  /** Set if the move piece animation has to be done. */
   public static boolean ANIMATION_ENABLED = true;
 
   /** Boolean to indicate whether the GUI View is initialized or not. */
@@ -326,7 +327,7 @@ public class GuiView implements View {
                 break;
               case MOVE_PLAYED:
                 if (board != null) {
-                  board.updateBoard(true);
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);

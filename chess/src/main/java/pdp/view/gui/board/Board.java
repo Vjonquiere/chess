@@ -108,8 +108,8 @@ public class Board extends GridPane {
           label.setStyle(
               "-fx-text-fill: "
                   + GuiView.getTheme().getText()
-                  + ";-fx-padding: 0 5 0 0;-fx-font-weight: bold;");
-          GridPane.setHalignment(label, HPos.RIGHT);
+                  + ";-fx-padding: 0 0 0 5;-fx-font-weight: bold;");
+          GridPane.setHalignment(label, HPos.LEFT);
           GridPane.setValignment(label, VPos.BOTTOM);
           super.add(label, x, y);
           letter++;
