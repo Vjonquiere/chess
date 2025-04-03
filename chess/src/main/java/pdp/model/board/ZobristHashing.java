@@ -76,7 +76,7 @@ public class ZobristHashing {
    * @param board Current board game to get the castling rights
    * @return An integer (0 to 15) representing castling rights, or -1 if no castling is possible.
    */
-  private int translateCastling(final Board board) {
+  private int translateCastling(final BoardRepresentation board) {
     int castlingRights = 0;
     if (!board.isWhiteShortCastle()
         && !board.isWhiteLongCastle()
@@ -132,14 +132,15 @@ public class ZobristHashing {
    * @param move last played move
    * @return updated hash
    */
-  private long updatePieceHash(final long currHash, final Board board, final Move move) {
-    if (!(board.getBoardRep() instanceof BitboardRepresentation)) {
+  private long updatePieceHash(
+      final long currHash, final BoardRepresentation board, final Move move) {
+    if (!(board instanceof BitboardRepresentation)) {
       throw new InvalidBoardException();
     }
     long hash = currHash;
 
-    final int from = move.getSource().x() + move.getSource().y() * board.getBoardRep().getNbRows();
-    final int to = move.getDest().x() + move.getDest().y() * board.getBoardRep().getNbCols();
+    final int from = move.getSource().x() + move.getSource().y() * board.getNbRows();
+    final int to = move.getDest().x() + move.getDest().y() * board.getNbCols();
 
     // Remove piece from its source and add it to the destination
     hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(move.getPiece())][to];
@@ -148,7 +149,8 @@ public class ZobristHashing {
     final ColoredPiece capturedPiece = move.getPieceTaken();
     // delete the captured piece
     if (capturedPiece != null) {
-      hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(capturedPiece)][to];
+      final int toTake = move.getTakeDest().x() + move.getTakeDest().y() * board.getNbCols();
+      hash ^= PIECES[BitboardRepresentation.getPiecesMap().getFromValue(capturedPiece)][toTake];
     }
     return hash;
   }
@@ -159,8 +161,8 @@ public class ZobristHashing {
    * @param board Current board
    * @return hash corresponding to the board given in parameters
    */
-  public long generateHashFromBitboards(final Board board) {
-    long hash = generatePieceHash(board.getBoardRep());
+  public long generateHashFromBitboards(final BoardRepresentation board) {
+    long hash = generatePieceHash(board);
     prevCastlingIndex = translateCastling(board);
     if (prevCastlingIndex != -1) {
       hash ^= CASTLING[prevCastlingIndex];
@@ -186,7 +188,8 @@ public class ZobristHashing {
    * @param move last played move
    * @return updated hash
    */
-  public long updateHashFromBitboards(final long currHash, final Board board, final Move move) {
+  public long updateHashFromBitboards(
+      final long currHash, final BoardRepresentation board, final Move move) {
     long hash = updatePieceHash(currHash, board, move);
     // if en passant is not possible in the column saved before
     if (prevEnPassantFile != -1) {
@@ -215,16 +218,6 @@ public class ZobristHashing {
   }
 
   /**
-   * Generate the simplified hash corresponding to the pieces of the current board.
-   *
-   * @param board Current board
-   * @return hash corresponding to the board given in parameters
-   */
-  public long generateSimplifiedHashFromBitboards(final Board board) {
-    return generatePieceHash(board.getBoardRep());
-  }
-
-  /**
    * Generate the simplified hash corresponding to the pieces of the current board representation.
    *
    * @param boardRep current board representation
@@ -244,7 +237,7 @@ public class ZobristHashing {
    * @return updated hash
    */
   public long updateSimplifiedHashFromBitboards(
-      final long currHash, final Board board, final Move move) {
+      final long currHash, final BoardRepresentation board, final Move move) {
     return updatePieceHash(currHash, board, move);
   }
 }

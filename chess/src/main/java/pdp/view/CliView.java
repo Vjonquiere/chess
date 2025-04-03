@@ -34,8 +34,13 @@ import pdp.utils.Timer;
 
 /** View implementation to play in the terminal. */
 public class CliView implements View {
-  private boolean running = false;
+  /** Boolean to indicate whether the view is running or not. */
+  private boolean running;
+
+  /** Map of commands mapping a text to its description and action. */
   private final Map<String, CommandEntry> commands = new HashMap<>();
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(CliView.class.getName());
 
   /** Build a new Cli view (initialize all commands). */
@@ -91,7 +96,7 @@ public class CliView implements View {
    * @param event The type of event that occurred.
    */
   @Override
-  public void onGameEvent(EventType event) {
+  public void onGameEvent(final EventType event) {
     Game.getInstance().getViewLock().lock();
     try {
       switch (event) {
@@ -215,7 +220,7 @@ public class CliView implements View {
    * @param exception The exception that was thrown.
    */
   @Override
-  public void onErrorEvent(Exception exception) {
+  public void onErrorEvent(final Exception exception) {
     if (exception instanceof IllegalMoveException
         || exception instanceof MoveParsingException
         || exception instanceof InvalidPositionException
@@ -237,12 +242,12 @@ public class CliView implements View {
    * @return The thread that listens for user input.
    */
   private Thread startUserInputListener() {
-    Thread inputThread =
+    final Thread inputThread =
         new Thread(
             () -> {
-              Scanner scanner = new Scanner(System.in);
+              final Scanner scanner = new Scanner(System.in);
               while (running) {
-                String input = scanner.nextLine();
+                final String input = scanner.nextLine();
                 handleUserInput(input);
               }
               scanner.close();
@@ -261,12 +266,12 @@ public class CliView implements View {
    */
   private void handleUserInput(String input) {
     input = input.trim().toLowerCase();
-    String[] parts = input.split(" ", 2);
+    final String[] parts = input.split(" ", 2);
 
-    CommandEntry ce = commands.get(parts[0]);
+    final CommandEntry commandEntry = commands.get(parts[0]);
 
-    if (ce != null) {
-      Consumer<String> command = commands.get(parts[0]).action();
+    if (commandEntry != null) {
+      final Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
       print(TextGetter.getText("unknownCommand", input));
@@ -279,7 +284,7 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void displayBoardCommand(String args) {
+  private void displayBoardCommand(final String args) {
     print(Game.getInstance().getGameRepresentation());
   }
 
@@ -288,9 +293,9 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void historyCommand(String args) {
+  private void historyCommand(final String args) {
     print(TextGetter.getText("historyTitle"));
-    System.out.println(Game.getInstance().getHistory());
+    print(Game.getInstance().getHistory().toString());
   }
 
   /**
@@ -298,7 +303,7 @@ public class CliView implements View {
    *
    * @param args The move in standard text notation.
    */
-  private void moveCommand(String args) {
+  private void moveCommand(final String args) {
     BagOfCommands.getInstance().addCommand(new PlayMoveCommand(args));
   }
 
@@ -307,10 +312,10 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void helpCommand(String args) {
+  private void helpCommand(final String args) {
     print(TextGetter.getText("availableCommandsTitle"));
-    for (Map.Entry<String, CommandEntry> entry : commands.entrySet()) {
-      System.out.printf("  %-10s - %s%n", entry.getKey(), entry.getValue().description());
+    for (final Map.Entry<String, CommandEntry> entry : commands.entrySet()) {
+      print(String.format("  %-10s - %s%n", entry.getKey(), entry.getValue().description()));
     }
   }
 
@@ -319,7 +324,7 @@ public class CliView implements View {
    *
    * @param args The path to where the game should be saved.
    */
-  private void saveCommand(String args) {
+  private void saveCommand(final String args) {
     BagOfCommands.getInstance().addCommand(new SaveGameCommand(args.strip()));
   }
 
@@ -328,7 +333,7 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void drawCommand(String args) {
+  private void drawCommand(final String args) {
     BagOfCommands.getInstance()
         .addCommand(new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
@@ -338,7 +343,7 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void undrawCommand(String args) {
+  private void undrawCommand(final String args) {
     BagOfCommands.getInstance()
         .addCommand(new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
@@ -348,7 +353,7 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void quitCommand(String args) {
+  private void quitCommand(final String args) {
     print(TextGetter.getText("quitting"));
     this.running = false;
   }
@@ -358,7 +363,7 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void undoCommand(String args) {
+  private void undoCommand(final String args) {
     BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
   }
 
@@ -367,7 +372,7 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void redoCommand(String args) {
+  private void redoCommand(final String args) {
     BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
   }
 
@@ -376,7 +381,7 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void restartCommand(String args) {
+  private void restartCommand(final String args) {
     BagOfCommands.getInstance().addCommand(new RestartCommand());
   }
 
@@ -385,13 +390,19 @@ public class CliView implements View {
    *
    * @param args Unused argument
    */
-  private void surrenderCommand(String args) {
+  private void surrenderCommand(final String args) {
     BagOfCommands.getInstance()
         .addCommand(new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()));
   }
 
-  private void timeCommand(String args) {
-    Timer timer = Game.getInstance().getTimer(Game.getInstance().getGameState().isWhiteTurn());
+  /**
+   * Handles the time command. Displays the remaining time in the blitz timer if the mode is on.
+   *
+   * @param args Unused argument
+   */
+  private void timeCommand(final String args) {
+    final Timer timer =
+        Game.getInstance().getTimer(Game.getInstance().getGameState().isWhiteTurn());
     if (timer != null) {
       print(TextGetter.getText("timeRemainingCurrent", timer.getTimeRemainingString()));
     } else {

@@ -6,7 +6,8 @@ import pdp.utils.Position;
 
 /** Special move representation for pawn promotion. */
 public class PromoteMove extends Move {
-  private Piece promPiece;
+  /** Piece for the pawn to be promoted to. */
+  private final Piece promPiece;
 
   /**
    * Constructs a new PromoteMove object with the specified source, destination and promoted piece.
@@ -15,18 +16,28 @@ public class PromoteMove extends Move {
    * @param dest The destination Position of the move.
    * @param promPiece The piece that this move promotes to.
    */
-  public PromoteMove(Position source, Position dest, Piece promPiece) {
-    super(source, dest);
-    this.promPiece = promPiece;
+  public PromoteMove(final Position source, final Position dest, final Piece promPiece) {
+    this(source, dest, promPiece, null, false, null);
   }
 
+  /**
+   * Constructs a new PromoteMove object with the specified source, destination, promoted piece,
+   * piece to promote, boolean to indicate if the move is a capture and the piece taken and .
+   *
+   * @param source The starting Position of the move.
+   * @param dest The destination Position of the move.
+   * @param promPiece The piece that this move promotes to.
+   * @param piece Piece making the move.
+   * @param isTake True if a piece ius taken during the move.
+   * @param takenPiece Piece taken during the move
+   */
   public PromoteMove(
-      Position source,
-      Position dest,
-      Piece promPiece,
-      ColoredPiece piece,
-      boolean isTake,
-      ColoredPiece takenPiece) {
+      final Position source,
+      final Position dest,
+      final Piece promPiece,
+      final ColoredPiece piece,
+      final boolean isTake,
+      final ColoredPiece takenPiece) {
     super(source, dest, piece, isTake, takenPiece);
     this.promPiece = promPiece;
   }
@@ -48,14 +59,14 @@ public class PromoteMove extends Move {
    *     checkmate, false otherwise).
    */
   public PromoteMove(
-      Position source,
-      Position dest,
-      Piece promPiece,
-      ColoredPiece piece,
-      boolean isTake,
-      ColoredPiece takenPiece,
-      boolean isCheck,
-      boolean isCheckMate) {
+      final Position source,
+      final Position dest,
+      final Piece promPiece,
+      final ColoredPiece piece,
+      final boolean isTake,
+      final ColoredPiece takenPiece,
+      final boolean isCheck,
+      final boolean isCheckMate) {
     super(source, dest, piece, isTake, takenPiece, isCheck, isCheckMate);
     this.promPiece = promPiece;
   }
@@ -76,10 +87,10 @@ public class PromoteMove extends Move {
    */
   @Override
   public String toAlgebraicString() {
-    String sourceStr = positionToString(this.getSource());
-    String destinationStr = positionToString(this.getDest());
-    String separator = this.isTake() ? "x" : "-";
-    String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
+    final String sourceStr = positionToString(this.getSource());
+    final String destinationStr = positionToString(this.getDest());
+    final String separator = this.isTake() ? "x" : "-";
+    final String annotation = this.isCheckMate() ? "#" : this.isCheck() ? "+" : "";
 
     return sourceStr
         + separator
@@ -89,6 +100,7 @@ public class PromoteMove extends Move {
         + annotation;
   }
 
+  @Override
   public String toUciString() {
     return super.toUciString() + this.promPiece.getCharRepresentation(true);
   }
@@ -100,6 +112,6 @@ public class PromoteMove extends Move {
    */
   @Override
   public String toString() {
-    return super.toString() + "=" + this.promPiece.getCharRepresentation(true);
+    return this.toAlgebraicString();
   }
 }

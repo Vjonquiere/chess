@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import pdp.events.EventType;
 import pdp.model.*;
 import pdp.model.board.BitboardRepresentation;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.parsers.FenHeader;
 import pdp.model.parsers.FileBoard;
@@ -143,7 +142,7 @@ public class GameStateTest {
   @Test
   public void testWhiteRequestsDraw() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.whiteWantsToDraw();
+    gameBlitzOff.doesWhiteWantsToDraw();
     assertTrue(gameBlitzOff.hasWhiteRequestedDraw(), "White should have requested a draw !");
     assertFalse(
         gameBlitzOff.isGameOver(), "Game should not be over just because White requested a draw !");
@@ -152,7 +151,7 @@ public class GameStateTest {
   @Test
   public void testBlackRequestsDraw() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.blackWantsToDraw();
+    gameBlitzOff.doesBlackWantsToDraw();
     assertTrue(gameBlitzOff.hasBlackRequestedDraw(), "Black should have requested a draw !");
     assertFalse(
         gameBlitzOff.isGameOver(), "Game should not be over just because Black requested a draw !");
@@ -161,7 +160,7 @@ public class GameStateTest {
   @Test
   public void testWhiteCancelsDrawRequest() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.whiteWantsToDraw();
+    gameBlitzOff.doesWhiteWantsToDraw();
     gameBlitzOff.whiteCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasWhiteRequestedDraw(), "White's draw request should be canceled !");
     assertFalse(gameBlitzOff.isGameOver(), "Canceling draw should not end the game !");
@@ -170,7 +169,7 @@ public class GameStateTest {
   @Test
   public void testBlackCancelsDrawRequest() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.blackWantsToDraw();
+    gameBlitzOff.doesBlackWantsToDraw();
     gameBlitzOff.blackCancelsDrawRequest();
     assertFalse(gameBlitzOff.hasBlackRequestedDraw(), "Black's draw request should be canceled !");
     assertFalse(gameBlitzOff.isGameOver(), "Canceling draw should not end the game !");
@@ -179,8 +178,8 @@ public class GameStateTest {
   @Test
   public void testMutualDrawAgreementShouldEndGame() {
     GameState gameBlitzOff = new GameState();
-    gameBlitzOff.whiteWantsToDraw();
-    gameBlitzOff.blackWantsToDraw();
+    gameBlitzOff.doesWhiteWantsToDraw();
+    gameBlitzOff.doesBlackWantsToDraw();
     assertTrue(gameBlitzOff.isGameOver(), "Game should be over if both players agree to a draw !");
   }
 
@@ -242,11 +241,9 @@ public class GameStateTest {
   @Test
   public void testWhitePlayerDrawOnTime() {
     GameState gameState = spy(new GameState());
-    Board board = mock(Board.class);
-    BoardRepresentation boardRep = mock(BoardRepresentation.class);
+    BoardRepresentation board = mock(BoardRepresentation.class);
     when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(boardRep);
-    when(boardRep.hasEnoughMaterialToMate(false)).thenReturn(false);
+    when(board.hasEnoughMaterialToMate(false)).thenReturn(false);
     gameState.playerOutOfTime(true);
 
     assertTrue(gameState.isGameOver());
@@ -257,11 +254,9 @@ public class GameStateTest {
   @Test
   public void testBlackPlayerDrawOnTime() {
     GameState gameState = spy(new GameState());
-    Board board = mock(Board.class);
-    BoardRepresentation boardRep = mock(BoardRepresentation.class);
+    BoardRepresentation board = mock(BoardRepresentation.class);
     when(gameState.getBoard()).thenReturn(board);
-    when(board.getBoardRep()).thenReturn(boardRep);
-    when(boardRep.hasEnoughMaterialToMate(true)).thenReturn(false);
+    when(board.hasEnoughMaterialToMate(true)).thenReturn(false);
     gameState.playerOutOfTime(false);
 
     assertTrue(gameState.isGameOver());

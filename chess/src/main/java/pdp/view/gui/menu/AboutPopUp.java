@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.utils.CommandLineOptions;
@@ -17,7 +19,8 @@ import pdp.view.GuiView;
 public class AboutPopUp extends VBox {
   /** Build a new popup. */
   public AboutPopUp() {
-    Stage popupStage = new Stage();
+    super();
+    final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("about"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
     Label infoLabel = null;
@@ -27,14 +30,14 @@ public class AboutPopUp extends VBox {
 
     }
 
-    Button closeButton = new Button(TextGetter.getText("close"));
+    final Button closeButton = new Button(TextGetter.getText("close"));
     closeButton.setOnAction(e -> popupStage.close());
 
-    VBox layout = new VBox(10, infoLabel, closeButton);
+    final VBox layout = new VBox(10, infoLabel, closeButton);
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
 
-    Scene scene = new Scene(layout);
+    final Scene scene = new Scene(layout);
     GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();
@@ -46,24 +49,42 @@ public class AboutPopUp extends VBox {
    * @return A label containing the about message.
    */
   private Label getLabel() throws IOException {
-    Properties properties = new Properties();
+    final Properties properties = new Properties();
     properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
 
-    String aboutText =
-        TextGetter.getText("version")
-            + " "
-            + properties.getProperty("version")
-            + "\n"
-            + TextGetter.getText("authors")
-            + " "
-            + "CHOLLON Mathilde, DEMIRCI Denis, JOMAA Iwen, JONQUIERE Valentin, LANDRY Jonathan"
-            + "\n"
-            + TextGetter.getText("project")
-            + " "
-            + TextGetter.getText("projectDescription");
+    // Create bold text elements
+    Text versionTitle = new Text(TextGetter.getText("version") + " ");
+    versionTitle.setStyle("-fx-font-weight: bold;");
 
-    Label aboutLabel = new Label(aboutText);
+    Text authorsTitle = new Text("\n" + TextGetter.getText("authors") + " ");
+    authorsTitle.setStyle("-fx-font-weight: bold;");
+
+    Text projectTitle = new Text("\n" + TextGetter.getText("project") + " ");
+    projectTitle.setStyle("-fx-font-weight: bold;");
+
+    // Create normal text elements
+    Text versionValue = new Text(properties.getProperty("version"));
+    Text authorsValue =
+        new Text(
+            "CHOLLON Mathilde, DEMIRCI Denis, JOMAA Iwen, JONQUIERE Valentin, LANDRY Jonathan");
+    Text projectValue = new Text(TextGetter.getText("projectDescription"));
+
+    // Add texts to TextFlow for proper formatting
+    TextFlow textFlow =
+        new TextFlow(
+            versionTitle,
+            versionValue,
+            authorsTitle,
+            authorsValue,
+            new Text("\n"),
+            projectTitle,
+            projectValue);
+
+    // Set the TextFlow as the content of the Label
+    Label aboutLabel = new Label();
+    aboutLabel.setGraphic(textFlow);
     aboutLabel.setWrapText(true);
+
     return aboutLabel;
   }
 }

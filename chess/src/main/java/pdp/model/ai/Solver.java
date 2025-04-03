@@ -5,11 +5,14 @@ import static pdp.utils.Logging.error;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
+import pdp.model.GameState;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
+import pdp.model.ai.algorithms.AlphaBetaIterativeDeepeningParallel;
 import pdp.model.ai.algorithms.AlphaBetaParallel;
 import pdp.model.ai.algorithms.Minimax;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
@@ -26,11 +29,11 @@ import pdp.model.ai.heuristics.KingSafetyHeuristic;
 import pdp.model.ai.heuristics.MaterialHeuristic;
 import pdp.model.ai.heuristics.MobilityHeuristic;
 import pdp.model.ai.heuristics.PawnChainHeuristic;
+import pdp.model.ai.heuristics.PromotionHeuristic;
 import pdp.model.ai.heuristics.ShannonBasic;
 import pdp.model.ai.heuristics.SpaceControlHeuristic;
 import pdp.model.ai.heuristics.StandardHeuristic;
 import pdp.model.ai.heuristics.StandardLightHeuristic;
-import pdp.model.board.Board;
 import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
@@ -63,6 +66,9 @@ public class Solver {
   /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
 
+  /** The move reflexion time in nanoseconds. */
+  private List<Long> moveTimes;
+
   /**
    * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before
    * evaluation.
@@ -90,6 +96,7 @@ public class Solver {
     evaluatedBoards = new ConcurrentHashMap<>();
     this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
+    this.moveTimes = new CopyOnWriteArrayList<>();
   }
 
   /**
@@ -97,12 +104,13 @@ public class Solver {
    *
    * @param algorithm The algorithm to use.
    */
-  public void setAlgorithm(AlgorithmType algorithm) {
+  public void setAlgorithm(final AlgorithmType algorithm) {
     switch (algorithm) {
       case MINIMAX -> this.algorithm = new Minimax(this);
       case ALPHA_BETA -> this.algorithm = new AlphaBeta(this);
       case ALPHA_BETA_ID -> this.algorithm = new AlphaBetaIterativeDeepening(this);
       case ALPHA_BETA_PARALLEL -> this.algorithm = new AlphaBetaParallel(this);
+      case ALPHA_BETA_ID_PARALLEL -> this.algorithm = new AlphaBetaIterativeDeepeningParallel(this);
       case MCTS -> this.algorithm = new MonteCarloTreeSearch(this);
       default -> throw new IllegalArgumentException("No algorithm is set");
     }
@@ -141,6 +149,7 @@ public class Solver {
       case STANDARD -> this.heuristic = new StandardHeuristic();
       case STANDARD_LIGHT -> this.heuristic = new StandardLightHeuristic();
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
+      case PROMOTION -> this.heuristic = new PromotionHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     this.currentHeuristic = heuristic;
@@ -157,29 +166,17 @@ public class Solver {
    * @param heuristic The heuristic to use.
    */
   public void setHeuristic(final HeuristicType heuristic, final List<Float> weight) {
-    switch (heuristic) {
-      case MATERIAL -> this.heuristic = new MaterialHeuristic();
-      case KING_SAFETY -> this.heuristic = new KingSafetyHeuristic();
-      case SPACE_CONTROL -> this.heuristic = new SpaceControlHeuristic();
-      case DEVELOPMENT -> this.heuristic = new DevelopmentHeuristic();
-      case PAWN_CHAIN -> this.heuristic = new PawnChainHeuristic();
-      case MOBILITY -> this.heuristic = new MobilityHeuristic();
-      case BAD_PAWNS -> this.heuristic = new BadPawnsHeuristic();
-      case SHANNON -> this.heuristic = new ShannonBasic();
-      case GAME_STATUS -> this.heuristic = new GameStatus();
-      case KING_ACTIVITY -> this.heuristic = new KingActivityHeuristic();
-      case BISHOP_ENDGAME -> this.heuristic = new BishopEndgameHeuristic();
-      case KING_OPPOSITION -> this.heuristic = new KingOppositionHeuristic();
-      case STANDARD -> this.heuristic = new StandardHeuristic(weight);
-      case ENDGAME -> this.heuristic = new EndGameHeuristic();
-      default -> throw new IllegalArgumentException("No heuristic is set");
+    if (heuristic == HeuristicType.STANDARD) {
+      this.heuristic = new StandardHeuristic(weight);
+      if (this.startHeuristic == null) {
+        this.startHeuristic = heuristic;
+      }
+      evaluatedBoards = new ConcurrentHashMap<>();
+      this.currentHeuristic = heuristic;
+      debug(LOGGER, "Heuristic set to: " + this.heuristic);
+    } else {
+      setHeuristic(heuristic);
     }
-    evaluatedBoards = new ConcurrentHashMap<>();
-    this.currentHeuristic = heuristic;
-    if (this.startHeuristic == null) {
-      this.startHeuristic = heuristic;
-    }
-    debug(LOGGER, "Heuristic set to: " + this.heuristic);
   }
 
   /**
@@ -316,22 +313,19 @@ public class Solver {
    * @param game current game
    */
   public void playAiMove(final Game game) {
-    game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
+    final long startTime = System.nanoTime();
     searchStopped = false;
     isMoveToPlay = true;
-    game.setAiPlayedItsLastMove(false);
     final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
-    game.setAiPlayedItsLastMove(true);
     if (timer != null) {
       timer.stop();
     }
+    moveTimes.add(System.nanoTime() - startTime);
 
     debug(LOGGER, "Best move " + bestMove);
-
-    game.setExploration(false);
 
     if (isMoveToPlay) {
       try {
@@ -355,7 +349,6 @@ public class Solver {
    * @return best move according to the game in parameter
    */
   public Move getBestMove(final Game game) {
-    game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
@@ -365,7 +358,6 @@ public class Solver {
     }
 
     debug(LOGGER, "Best move " + bestMove);
-    game.setExploration(false);
     return bestMove.move();
   }
 
@@ -373,32 +365,70 @@ public class Solver {
    * Evaluates the board based on the chosen heuristic. Use Zobrist Hashing to avoid recalculating
    * scores.
    *
-   * @param board Current board to evaluate
+   * @param gameState Current gameState to evaluate
    * @param isWhite Current player
    * @return score corresponding to the position evaluation of the board.
    */
-  public float evaluateBoard(final Board board, final boolean isWhite) {
-    if (board == null) {
+  public float evaluateBoard(final GameState gameState, final boolean isWhite) {
+    if (gameState == null || gameState.getBoard() == null) {
       throw new IllegalArgumentException("Board is null");
     }
 
-    final long hash = zobristHashing.generateHashFromBitboards(board);
+    final long hash = zobristHashing.generateHashFromBitboards(gameState.getBoard());
     float score;
     if (evaluatedBoards.containsKey(hash)) {
       score = evaluatedBoards.get(hash);
     } else {
-      score = heuristic.evaluate(board, isWhite);
+      score = heuristic.evaluate(gameState.getBoard(), isWhite);
       evaluatedBoards.put(hash, score);
     }
 
     final Color player = isWhite ? Color.WHITE : Color.BLACK;
 
-    if (Game.getInstance().getGameState().isThreefoldRepetition()
-        || board.getBoardRep().isStaleMate(player, player)
-        || board.getNbFullMovesWithNoCaptureOrPawn() >= 50) {
+    if (gameState.isThreefoldRepetition()
+        || gameState.getBoard().isStaleMate(player, player)
+        || gameState.getBoard().getNbFullMovesWithNoCaptureOrPawn() >= 50) {
       score = 0;
     }
 
     return score;
+  }
+
+  /**
+   * Get the reflexion time for the last AI move.
+   *
+   * @return A long corresponding to the time in nanoseconds.
+   */
+  public long getLastMoveTime() {
+    return moveTimes.get(moveTimes.size() - 1);
+  }
+
+  /**
+   * Get all the reflexion time of the game.
+   *
+   * @return A list containing all the reflexion times in nanoseconds.
+   */
+  public List<Long> getMoveTimes() {
+    return moveTimes;
+  }
+
+  @Override
+  public String toString() {
+    if (algorithm instanceof MonteCarloTreeSearch) {
+      return "algorithm="
+          + algorithm
+          + ", simulations="
+          + ((MonteCarloTreeSearch) algorithm).getSimulationLimit()
+          + ", time="
+          + time;
+    }
+    return "algorithm="
+        + algorithm
+        + ", depth="
+        + depth
+        + ", time="
+        + time
+        + ", heuristic="
+        + heuristic;
   }
 }

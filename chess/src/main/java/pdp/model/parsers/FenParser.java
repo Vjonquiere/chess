@@ -13,6 +13,7 @@ import pdp.utils.Position;
 
 /** File parser that produce boards from file at FEN format. */
 public final class FenParser {
+  /** Map making correspond a string and the piece it represents. */
   private static final Map<String, ColoredPiece> PIECES =
       Map.ofEntries(
           entry("K", new ColoredPiece(Piece.KING, Color.WHITE)),
@@ -27,6 +28,8 @@ public final class FenParser {
           entry("r", new ColoredPiece(Piece.ROOK, Color.BLACK)),
           entry("n", new ColoredPiece(Piece.KNIGHT, Color.BLACK)),
           entry("p", new ColoredPiece(Piece.PAWN, Color.BLACK)));
+
+  /** Bitboard to initialize when parsing a file. */
   private static final BitboardRepresentation BITBOARD_REP =
       new BitboardRepresentation(
           new Bitboard(0L),
@@ -70,7 +73,7 @@ public final class FenParser {
           x += Character.getNumericValue(c); // Skip empty squares
         } else {
           final ColoredPiece piece = PIECES.get(String.valueOf(c));
-          BITBOARD_REP.setSquare(piece, (x + y * 8));
+          BITBOARD_REP.setSquare(piece, x + y * 8);
           x++;
         }
       }

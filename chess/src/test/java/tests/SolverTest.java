@@ -1,6 +1,8 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -11,12 +13,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
+import pdp.model.GameState;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.*;
 import pdp.model.board.Move;
 import pdp.utils.Position;
-import tests.helpers.MockBoard;
+import tests.helpers.DummyBoardRepresentation;
 
 public class SolverTest {
   private Solver solver;
@@ -42,7 +45,7 @@ public class SolverTest {
   public void testEvaluationMaterial() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(0, solver.evaluateBoard(game.getGameState(), true));
 
     game.playMove(new Move(new Position(4, 1), new Position(4, 2)));
     game.playMove(new Move(new Position(3, 6), new Position(3, 5)));
@@ -53,10 +56,11 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
+    float expected = 4 * (100f / 103);
+    assertEquals(-expected, solver.evaluateBoard(game.getGameState(), false)); // rounded value
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(expected, solver.evaluateBoard(game.getGameState(), true)); // rounded value
   }
 
   @Test
@@ -74,15 +78,16 @@ public class SolverTest {
 
   @Test
   public void testEvaluationErrorBoardNonBitboardRepresentation() {
-    MockBoard board = new MockBoard();
-
+    DummyBoardRepresentation board = new DummyBoardRepresentation();
+    GameState gameState = mock(GameState.class);
+    when(gameState.getBoard()).thenReturn(board);
     solver.setHeuristic(HeuristicType.MATERIAL);
 
     Exception exception =
         assertThrows(
             RuntimeException.class,
             () -> {
-              solver.evaluateBoard(board, true);
+              solver.evaluateBoard(gameState, true);
             });
     assertEquals("Only available for bitboards.", exception.getMessage());
   }
@@ -92,12 +97,12 @@ public class SolverTest {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
-    float score1 = solver.evaluateBoard(game.getBoard(), true);
+    float score1 = solver.evaluateBoard(game.getGameState(), true);
     game.playMove(new Move(new Position(1, 0), new Position(2, 2)));
     game.playMove(new Move(new Position(1, 7), new Position(0, 5)));
     game.playMove(new Move(new Position(2, 2), new Position(1, 0)));
     game.playMove(new Move(new Position(0, 5), new Position(1, 7)));
-    float score2 = solver.evaluateBoard(game.getBoard(), true);
+    float score2 = solver.evaluateBoard(game.getGameState(), true);
 
     assertEquals(score1, score2);
   }

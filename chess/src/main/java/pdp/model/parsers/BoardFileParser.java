@@ -8,10 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
@@ -22,6 +19,7 @@ import pdp.utils.Logging;
 
 /** Parser that produce board objects from given file format (support FEN header). */
 public class BoardFileParser {
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BoardFileParser.class.getName());
 
   static {
@@ -35,14 +33,14 @@ public class BoardFileParser {
    * @return The content of the given file has a String
    * @throws FileNotFoundException if the path is not valid
    */
-  public String readFile(String path) throws FileNotFoundException {
+  public String readFile(final String path) throws FileNotFoundException {
     debug(LOGGER, "Loading file: " + path);
-    StringBuilder fileContent = new StringBuilder();
-    File myObj = new File(path);
-    Scanner myReader = new Scanner(myObj);
+    final StringBuilder fileContent = new StringBuilder();
+    final File myObj = new File(path);
+    final Scanner myReader = new Scanner(myObj);
     while (myReader.hasNextLine()) {
       fileContent.append(myReader.nextLine());
-      fileContent.append("\n");
+      fileContent.append('\n');
     }
     myReader.close();
     verbose(LOGGER, "File content: " + fileContent);
@@ -57,7 +55,7 @@ public class BoardFileParser {
    * @param fileName The file path
    * @return The corresponding board and current player
    */
-  public FileBoard parseGameFile(String fileName, Runtime runtime) {
+  public FileBoard parseGameFile(final String fileName, final Runtime runtime) {
     String content;
     try {
       content = readFile(fileName);
@@ -67,22 +65,23 @@ public class BoardFileParser {
       return new FileBoard(new BitboardRepresentation(), true, null);
     }
     content = content.split("\\d+\\.")[0].trim(); // Removing history if present
+    BoardLoaderParser parser = null;
     try {
       debug(LOGGER, "Converting file to charStream...");
-      CharStream charStream = CharStreams.fromString(content);
+      final CharStream charStream = CharStreams.fromString(content);
       debug(LOGGER, "Lexing...");
-      BoardLoaderLexer lexer = new BoardLoaderLexer(charStream);
-      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      final BoardLoaderLexer lexer = new BoardLoaderLexer(charStream);
+      final CommonTokenStream tokens = new CommonTokenStream(lexer);
       debug(LOGGER, "Parsing...");
-      BoardLoaderParser parser = new BoardLoaderParser(tokens);
+      parser = new BoardLoaderParser(tokens);
       parser.setErrorHandler(new BailErrorStrategy()); // force parser to throw error
-      ParseTree tree = parser.board();
+      final ParseTree tree = parser.board();
       debug(LOGGER, "Building board...");
-      ParseTreeWalker walker = new ParseTreeWalker();
-      BoardLoaderListener listener = new BoardLoaderListener();
+      final ParseTreeWalker walker = new ParseTreeWalker();
+      final BoardLoaderListener listener = new BoardLoaderListener();
       walker.walk(listener, tree);
       debug(LOGGER, "Board built successfully");
-      FileBoard result = listener.getResult();
+      final FileBoard result = listener.getResult();
       if (result.board().getKing(true).size() != 1
           || result.board().getKing(false).size() != 1
           || result.board().isCheckMate(Color.WHITE)
@@ -91,8 +90,20 @@ public class BoardFileParser {
             "Board do not satisfy load requirements (no check mate and one king by player)");
       }
       return result;
-    } catch (Exception e) {
-      error("Failed to build board: " + e.getMessage());
+    } catch (RuntimeException e) {
+      if (e.getCause() instanceof InputMismatchException) {
+        Token offendingToken = parser.getCurrentToken();
+        error(
+            "Failed to parse board at line "
+                + offendingToken.getLine()
+                + ", position "
+                + offendingToken.getCharPositionInLine()
+                + ": unexpected token '"
+                + offendingToken.getText()
+                + "'");
+      } else {
+        error(e.getMessage());
+      }
       runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true, null);
     }

@@ -23,6 +23,7 @@
     <rule ref="category/java/codestyle.xml">
         <!--At least one constructor and no empty constructor were present, cannot satisfy both in some simple classes -->
         <exclude name="AtLeastOneConstructor"/>
+        <exclude name="ShortVariable" />
     </rule>
     <rule ref="category/java/design.xml"/>
     <rule ref="category/java/design.xml/LawOfDemeter">
