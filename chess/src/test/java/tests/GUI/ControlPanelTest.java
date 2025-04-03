@@ -68,22 +68,17 @@ class ControlPanelTest extends ApplicationTest {
   @Test
   @Tag("gui")
   void testUpdateHistoryPanel() {
-    // Récupération de la ListView de l'historique
     ListView<String> listView = lookup(".list-view").query();
     assertNotNull(listView, "The history list should be initialized.");
 
-    // Vérifier l'état initial : 2 coups présents
     assertEquals(
         2, listView.getItems().size(), "The history list should initially contain 2 moves.");
 
-    // Jouer un nouveau coup
     Move move3 = new Move(new Position(3, 1), new Position(3, 3));
     game.playMove(move3);
 
-    // Mettre à jour l'historique via updateHistoryPanel()
     interact(() -> controlPanel.getHistoryPanel().updateHistoryPanel());
 
-    // Vérifier que le dernier coup affiché est bien move3
     assertEquals(
         game.getHistory().getCurrentMove().get().getPrevious().get().getState().toString(),
         listView.getItems().get(2),
