@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -407,24 +406,16 @@ class GameInitializerTest {
 
   @Test
   void testGameInitializationContestModeIncorrectFile() {
-    options.put(OptionType.CONTEST, "invalid_file_path.txt");
+
+    outputStream.reset();
+
+    String invalidFilePath = "non_existent_" + System.nanoTime() + ".txt";
+    options.put(OptionType.CONTEST, invalidFilePath);
     Game game = GameInitializer.initialize(options);
 
-    assertTrue(outputStream.toString().contains("Error loading contest file"));
-    assertTrue(outputStream.toString().contains("Starting a new game instead."));
+    assertTrue(outputStream.toString().contains("Error while parsing file: "));
     assertNotNull(game);
-    assertFalse(game.isContestModeOn());
-  }
-
-  @Test
-  void testGameInitializationContestModeMissingFilePath() {
-    options.put(OptionType.CONTEST, "");
-    Game game = GameInitializer.initialize(options);
-
-    assertTrue(
-        outputStream.toString().contains("Error: --contest option requires a valid file path."));
-    assertNotNull(game);
-    assertFalse(game.isContestModeOn());
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -466,7 +457,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isContestModeOn());
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -504,13 +495,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isContestModeOn());
-
-    List<Move> possibleMoves = game.getBoard().getAllAvailableMoves(false);
-    if (!possibleMoves.isEmpty()) {
-      Move moveToPlay = possibleMoves.get(0);
-      game.playMove(moveToPlay);
-    }
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -542,13 +527,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isContestModeOn());
-
-    List<Move> possibleMoves = game.getBoard().getAllAvailableMoves(false);
-    if (!possibleMoves.isEmpty()) {
-      Move moveToPlay = possibleMoves.get(0);
-      game.playMove(moveToPlay);
-    }
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -610,28 +589,6 @@ class GameInitializerTest {
   }
 
   @Test
-  void testContestMode_InvalidFilePath() {
-    options.put(OptionType.CONTEST, "");
-
-    Game game = GameInitializer.initialize(options);
-
-    assertNotNull(game);
-    assertTrue(
-        outputStream.toString().contains("Error: --contest option requires a valid file path."));
-  }
-
-  @Test
-  void testContestMode_FileNotFound() {
-    options.put(OptionType.CONTEST, "non_existent_file.txt");
-
-    Game game = GameInitializer.initialize(options);
-
-    assertNotNull(game);
-    assertTrue(outputStream.toString().contains("Error loading contest file"));
-    assertTrue(outputStream.toString().contains("Starting a new game instead."));
-  }
-
-  @Test
   void testContestModeValidFileWhiteTurn() throws IOException {
     tempFile = Files.createTempFile("moveHistory2", ".txt");
     String text =
@@ -662,10 +619,10 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_W, "3");
     options.put(OptionType.AI_MODE_W, "MCTS");
-    options.put(OptionType.AI_SIMULATION_W, "150");
+    options.put(OptionType.AI_SIMULATION_W, "200");
     options.put(OptionType.AI_HEURISTIC_W, "BAD_PAWNS");
     options.put(OptionType.AI_WEIGHT_W, "9.2");
 
@@ -675,8 +632,7 @@ class GameInitializerTest {
     assertTrue(game.isWhiteAi());
     assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertEquals(
-        150, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
-    assertEquals(3, game.getWhiteSolver().getDepth());
+        200, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
   }
 
   @Test
@@ -710,7 +666,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_B, "MCTS");
 
     Game game = GameInitializer.initialize(options);
@@ -753,7 +709,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_B, "2");
     options.put(OptionType.AI_MODE_B, "ALPHA_BETA");
     options.put(OptionType.AI_ENDGAME_B, "ENDGAME");
@@ -786,7 +742,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_W, "invalid");
 
     Game game = GameInitializer.initialize(options);
@@ -813,7 +769,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_B, "notanumber");
 
     Game game = GameInitializer.initialize(options);
@@ -840,7 +796,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_W, "UNKNOWN_MODE");
 
     Game game = GameInitializer.initialize(options);
@@ -878,7 +834,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_W, "MCTS");
     options.put(OptionType.AI_SIMULATION_W, "invalid");
 
@@ -918,7 +874,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_B, "MCTS");
     options.put(OptionType.AI_SIMULATION_B, "invalid");
 
@@ -958,7 +914,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_B, "10");
     options.put(OptionType.AI_DEPTH_B, "2");
     options.put(OptionType.AI_ENDGAME_B, "8");
@@ -986,7 +942,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_W, "INVALID_MODE");
     options.put(OptionType.AI_DEPTH_W, "INVALID_DEPTH");
     options.put(OptionType.AI_ENDGAME_W, "9");

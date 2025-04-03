@@ -6,6 +6,7 @@ import pdp.controller.GameController;
 import pdp.model.Game;
 import pdp.utils.OptionType;
 import pdp.view.CliView;
+import pdp.view.ContestView;
 import pdp.view.GuiView;
 import pdp.view.UciView;
 import pdp.view.View;
@@ -23,10 +24,12 @@ public abstract class GameControllerInit {
     final Game model = GameInitializer.initialize(options);
 
     final View view;
-    if (options.containsKey(OptionType.GUI)) {
-      view = new GuiView();
+    if (options.containsKey(OptionType.CONTEST)) {
+      view = new ContestView();
     } else if (options.containsKey(OptionType.UCI)) {
       view = new UciView();
+    } else if (options.containsKey(OptionType.GUI)) {
+      view = new GuiView();
     } else {
       view = new CliView();
     }

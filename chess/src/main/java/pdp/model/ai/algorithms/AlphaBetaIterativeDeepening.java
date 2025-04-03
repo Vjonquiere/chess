@@ -79,6 +79,9 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
     }
 
     debug(LOGGER, "Best move: " + bestMove);
+    long visitedNodes = getVisitedNodes();
+    clearNode();
+    debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
   }
 
@@ -104,7 +107,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
       float beta,
       final boolean originalPlayer,
       final List<Move> orderedMoves) {
-
+    addNode();
     if (solver.isSearchStopped()) {
       this.stoppedEarly = true;
       return new AiMove(
@@ -152,5 +155,10 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
       }
     }
     return bestMove;
+  }
+
+  @Override
+  public String toString() {
+    return "Alpha-Beta Iterative Deepening";
   }
 }

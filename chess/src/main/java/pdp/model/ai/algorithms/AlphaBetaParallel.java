@@ -180,4 +180,9 @@ public class AlphaBetaParallel extends SearchAlgorithm {
 
     return bestMove;
   }
+
+  @Override
+  public String toString() {
+    return "Alpha-Beta Parallel";
+  }
 }

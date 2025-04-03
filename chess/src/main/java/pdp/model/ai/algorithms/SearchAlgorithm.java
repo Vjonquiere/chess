@@ -55,6 +55,10 @@ public abstract class SearchAlgorithm {
     return totalNodes / visitedNodeList.size();
   }
 
+  public List<Long> getVisitedNodeList() {
+    return visitedNodeList;
+  }
+
   /**
    * Retrieves the number of visited nodes during this run of the algorithm.
    *
@@ -62,5 +66,9 @@ public abstract class SearchAlgorithm {
    */
   public long getVisitedNodes() {
     return visitedNodes.get();
+  }
+
+  public long getLastVisitedNodeCount() {
+    return visitedNodeList.get(visitedNodeList.size() - 1);
   }
 }

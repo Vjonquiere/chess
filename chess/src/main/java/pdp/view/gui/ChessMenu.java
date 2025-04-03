@@ -3,10 +3,7 @@ package pdp.view.gui;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Optional;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -15,8 +12,8 @@ import pdp.GameInitializer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.AskHintCommand;
 import pdp.controller.commands.CancelMoveCommand;
-import pdp.controller.commands.ChangeLang;
-import pdp.controller.commands.ChangeTheme;
+import pdp.controller.commands.ChangeLangCommand;
+import pdp.controller.commands.ChangeThemeCommand;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
@@ -53,6 +50,15 @@ public class ChessMenu extends HBox {
     menuBar.getMenus().add(createAboutMenu());
     menuBar.getMenus().add(createOptionsMenu());
     this.getChildren().addAll(menuBar, messageDisplay);
+  }
+
+  /**
+   * Retrieves the message display. Used for tests.
+   *
+   * @return messageDisplay
+   */
+  public MessageDisplay getMessageDisplay() {
+    return messageDisplay;
   }
 
   /**
@@ -230,7 +236,13 @@ public class ChessMenu extends HBox {
    */
   private Menu createOptionsMenu() {
     final Menu optionsMenu = new Menu(TextGetter.getText("options"));
-    optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu());
+    RadioMenuItem monitor = new RadioMenuItem(TextGetter.getText("monitor"));
+    monitor.setSelected(GuiView.getMonitoringStatus());
+    monitor.setOnAction(
+        event -> {
+          GuiView.toggleMonitoring();
+        });
+    optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu(), monitor);
     return optionsMenu;
   }
 
@@ -258,7 +270,7 @@ public class ChessMenu extends HBox {
       theme.setOnAction(
           e -> {
             GuiView.setTheme(ColorTheme.getTheme(name));
-            BagOfCommands.getInstance().addCommand(new ChangeTheme());
+            BagOfCommands.getInstance().addCommand(new ChangeThemeCommand());
           });
       themes.getItems().add(theme);
     }
@@ -284,14 +296,14 @@ public class ChessMenu extends HBox {
     english.setOnAction(
         e -> {
           TextGetter.setLocale("en");
-          BagOfCommands.getInstance().addCommand(new ChangeLang());
+          BagOfCommands.getInstance().addCommand(new ChangeLangCommand());
         });
     final MenuItem french = new MenuItem(TextGetter.getText("french"));
     french.setId("french");
     french.setOnAction(
         e -> {
           TextGetter.setLocale("fr");
-          BagOfCommands.getInstance().addCommand(new ChangeLang());
+          BagOfCommands.getInstance().addCommand(new ChangeLangCommand());
         });
     lang.getItems().addAll(english, french);
 

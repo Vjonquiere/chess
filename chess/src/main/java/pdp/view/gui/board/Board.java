@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javafx.animation.TranslateTransition;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
@@ -19,6 +22,7 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
+import pdp.view.GuiView;
 
 /** GUI representation of game board. */
 public class Board extends GridPane {
@@ -71,6 +75,8 @@ public class Board extends GridPane {
 
   /** Build the board for the first time. Init all squares and setup them. */
   public void buildBoard() {
+    char letter = 65;
+    char number = 56;
     if (stage != null) {
       final double maxWidth = stage.getWidth() * 2.0 / 3.0 / 8.0;
       final double maxHeight = (stage.getHeight() - 75) / 8.0;
@@ -97,18 +103,42 @@ public class Board extends GridPane {
         square.setId("square" + finalX + finalY);
         pieces.put(new Position(x, boardRows - 1 - y), square);
         super.add(square, x, y);
+        if (boardRows - 1 - y == 0) {
+          Label label = new Label(String.valueOf(letter));
+          label.setStyle(
+              "-fx-text-fill: "
+                  + GuiView.getTheme().getText()
+                  + ";-fx-padding: 0 0 0 5;-fx-font-weight: bold;");
+          GridPane.setHalignment(label, HPos.LEFT);
+          GridPane.setValignment(label, VPos.BOTTOM);
+          super.add(label, x, y);
+          letter++;
+        }
+        if (x == 7) {
+          Label label = new Label(String.valueOf(number));
+          label.setStyle(
+              "-fx-text-fill: "
+                  + GuiView.getTheme().getText()
+                  + ";-fx-padding: 0 5 0 0;-fx-font-weight: bold;");
+          GridPane.setHalignment(label, HPos.RIGHT);
+          GridPane.setValignment(label, VPos.TOP);
+          super.add(label, x, y);
+          number--;
+        }
       }
     }
   }
 
   /** Update the pieces sprites of all squares. */
-  public void updateBoard() {
+  public void updateBoard(boolean withAnimation) {
     cleanHintSquares();
     clearCheckSquare();
     clearLastMoveSquares();
-    // Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece); // TODO:
-    // Re-activate after tests.
-    updateAfterAnimation();
+    if (withAnimation) {
+      Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece);
+    } else {
+      updateAfterAnimation();
+    }
   }
 
   /** Used to update the board after the move animation finished. */
@@ -139,41 +169,45 @@ public class Board extends GridPane {
    * @param historyNode The history to extract the move.
    */
   private void movePiece(final HistoryNode historyNode) {
-    if (Game.getInstance().getGameState().isWhiteTurn()
-        && Game.getInstance().isBlackAi()
-        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
-      updateAfterAnimation();
-      return;
+    try {
+      if (Game.getInstance().getGameState().isWhiteTurn()
+          && Game.getInstance().isBlackAi()
+          && Game.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
+        updateAfterAnimation();
+        return;
+      }
+      if (!Game.getInstance().getGameState().isWhiteTurn()
+          && Game.getInstance().isWhiteAi()
+          && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
+        updateAfterAnimation();
+        return;
+      }
+      final Move move = historyNode.getState().getMove();
+      pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
+      pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
+
+      final PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
+      piece.setLayoutX(move.getSource().x() * squareSize + 25);
+      piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
+      super.getChildren().add(piece);
+
+      final TranslateTransition transition = new TranslateTransition();
+      transition.setNode(piece);
+      transition.setDuration(javafx.util.Duration.seconds(0.1));
+      transition.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
+      transition.setFromY((boardRows - 1 - move.getSource().y()) * squareSize);
+      transition.setToX(move.getDest().x() * squareSize + squareSize * 0.25);
+      transition.setToY((boardRows - 1 - move.getDest().y()) * squareSize);
+
+      transition.setOnFinished(
+          (event) -> {
+            super.getChildren().remove(piece);
+            updateAfterAnimation();
+          });
+      transition.play();
+    } catch (Exception e) {
+      // Here to prevent animation interruptions.
     }
-    if (!Game.getInstance().getGameState().isWhiteTurn()
-        && Game.getInstance().isWhiteAi()
-        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
-      updateAfterAnimation();
-      return;
-    }
-    final Move move = historyNode.getState().getMove();
-    pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
-    pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
-
-    final PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
-    piece.setLayoutX(move.getSource().x() * squareSize + 25);
-    piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
-    super.getChildren().add(piece);
-
-    final TranslateTransition transition = new TranslateTransition();
-    transition.setNode(piece);
-    transition.setDuration(javafx.util.Duration.seconds(0.1));
-    transition.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
-    transition.setFromY((boardRows - 1 - move.getSource().y()) * squareSize);
-    transition.setToX(move.getDest().x() * squareSize + squareSize * 0.25);
-    transition.setToY((boardRows - 1 - move.getDest().y()) * squareSize);
-
-    transition.setOnFinished(
-        (event) -> {
-          super.getChildren().remove(piece);
-          updateAfterAnimation();
-        });
-    transition.play();
   }
 
   /**

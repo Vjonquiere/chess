@@ -5,6 +5,7 @@ import static pdp.utils.Logging.error;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.model.Game;
@@ -65,8 +66,8 @@ public class Solver {
   /** Heuristic chosen for the endgame phase of the game. */
   private HeuristicType endgameHeuristic;
 
-  /** The last move reflexion time in nanoseconds. */
-  private long lastMoveTime;
+  /** The move reflexion time in nanoseconds. */
+  private List<Long> moveTimes;
 
   /**
    * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before
@@ -95,6 +96,7 @@ public class Solver {
     evaluatedBoards = new ConcurrentHashMap<>();
     this.algorithm = new AlphaBeta(this);
     this.heuristic = new StandardHeuristic();
+    this.moveTimes = new CopyOnWriteArrayList<>();
   }
 
   /**
@@ -311,24 +313,19 @@ public class Solver {
    * @param game current game
    */
   public void playAiMove(final Game game) {
-    game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
     final long startTime = System.nanoTime();
     searchStopped = false;
     isMoveToPlay = true;
-    game.setAiPlayedItsLastMove(false);
     final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
-    game.setAiPlayedItsLastMove(true);
     if (timer != null) {
       timer.stop();
     }
-    lastMoveTime = System.nanoTime() - startTime;
+    moveTimes.add(System.nanoTime() - startTime);
 
     debug(LOGGER, "Best move " + bestMove);
-
-    game.setExploration(false);
 
     if (isMoveToPlay) {
       try {
@@ -352,7 +349,6 @@ public class Solver {
    * @return best move according to the game in parameter
    */
   public Move getBestMove(final Game game) {
-    game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
@@ -362,7 +358,6 @@ public class Solver {
     }
 
     debug(LOGGER, "Best move " + bestMove);
-    game.setExploration(false);
     return bestMove.move();
   }
 
@@ -405,6 +400,35 @@ public class Solver {
    * @return A long corresponding to the time in nanoseconds.
    */
   public long getLastMoveTime() {
-    return lastMoveTime;
+    return moveTimes.get(moveTimes.size() - 1);
+  }
+
+  /**
+   * Get all the reflexion time of the game.
+   *
+   * @return A list containing all the reflexion times in nanoseconds.
+   */
+  public List<Long> getMoveTimes() {
+    return moveTimes;
+  }
+
+  @Override
+  public String toString() {
+    if (algorithm instanceof MonteCarloTreeSearch) {
+      return "algorithm="
+          + algorithm
+          + ", simulations="
+          + ((MonteCarloTreeSearch) algorithm).getSimulationLimit()
+          + ", time="
+          + time;
+    }
+    return "algorithm="
+        + algorithm
+        + ", depth="
+        + depth
+        + ", time="
+        + time
+        + ", heuristic="
+        + heuristic;
   }
 }

@@ -289,4 +289,9 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
 
     return new AiMove(bestMove, (int) winRate);
   }
+
+  @Override
+  public String toString() {
+    return "MCTS";
+  }
 }

@@ -9,13 +9,13 @@ import pdp.events.EventType;
 import pdp.model.Game;
 
 /**
- * Part of Command Design pattern. Creates a command to update the Application due to a language
- * change.
+ * Part of Command Design pattern. Creates a command to update the view (GUI) after a change of
+ * theme.
  */
-public class ChangeLang implements Command {
+public class ChangeThemeCommand implements Command {
 
   /**
-   * Executes the move on the game model.
+   * Change the theme in the GUI.
    *
    * @param model The game model on which the move is to be executed.
    * @param controller The game controller managing game commands.
@@ -23,7 +23,7 @@ public class ChangeLang implements Command {
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
     try {
-      Game.getInstance().notifyObservers(EventType.UPDATE_LANG);
+      Game.getInstance().notifyObservers(EventType.UPDATE_THEME);
       return Optional.empty();
     } catch (Exception e) {
       error(e.getMessage());

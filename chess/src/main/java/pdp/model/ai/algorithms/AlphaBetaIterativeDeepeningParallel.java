@@ -61,6 +61,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     AiMove bestMove = null;
     final GameAi gameAi = GameAi.fromGame(game);
     final List<Move> rootMoves = new ArrayList<>(game.getBoard().getAllAvailableMoves(player));
+    MoveOrdering.moveOrder(rootMoves);
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -69,7 +70,6 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
 
       if (bestMove != null && bestMove.move() != null) {
         rootMoves.remove(bestMove.move());
-        MoveOrdering.moveOrder(rootMoves);
         rootMoves.add(0, bestMove.move());
       }
 
@@ -146,6 +146,9 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     }
 
     debug(LOGGER, "Best move: " + bestMove);
+    long visitedNodes = getVisitedNodes();
+    clearNode();
+    debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
   }
 
@@ -170,7 +173,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
       float alpha,
       float beta,
       final boolean originalPlayer) {
-
+    addNode();
     if (solver.isSearchStopped()) {
       stoppedEarly.set(true);
       return new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
@@ -220,5 +223,10 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     }
 
     return bestMove;
+  }
+
+  @Override
+  public String toString() {
+    return "Alpha-Beta Iterative Deepening Parallel";
   }
 }
