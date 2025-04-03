@@ -8,10 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
@@ -68,6 +65,7 @@ public class BoardFileParser {
       return new FileBoard(new BitboardRepresentation(), true, null);
     }
     content = content.split("\\d+\\.")[0].trim(); // Removing history if present
+    BoardLoaderParser parser = null;
     try {
       debug(LOGGER, "Converting file to charStream...");
       final CharStream charStream = CharStreams.fromString(content);
@@ -75,7 +73,7 @@ public class BoardFileParser {
       final BoardLoaderLexer lexer = new BoardLoaderLexer(charStream);
       final CommonTokenStream tokens = new CommonTokenStream(lexer);
       debug(LOGGER, "Parsing...");
-      final BoardLoaderParser parser = new BoardLoaderParser(tokens);
+      parser = new BoardLoaderParser(tokens);
       parser.setErrorHandler(new BailErrorStrategy()); // force parser to throw error
       final ParseTree tree = parser.board();
       debug(LOGGER, "Building board...");
@@ -92,8 +90,20 @@ public class BoardFileParser {
             "Board do not satisfy load requirements (no check mate and one king by player)");
       }
       return result;
-    } catch (Exception e) {
-      error("Failed to build board: " + e.getMessage());
+    } catch (RuntimeException e) {
+      if (e.getCause() instanceof InputMismatchException) {
+        Token offendingToken = parser.getCurrentToken();
+        error(
+            "Failed to parse board at line "
+                + offendingToken.getLine()
+                + ", position "
+                + offendingToken.getCharPositionInLine()
+                + ": unexpected token '"
+                + offendingToken.getText()
+                + "'");
+      } else {
+        error(e.getMessage());
+      }
       runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true, null);
     }
