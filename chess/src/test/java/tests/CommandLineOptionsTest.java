@@ -624,7 +624,6 @@ public class CommandLineOptionsTest {
     activatedOptions = CommandLineOptions.parseOptions(new String[] {"--contest="}, mockRuntime);
     assertFalse(activatedOptions.containsKey(OptionType.CONTEST));
 
-    assertTrue(
-        outputStream.toString().contains("Error: --contest option requires a valid file path."));
+    verify(mockRuntime).exit(1);
   }
 }

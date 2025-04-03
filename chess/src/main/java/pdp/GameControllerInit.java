@@ -24,12 +24,12 @@ public abstract class GameControllerInit {
     final Game model = GameInitializer.initialize(options);
 
     final View view;
-    if (options.containsKey(OptionType.GUI)) {
-      view = new GuiView();
+    if (options.containsKey(OptionType.CONTEST)) {
+      view = new ContestView();
     } else if (options.containsKey(OptionType.UCI)) {
       view = new UciView();
-    } else if (options.containsKey(OptionType.CONTEST)) {
-      view = new ContestView();
+    } else if (options.containsKey(OptionType.GUI)) {
+      view = new GuiView();
     } else {
       view = new CliView();
     }
