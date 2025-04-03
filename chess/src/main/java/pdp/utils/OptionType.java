@@ -233,7 +233,10 @@ public enum OptionType {
                           Available options:
                           - MINIMAX : Uses the MiniMax algorithm.
                           - ALPHA_BETA : Uses the Alpha-Beta Pruning algorithm (default).
-                          - MCTS : Uses Monte Carlo Tree Search for AI move exploration.""")
+                          - MCTS : Uses Monte Carlo Tree Search for AI move exploration.
+                          - ALPHA_BETA_PARALLEL, Alpha-Beta with multithreading. More nodes explored but faster.
+                          - ALPHA_BETA_ID, Alpha-Beta with iterative deepening, really efficient algorithm.
+                          - ALPHA_BETA_ID_PARALLEL, Alpha-Beta with iterative deepening and multithreading.""")
           .build();
     }
   },
