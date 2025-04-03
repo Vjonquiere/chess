@@ -10,7 +10,11 @@
 \usepackage{natbib}
 \usepackage{tcolorbox}
 \usepackage{xcolor}
-\usepackage{geometry}
+\usepackage{array}
+\usepackage{pifont}
+\usepackage[a4paper, margin=1.5cm]{geometry}  
+\usepackage{longtable}
+
 \graphicspath{ {./res/} }
 
 \definecolor{needcolor}{HTML}{007ACC}
@@ -51,6 +55,10 @@
   enhanced,
   sharp corners=all
 }
+
+\newcommand{\valid}{\textcolor{green}{\ding{108}}}  % Cercle vert pour validé
+\newcommand{\semivalid}{\textcolor{orange}{\ding{108}}}  % Cercle orange pour semi-validé
+\newcommand{\nonvalid}{\textcolor{red}{\ding{108}}}  % Cercle rouge pour non-validé
 
 \author{
     Valentin Jonquière,
@@ -629,6 +637,7 @@ lente de base, notamment à cause d'un grand nombre de deep copies d'objets Game
 Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité sans optimisation.
 \subsection{Critiques positives}
 COMPLETER ICI PAR DES CRITIQUES POSITIVES.
+Par exemple, la communication entre IA (avec stockfish etc.).
 
 \subsection{Perspectives}
 \subsubsection{Mode Multi-joueur}
@@ -664,536 +673,154 @@ Cela ressemblerait à quelque chose du style :\\
  \bibliography{references}
 
 
-\section{Besoins réalisés}
+\section{Besoins réalisés - Annexe}
 \label{Spec}
 
-Voici la liste exhaustive des besoins qui ont été réalisés lors de ce projet. Pour chaque besoin, on retrouve une justification rapide de
-pourquoi nous le considérons réalisé. Afin de visualiser au mieux les besoins, nous les avons présentés comme lors du premier rapport,
-à l'exception que les sous-besoins précédemment identifiés n'y sont pas. Les encadrés bleus représentent les besoins fonctionnels et les
-encadrés violets représentent les non-fonctionnels.
-
-\begin{needbox}[F?: Titre]
-    Template pour les besoins fonctionnels
-    \begin{justificationbox}[Justification de réalisation]
-        Explication justifiant la réalisation du besoin
-    \end{justificationbox}
-\end{needbox}
-
-\begin{nonfunctionnalneedbox}[F?: Titre]
-    Template pour les besoins non fonctionnels
-    \begin{justificationbox}[Justification de réalisation]
-        Explication justifiant la réalisation du besoin
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\subsection{Généralités}
-
-\begin{nonfunctionnalneedbox}[F1. Langage de programmation]
-    Le langage de programmation du projet devra être Java et utiliser la spécification Java SE 17+.
-    \begin{justificationbox}
-        Le projet est développé en Java et respecte la spécification Java SE 17+.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F2: Style de codage]
-    Le coding style du programme doit respecter le coding style de Google.
-    \begin{justificationbox}
-        Le coding style du Projet respecte le coding style de Google. Tous les commits ne le respectant pas
-        ne sont pas acceptés sur GitLab. Pour s'en assurer, taper la commande mvn spotless:apply depuis
-        chess/ et observer qu'aucun changement n'est appliqué.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
-    La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
-    \begin{justificationbox}
-        Le code du projet a été écrit en anglais, qu'il s'agisse des noms de variables, de fonctions
-        ou même de la documentation et des noms de fichiers/dossiers. 
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F4. Système cible]
-    Le programme devra fonctionner sur des systèmes d’exploitation GNU/Linux.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F5. Documentation]
-    Le programme et le code source devra être documenté : manuel utilisateur,
-    option d’aide en ligne de commande et commentaires dans le code source.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F6. Tests]
-    Tester et valider le programme avec une couverture suffisante.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F7: Bugs]
-    Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées
-    et les erreurs doivent générer des messages d'erreur.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F8: Performances]
-    Evaluer des performances du programme de manière générale et pour différentes options et différentes configurations de jeu
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F9: Build-system]
-    Établir un système de build pour le programme avec l'outil Maven pour Java. 
-    \begin{justificationbox}
-        Le projet se compile et utilise un système de build avec l'outil Maven.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\subsection{Bibliothèques et outils}
-
-\begin{nonfunctionnalneedbox}[F10. Frameworks de test]
-    Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
-    \begin{justificationbox}
-        Du Mock testing a été réalisé et le framework TestFX a notamment été utilisé.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F11. Gestion des options]
-    La gestion des options sera basée sur la bibliothèque \textit{commons-cli}.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
-    La bibliothèque graphique utilisée sera basée sur JavaFx
-    \begin{justificationbox}
-        La partie Vue (frontend) se base sur le framework JavaFx.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F13: Internationalisation]
-    Le framework d'internationalisation sera basé sur ResourcesBundle et Locale.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\subsection{Options en ligne de commande}
-
-\begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal]
-    L’exécutable principal doit s’appeler "chess" et permettre de lancer tout le programme.
-    \begin{justificationbox}
-        L’exécutable principal s’appele "chess" et permet de lancer tout le programme.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{needbox}[F15. Usage général]
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F16: Aide en ligne de commande ]
-    L'option '-h', '--help' affiche l'aide puis quitte.
-    \begin{justificationbox}
-        L’option ’-h’, ’–-help’ affiche l’aide puis quitte.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F17: Version ]
-    L'option '-V', '--version' affiche la version puis quitte.
-    \begin{justificationbox}
-        L’option ’-V’, ’–-version’ affiche la version puis quitte.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F18: Mode verbose ]
-    Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).
-    \begin{justificationbox}
-        L’option ’-v’, ’–-verbose’ permet d’afficher des
-        informations supplémentaires pendant l’exécution.
-    \end{justificationbox}
-\end{needbox}
-    
-\begin{needbox}[F19: Mode debug ]
-    Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.
-    \begin{justificationbox}
-        L’option ’-d’, ’–-debug’ permet d’afficher des informations
-        de débogage pendant l’exécution.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F20. Mode Blitz ]
-    Permet de lancer le jeu en mode Blitz.
-    \begin{justificationbox}
-        L’option ’-b’, ’–-blitz’ permet de jouer en mode blitz.
-        Dans ce mode, un temps limite est donné à chaque joueur
-        pour jouer. Si le temps d’un des joueur est écoulé,
-        il perd la partie.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F21. Durée du Blitz ]
-    Permet de définir la durée du Blitz.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F22: Mode \textit{Contest}]
-    \begin{justificationbox}
-        L’option ’-c FILENAME’, ’–-contest FILENAME’ permet de
-        lancer le programme en mode ’contest’ en chargeant une
-        partie depuis un fichier ’FILENAME’ (si fichier au bon format).
-        Le programme affiche alors le joueur qui doit jouer ainsi que
-        le coup à jouer.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F23: Mode IA ]
-    Permet de lancer le programme en mode joueur artificiel.
-    \begin{justificationbox}
-        L’option ’-a[COLOR]’, ’–-ai[=COLOR]’ permet de lancer le
-        programme en mode joueur artificiel avec la couleur COLOR
-        (’W’, ’B’ et ’A’ (All), W par défaut).\\
-        Note : en GUI, cliquer sur Menu 'Game' puis sur l'option 'Start'.
-    \end{justificationbox}
-\end{needbox}
-
-\subsection{Interface utilisateur}
-
-\begin{needbox}[F24. Interface en ligne de commande]
-    \begin{justificationbox}
-        Le programme posséde une interface en ligne de
-        commande qui permet une interaction avec l’utilisateur via
-        le terminal. Cette interface textuelle est lancée par défaut
-        par le programme.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F25. Interface graphique]
-    \begin{justificationbox}
-        Le programme posséde une interface graphique qui
-        permet les mêmes interactions que sur le CLI avec l’utilisateur
-        via une fenêtre graphique. Cette interface graphique est
-        lancée si l’option ’-g’, ’–-gui’ est donnée.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F26: Affichage de l'échiquier]
-    À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
-    \begin{justificationbox}
-        À chaque coup, le programme affiche l’échiquier ainsi
-        que le temps pris par chaque joueur si la partie est en blitz.
-        Note: en ce qui concerne le temps pris par chaque joueur, le groupe
-        a estimé plus logique d'afficher le temps pris sur toute la partie,
-        pas le temps pris pour chaque coup.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F27: Notation des coups]
-    Utilisation d'une notation codifiée pour les coups.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F28: Représentation de l'historique]
-    Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.
-    \begin{justificationbox}
-        L’historique est représenté comme une liste des tours du
-        jeu. Par exemple, le premier tour est affiché comme suit :
-        ’1. B h4-h5 W e3-e5’ (le numéro du tour dans la partie, la
-        couleur du joueur puis le coup en notation algébrique).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F29: En passant]
-    Gestion du coup en passant des deux côtés.
-    \begin{justificationbox}
-        Le programme gère la prise en passant des deux côtés lorsque le coup est possible.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F30. Roque]
-    Le jeu devra gérer le petit et grand roque des deux côtés.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F31: Promotion du pion]
-    Gérer la promotion du pion.
-    \begin{justificationbox}
-        Le programme gère la promotion du pion. Par défaut, pour l'IA,
-        le pion se transforme en Dame.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F32: Abandon]
-    Le programme devra permettre à un joueur d'abandonner la partie en cours de jeu.
-    \begin{justificationbox}
-        Le programme permet à un joueur d’abandonner
-        la partie en cours de jeu s'il le souhaite.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F33: Affichage des messages]
-    Le programme devra afficher des messages d'information
-    pendant la partie en fonction du mode dans lequel il est
-    (default, verbose, debug).
-    \begin{justificationbox}
-        Le programme affiche des messages d’information
-        pendant la partie en fonction du mode dans lequel il est
-        lancé (default, verbose, debug).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F34. Quitter et sauvegarder une partie]
-    \begin{justificationbox}
-        Le programme permet de quitter une partie en
-        cours et de la sauvegarder dans un fichier.
-        L'utilisateur choisit le nom du fichier.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F35. Sauvegarde de l’historique]
-    \begin{justificationbox}
-        Le programme peut sauvegarder l’historique des
-        coups joués dans un fichier à la demande de l’utilisateur.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F36: Naviguer dans l'historique]
-    Il doit être possible de revenir en arrière ou d'aller en avant dans l'historique des coups joués si tous les joueurs humains sont d'accord.
-    \begin{justificationbox}
-        Il est possible de revenir en arrière ("Undo") ou d’aller en avant
-        ("Redo") dans l’historique des coups joués si tous les joueurs humains
-        sont d’accord.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F37: Recommencer une partie]
-    À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
-    \begin{justificationbox}
-        À tout moment, il est possible de recommencer une
-        partie depuis le début en abandonnant la partie en cours.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F38: Fin de partie]
-    Détecter la fin de la partie et déterminer le résultat en indiquant notamment qui est vainqueur (si vainqueur il y a).
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F39: Rejouer une partie]
-    Possibilité de charger un fichier, naviguer dans l'historique et rejouer la partie depuis un coup choisi par l'utilisateur.
-    \begin{justificationbox}
-        L'utilisateur a la possibilité de charger une partie depuis un fichier,
-        naviguer dans l'historique la partie et la reprendre depuis un certain
-        coup. L'utilisateur doit demander la sauvegarde de cette nouvelle partie
-        s'il souhaite ne pas la perdre.
-    \end{justificationbox}
-\end{needbox}
-
-\subsection{Format d'entrée/sortie}
-
-\begin{nonfunctionnalneedbox}[F40: Format de fichier simplifié]
-    Permettre au joueur de sauvegarder et restaurer des fichires de jeu.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F41: Format de l'historique]
-    Lecture et écriture de l'historique de jeu.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\begin{nonfunctionnalneedbox}[F42: Fichier de configuration]
-    \begin{justificationbox}
-        Le programme est capable de lire un fichier de
-        configuration (.chessrc) qui contient les options par
-        défaut du programme. Ce fichier est lu au démarrage du
-        programme et les options qu’il contient sont utilisées par
-        défaut.
-    \end{justificationbox}
-\end{nonfunctionnalneedbox}
-
-\subsection{Structures internes}
-
-\begin{needbox}[F43: Plateau de jeu]
-    Les bitboards seront utilisées pour représenter l'état du plateau de jeu
-    \begin{justificationbox}
-        Des bitboards sont utilisés pour représenter l’état du plateau
-        de jeu à chaque instant.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F44. Module bitboard]
-    \begin{justificationbox}
-        Un module bitboard rassemble les fonctions qui
-        permettent de manipuler les bitboards.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F45. État du jeu]
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{needbox}
-
-\subsection{Interface graphique}
-
-\begin{needbox}[F46: Fonctions de base]
-    Possibilité d'utiliser les fonctions de base CLI directement depuis l'interface graphique.
-    \begin{justificationbox}
-        COMPLETER.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F47: Menu 'File']
-    Menu principal 'File' permettant de gérer les fonctions liées aux parties.
-    \begin{justificationbox}
-        L’interface graphique comporte un menu principal
-        avec les options (’New Game’), (’Load Game’),
-        (’Save Game’), (’Quit’), (’Help’) et (’Settings’).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F48: Menu 'Game']
-    Menu 'Game' permettant d'accéder à certaines options relatives à la partie.
-    \begin{justificationbox}
-        L’interface graphique comporte un menu de jeu qui
-        permet de demander un conseil (’Hint’), naviguer dans
-        l’historique (revenir en arrière, aller en avant, etc).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F49: Menu 'About']
-    Menu 'About' permettant d'afficher quelques informations sur le Projet.
-    \begin{justificationbox}
-        L’interface graphique comporte un menu d’options 'About'
-        qui permet de consulter des informations sur le programme
-        (version, auteurs, ...).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F50: Affichage d'une partie en cours]
-    Affiche le plateau courant et permet au joueur de bouger ses pièces.
-    \begin{justificationbox}
-        L’interface graphique affiche le plateau de jeu de la partie
-        en cours ainsi que les informations habituellement présentes
-        sur l’interface en ligne de commandes.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F51: Affichage des coups joués]
-    Affiche l'historique des coups joués sur l'interface graphique.
-    \begin{justificationbox}
-        L’interface graphique affiche sur un côté de l’interface,
-        les coups joués lors de la partie en les numérotant.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F52: Configuration d'une nouvelle partie]
-    L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
-    de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
-    non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'.
-    \begin{justificationbox}
-        Lorsque l'option 'New Game' est cliquée, l'utilisateur a le choix de lancer une nouvelle
-        partie avec les paramètres par défaut, ou ajouter des paramètres. Un bouton 'Start Game'
-        permet à l'utilisateur de lancer cette nouvelle partie.
-    \end{justificationbox}
-\end{needbox}
-
-\subsection{Joueur artificiel}
-
-\begin{needbox}[F53: Heuristique d'évaluation de position]
-    Le programme devra comporter au moins une fonction
-    capable de prendre un état du jeu et de lui donner un score en
-    fonction de différents critères qui vous sembleront pertinents.
-    \begin{justificationbox}
-        Le programme comporte plusieurs fonctions capables de prendre
-        un état du jeu et de lui donner un score en
-        fonction de différents critères qui nous semblent pertinents.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F54. Algorithme de recherche Minimax]
-    \begin{justificationbox}
-        Le choix du meilleur coup se fait via une exploration
-        de l’arbre des coups possibles via l’algorithme de recherche
-        Minimax.
-        Note: le groupe a préféré considérer AlphaBeta l'option
-        par défaut car plus efficace donc ptentiellement mieux
-        pourl'utilisateur (car plus de précision).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F55. AlphaBeta-pruning]
-    \begin{justificationbox}
-        Le choix du meilleur coup se fait via une exploration de
-        l’arbre des coups possibles via l’algorithme de l'AlphaBeta-pruning.
-        Cette option est activée par défaut si le programme est lancé
-        en mode joueur artificiel.
-        Néanmoins, l’option ’–-ai-mode ALPHA\_BETA’
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F56: Monte Carlo Tree Search]
-    \begin{justificationbox}
-        L’option ’–-ai-mode mcts’ remplace l’algorithme d’exploration
-        par défaut par un algorithme de Monte Carlo Tree Search (MCTS).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F57: Profondeur de recherche]
-    \begin{justificationbox}
-        L’option ’–-ai-depth DEPTH’ permet de spécifier la
-        profondeur de recherche de l’algorithme de recherche.
-        L’option ’–-ai-simulation SIMULATION permet de spécifier le
-        nombre de simulations pour le recherche avec MCTS.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F58: Choix des heuristiques]
-    \begin{justificationbox}
-        Il est possible de gérer plusieurs heuristiques d’évaluation
-        de position. L’option ’–-ai-heuristic HEURISTIC’
-        permet de spécifier l’heuristique choisie parmi celles
-        qui sont mises à disposition. Plusieurs peuvent être
-        combinées (STANDARD défaut en utilise plusieurs).
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F59: Heuristiques de fin de partie]
-    \begin{justificationbox}
-        Plusieurs heuristiques de fin de partie pour ont été créées
-        afin d'optimiser l’évaluation des positions.
-    \end{justificationbox}
-\end{needbox}
-
-\begin{needbox}[F60: Temps de réflexion borné]
-    Permet de paramétrer la durée de "réflexion" de l'IA.
-    \begin{justificationbox}
-        L’option ’–-ai-time TIME’ permet de spécifier le temps
-        de réflexion de l’algorithme de recherche. Si le temps est écoulé,
-        le programme joue le meilleur coup trouvé jusqu’à présent.
-        Par défaut, le temps de réflexion est de 5 secondes.
-    \end{justificationbox}
+Voici la liste exhaustive des besoins qui ont été réalisés lors de ce projet. Pour chaque besoin, on retrouve un code couleur représentant
+son état de validation. Vert signifie validé, orange semi-validé, rouge non validé. Si ambiguïté ou besoin de détails il y a, une explication
+est fournie afin d'éclaircir les choses. Parfois, le besoin peut être compris d'une autre manière. Nous rappelons qu'il s'agit de notre point de vue.
+Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, mais en tout état de cause, le but n'est pas de tricher.
+
+\begin{longtable}{|c|p{5cm}|c|p{5cm}|}
+    \hline
+    \textbf{\#} & \textbf{Nom du besoin} & \textbf{Statut} & \textbf{Explication si ambiguïté} \\
+    \hline
+    \endfirsthead
+
+    \hline
+    \textbf{\#} & \textbf{Nom du besoin} & \textbf{Statut} & \textbf{Explication si ambiguïté} \\
+    \hline
+    \endhead
+
+    \hline
+    1 & Langage de programmation & \valid & \\
+    \hline
+    2 & Style de codage & \valid & \\
+    \hline
+    3 & Langue par défaut dans le code & \valid & \\
+    \hline
+    4 & Système cible & \valid & \\
+    \hline
+    5 & Documentation & \nonvalid & COMPLETER SI BESOIN \\
+    \hline
+    6 & Tests & \valid & \\
+    \hline
+    7 & Bugs & \valid & \\
+    \hline
+    8 & Performances & \nonvalid & COMPLETER SI BESOIN \\
+    \hline
+    9 & Build-system & \valid & \\
+    \hline
+    10 & Frameworks de test & \valid & \\
+    \hline
+    11 & Gestion des options & \valid & \\
+    \hline
+    12 & Bibliothèque graphique & \valid & \\
+    \hline
+    13 & Internationalisation & \valid & \\
+    \hline
+    14 & Nom de l’exécutable principal & \valid & \\
+    \hline
+    15 & Usage général & \nonvalid & COMPLETER SI BESOIN \\
+    \hline
+    16 & Aide en ligne de commande & \valid & \\
+    \hline
+    17 & Version & \valid & \\
+    \hline
+    18 & Mode verbose & \valid & \\
+    \hline
+    19 & Mode debug & \valid & \\
+    \hline
+    20 & Mode Blitz & \valid & Le temps de chaque joueur est donné à tout instant. Chaque joueur a un temps total pour toute la partie, et non pour chaque coup. Pas d'affichage du temps par coup.\\
+    \hline
+    21 & Durée du Blitz & \valid & \\
+    \hline
+    22 & Mode Contest & \valid & \\
+    \hline
+    23 & Mode IA & \valid & \\
+    \hline
+    24 & Interface en ligne de commande & \valid & \\
+    \hline
+    25 & Interface graphique & \valid & \\
+    \hline
+    26 & Affichage de l'échiquier & \valid & \\
+    \hline
+    27 & Notation des coups & \valid & \\
+    \hline
+    28 & Représentation de l'historique & \valid & \\
+    \hline
+    29 & En passant & \valid & \\
+    \hline
+    30 & Roque & \valid & \\
+    \hline
+    31 & Promotion du pion & \valid & \\
+    \hline
+    32 & Abandon & \valid & \\
+    \hline
+    33 & Affichage des messages & \valid & \\
+    \hline
+    34 & Quitter et sauvegarder une partie & \valid & \\
+    \hline
+    35 & Sauvegarde de l’historique & \nonvalid & COMPLETER SI BESOIN \\
+    \hline
+    36 & Naviguer dans l'historique & \valid & \\
+    \hline
+    37 & Recommencer une partie & \valid & \\
+    \hline
+    38 & Fin de partie & \valid & \\
+    \hline
+    39 & Rejouer une partie & \nonvalid & COMPLETER SI BESOIN \\
+    \hline
+    40 & Format de fichier simplifié & \nonvalid & COMPLETER SI BESOIN \\
+    \hline
+    41 & Format de l'historique & \valid & \\
+    \hline
+    42 & Fichier de configuration & \valid & \\
+    \hline
+    43 & Plateau de jeu & \valid & \\
+    \hline
+    44 & Module bitboard & \valid & \\
+    \hline
+    45 & État du jeu & \valid & L'historique est stocké dans la classe Game plutôt que GameState (choix d'implémentation).
+    Game et GameState forment une structure contenant le joueur courant, le plateau, le temps (blitz) et l'historique.\\
+    \hline
+    46 & Fonctions de base GUI & \nonvalid & COMPLETER SI BESOIN \\
+    \hline
+    47 & Menu 'File' & \valid & \\
+    \hline
+    48 & Menu 'Game' & \valid & \\
+    \hline
+    49 & Menu 'About' & \valid & \\
+    \hline
+    50 & Affichage d'une partie en cours & \valid & \\
+    \hline
+    51 & Affichage des coups joués & \valid & \\
+    \hline
+    52 & Configuration d'une nouvelle partie & \valid & L'option 'New Game' permet de choisir entre lancer une partie avec les paramètres par défaut ou les modifier avant de commencer. Un bouton 'Start Game' lance la partie. \\
+    \hline
+    53 & Heuristique d'évaluation & \valid & \\
+    \hline
+    54 & Algorithme Minimax & \valid & \\
+    \hline
+    55 & AlphaBeta-pruning & \valid & \\
+    \hline
+    56 & Monte Carlo Tree Search & \valid & \\
+    \hline
+    57 & Profondeur de recherche & \valid & \\
+    \hline
+    58 & Choix des heuristiques & \valid & \\
+    \hline
+    59 & Heuristiques de fin de partie & \valid & \\
+    \hline
+    60 & Temps de réflexion IA & \valid & \\
+    \hline
+\end{longtable}
+
+Voici aussi une liste présentant les besoins "bonus", qui n'étaient pas présents dans la liste des besoins du cahier des charges.
+
+\begin{needbox}[F61: Historique scrollable]
+    L'historique en GUI est scrollable, de telle manière que les coups sont lisibles même si la partie
+    comporte un grand nombre de coups.
 \end{needbox}
 
 
