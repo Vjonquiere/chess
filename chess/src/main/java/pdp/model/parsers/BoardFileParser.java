@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
@@ -91,7 +90,7 @@ public class BoardFileParser {
             "Board do not satisfy load requirements (no check mate and one king by player)");
       }
       return result;
-    } catch (ParseCancellationException e) {
+    } catch (RuntimeException e) {
       if (e.getCause() instanceof InputMismatchException) {
         Token offendingToken = parser.getCurrentToken();
         error(
@@ -102,6 +101,8 @@ public class BoardFileParser {
                 + ": unexpected token '"
                 + offendingToken.getText()
                 + "'");
+      } else {
+        error(e.getMessage());
       }
       runtime.exit(1);
       return new FileBoard(new BitboardRepresentation(), true, null);
