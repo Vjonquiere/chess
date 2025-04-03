@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
+import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.model.Game;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
@@ -21,6 +22,9 @@ public class AskHintCommand implements Command {
    */
   @Override
   public Optional<Exception> execute(Game model, GameController controller) {
+    if (model.getGameState().isGameOver()) {
+      return Optional.of(new CommandNotAvailableNowException());
+    }
     try {
       final Solver hintSolver = new Solver();
       final Move hintMove =

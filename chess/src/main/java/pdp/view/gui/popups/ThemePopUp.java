@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.ChangeTheme;
+import pdp.controller.commands.ChangeThemeCommand;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 import pdp.view.gui.themes.ColorTheme;
@@ -100,7 +100,7 @@ public class ThemePopUp {
             ColorTheme.addTheme(themeName, newTheme);
 
             GuiView.setTheme(newTheme);
-            BagOfCommands.getInstance().addCommand(new ChangeTheme());
+            BagOfCommands.getInstance().addCommand(new ChangeThemeCommand());
             popupStage.close();
           } catch (IllegalArgumentException ignore) {
           }
