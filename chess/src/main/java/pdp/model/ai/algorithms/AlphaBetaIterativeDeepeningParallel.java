@@ -61,6 +61,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     AiMove bestMove = null;
     final GameAi gameAi = GameAi.fromGame(game);
     final List<Move> rootMoves = new ArrayList<>(game.getBoard().getAllAvailableMoves(player));
+    MoveOrdering.moveOrder(rootMoves);
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -69,7 +70,6 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
 
       if (bestMove != null && bestMove.move() != null) {
         rootMoves.remove(bestMove.move());
-        MoveOrdering.moveOrder(rootMoves);
         rootMoves.add(0, bestMove.move());
       }
 
