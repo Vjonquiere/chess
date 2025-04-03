@@ -69,7 +69,7 @@ public class GuiView implements View {
   }
 
   /**
-   * Retrieves the scene of the view. (USed for tests)
+   * Retrieves the scene of the view. (Used for tests)
    *
    * @return field scene
    */
@@ -78,7 +78,7 @@ public class GuiView implements View {
   }
 
   /**
-   * Retrieves the board of the view. (USed for tests)
+   * Retrieves the board of the view. (Used for tests)
    *
    * @return field board
    */
@@ -87,7 +87,7 @@ public class GuiView implements View {
   }
 
   /**
-   * Retrieves the controlPanel of the view. (USed for tests)
+   * Retrieves the controlPanel of the view. (Used for tests)
    *
    * @return field controlPanel
    */
@@ -96,12 +96,22 @@ public class GuiView implements View {
   }
 
   /**
-   * Retrieves the menu of the view. (USed for tests)
+   * Retrieves the menu of the view. (Used for tests)
    *
    * @return field menu
    */
   public ChessMenu getMenu() {
     return menu;
+  }
+
+  /**
+   * Retrieves the root of the app, the border pane containing all elements of the UI. Used for
+   * tests.
+   *
+   * @return fiels root.
+   */
+  public BorderPane getRoot() {
+    return root;
   }
 
   /**
