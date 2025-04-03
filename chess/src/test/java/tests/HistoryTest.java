@@ -6,8 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
@@ -21,7 +19,7 @@ public class HistoryTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
-  @BeforeEach
+  /* @BeforeEach
   void setUpConsole() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
@@ -32,7 +30,7 @@ public class HistoryTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
-  }
+  }*/
 
   /*   @Test
   void testHistoryToString() {

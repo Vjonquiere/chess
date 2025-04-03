@@ -2,7 +2,7 @@ package pdp.view.gui.themes;
 
 import java.util.regex.Pattern;
 
-/** Class representing custom themes */
+/** Class representing custom themes. */
 public class CustomColorTheme implements ColorThemeInterface {
 
   /** The regex pattern used to check if input strings are hexadecimal colors. */
