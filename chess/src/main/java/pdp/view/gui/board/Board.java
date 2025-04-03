@@ -169,41 +169,45 @@ public class Board extends GridPane {
    * @param historyNode The history to extract the move.
    */
   private void movePiece(final HistoryNode historyNode) {
-    if (Game.getInstance().getGameState().isWhiteTurn()
-        && Game.getInstance().isBlackAi()
-        && Game.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
-      updateAfterAnimation();
-      return;
+    try {
+      if (Game.getInstance().getGameState().isWhiteTurn()
+          && Game.getInstance().isBlackAi()
+          && Game.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
+        updateAfterAnimation();
+        return;
+      }
+      if (!Game.getInstance().getGameState().isWhiteTurn()
+          && Game.getInstance().isWhiteAi()
+          && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
+        updateAfterAnimation();
+        return;
+      }
+      final Move move = historyNode.getState().getMove();
+      pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
+      pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
+
+      final PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
+      piece.setLayoutX(move.getSource().x() * squareSize + 25);
+      piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
+      super.getChildren().add(piece);
+
+      final TranslateTransition transition = new TranslateTransition();
+      transition.setNode(piece);
+      transition.setDuration(javafx.util.Duration.seconds(0.1));
+      transition.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
+      transition.setFromY((boardRows - 1 - move.getSource().y()) * squareSize);
+      transition.setToX(move.getDest().x() * squareSize + squareSize * 0.25);
+      transition.setToY((boardRows - 1 - move.getDest().y()) * squareSize);
+
+      transition.setOnFinished(
+          (event) -> {
+            super.getChildren().remove(piece);
+            updateAfterAnimation();
+          });
+      transition.play();
+    } catch (Exception e) {
+      // Here to prevent animation interruptions.
     }
-    if (!Game.getInstance().getGameState().isWhiteTurn()
-        && Game.getInstance().isWhiteAi()
-        && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
-      updateAfterAnimation();
-      return;
-    }
-    final Move move = historyNode.getState().getMove();
-    pieces.get(move.getSource()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
-    pieces.get(move.getDest()).updatePiece(new ColoredPiece(Piece.EMPTY, Color.EMPTY));
-
-    final PieceImage piece = new PieceImage(move.getPiece(), squareSize / 2);
-    piece.setLayoutX(move.getSource().x() * squareSize + 25);
-    piece.setLayoutY((boardRows - 1 - move.getSource().y()) * squareSize);
-    super.getChildren().add(piece);
-
-    final TranslateTransition transition = new TranslateTransition();
-    transition.setNode(piece);
-    transition.setDuration(javafx.util.Duration.seconds(0.1));
-    transition.setFromX(move.getSource().x() * squareSize + squareSize * 0.25);
-    transition.setFromY((boardRows - 1 - move.getSource().y()) * squareSize);
-    transition.setToX(move.getDest().x() * squareSize + squareSize * 0.25);
-    transition.setToY((boardRows - 1 - move.getDest().y()) * squareSize);
-
-    transition.setOnFinished(
-        (event) -> {
-          super.getChildren().remove(piece);
-          updateAfterAnimation();
-        });
-    transition.play();
   }
 
   /**
