@@ -60,7 +60,7 @@
     Jonathan Landry
 }
 
-\title{Rapport Préliminaire projet de programmation, Échecs en Java}
+\title{Rapport Final projet de programmation, Échecs en Java}
 
 \begin{document}
 
@@ -591,7 +591,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
  gestion d'évènements.
     \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
     \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
-    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourons gérer l'ajout de plusieurs commandes en parallèle.
+    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourrons gérer l'ajout de plusieurs commandes en parallèle.
     \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle.
 \end{itemize}
 
@@ -696,21 +696,24 @@ encadrés violets représentent les non-fonctionnels.
 \begin{nonfunctionnalneedbox}[F1. Langage de programmation]
     Le langage de programmation du projet devra être Java et utiliser la spécification Java SE 17+.
     \begin{justificationbox}
-        COMPLETER.
+        Le projet est développé en Java et respecte la spécification Java SE 17+.
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F2: Style de codage]
     Le coding style du programme doit respecter le coding style de Google.
     \begin{justificationbox}
-        COMPLETER.
+        Le coding style du Projet respecte le coding style de Google. Tous les commits ne le respectant pas
+        ne sont pas acceptés sur GitLab. Pour s'en assurer, taper la commande mvn spotless:apply depuis
+        chess/ et observer qu'aucun changement n'est appliqué.
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F3: Langue par défaut dans le code]
     La documentation, le nom des variables, des fonctions et des fichiers devront être en anglais.
     \begin{justificationbox}
-        COMPLETER.
+        Le code du projet a été écrit en anglais, qu'il s'agisse des noms de variables, de fonctions
+        ou même de la documentation et des noms de fichiers/dossiers. 
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
@@ -737,7 +740,8 @@ encadrés violets représentent les non-fonctionnels.
 \end{nonfunctionnalneedbox}
 
 \begin{nonfunctionnalneedbox}[F7: Bugs]
-    Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées et les erreurs doivent générer des messages d'erreur.
+    Aucun bug menant à un crash ne doit être présent dans le programme. Les spécifications doivent être respectées
+    et les erreurs doivent générer des messages d'erreur.
     \begin{justificationbox}
         COMPLETER.
     \end{justificationbox}
@@ -753,7 +757,7 @@ encadrés violets représentent les non-fonctionnels.
 \begin{nonfunctionnalneedbox}[F9: Build-system]
     Établir un système de build pour le programme avec l'outil Maven pour Java. 
     \begin{justificationbox}
-        COMPLETER.
+        Le projet se compile et utilise un système de build avec l'outil Maven.
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
@@ -762,7 +766,7 @@ encadrés violets représentent les non-fonctionnels.
 \begin{nonfunctionnalneedbox}[F10. Frameworks de test]
     Tester le code avec des frameworks donnés afin d'avoir un code sans bugs.
     \begin{justificationbox}
-        COMPLETER.
+        Du Mock testing a été réalisé et le framework TestFX a notamment été utilisé.
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
@@ -776,7 +780,7 @@ encadrés violets représentent les non-fonctionnels.
 \begin{nonfunctionnalneedbox}[F12: Bibliothèque graphique]
     La bibliothèque graphique utilisée sera basée sur JavaFx
     \begin{justificationbox}
-        COMPLETER.
+        La partie Vue (frontend) se base sur le framework JavaFx.
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
@@ -792,7 +796,7 @@ encadrés violets représentent les non-fonctionnels.
 \begin{nonfunctionnalneedbox}[F14. Nom de l’exécutable principal]
     L’exécutable principal doit s’appeler "chess" et permettre de lancer tout le programme.
     \begin{justificationbox}
-        COMPLETER.
+        L’exécutable principal s’appele "chess" et permet de lancer tout le programme.
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
@@ -805,28 +809,30 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F16: Aide en ligne de commande ]
     L'option '-h', '--help' affiche l'aide puis quitte.
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’-h’, ’–-help’ affiche l’aide puis quitte.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F17: Version ]
     L'option '-V', '--version' affiche la version puis quitte.
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’-V’, ’–-version’ affiche la version puis quitte.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F18: Mode verbose ]
     Réalisation d'un mode verbose, rapportant certaines informations supplémentaires au(x) joueur(s).
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’-v’, ’–-verbose’ permet d’afficher des
+        informations supplémentaires pendant l’exécution.
     \end{justificationbox}
 \end{needbox}
     
 \begin{needbox}[F19: Mode debug ]
     Réalisation d'un mode debug, rapportant aux développeurs certaines informations sur le programme.
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’-d’, ’–-debug’ permet d’afficher des informations
+        de débogage pendant l’exécution.
     \end{justificationbox}
 \end{needbox}
 
@@ -857,7 +863,10 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F23: Mode IA ]
     Permet de lancer le programme en mode joueur artificiel.
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’-a[COLOR]’, ’–-ai[=COLOR]’ permet de lancer le
+        programme en mode joueur artificiel avec la couleur COLOR
+        (’W’, ’B’ et ’A’ (All), W par défaut).\\
+        Note : en GUI, cliquer sur Menu 'Game' puis sur l'option 'Start'.
     \end{justificationbox}
 \end{needbox}
 
@@ -865,13 +874,19 @@ encadrés violets représentent les non-fonctionnels.
 
 \begin{needbox}[F24. Interface en ligne de commande]
     \begin{justificationbox}
-        COMPLETER.
+        Le programme posséde une interface en ligne de
+        commande qui permet une interaction avec l’utilisateur via
+        le terminal. Cette interface textuelle est lancée par défaut
+        par le programme.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F25. Interface graphique]
     \begin{justificationbox}
-        COMPLETER.
+        Le programme posséde une interface graphique qui
+        permet les mêmes interactions que sur le CLI avec l’utilisateur
+        via une fenêtre graphique. Cette interface graphique est
+        lancée si l’option ’-g’, ’–-gui’ est donnée.
     \end{justificationbox}
 \end{needbox}
 
