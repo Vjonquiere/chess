@@ -398,7 +398,7 @@ public class GuiView implements View {
               case MOVE_UNDO:
                 menu.displayMessage(TextGetter.getText("moveUndone"), false, false);
                 if (board != null) {
-                  board.updateBoard(ANIMATION_ENABLED);
+                  board.updateBoard(false);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -409,7 +409,7 @@ public class GuiView implements View {
                 break;
               case WHITE_UNDO_PROPOSAL:
                 if (board != null) {
-                  board.updateBoard(ANIMATION_ENABLED);
+                  board.updateBoard(false);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -417,7 +417,7 @@ public class GuiView implements View {
                 break;
               case BLACK_UNDO_PROPOSAL:
                 if (board != null) {
-                  board.updateBoard(ANIMATION_ENABLED);
+                  board.updateBoard(false);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -445,7 +445,7 @@ public class GuiView implements View {
               case GAME_RESTART:
                 menu.displayMessage(TextGetter.getText("gameRestart"), false, false);
                 if (board != null) {
-                  board.updateBoard(ANIMATION_ENABLED);
+                  board.updateBoard(false);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
