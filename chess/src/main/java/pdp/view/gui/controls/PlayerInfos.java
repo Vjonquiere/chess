@@ -16,7 +16,6 @@ import pdp.model.Game;
 import pdp.model.ai.Solver;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
-import pdp.view.gui.popups.InfoPopUp;
 
 /** GUI widget to display player data. */
 public class PlayerInfos extends HBox {
@@ -46,6 +45,8 @@ public class PlayerInfos extends HBox {
       updateTimer(isWhite);
     }
 
+    this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
+
     if (isAi) {
       ImageView info = getInfoIcon();
       Solver solver;
@@ -54,17 +55,9 @@ public class PlayerInfos extends HBox {
       } else {
         solver = Game.getInstance().getBlackSolver();
       }
-      info.setOnMouseClicked(
-          event -> {
-            InfoPopUp.show(solver.toString());
-          });
       Tooltip.install(info, new Tooltip(solver.toString()));
-      this.getChildren()
-          .addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer, info);
-    } else {
-      this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
+      this.getChildren().add(info);
     }
-
     this.setSpacing(10);
   }
 
@@ -85,6 +78,11 @@ public class PlayerInfos extends HBox {
     return imageView;
   }
 
+  /**
+   * Get the info icon from resources.
+   *
+   * @return An image corresponding to the info icon.
+   */
   public ImageView getInfoIcon() {
     final ImageView imageView = new ImageView();
     final String path = "/assets/icons/information.png";

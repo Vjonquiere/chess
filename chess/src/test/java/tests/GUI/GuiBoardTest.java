@@ -65,7 +65,7 @@ public class GuiBoardTest extends ApplicationTest {
   @Tag("gui")
   public void testMovePiece() {
     Game.initialize(false, false, null, null, null, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.WHITE), Game.getInstance().getBoard().getPieceAt(0, 1));
     Square square1 = lookup("#square01").query();
@@ -82,7 +82,7 @@ public class GuiBoardTest extends ApplicationTest {
   @Tag("gui")
   public void testIllegalMovePiece() {
     Game.initialize(false, false, null, null, null, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square01 = lookup("#square01").query();
     Square square02 = lookup("#square02").query();
     clickOn(square01);
@@ -103,7 +103,7 @@ public class GuiBoardTest extends ApplicationTest {
   @Tag("gui")
   public void switchSelectedPieceWhite() {
     Game.initialize(false, false, null, null, null, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     assertEquals(
         new ColoredPiece(Piece.PAWN, Color.WHITE), Game.getInstance().getBoard().getPieceAt(5, 1));
     assertEquals(
@@ -128,7 +128,7 @@ public class GuiBoardTest extends ApplicationTest {
   @Tag("gui")
   public void switchSelectedPieceBlack() {
     Game.initialize(false, false, null, null, null, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     clickOn((Square) lookup("#square51").query());
     clickOn((Square) lookup("#square52").query());
 
@@ -156,7 +156,7 @@ public class GuiBoardTest extends ApplicationTest {
   @Tag("gui")
   public void testWhiteClickOnNonWhiteSquare() {
     Game.initialize(false, false, null, null, null, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square07").query(); // click on black piece
     Square square2 = lookup("#square05").query(); // click on empty square
     clickOn(square1);
@@ -168,7 +168,7 @@ public class GuiBoardTest extends ApplicationTest {
   @Tag("gui")
   public void testBlackClickOnNonBlackSquare() {
     Game.initialize(false, false, null, null, null, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square40").query(); // click on black piece
     Square square2 = lookup("#square05").query(); // click on empty square
     clickOn(square1);
@@ -185,7 +185,7 @@ public class GuiBoardTest extends ApplicationTest {
     BoardFileParser parser = new BoardFileParser();
     FileBoard loadedBoard = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game.initialize(false, false, null, null, null, loadedBoard, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square66").query();
     Square square2 = lookup("#square67").query();
     clickOn(square1);
@@ -205,7 +205,7 @@ public class GuiBoardTest extends ApplicationTest {
     BoardFileParser parser = new BoardFileParser();
     FileBoard loadedBoard = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game.initialize(false, false, null, null, null, loadedBoard, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square66").query();
     Square square2 = lookup("#square67").query();
     clickOn(square1);
@@ -226,7 +226,7 @@ public class GuiBoardTest extends ApplicationTest {
     BoardFileParser parser = new BoardFileParser();
     FileBoard loadedBoard = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game.initialize(false, false, null, null, null, loadedBoard, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square66").query();
     Square square2 = lookup("#square67").query();
     clickOn(square1);
@@ -247,7 +247,7 @@ public class GuiBoardTest extends ApplicationTest {
     BoardFileParser parser = new BoardFileParser();
     FileBoard loadedBoard = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game.initialize(false, false, null, null, null, loadedBoard, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square66").query();
     Square square2 = lookup("#square67").query();
     clickOn(square1);
@@ -267,7 +267,7 @@ public class GuiBoardTest extends ApplicationTest {
     BoardFileParser parser = new BoardFileParser();
     FileBoard loadedBoard = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game.initialize(false, false, null, null, null, loadedBoard, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square66").query();
     Square square2 = lookup("#square77").query();
     clickOn(square1);
@@ -287,7 +287,7 @@ public class GuiBoardTest extends ApplicationTest {
     BoardFileParser parser = new BoardFileParser();
     FileBoard loadedBoard = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game.initialize(false, false, null, null, null, loadedBoard, options);
-    Platform.runLater(() -> board.updateBoard());
+    Platform.runLater(() -> board.updateBoard(false));
     Square square1 = lookup("#square11").query();
     Square square2 = lookup("#square10").query();
     clickOn(square1);

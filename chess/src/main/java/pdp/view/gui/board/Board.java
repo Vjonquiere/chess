@@ -130,13 +130,15 @@ public class Board extends GridPane {
   }
 
   /** Update the pieces sprites of all squares. */
-  public void updateBoard() {
+  public void updateBoard(boolean withAnimation) {
     cleanHintSquares();
     clearCheckSquare();
     clearLastMoveSquares();
-    Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece); // TODO:
-    // Re-activate after tests.
-    // updateAfterAnimation();
+    if (withAnimation) {
+      Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece);
+    } else {
+      updateAfterAnimation();
+    }
   }
 
   /** Used to update the board after the move animation finished. */
