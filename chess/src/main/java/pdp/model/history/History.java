@@ -124,13 +124,4 @@ public class History {
 
     return builder.toString().trim();
   }
-
-  /**
-   * Retrieves a string in the UCI format.
-   *
-   * @return history in UCI format.
-   */
-  public String toUciString() {
-    return currentMove == null ? "" : currentMove.getState().getMove().toUciString();
-  }
 }
