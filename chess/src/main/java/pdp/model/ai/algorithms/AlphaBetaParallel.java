@@ -61,11 +61,11 @@ public class AlphaBetaParallel extends SearchAlgorithm {
     AiMove bestMove = new AiMove(moves.get(0), -Float.MAX_VALUE);
 
     if (!moves.isEmpty()) {
-      Move firstMove = moves.get(0);
+      final Move firstMove = moves.get(0);
       try {
-        GameAi firstGameCopy = aiGame.copy();
+        final GameAi firstGameCopy = aiGame.copy();
         firstGameCopy.playMove(firstMove);
-        AiMove firstResult =
+        final AiMove firstResult =
             alphaBeta(firstGameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
         bestMove = new AiMove(firstMove, firstResult.score());
       } catch (IllegalMoveException e) {
@@ -106,7 +106,7 @@ public class AlphaBetaParallel extends SearchAlgorithm {
 
     executor.shutdown();
     debug(LOGGER, "Best move: " + bestMove);
-    long visitedNodes = getVisitedNodes();
+    final long visitedNodes = getVisitedNodes();
     clearNode();
     debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
@@ -144,10 +144,10 @@ public class AlphaBetaParallel extends SearchAlgorithm {
 
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
+    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
     MoveOrdering.moveOrder(moves);
 
-    for (Move move : moves) {
+    for (final Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
       }

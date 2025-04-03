@@ -69,7 +69,7 @@ public class AlphaBeta extends SearchAlgorithm {
     executor.shutdown();
 
     debug(LOGGER, "Best move: " + bestMove);
-    long visitedNodes = getVisitedNodes();
+    final long visitedNodes = getVisitedNodes();
     clearNode();
     debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
@@ -106,9 +106,9 @@ public class AlphaBeta extends SearchAlgorithm {
     }
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
+    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
     MoveOrdering.moveOrder(moves);
-    for (Move move : moves) {
+    for (final Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
       }

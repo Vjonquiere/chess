@@ -33,6 +33,15 @@ public class Square extends StackPane {
   private final double squareSize;
 
   /**
+   * Retrieves the piece on the square.
+   *
+   * @return field curentPiece
+   */
+  public ColoredPiece getCurrentPiece() {
+    return currentPiece;
+  }
+
+  /**
    * Build a square of the given color with the sprite of the given piece.
    *
    * @param piece The piece on the square
@@ -70,7 +79,7 @@ public class Square extends StackPane {
    * @param piece The piece to display
    */
   public void updatePiece(final ColoredPiece piece) {
-    if (!(piece.equals(currentPiece))) {
+    if (!piece.equals(currentPiece)) {
       currentPiece = piece;
       if (pieceImage != null) {
         super.getChildren().remove(pieceImage);

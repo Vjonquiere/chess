@@ -313,24 +313,19 @@ public class Solver {
    * @param game current game
    */
   public void playAiMove(final Game game) {
-    game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
     final long startTime = System.nanoTime();
     searchStopped = false;
     isMoveToPlay = true;
-    game.setAiPlayedItsLastMove(false);
     final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
-    game.setAiPlayedItsLastMove(true);
     if (timer != null) {
       timer.stop();
     }
     moveTimes.add(System.nanoTime() - startTime);
 
     debug(LOGGER, "Best move " + bestMove);
-
-    game.setExploration(false);
 
     if (isMoveToPlay) {
       try {
@@ -354,7 +349,6 @@ public class Solver {
    * @return best move according to the game in parameter
    */
   public Move getBestMove(final Game game) {
-    game.setExploration(true);
     if (timer != null) {
       timer.start();
     }
@@ -364,7 +358,6 @@ public class Solver {
     }
 
     debug(LOGGER, "Best move " + bestMove);
-    game.setExploration(false);
     return bestMove.move();
   }
 

@@ -40,7 +40,9 @@ public class MessageDisplay extends HBox {
    */
   public void displayError(final String error, final boolean infinite) {
     clearPreviousMessage();
-    super.getChildren().addAll(errorIcon, new Label(error));
+    Label label = new Label(error);
+    label.setId("labelError");
+    super.getChildren().addAll(errorIcon, label);
     if (!infinite) {
       autoClearMessage();
     }
@@ -53,7 +55,9 @@ public class MessageDisplay extends HBox {
    */
   public void displayInfo(final String information, final boolean infinite) {
     clearPreviousMessage();
-    super.getChildren().addAll(infoIcon, new Label(information));
+    Label label = new Label(information);
+    label.setId("labelInfo");
+    super.getChildren().addAll(infoIcon, label);
     if (!infinite) {
       autoClearMessage();
     }

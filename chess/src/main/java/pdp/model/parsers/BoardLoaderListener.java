@@ -33,7 +33,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
           entry("p", new ColoredPiece(Piece.PAWN, Color.BLACK)));
 
   /** Bitboard to initialize when parsing a file. */
-  private final BitboardRepresentation bitboardRepresentation =
+  private final BitboardRepresentation bitboardRep =
       new BitboardRepresentation(
           new Bitboard(0L),
           new Bitboard(0L),
@@ -87,7 +87,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
    * @return The board and current player parsed
    */
   public FileBoard getResult() {
-    return new FileBoard(bitboardRepresentation, whiteTurn, fenHeader);
+    return new FileBoard(bitboardRep, whiteTurn, fenHeader);
   }
 
   @Override
@@ -108,12 +108,12 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
       return;
     }
     final ColoredPiece piece = PIECES.get(ctx.getText());
-    final int square = (x + (y * 8));
+    final int square = x + (y * 8);
     if (piece == null) {
       throw new RuntimeException(
           "Piece `" + ctx.getText() + "` at square " + square + " is not recognized");
     } else {
-      bitboardRepresentation.setSquare(piece, square);
+      bitboardRep.setSquare(piece, square);
     }
     x++;
   }

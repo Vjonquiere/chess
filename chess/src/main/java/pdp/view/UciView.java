@@ -147,9 +147,9 @@ public class UciView implements View {
     input = input.trim();
     final String[] parts = input.split(" ", 2);
 
-    final CommandEntry ce = commands.get(parts[0]);
+    final CommandEntry commandEntry = commands.get(parts[0]);
 
-    if (ce != null) {
+    if (commandEntry != null) {
       final Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {

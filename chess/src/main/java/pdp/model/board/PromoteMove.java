@@ -90,7 +90,7 @@ public class PromoteMove extends Move {
     final String sourceStr = positionToString(this.getSource());
     final String destinationStr = positionToString(this.getDest());
     final String separator = this.isTake() ? "x" : "-";
-    final String annotation = this.isCheckMate() ? "#" : (this.isCheck() ? "+" : "");
+    final String annotation = this.isCheckMate() ? "#" : this.isCheck() ? "+" : "";
 
     return sourceStr
         + separator

@@ -67,7 +67,7 @@ public class HistoryPanel extends VBox {
       currentNode = currentNode.getPrevious().orElse(null); // Utilisation du getter
     }
 
-    HistoryNode node = stack.pop();
+    HistoryNode node;
     while (!stack.isEmpty()) {
       node = stack.pop();
       items.add(node.getState().toString());

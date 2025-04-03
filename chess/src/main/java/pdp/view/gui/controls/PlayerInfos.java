@@ -113,6 +113,18 @@ public class PlayerInfos extends HBox {
   }
 
   /**
+   * Updates the timer of the given player.
+   *
+   * @param isWhite true if the player is white, false otherwise.
+   */
+  public void updateTimerOnce(final boolean isWhite) {
+    final Timer timer = Game.getInstance().getTimer(isWhite);
+    if (timer != null) {
+      timerLabel.setText(timer.getTimeRemainingString());
+    }
+  }
+
+  /**
    * Update the current player.
    *
    * @param isCurrent The current player status.
