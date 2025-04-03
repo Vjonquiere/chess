@@ -732,4 +732,33 @@ public class CommandsTest {
     assertTrue(result.isPresent());
     assertTrue(result.get() instanceof CommandNotAvailableNowException);
   }
+
+  // RestartCommand tests
+
+  @Test
+  public void testRestartCommandSuccess() {
+    RestartCommand command = new RestartCommand();
+
+    doNothing().when(model).restartGame();
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model, times(1)).restartGame();
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  public void testRestartCommandFailure() {
+    RestartCommand command = new RestartCommand();
+
+    doThrow(new RuntimeException("Restart failed")).when(model).restartGame();
+
+    Optional<Exception> result = command.execute(model, controller);
+
+    verify(model, times(1)).restartGame();
+
+    assertTrue(result.isPresent());
+    assertEquals("Restart failed", result.get().getMessage());
+  }
 }
