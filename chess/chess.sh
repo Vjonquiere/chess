@@ -1,6 +1,6 @@
 #!/bin/sh
 
-JAR=chess-0.0.3.jar
+JAR=chess-0.0.4.jar
 
 if [ ! -f "$JAR" ]; then
     echo "$0: jar not found!"
