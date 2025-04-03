@@ -346,6 +346,7 @@ public class GuiView implements View {
                     && BlackAiMonitor.isShowing()) {
                   BlackAiMonitor.update();
                 }
+                menu.getMessageDisplay().clearPreviousMessage();
 
                 break;
               case DRAW_ACCEPTED,
