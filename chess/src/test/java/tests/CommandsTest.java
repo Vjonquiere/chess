@@ -2,6 +2,8 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -9,6 +11,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import pdp.controller.GameController;
 import pdp.controller.commands.*;
@@ -19,7 +22,11 @@ import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.FailedUndoException;
 import pdp.model.Game;
 import pdp.model.GameState;
+import pdp.model.ai.AiMove;
+import pdp.model.ai.Solver;
+import pdp.model.ai.algorithms.SearchAlgorithm;
 import pdp.model.board.Move;
+import pdp.utils.Position;
 
 public class CommandsTest {
   private Game model;
@@ -731,6 +738,50 @@ public class CommandsTest {
 
     assertTrue(result.isPresent());
     assertTrue(result.get() instanceof CommandNotAvailableNowException);
+  }
+
+  @Test
+  public void testAskHintCommandFailure() {
+    when(gameState.isGameOver()).thenReturn(false);
+
+    try (MockedConstruction<pdp.model.ai.Solver> mockedSolver =
+        mockConstruction(
+            pdp.model.ai.Solver.class,
+            (mock, context) -> {
+              when(mock.getAlgorithm()).thenThrow(new RuntimeException("Solver failure"));
+            })) {
+      AskHintCommand command = new AskHintCommand();
+      Optional<Exception> result = command.execute(model, controller);
+
+      assertTrue(result.isPresent());
+      assertEquals("Solver failure", result.get().getMessage());
+    }
+  }
+
+  @Test
+  public void testAskHintCommandSuccess() {
+    when(gameState.isGameOver()).thenReturn(false);
+
+    Move mockMove = mock(Move.class);
+    SearchAlgorithm mockAlgorithm = mock(SearchAlgorithm.class);
+    when(mockMove.getSource()).thenReturn(new Position(0, 0));
+    when(mockMove.getDest()).thenReturn(new Position(1, 1));
+    when(mockAlgorithm.findBestMove(any(Game.class), anyInt(), anyBoolean()))
+        .thenReturn(new AiMove(mockMove, 0));
+
+    try (MockedConstruction<Solver> mockedSolver =
+        mockConstruction(
+            Solver.class,
+            (solver, context) -> {
+              when(solver.getAlgorithm()).thenReturn(mockAlgorithm);
+            })) {
+      AskHintCommand command = new AskHintCommand();
+      Optional<Exception> result = command.execute(model, controller);
+
+      verify(mockAlgorithm).findBestMove(any(Game.class), anyInt(), anyBoolean());
+
+      assertTrue(result.isEmpty());
+    }
   }
 
   // RestartCommand tests
