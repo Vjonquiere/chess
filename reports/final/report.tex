@@ -611,8 +611,8 @@ JavaFX, bien que pratique pour développer des GUI en Java, présente des limite
 la fluidité et les animations. En effectuant quelques recherches, on se rend compte que l'engine de rendu du framework repose principalement
 sur Java2D et utilise une pipeline GPU limitée, ce qui peut causer des ralentissements, surtout pour les logiciels nécessitant du refresh
 fréquent. Java est globalement un langage rapide, mais il est limité. Si le projet avait été développé en C++, avec notamment
-l'aide d'OpenMP, la vue serait bien plus efficace. Sinon, en comparaison, l'utilisation d'un engine dédié comme Unity ou Godot permettrait
-un meilleur rendu général, tandis qu'une approche basée sur les technologies web (HTML, CSS, WebGL) offrirait une meilleure portabilité et une
+l'aide d'OpenGL, la vue serait bien plus efficace. Sinon, en comparaison, l'utilisation d'un engine dédié comme Unity ou Godot permettrait
+un meilleur rendu général, tandis qu'une approche basée sur les technologies web (HTML, CSS, WebGL) offrirait une
 optimisation native des performances. Finalement, JavaFx se trouve être une solution pour l'interface graphique dans notre cas, et même si
 pratique et bien architecturé, reste limité en termes de performances graphiques.
 
@@ -839,7 +839,10 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F20. Mode Blitz ]
     Permet de lancer le jeu en mode Blitz.
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’-b’, ’–-blitz’ permet de jouer en mode blitz.
+        Dans ce mode, un temps limite est donné à chaque joueur
+        pour jouer. Si le temps d’un des joueur est écoulé,
+        il perd la partie.
     \end{justificationbox}
 \end{needbox}
 
@@ -893,7 +896,11 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F26: Affichage de l'échiquier]
     À chaque coup, le programme devra afficher l'échiquier ainsi que le temps pris par chaque joueur si la partie est en blitz.
     \begin{justificationbox}
-        COMPLETER.
+        À chaque coup, le programme affiche l’échiquier ainsi
+        que le temps pris par chaque joueur si la partie est en blitz.
+        Note: en ce qui concerne le temps pris par chaque joueur, le groupe
+        a estimé plus logique d'afficher le temps pris sur toute la partie,
+        pas le temps pris pour chaque coup.
     \end{justificationbox}
 \end{needbox}
 
@@ -907,7 +914,10 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F28: Représentation de l'historique]
     Afficher l'historique de la partie en indiquant le numéro de tour, le joueur, et le coup en notation algébrique.
     \begin{justificationbox}
-        COMPLETER.
+        L’historique est représenté comme une liste des tours du
+        jeu. Par exemple, le premier tour est affiché comme suit :
+        ’1. B h4-h5 W e3-e5’ (le numéro du tour dans la partie, la
+        couleur du joueur puis le coup en notation algébrique).
     \end{justificationbox}
 \end{needbox}
 
@@ -928,7 +938,8 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F31: Promotion du pion]
     Gérer la promotion du pion.
     \begin{justificationbox}
-        COMPLETER.
+        Le programme gère la promotion du pion. Par défaut, pour l'IA,
+        le pion se transforme en Dame.
     \end{justificationbox}
 \end{needbox}
 
@@ -945,7 +956,9 @@ encadrés violets représentent les non-fonctionnels.
     pendant la partie en fonction du mode dans lequel il est
     (default, verbose, debug).
     \begin{justificationbox}
-        COMPLETER.
+        Le programme affiche des messages d’information
+        pendant la partie en fonction du mode dans lequel il est
+        lancé (default, verbose, debug).
     \end{justificationbox}
 \end{needbox}
 
@@ -976,7 +989,8 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F37: Recommencer une partie]
     À tout moment, il doit être possible de recommencer une partie depuis le début en abandonnant la partie en cours.
     \begin{justificationbox}
-        COMPLETER.
+        À tout moment, il est possible de recommencer une
+        partie depuis le début en abandonnant la partie en cours.
     \end{justificationbox}
 \end{needbox}
 
@@ -1015,7 +1029,11 @@ encadrés violets représentent les non-fonctionnels.
 
 \begin{nonfunctionnalneedbox}[F42: Fichier de configuration]
     \begin{justificationbox}
-        COMPLETER.
+        Le programme est capable de lire un fichier de
+        configuration (.chessrc) qui contient les options par
+        défaut du programme. Ce fichier est lu au démarrage du
+        programme et les options qu’il contient sont utilisées par
+        défaut.
     \end{justificationbox}
 \end{nonfunctionnalneedbox}
 
@@ -1054,7 +1072,9 @@ encadrés violets représentent les non-fonctionnels.
 \begin{needbox}[F47: Menu 'File']
     Menu principal 'File' permettant de gérer les fonctions liées aux parties.
     \begin{justificationbox}
-        COMPLETER.
+        L’interface graphique comporte un menu principal
+        avec les options (’New Game’), (’Load Game’),
+        (’Save Game’), (’Quit’), (’Help’) et (’Settings’).
     \end{justificationbox}
 \end{needbox}
 
@@ -1093,13 +1113,14 @@ encadrés violets représentent les non-fonctionnels.
     \end{justificationbox}
 \end{needbox}
 
-
 \begin{needbox}[F52: Configuration d'une nouvelle partie]
     L'item 'New Game' du menu 'File' permettra de mener l'utilisateur à une fenêtre de configuration
     de la partie qui sera déjà remplie avec les paramètres par défaut. Qu'ils soient modifiés ou
     non, l'utilisateur pourra lancer la partie en cliquant sur 'Start'.
     \begin{justificationbox}
-        COMPLETER.
+        Lorsque l'option 'New Game' est cliquée, l'utilisateur a le choix de lancer une nouvelle
+        partie avec les paramètres par défaut, ou ajouter des paramètres. Un bouton 'Start Game'
+        permet à l'utilisateur de lancer cette nouvelle partie.
     \end{justificationbox}
 \end{needbox}
 
@@ -1110,19 +1131,30 @@ encadrés violets représentent les non-fonctionnels.
     capable de prendre un état du jeu et de lui donner un score en
     fonction de différents critères qui vous sembleront pertinents.
     \begin{justificationbox}
-        COMPLETER.
+        Le programme comporte plusieurs fonctions capables de prendre
+        un état du jeu et de lui donner un score en
+        fonction de différents critères qui nous semblent pertinents.
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F54. Algorithme de recherche Minimax]
     \begin{justificationbox}
-        COMPLETER.
+        Le choix du meilleur coup se fait via une exploration
+        de l’arbre des coups possibles via l’algorithme de recherche
+        Minimax.
+        Note: le groupe a préféré considérer AlphaBeta l'option
+        par défaut car plus efficace donc ptentiellement mieux
+        pourl'utilisateur (car plus de précision).
     \end{justificationbox}
 \end{needbox}
 
 \begin{needbox}[F55. AlphaBeta-pruning]
     \begin{justificationbox}
-        COMPLETER.
+        Le choix du meilleur coup se fait via une exploration de
+        l’arbre des coups possibles via l’algorithme de l'AlphaBeta-pruning.
+        Cette option est activée par défaut si le programme est lancé
+        en mode joueur artificiel.
+        Néanmoins, l’option ’–-ai-mode ALPHA\_BETA’
     \end{justificationbox}
 \end{needbox}
 
@@ -1135,7 +1167,10 @@ encadrés violets représentent les non-fonctionnels.
 
 \begin{needbox}[F57: Profondeur de recherche]
     \begin{justificationbox}
-        COMPLETER.
+        L’option ’–-ai-depth DEPTH’ permet de spécifier la
+        profondeur de recherche de l’algorithme de recherche.
+        L’option ’–-ai-simulation SIMULATION permet de spécifier le
+        nombre de simulations pour le recherche avec MCTS.
     \end{justificationbox}
 \end{needbox}
 
@@ -1144,7 +1179,8 @@ encadrés violets représentent les non-fonctionnels.
         Il est possible de gérer plusieurs heuristiques d’évaluation
         de position. L’option ’–-ai-heuristic HEURISTIC’
         permet de spécifier l’heuristique choisie parmi celles
-        qui sont mises à disposition.
+        qui sont mises à disposition. Plusieurs peuvent être
+        combinées (STANDARD défaut en utilise plusieurs).
     \end{justificationbox}
 \end{needbox}
 
