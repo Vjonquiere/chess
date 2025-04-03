@@ -77,11 +77,6 @@
     sur notre repository GitLab.
  \end{abstract}
 
-
- \section{Bibliographie}
- \bibliographystyle{plain}
- \bibliography{references}
-
 \section{Description de l'existant}
 \subsection{Origine des Échecs}
 Le jeu d’échecs, aussi appelé le jeu des Rois, est un jeu de stratégie dans lequel deux joueurs s’affrontent,
@@ -89,11 +84,11 @@ et le but est de faire échec et mat, c’est-à-dire arriver dans une position 
 le Roi adverse et donc gagner la partie après n’importe quel coup joué par notre opposant (hormis capturer notre roi).
 Le jeu d’échecs se joue sur un échiquier, un plateau de 8 lignes et 8 colonnes, 64 cases au total avec des pièces
 caractérisées par certaines propriétés uniques. De manière compétitive, le jeu d'échecs effectue un classement
-basé sur un système de points, appelés "Élo". Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
+basé sur un système de points, appelés "Élos". Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
 à répartir ces joueurs en catégories. Pour donner un ordre d'idée, le champion du monde possède un Élo aux alentours de 2900,
 tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Élos. Ce système d'Élo
 va notamment nous permettre d'approximer le niveau de notre Intelligence Artificielle développée dans le cadre de ce projet.\\
-Les origines de ce jeu sont sombres, mais la légende la plus célèbre raconte que le précepteur d’un jeune prince en Inde
+Les origines de ce jeu restent méconnues, mais la légende la plus célèbre raconte que le précepteur d’un jeune prince en Inde
 voulait simplifier les mécanismes de la société et inventa ainsi un échiquier avec des pièces, chacune jouant un rôle précis,
 avec le Roi, la pièce maîtresse. Le prince fut alors émerveillé et en gage de remerciements, il demanda à son précepteur ce
 qu’il souhaitait avoir comme présent. Ce dernier répondit qu’il voulait 1 grain de riz sur la première case, 2 grains de riz
@@ -103,29 +98,15 @@ sur la deuxième, 4 grains de riz sur la troisième, etc. jusqu’à la dernièr
 \subsection{Variantes du jeu d'échecs}
 À travers les années, les échecs ont été popularisés et ont donné naissance à de nombreuses variantes. Parmi les plus connues, on trouve :
 \begin{itemize}
-    \item Les échecs aléatoires de Fischer (Chess960) : Une variante inventée par Bobby Fischer où la position initiale des pièces est aléatoire,
-    favorisant la créativité au détriment de la mémorisation des ouvertures.
-    \item Les échecs Capablanca : Une version jouée sur un échiquier plus grand (10x8) avec des pièces supplémentaires comme l'archer et le chancelier.
+    \item Les échecs aléatoires de Fischer (Chess960) : Une variante inventée en 1996 par Bobby Fischer où la position initiale des pièces est aléatoire
+    (mais reste miroir, c'est-à-dire que les blancs et les noirs commencent avec la même position). Ce mode favorise la créativité au détriment de la mémorisation des ouvertures.
+    \item Les échecs Capablanca : Une version jouée sur un échiquier plus grand (10x8 ou 10x10) avec des pièces supplémentaires comme l'archer et le chancelier. Cette variante a été inventée en 1984 par le créateur de jeux hollandais Christian Freeling.
     \item Les échecs japonais : Le Shôgi, où contrairement aux échecs occidentaux, la partie se termine dès que le roi est capturé, ou lorsque l'un
-    des deux joueurs abandonne. Il n'y a pas d'échec et mat à proprement parler.
+    des deux joueurs abandonne. Il n'y a pas d'échec et mat à proprement parler. Les origines de cette variante asiatique reste inconnue,
+    mais des rumeurs disent qu'ils ont été inspirés des échecs chinois, à l'époque de Nara (710-794).
 \end{itemize}
 Notre projet concerne les échecs classiques, ou traditionnels. On peut considérer que l'on admet une variation: celle du Blitz, si ce mode
 est vu comme une variante.
-
-\subsection{L’évolution des chess engines}
-L’intelligence artificielle a pris une place très importante dans le jeu d'échecs, à tel point que les échecs
-sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on retrouve :
-\begin{itemize}
-    \item Deep Blue : Programme célèbre pour avoir battu Garry Kasparov en 1997, marquant la première victoire d'un ordinateur contre un
-    champion du monde des échecs en match officiel.
-    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé sur notamment une évaluation positionnelle
-    grâce à des heuristiques avancées et des optimisations algorithmiques.
-    \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
-    modèle AlphaZero de Google DeepMind.
-\end{itemize}
-Ces chess engines sont aujourd’hui utilisés pour analyser des parties, préparer des parties, et même aider les
-joueurs humains à progresser. Au jeu d'échecs, l'Intelligence Artificielle est notamment connue pour être très agressive.
-Il est aujourd'hui impossible pour un humain de gagner contre le meilleur ordinateur aux échecs (autour des 3600 Élos).
 
 \subsection{Moments clés dans l’histoire des échecs}
 Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment deux très connues que voici :
@@ -135,9 +116,27 @@ Le jeu d’échecs a été animé par des confrontations historiques et importan
     aux échecs. Les États-Unis ressortent ainsi victorieux face à l'URSS.
     \item Kasparov vs. Karpov (1984-1985) : Un des matchs les plus longs de l’histoire, où Anatoli Karpov et Garry Kasparov
     se sont affrontés pendant des mois avant que le match soit interrompu sans vainqueur, puis rejoué et remporté par Kasparov.
+    \item Kasparov vs. Deep Blue (1997) : Ce fut la première victoire d'un ordinateur contre un champion du monde des échecs en match officiel.
+    Cette date marque notamment l'ascension de l'Intelligence Artificielle dans le monde des échecs.
 \end{itemize}
 Ces événements ont façonné l’histoire du jeu. La perception des échecs dans la culture populaire a changé et de nombreuses
 personnes se sont mises à jouer.
+
+\subsection{L’évolution des chess engines}
+L’intelligence artificielle a pris une place très importante dans le jeu d'échecs, à tel point que les échecs
+sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on retrouve :
+\begin{itemize}
+    \item Deep Blue : Programme célèbre pour avoir battu Garry Kasparov en 1997. Ce programme était exécuté par des super-calculateurs
+    de l'époque, avec 32 coeurs, 256 threads au total.
+    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé sur notamment une évaluation positionnelle
+    grâce à des heuristiques avancées et des optimisations algorithmiques.
+    \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
+    modèle AlphaZero de Google DeepMind.
+\end{itemize}
+Ces chess engines sont aujourd’hui utilisés pour analyser des parties, préparer des parties, et même aider les
+joueurs humains à progresser. Au jeu d'échecs, l'Intelligence Artificielle est notamment connue pour être très agressive
+(en terme de stratégie de jeu). Cela fait maintenant presque 30 ans qu'il impossible pour un humain de gagner contre
+le meilleur ordinateur aux échecs (autour des 3600 Élos aujourd'hui, environ 2900 pour Deep Blue en 1997).
 
 Les échecs étant un jeu universel, ils ont été étudiés et un grand nombre de papiers scientifiques
 sont disponibles. Ceux-ci nous seront très utiles tout au long du projet, car ils concernent des
@@ -156,9 +155,13 @@ d'un moteur d'échecs en java \cite{PaulDailly}. Nous nous servons également de
 notre repository Gitlab, \cite{Bitboards} et \cite{GameBitboards}, qui concernent aussi les Bitboards.
 
 \section{Règles du jeu}
-Le jeu d'échecs contient beaucoup de règles parfois techniques, mais dont l'objectif reste simple à comprendre :
-il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est attaqué 
-mais n'a aucun coup légal pour se défendre de cette attaque.
+Le jeu d'échecs contient beaucoup de règles, parfois techniques, mais dont l'objectif reste simple à comprendre :
+il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est en \textbf{échec},
+mais n'a aucun coup légal pour se défendre de cette attaque. Il faut différencier la règle \textbf{échec} et 
+\textbf{échec et mat}. Un Roi qui est en situation d'\textbf{échec} est un Roi qui est attaqué par une pièce
+ennemie, mais qui peut se défendre pour sortir de cette situation (car en tant que joueur, on ne doit pas capturer notre Roi,
+la pièce maîtresse). Donc finalement, être en \textbf{échecs et mat} signifie être en \textbf{échec}, mais sans avoir
+la possibilité de se défendre, c'est-à-dire que le Roi est capturé par l'adversaire après n'importe quel coup joué.
 
 \subsection{L'échiquier et les pièces}
 Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces :
@@ -287,7 +290,7 @@ Parfois, les déplacements peuvent être limités par des règles spécifiques c
      \vspace{0.5cm}
  \end{minipage}
 
-\paragraph{-Roc} Le \textbf{roc} est un mouvement spécial impliquant le roi et une des tours, sous certaines conditions :
+\paragraph{-Roque} Le \textbf{roque} est un mouvement spécial impliquant le roi et une des tours, sous certaines conditions :
 \begin{itemize}
     \item Le roi et la tour concernés n'ont jamais bougé depuis le début de la partie.
     \item Le roi ne doit pas être en échec, et aucune des cases qu'il traverse ou sur laquelle il atterrit ne doit être attaquée.
@@ -297,14 +300,14 @@ Parfois, les déplacements peuvent être limités par des règles spécifiques c
 \noindent
 \begin{minipage}{0.48\textwidth}
     \centering
-    \includegraphics[width=\textwidth, height=\textwidth]{roc1.png}
+    \includegraphics[width=\textwidth, height=\textwidth]{roque1.png}
     \vspace{0.5cm}
-   \textbf{Exemple de roc}
+   \textbf{Exemple de roque}
 \end{minipage}
 \hfill
 \begin{minipage}{0.48\textwidth}
     \centering
-    \includegraphics[width=\textwidth, height=\textwidth]{roc2.png}
+    \includegraphics[width=\textwidth, height=\textwidth]{roque2.png}
     \vspace{0.5cm}
 \end{minipage}
 
@@ -366,7 +369,7 @@ notion de binaire. Pour une pièce: "Blanche ou Noire", "Présente ou Non" (pour
 représenter l'échiquier en se servant de bitmaps plutôt que d'utiliser des arrays, vecteurs ou listes en deux dimensions.
 Il s'agit du bitboard. On observera un gain de performance en temps et un gain d'espace énormes pour la représentation
 de l'échiquier (et des règles spécifiques).\\
-Comment cela va-t-il fonctionner ? Comme on vient de le voir, sur une case, soit il y a une pièce, soit il n'y en a pas.
+Comme on vient de le voir, sur une case, soit il y a une pièce, soit il n'y en a pas.
 Encodons le fait qu'une case soit occupée par 1 et le fait qu'une case soit vide (libre) par 0. Il y a 64 cases au total.
 Donc, en attribuant un indice à chaque case (de 0 à 63), on va pouvoir chiffrer l'échiquier par un entier de 64 bits.
 Chaque bit de cet entier est à 0 ou à 1. S'il est à 0 pour l'indice i, alors la case i est libre. S'il est à 1, alors la
@@ -402,18 +405,15 @@ Intelligence Artificielle. Il y a quelques détails en ce qui concerne les perfo
 \ref{AI} Intelligence Artificielle dans le rapport notamment.
 
 \subsection{Historique des coups}
-\par Le groupe s'est posé la question de quelles structures de données utiliser pour stocker l'historique des coups d'une
-partie. Il a fallu prendre en compte plusieurs facteurs, notamment la performance, la ou les difficultés d'implémentation,
-la compatibilité avec les bitboards pour représenter le plateau de jeu, ainsi que les ajouts potentiels de fonctionnalités.
-La liste (doublement) chaînée a été choisie par le groupe. En effet, l'insertion et la suppression sont des opérations
-réalisables en O(1). L'historique est alors plus flexible et les modifications sur l'historique sont assez efficaces.
-Pour revenir à un certain coup de la partie, qu'il s'agisse d'un undo ou redo, nous sommes en O(n), n étant le nombre de coups.
-En revanche, il y a certains cas où cette approche n'est pas très optimale. Par exemple, pour les parties (très) longues.
-En effet, la surcharge en mémoire (due aux références) et le coût en temps pour parcourir la liste peuvent
-devenir problématiques. Notons néanmoins que c'est un problème pour quasiment toutes les structures de données pour ce cas-là.
-Grâce au chaînage, se promener dans l'historique devient très pratique et plutôt performant. Cependant, cette solution comporte
-l'inconvénient d'une complexité plus élevée en termes de maintenance et de gestion de la mémoire. \'A titre d'exemple,
-trois classes différentes dans le code ont dues être créées afin d'implémenter cette solution avec liste doublement chaînée.
+\par La liste (doublement) chaînée a été choisie par le groupe afin de stocker les coups qui représentent l'historique de jeu.
+En effet, l'insertion et la suppression sont des opérations réalisables en O(1). L'historique est alors plus flexible et les
+modifications sur l'historique sont assez efficaces. Pour revenir à un certain coup de la partie, qu'il s'agisse d'un undo ou redo,
+nous sommes en O(n), n étant le nombre de coups. En revanche, il y a certains cas où cette approche n'est pas très optimale.
+Par exemple, pour les parties (très) longues. En effet, la surcharge en mémoire (due aux références) et le coût en temps pour
+parcourir la liste peuvent devenir problématiques. Notons néanmoins que c'est un problème pour quasiment toutes les structures de
+données pour ce cas-là. Grâce au chaînage, se promener dans l'historique devient très pratique et plutôt performant.
+Cependant, cette solution comporte l'inconvénient d'une complexité plus élevée en termes de maintenance et de gestion de la mémoire.
+\'A titre d'exemple, trois classes différentes dans le code ont dues être créées afin d'implémenter cette solution avec liste doublement chaînée.
 En bref, chaque noeud (ou élément) de la liste est représenté par une configuration de la partie, soit un GameState.
 Ces noeuds sont reliés entre eux par des coups, permettant de jouer ou annuler un coup afin de traverser les états de jeu
 de la partie.\\
@@ -450,8 +450,8 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
 \end{itemize}
 
 Seulement ceux-là sont cités ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
-Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. Puisque c'est un jeu à somme nulle,
-c'est la marche à suivre. \\
+Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. C'est la marche à suivre puisque
+il s'agit d'un jeu à somme nulle, c'est-à-dire que le gain d'un joueur correspond exactement à la perte de l'autre. En d'autres termes, si un joueur gagne (+1), l'autre perd (-1), et si la partie est nulle, aucun des deux joueurs ne gagne ni ne perd (0-0). \\
 Dans ce projet, le groupe a développé une multitude d'heuristiques permettant d'évaluer des positions. Essentiellement, elles peuvent être regroupées
 en deux catégories: Heuristiques "STANDARD" et Heuristiques "ENDGAME" ("Fin de partie"). En se servant du design pattern Composite, on combine les
 heuristiques codées afin de se baser sur "beaucoup" de facteurs dans le but d'obtenir une évaluation d'une position la plus précise possible. Ainsi,
@@ -519,10 +519,10 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
 PARLER DES OPTIMISATIONS D'IA MISES EN PLACES ET PEUT-ETRE CELLES ENVISAGÉES OU POSSIBLES;
 
 \subsection{Zobrist hashing} \label{Zobrist}
-Le hachage Zobrist est une fonction utilisée en particulier dans les jeux comme les échecs ou le go, où le but est d'attribuer un codage "complexe" à
+Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage "complexe" à
 une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on peut gagner en performance, notamment dans les algorithmes d'IA, où les
 états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des "tables de transposition", qui sont des tables de
-hachage indexées par une position. Comment cela fonctionne-t-il ? Dans notre cas, les positions sont encodées par 12 bitmaps, et quelques bits
+hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitmaps, et quelques bits
 supplémentaires pour les règles spécifiques. Pour chaque combinaison case-pièce, on va générer un nombre aléatoire. De cette façon, toutes les configurations
 de plateaux vont être rencontrées. Le hachage va consister à combiner toutes ces chaînes de bits pour chaque configuration avec l'opérateur XOR,
 pour à la fin obtenir un hachage final pour chaque position. Ainsi, en utilisant une HashMap, on va conserver tous les hachages représantant toutes les
@@ -544,7 +544,7 @@ Pour l'IA, cette méthode sera clé car elle fera gagner en performance, car les
 toujours dans le même ordre).
 
 \subsection{Cache}
-Afin que le programme soit plus performant, un système de "cache" a été mis en place. COMPLETER.
+Afin que le programme soit plus performant, le groupe a mis en place un système de "cache". COMPLETER.
 
 \subsection{Bidirectional Map}
 COMPLETER.
@@ -640,16 +640,6 @@ par Peer-To-Peer, même si soultion "bancale" de par la nécessité d'encryption
 Dans notre application, c'est toujours les pièces blanches qui sont situées en bas. Une amélioration graphique serait la possibilité d'inverser le plateau
 de jeu en pleine partie de telle sorte que les pièces noires seraient en bas. Cela deviendrait plus pratique pour les utilisateurs qui jouent les Noirs.
 
-\subsubsection{Historique interactif}
-Une fonctionnalité additionnelle et assez pratique concernerait la possibilité de cliquer sur un coup dans l'historique afin de revenir au moment de la 
-partie correspondant. De cette manière, on peut reprendre un nombre de coups conséquent sans avoir à cliquer sur un boutton "Undo" N fois, N étant le nombre 
-de coups que l'on souhaite reprendre.
-
-\subsubsection{Historique scrollable}
-Une nouvelle fois, en ce qui concerne l'interface utilisateur, une option supplémentaire serait un historique scrollable. C'est-à-dire que l'utilisateur 
-verrait par défaut les derniers coups de la partie. En effet, lorsqu'il y a un nombre conséquent de coups joués dans une partie, l'historique peut prendre 
-de la place. Donc, on purrait ajouter la possibilité de scroller dans l'historique en haut et en bas.
-
 \subsubsection{Coups préparés}
 Lorsque le joueur joue contre une IA, il pourrait effectuer un 'pre-move', c'est-à-dire préparer un coup sur l'échiquier avant que l'IA n'ait joué. Dès que 
 le joueur IA jouerait son coup, le coup préparé par l'utilisateur serait immédiatement joué. Ceci peut être pratique en début de partie ou en fin de partie 
@@ -667,6 +657,11 @@ Cela ressemblerait à quelque chose du style :\\
     \centering
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{surlignage-coups}
 \end{figure}
+
+
+\section{Bibliographie}
+ \bibliographystyle{plain}
+ \bibliography{references}
 
 
 \section{Besoins réalisés}
