@@ -15,8 +15,8 @@ import pdp.GameInitializer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.AskHintCommand;
 import pdp.controller.commands.CancelMoveCommand;
-import pdp.controller.commands.ChangeLang;
-import pdp.controller.commands.ChangeTheme;
+import pdp.controller.commands.ChangeLangCommand;
+import pdp.controller.commands.ChangeThemeCommand;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
@@ -267,7 +267,7 @@ public class ChessMenu extends HBox {
       theme.setOnAction(
           e -> {
             GuiView.setTheme(ColorTheme.getTheme(name));
-            BagOfCommands.getInstance().addCommand(new ChangeTheme());
+            BagOfCommands.getInstance().addCommand(new ChangeThemeCommand());
           });
       themes.getItems().add(theme);
     }
@@ -293,14 +293,14 @@ public class ChessMenu extends HBox {
     english.setOnAction(
         e -> {
           TextGetter.setLocale("en");
-          BagOfCommands.getInstance().addCommand(new ChangeLang());
+          BagOfCommands.getInstance().addCommand(new ChangeLangCommand());
         });
     final MenuItem french = new MenuItem(TextGetter.getText("french"));
     french.setId("french");
     french.setOnAction(
         e -> {
           TextGetter.setLocale("fr");
-          BagOfCommands.getInstance().addCommand(new ChangeLang());
+          BagOfCommands.getInstance().addCommand(new ChangeLangCommand());
         });
     lang.getItems().addAll(english, french);
 
