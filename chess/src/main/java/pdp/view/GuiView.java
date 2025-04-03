@@ -25,6 +25,7 @@ import pdp.view.gui.ChessMenu;
 import pdp.view.gui.ControlPanel;
 import pdp.view.gui.GuiLauncher;
 import pdp.view.gui.board.Board;
+import pdp.view.gui.popups.AiMonitor;
 import pdp.view.gui.popups.EndGamePopUp;
 import pdp.view.gui.themes.ColorThemeInterface;
 
@@ -60,11 +61,35 @@ public class GuiView implements View {
   /** Color theme of the whole app. Grey by default. */
   private static ColorThemeInterface theme = GREY;
 
+  /** Set if the move piece animation has to be done. */
+  public static boolean ANIMATION_ENABLED = true;
+
   /** Boolean to indicate whether the GUI View is initialized or not. */
   private boolean initialized;
 
+  private static AiMonitor WhiteAiMonitor;
+  private static AiMonitor BlackAiMonitor;
+
+  private static boolean monitoring = false;
+
   static {
     Logging.configureLogging(LOGGER);
+  }
+
+  public static void toggleMonitoring() {
+    monitoring = !monitoring;
+    if (WhiteAiMonitor != null && BlackAiMonitor != null && !monitoring) {
+      WhiteAiMonitor.hide();
+      BlackAiMonitor.hide();
+    }
+    if (WhiteAiMonitor != null && BlackAiMonitor != null && monitoring) {
+      WhiteAiMonitor.show();
+      BlackAiMonitor.show();
+    }
+  }
+
+  public static boolean getMonitoringStatus() {
+    return monitoring;
   }
 
   /**
@@ -214,7 +239,6 @@ public class GuiView implements View {
                 board.buildBoard();
               }
             });
-
     this.stage = stage;
   }
 
@@ -280,10 +304,30 @@ public class GuiView implements View {
                   menu.displayMessage(TextGetter.getText("guiStartMessagePlayAMove"), false, true);
                 }
 
+                if (WhiteAiMonitor != null) {
+                  WhiteAiMonitor.hide();
+                }
+                if (BlackAiMonitor != null) {
+                  BlackAiMonitor.hide();
+                }
+                if (Game.getInstance().isWhiteAi()) {
+                  WhiteAiMonitor = new AiMonitor(true);
+                }
+                if (Game.getInstance().isWhiteAi() && monitoring) {
+                  WhiteAiMonitor.show();
+                }
+                if (Game.getInstance().isBlackAi()) {
+                  BlackAiMonitor = new AiMonitor(false);
+                  // BlackAiMonitor.show();
+                }
+                if (Game.getInstance().isBlackAi() && monitoring) {
+                  BlackAiMonitor.show();
+                }
+
                 break;
               case MOVE_PLAYED:
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -291,6 +335,19 @@ public class GuiView implements View {
                     controlPanel.getHistoryPanel().updateHistoryPanel();
                   }
                 }
+                if (Game.getInstance().isWhiteAi()
+                    && WhiteAiMonitor != null
+                    && WhiteAiMonitor.isShowing()) {
+                  WhiteAiMonitor.update();
+                }
+
+                if (Game.getInstance().isBlackAi()
+                    && BlackAiMonitor != null
+                    && BlackAiMonitor.isShowing()) {
+                  BlackAiMonitor.update();
+                }
+                menu.getMessageDisplay().clearPreviousMessage();
+
                 break;
               case DRAW_ACCEPTED,
                   INSUFFICIENT_MATERIAL,
@@ -341,7 +398,7 @@ public class GuiView implements View {
               case MOVE_UNDO:
                 menu.displayMessage(TextGetter.getText("moveUndone"), false, false);
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -352,7 +409,7 @@ public class GuiView implements View {
                 break;
               case WHITE_UNDO_PROPOSAL:
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -360,7 +417,7 @@ public class GuiView implements View {
                 break;
               case BLACK_UNDO_PROPOSAL:
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -369,7 +426,7 @@ public class GuiView implements View {
               case MOVE_REDO:
                 menu.displayMessage(TextGetter.getText("moveRedone"), false, false);
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -388,7 +445,7 @@ public class GuiView implements View {
               case GAME_RESTART:
                 menu.displayMessage(TextGetter.getText("gameRestart"), false, false);
                 if (board != null) {
-                  board.updateBoard();
+                  board.updateBoard(ANIMATION_ENABLED);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);

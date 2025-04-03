@@ -6,12 +6,14 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import pdp.model.Game;
+import pdp.model.ai.Solver;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
 
@@ -42,7 +44,20 @@ public class PlayerInfos extends HBox {
       timerLabel.setText(timer.getTimeRemainingString());
       updateTimer(isWhite);
     }
+
     this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
+
+    if (isAi) {
+      ImageView info = getInfoIcon();
+      Solver solver;
+      if (isWhite) {
+        solver = Game.getInstance().getWhiteSolver();
+      } else {
+        solver = Game.getInstance().getBlackSolver();
+      }
+      Tooltip.install(info, new Tooltip(solver.toString()));
+      this.getChildren().add(info);
+    }
     this.setSpacing(10);
   }
 
@@ -60,6 +75,21 @@ public class PlayerInfos extends HBox {
     imageView.setImage(image);
     imageView.setFitWidth(50);
     imageView.setFitHeight(50);
+    return imageView;
+  }
+
+  /**
+   * Get the info icon from resources.
+   *
+   * @return An image corresponding to the info icon.
+   */
+  public ImageView getInfoIcon() {
+    final ImageView imageView = new ImageView();
+    final String path = "/assets/icons/information.png";
+    final Image image = new Image(getClass().getResourceAsStream(path));
+    imageView.setImage(image);
+    imageView.setFitWidth(25);
+    imageView.setFitHeight(25);
     return imageView;
   }
 

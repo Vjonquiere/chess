@@ -32,7 +32,9 @@ public class Minimax extends SearchAlgorithm {
   @Override
   public AiMove findBestMove(final Game game, final int depth, final boolean player) {
     final GameAi aiGame = GameAi.fromGame(game);
-    return minimax(aiGame, depth, player, player);
+    AiMove bestMove = minimax(aiGame, depth, player, player);
+    clearNode();
+    return bestMove;
   }
 
   /**
@@ -51,6 +53,7 @@ public class Minimax extends SearchAlgorithm {
       final int depth,
       final boolean currentPlayer,
       final boolean originalPlayer) {
+    addNode();
     if (solver.isSearchStopped()) {
       final boolean isMinimizing = currentPlayer != originalPlayer;
       return new AiMove(null, isMinimizing ? Integer.MAX_VALUE : Integer.MIN_VALUE);
@@ -86,5 +89,10 @@ public class Minimax extends SearchAlgorithm {
       }
     }
     return bestMove;
+  }
+
+  @Override
+  public String toString() {
+    return "Minimax";
   }
 }

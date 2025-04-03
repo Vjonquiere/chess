@@ -3,10 +3,7 @@ package pdp.view.gui;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Optional;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -239,7 +236,13 @@ public class ChessMenu extends HBox {
    */
   private Menu createOptionsMenu() {
     final Menu optionsMenu = new Menu(TextGetter.getText("options"));
-    optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu());
+    RadioMenuItem monitor = new RadioMenuItem(TextGetter.getText("monitor"));
+    monitor.setSelected(GuiView.getMonitoringStatus());
+    monitor.setOnAction(
+        event -> {
+          GuiView.toggleMonitoring();
+        });
+    optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu(), monitor);
     return optionsMenu;
   }
 

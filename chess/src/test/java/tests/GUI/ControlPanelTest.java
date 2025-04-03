@@ -80,7 +80,7 @@ class ControlPanelTest extends ApplicationTest {
     interact(() -> controlPanel.getHistoryPanel().updateHistoryPanel());
 
     assertEquals(
-        game.getHistory().getCurrentMove().get().getPrevious().get().getState().toString(),
+        game.getHistory().getCurrentMove().get().getState().toString(),
         listView.getItems().get(2),
         "The third move should match.");
   }
