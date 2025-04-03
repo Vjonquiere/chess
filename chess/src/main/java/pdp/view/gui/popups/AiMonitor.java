@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import pdp.model.Game;
 import pdp.model.ai.Solver;
+import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
@@ -47,9 +48,13 @@ public class AiMonitor extends Stage {
 
     solver = isWhite ? Game.getInstance().getWhiteSolver() : Game.getInstance().getBlackSolver();
 
+    table = new TableView<>();
+
     average = new Label();
 
-    table = new TableView<>();
+    if (solver.getAlgorithm() instanceof MonteCarloTreeSearch) {
+      average.setText("Monitoring couldn't be activated with MCTS");
+    }
 
     final TableColumn<MonitorEntry, Integer> turnColumn =
         new TableColumn<>(TextGetter.getText("turn"));
