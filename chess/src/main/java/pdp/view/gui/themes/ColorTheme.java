@@ -162,10 +162,10 @@ public enum ColorTheme implements ColorThemeInterface {
                     parts[8]);
             THEMES.put(name, customTheme);
           } catch (IllegalArgumentException e) {
-            System.err.println("Failed to load custom theme " + name + " : " + e.getMessage());
+            print("Failed to load custom theme " + name + " : " + e.getMessage());
           }
         } else {
-          System.err.println("Invalid custom theme format: " + line);
+          error("Invalid custom theme format: " + line);
         }
       }
     } catch (IOException | NullPointerException e) {
