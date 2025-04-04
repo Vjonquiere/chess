@@ -804,4 +804,79 @@ public class GameTest {
     assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() > 0);
     verify(callback, never()).run();
   }
+
+  @Test
+  public void testSetBlackAi() {
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+
+    assertFalse(game.isBlackAi());
+    game.setBlackAi(true);
+    assertTrue(game.isBlackAi());
+  }
+
+  @Test
+  public void testSetWhiteAi() {
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+
+    assertFalse(game.isWhiteAi());
+    game.setWhiteAi(true);
+    assertTrue(game.isWhiteAi());
+  }
+
+  @Test
+  public void testSetInit() {
+
+    assertFalse(Game.getInstance().isInitialized());
+    Game.getInstance().setInitializing(true);
+    assertTrue(Game.getInstance().isInitialized());
+  }
+
+  @Test
+  public void testGetStringHistory() {
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+
+    assertEquals("1. W e2-e4", game.getStringHistory());
+  }
+
+  @Test
+  public void testSetBlackSolver() {
+
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+
+    Solver newSolverBlack = new Solver();
+    newSolverBlack.setDepth(2);
+    game.setBlackSolver(newSolverBlack);
+    assertEquals(2, game.getBlackSolver().getDepth());
+    newSolverBlack.setDepth(6);
+    game.setBlackSolver(newSolverBlack);
+    assertEquals(6, game.getBlackSolver().getDepth());
+  }
+
+  @Test
+  public void testSetWhiteSolver() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    Solver newSolverWhite = new Solver();
+    newSolverWhite.setDepth(2);
+    game.setWhiteSolver(newSolverWhite);
+    assertEquals(2, game.getWhiteSolver().getDepth());
+    newSolverWhite.setDepth(6);
+    game.setWhiteSolver(newSolverWhite);
+    assertEquals(6, game.getWhiteSolver().getDepth());
+  }
+
+  /*  @Test
+  public void testGetInstance(){
+
+    assertThrows(
+      IllegalStateException.class,
+        () -> {
+          Game.getInstance();
+        });
+    Game.initialize(true, true, null, null, null, new HashMap<>());
+    assertEquals(0, Game.getInstance().getGameState().getFullTurn());
+  } */
+
 }
