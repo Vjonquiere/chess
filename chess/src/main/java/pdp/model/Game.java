@@ -818,4 +818,13 @@ public final class Game extends GameAbstract {
     }
     return instance;
   }
+
+  /**
+   * Indicates whether the object has been fully initialized.
+   *
+   * @return {@code true} if initialization is complete, otherwise {@code false}.
+   */
+  public boolean isInitialized() {
+    return this.isInitializing;
+  }
 }
