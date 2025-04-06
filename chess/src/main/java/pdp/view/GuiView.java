@@ -306,9 +306,11 @@ public class GuiView implements View {
 
                 if (WhiteAiMonitor != null) {
                   WhiteAiMonitor.hide();
+                  WhiteAiMonitor = null;
                 }
                 if (BlackAiMonitor != null) {
                   BlackAiMonitor.hide();
+                  WhiteAiMonitor = null;
                 }
                 if (Game.getInstance().isWhiteAi()) {
                   WhiteAiMonitor = new AiMonitor(true);
