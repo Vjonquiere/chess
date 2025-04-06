@@ -34,6 +34,7 @@ public class AlphaBeta extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBeta(final Solver solver) {
+    super();
     this.solver = solver;
   }
 

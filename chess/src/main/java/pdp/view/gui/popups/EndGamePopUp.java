@@ -19,7 +19,11 @@ import pdp.view.GuiView;
 import pdp.view.gui.ChessMenu;
 
 /** GUI popup to display the information about the end of game. */
-public class EndGamePopUp {
+public final class EndGamePopUp {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private EndGamePopUp() {}
+
   /**
    * Displays a popup with information about the end of game. Contains the cause of ending and
    * several buttons to analyse, restart quit or start a new game.

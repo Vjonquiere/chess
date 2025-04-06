@@ -37,6 +37,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBetaIterativeDeepening(final Solver solver) {
+    super();
     this.solver = solver;
   }
 

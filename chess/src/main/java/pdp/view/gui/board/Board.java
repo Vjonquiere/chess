@@ -66,6 +66,7 @@ public class Board extends GridPane {
    * @param stage The stage to add the board.
    */
   public Board(final Game game, final Stage stage) {
+    super();
     this.boardRep = game.getBoard();
     this.boardColumns = boardRep.getNbCols();
     this.boardRows = boardRep.getNbRows();

@@ -7,7 +7,7 @@ import pdp.model.board.PromoteMove;
 import pdp.model.piece.ColoredPiece;
 
 /** An algorithm to order moves on several parameters to maximise the Alpha-Beta cuts. */
-public class MoveOrdering {
+public final class MoveOrdering {
 
   /** Comparison function for moves. */
   public static Comparator<Move> moveOrderingComparator =
@@ -30,6 +30,9 @@ public class MoveOrdering {
 
         return 0;
       };
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private MoveOrdering() {}
 
   /**
    * Order the given moves by executing the sort algorithm.

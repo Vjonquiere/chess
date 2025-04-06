@@ -44,6 +44,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBetaIterativeDeepeningParallel(final Solver solver) {
+    super();
     this.solver = solver;
   }
 

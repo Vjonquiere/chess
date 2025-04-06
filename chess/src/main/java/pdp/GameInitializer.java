@@ -272,7 +272,7 @@ public abstract class GameInitializer {
       }
     }
 
-    Game model = null;
+    Game model;
 
     if (options.containsKey(OptionType.LOAD) || options.containsKey(OptionType.CONTEST)) {
       final String path =

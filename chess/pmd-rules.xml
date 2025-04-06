@@ -38,6 +38,13 @@
 
     <rule ref="category/java/errorprone.xml"/>
 
+    <rule ref="category/java/errorprone.xml/EmptyCatchBlock">
+        <properties>
+            <property name="allowCommentedBlocks" value="false" />
+            <property name="allowExceptionNameRegex" value="^(ignored|expected)$" />
+        </properties>
+    </rule>
+
     <rule ref="category/java/multithreading.xml">
         <exclude name="DoNotUseThreads"/>
     </rule>

@@ -18,6 +18,7 @@ public class Minimax extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public Minimax(final Solver solver) {
+    super();
     this.solver = solver;
   }
 
