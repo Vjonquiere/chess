@@ -126,4 +126,8 @@ To customize the app, you can go in the `Options` menu, where you will be able t
 
 You can also resize the application, this will mainly affect the board. Indeed, you can resize to make the board smaller (or bigger), but the text will not change it's size, so it is possible to resize in a way that the display of the Control Panel is truncated.
 
+### UCI
 
+If you want to connect this chess engine with another, you can launch the app in UCI (Universal Chess Interface) mode with the `-uci` option.
+By default, the UCI solver will use the configuration given to the white solver which you can configure as usual (see AI section). All UCI commands 
+have not been implemented yet, that's why you can't limit search by time or depth directly in the `go` command (those are ignored by default).
