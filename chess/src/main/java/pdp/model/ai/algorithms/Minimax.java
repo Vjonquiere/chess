@@ -32,7 +32,7 @@ public class Minimax extends SearchAlgorithm {
   @Override
   public AiMove findBestMove(final Game game, final int depth, final boolean player) {
     final GameAi aiGame = GameAi.fromGame(game);
-    AiMove bestMove = minimax(aiGame, depth, player, player);
+    final AiMove bestMove = minimax(aiGame, depth, player, player);
     clearNode();
     return bestMove;
   }

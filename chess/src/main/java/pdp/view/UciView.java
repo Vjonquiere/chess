@@ -31,7 +31,7 @@ import pdp.utils.Logging;
 /** View used to communicate with other chess engines. */
 public class UciView implements View {
   /** Boolean to indicate whether the view is running or not. */
-  private boolean running = false;
+  private boolean running;
 
   /** Map making a correspondance between a string and the command it represents. */
   private final Map<String, CommandEntry> commands = new HashMap<>();

@@ -19,13 +19,6 @@ public final class Logging {
   /** Boolean to indicate whether verbose is enabled. */
   private static boolean verboseOn;
 
-  /*
-   private static final Logger GLOBAL_LOGGER = Logger.getLogger("GlobalLogger");
-
-   static {
-     configureGlobalLogger();
-   }
-  */
   /*Private constructor to avoid instantiation.*/
   private Logging() {}
 
@@ -100,26 +93,6 @@ public final class Logging {
     logger.setUseParentHandlers(false);
   }
 
-  /*
-    /** Configures the global logger for print and error messages.
-    private static void configureGlobalLogger() {
-      GLOBAL_LOGGER.setLevel(Level.INFO);
-      ConsoleHandler consoleHandler = new ConsoleHandler();
-      consoleHandler.setLevel(Level.INFO);
-      consoleHandler.setFormatter(new SimpleFormatter() {
-        @Override
-        public String format(LogRecord record) {
-          return record.getMessage() + System.lineSeparator();
-        }
-      });
-
-      for (Handler handler : GLOBAL_LOGGER.getHandlers()) {
-        GLOBAL_LOGGER.removeHandler(handler);
-      }
-      GLOBAL_LOGGER.addHandler(consoleHandler);
-      GLOBAL_LOGGER.setUseParentHandlers(false);
-    }
-  */
   /** Logs a normal message (replaces System.out in the rest of the code). */
   public static void print(final String message) {
     System.out.println(message);

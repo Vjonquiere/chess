@@ -79,7 +79,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
     }
 
     debug(LOGGER, "Best move: " + bestMove);
-    long visitedNodes = getVisitedNodes();
+    final long visitedNodes = getVisitedNodes();
     clearNode();
     debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
@@ -150,7 +150,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
         if (alpha >= beta) {
           break;
         }
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Skipping illegal move
       }
     }

@@ -289,9 +289,15 @@ public class BitboardRepresentation implements BoardRepresentation {
         }
       }
       /*
-      if (this.getPlayer() != obj.getPlayer() || this.isLastMoveDoublePush() != obj.isLastMoveDoublePush() || this.getEnPassantPos().equals(obj.getEnPassantPos())
-      || this.isWhiteShortCastle() != obj.isWhiteShortCastle() || this.isBlackShortCastle() != obj.isBlackShortCastle() || this.isWhiteLongCastle() != obj.isWhiteLongCastle()
-      || this.isBlackLongCastle() != obj.isBlackLongCastle() || this.getNbMovesWithNoCaptureOrPawn() != obj.getNbMovesWithNoCaptureOrPawn()) {
+      if (this.getPlayer() != obj.getPlayer()
+      || this.isLastMoveDoublePush() != obj.isLastMoveDoublePush()
+      || this.getEnPassantPos().equals(obj.getEnPassantPos())
+      || this.isWhiteShortCastle() != obj.isWhiteShortCastle()
+      || this.isBlackShortCastle() != obj.isBlackShortCastle()
+      || this.isWhiteLongCastle() != obj.isWhiteLongCastle()
+      || this.isBlackLongCastle() != obj.isBlackLongCastle()
+      || this.getNbMovesWithNoCaptureOrPawn() != obj.getNbMovesWithNoCaptureOrPawn())
+      {
         return false;
       }
         */

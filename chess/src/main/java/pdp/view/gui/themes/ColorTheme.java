@@ -154,9 +154,9 @@ public enum ColorTheme implements ColorThemeInterface {
       while ((line = reader.readLine()) != null) {
         final String[] parts = line.split(",");
         if (parts.length == 9) {
-          String name = parts[0].trim().toUpperCase();
+          final String name = parts[0].trim().toUpperCase();
           try {
-            CustomColorTheme customTheme =
+            final CustomColorTheme customTheme =
                 new CustomColorTheme(
                     name, parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7],
                     parts[8]);

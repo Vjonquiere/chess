@@ -606,8 +606,9 @@ public final class BitboardRules {
    * @throws IllegalMoveException If the move is illegal in the current configuration.
    */
   public static boolean validatePieceOwnership(
-      final boolean white, final Position sourcePosition, final BitboardRepresentation bitboardRep)
-      throws IllegalMoveException {
+      final boolean white,
+      final Position sourcePosition,
+      final BitboardRepresentation bitboardRep) {
     final ColoredPiece pieceAtSource =
         bitboardRep.getPieceAt(sourcePosition.x(), sourcePosition.y());
 

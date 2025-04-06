@@ -131,7 +131,7 @@ public class AlphaBeta extends SearchAlgorithm {
         if (alpha >= beta) {
           break;
         }
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Skipping illegal move
       }
     }

@@ -16,7 +16,7 @@ public class GuiLauncher extends Application {
    */
   public static void launchGui(final GuiView view) {
     guiView = view;
-    Application.launch();
+    launch();
   }
 
   /**

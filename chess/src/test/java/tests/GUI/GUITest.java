@@ -41,7 +41,7 @@ public class GUITest extends ApplicationTest {
           guiView = new GuiView();
           guiView.init(stage);
           guiView.setInitialized(true);
-          GuiView.ANIMATION_ENABLED = false;
+          GuiView.animationEnabled = false;
         });
   }
 

@@ -48,8 +48,8 @@ public class PlayerInfos extends HBox {
     this.getChildren().addAll(getPlayerIcon(isAi), new Label(name), timerLabel, currentPlayer);
 
     if (isAi) {
-      ImageView info = getInfoIcon();
-      Solver solver;
+      final ImageView info = getInfoIcon();
+      final Solver solver;
       if (isWhite) {
         solver = Game.getInstance().getWhiteSolver();
       } else {

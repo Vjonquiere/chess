@@ -3,6 +3,7 @@ package pdp.view;
 import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.StartGameCommand;
@@ -23,9 +24,10 @@ import pdp.utils.Logging;
 /** View used to handle the game in contest mode. */
 public class ContestView implements View {
   /** Logger of the class. */
-  private static final Logger LOGGER = Logger.getLogger(UciView.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(ContestView.class.getName());
 
-  private boolean running = false;
+  /** Boolean to indicate if the view is currently running. */
+  private boolean running;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -75,12 +77,9 @@ public class ContestView implements View {
    */
   @Override
   public void onGameEvent(final EventType event) {
-    switch (event) {
-      case MOVE_PLAYED -> {
-        print(Game.getInstance().getGameRepresentation());
-        running = false;
-      }
-      default -> {}
+    if (Objects.requireNonNull(event) == EventType.MOVE_PLAYED) {
+      print(Game.getInstance().getGameRepresentation());
+      running = false;
     }
   }
 
