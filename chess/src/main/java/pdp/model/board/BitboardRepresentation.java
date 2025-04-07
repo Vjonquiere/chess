@@ -142,7 +142,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[6] = new Bitboard(1_152_921_504_606_846_976L); // BKi
     board[7] = new Bitboard(576_460_752_303_423_488L); // BQ
     board[8] = new Bitboard(2_594_073_385_365_405_696L); // BB
-    board[9] = new Bitboard(); // BR // TODO: Find why overflow ???
+    board[9] = new Bitboard(); // BR // TODO: Find why overflow
     board[9].setBit(56);
     board[9].setBit(63);
     board[10] = new Bitboard(4_755_801_206_503_243_776L); // BKi
@@ -288,13 +288,6 @@ public class BitboardRepresentation implements BoardRepresentation {
           return false;
         }
       }
-      /*
-      if (this.getPlayer() != obj.getPlayer() || this.isLastMoveDoublePush() != obj.isLastMoveDoublePush() || this.getEnPassantPos().equals(obj.getEnPassantPos())
-      || this.isWhiteShortCastle() != obj.isWhiteShortCastle() || this.isBlackShortCastle() != obj.isBlackShortCastle() || this.isWhiteLongCastle() != obj.isWhiteLongCastle()
-      || this.isBlackLongCastle() != obj.isBlackLongCastle() || this.getNbMovesWithNoCaptureOrPawn() != obj.getNbMovesWithNoCaptureOrPawn()) {
-        return false;
-      }
-        */
       return true;
     }
     return false;
@@ -608,21 +601,6 @@ public class BitboardRepresentation implements BoardRepresentation {
         whiteShortCastle,
         blackLongCastle,
         blackShortCastle);
-  }
-
-  /**
-   * Generate the possible moves for a player. This function do not apply check after guard.
-   * Optimised for AI.
-   *
-   * @param isWhite {true} if pawn is white, {false} if pawn is black
-   * @return The bitboard containing all possible moves (without special cases)
-   */
-  public Bitboard getColorMoveBitboard(final boolean isWhite) {
-    // TODO: can delete this function ?
-    // Bitboard moves =
-    // BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
-
-    return getColorAttackBitboard(isWhite);
   }
 
   /**

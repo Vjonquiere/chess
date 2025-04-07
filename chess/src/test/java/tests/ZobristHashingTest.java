@@ -248,8 +248,7 @@ public class ZobristHashingTest {
       bitboardRepresentation.movePiece(new Position(1, 1), new Position(0, 4));
     }
     long hashGenerate = zobristHashing.generateSimplifiedHashFromBitboards(board2);
-    // TODO: find out why bitboard representations are not equals
-    // assertEquals(board.Rep(),board2);
+    assertEquals(board, board2);
     assertEquals(hashUpdate, hashGenerate);
   }
 
