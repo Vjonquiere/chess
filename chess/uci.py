@@ -5,6 +5,8 @@ import chess
 import chess.engine
 import threading
 import csv
+import multiprocessing
+
 # --- Constants ---
 POP_SIZE = 20
 GENS = 1
@@ -26,7 +28,6 @@ creator.create("Individual", list, fitness=creator.FitnessMax)
 def eval_fitness(weights):
     moves = 0
     board = chess.Board()
-
 
     engine1 = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
     engine1.configure({"UCI_LimitStrength": True, "UCI_Elo": STOCKFISH_ELO})
@@ -56,10 +57,9 @@ def eval_fitness(weights):
                 result = engines[1].play(board, chess.engine.Limit(time=0.5))
 
         board.push(result.move)
-        #print(board, "\n")
         moves += 1
 
-        turn = 1 - turn
+        turn = 1 - turn  # Switch turn
 
     print("Game Over!", board.result(), " / ", moves, " moves")
 
@@ -85,7 +85,6 @@ def eval_fitness(weights):
         else:
             return (0.5,)
 
-
 def log_game_result(engine2_is_white, game_result, moves, captures, weights):
     weights_str = ";".join(map(str, weights))
 
@@ -110,8 +109,14 @@ toolbox.register("mate", tools.cxBlend, alpha=0.5)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=2, indpb=MUTATION_RATE)
 toolbox.register("select", tools.selTournament, tournsize=3)
 
-def main():
+def parallel_eval(population):
+    # Use Pool to parallelize fitness evaluations
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        fitness_values = pool.map(toolbox.evaluate, population)
+    for ind, fit in zip(population, fitness_values):
+        ind.fitness.values = fit
 
+def main():
     with open(CSV_FILEPATH, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["White Result", "Black Result", "Moves", "Captures", "White", "Weights"])
@@ -120,6 +125,9 @@ def main():
     hof = tools.HallOfFame(1)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("max", np.max)
+
+    # Use parallel_eval to evaluate the fitness function in parallel
+    parallel_eval(pop)
 
     pop, _ = algorithms.eaSimple(pop, toolbox, cxpb=CROSSOVER_RATE, mutpb=MUTATION_RATE,
                                  ngen=GENS, stats=stats, halloffame=hof, verbose=True)
