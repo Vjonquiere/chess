@@ -17,7 +17,8 @@ public class StandardHeuristic extends AbstractHeuristic {
     super.addHeuristic(new WeightedHeuristic(new PawnChainHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new DevelopmentHeuristic(), 3));
-    // super.addHeuristic(new SpaceControlHeuristic());
+    super.addHeuristic(new WeightedHeuristic(new CheckHeuristic(), 5));
+    super.addHeuristic(new WeightedHeuristic(new SpaceControlHeuristic(), 3));
   }
 
   /**
@@ -34,7 +35,8 @@ public class StandardHeuristic extends AbstractHeuristic {
     super.addHeuristic(new WeightedHeuristic(new PawnChainHeuristic(), weight.get(4)));
     super.addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), weight.get(5)));
     super.addHeuristic(new WeightedHeuristic(new DevelopmentHeuristic(), weight.get(6)));
-    // super.addHeuristic(new SpaceControlHeuristic());
+    super.addHeuristic(new WeightedHeuristic(new CheckHeuristic(), weight.get(7)));
+    super.addHeuristic(new WeightedHeuristic(new SpaceControlHeuristic(), weight.get(8)));
   }
 
   @Override

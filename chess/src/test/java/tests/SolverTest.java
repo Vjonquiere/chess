@@ -220,7 +220,7 @@ public class SolverTest {
 
   @Test
   public void testSetHeuristicWithWeights() {
-    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f);
+    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f, 0.4f, 0.1f);
 
     solver.setHeuristic(HeuristicType.STANDARD, weights);
     assertInstanceOf(StandardHeuristic.class, solver.getHeuristic());

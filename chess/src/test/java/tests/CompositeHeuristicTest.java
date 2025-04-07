@@ -71,7 +71,7 @@ public class CompositeHeuristicTest {
   public void verifyCreationStandard() {
     StandardHeuristic standardHeuristic = new StandardHeuristic();
     List<Heuristic> heuristics = standardHeuristic.getHeuristics();
-    assertEquals(7, heuristics.size(), "Expected exactly 7 heuristics");
+    assertEquals(9, heuristics.size(), "Expected exactly 9 heuristics");
     assertTrue(
         heuristics.stream().anyMatch(h -> h instanceof MobilityHeuristic),
         "Missing MobilityHeuristic");
@@ -91,6 +91,12 @@ public class CompositeHeuristicTest {
     assertTrue(
         heuristics.stream().anyMatch(h -> h instanceof KingSafetyHeuristic),
         "Missing KingSafetyHeuristic");
+
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof CheckHeuristic), "Missing CheckHeuristic");
+    assertTrue(
+        heuristics.stream().anyMatch(h -> h instanceof SpaceControlHeuristic),
+        "Missing SpaceControlHeuristic");
   }
 
   @Test
@@ -111,14 +117,18 @@ public class CompositeHeuristicTest {
     Heuristic badPawnsHeuristic = new BadPawnsHeuristic();
     Heuristic pawnChainHeuristic = new PawnChainHeuristic();
     Heuristic developmentHeuristic = new DevelopmentHeuristic();
-    Heuristic KingSafetyHeuristic = new KingSafetyHeuristic();
+    Heuristic kingSafetyHeuristic = new KingSafetyHeuristic();
+    Heuristic checkHeuristic = new CheckHeuristic();
+    Heuristic spaceControlHeuristic = new SpaceControlHeuristic();
     score += material.evaluate(game.getBoard(), false) * 100;
     score += status.evaluate(game.getBoard(), false) * 100;
     score += mobility.evaluate(game.getBoard(), false);
     score += badPawnsHeuristic.evaluate(game.getBoard(), false);
     score += pawnChainHeuristic.evaluate(game.getBoard(), false);
     score += developmentHeuristic.evaluate(game.getBoard(), false) * 3;
-    score += KingSafetyHeuristic.evaluate(game.getBoard(), false);
+    score += kingSafetyHeuristic.evaluate(game.getBoard(), false);
+    score += checkHeuristic.evaluate(game.getBoard(), false) * 5;
+    score += spaceControlHeuristic.evaluate(game.getBoard(), false) * 3;
     assertEquals(score, solver.evaluateBoard(game.getGameState(), false));
   }
 }
