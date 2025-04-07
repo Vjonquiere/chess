@@ -1344,6 +1344,4 @@ public class BitboardRepresentationTest {
     assertTrue(board.pawnsHaveProgressed(true));
     assertTrue(board.pawnsHaveProgressed(false));
   }
-
-  // TODO pawn can't eat front
 }
