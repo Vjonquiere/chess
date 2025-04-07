@@ -240,7 +240,8 @@ public class SolverTest {
             HeuristicType.KING_ACTIVITY,
             HeuristicType.BISHOP_ENDGAME,
             HeuristicType.KING_OPPOSITION,
-            HeuristicType.ENDGAME);
+            HeuristicType.ENDGAME,
+            HeuristicType.CHECK);
 
     for (HeuristicType heuristic : heuristicsToTest) {
       solver.setHeuristic(heuristic, weights);
@@ -261,6 +262,7 @@ public class SolverTest {
         case KING_OPPOSITION ->
             assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
         case ENDGAME -> assertInstanceOf(EndGameHeuristic.class, solver.getHeuristic());
+
         default -> throw new IllegalArgumentException("Unexpected value: " + heuristic);
       }
 
