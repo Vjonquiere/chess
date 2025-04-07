@@ -80,9 +80,7 @@
 
 \pagebreak
 \begin{abstract}
-    Les images fournies dans le rapport sont parfois petites.
-    Elles sont disponibles dans le dossier \textit{reports/final/res}
-    sur notre repository GitLab.
+    Ce rapport synthétise le travail réalisé lors de l'UE Projet de Programmation de Master 1 Informatique à l'Université de Bordeaux.
  \end{abstract}
 
 \section{Description de l'existant}
@@ -701,7 +699,7 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     4 & Système cible & \valid & \\
     \hline
-    5 & Documentation & \nonvalid & COMPLETER SI BESOIN \\
+    5 & Documentation & \semivalid & COMPLETER SI BESOIN \\
     \hline
     6 & Tests & \valid & \\
     \hline
@@ -711,7 +709,7 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     9 & Build-system & \valid & \\
     \hline
-    10 & Frameworks de test & \valid & \\
+    10 & Frameworks de test & \valid & TestFX a été utilisé pour tester l'interface graphique. \\
     \hline
     11 & Gestion des options & \valid & \\
     \hline
@@ -719,9 +717,9 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     13 & Internationalisation & \valid & \\
     \hline
-    14 & Nom de l’exécutable principal & \valid & \\
+    14 & Nom de l’exécutable principal & \semivalid & \\
     \hline
-    15 & Usage général & \nonvalid & COMPLETER SI BESOIN \\
+    15 & Usage général & \semivalid & COMPLETER SI BESOIN \\
     \hline
     16 & Aide en ligne de commande & \valid & \\
     \hline
@@ -731,11 +729,11 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     19 & Mode debug & \valid & \\
     \hline
-    20 & Mode Blitz & \valid & Le temps de chaque joueur est donné à tout instant. Chaque joueur a un temps total pour toute la partie, et non pour chaque coup. Pas d'affichage du temps par coup.\\
+    20 & Mode Blitz & \valid & Le temps de chaque joueur est donné à tout instant. Chaque joueur a un temps pour chaque coup, et non pour toute la partie afin de suivre la spécification (ce comportement ne correspond pas à la règle officielle du blitz). Affichage du temps restant après chaque coup.\\
     \hline
     21 & Durée du Blitz & \valid & \\
     \hline
-    22 & Mode Contest & \valid & \\
+    22 & Mode Contest & \valid & La partie est sauvegardée dans le fichier une fois le coup joué et affiché.\\
     \hline
     23 & Mode IA & \valid & \\
     \hline
@@ -743,7 +741,7 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     25 & Interface graphique & \valid & \\
     \hline
-    26 & Affichage de l'échiquier & \valid & \\
+    26 & Affichage de l'échiquier & \valid & Le temps affiché est le temps restant au joueur au moment du coup.\\
     \hline
     27 & Notation des coups & \valid & \\
     \hline
@@ -761,7 +759,7 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     34 & Quitter et sauvegarder une partie & \valid & \\
     \hline
-    35 & Sauvegarde de l’historique & \nonvalid & COMPLETER SI BESOIN \\
+    35 & Sauvegarde de l’historique & \valid & L'historique est sauvegardé à la suite du plateau de jeu. \\
     \hline
     36 & Naviguer dans l'historique & \valid & \\
     \hline
@@ -769,11 +767,11 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     38 & Fin de partie & \valid & \\
     \hline
-    39 & Rejouer une partie & \nonvalid & COMPLETER SI BESOIN \\
+    39 & Rejouer une partie & \valid & \\
     \hline
-    40 & Format de fichier simplifié & \nonvalid & COMPLETER SI BESOIN \\
+    40 & Format de fichier simplifié & \valid & L'historique est sauvegardé uniquement si le fichier d'origine contient un historique ou que la partie a été jouée depuis le début. Le format proposé étant ambigu (roques, en passant, etc), nous avons décidé d'ajouter un header au format FEN. \\
     \hline
-    41 & Format de l'historique & \valid & \\
+    41 & Format de l'historique & \valid & Si un historique est fourni, la partie est chargée depuis ce dernier, sinon elle est chargée depuis le plateau de jeu. \\
     \hline
     42 & Fichier de configuration & \valid & \\
     \hline
@@ -784,7 +782,7 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     45 & État du jeu & \valid & L'historique est stocké dans la classe Game plutôt que GameState (choix d'implémentation).
     Game et GameState forment une structure contenant le joueur courant, le plateau, le temps (blitz) et l'historique.\\
     \hline
-    46 & Fonctions de base GUI & \nonvalid & COMPLETER SI BESOIN \\
+    46 & Fonctions de base GUI & \valid & \\
     \hline
     47 & Menu 'File' & \valid & \\
     \hline
@@ -796,31 +794,61 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
     51 & Affichage des coups joués & \valid & \\
     \hline
-    52 & Configuration d'une nouvelle partie & \valid & L'option 'New Game' permet de choisir entre lancer une partie avec les paramètres par défaut ou les modifier avant de commencer. Un bouton 'Start Game' lance la partie. \\
+    52 & Configuration d'une nouvelle partie & \valid & \\
     \hline
     53 & Heuristique d'évaluation & \valid & \\
     \hline
     54 & Algorithme Minimax & \valid & \\
     \hline
-    55 & AlphaBeta-pruning & \valid & \\
+    55 & AlphaBeta-pruning & \valid & En plus de la version classique, une version Iterative Deepening a été implémentée. Les deux versions possèdent également une alternative parallèle (avec la moitié des threads disponibles sur la machine). \\
     \hline
-    56 & Monte Carlo Tree Search & \valid & \\
+    56 & Monte Carlo Tree Search & \valid & L'option --ai-simulations permet de paramétrer le nombre de simulations effectuées par l'IA. \\
     \hline
-    57 & Profondeur de recherche & \valid & \\
+    57 & Profondeur de recherche & \valid & L'option n'est pas disponible pour l'algorithme MCTS. \\
     \hline
     58 & Choix des heuristiques & \valid & \\
     \hline
-    59 & Heuristiques de fin de partie & \valid & \\
+    59 & Heuristiques de fin de partie & \valid & L'heuristique ENDGAME a été prévue pour la fin de partie, et le solver change automatiquement l'heuristique utilisée en fonction de l'état du plateau. L'option --ai-endgame permet également de choisir l'heuristique de fin de partie utilisée. \\
     \hline
-    60 & Temps de réflexion IA & \valid & \\
+    60 & Temps de réflexion IA & \valid & Le temps de l'IA est borné uniquement lorsque l'option est présente. Cependant, les algorithmes possèdent toujours une profondeur de recherche et s'arrêtent lorsque l'une des bornes est atteinte (pour utiliser uniquement le temps, il faut utiliser une profondeur très élevée). \\
     \hline
 \end{longtable}
 
 Voici aussi une liste présentant les besoins "bonus", qui n'étaient pas présents dans la liste des besoins du cahier des charges.
 
-\begin{needbox}[F61: Historique scrollable]
+\begin{needbox}[F61: Historique scrollable et cliquable]
     L'historique en GUI est scrollable, de telle manière que les coups sont lisibles même si la partie
-    comporte un grand nombre de coups.
+    comporte un grand nombre de coups. Il est également possible de double-cliquer sur un coup pour revenir à celui ci si les deux joueurs sont d'accord.
+\end{needbox}
+
+\begin{needbox}[F62: IA paramétrable]
+   Toutes les options d'IA, mis à part --ai-time, sont paramétrables en fonction de la couleur, en rajoutant 
+   -b ou -w au nom de l'option. Par exemple --ai-mode-w.
+\end{needbox}
+
+\begin{needbox}[F63: Algorithmes d'IA supplémentaires]
+   Une version Iterative Deepening est disponible. Elle permet une meilleure précision lorsque l'option time est activée. Cet algorithme est également plus performant que l'AlphaBeta classique.
+   Des versions parallélisées des algoritmes d'AlphaBeta et AlphaBeta Iterative Deepening sont aussi disponibles.
+\end{needbox}
+
+\begin{needbox}[F64: Header FEN]
+   Afin d'éviter toute ambiguité lors de chargement de partie depuis un fichier, nous prenons en charge un header au format FEN. Cela permet de conserver les droits de roque, d'en passant et la fifty move rule à jour.
+\end{needbox}
+
+\begin{needbox}[F65: Thèmes GUI]
+    Différents thèmes sont disponibles dans le menu Options du GUI. Il est également possible de créer et sauvegarder ses propres thèmes.
+\end{needbox}
+
+\begin{needbox}[F66: Monitoring de l'IA]
+    Il est possible de suivre les performances de l'IA dans le GUI. En activant l'option Monitor dans le menu Options, celui ci permet d'observer le nombre de noeuds, le temps de recherche, le nombre de noeuds visités par senconde pour chaque coup ainsi que les valeurs moyennes au cours de la partie..
+\end{needbox}
+
+\begin{needbox}[F67: Mode UCI]
+    Afin de pouvoir communiquer avec d'autres chess engines, notre programme intègre une version minimale de la norme UCI. Il est possible de réaliser des parties contre Stockfish à l'aide de scripts externes.
+\end{needbox}
+
+\begin{needbox}[F68: Heuristique à poids]
+    Il est possible de configurer l'heuristique Standard en lui ajoutant des poids personnalisés (float), via l'option --ai-weight-b ou --ai-weight-w afin d'améliorer la précision de l'heuristique.
 \end{needbox}
 
 
