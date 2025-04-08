@@ -4,9 +4,7 @@ import static pdp.utils.Logging.debug;
 import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
@@ -24,9 +22,11 @@ import pdp.model.Game;
 import pdp.model.GameAbstract;
 import pdp.model.GameState;
 import pdp.model.ai.AlgorithmType;
+import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
+import pdp.utils.OptionType;
 
 /** View used to communicate with other chess engines. */
 public class UciView implements View {
@@ -51,7 +51,7 @@ public class UciView implements View {
    * move rule and threefold repetition. The other chess engine use a 5-fold repetition and a 75
    * move rule, we adapt our game the same way.
    */
-  public UciView() {
+  public UciView(final HashMap<OptionType, String> options) {
     commands.put("uci", new CommandEntry(this::uciCommand, "uci"));
     commands.put("ucinewgame", new CommandEntry(this::uciNewGameCommand, "uci new game"));
     commands.put("position", new CommandEntry(this::positionCommand, "position"));
@@ -62,10 +62,27 @@ public class UciView implements View {
     GameState.setFiftyMoveLimit(75);
     Solver aiConfiguration = Game.getInstance().getWhiteSolver();
     if (aiConfiguration != null) {
-      solver.setAlgorithm(AlgorithmType.ALPHA_BETA_ID_PARALLEL);
+      solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
       solver.setDepth(aiConfiguration.getDepth());
       solver.setHeuristic(aiConfiguration.getStartHeuristic());
       solver.setEndgameHeuristic(aiConfiguration.getEndgameHeuristic());
+      if (options.containsKey(OptionType.AI_WEIGHT_W)
+          && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W))
+              .equals(HeuristicType.STANDARD)) {
+        final String weight = options.get(OptionType.AI_WEIGHT_W);
+        final String[] weights = weight.split(",");
+        final List<Float> weightsFloats = new ArrayList<>();
+        for (final String w : weights) {
+          weightsFloats.add(Float.parseFloat(w));
+        }
+        if (weightsFloats.size() != 9) {
+          print("Invalid number of weights");
+        }
+        solver.setHeuristic(
+            HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)), weightsFloats);
+      } else {
+        solver.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)));
+      }
     }
   }
 

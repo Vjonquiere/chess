@@ -13,7 +13,7 @@ GENS = 1
 MUTATION_RATE = 0.2
 CROSSOVER_RATE = 0.5
 WEIGHT_RANGE = (0.0, 1.0)
-STOCKFISH_ELO = 1320
+STOCKFISH_ELO = 1350
 
 # --- Java Program Path ---
 JAR_PATH = "target/chess-0.0.4.jar"
@@ -32,12 +32,11 @@ def eval_fitness(weights):
     engine1 = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
     engine1.configure({"UCI_LimitStrength": True, "UCI_Elo": STOCKFISH_ELO})
 
-    cmdStr = " --ai-weight-w="
-    for weight in weights:
-        cmdStr += str(weight) + ","
-    cmdStr = cmdStr[:-1]
+    cmdStr = "--ai-weight-w=1000.0"
+    cmdStr += "," + ",".join(map(str, weights))
 
-    engine2 = chess.engine.SimpleEngine.popen_uci(["java", "-jar", JAR_PATH ,"-uci", "-ai-depth=2", "-a=A" ,"--ai-endgame-w=STANDARD"])
+    engine2 = chess.engine.SimpleEngine.popen_uci(["java", "-jar", JAR_PATH, "-uci", "-ai-depth=2", "-a=A", "--ai-endgame-w=STANDARD", cmdStr])
+
 
     engines = [engine1, engine2]
     random.shuffle(engines)
@@ -102,7 +101,7 @@ def log_game_result(engine2_is_white, game_result, moves, captures, weights):
 
 toolbox = base.Toolbox()
 toolbox.register("attr_float", random.uniform, *WEIGHT_RANGE)
-toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_float, 7)
+toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_float, 8)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register("evaluate", eval_fitness)
 toolbox.register("mate", tools.cxBlend, alpha=0.5)
