@@ -641,7 +641,43 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 
 \section{Performances et Limitations}
 \subsection{Traces}
-PRINT TRACES.
+Pour exprimer les performances de notre programme et plus généralement pour pouvoir comparer des version différentes, nous avons réalisé plusieurs
+traces à l'aide de \textit{Intellij Profiler}. À l'aide de ce logiciel, il est possible de réaliser des traces comportant le temps d'exécution, l'occupation des threads
+ou encore la mémoire utilisée par notre programme à tout instant comme le présente la figure \ref{trace_ex}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{trace_example.png}
+    \caption{Exemple de trace d'exécution pour visualiser le temps d'exécution découpé par fonctions}
+    \label{trace_ex}
+\end{figure}
+
+Dans cette représentation il est possible de voir clairement quelles sont les fonctions les plus chronophages mais il est également possible 
+de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques \ref{trace_ex2}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{trace_ex2.png}
+    \caption{Exemple de comparaison entre deux traces d'exécution}
+    \label{trace_ex2}
+\end{figure}
+
+Dans ce graphique on superpose donc deux traces afin de pouvoir analyser le temps gagné ou perdu pour chaque fonction. Il faut donc définir une trace référente, et les temps
+s'afficheront en fonction de celle-ci. Tous les rectangles verts signifient que l'on gagne du temps par rapport à l'autre exécution tandis que les rectangles rouges représentent
+les endroits où l'exécution référente est plus lente. Des informations supplémentaires sont également disponibles notammement pour afficher les temps gagnés/perdus en pourcentage
+que nous utiliserons pour donner des gains/pertes chiffrés.
+
+Enfin il est possible d'obtenir une vue comme le présente la figure \ref{thread_ex} afin de voir l'état des différents threads de la machine (running, sleeping). Ici, chaque thread est représenté
+par une ligne, et on peut lire sont état au fil du temps de l'exécution à l'horizontal. Dans ces graphiques les rectangles verts
+représentent lorsque le threads est actif, il sont rouges lorsque qu'il sont endormis. Il permet donc de voir l'équilibre des charges et si la parallélisation est réellement efficace.
+Nous utiliserons donc ce graphe pour vérifier le caractère parallèle de certaines optimisations.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{threads_ex.png}
+    \caption{}
+    \label{thread_ex}
+\end{figure}
 
 \subsection{Optimisations Intelligence Artificielle}
 À la suite de l'implémentation des algorithmes d'IA démandés, nous avons remarqué que les performances du programmes étaient assez contrastées. En effet, le facteur
