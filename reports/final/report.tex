@@ -528,7 +528,7 @@ PARLER DES OPTIMISATIONS D'IA MISES EN PLACES ET PEUT-ETRE CELLES ENVISAGÉES OU
 Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage "complexe" à
 une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on peut gagner en performance, notamment dans les algorithmes d'IA, où les
 états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des "tables de transposition", qui sont des tables de
-hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitmaps, et quelques booléens
+hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitmaps et quelques booléens
 supplémentaires pour les règles spécifiques.
 \\Nous disposons des structures suivantes pour générer nos hash:\\
 \begin{itemize}
@@ -587,18 +587,12 @@ Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6
 
 \section{Architecture du projet}
 Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que d'extensibilité.
-Le Controller agit comme interprète entre la vue et le Model, il va recevoir des commandes de la part de la Vue et appeler les fonctions correspondantes dans le Model.
+Le Controller, ou plutôt le Bag Of Commands agit comme interprète entre la vue et le Model, il va recevoir des commandes de la part de la Vue et appeler les fonctions correspondantes dans le Model.
 La vue a tout de même accès au Model, afin de récuperer les changements à afficher, ce qui évite de surcharcher le controller.
 
-Les différents modules principaux de notre projet sont les suivants : \textbf{Model}, \textbf{Controller}, \textbf{Vue}, \textbf{Events}, \textbf{Utils}
-et \textbf{Exceptions}. 
-
-Voici l'architecture UML du projet : 
-
 \begin{center}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{archiUML}
+    \includegraphics[width=0.5\textwidth]{MVC}
 \end{center}
-
 
 \subsubsection{Description des Modules}
 
@@ -622,6 +616,16 @@ Le Modèle est lui même composé de plusieurs packages, afin de séparer les di
     \item \textbf{Piece} : 
     \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
 \end{itemize}
+
+\subsubsection{View}
+
+
+\subsubsection{Controller}
+
+\begin{center}
+    \includegraphics[height=\textwidth]{uml_controller}
+\end{center}
+
 \subsubsection{Design Patterns Utilisés}
 
 Les différents design patterns utilisés dans ce projet sont les suivants : 

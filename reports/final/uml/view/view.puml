@@ -1,6 +1,6 @@
 @startuml
 
-top to bottom direction
+left to right direction
 skinparam linetype ortho
 
 class CliView {
