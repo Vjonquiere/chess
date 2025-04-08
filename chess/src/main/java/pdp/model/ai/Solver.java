@@ -19,6 +19,7 @@ import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.ai.algorithms.SearchAlgorithm;
 import pdp.model.ai.heuristics.BadPawnsHeuristic;
 import pdp.model.ai.heuristics.BishopEndgameHeuristic;
+import pdp.model.ai.heuristics.CheckHeuristic;
 import pdp.model.ai.heuristics.DevelopmentHeuristic;
 import pdp.model.ai.heuristics.EndGameHeuristic;
 import pdp.model.ai.heuristics.GameStatus;
@@ -150,6 +151,7 @@ public class Solver {
       case STANDARD_LIGHT -> this.heuristic = new StandardLightHeuristic();
       case ENDGAME -> this.heuristic = new EndGameHeuristic();
       case PROMOTION -> this.heuristic = new PromotionHeuristic();
+      case CHECK -> this.heuristic = new CheckHeuristic();
       default -> throw new IllegalArgumentException("No heuristic is set");
     }
     this.currentHeuristic = heuristic;

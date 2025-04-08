@@ -298,7 +298,7 @@ public final class NewGamePopup {
 
     timeContainer.getChildren().add(new Label(TextGetter.getText("newGame.time")));
 
-    final Slider timeSlider = new Slider(1, 60, 30);
+    final Slider timeSlider = new Slider(1, 30, 30);
     timeSlider.setId("timeSlider");
     timeSlider.setShowTickLabels(true);
     timeSlider.setShowTickMarks(true);

@@ -23,7 +23,7 @@ import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.model.GameAbstract;
 import pdp.model.GameState;
-import pdp.model.ai.HeuristicType;
+import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
@@ -60,7 +60,13 @@ public class UciView implements View {
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
     GameAbstract.setThreeFoldLimit(5);
     GameState.setFiftyMoveLimit(75);
-    solver.setEndgameHeuristic(HeuristicType.STANDARD);
+    final Solver aiConfiguration = Game.getInstance().getWhiteSolver();
+    if (aiConfiguration != null) {
+      solver.setAlgorithm(AlgorithmType.ALPHA_BETA_ID_PARALLEL);
+      solver.setDepth(aiConfiguration.getDepth());
+      solver.setHeuristic(aiConfiguration.getStartHeuristic());
+      solver.setEndgameHeuristic(aiConfiguration.getEndgameHeuristic());
+    }
   }
 
   /**
@@ -158,8 +164,9 @@ public class UciView implements View {
   }
 
   private void uciCommand(final String args) {
-    print("Chess 2\nMade by PDP team\nuciok\n");
-    // TODO: add ai config
+    print("Chess 2\nMade by PDP team");
+    print("Ai configuration: " + solver);
+    print("uciok\n");
   }
 
   private void positionCommand(final String args) {

@@ -4,6 +4,7 @@ import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.StartGameCommand;
@@ -19,7 +20,9 @@ import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.model.GameAbstract;
 import pdp.model.GameState;
+import pdp.model.history.HistoryNode;
 import pdp.utils.Logging;
+import pdp.utils.TextGetter;
 
 /** View used to handle the game in contest mode. */
 public class ContestView implements View {
@@ -79,6 +82,10 @@ public class ContestView implements View {
   public void onGameEvent(final EventType event) {
     if (Objects.requireNonNull(event) == EventType.MOVE_PLAYED) {
       print(Game.getInstance().getGameRepresentation());
+      final Optional<HistoryNode> lastMove = Game.getInstance().getHistory().getCurrentMove();
+      if (lastMove.isPresent()) {
+        print(TextGetter.getText("movePlayed", lastMove.get().getState().getMove().toString()));
+      }
       running = false;
     }
   }

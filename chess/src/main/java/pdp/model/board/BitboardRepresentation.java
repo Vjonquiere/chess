@@ -142,7 +142,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[6] = new Bitboard(1_152_921_504_606_846_976L); // BKi
     board[7] = new Bitboard(576_460_752_303_423_488L); // BQ
     board[8] = new Bitboard(2_594_073_385_365_405_696L); // BB
-    board[9] = new Bitboard(); // BR // TODO: Find why overflow ???
+    board[9] = new Bitboard(); // BR // TODO: Find why overflow
     board[9].setBit(56);
     board[9].setBit(63);
     board[10] = new Bitboard(4_755_801_206_503_243_776L); // BKi
@@ -288,19 +288,6 @@ public class BitboardRepresentation implements BoardRepresentation {
           return false;
         }
       }
-      /*
-      if (this.getPlayer() != obj.getPlayer()
-      || this.isLastMoveDoublePush() != obj.isLastMoveDoublePush()
-      || this.getEnPassantPos().equals(obj.getEnPassantPos())
-      || this.isWhiteShortCastle() != obj.isWhiteShortCastle()
-      || this.isBlackShortCastle() != obj.isBlackShortCastle()
-      || this.isWhiteLongCastle() != obj.isWhiteLongCastle()
-      || this.isBlackLongCastle() != obj.isBlackLongCastle()
-      || this.getNbMovesWithNoCaptureOrPawn() != obj.getNbMovesWithNoCaptureOrPawn())
-      {
-        return false;
-      }
-        */
       return true;
     }
     return false;
@@ -614,21 +601,6 @@ public class BitboardRepresentation implements BoardRepresentation {
         whiteShortCastle,
         blackLongCastle,
         blackShortCastle);
-  }
-
-  /**
-   * Generate the possible moves for a player. This function do not apply check after guard.
-   * Optimised for AI.
-   *
-   * @param isWhite {true} if pawn is white, {false} if pawn is black
-   * @return The bitboard containing all possible moves (without special cases)
-   */
-  public Bitboard getColorMoveBitboard(final boolean isWhite) {
-    // TODO: can delete this function ?
-    // Bitboard moves =
-    // BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
-
-    return getColorAttackBitboard(isWhite);
   }
 
   /**
@@ -1264,23 +1236,27 @@ public class BitboardRepresentation implements BoardRepresentation {
 
     if (this.isWhiteLongCastle()
         && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(0, 0)))) { // rook on a1 and king on e1
+            || move.getSource().equals(new Position(0, 0))
+            || move.getDest().equals(new Position(0, 0)))) { // rook on a1 and king on e1
       this.setWhiteLongCastle(false);
     }
     if (this.isWhiteShortCastle()
         && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(7, 0)))) { // rook on h1 and king on e1
+            || move.getSource().equals(new Position(7, 0))
+            || move.getDest().equals(new Position(7, 0)))) { // rook on h1 and king on e1
       this.setWhiteShortCastle(false);
     }
 
     if (this.isBlackShortCastle()
         && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(7, 7)))) { // rook on h8 and king on e8
+            || move.getSource().equals(new Position(7, 7))
+            || move.getDest().equals(new Position(7, 7)))) { // rook on h8 and king on e8
       this.setBlackShortCastle(false);
     }
     if (this.isBlackLongCastle()
         && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(0, 7)))) { // rook on a8 and king on e8
+            || move.getSource().equals(new Position(0, 7))
+            || move.getDest().equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.setBlackLongCastle(false);
     }
     if (this.isPawnPromoting(move.getDest().x(), move.getDest().y(), this.getPlayer())) {

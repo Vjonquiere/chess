@@ -303,13 +303,15 @@ public class Board extends GridPane {
     final ColoredPiece piece = Game.getInstance().getBoard().getPieceAt(from.x(), from.y());
     if (piece.getPiece() == Piece.PAWN
         && piece.getColor() == Color.BLACK
-        && y == 0) { // Black pawn promote
+        && y == 0
+        && from.y() == 1) { // Black pawn promote
       new PromotionPieceSelectionPopUp(stage, from, new Position(x, y));
       return true;
     }
     if (piece.getPiece() == Piece.PAWN
         && piece.getColor() == Color.WHITE
-        && y == 7) { // White pawn promote
+        && y == 7
+        && from.y() == 6) { // White pawn promote
       new PromotionPieceSelectionPopUp(stage, from, new Position(x, y));
       return true;
     }

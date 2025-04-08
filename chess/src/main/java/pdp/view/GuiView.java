@@ -226,6 +226,13 @@ public class GuiView implements View {
    */
   public void init(final Stage stage) {
     stage.setTitle(TextGetter.getText("title"));
+
+    stage.setOnCloseRequest(
+        event -> {
+          event.consume();
+          Runtime.getRuntime().exit(0);
+        });
+
     // root.setCenter(board);
     scene = new Scene(root, 1200, 820);
     applyCss(scene);
@@ -316,9 +323,11 @@ public class GuiView implements View {
 
                 if (whiteAiMonitor != null) {
                   whiteAiMonitor.hide();
+                  whiteAiMonitor = null;
                 }
                 if (blackAiMonitor != null) {
                   blackAiMonitor.hide();
+                  blackAiMonitor = null;
                 }
                 if (Game.getInstance().isWhiteAi()) {
                   whiteAiMonitor = new AiMonitor(true);

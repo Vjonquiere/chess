@@ -221,8 +221,8 @@ public final class BitboardStatusCheck {
     }
     // Number of possible Moves
 
-    final int nbMovesWhite = bitboardRep.getColorMoveBitboard(true).bitCount();
-    final int nbMovesBlack = bitboardRep.getColorMoveBitboard(false).bitCount();
+    final int nbMovesWhite = bitboardRep.getColorAttackBitboard(true).bitCount();
+    final int nbMovesBlack = bitboardRep.getColorAttackBitboard(false).bitCount();
 
     if (nbMovesWhite + nbMovesBlack <= nbPossibleMoveInEndGame) {
       nbFilledConditions++;
