@@ -528,26 +528,29 @@ PARLER DES OPTIMISATIONS D'IA MISES EN PLACES ET PEUT-ETRE CELLES ENVISAGÉES OU
 Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage "complexe" à
 une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on peut gagner en performance, notamment dans les algorithmes d'IA, où les
 états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des "tables de transposition", qui sont des tables de
-hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitmaps, et quelques bits
-supplémentaires pour les règles spécifiques. Pour chaque combinaison case-pièce, on va générer un nombre aléatoire. De cette façon, toutes les configurations
-de plateaux vont être rencontrées. Le hachage va consister à combiner toutes ces chaînes de bits pour chaque configuration avec l'opérateur XOR,
-pour à la fin obtenir un hachage final pour chaque position. Ainsi, en utilisant une HashMap, on va conserver tous les hachages représantant toutes les
-configurations possibles pour les utiliser plus tard. Par exemple, pour la règle "Threefold repetition", il faut vérifier si dans cette table de hachage
-il existe un hachage H tel que H $\ge$ 3. Si c'est le cas, alors la partie se termine en égalité.
-\\Donc, dans notre cas, on aura quelque chose de la sorte:\\
+hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitmaps, et quelques booléens
+supplémentaires pour les règles spécifiques.
+\\Nous disposons des structures suivantes pour générer nos hash:\\
 \begin{itemize}
-    \item ZobristBoardTable[64][12]
-    \item ZobristEnPassantTable[64]
-    \item ZobristCastlingRightsTable[16]
-    \item ZobristFiftyMoveRuleTable[51]
-    \item ZobristFullMoveTable[1025]
+    \item long PIECES[64][12]
+    \item long EN\_PASSANT[8]
+    \item long CASTLING[16]
+    \item long SIDE\_TO\_MOVE
 \end{itemize}
 
-\par Chaque élément sera donc en premier aléatoire, puis bits à bits, des opérations avec XOR seront réalisées. C'est avantageux car lorsque l'on joue
-un coup, donc que l'on change l'état du jeu, il n'y a pas à tout recalculer. D'abord, on XOR le nombre aléatoire correspondant à la pièce qui quitte
-sa case de départ, puis celui pour la case d'arrivée de cette pièce, et éventuellement changer les bits pour les règles spécifiques.
-Pour l'IA, cette méthode sera clé car elle fera gagner en performance, car les états de jeu peuvent se répéter un grand nombre de fois (même si pas
-toujours dans le même ordre).
+Nous générons donc au départ des nombres aléatoires pour chaque combinaison possible de case et de pièce, que nous mettons dans le tableau `PIECES`.
+Nous générons également des nombres correspondant aux en passant possibles ainsi qu'aux droits de roque. Il y a 8 configurations possible pour le en passant :
+une pour chaque colonne ou un en passant pourrait être en cours
+Il y a 16 configurations possibles pour le roque, le petit et le grand roque de chaque couleur encore possible ou non (2 valeurs pour 4 roques différents soit 2**4).
+Une fois ces nombres générés, on va pouvoir créer des hash correspondant à un état de plateau en faisant un XOR sur chaque pièce sur le plateau aisni que sur
+les droits particuliers que nous avons pour le en passant et le roque. Il faut également XORer le joueur courant.
+Ensuite, lorsqu'un mouvement est fait, il faut mettre à jour le hash, grace au XOR afin de corrrespondre au nouveau plateau de jeu.
+
+Nous avons également implémeneté une version simplifiée du zobrist hashing, qui ne prend en compte que les pièces sur le plateau.
+
+La version simplifiée est utilisée pour la règle du fifty move rule, où il ne faut pas revoir le même plateau 3 fois au cours d'une partie.
+La version classique est très utile pour l'intelligence artificielle, pour le calcul des heuristiques en particulier, ce qui nous évite de reclaculer des heuristiques 
+à partir du moment où on l'a calculée une fois. Le gain de temps est considérable car les états de jeu peuvent se répéter un grand nombre de fois.
 
 \subsection{Cache}
 Afin que le programme soit plus performant, le groupe a mis en place un système de "cache". COMPLETER.
@@ -559,7 +562,10 @@ COMPLETER.
 COMPLETER.
 
 \subsection{Code propre}
-COMPLETER.
+Nous avons effectué plusieurs refactor afin d'arriver à une architecture plus claire plusieurs fois au corus du projet. Dans les dernières semaines de développement, 
+lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que `Checkstyle` ou `PMD`.
+Les règles utilisées dans PMD sont disponibles dans le fichier `pmd-rules.xml`.
+Nous avons commencé par rajouter de la documentation sur les classes ainsi que sur leurs fields et méthodes. 
 
 
 \section{Architecture du projet}
