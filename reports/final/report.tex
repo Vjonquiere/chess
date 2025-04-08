@@ -648,6 +648,28 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 PRINT TRACES.
 
 \subsection{Optimisations Intelligence Artificielle}
+À la suite de l'implémentation des algorithmes d'IA démandés, nous avons remarqué que les performances du programmes étaient assez contrastées. En effet, le facteur
+de branchement moyen étant 35, le passage d'une profondeur à une profondeur+1 demande un temps de calcul beaucoup plus long. Nous avons donc pu atteindre la profondeur 3
+en temps raisonnable sans optimisation. Afin d'améliorer l'IA nous avons donc ensuite mis en place différentes optimisations. Pour commencer nous avons adapté nos heuristiques
+pour qu'elle puissent utiliser directement les bitboard afin de tirer le meilleur de la structure de données et d'enlever des couches d'abstractions. Nous avons par la suite 
+remarqué que le calcul de certaines fonctions était chronophage et ne pouvaient pas être diminué en complexité facilement. C'est par exemple le cas des fonction de détection de 
+l'échec, échec et mat, pat qui sont utilisé lors de l'évaluation du plateau mais également lorsque qu'un coup est jouer pour vérifier si le coup est légal (sans compter le fait 
+qu'un plateau peut apparaître plusieurs fois). Grace au Zobrist hashing, nous avons donc implémenté une sorte de cache pour ne pas reclaculer ces fonctions pour le même plateau 
+plusieurs fois. Nous avons donc stocké les résultats des fonctions précédentes ainsi que les bitboards de mouvements puisqu'elles sont très solicitées lors de l'évaluation des
+plateaux. Nous avons donc pu comparer une exécution avec un cache de 10000 entré et une autre sans cache comme le présente la figure \ref{cache_cmp}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{cache_compare.png}
+    \caption{Comparaison des traces d'exécutions avec et sans cache}
+    \label{cache_cmp}
+\end{figure}
+
+Sur cette trace on remarque un gain temps de l'ordre de 68\% lorsque l'on utilise un cache. Globalement, nous gagnons du temps car il n'y a plus de calculs couteux
+effectués plusieurs fois. Puisque toutes ces fonctions sont calculées afin de pouvoir jouer le coup (car il faut vérifier que le coup ne met pas fin à la partie et 
+est bien légal), la grande différence se fait dans lors de l'évaluation car on économise ici près de 80\% du temps nécessaire sans cache. Mais si cela est moins significatif,
+celui-ci permet de gagner environ 25\% de performance sur la fonction \textit{playMove} car il était obligatoire de vérifier deux fois la mise en échec lorsque qu'un coup était joué,
+une première pour vérifier que le roi n'était pas en échec ainsi que pour vérifier que la partie n'avait pas atteint une situation de pat
 COMPARAISON ALPHA\_BETA, ALPHA\_BETA\_PARALLEL, ALPHA\_BETA\_IT
 
 \subsection{Profondeur de recherche}
