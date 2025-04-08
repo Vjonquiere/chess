@@ -1,0 +1,291 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class AbstractHeuristic {
+  + AbstractHeuristic(): 
+  - heuristics: List<WeightedHeuristic>
+  + evaluate(Board, boolean): float
+  + removeHeuristic(WeightedHeuristic): void
+  + addHeuristic(WeightedHeuristic): void
+   weightedHeuristics: List<WeightedHeuristic>
+   heuristics: List<Heuristic>
+}
+entity AiMove << record >> {
+  + AiMove(Move, float): 
+  + score(): float
+  + move(): Move
+}
+class AlgorithmHelpers {
+  - AlgorithmHelpers(): 
+  + promoteMove(Move): Move
+}
+enum AlgorithmType << enumeration >> {
+  + AlgorithmType(): 
+  + valueOf(String): AlgorithmType
+  + values(): AlgorithmType[]
+}
+class AlphaBeta {
+  + AlphaBeta(Solver): 
+  + findBestMove(Game, int, boolean): AiMove
+  - alphaBeta(GameAi, int, boolean, float, float, boolean): AiMove
+}
+class AlphaBetaIterativeDeepening {
+  + AlphaBetaIterativeDeepening(Solver): 
+  - alphaBeta(Game, int, boolean, float, float, boolean, List<Move>): AiMove
+  - sortMoves(List<Move>, Game): void
+  + findBestMove(Game, int, boolean): AiMove
+  - evaluateMove(Move, Game): int
+}
+class AlphaBetaParallel {
+  + AlphaBetaParallel(Solver): 
+  + findBestMove(Game, int, boolean): AiMove
+  - alphaBeta(GameAi, int, boolean, float, float, boolean): AiMove
+}
+class BadPawnsHeuristic {
+  + BadPawnsHeuristic(): 
+  - backwardsPawns(Board, boolean): int
+  + evaluate(Board, boolean): float
+  - isolatedPawns(Board, boolean): int
+  - doubledPawns(Board, boolean): int
+}
+class BishopEndgameHeuristic {
+  + BishopEndgameHeuristic(): 
+  - evaluateCentralization(Board, boolean): int
+  + evaluate(Board, boolean): float
+  - evaluateSameColorBishopsOpponent(Board, boolean): int
+  - evaluateSameColorBishopsSamePlayer(Board, boolean): int
+  - evaluateBadBishop(Board, boolean): int
+  - evaluateBishopMobility(Board, boolean): int
+}
+class DevelopmentHeuristic {
+  + DevelopmentHeuristic(): 
+  - evaluatePiecesDevelopment(Board, boolean): int
+  + evaluate(Board, boolean): float
+}
+class EndGameHeuristic {
+  + EndGameHeuristic(): 
+}
+class GameStatus {
+  + GameStatus(): 
+  + evaluate(Board, boolean): float
+}
+interface Heuristic << interface >> {
+  + evaluate(Board, boolean): float
+}
+enum HeuristicType << enumeration >> {
+  + HeuristicType(): 
+  + values(): HeuristicType[]
+  + valueOf(String): HeuristicType
+}
+class KingActivityHeuristic {
+  + KingActivityHeuristic(): 
+  + evaluate(Board, boolean): float
+  - kingIsInCenterScore(Board, boolean): int
+  - kingActivityScore(Board, boolean): int
+}
+class KingOppositionHeuristic {
+  + KingOppositionHeuristic(): 
+  - evaluateKingOpposition(Board): int
+  + evaluate(Board, boolean): float
+}
+class KingSafetyHeuristic {
+  + KingSafetyHeuristic(): 
+  - kingVulnerabilityScore(Board, boolean): int
+  + evaluate(Board, boolean): float
+  - kingSafetyToChecksFromEnemy(Board, boolean): int
+  - kingProtectionScore(Board, boolean): int
+}
+class MaterialHeuristic {
+  + MaterialHeuristic(): 
+  + evaluate(Board, boolean): float
+}
+class Minimax {
+  + Minimax(Solver): 
+  + findBestMove(Game, int, boolean): AiMove
+  - minimax(GameAi, int, boolean, boolean): AiMove
+}
+class MobilityHeuristic {
+  + MobilityHeuristic(): 
+  + evaluate(Board, boolean): float
+}
+class MonteCarloTreeSearch {
+  + MonteCarloTreeSearch(Solver): 
+  + MonteCarloTreeSearch(Solver, int): 
+  - simulationLimit: int
+  + findBestMove(Game, int, boolean): AiMove
+  - backpropagate(TreeNodeMonteCarlo, int): void
+  - expand(GameAi, TreeNodeMonteCarlo): TreeNodeMonteCarlo
+  - simulate(GameAi, TreeNodeMonteCarlo): int
+  - evaluateSimulation(GameState): int
+  - selectRandomMove(List<Move>): Move
+  - select(TreeNodeMonteCarlo): TreeNodeMonteCarlo
+  - getBestMove(TreeNodeMonteCarlo): AiMove
+   simulationLimit: int
+}
+class PawnChainHeuristic {
+  + PawnChainHeuristic(): 
+  + evaluate(Board, boolean): float
+  - evaluatePawnChains(Board, boolean): int
+}
+class PromotionHeuristic {
+  + PromotionHeuristic(): 
+  + evaluate(Board, boolean): float
+  - pawnsAreCloseToPromotion(Board, boolean): int
+  - pawnsHaveProgressedScore(Board, boolean): int
+}
+interface SearchAlgorithm << interface >> {
+  + findBestMove(Game, int, boolean): AiMove
+}
+class ShannonBasic {
+  + ShannonBasic(): 
+}
+class Solver {
+  + Solver(): 
+  - algorithm: SearchAlgorithm
+  - depth: int
+  - timer: Timer
+  - heuristic: Heuristic
+  - startHeuristic: HeuristicType
+  - endgameHeuristic: HeuristicType
+  - currentHeuristic: HeuristicType
+  - searchStopped: boolean
+  - time: long
+  + playAiMove(Game): void
+  + evaluateBoard(Board, boolean): float
+  + stopSearch(boolean): void
+  + getBestMove(Game): Move
+  + setHeuristic(HeuristicType, List<Float>): void
+   heuristic: Heuristic
+   time: long
+   startHeuristic: HeuristicType
+   endgameHeuristic: HeuristicType
+   depth: int
+   searchStopped: boolean
+   monteCarloAlgorithm: int
+   currentHeuristic: HeuristicType
+   algorithm: SearchAlgorithm
+   timer: Timer
+}
+class SpaceControlHeuristic {
+  + SpaceControlHeuristic(): 
+  - evaluateFlanksControl(Board, boolean): int
+  + evaluate(Board, boolean): float
+  - evaluateCenterControl(Board, boolean): int
+}
+class StandardHeuristic {
+  + StandardHeuristic(): 
+  + StandardHeuristic(List<Float>): 
+}
+class StandardLightHeuristic {
+  + StandardLightHeuristic(): 
+}
+class TreeNodeMonteCarlo {
+  + TreeNodeMonteCarlo(GameState, TreeNodeMonteCarlo, Move): 
+  - nbVisits: int
+  - startingMove: Move
+  + incrementNbVisits(): void
+  + incrementNbWinsBy(int): void
+  + getChildToExplore(double): TreeNodeMonteCarlo
+  + addChildToTree(TreeNodeMonteCarlo): void
+  - uctValue(TreeNodeMonteCarlo, double): double
+   nbWins: int
+   childrenNodes: List<TreeNodeMonteCarlo>
+   gameState: GameState
+   startingMove: Move
+   nbVisits: int
+   fullyExpanded: boolean
+   parentNode: TreeNodeMonteCarlo
+}
+entity WeightedHeuristic << record >> {
+  + WeightedHeuristic(Heuristic, float): 
+  + weight(): float
+  + heuristic(): Heuristic
+}
+
+AbstractHeuristic            -[#008200,dashed]-^  Heuristic                   
+AbstractHeuristic           "1" *-[#595959,plain]-> "heuristics\n*" WeightedHeuristic           
+AlphaBeta                    -[#595959,dashed]->  AiMove                      : "«create»"
+AlphaBeta                    -[#008200,dashed]-^  SearchAlgorithm             
+AlphaBeta                   "1" *-[#595959,plain]-> "solver\n1" Solver                      
+AlphaBetaIterativeDeepening  -[#595959,dashed]->  AiMove                      : "«create»"
+AlphaBetaIterativeDeepening  -[#008200,dashed]-^  SearchAlgorithm             
+AlphaBetaIterativeDeepening "1" *-[#595959,plain]-> "solver\n1" Solver                      
+AlphaBetaParallel            -[#595959,dashed]->  AiMove                      : "«create»"
+AlphaBetaParallel            -[#008200,dashed]-^  SearchAlgorithm             
+AlphaBetaParallel           "1" *-[#595959,plain]-> "solver\n1" Solver                      
+BadPawnsHeuristic            -[#008200,dashed]-^  Heuristic                   
+BishopEndgameHeuristic       -[#008200,dashed]-^  Heuristic                   
+DevelopmentHeuristic         -[#008200,dashed]-^  Heuristic                   
+EndGameHeuristic             -[#000082,plain]-^  AbstractHeuristic           
+EndGameHeuristic             -[#595959,dashed]->  BadPawnsHeuristic           : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  BishopEndgameHeuristic      : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  GameStatus                  : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  KingActivityHeuristic       : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  KingOppositionHeuristic     : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  KingSafetyHeuristic         : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  MaterialHeuristic           : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  PawnChainHeuristic          : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  PromotionHeuristic          : "«create»"
+EndGameHeuristic             -[#595959,dashed]->  WeightedHeuristic           : "«create»"
+GameStatus                   -[#008200,dashed]-^  Heuristic                   
+KingActivityHeuristic        -[#008200,dashed]-^  Heuristic                   
+KingOppositionHeuristic      -[#008200,dashed]-^  Heuristic                   
+KingSafetyHeuristic          -[#008200,dashed]-^  Heuristic                   
+MaterialHeuristic            -[#008200,dashed]-^  Heuristic                   
+Minimax                      -[#595959,dashed]->  AiMove                      : "«create»"
+Minimax                      -[#008200,dashed]-^  SearchAlgorithm             
+Minimax                     "1" *-[#595959,plain]-> "solver\n1" Solver                      
+MobilityHeuristic            -[#008200,dashed]-^  Heuristic                   
+MonteCarloTreeSearch         -[#595959,dashed]->  AiMove                      : "«create»"
+MonteCarloTreeSearch         -[#008200,dashed]-^  SearchAlgorithm             
+MonteCarloTreeSearch        "1" *-[#595959,plain]-> "solver\n1" Solver                      
+MonteCarloTreeSearch         -[#595959,dashed]->  TreeNodeMonteCarlo          : "«create»"
+PawnChainHeuristic           -[#008200,dashed]-^  Heuristic                   
+PromotionHeuristic           -[#008200,dashed]-^  Heuristic                   
+ShannonBasic                 -[#000082,plain]-^  AbstractHeuristic           
+ShannonBasic                 -[#595959,dashed]->  BadPawnsHeuristic           : "«create»"
+ShannonBasic                 -[#595959,dashed]->  MaterialHeuristic           : "«create»"
+ShannonBasic                 -[#595959,dashed]->  MobilityHeuristic           : "«create»"
+ShannonBasic                 -[#595959,dashed]->  WeightedHeuristic           : "«create»"
+Solver                       -[#595959,dashed]->  AlphaBeta                   : "«create»"
+Solver                       -[#595959,dashed]->  AlphaBetaIterativeDeepening : "«create»"
+Solver                       -[#595959,dashed]->  AlphaBetaParallel           : "«create»"
+Solver                       -[#595959,dashed]->  BadPawnsHeuristic           : "«create»"
+Solver                       -[#595959,dashed]->  BishopEndgameHeuristic      : "«create»"
+Solver                       -[#595959,dashed]->  DevelopmentHeuristic        : "«create»"
+Solver                       -[#595959,dashed]->  EndGameHeuristic            : "«create»"
+Solver                       -[#595959,dashed]->  GameStatus                  : "«create»"
+Solver                      "1" *-[#595959,plain]-> "heuristic\n1" Heuristic                   
+Solver                      "1" *-[#595959,plain]-> "currentHeuristic\n1" HeuristicType               
+Solver                       -[#595959,dashed]->  KingActivityHeuristic       : "«create»"
+Solver                       -[#595959,dashed]->  KingOppositionHeuristic     : "«create»"
+Solver                       -[#595959,dashed]->  KingSafetyHeuristic         : "«create»"
+Solver                       -[#595959,dashed]->  MaterialHeuristic           : "«create»"
+Solver                       -[#595959,dashed]->  Minimax                     : "«create»"
+Solver                       -[#595959,dashed]->  MobilityHeuristic           : "«create»"
+Solver                       -[#595959,dashed]->  MonteCarloTreeSearch        : "«create»"
+Solver                       -[#595959,dashed]->  PawnChainHeuristic          : "«create»"
+Solver                      "1" *-[#595959,plain]-> "algorithm\n1" SearchAlgorithm             
+Solver                       -[#595959,dashed]->  ShannonBasic                : "«create»"
+Solver                       -[#595959,dashed]->  SpaceControlHeuristic       : "«create»"
+Solver                       -[#595959,dashed]->  StandardHeuristic           : "«create»"
+Solver                       -[#595959,dashed]->  StandardLightHeuristic      : "«create»"
+SpaceControlHeuristic        -[#008200,dashed]-^  Heuristic                   
+StandardHeuristic            -[#000082,plain]-^  AbstractHeuristic           
+StandardHeuristic            -[#595959,dashed]->  BadPawnsHeuristic           : "«create»"
+StandardHeuristic            -[#595959,dashed]->  DevelopmentHeuristic        : "«create»"
+StandardHeuristic            -[#595959,dashed]->  GameStatus                  : "«create»"
+StandardHeuristic            -[#595959,dashed]->  KingSafetyHeuristic         : "«create»"
+StandardHeuristic            -[#595959,dashed]->  MaterialHeuristic           : "«create»"
+StandardHeuristic            -[#595959,dashed]->  MobilityHeuristic           : "«create»"
+StandardHeuristic            -[#595959,dashed]->  PawnChainHeuristic          : "«create»"
+StandardHeuristic            -[#595959,dashed]->  WeightedHeuristic           : "«create»"
+StandardLightHeuristic       -[#000082,plain]-^  AbstractHeuristic           
+StandardLightHeuristic       -[#595959,dashed]->  DevelopmentHeuristic        : "«create»"
+StandardLightHeuristic       -[#595959,dashed]->  GameStatus                  : "«create»"
+StandardLightHeuristic       -[#595959,dashed]->  MaterialHeuristic           : "«create»"
+StandardLightHeuristic       -[#595959,dashed]->  WeightedHeuristic           : "«create»"
+WeightedHeuristic           "1" *-[#595959,plain]-> "heuristic\n1" Heuristic                   
+@enduml

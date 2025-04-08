@@ -1,74 +1,16 @@
-@startuml Controller
+@startuml
 
-!theme plain
-top to bottom direction
+left to right direction
 skinparam linetype ortho
 
-package commands{
-    class AskHintCommand {
-    + AskHintCommand(): 
-    + execute(Game, GameController): Optional<Exception>
-    }
-    entity CancelDrawCommand << record >> {
-        + CancelDrawCommand(boolean): 
-        - isWhite: boolean
-        + execute(Game, GameController): Optional<Exception>
-        isWhite: boolean
-    }
-    class CancelMoveCommand {
-        + CancelMoveCommand(): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    class ChangeLangCommand {
-        + ChangeLangCommand(): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    class ChangeThemeCommand {
-        + ChangeThemeCommand(): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-
-    class PlayMoveCommand {
-        + PlayMoveCommand(String): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    class ProposeDrawCommand {
-        + ProposeDrawCommand(boolean): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    class RestartCommand {
-        + RestartCommand(): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    class RestoreMoveCommand {
-        + RestoreMoveCommand(): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    class SaveGameCommand {
-        + SaveGameCommand(String): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    class StartGameCommand {
-        + StartGameCommand(): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-    entity SurrenderCommand << record >> {
-        + SurrenderCommand(boolean): 
-        - isWhite: boolean
-        + execute(Game, GameController): Optional<Exception>
-        isWhite: boolean
-    }
-    class UndoMultipleMoveCommand {
-        + UndoMultipleMoveCommand(int): 
-        + execute(Game, GameController): Optional<Exception>
-    }
-
+class AskHintCommand {
+  + AskHintCommand(): 
+  + execute(Game, GameController): Optional<Exception>
 }
-
 class BagOfCommands {
   - BagOfCommands(): 
-  - instance: BagOfCommands
   - model: Game
+  - instance: BagOfCommands
   - controller: GameController
   - processCommands(): void
   + addCommand(Command): void
@@ -77,7 +19,24 @@ class BagOfCommands {
    controller: GameController
    instance: BagOfCommands
 }
-
+entity CancelDrawCommand << record >> {
+  + CancelDrawCommand(boolean): 
+  - isWhite: boolean
+  + execute(Game, GameController): Optional<Exception>
+   isWhite: boolean
+}
+class CancelMoveCommand {
+  + CancelMoveCommand(): 
+  + execute(Game, GameController): Optional<Exception>
+}
+class ChangeLangCommand {
+  + ChangeLangCommand(): 
+  + execute(Game, GameController): Optional<Exception>
+}
+class ChangeThemeCommand {
+  + ChangeThemeCommand(): 
+  + execute(Game, GameController): Optional<Exception>
+}
 interface Command << interface >> {
   + execute(Game, GameController): Optional<Exception>
 }
@@ -89,6 +48,54 @@ class GameController {
    view: View
    model: Game
 }
+class PlayMoveCommand {
+  + PlayMoveCommand(String): 
+  + execute(Game, GameController): Optional<Exception>
+}
+class ProposeDrawCommand {
+  + ProposeDrawCommand(boolean): 
+  + execute(Game, GameController): Optional<Exception>
+}
+class RestartCommand {
+  + RestartCommand(): 
+  + execute(Game, GameController): Optional<Exception>
+}
+class RestoreMoveCommand {
+  + RestoreMoveCommand(): 
+  + execute(Game, GameController): Optional<Exception>
+}
+class SaveGameCommand {
+  + SaveGameCommand(String): 
+  + execute(Game, GameController): Optional<Exception>
+}
+class StartGameCommand {
+  + StartGameCommand(): 
+  + execute(Game, GameController): Optional<Exception>
+}
+entity SurrenderCommand << record >> {
+  + SurrenderCommand(boolean): 
+  - isWhite: boolean
+  + execute(Game, GameController): Optional<Exception>
+   isWhite: boolean
+}
+class UndoMultipleMoveCommand {
+  + UndoMultipleMoveCommand(int): 
+  + execute(Game, GameController): Optional<Exception>
+}
 
-
+AskHintCommand           -[#008200,dashed]-^  Command                 
+BagOfCommands           "1" *-[#595959,plain]-> "commands\n*" Command                 
+BagOfCommands           "1" *-[#595959,plain]-> "controller\n1" GameController          
+CancelDrawCommand        -[#008200,dashed]-^  Command                 
+CancelMoveCommand        -[#008200,dashed]-^  Command                 
+ChangeLangCommand        -[#008200,dashed]-^  Command                 
+ChangeThemeCommand       -[#008200,dashed]-^  Command                 
+PlayMoveCommand          -[#008200,dashed]-^  Command                 
+ProposeDrawCommand       -[#008200,dashed]-^  Command                 
+RestartCommand           -[#008200,dashed]-^  Command                 
+RestoreMoveCommand       -[#008200,dashed]-^  Command                 
+SaveGameCommand          -[#008200,dashed]-^  Command                 
+StartGameCommand         -[#008200,dashed]-^  Command                 
+SurrenderCommand         -[#008200,dashed]-^  Command                 
+UndoMultipleMoveCommand  -[#008200,dashed]-^  Command                 
 @enduml

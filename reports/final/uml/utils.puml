@@ -1,26 +1,25 @@
 @startuml
 
-!theme plain
 top to bottom direction
 skinparam linetype ortho
 
 class BiDirectionalMap<K, V> {
   + BiDirectionalMap(): 
   + getFromValue(V): K
-  + getFromKey(K): V
   + put(K, V): void
   + removeByKey(K): void
   + removeByValue(V): void
+  + getFromKey(K): V
 }
 class CommandLineOptions {
   - CommandLineOptions(): 
+  - processOptions(CommandLine, Map<String, String>, HashMap<OptionType, String>): void
+  - isFeatureImplemented(OptionType): boolean
   - loadDefaultArgs(String, HashMap<OptionType, String>): Map<String, String>
-  + validateAiOptions(HashMap<OptionType, String>): void
   - handleImmediateExitOptions(CommandLine, Options, Runtime): boolean
-  - handlePathInput(HashMap<OptionType, String>, Runtime): void
-  - processOptions(CommandLine, Map<String, String>, HashMap<OptionType, String>, Options, Runtime): void
-  - handleLoggingOptions(CommandLine, Map<String, String>): void
   + parseOptions(String[], Runtime): HashMap<OptionType, String>?
+  + validateAiOptions(HashMap<OptionType, String>): void
+  - handleLoggingOptions(CommandLine, Map<String, String>): void
 }
 class CustomFormatter {
   + CustomFormatter(): 
@@ -33,12 +32,12 @@ class IniParser {
 class Logging {
   - Logging(): 
   + configureLogging(Logger): void
-  + print(String): void
-  + verbose(Logger, String): void
   + error(String): void
   + debug(Logger, String): void
-   debug: boolean
+  + verbose(Logger, String): void
+  + print(String): void
    verbose: boolean
+   debug: boolean
 }
 class MoveHistoryParser {
   - MoveHistoryParser(): 
@@ -55,22 +54,23 @@ enum OptionType << enumeration >> {
 }
 entity Position << record >> {
   + Position(int, int): 
-  + toString(): String
-  + x(): int
   + y(): int
+  + equals(Object): boolean
+  + x(): int
+  + toString(): String
    copy: Position
    valid: boolean
 }
 class TextGetter {
   - TextGetter(): 
   - locale: Locale
-  + getText(String): String
   + getText(String, Object[]): String
+  + getText(String): String
    locale: Locale
 }
 class Timer {
-  + Timer(long, Runnable): 
   + Timer(long): 
+  + Timer(long, Runnable): 
   + start(): void
   + stop(): void
   + run(): void
@@ -79,4 +79,6 @@ class Timer {
    callback: Runnable
 }
 
+CommandLineOptions  -[#595959,dashed]->  OptionType         : "«create»"
+Logging             -[#595959,dashed]->  CustomFormatter    : "«create»"
 @enduml

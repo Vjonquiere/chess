@@ -1,0 +1,80 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class CliView {
+  + CliView(): 
+  - undoCommand(String): void
+  - quitCommand(String): void
+  - restartCommand(String): void
+  - redoCommand(String): void
+  - startUserInputListener(): Thread
+  + onGameEvent(EventType): void
+  - surrenderCommand(String): void
+  - saveCommand(String): void
+  - drawCommand(String): void
+  - helpCommand(String): void
+  - handleUserInput(String): void
+  - historyCommand(String): void
+  - timeCommand(String): void
+  + start(): Thread
+  - undrawCommand(String): void
+  - displayBoardCommand(String): void
+  - moveCommand(String): void
+  + onErrorEvent(Exception): void
+}
+entity CommandEntry << record >> {
+  - CommandEntry(Consumer<String>, String): 
+  + action(): Consumer<String>
+  + description(): String
+}
+entity CommandEntry << record >> {
+  - CommandEntry(Consumer<String>, String): 
+  + description(): String
+  + action(): Consumer<String>
+}
+class GuiView {
+  + GuiView(): 
+  - theme: ColorTheme
+  - init: boolean
+  + init(Stage): void
+  + start(): Thread
+  + onErrorEvent(Exception): void
+  + updateLanguage(): void
+  + show(): void
+  + updateTheme(): void
+  + applyCss(Scene): void
+  + onGameEvent(EventType): void
+   init: boolean
+   theme: ColorTheme
+}
+class UciView {
+  + UciView(): 
+  + onErrorEvent(Exception): void
+  - startUserInputListener(): Thread
+  + onGameEvent(EventType): void
+  - positionCommand(String): void
+  - handleUserInput(String): void
+  - quitCommand(String): void
+  - goCommand(String): void
+  - uciNewGameCommand(String): void
+  - isReadyCommand(String): void
+  + start(): Thread
+  - uciCommand(String): void
+}
+interface View << interface >> {
+  + start(): Thread
+}
+class node6 as "package  pdp.view.gui" << package >>
+
+CliView       -[#595959,dashed]->  CommandEntry : "«create»"
+CliView      "1" *-[#595959,plain]-> "commands\n*" CommandEntry 
+CliView       -[#008200,dashed]-^  View         
+CommandEntry  +-[#820000,plain]-  CliView      
+CommandEntry  +-[#820000,plain]-  UciView      
+GuiView       -[#008200,dashed]-^  View         
+UciView       -[#595959,dashed]->  CommandEntry : "«create»"
+UciView      "1" *-[#595959,plain]-> "commands\n*" CommandEntry 
+UciView       -[#008200,dashed]-^  View         
+@enduml

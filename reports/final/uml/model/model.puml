@@ -1,796 +1,149 @@
-@startuml Model
+@startuml
 
-!theme plain
 top to bottom direction
 skinparam linetype ortho
 
-class AbstractHeuristic {
-  + AbstractHeuristic(): 
-  - heuristics: List<WeightedHeuristic>
-  + evaluate(BoardRepresentation, boolean): float
-  + addHeuristic(WeightedHeuristic): void
-  + removeHeuristic(WeightedHeuristic): void
-   weightedHeuristics: List<WeightedHeuristic>
-   heuristics: List<Heuristic>
-}
-entity AiMove << record >> {
-  + AiMove(Move, float): 
-  + score(): float
-  + move(): Move
-}
-enum AlgorithmType << enumeration >> {
-  + AlgorithmType(): 
-  + values(): AlgorithmType[]
-  + valueOf(String): AlgorithmType
-}
-class AlphaBeta {
-  + AlphaBeta(Solver): 
-  + findBestMove(Game, int, boolean): AiMove
-  + toString(): String
-  - alphaBeta(GameAi, int, boolean, float, float, boolean): AiMove
-}
-class AlphaBetaIterativeDeepening {
-  + AlphaBetaIterativeDeepening(Solver): 
-  + toString(): String
-  - alphaBeta(Game, int, boolean, float, float, boolean, List<Move>): AiMove
-  + findBestMove(Game, int, boolean): AiMove
-}
-class AlphaBetaIterativeDeepeningParallel {
-  + AlphaBetaIterativeDeepeningParallel(Solver): 
-  + toString(): String
-  + findBestMove(Game, int, boolean): AiMove
-  - alphaBeta(GameAi, int, boolean, float, float, boolean): AiMove
-}
-class AlphaBetaParallel {
-  + AlphaBetaParallel(Solver): 
-  - alphaBeta(GameAi, int, boolean, float, float, boolean): AiMove
-  + toString(): String
-  + findBestMove(Game, int, boolean): AiMove
-}
-class BadPawnsHeuristic {
-  + BadPawnsHeuristic(): 
-  - isolatedPawns(BoardRepresentation, boolean): int
-  + evaluate(BoardRepresentation, boolean): float
-  - doubledPawns(BoardRepresentation, boolean): int
-  - backwardsPawns(BoardRepresentation, boolean): int
-}
-class BishopEndgameHeuristic {
-  + BishopEndgameHeuristic(): 
-  - evaluateBishopMobility(BoardRepresentation, boolean): float
-  - evaluateBadBishop(BoardRepresentation, boolean): float
-  - evaluateCentralization(BoardRepresentation, boolean): float
-  - evaluateSameColorBishopsSamePlayer(BoardRepresentation, boolean): float
-  + evaluate(BoardRepresentation, boolean): float
-}
-class Bitboard {
-  + Bitboard(long): 
-  + Bitboard(): 
-  + and(Bitboard): Bitboard
-  + clearBits(): void
-  + moveDown(): Bitboard
-  + moveUp(): Bitboard
-  + bitCount(): int
-  + moveDownLeft(): Bitboard
-  + equals(Object): boolean
-  + toString(): String
-  + moveLeft(): Bitboard
-  + moveDownRight(): Bitboard
-  + clearBit(int): void
-  + moveUpLeft(): Bitboard
-  + getBit(int): boolean
-  + toggleBit(int): void
-  + moveRight(): Bitboard
-  + not(): Bitboard
-  + moveUpRight(): Bitboard
-  + or(Bitboard): Bitboard
-  + xor(Bitboard): Bitboard
-   setBits: List<Integer>
-   bits: long
-   copy: Bitboard
-   bit: int
-}
-class BitboardCache {
-  + BitboardCache(int): 
-  + getOrCreate(long): CachedResult
-  - evictIfNecessary(): void
-}
-class BitboardMovesGen {
-  - BitboardMovesGen(): 
-  + getKnightMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
-  + getPawnMoveBitboard(Position, Bitboard, Bitboard, boolean, BitboardRepresentation, Position, boolean): Bitboard
-  + getBishopMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
-  + retrieveKingMoves(boolean, BitboardRepresentation, boolean, boolean, boolean, boolean): List<Move>
-  + getColorAttackBitboard(boolean, BitboardRepresentation, Position, boolean): Bitboard
-  + bitboardToMoves(Bitboard, Bitboard, Position, ColoredPiece, BitboardRepresentation): List<Move>
-  + getKingMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation, boolean, boolean, boolean, boolean): List<Move>
-  + getAllAvailableMoves(boolean, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): List<Move>
-  + getPawnMoves(Position, Bitboard, Bitboard, boolean, BitboardRepresentation, Position, boolean): List<Move>
-  + getInlineMoves(Position, Bitboard, Bitboard): Bitboard
-  + retrieveBishopMoves(boolean, BitboardRepresentation): List<Move>
-  + getAttackBitboard(int, int, boolean, BitboardRepresentation, Position, boolean): Bitboard
-  + getMultipleMovesFromDirection(Bitboard, Bitboard, Bitboard, Function<Bitboard, Bitboard>): Bitboard
-  + getKingMoveBitboard(Position, Bitboard, ColoredPiece, BitboardRepresentation, boolean, boolean, boolean, boolean): Bitboard
-  + getRookMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
-  + getDiagonalMoves(Position, Bitboard, Bitboard): Bitboard
-  + getKnightMoveBitboard(Position, Bitboard): Bitboard
-  + getQueenMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
-  + getAvailableMoves(int, int, boolean, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): List<Move>
-  + getKingAttackBitboard(Position, Bitboard): Bitboard
-}
-class BitboardPieces {
-  - BitboardPieces(): 
-  + getBishops(boolean, BitboardRepresentation): List<Position>
-  + getPawns(boolean, BitboardRepresentation): List<Position>
-  + getWhiteBoard(BitboardRepresentation): Bitboard
-  + getQueens(boolean, BitboardRepresentation): List<Position>
-  + getBlackBoard(BitboardRepresentation): Bitboard
-  + getKing(boolean, BitboardRepresentation): List<Position>
-  + getKingOpti(boolean, BitboardRepresentation): int
-  + nbPiecesRemaining(BitboardRepresentation): int
-  + getKnights(boolean, BitboardRepresentation): List<Position>
-  + getRooks(boolean, BitboardRepresentation): List<Position>
-}
-class BitboardRepresentation {
-  + BitboardRepresentation(Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard): 
-  + BitboardRepresentation(FileBoard): 
-  + BitboardRepresentation(): 
-  - lastMoveDoublePush: boolean
-  - NB_COLS: int
-  - whiteShortCastle: boolean
-  - blackShortCastle: boolean
-  - nbMovesWithNoCaptureOrPawn: int
-  - enPassantTake: boolean
-  - NB_ROWS: int
-  - enPassantPos: Position
-  - whiteLongCastle: boolean
-  - blackLongCastle: boolean
-  + getColorAttackBitboard(boolean): Bitboard
-  + isStaleMate(Color, Color): boolean
-  + retrieveInitialBlackPiecesPos(): List<List<Position>>
-  + getColorMoveBitboard(boolean): Bitboard
-  + validatePieceOwnership(boolean, Position): boolean
-  + getBishops(boolean): List<Position>
-  + isPromotionMove(int, int, int, int, boolean): boolean
-  + movePiece(Position, Position): void
-  + retrieveInitialWhitePiecesPos(): List<List<Position>>
-  + getRooks(boolean): List<Position>
-  + getKing(boolean): List<Position>
-  + getAvailableMoves(Position): List<Move>
-  + deletePieceAt(int, int): void
-  + canCastle(Color, boolean): boolean
-  + isEndGamePhase(int, boolean): boolean
-  + isPawnPromoting(int, int, boolean): boolean
-  + applyCastle(Color, boolean): void
-  + retrieveKingMoves(boolean): List<Move>
-  + pawnsHaveProgressed(boolean): boolean
-  + isCastleMove(ColoredPiece, Position, Position): boolean
-  + setSquare(ColoredPiece, int): void
-  + isDoublePushPossible(Move, boolean): boolean
-  + equals(Object): boolean
-  + isAttacked(int, int, Color): boolean
-  + getPawns(boolean): List<Position>
-  + isEnPassant(int, int, Move, boolean): boolean
-  + hasEnoughMaterialToMate(boolean): boolean
-  + getAllAvailableMoves(boolean): List<Move>
-  # getOccupiedSquares(int): List<Position>
-  + getAvailableMoves(int, int, boolean): List<Move>
-  + isCheckMate(Color): boolean
-  + promotePawn(int, int, boolean, Piece): void
-  + isCheckAfterMove(Color, Move): boolean
-  + nbPiecesRemaining(): int
-  + getKingOpti(boolean): int
-  + toString(): String
-  # getKingMoves(Position, Bitboard, Bitboard, ColoredPiece): List<Move>
-  - placePiecesOnBoard(char[][], List<Position>, char): void
-  + isCheck(Color): boolean
-  + applyShortCastle(Color): void
-  # squareToPosition(int): Position
-  + queensOffTheBoard(): boolean
-  + getKnights(boolean): List<Position>
-  # squaresToPosition(List<Integer>): List<Position>
-  + getQueens(boolean): List<Position>
-  + retrieveBlackPiecesPos(): List<List<Position>>
-  + areKingsActive(): boolean
-  + getPieceAt(int, int): ColoredPiece
-  + makeMove(Move): void
-  + retrieveBishopMoves(boolean): List<Move>
-  + retrieveWhitePiecesPos(): List<List<Position>>
-  # addPieceAt(int, int, ColoredPiece): void
-  + applyLongCastle(Color): void
-   blackBoard: Bitboard
-   player: boolean
-   blackShortCastle: boolean
-   whiteShortCastle: boolean
-   lastMoveDoublePush: boolean
-   nbMovesWithNoCaptureOrPawn: int
-   drawByInsufficientMaterial: boolean
-   piecesMap: BiDirectionalMap<Integer, ColoredPiece>
-   enPassantTake: boolean
-   NB_ROWS: int
-   whiteLongCastle: boolean
-   nbFullMovesWithNoCaptureOrPawn: int
-   asciiRepresentation: char[][]
-   bitboards: Bitboard[]
-   whiteBoard: Bitboard
-   copy: BoardRepresentation
-   castlingRights: boolean[]
-   blackLongCastle: boolean
-   NB_COLS: int
-   enPassantPos: Position
-}
-class BitboardRules {
-  - BitboardRules(): 
-  + isCheckAfterMove(Color, Move, BitboardRepresentation): boolean
-  + isAttacked(int, int, Color, BitboardRepresentation): boolean
-  + isStaleMate(Color, Color, BitboardRepresentation): boolean
-  + isDrawByInsufficientMaterial(BitboardRepresentation): boolean
-  + promotePawn(int, int, boolean, Piece, BitboardRepresentation): void
-  + isCheckMate(Color, BitboardRepresentation): boolean
-  + validatePieceOwnership(boolean, Position, BitboardRepresentation): boolean
-  + isPromotionMove(int, int, int, int, boolean, BitboardRepresentation): boolean
-  + isEnPassant(int, int, Move, boolean, BitboardRepresentation): boolean
-  + isPawnPromoting(int, int, boolean, BitboardRepresentation): boolean
-  + isCastleMove(ColoredPiece, Position, Position): boolean
-  + isDoublePushPossible(Move, boolean, BitboardRepresentation): boolean
-  + isCheck(Color, BitboardRepresentation): boolean
-  + hasEnoughMaterialToMate(boolean, BitboardRepresentation): boolean
-  + retrieveInitialWhitePiecesPos(): List<List<Position>>
-  + retrieveInitialBlackPiecesPos(): List<List<Position>>
-  + retrieveWhitePiecesPos(BitboardRepresentation): List<List<Position>>
-  + retrieveBlackPiecesPos(BitboardRepresentation): List<List<Position>>
-}
-class BitboardStatusCheck {
-  - BitboardStatusCheck(): 
-  + pawnsHaveProgressed(boolean, BitboardRepresentation): boolean
-  + queensOffTheBoard(BitboardRepresentation): boolean
-  + isEndGamePhase(int, boolean, BitboardRepresentation): boolean
-  + canCastle(Color, boolean, boolean, boolean, boolean, boolean, BitboardRepresentation): boolean
-  + areKingsActive(BitboardRepresentation): boolean
-}
-class BitboardUtils {
-  - BitboardUtils(): 
-  + getNbCols(BitboardRepresentation): int
-  + getOccupiedSquares(int, BitboardRepresentation): List<Position>
-  + squaresToPosition(List<Integer>): List<Position>
-  + squareToPosition(int): Position
-  + getNbRows(BitboardRepresentation): int
-}
-class BoardFileParser {
-  + BoardFileParser(): 
-  + parseGameFile(String, Runtime): FileBoard
-  + readFile(String): String
-}
-class BoardLoaderListener {
-  + BoardLoaderListener(): 
-  + enterBoardLine(BoardLineContext): void
-  + enterPlayer(PlayerContext): void
-  + exitFen(FenContext): void
-  + enterCastling(CastlingContext): void
-  + enterFen(FenContext): void
-  + enterPiece(PieceContext): void
-   result: FileBoard
-}
-interface BoardRepresentation << interface >> {
-  + isCheckMate(Color): boolean
-  + isStaleMate(Color, Color): boolean
-  + isDoublePushPossible(Move, boolean): boolean
-  + isAttacked(int, int, Color): boolean
-  + deletePieceAt(int, int): void
-  + retrieveKingMoves(boolean): List<Move>
-  + promotePawn(int, int, boolean, Piece): void
-  + applyLongCastle(Color): void
-  + getAvailableMoves(Position): List<Move>
-  + getRooks(boolean): List<Position>
-  + movePiece(Position, Position): void
-  + isPawnPromoting(int, int, boolean): boolean
-  + nbPiecesRemaining(): int
-  + retrieveInitialWhitePiecesPos(): List<List<Position>>
-  + isPromotionMove(int, int, int, int, boolean): boolean
-  + hasEnoughMaterialToMate(boolean): boolean
-  + retrieveBishopMoves(boolean): List<Move>
-  + canCastle(Color, boolean): boolean
-  + isCastleMove(ColoredPiece, Position, Position): boolean
-  + getQueens(boolean): List<Position>
-  + getAvailableMoves(int, int, boolean): List<Move>
-  + retrieveWhitePiecesPos(): List<List<Position>>
-  + applyCastle(Color, boolean): void
-  + queensOffTheBoard(): boolean
-  + applyShortCastle(Color): void
-  + retrieveBlackPiecesPos(): List<List<Position>>
-  + getKnights(boolean): List<Position>
-  + isEnPassant(int, int, Move, boolean): boolean
-  + validatePieceOwnership(boolean, Position): boolean
-  + getBishops(boolean): List<Position>
-  + areKingsActive(): boolean
-  + isCheck(Color): boolean
-  + getPieceAt(int, int): ColoredPiece
-  + pawnsHaveProgressed(boolean): boolean
-  + retrieveInitialBlackPiecesPos(): List<List<Position>>
-  + isCheckAfterMove(Color, Move): boolean
-  + getAllAvailableMoves(boolean): List<Move>
-  + isEndGamePhase(int, boolean): boolean
-  + makeMove(Move): void
-  + getKing(boolean): List<Position>
-  + getPawns(boolean): List<Position>
-   nbRows: int
-   player: boolean
-   blackShortCastle: boolean
-   nbCols: int
-   whiteShortCastle: boolean
-   lastMoveDoublePush: boolean
-   nbMovesWithNoCaptureOrPawn: int
-   drawByInsufficientMaterial: boolean
-   enPassantTake: boolean
-   whiteLongCastle: boolean
-   nbFullMovesWithNoCaptureOrPawn: int
-   asciiRepresentation: char[][]
-   copy: BoardRepresentation
-   castlingRights: boolean[]
-   blackLongCastle: boolean
-   enPassantPos: Position
-}
-class BoardSaver {
-  - BoardSaver(): 
-  + saveBoard(FileBoard): String
-}
-class CachedResult {
-  + CachedResult(): 
-  + setCheck(boolean, Color): void
-  + isStaleMate(Color): Boolean
-  + isCheck(Color): Boolean
-  + setCheckMate(boolean, Color): void
-  + isCheckMate(Color): Boolean
-  + getAttackBitboard(boolean): Long
-  + setStaleMate(boolean, Color): void
-  + setAttackBitboard(boolean, Bitboard): void
-}
-class CastlingMove {
-  + CastlingMove(Position, Position, ColoredPiece, boolean): 
-  + CastlingMove(Position, Position, ColoredPiece, boolean, boolean, boolean): 
-  - shortCastle: boolean
-  + toUciString(): String
-  + toAlgebraicString(): String
-  + toString(): String
-   shortCastle: boolean
-}
-enum Color << enumeration >> {
-  + Color(): 
-  + values(): Color[]
-  + valueOf(String): Color
-}
-class ColoredPiece {
-  + ColoredPiece(Piece, Color): 
-  - color: Color
-  - piece: Piece
-  + toString(): String
-  + equals(Object): boolean
-  + hashCode(): int
-   color: Color
-   piece: Piece
-}
-class ConfigFileSaver {
-  - ConfigFileSaver(): 
-  + save(String, String): void
-}
-class DevelopmentHeuristic {
-  + DevelopmentHeuristic(): 
-  - evaluatePiecesDevelopment(BoardRepresentation, boolean): float
-  + evaluate(BoardRepresentation, boolean): float
-}
-class EnPassantMove {
-  + EnPassantMove(Position, Position, ColoredPiece, Position, ColoredPiece, boolean, boolean): 
-  + EnPassantMove(Position, Position, ColoredPiece, Position, ColoredPiece): 
-  + toAlgebraicString(): String
-  + toUciString(): String
-  + toString(): String
-}
-class EndGameHeuristic {
-  + EndGameHeuristic(): 
-}
-entity FenHeader << record >> {
-  + FenHeader(boolean, boolean, boolean, boolean, Position, int, int): 
-  + enPassant(): Position
-  + whiteQueenCastling(): boolean
-  + whiteKingCastling(): boolean
-  + fiftyMoveRule(): int
-  + blackKingCastling(): boolean
-  + blackQueenCastling(): boolean
-  + playedMoves(): int
-}
-class FenParser {
-  - FenParser(): 
-  + loadBoardFromFen(String): FileBoard
-}
-class FenSaver {
-  - FenSaver(): 
-  + saveBoard(FileBoard): String
-}
-entity FileBoard << record >> {
-  + FileBoard(BoardRepresentation, boolean, FenHeader): 
-  - isWhiteTurn: boolean
-  + board(): BoardRepresentation
-  + header(): FenHeader
-   isWhiteTurn: boolean
-}
 class Game {
   - Game(boolean, boolean, Solver, Solver, GameState, History, HashMap<OptionType, String>): 
-  - loadedFromFile: boolean
-  - blackAi: boolean
-  - viewLock: ReentrantLock
-  - isContestMode: boolean
-  - instance: Game
-  - options: HashMap<OptionType, String>
+  - aiPlayedItsLastMove: boolean
   - whiteAi: boolean
   - isInitializing: boolean
-  + restartGame(): void
-  + addObserver(EventObserver): void
-  # updateGameStateAfterMove(Move): void
-  + loadingFileHasHistory(): boolean
-  + initialize(boolean, boolean, Solver, Solver, Timer, FileBoard, HashMap<OptionType, String>): Game
-  + setLoadedFromFile(): void
+  - options: HashMap<OptionType, String>
+  - contestModeOn: boolean
+  - loadedFromFile: boolean
+  - viewLock: Lock
+  - instance: Game
+  - blackAi: boolean
+  + outOfTimeCallback(): void
+  + saveGame(String): void
   + initialize(boolean, boolean, Solver, Solver, Timer, HashMap<OptionType, String>): Game
   + getTimer(boolean): Timer
-  - setupTimer(Timer): void
-  + startAi(): void
-  + addErrorObserver(EventObserver): void
-  + outOfTimeCallback(): void
+  + aiPlayedItsLastMove(): boolean
   + playMove(Move): void
+  + restartGame(): void
+  + startAi(): void
   + fromHistory(List<Move>, boolean, boolean, Solver, Solver, Timer, HashMap<OptionType, String>): Game
-  - createGameInstance(boolean, boolean, Solver, Solver, Timer, FileBoard, HashMap<OptionType, String>): Game
-  + saveGame(String): void
+  + setLoadedFromFile(): void
+  + addObserver(EventObserver): void
+  + loadingFileHasHistory(): boolean
+  - checkAndOverwriteHistory(Move): void
+  + addErrorObserver(EventObserver): void
+  - updateGameStateAfterMove(Move, boolean): void
+  + initialize(boolean, boolean, Solver, Solver, Timer, FileBoard, HashMap<OptionType, String>): Game
    instance: Game
    workingViewCondition: Condition
-   loadedFromFile: boolean
-   isInitializing: boolean
+   contestModeOnOrOff: boolean
+   aiExploring: boolean
    options: HashMap<OptionType, String>
-   isContestMode: boolean
+   exploration: boolean
+   currentPlayerAi: boolean
+   viewLock: Lock
+   blackAi: boolean
    whiteSolver: Solver
    contestFile: String
-   currentPlayerAi: boolean
+   contestModeOn: boolean
    blackSolver: Solver
-   viewLock: ReentrantLock
-   blackAi: boolean
-   gameRepresentation: String
-   whiteAi: boolean
-   stringHistory: String
    loadingFileHasHistory: boolean
+   isInitializing: boolean
+   loadedFromFile: boolean
+   gameRepresentation: String
+   stringHistory: String
+   whiteAi: boolean
+   aiPlayedItsLastMove: boolean
 }
 class GameAbstract {
   + GameAbstract(GameState, History, HashMap<Long, Integer>, ZobristHashing): 
   + GameAbstract(GameState, History, Map<Long, Integer>): 
-  - gameState: GameState
-  - stateCount: Map<Long, Integer>
   - history: History
-  + previousState(): void
-  # addStateToCount(long): boolean
+  - stateCount: Map<Long, Integer>
+  - gameState: GameState
   # isCastleMove(ColoredPiece, Position, Position): boolean
-  + isPromotionMove(Move): boolean
   # validatePromotionMove(Move): void
-  # updateGameStateAfterMove(Move): void
-  + nextState(): void
-  + playMove(Move): void
   # validatePieceOwnership(GameState, Position): boolean
+  + isPromotionMove(Move): boolean
+  + nextState(): void
+  + previousState(): void
   # processMove(GameState, Move): void
+  # addStateToCount(long): boolean
+  + playMove(Move): void
    zobristHasher: ZobristHashing
-   over: boolean
-   endGamePhase: boolean
    history: History
    stateCount: Map<Long, Integer>
+   over: boolean
    gameState: GameState
-   board: BoardRepresentation
+   endGamePhase: boolean
+   board: Board
    threeFoldLimit: int
 }
 class GameAi {
   - GameAi(GameState, History, HashMap<Long, Integer>, ZobristHashing): 
+  - updateOtherGameStateAfterMove(GameState, Move): void
+  + fromGame(Game): GameAi
   + copy(): GameAi
   + playMoveOtherGameState(GameState, Move): void
-  + fromGame(Game): GameAi
-  # updateGameStateAfterMove(Move): void
-  - updateOtherGameStateAfterMove(GameState): void
   + playMove(Move): void
+  - updateGameStateAfterMove(Move, boolean): void
 }
 class GameState {
-  + GameState(FileBoard, Timer): 
-  - GameState(BitboardRepresentation, Timer, int): 
-  + GameState(): 
   + GameState(Timer): 
+  + GameState(): 
   + GameState(FileBoard): 
-  - hintIntegers: List<Integer>
-  - threefoldRepetition: boolean
-  - simplifiedZobristHashing: long
+  + GameState(FileBoard, Timer): 
+  - isGameOver: boolean
+  - undoRequestTurnNumber: int
   - zobristHashing: long
-  - board: BoardRepresentation
-  - gameOver: boolean
+  - simplifiedZobristHashing: long
+  - redoRequestTurnNumber: int
+  - hintIntegers: List<Integer>
+  - board: Board
   - moveTimer: Timer
-  + undoRequestReset(): void
-  + blackResigns(): void
-  + whiteResigns(): void
-  + hasBlackRequestedDraw(): boolean
-  + switchPlayerTurn(): void
-  + whiteCancelsDrawRequest(): void
-  + blackCancelsDrawRequest(): void
-  + redoRequestReset(): void
-  + doesWhiteWantsToDraw(): void
+  - threefoldRepetition: boolean
   + applyFiftyMoveRule(): void
-  + hasBlackResigned(): boolean
-  + doesBlackWantsToDraw(): void
-  - checkDrawAgreement(): boolean
-  + undoRequest(): void
-  + playerOutOfTime(boolean): void
   + updateFrom(GameState): void
   + activateThreefold(): void
-  + checkGameStatus(): void
-  + hasWhiteResigned(): boolean
-  + incrementsFullTurn(): void
+  + whiteWantsToDraw(): void
+  + undoRequestReset(): void
+  + undoRequest(): void
+  + whiteCancelsDrawRequest(): void
+  + hasBlackResigned(): boolean
   + hasWhiteLostOnTime(): boolean
+  + incrementsFullTurn(): void
+  + playerOutOfTime(boolean): void
+  + hasBlackRequestedDraw(): boolean
+  + blackResigns(): void
+  + redoRequestReset(): void
+  + blackCancelsDrawRequest(): void
   + redoRequest(): void
-  + hasWhiteRequestedDraw(): boolean
+  + blackWantsToDraw(): void
+  + hasWhiteResigned(): boolean
+  + checkGameStatus(): void
+  - checkDrawAgreement(): boolean
   + hasBlackLostOnTime(): boolean
-   fiftyMoveRule: boolean
-   whiteTurn: boolean
+  + switchPlayerTurn(): void
+  + whiteResigns(): void
+  + hasWhiteRequestedDraw(): boolean
    moveTimer: Timer
-   undoRequestTurnNumber: int
-   gameOver: boolean
-   simplifiedZobristHashing: long
-   board: BoardRepresentation
-   redoRequestTurnNumber: int
-   fiftyMoveLimit: int
-   fullTurn: int
-   hintIntegers: List<Integer>
-   copy: GameState
-   threefoldRepetition: boolean
+   whiteTurn: boolean
    zobristHashing: long
-}
-class GameStatus {
-  + GameStatus(): 
-  + evaluate(BoardRepresentation, boolean): float
-}
-interface Heuristic << interface >> {
-  + evaluate(BoardRepresentation, boolean): float
-}
-enum HeuristicType << enumeration >> {
-  + HeuristicType(): 
-  + valueOf(String): HeuristicType
-  + values(): HeuristicType[]
-}
-class History {
-  + History(): 
-  - currentMove: HistoryNode
-  + toString(): String
-  + addMove(HistoryState): void
-  + toAlgebraicString(): String
-  + clear(): void
-   currentMove: Optional<HistoryNode>
-}
-class HistoryNode {
-  + HistoryNode(HistoryState, HistoryNode): 
-  - state: HistoryState
-  - next: HistoryNode
-  - previous: HistoryNode
-   state: HistoryState
-   previous: Optional<HistoryNode>
-   next: Optional<HistoryNode>
-}
-class HistoryState {
-  + HistoryState(Move, GameState): 
-  - gameState: GameState
-  - move: Move
-  + toAlgebraicString(): String
-  + toString(): String
-   move: Move
-   gameState: GameState
-   white: boolean
+   fiftyMoveRule: boolean
+   undoRequestTurnNumber: int
+   threefoldRepetition: boolean
+   hintIntegers: List<Integer>
+   isGameOver: boolean
    fullTurn: int
+   copy: GameState
+   simplifiedZobristHashing: long
+   fiftyMoveLimit: int
+   board: Board
+   redoRequestTurnNumber: int
 }
-class KingActivityHeuristic {
-  + KingActivityHeuristic(): 
-  + evaluate(BoardRepresentation, boolean): float
-  - kingIsInCenterScore(BoardRepresentation, boolean): float
-  - kingActivityScore(BoardRepresentation, boolean): float
-}
-class KingOppositionHeuristic {
-  + KingOppositionHeuristic(): 
-  - evaluateKingOpposition(BoardRepresentation): float
-  + evaluate(BoardRepresentation, boolean): float
-}
-class KingSafetyHeuristic {
-  + KingSafetyHeuristic(): 
-  + evaluate(BoardRepresentation, boolean): float
-  - kingProtectionScore(BoardRepresentation, boolean): float
-  - kingSafetyToChecksFromEnemy(BoardRepresentation, boolean): float
-  - kingVulnerabilityScore(BoardRepresentation, boolean): float
-}
-class MaterialHeuristic {
-  + MaterialHeuristic(): 
-  + evaluate(BoardRepresentation, boolean): float
-}
-class Minimax {
-  + Minimax(Solver): 
-  + findBestMove(Game, int, boolean): AiMove
-  - minimax(GameAi, int, boolean, boolean): AiMove
-  + toString(): String
-}
-class MobilityHeuristic {
-  + MobilityHeuristic(): 
-  + evaluate(BoardRepresentation, boolean): float
-}
-class MonteCarloTreeSearch {
-  + MonteCarloTreeSearch(Solver, int): 
-  + MonteCarloTreeSearch(Solver): 
-  - simulationLimit: int
-  - backpropagate(TreeNodeMonteCarlo, int): void
-  - expand(GameAi, TreeNodeMonteCarlo): TreeNodeMonteCarlo
-  + toString(): String
-  - select(TreeNodeMonteCarlo): TreeNodeMonteCarlo
-  + findBestMove(Game, int, boolean): AiMove
-  - simulate(GameAi, TreeNodeMonteCarlo): int
-  - getBestMove(TreeNodeMonteCarlo): AiMove
-  - selectRandomMove(List<Move>): Move
-  - evaluateSimulation(GameState): int
-   simulationLimit: int
-}
-class Move {
-  + Move(Position, Position): 
-  + Move(Position, Position, ColoredPiece, boolean): 
-  + Move(Position, Position, ColoredPiece, boolean, ColoredPiece, boolean, boolean): 
-  + Move(Position, Position, ColoredPiece, boolean, ColoredPiece, Position, boolean, boolean): 
-  + Move(Position, Position, ColoredPiece, boolean, ColoredPiece): 
-  + Move(Position, Position, ColoredPiece, boolean, ColoredPiece, Position): 
-  - source: Position
-  - piece: ColoredPiece
-  - check: boolean
-  - checkMate: boolean
-  - dest: Position
-  - takeDest: Position
-  - take: boolean
-  + hashCode(): int
-  + toAlgebraicString(): String
-  + stringToPiece(String): Piece
-  + fromString(String): Move
-  + toUciString(): String
-  + fromString(String, boolean): Move
-  + equals(Object): boolean
-  + fromUciString(String): Move
-  + positionToString(Position): String
-  + isMoveClassical(List<Move>): Optional<Move>
-  + toString(): String
-  + stringToPosition(String): Position
-   piece: ColoredPiece
-   take: boolean
-   takeDest: Position
-   source: Position
-   check: boolean
-   checkMate: boolean
-   dest: Position
-   pieceTaken: ColoredPiece
-}
-class MoveOrdering {
-  - MoveOrdering(): 
-  + getMvvlva(Move): int
-  + moveOrder(List<Move>): List<Move>
-  + getValue(ColoredPiece): int
-}
-class PawnChainHeuristic {
-  + PawnChainHeuristic(): 
-  - evaluatePawnChains(BoardRepresentation, boolean): float
-  + evaluate(BoardRepresentation, boolean): float
-}
-enum Piece << enumeration >> {
-  + Piece(): 
-  + valueOf(String): Piece
-  + values(): Piece[]
-  + getCharRepresentation(boolean): char
-}
-class PromoteMove {
-  + PromoteMove(Position, Position, Piece, ColoredPiece, boolean, ColoredPiece, boolean, boolean): 
-  + PromoteMove(Position, Position, Piece): 
-  + PromoteMove(Position, Position, Piece, ColoredPiece, boolean, ColoredPiece): 
-  - promPiece: Piece
-  + toAlgebraicString(): String
-  + toString(): String
-  + toUciString(): String
-   promPiece: Piece
-}
-class PromotionHeuristic {
-  + PromotionHeuristic(): 
-  + evaluate(BoardRepresentation, boolean): float
-  - pawnsAreCloseToPromotion(BoardRepresentation, boolean): float
-  - pawnsHaveProgressedScore(BoardRepresentation, boolean): float
-}
-class SearchAlgorithm {
-  + SearchAlgorithm(): 
-  - visitedNodes: AtomicLong
-  - visitedNodeList: List<Long>
-  + findBestMove(Game, int, boolean): AiMove
-  + clearNode(): void
-  + addNode(): void
-   visitedNodeList: List<Long>
-   lastVisitedNodeCount: long
-   mean: long
-   visitedNodes: long
-}
-class ShannonBasic {
-  + ShannonBasic(): 
-}
-class Solver {
-  + Solver(): 
-  - startHeuristic: HeuristicType
-  - time: long
-  - moveTimes: List<Long>
-  - searchStopped: boolean
-  - heuristic: Heuristic
-  - endgameHeuristic: HeuristicType
-  - timer: Timer
-  - currentHeuristic: HeuristicType
-  - depth: int
-  - algorithm: SearchAlgorithm
-  + getBestMove(Game): Move
-  + playAiMove(Game): void
-  + stopSearch(boolean): void
-  + toString(): String
-  + evaluateBoard(GameState, boolean): float
-  + setHeuristic(HeuristicType, List<Float>): void
-   heuristic: Heuristic
-   monteCarloAlgorithm: int
-   startHeuristic: HeuristicType
-   endgameHeuristic: HeuristicType
-   depth: int
-   searchStopped: boolean
-   currentHeuristic: HeuristicType
-   algorithm: SearchAlgorithm
-   timer: Timer
-   moveTimes: List<Long>
-   lastMoveTime: long
-   time: long
-}
-class SpaceControlHeuristic {
-  + SpaceControlHeuristic(): 
-  - isInCenter(Position): boolean
-  - isInLeftFlank(Position): boolean
-  + evaluate(BoardRepresentation, boolean): float
-  - evaluateBoardControl(BoardRepresentation, boolean): float
-  - isInRightFlank(Position): boolean
-}
-class StandardHeuristic {
-  + StandardHeuristic(List<Float>): 
-  + StandardHeuristic(): 
-  + toString(): String
-}
-class StandardLightHeuristic {
-  + StandardLightHeuristic(): 
-}
-class TreeNodeMonteCarlo {
-  + TreeNodeMonteCarlo(GameState, TreeNodeMonteCarlo, Move): 
-  - nbVisits: int
-  - startingMove: Move
-  + incrementNbWinsBy(int): void
-  + addChildToTree(TreeNodeMonteCarlo): void
-  + incrementNbVisits(): void
-  + getChildToExplore(double): TreeNodeMonteCarlo
-  - uctValue(TreeNodeMonteCarlo, double): double
-   nbVisits: int
-   nbWins: int
-   childrenNodes: List<TreeNodeMonteCarlo>
-   gameState: GameState
-   startingMove: Move
-   parentNode: TreeNodeMonteCarlo
-   fullyExpanded: boolean
-}
-entity WeightedHeuristic << record >> {
-  + WeightedHeuristic(Heuristic, float): 
-  + weight(): float
-  + heuristic(): Heuristic
-}
-class ZobristHashing {
-  + ZobristHashing(ZobristHashing): 
-  + ZobristHashing(): 
-  - translateCastling(BoardRepresentation): int
-  + generateSimplifiedHashFromBitboards(BoardRepresentation): long
-  - updatePieceHash(long, BoardRepresentation, Move): long
-  + updateHashFromBitboards(long, BoardRepresentation, Move): long
-  - generatePieceHash(BoardRepresentation): long
-  + generateHashFromBitboards(BoardRepresentation): long
-  + updateSimplifiedHashFromBitboards(long, BoardRepresentation, Move): long
-}
+class node6 as "package  pdp.model.ai" << package >>
+class node9 as "package  pdp.model.board" << package >>
+class node1 as "package  pdp.model.history" << package >>
+class node5 as "package  pdp.model.parsers" << package >>
+class node3 as "package  pdp.model.piece" << package >>
+class node7 as "package  pdp.model.savers" << package >>
 
+Game          -[#000082,plain]-^  GameAbstract 
+GameAi        -[#000082,plain]-^  GameAbstract 
 @enduml
