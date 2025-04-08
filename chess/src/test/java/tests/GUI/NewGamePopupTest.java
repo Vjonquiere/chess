@@ -86,8 +86,8 @@ public class NewGamePopupTest extends ApplicationTest {
     assertEquals(30.0, timeSlider.getValue(), 0.1);
     assertTrue(scrollUntilVisible("#timeSlider"));
 
-    timeSlider.setValue(45);
-    assertEquals("45", options.get(OptionType.TIME));
+    timeSlider.setValue(15);
+    assertEquals("15", options.get(OptionType.TIME));
   }
 
   @Test

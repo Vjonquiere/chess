@@ -1243,23 +1243,27 @@ public class BitboardRepresentation implements BoardRepresentation {
 
     if (this.isWhiteLongCastle()
         && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(0, 0)))) { // rook on a1 and king on e1
+            || move.getSource().equals(new Position(0, 0))
+            || move.getDest().equals(new Position(0, 0)))) { // rook on a1 and king on e1
       this.setWhiteLongCastle(false);
     }
     if (this.isWhiteShortCastle()
         && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(7, 0)))) { // rook on h1 and king on e1
+            || move.getSource().equals(new Position(7, 0))
+            || move.getDest().equals(new Position(7, 0)))) { // rook on h1 and king on e1
       this.setWhiteShortCastle(false);
     }
 
     if (this.isBlackShortCastle()
         && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(7, 7)))) { // rook on h8 and king on e8
+            || move.getSource().equals(new Position(7, 7))
+            || move.getDest().equals(new Position(7, 7)))) { // rook on h8 and king on e8
       this.setBlackShortCastle(false);
     }
     if (this.isBlackLongCastle()
         && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(0, 7)))) { // rook on a8 and king on e8
+            || move.getSource().equals(new Position(0, 7))
+            || move.getDest().equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.setBlackLongCastle(false);
     }
     if (this.isPawnPromoting(move.getDest().x(), move.getDest().y(), this.getPlayer())) {
