@@ -538,9 +538,9 @@ supplémentaires pour les règles spécifiques.
     \item long SIDE\_TO\_MOVE
 \end{itemize}
 
-Nous générons donc au départ des nombres aléatoires pour chaque combinaison possible de case et de pièce, que nous mettons dans le tableau `PIECES`.
+Nous générons donc au départ des nombres aléatoires pour chaque combinaison possible de case et de pièce, que nous mettons dans le tableau \textit{PIECES}.
 Nous générons également des nombres correspondant aux en passant possibles ainsi qu'aux droits de roque. Il y a 8 configurations possible pour le en passant :
-une pour chaque colonne ou un en passant pourrait être en cours
+une pour chaque colonne ou un en passant pourrait être en cours.
 Il y a 16 configurations possibles pour le roque, le petit et le grand roque de chaque couleur encore possible ou non (2 valeurs pour 4 roques différents soit 2**4).
 Une fois ces nombres générés, on va pouvoir créer des hash correspondant à un état de plateau en faisant un XOR sur chaque pièce sur le plateau aisni que sur
 les droits particuliers que nous avons pour le en passant et le roque. Il faut également XORer le joueur courant.
@@ -550,7 +550,7 @@ Nous avons également implémeneté une version simplifiée du zobrist hashing, 
 
 La version simplifiée est utilisée pour la règle du fifty move rule, où il ne faut pas revoir le même plateau 3 fois au cours d'une partie.
 La version classique est très utile pour l'intelligence artificielle, pour le calcul des heuristiques en particulier, ce qui nous évite de reclaculer des heuristiques 
-à partir du moment où on l'a calculée une fois. Le gain de temps est considérable car les états de jeu peuvent se répéter un grand nombre de fois.
+à partir du moment où on l'a calculée une fois. Le gain de temps est considérable en particulier lorsqu'on utilise des heuristiques lourdes à calculer.
 
 \subsection{Cache}
 Afin que le programme soit plus performant, le groupe a mis en place un système de "cache". COMPLETER.
@@ -562,11 +562,28 @@ COMPLETER.
 COMPLETER.
 
 \subsection{Code propre}
-Nous avons effectué plusieurs refactor afin d'arriver à une architecture plus claire plusieurs fois au corus du projet. Dans les dernières semaines de développement, 
-lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que `Checkstyle` ou `PMD`.
-Les règles utilisées dans PMD sont disponibles dans le fichier `pmd-rules.xml`.
-Nous avons commencé par rajouter de la documentation sur les classes ainsi que sur leurs fields et méthodes. 
+Nous avons effectué plusieurs refactor afin d'arriver à une architecture plus claire au cours du projet. Dans les dernières semaines de développement, 
+lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que \textit{Checkstyle} ou \textit{PMD}.
 
+Nous avons commencé par rajouter de la documentation sur les classes ainsi que sur leurs fields et méthodes. 
+Le mot clé final a été ajouté sur les variables et fields le nécéssitant. Cela permet de rajouter de la sécurité ainsi que la lisibilité du code.
+Les noms de fonctions ainsi que de variables on été modifiés afin de suivre les normes. Nous avons également suprimé la quasi totalité des \textit{System.out/err}.
+
+Après avoir corrigé de nombreux warnings, environ 500 d'entre eux sont toujours présents.
+Les règles utilisées dans PMD sont disponibles dans le fichier \textit{pmd-rules.xml}.
+Certains de ces warnings ont été jugés 
+comme peu utile comme par exemple les logs devant être entourés de barrières (ce qui est fait dans nos méthodes de logging) ou la taille des commentaires,
+qui correspondait au style Google mais pas à celui de PMD. 
+Ayant décidé d'avoir une application multithreadée ( Bag of commands, vue, IA parralèle), nous avons décicé d'ignorer le warning interdisant l'utilisation de threads.
+En effet, cela concerne les application utilisant Java Enterprise Edition, ce que nous ne faisons pas.
+Le fait d'avoi au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
+Le fait de pouvoir faire un return anticpé dans une fonction est quasi nécéssaire, si nous ne voulons pas entourer le code dans 
+d'énormes blocs de \textit{if}, nous avons donc supprimé la règle correspondante.
+Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujurs explicite (comme \textit{x} pour une position). 
+D'autres sont trop longues, mais avec la présence d'autocomplétion dans la plupart des IDE, nous avons préféré garder des noms explicites, qui peuvent être compliqué à raccoucir,
+comme \textit{isLastMoveDoublePush}.
+
+Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6000 warnings à moins de 500.
 
 \section{Architecture du projet}
 Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que d'extensibilité.
@@ -639,15 +656,22 @@ Premièrement, les échecs bénéficient d'évaluations positionnelles efficaces
 Enfin, les engines d'échecs modernes tirent parti d'optimisations telles que le move ordering, des bibliothèques d'ouvertures, améliorant ainsi les performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par des techniques spécifiques d'IA comme les réseaux de neuronnes, son efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs. Maintenant, le groupe admet que son implémentation du MCTS est 
 lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState
 Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité sans optimisation.
+
+\subsubsection{Clean Code}
+Même en enlevant les règles nous paraissant superflues, nous avons toujours environ 500 warning à résoudre.
+Afin de retirer les \textit{System.out/err}, nous avons crée des fonctions \textit{print} et \textit{error}, qui sont des wrappers de ces fonctions. Il serait plus judicieux de créer
+des loggers pour ces opérations.
+Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce quicorrespond à un projet à part entière.
+Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
 \subsection{Critiques positives}
 COMPLETER ICI PAR DES CRITIQUES POSITIVES.
 Par exemple, la communication entre IA (avec stockfish etc.).
 
 \subsection{Perspectives}
 \subsubsection{Mode Multi-joueur}
-Certainement l'amélioration la plus intrigante serait un mode multi-joueur, dans le même style que chess.com ou lichess.org pour ne citer qu'eux.
-Le projet prendrait néanmoins une toute autre direction puisque les joueurs devraient se connecter à un serveur afin de jouer en temps réel. Autrement,
-par Peer-To-Peer, même si soultion "bancale" de par la nécessité d'encryption etc.
+Certainement l'amélioration la plus intéressante serait un mode multi-joueur, dans le même style que chess.com ou lichess.org pour ne citer qu'eux.
+Le projet prendrait néanmoins une toute autre direction puisque les joueurs devraient se connecter à un serveur afin de jouer en temps réel. Une
+autre solution serait le Peer-To-Peer.
 
 \subsubsection{Tourner l'échiquier}
 Dans notre application, c'est toujours les pièces blanches qui sont situées en bas. Une amélioration graphique serait la possibilité d'inverser le plateau
