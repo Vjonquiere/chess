@@ -83,7 +83,7 @@ def run_single_game(weights):
     cmdStr = "--ai-weight-w=1000.0"
     cmdStr += "," + ",".join(map(str, weights))
     engine2 = chess.engine.SimpleEngine.popen_uci([
-        "java", "-jar", JAR_PATH, "-uci", "-ai-depth=1", "-a=A", "--ai-endgame-w=STANDARD", cmdStr
+        "java", "-jar", JAR_PATH, "-uci", "-ai-depth=4", "-a=A", "--ai-endgame-w=STANDARD", cmdStr
     ])
 
     engines = [engine1, engine2]
@@ -105,10 +105,30 @@ def run_single_game(weights):
                     result = engines[1].play(board, chess.engine.Limit(time=0.5))
 
             if board.is_capture(result.move):
-                if board.color_at(result.move.to_square) == chess.WHITE:
-                    captures_black += 1
+                if board.is_en_passant(result.move):
+                    captured_piece_value = 1 
                 else:
-                    captures_white += 1
+                    captured_piece = board.piece_at(result.move.to_square)
+                    if captured_piece:
+                        piece_type = captured_piece.piece_type
+                        if piece_type == chess.PAWN:
+                            captured_piece_value = 1
+                        elif piece_type in (chess.KNIGHT, chess.BISHOP):
+                            captured_piece_value = 3
+                        elif piece_type == chess.ROOK:
+                            captured_piece_value = 5
+                        elif piece_type == chess.QUEEN:
+                            captured_piece_value = 9
+                        else:
+                            captured_piece_value = 0
+                    else:
+                        captured_piece_value = 0 
+
+                capturer_color = board.color_at(result.move.from_square)
+                if capturer_color == chess.WHITE:
+                    captures_white += captured_piece_value
+                else:
+                    captures_black += captured_piece_value
 
             board.push(result.move)
             moves += 1
