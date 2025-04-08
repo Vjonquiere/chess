@@ -66,6 +66,7 @@ public class Board extends GridPane {
    * @param stage The stage to add the board.
    */
   public Board(final Game game, final Stage stage) {
+    super();
     this.boardRep = game.getBoard();
     this.boardColumns = boardRep.getNbCols();
     this.boardRows = boardRep.getNbRows();
@@ -104,24 +105,24 @@ public class Board extends GridPane {
         pieces.put(new Position(x, boardRows - 1 - y), square);
         super.add(square, x, y);
         if (boardRows - 1 - y == 0) {
-          Label label = new Label(String.valueOf(letter));
+          final Label label = new Label(String.valueOf(letter));
           label.setStyle(
               "-fx-text-fill: "
                   + GuiView.getTheme().getText()
                   + ";-fx-padding: 0 0 0 5;-fx-font-weight: bold;");
-          GridPane.setHalignment(label, HPos.LEFT);
-          GridPane.setValignment(label, VPos.BOTTOM);
+          setHalignment(label, HPos.LEFT);
+          setValignment(label, VPos.BOTTOM);
           super.add(label, x, y);
           letter++;
         }
         if (x == 7) {
-          Label label = new Label(String.valueOf(number));
+          final Label label = new Label(String.valueOf(number));
           label.setStyle(
               "-fx-text-fill: "
                   + GuiView.getTheme().getText()
                   + ";-fx-padding: 0 5 0 0;-fx-font-weight: bold;");
-          GridPane.setHalignment(label, HPos.RIGHT);
-          GridPane.setValignment(label, VPos.TOP);
+          setHalignment(label, HPos.RIGHT);
+          setValignment(label, VPos.TOP);
           super.add(label, x, y);
           number--;
         }
@@ -130,7 +131,7 @@ public class Board extends GridPane {
   }
 
   /** Update the pieces sprites of all squares. */
-  public void updateBoard(boolean withAnimation) {
+  public void updateBoard(final boolean withAnimation) {
     cleanHintSquares();
     clearCheckSquare();
     clearLastMoveSquares();

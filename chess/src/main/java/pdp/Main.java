@@ -11,7 +11,11 @@ import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 
 /** Base of the application. */
-public class Main {
+public final class Main {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private Main() {}
+
   /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 

@@ -32,7 +32,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
       Logger.getLogger(AlphaBetaIterativeDeepeningParallel.class.getName());
 
   /** Boolean to indicate whether the search has been stopped before reaching the depth asked. */
-  private AtomicBoolean stoppedEarly = new AtomicBoolean(false);
+  private final AtomicBoolean stoppedEarly = new AtomicBoolean(false);
 
   static {
     Logging.configureLogging(LOGGER);
@@ -44,6 +44,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBetaIterativeDeepeningParallel(final Solver solver) {
+    super();
     this.solver = solver;
   }
 
@@ -88,7 +89,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
               alphaBeta(
                   firstGameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
           currentBest = new AiMove(firstMove, firstResult.score());
-        } catch (IllegalMoveException e) {
+        } catch (IllegalMoveException ignored) {
           // Illegal move, normal search
         }
       }
@@ -146,7 +147,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
     }
 
     debug(LOGGER, "Best move: " + bestMove);
-    long visitedNodes = getVisitedNodes();
+    final long visitedNodes = getVisitedNodes();
     clearNode();
     debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
@@ -217,7 +218,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
         if (alpha >= beta) {
           break;
         }
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Skipping illegal move
       }
     }

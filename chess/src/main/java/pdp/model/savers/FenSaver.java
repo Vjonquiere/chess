@@ -10,7 +10,10 @@ import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 
 /** Save boards to the universal FEN format. */
-public class FenSaver {
+public final class FenSaver {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private FenSaver() {}
 
   /**
    * Generate the FEN string representing the current board position.

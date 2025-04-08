@@ -68,7 +68,7 @@ public class Solver {
   private HeuristicType endgameHeuristic;
 
   /** The move reflexion time in nanoseconds. */
-  private List<Long> moveTimes;
+  private final List<Long> moveTimes;
 
   /**
    * Depth for the SearchAlgorithm. The algorithm will play depth consecutive moves before

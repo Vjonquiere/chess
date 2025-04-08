@@ -3,7 +3,11 @@ package pdp.view.gui;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Optional;
-import javafx.scene.control.*;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -42,6 +46,7 @@ public class ChessMenu extends HBox {
    * Options.
    */
   public ChessMenu() {
+    super();
     messageDisplay = new MessageDisplay();
     final MenuBar menuBar = new MenuBar();
     menuBar.setId("menuBar");
@@ -152,10 +157,7 @@ public class ChessMenu extends HBox {
    */
   private Menu createGameMenu() {
     final MenuItem start = new MenuItem(TextGetter.getText("start"));
-    start.setOnAction(
-        e -> {
-          BagOfCommands.getInstance().addCommand(new StartGameCommand());
-        });
+    start.setOnAction(e -> BagOfCommands.getInstance().addCommand(new StartGameCommand()));
     final MenuItem undo = new MenuItem(TextGetter.getText("undo"));
     undo.setOnAction(
         e -> {
@@ -202,10 +204,7 @@ public class ChessMenu extends HBox {
           new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
         });
     final MenuItem hint = new MenuItem(TextGetter.getText("hint"));
-    hint.setOnAction(
-        e -> {
-          new YesNoPopUp("hintInstructionsGui", new AskHintCommand(), null);
-        });
+    hint.setOnAction(e -> new YesNoPopUp("hintInstructionsGui", new AskHintCommand(), null));
     final Menu gameMenu = new Menu(TextGetter.getText("game"));
     gameMenu.getItems().add(start);
     gameMenu.getItems().add(undo);
@@ -236,12 +235,9 @@ public class ChessMenu extends HBox {
    */
   private Menu createOptionsMenu() {
     final Menu optionsMenu = new Menu(TextGetter.getText("options"));
-    RadioMenuItem monitor = new RadioMenuItem(TextGetter.getText("monitor"));
+    final RadioMenuItem monitor = new RadioMenuItem(TextGetter.getText("monitor"));
     monitor.setSelected(GuiView.getMonitoringStatus());
-    monitor.setOnAction(
-        event -> {
-          GuiView.toggleMonitoring();
-        });
+    monitor.setOnAction(event -> GuiView.toggleMonitoring());
     optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu(), monitor);
     return optionsMenu;
   }
@@ -275,10 +271,7 @@ public class ChessMenu extends HBox {
       themes.getItems().add(theme);
     }
     final MenuItem customize = new MenuItem("Customize");
-    customize.setOnAction(
-        e -> {
-          openThemePopup();
-        });
+    customize.setOnAction(e -> openThemePopup());
     themes.getItems().add(customize);
     return themes;
   }

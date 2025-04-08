@@ -11,7 +11,11 @@ import javafx.util.Duration;
 import pdp.view.GuiView;
 
 /** Creates a pop-up that fades away in 2 seconds. */
-public class InfoPopUp {
+public final class InfoPopUp {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private InfoPopUp() {}
+
   /**
    * Displays a pop-up during 2 seconds, that fades into the background. It displays the given
    * message.

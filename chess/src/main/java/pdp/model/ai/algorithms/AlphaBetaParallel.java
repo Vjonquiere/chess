@@ -68,7 +68,7 @@ public class AlphaBetaParallel extends SearchAlgorithm {
         final AiMove firstResult =
             alphaBeta(firstGameCopy, depth - 1, !player, -Float.MAX_VALUE, Float.MAX_VALUE, player);
         bestMove = new AiMove(firstMove, firstResult.score());
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Illegal move, normal search
       }
 
@@ -173,7 +173,7 @@ public class AlphaBetaParallel extends SearchAlgorithm {
         if (alpha >= beta) {
           break;
         }
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Skipping illegal move
       }
     }

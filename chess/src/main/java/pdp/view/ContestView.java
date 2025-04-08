@@ -3,6 +3,7 @@ package pdp.view;
 import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
@@ -26,9 +27,10 @@ import pdp.utils.TextGetter;
 /** View used to handle the game in contest mode. */
 public class ContestView implements View {
   /** Logger of the class. */
-  private static final Logger LOGGER = Logger.getLogger(UciView.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(ContestView.class.getName());
 
-  private boolean running = false;
+  /** Boolean to indicate if the view is currently running. */
+  private boolean running;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -78,16 +80,13 @@ public class ContestView implements View {
    */
   @Override
   public void onGameEvent(final EventType event) {
-    switch (event) {
-      case MOVE_PLAYED -> {
-        print(Game.getInstance().getGameRepresentation());
-        Optional<HistoryNode> lastMove = Game.getInstance().getHistory().getCurrentMove();
-        if (lastMove.isPresent()) {
-          print(TextGetter.getText("movePlayed", lastMove.get().getState().getMove().toString()));
-        }
-        running = false;
+    if (Objects.requireNonNull(event) == EventType.MOVE_PLAYED) {
+      print(Game.getInstance().getGameRepresentation());
+      final Optional<HistoryNode> lastMove = Game.getInstance().getHistory().getCurrentMove();
+      if (lastMove.isPresent()) {
+        print(TextGetter.getText("movePlayed", lastMove.get().getState().getMove().toString()));
       }
-      default -> {}
+      running = false;
     }
   }
 

@@ -7,12 +7,12 @@ import pdp.model.board.PromoteMove;
 import pdp.model.piece.ColoredPiece;
 
 /** An algorithm to order moves on several parameters to maximise the Alpha-Beta cuts. */
-public class MoveOrdering {
+public final class MoveOrdering {
 
   /** Comparison function for moves. */
   public static Comparator<Move> moveOrderingComparator =
       (m1, m2) -> {
-        final int captureComparison = Integer.compare(getMVVLVA(m2), getMVVLVA(m1));
+        final int captureComparison = Integer.compare(getMvvlva(m2), getMvvlva(m1));
         if (captureComparison != 0) {
           return captureComparison;
         }
@@ -30,6 +30,9 @@ public class MoveOrdering {
 
         return 0;
       };
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private MoveOrdering() {}
 
   /**
    * Order the given moves by executing the sort algorithm.
@@ -65,7 +68,7 @@ public class MoveOrdering {
    * @param move The move to get the score.
    * @return The score corresponding to the move.
    */
-  public static int getMVVLVA(final Move move) {
+  public static int getMvvlva(final Move move) {
     if (move.getPieceTaken() == null) {
       return 0;
     }
