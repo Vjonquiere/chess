@@ -14,6 +14,7 @@
 \usepackage{pifont}
 \usepackage[a4paper, margin=1.5cm]{geometry}  
 \usepackage{longtable}
+\usepackage{float}
 
 \graphicspath{ {./res/} }
 
@@ -180,176 +181,147 @@ Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joue
     \item 8 pions
 \end{itemize}
 
-\begin{minipage}{\textwidth}
+\begin{figure}[h]
     \centering
-    Voici l'échiquier au début de la partie. \\
-    \includegraphics[width=0.6\textwidth]{jeuDepart.png}
-    \vspace{0.5cm}
-\end{minipage}
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{jeuDepart.png}
+    \caption{Position initiale des pièces}
+\end{figure}
 
 Le joueur avec les pièces blanches commence. Ensuite, chaque joueur joue à tour de rôle, un déplacement de pièce par tour.
 
-\subsection{Déplacements des Pièces}
+\subsection{Déplacements des pièces}
+
 Les déplacements sont propres à chaque type de pièce :
-\vspace{0.5cm}
 
+\subsubsection*{Pion}
+Le pion avance uniquement en ligne droite, d'une case à la fois. Lors de son premier déplacement, il peut avancer de deux cases. Il capture les pièces adverses en diagonale.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{pionMove.png}
+    \caption{Déplacement du pion}
+\end{figure}
+
+\subsubsection*{Cavalier}
+Le cavalier se déplace en forme de "L" : deux cases dans une direction, puis une case perpendiculaire. Il peut sauter par-dessus d'autres pièces.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{cavalierMove.png}
+    \caption{Déplacement du cavalier}
+\end{figure}
+
+\subsubsection*{Fou}
+Le fou se déplace en diagonale sur un nombre illimité de cases, sans sauter d'autres pièces. Il reste toujours sur des cases de la même couleur.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{fouMove.png}
+    \caption{Déplacement du fou}
+\end{figure}
+
+\subsubsection*{Tour}
+La tour se déplace horizontalement ou verticalement sur un nombre illimité de cases. Elle contrôle des lignes entières.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{tourMove.png}
+    \caption{Déplacement de la tour}
+\end{figure}
+
+\subsubsection*{Dame}
+La dame combine les mouvements du fou et de la tour. Elle peut se déplacer horizontalement, verticalement et en diagonale.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{dameMove.png}
+    \caption{Déplacement de la dame}
+\end{figure}
+
+\subsubsection*{Roi}
+Le roi se déplace d'une case dans toutes les directions. Il est la pièce la plus importante, mais aussi vulnérable.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{roiMove.png}
+    \caption{Déplacement du roi}
+\end{figure}
+
+\subsection{Règles spécifiques}
+
+\subsubsection*{Clouage}
+Lorsqu'une pièce intercepte une menace dirigée contre le roi, elle est \textbf{clouée} : elle ne peut pas bouger, sous peine de mettre le roi en échec.
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{clouage1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{clouage2.png}
+    \end{minipage}
+    \caption{Exemple de Clouage}
+\end{figure}
+
+\subsubsection*{Roque}
+Le \textbf{roque} est un mouvement spécial impliquant le roi et une tour. Il est soumis aux conditions suivantes :
 \begin{itemize}
-    \item \begin{minipage}{0.45\textwidth}
-        \textbf{Déplacement du pion :} \\
-        Le pion avance uniquement en ligne droite, d'une case à la fois. Toutefois, lors de son premier déplacement, 
-        il a la possibilité d'avancer de deux cases. Contrairement à son déplacement habituel, le pion capture les pièces
-         adverses en diagonale, en se déplaçant d'une case.
-    \end{minipage}
-    \hspace{0.05\textwidth}
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{pionMove.png}
-    \end{minipage}
-
-    \vspace{0.5cm}
-
-    \item \begin{minipage}{0.45\textwidth}
-        \textbf{Déplacement du cavalier :} \\
-        Le cavalier a un déplacement unique en forme de "L", ce qui signifie qu'il se déplace de deux cases dans une direction,
-        puis d'une case perpendiculairement (ou inversement). C'est la seule pièce capable de sauter par-dessus d'autres 
-        pièces sur l'échiquier.
-    \end{minipage}
-    \hspace{0.05\textwidth}
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{cavalierMove.png}
-    \end{minipage}
-
-    \vspace{0.5cm}
-
-    \item \begin{minipage}{0.45\textwidth}
-        \textbf{Déplacement du fou :} \\
-        Le fou se déplace en diagonale sur un nombre illimité de cases, tant qu'il n'est pas bloqué par une autre pièce.
-         Chaque fou reste toujours sur des cases de la couleur d'où il a commencé (blanches ou noires).
-    \end{minipage}
-    \hspace{0.05\textwidth}
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fouMove.png}
-    \end{minipage}
-
-    \vspace{0.5cm}
-
-    \item \begin{minipage}{0.45\textwidth}
-        \textbf{Déplacement de la tour :} \\
-        La tour peut se déplacer de manière illimitée en ligne droite, que ce soit horizontalement ou verticalement.
-        Sa puissance réside dans sa capacité à contrôler des colonnes et des rangées entières.
-    \end{minipage}
-    \hspace{0.05\textwidth}
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{tourMove.png}
-    \end{minipage}
-
-    \vspace{0.5cm}
-
-    \item \begin{minipage}{0.45\textwidth}
-        \textbf{Déplacement de la dame :} \\
-        La dame est la pièce la plus puissante du jeu. Elle combine les capacités de déplacement du fou et de la tour:
-        elle peut se déplacer d'un nombre illimité de cases horizontalement, verticalement ou en diagonale.
-    \end{minipage}
-    \hspace{0.05\textwidth}
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{dameMove.png}
-    \end{minipage}
-
-    \vspace{0.5cm}
-
-    \item \begin{minipage}{0.45\textwidth}
-        \textbf{Déplacement du roi :} \\
-        Le roi peut se déplacer d'une case dans n'importe quelle direction: horizontalement, verticalement ou en diagonale.
-        Bien qu'il soit la pièce la plus importante, son mouvement limité le rend vulnérable.
-    \end{minipage}
-    \hspace{0.05\textwidth}
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{roiMove.png}
-    \end{minipage}
-
+    \item Ni le roi ni la tour n'ont bougé.
+    \item Le roi n'est pas en échec.
+    \item Aucune des cases traversées par le roi n'est attaquée.
+    \item Aucune pièce ne se trouve entre le roi et la tour.
 \end{itemize}
 
-\vspace{0.5cm}
-
-Parfois, les déplacements peuvent être limités par des règles spécifiques comme le \textbf{clouage}. Voyons ces règles en détail.
-
-\subsection{Règles Spécifiques}
-\paragraph{-Clouage} Si une pièce défend une attaque au roi en se positionnant devant cette dernière, on dit qu'elle est \textbf{clouée}
- et ne peut pas bouger. En effet, il est interdit de mettre son roi en échec volontairement par l'une de ses propres actions.
-
- \noindent
- \begin{minipage}{0.48\textwidth}
-     \centering
-     \includegraphics[width=\textwidth, height=\textwidth]{clouage1.png}
-     \vspace{0.5cm}
-    \textbf{Exemple de clouage}
- \end{minipage}
- \hfill
- \begin{minipage}{0.48\textwidth}
-     \centering
-     \includegraphics[width=\textwidth, height=\textwidth]{clouage2.png}
-     \vspace{0.5cm}
- \end{minipage}
-
-\paragraph{-Roque} Le \textbf{roque} est un mouvement spécial impliquant le roi et une des tours, sous certaines conditions :
-\begin{itemize}
-    \item Le roi et la tour concernés n'ont jamais bougé depuis le début de la partie.
-    \item Le roi ne doit pas être en échec, et aucune des cases qu'il traverse ou sur laquelle il atterrit ne doit être attaquée.
-    \item Il ne doit y avoir aucune pièce entre le roi et la tour.
-\end{itemize}
-
-\noindent
-\begin{minipage}{0.48\textwidth}
+\begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth, height=\textwidth]{roque1.png}
-    \vspace{0.5cm}
-   \textbf{Exemple de roque}
-\end{minipage}
-\hfill
-\begin{minipage}{0.48\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{roque1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{roque2.png}
+    \end{minipage}
+    \caption{Exemple de Roque}
+\end{figure}
+
+\subsubsection*{Prise en passant}
+Lorsqu'un pion adverse avance de deux cases depuis sa position initiale et finit à côté de l’un de nos pions, on peut le capturer \textbf{en passant} au coup suivant uniquement.
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth, height=\textwidth]{roque2.png}
-    \vspace{0.5cm}
-\end{minipage}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{enpassant1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{enpassant2.png}
+    \end{minipage}
+    \caption{Exemple d'En passant}
+\end{figure}
 
-\paragraph{-Prise en Passant} Si un pion adverse avance de deux cases depuis sa position initiale et finit à côté d'un de nos pions,
- on peut le capturer \textbf{en passant}, mais uniquement au coup suivant.
+\subsubsection*{Promotion du pion}
+Lorsqu'un pion atteint la dernière rangée, il peut être promu en dame, tour, fou ou cavalier. Cette promotion peut représenter un avantage décisif.
 
- \noindent
- \begin{minipage}{0.48\textwidth}
-     \centering
-     \includegraphics[width=\textwidth, height=\textwidth]{enpassant1.png}
-     \vspace{0.5cm}
-    \textbf{Exemple de en passant}
- \end{minipage}
- \hfill
- \begin{minipage}{0.48\textwidth}
-     \centering
-     \includegraphics[width=\textwidth, height=\textwidth]{enpassant2.png}
-     \vspace{0.5cm}
- \end{minipage}
-
-\paragraph{-Promotion du Pion} Si un pion atteint la dernière rangée de l'échiquier, il peut être promu en dame,
- tour, fou ou cavalier. La promotion du pion est souvent synonyme d'avantage conséquent et peut mener à une victoire.
-
- \noindent
- \begin{minipage}{0.48\textwidth}
-     \centering
-     \includegraphics[width=\textwidth, height=\textwidth]{promotion1.png}
-     \vspace{0.5cm}
-    \textbf{Exemple de promotion}
- \end{minipage}
- \hfill
- \begin{minipage}{0.48\textwidth}
-     \centering
-     \includegraphics[width=\textwidth, height=\textwidth]{promotion2.png}
-     \vspace{0.5cm}
- \end{minipage}
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{promotion1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{promotion2.png}
+    \end{minipage}
+    \caption{Exemple de promotion}
+\end{figure}
 
 \subsection{Fin de Partie}
 Une partie d'échecs peut se terminer de plusieurs façons :
