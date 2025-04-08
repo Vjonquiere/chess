@@ -41,7 +41,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   private static final BitboardCache CACHE;
 
   /** Zobrist hashing instance used to generate the hash. */
-  private ZobristHashing zobristHashing = new ZobristHashing();
+  private ZobristHashing zobristHashing;
 
   /** Zobrist simple hash generated for the board at a given moment. */
   private long simpleHash;
@@ -146,6 +146,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[10] = new Bitboard(4_755_801_206_503_243_776L); // BKi
     board[11] = new Bitboard(71_776_119_061_217_280L);
 
+    this.zobristHashing = new ZobristHashing();
     this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
@@ -259,6 +260,8 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[9] = blackRooks;
     board[10] = blackKnights;
     board[11] = blackPawns;
+
+    this.zobristHashing = new ZobristHashing();
   }
 
   /**
@@ -1209,6 +1212,7 @@ public class BitboardRepresentation implements BoardRepresentation {
 
   public void setZobristHashing(final ZobristHashing zobristHashing) {
     this.zobristHashing = zobristHashing;
+    this.simpleHash = this.zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   /**

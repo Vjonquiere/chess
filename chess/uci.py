@@ -13,7 +13,7 @@ GENS = 1
 MUTATION_RATE = 0.2
 CROSSOVER_RATE = 0.5
 WEIGHT_RANGE = (0.0, 1.0)
-STOCKFISH_ELO = 1320
+STOCKFISH_ELO = 1350
 
 # --- Java Program Path ---
 JAR_PATH = "target/chess-0.0.4.jar"
