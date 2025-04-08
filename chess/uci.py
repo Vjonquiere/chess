@@ -6,14 +6,17 @@ import chess.engine
 import threading
 import csv
 import multiprocessing
+from concurrent.futures import ThreadPoolExecutor
+import pickle
 
 # --- Constants ---
 POP_SIZE = 20
-GENS = 1
+GENS = 10  # Run for multiple generations
 MUTATION_RATE = 0.2
 CROSSOVER_RATE = 0.5
 WEIGHT_RANGE = (0.0, 1.0)
 STOCKFISH_ELO = 1350
+CURRENT_GEN = 0
 
 # --- Java Program Path ---
 JAR_PATH = "target/chess-0.0.4.jar"
@@ -25,8 +28,33 @@ csv_lock = threading.Lock()
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMax)
 
+
+def save_checkpoint(population, current_gen, hof):
+    checkpoint_data = {
+        "population": population,
+        "current_gen": current_gen,
+        "hof": hof,
+    }
+
+    with open("checkpoint.pkl", "wb") as f:
+        pickle.dump(checkpoint_data, f)
+    print(f"Checkpoint saved at generation {current_gen}")
+
+
+def load_checkpoint():
+    try:
+        with open("checkpoint.pkl", "rb") as f:
+            checkpoint_data = pickle.load(f)
+        print("Checkpoint loaded.")
+        return checkpoint_data
+    except FileNotFoundError:
+        print("No checkpoint found, starting fresh.")
+        return None
+
 def eval_fitness(weights):
     moves = 0
+    captures_white = 0
+    captures_black = 0
     board = chess.Board()
 
     engine1 = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
@@ -35,30 +63,38 @@ def eval_fitness(weights):
     cmdStr = "--ai-weight-w=1000.0"
     cmdStr += "," + ",".join(map(str, weights))
 
-    engine2 = chess.engine.SimpleEngine.popen_uci(["java", "-jar", JAR_PATH, "-uci", "-ai-depth=2", "-a=A", "--ai-endgame-w=STANDARD", cmdStr])
-
+    engine2 = chess.engine.SimpleEngine.popen_uci(["java", "-jar", JAR_PATH, "-uci", "-ai-depth=4", "-a=A", "--ai-endgame-w=STANDARD", cmdStr])
 
     engines = [engine1, engine2]
     random.shuffle(engines)
     turn = 0
     engine2_is_white = engines[0] == engine2
-
-    while not board.is_game_over():
-        if turn == 0:
-            if engines[0] == engine2:
-                result = engines[0].play(board, chess.engine.Limit(time=15000))
+    try:
+        while not board.is_game_over():
+            if turn == 0:
+                if engines[0] == engine2:
+                    result = engines[0].play(board, chess.engine.Limit(time=15000))
+                else:
+                    result = engines[0].play(board, chess.engine.Limit(time=0.5))
             else:
-                result = engines[0].play(board, chess.engine.Limit(time=0.5))
-        else:
-            if engines[1] == engine2:
-                result = engines[1].play(board, chess.engine.Limit(time=15000))
-            else:
-                result = engines[1].play(board, chess.engine.Limit(time=0.5))
+                if engines[1] == engine2:
+                    result = engines[1].play(board, chess.engine.Limit(time=15000))
+                else:
+                    result = engines[1].play(board, chess.engine.Limit(time=0.5))
 
-        board.push(result.move)
-        moves += 1
+            if board.is_capture(result.move):
+                if board.color_at(result.move.to_square) == chess.WHITE:
+                    captures_black += 1
+                else:
+                    captures_white += 1
 
-        turn = 1 - turn  # Switch turn
+            board.push(result.move)
+            moves += 1
+
+            turn = 1 - turn
+    except Exception as e:
+        print(e)
+        return (0.0,)
 
     print("Game Over!", board.result(), " / ", moves, " moves")
 
@@ -67,7 +103,7 @@ def eval_fitness(weights):
 
     game_result = board.result()
 
-    log_game_result(engine2_is_white, game_result, moves, 0, weights)
+    log_game_result(engine2_is_white, game_result, moves, weights, captures_white, captures_black)
 
     if engines[0] == engine2:  # If engine2 played as White
         if game_result == "1-0":
@@ -84,20 +120,18 @@ def eval_fitness(weights):
         else:
             return (0.5,)
 
-def log_game_result(engine2_is_white, game_result, moves, captures, weights):
+def log_game_result(engine2_is_white, game_result, moves, weights, white_captures, black_captures):
     weights_str = ";".join(map(str, weights))
-
+    win = -1
     if engine2_is_white:
-        white_result = game_result
-        black_result = "1-0" if game_result == "0-1" else "0-1" if game_result == "1-0" else "1/2-1/2"
+        win = 0 if game_result == "0-1" else 1 if game_result == "1-0" else 2
     else:
-        black_result = game_result
-        white_result = "1-0" if game_result == "0-1" else "0-1" if game_result == "1-0" else "1/2-1/2"
+        win = 1 if game_result == "0-1" else 0 if game_result == "1-0" else 2
 
     with csv_lock:
         with open(CSV_FILEPATH, mode="a", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow([white_result, black_result, moves, captures, engine2_is_white, weights_str])
+            writer.writerow([CURRENT_GEN, game_result, win, moves, white_captures, black_captures, engine2_is_white, weights_str])
 
 toolbox = base.Toolbox()
 toolbox.register("attr_float", random.uniform, *WEIGHT_RANGE)
@@ -109,32 +143,46 @@ toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=2, indpb=MUTATION_RATE
 toolbox.register("select", tools.selTournament, tournsize=3)
 
 def parallel_eval(population):
-    # Use Pool to parallelize fitness evaluations
-    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        fitness_values = pool.map(toolbox.evaluate, population)
+    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        fitness_values = list(executor.map(toolbox.evaluate, population))
+
     for ind, fit in zip(population, fitness_values):
         ind.fitness.values = fit
 
 def main():
-    with open(CSV_FILEPATH, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(["White Result", "Black Result", "Moves", "Captures", "White", "Weights"])
+    global CURRENT_GEN
+    checkpoint_data = load_checkpoint()
 
-    pop = toolbox.population(n=POP_SIZE)
-    hof = tools.HallOfFame(1)
+    if checkpoint_data:
+        pop = checkpoint_data["population"]
+        CURRENT_GEN = checkpoint_data["current_gen"]
+        hof = checkpoint_data["hof"]
+    else:
+        pop = toolbox.population(n=POP_SIZE)
+        hof = tools.HallOfFame(1)
+        CURRENT_GEN = 0
+
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("max", np.max)
 
-    # Use parallel_eval to evaluate the fitness function in parallel
-    parallel_eval(pop)
+    for gen in range(CURRENT_GEN, GENS):
+        print(f"Generation {gen+1}")
+        parallel_eval(pop)
+        pop = algorithms.varAnd(pop, toolbox, cxpb=CROSSOVER_RATE, mutpb=MUTATION_RATE)
+        parallel_eval(pop)
+        hof.update(pop)
+        record = stats.compile(pop)
+        print(record)
 
-    pop, _ = algorithms.eaSimple(pop, toolbox, cxpb=CROSSOVER_RATE, mutpb=MUTATION_RATE,
-                                 ngen=GENS, stats=stats, halloffame=hof, verbose=True)
+        save_checkpoint(pop, gen + 1, hof)
+
+        CURRENT_GEN += 1
 
     best_weights = hof[0]
     print("\nBest Weights Found:")
-    print("White:", best_weights[:7])
-    print("Black:", best_weights[7:])
+    print("White:", best_weights)
+
+
 
 if __name__ == "__main__":
     main()
