@@ -32,7 +32,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
       Logger.getLogger(AlphaBetaIterativeDeepeningParallel.class.getName());
 
   /** Boolean to indicate whether the search has been stopped before reaching the depth asked. */
-  private AtomicBoolean stoppedEarly = new AtomicBoolean(false);
+  private final AtomicBoolean stoppedEarly = new AtomicBoolean(false);
 
   static {
     Logging.configureLogging(LOGGER);
