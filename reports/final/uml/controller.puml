@@ -1,0 +1,94 @@
+@startuml Controller
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+package commands{
+    class AskHintCommand {
+    + AskHintCommand(): 
+    + execute(Game, GameController): Optional<Exception>
+    }
+    entity CancelDrawCommand << record >> {
+        + CancelDrawCommand(boolean): 
+        - isWhite: boolean
+        + execute(Game, GameController): Optional<Exception>
+        isWhite: boolean
+    }
+    class CancelMoveCommand {
+        + CancelMoveCommand(): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    class ChangeLangCommand {
+        + ChangeLangCommand(): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    class ChangeThemeCommand {
+        + ChangeThemeCommand(): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+
+    class PlayMoveCommand {
+        + PlayMoveCommand(String): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    class ProposeDrawCommand {
+        + ProposeDrawCommand(boolean): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    class RestartCommand {
+        + RestartCommand(): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    class RestoreMoveCommand {
+        + RestoreMoveCommand(): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    class SaveGameCommand {
+        + SaveGameCommand(String): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    class StartGameCommand {
+        + StartGameCommand(): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+    entity SurrenderCommand << record >> {
+        + SurrenderCommand(boolean): 
+        - isWhite: boolean
+        + execute(Game, GameController): Optional<Exception>
+        isWhite: boolean
+    }
+    class UndoMultipleMoveCommand {
+        + UndoMultipleMoveCommand(int): 
+        + execute(Game, GameController): Optional<Exception>
+    }
+
+}
+
+class BagOfCommands {
+  - BagOfCommands(): 
+  - instance: BagOfCommands
+  - model: Game
+  - controller: GameController
+  - processCommands(): void
+  + addCommand(Command): void
+   model: Game
+   running: boolean
+   controller: GameController
+   instance: BagOfCommands
+}
+
+interface Command << interface >> {
+  + execute(Game, GameController): Optional<Exception>
+}
+class GameController {
+  + GameController(Game, View, BagOfCommands): 
+  - model: Game
+  - view: View
+  + onErrorEvent(Exception): void
+   view: View
+   model: Game
+}
+
+
+@enduml

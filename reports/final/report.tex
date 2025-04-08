@@ -587,6 +587,8 @@ Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6
 
 \section{Architecture du projet}
 Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que d'extensibilité.
+Le Controller agit comme interprète entre la vue et le Model, il va recevoir des commandes de la part de la Vue et appeler les fonctions correspondantes dans le Model.
+La vue a tout de même accès au Model, afin de récuperer les changements à afficher, ce qui évite de surcharcher le controller.
 
 Les différents modules principaux de notre projet sont les suivants : \textbf{Model}, \textbf{Controller}, \textbf{Vue}, \textbf{Events}, \textbf{Utils}
 et \textbf{Exceptions}. 
@@ -609,6 +611,17 @@ Voici l'architecture UML du projet :
     \item \textbf{Exceptions} : Contient les types d'exceptions personnalisées qui peuvent survenir dans le programme et nous permettant d'agir en conséquence.
 \end{itemize}
 
+\subsubsection{Model}
+Le Modèle est lui même composé de plusieurs packages, afin de séparer les différentes patie de l'application :
+
+\begin{itemize}
+    \item \textbf{AI} : Contient toute la partie IA, soit le solver, les algorithmes et les heuristiques.
+    \item \textbf{Board} : 
+    \item \textbf{History} : Structure représentant l'historique de la partie sous forme de liste doublement chainée.
+    \item \textbf{Parsers} : Parsing des fichers de configuration et de sauvegarde.
+    \item \textbf{Piece} : 
+    \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
+\end{itemize}
 \subsubsection{Design Patterns Utilisés}
 
 Les différents design patterns utilisés dans ce projet sont les suivants : 
@@ -622,6 +635,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
     \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourrons gérer l'ajout de plusieurs commandes en parallèle.
     \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle.
+    \item \textbf{Prototype} : Utilisé avec la fonction getCopy() qui génère un clone de la classe demandée.
 \end{itemize}
 
 

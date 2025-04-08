@@ -1,0 +1,38 @@
+@startuml Exceptions
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class CommandNotAvailableNowException {
+  + CommandNotAvailableNowException(): 
+}
+class FailedRedoException {
+  + FailedRedoException(): 
+}
+class FailedSaveException {
+  + FailedSaveException(String): 
+}
+class FailedUndoException {
+  + FailedUndoException(): 
+}
+class IllegalMoveException {
+  + IllegalMoveException(String): 
+}
+class InvalidBoardException {
+  + InvalidBoardException(): 
+}
+class InvalidPositionException {
+  + InvalidPositionException(String): 
+}
+class InvalidPromoteFormatException {
+  + InvalidPromoteFormatException(): 
+}
+class MoveParsingException {
+  + MoveParsingException(String): 
+}
+class UnknownHeuristicException {
+  + UnknownHeuristicException(String): 
+}
+
+@enduml
