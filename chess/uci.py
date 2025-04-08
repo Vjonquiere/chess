@@ -18,6 +18,7 @@ CROSSOVER_RATE = 0.5
 WEIGHT_RANGE = (0.0, 1.0)
 STOCKFISH_ELO = 1350
 CURRENT_GEN = 0
+NUM_GAMES = 3
 
 JAR_PATH = "target/chess-0.0.4.jar"
 STOCKFISH_PATH = "/usr/games/stockfish"
@@ -171,17 +172,17 @@ def run_single_game(weights):
 
     return (base_score, bonus, engine2_is_white, moves, captures_white, captures_black, game_result)
 
-def eval_fitness(weights, num_games=3):
+def eval_fitness(weights):
     total_base = 0.0
     total_bonus = 0.0
 
-    for _ in range(num_games):
+    for _ in range(NUM_GAMES):
         (base_score, bonus, engine2_is_white, moves, captures_white, captures_black, game_result) = run_single_game(weights)
         total_base += base_score
         total_bonus += bonus
 
-    avg_base = total_base / num_games
-    avg_bonus = total_bonus / num_games
+    avg_base = total_base / NUM_GAMES
+    avg_bonus = total_bonus / NUM_GAMES
 
     fitness = avg_base + avg_bonus
     return (fitness,)
