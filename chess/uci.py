@@ -59,7 +59,7 @@ def load_checkpoint():
         print("No checkpoint found, starting fresh.")
         return None
 
-def log_game_result(engine2_is_white, game_result, moves, weights, white_captures, black_captures):
+def log_game_result(engine2_is_white, game_result, moves, white_captures, black_captures, weights):
     weights_str = ";".join(map(str, weights))
     win = -1
     if engine2_is_white:
@@ -96,12 +96,12 @@ def run_single_game(weights):
         while not board.is_game_over():
             if turn == 0:
                 if engines[0] == engine2:
-                    result = engines[0].play(board, chess.engine.Limit(time=15))
+                    result = engines[0].play(board, chess.engine.Limit(time=150))
                 else:
                     result = engines[0].play(board, chess.engine.Limit(time=0.5))
             else:
                 if engines[1] == engine2:
-                    result = engines[1].play(board, chess.engine.Limit(time=15))
+                    result = engines[1].play(board, chess.engine.Limit(time=150))
                 else:
                     result = engines[1].play(board, chess.engine.Limit(time=0.5))
 
@@ -146,24 +146,31 @@ def run_single_game(weights):
     engine2.quit()
     game_result = board.result()
 
-    print("Game Over!", board.result(), " / ", moves, " moves")
-
+    res_string = ""
     if engines[0] == engine2:  # engine2 played as White
         if game_result == "1-0":
             base_score = 1.0
+            res_string = "Engine2 wins"
         elif game_result == "0-1":
             base_score = 0.0
+            res_string = "Engine1 wins"
         else:
             base_score = 0.5
+            res_string = "Draw"
     else: # engine2 played as Black
         if game_result == "1-0":
             base_score = 0.0
+            res_string = "Engine1 wins"
         elif game_result == "0-1":
             base_score = 1.0
+            res_string = "Engine2 wins"
         else:
             base_score = 0.5
+            res_string = "Draw"
 
-    log_game_result(engine2_is_white, game_result, moves, weights, captures_white, captures_black)
+    print("Game Over!", board.result(), " / ", moves, " moves / ", res_string)
+
+    log_game_result(engine2_is_white, game_result, moves, captures_white, captures_black, weights)
 
     bonus_moves = 1.0 / moves if moves > 0 else 0.0
     bonus_captures = (captures_white if engine2_is_white else captures_black) * 0.1
@@ -236,7 +243,7 @@ def main():
 
     best_weights = hof[0]
     print("\nBest Weights Found:")
-    print("White:", best_weights)
+    print(best_weights)
 
 if __name__ == "__main__":
     main()
