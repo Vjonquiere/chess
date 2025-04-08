@@ -1,8 +1,7 @@
 package pdp.model.ai.heuristics;
 
 import java.util.List;
-import pdp.model.board.BoardRepresentation;
-import pdp.model.board.Move;
+import pdp.model.board.*;
 import pdp.utils.Position;
 
 /**
@@ -74,6 +73,22 @@ public class SpaceControlHeuristic implements Heuristic {
    */
   private float evaluateBoardControl(final BoardRepresentation board, final boolean isWhite) {
     float score = 0;
+
+    if (board instanceof BitboardRepresentation bitboard) {
+      Bitboard moves = bitboard.getColorAttackBitboard(isWhite);
+      for (Integer moveSquare : moves.getSetBits()) {
+        final Position posDest = BitboardUtils.squareToPosition(moveSquare);
+        if (isInCenter(posDest)) {
+          score += BONUS_MOVE_IN_CENTER;
+        } else if (isInLeftFlank(posDest) || isInRightFlank(posDest)) {
+          score += BONUS_MOVE_ON_FLANKS;
+        } else {
+          score += BONUS_MOVE_ELSEWHERE;
+        }
+      }
+      return score;
+    }
+
     final List<Move> allPossibleMoves = board.getAllAvailableMoves(isWhite);
 
     for (final Move move : allPossibleMoves) {
