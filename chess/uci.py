@@ -8,6 +8,7 @@ import csv
 import multiprocessing
 from concurrent.futures import ThreadPoolExecutor
 import pickle
+import logging
 
 # --- Constants ---
 POP_SIZE = 20
@@ -28,6 +29,11 @@ csv_lock = threading.Lock()
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMax)
 
+logging.basicConfig(
+    filename='error.log',
+    level=logging.ERROR,
+    format='%(asctime)s %(levelname)s:%(message)s'
+)
 
 def save_checkpoint(population, current_gen, hof):
     checkpoint_data = {
@@ -63,7 +69,7 @@ def eval_fitness(weights):
     cmdStr = "--ai-weight-w=1000.0"
     cmdStr += "," + ",".join(map(str, weights))
 
-    engine2 = chess.engine.SimpleEngine.popen_uci(["java", "-jar", JAR_PATH, "-uci", "-ai-depth=4", "-a=A", "--ai-endgame-w=STANDARD", cmdStr])
+    engine2 = chess.engine.SimpleEngine.popen_uci(["java", "-jar", JAR_PATH, "-uci", "-ai-depth=1", "-a=A", "--ai-endgame-w=STANDARD", cmdStr])
 
     engines = [engine1, engine2]
     random.shuffle(engines)
@@ -93,7 +99,8 @@ def eval_fitness(weights):
 
             turn = 1 - turn
     except Exception as e:
-        print(e)
+        logging.error(f"Game failed: {e}")
+        print("Game failed: ", e)
         return (0.0,)
 
     print("Game Over!", board.result(), " / ", moves, " moves")
