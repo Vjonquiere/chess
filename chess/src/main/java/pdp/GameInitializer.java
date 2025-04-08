@@ -126,7 +126,7 @@ public abstract class GameInitializer {
             for (final String w : weights) {
               weightsFloats.add(Float.parseFloat(w));
             }
-            if (weightsFloats.size() != 7) {
+            if (weightsFloats.size() != 9) {
               throw new ParseException("Invalid number of weights", 0);
             }
             solverWhite.setHeuristic(

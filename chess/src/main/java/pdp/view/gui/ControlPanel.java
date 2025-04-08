@@ -43,7 +43,6 @@ public class ControlPanel extends VBox {
     initHistoryPanel();
     initButtonsPanel();
     super.getChildren().addAll(playerPanel, historyPanel, buttonsPanel);
-    // TODO: really fix the width to 1/3 (does not work for now)
     super.setWidth(stage.getWidth() / 3);
     super.setSpacing(10);
     super.setPadding(new Insets(10));

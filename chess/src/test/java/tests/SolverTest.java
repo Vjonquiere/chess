@@ -220,7 +220,7 @@ public class SolverTest {
 
   @Test
   public void testSetHeuristicWithWeights() {
-    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f);
+    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f, 0.4f, 0.1f);
 
     solver.setHeuristic(HeuristicType.STANDARD, weights);
     assertInstanceOf(StandardHeuristic.class, solver.getHeuristic());
@@ -240,7 +240,8 @@ public class SolverTest {
             HeuristicType.KING_ACTIVITY,
             HeuristicType.BISHOP_ENDGAME,
             HeuristicType.KING_OPPOSITION,
-            HeuristicType.ENDGAME);
+            HeuristicType.ENDGAME,
+            HeuristicType.CHECK);
 
     for (HeuristicType heuristic : heuristicsToTest) {
       solver.setHeuristic(heuristic, weights);
@@ -261,6 +262,8 @@ public class SolverTest {
         case KING_OPPOSITION ->
             assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
         case ENDGAME -> assertInstanceOf(EndGameHeuristic.class, solver.getHeuristic());
+        case CHECK -> assertInstanceOf(CheckHeuristic.class, solver.getHeuristic());
+
         default -> throw new IllegalArgumentException("Unexpected value: " + heuristic);
       }
 

@@ -502,10 +502,8 @@ public class HeuristicsTest {
     board.movePiece(initWhiteKingPos, e4);
     board.movePiece(initBlackKingPos, e6);
 
-    // Expected score in this position
-    int expectedScore = 0;
-    // assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true)); // TODO: fix with new
-    // value
+    float expectedScore = 31.25f;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
