@@ -70,8 +70,6 @@ public class SpaceControlHeuristic implements Heuristic {
 
     score = score * MULTIPLIER;
 
-    System.out.println("Score: " + score);
-
     return isWhite ? score : -score;
   }
 
