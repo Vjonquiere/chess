@@ -742,7 +742,7 @@ de branchement moyen des échecs est de 35. Par exemple on retrouve en figure \r
     \caption{Graphique représentant le temps de recherche pour un coup en fonction de la profondeur}
     \label{board}
 \end{figure}
-\pagebreak
+\FloatBarrier
 Nous avons choisi cette position car les pièces principales sont toujours sur le plateau et ont une grand possibilité de mouvement afin de d'obtenir des temps de recherche significatifs.
 On peut remarquer que les temps pour les profondeurs 2,3 et 4 sont presque égaux qu'importe l'algorithme utilisé. Cependant, à partir de la profondeur 5 on peut commencer à distinguer
 une différence avec des meilleurs résultats pour les versions itératives. L'explosion combinatoire est visible à profondeur 7 où les temps de l'algorithme AlphaBeta parallèle augmentent fortement. Il en est de même pour l'algorithme AlphaBeta classique,
@@ -793,8 +793,13 @@ des loggers pour ces opérations.
 Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce quicorrespond à un projet à part entière.
 Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
 \subsection{Critiques positives}
-COMPLETER ICI PAR DES CRITIQUES POSITIVES.
-Par exemple, la communication entre IA (avec stockfish etc.).
+Intégrer la norme UCI à notre projet nous a permis de développer une interface standardisée et donc de communiquer avec d'autres projets de chess engine.
+Le plus interresant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le dertiminisme
+de l'algorithme AlphaBeta. En effet, nos algorithmes d'AlphaBeta trouvent toujours le même meilleur coup pour un plateau donné, ce qui donne des déroulements de parties
+identiques et par conséquent peu de parties différentes possibles. Se mesurer à d'autres projets nous a également permis d'affronter différents algorithmes comme par exemple
+Leela Chess Zero utilisant du deep learning couplé au Monte Carlo Tree Search (voir Explanatory analysis of the chess game \cite{GameEngine} page 24).
+Pour finir, l'implémentation de cette norme nous a permis de trouver certains bugs spécifiques survenant uniquement après certaines séquences de jeu mais nous a également
+obligé à rendre notre programme modulable car certaines règles peuvent changer lorsqu'il s'agit de parties entre IA (threefold repetition devient fivefold repetition par exemple).
 
 \subsection{Perspectives}
 \subsubsection{Mode Multi-joueur}
