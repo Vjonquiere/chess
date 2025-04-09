@@ -34,6 +34,7 @@ public class AlphaBeta extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBeta(final Solver solver) {
+    super();
     this.solver = solver;
   }
 
@@ -131,7 +132,7 @@ public class AlphaBeta extends SearchAlgorithm {
         if (alpha >= beta) {
           break;
         }
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Skipping illegal move
       }
     }

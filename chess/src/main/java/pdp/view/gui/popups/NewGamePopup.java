@@ -26,7 +26,10 @@ import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 
 /** GUI popup to configure a new game with all defined options (AI, blitz, ...). */
-public class NewGamePopup {
+public final class NewGamePopup {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private NewGamePopup() {}
 
   /**
    * GUI widget that represent configurable options for AI.
@@ -333,36 +336,36 @@ public class NewGamePopup {
     final VBox aiWhiteContainer = makeAiBox(true, options);
     layout.getChildren().add(aiWhiteContainer);
     aiWhiteContainer.setVisible(
-        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("W"));
+        "A".equals(aiDropdown.getValue()) || "W".equals(aiDropdown.getValue()));
     aiWhiteContainer.setManaged(
-        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("W"));
+        "A".equals(aiDropdown.getValue()) || "W".equals(aiDropdown.getValue()));
     aiWhiteContainer.setId("aiWhiteContainer");
 
     final VBox aiBlackContainer = makeAiBox(false, options);
     layout.getChildren().add(aiBlackContainer);
     aiBlackContainer.setVisible(
-        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("B"));
+        "A".equals(aiDropdown.getValue()) || "B".equals(aiDropdown.getValue()));
     aiBlackContainer.setManaged(
-        aiDropdown.getValue().equals("A") || aiDropdown.getValue().equals("B"));
+        "A".equals(aiDropdown.getValue()) || "B".equals(aiDropdown.getValue()));
     aiBlackContainer.setId("aiBlackContainer");
 
     final VBox aiTimeContainer = makeAiTimeBox(options);
     layout.getChildren().add(aiTimeContainer);
-    aiTimeContainer.setVisible(!aiDropdown.getValue().equals("None"));
-    aiTimeContainer.setManaged(!aiDropdown.getValue().equals("None"));
+    aiTimeContainer.setVisible(!"None".equals(aiDropdown.getValue()));
+    aiTimeContainer.setManaged(!"None".equals(aiDropdown.getValue()));
     aiTimeContainer.setId("fullAITimeContainer");
 
     aiDropdown
         .valueProperty()
         .addListener(
             (obs, oldVal, newVal) -> {
-              final boolean selectedWhite = newVal.equals("A") || newVal.equals("W");
-              final boolean selectedBlack = newVal.equals("A") || newVal.equals("B");
+              final boolean selectedWhite = "A".equals(newVal) || "W".equals(newVal);
+              final boolean selectedBlack = "A".equals(newVal) || "B".equals(newVal);
               aiWhiteContainer.setVisible(selectedWhite);
               aiWhiteContainer.setManaged(selectedWhite);
               aiBlackContainer.setVisible(selectedBlack);
               aiBlackContainer.setManaged(selectedBlack);
-              if (!newVal.equals("None")) {
+              if (!"None".equals(newVal)) {
                 aiTimeContainer.setVisible(true);
                 aiTimeContainer.setManaged(true);
                 options.put(OptionType.AI, newVal);

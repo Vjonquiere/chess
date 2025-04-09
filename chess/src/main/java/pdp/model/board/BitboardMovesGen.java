@@ -204,12 +204,7 @@ public final class BitboardMovesGen {
 
       if (piece.getPiece() == Piece.KING && Math.abs(source.x() - dest.x()) == 2) {
 
-        boolean isShortCastle;
-        if (dest.x() > source.x()) {
-          isShortCastle = true;
-        } else {
-          isShortCastle = false;
-        }
+        final boolean isShortCastle = dest.x() > source.x();
         moves.add(new CastlingMove(source, dest, piece, isShortCastle));
 
         continue;
@@ -301,46 +296,46 @@ public final class BitboardMovesGen {
 
     final Bitboard move = getKingAttackBitboard(square, unreachableSq);
 
-    if (isWhiteLongCastle && piece.getColor() == Color.WHITE) {
-      if (!bitboardRep.isAttacked(2, 0, Color.BLACK)
-          && !bitboardRep.isAttacked(3, 0, Color.BLACK)
-          && !bitboardRep.isAttacked(4, 0, Color.BLACK)
-          && bitboardRep.getPieceAt(1, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && bitboardRep.getPieceAt(2, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && bitboardRep.getPieceAt(3, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
-        move.setBit(2 + 0 * 8);
-      }
+    if (isWhiteLongCastle
+        && piece.getColor() == Color.WHITE
+        && !bitboardRep.isAttacked(2, 0, Color.BLACK)
+        && !bitboardRep.isAttacked(3, 0, Color.BLACK)
+        && !bitboardRep.isAttacked(4, 0, Color.BLACK)
+        && bitboardRep.getPieceAt(1, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+        && bitboardRep.getPieceAt(2, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+        && bitboardRep.getPieceAt(3, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+      move.setBit(2); // 2 + 0 * 8
     }
 
-    if (isWhiteShortCastle && piece.getColor() == Color.WHITE) {
-      if (!bitboardRep.isAttacked(5, 0, Color.BLACK)
-          && !bitboardRep.isAttacked(6, 0, Color.BLACK)
-          && !bitboardRep.isAttacked(4, 0, Color.BLACK)
-          && bitboardRep.getPieceAt(5, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && bitboardRep.getPieceAt(6, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
-        move.setBit(6 + 0 * 8);
-      }
+    if (isWhiteShortCastle
+        && piece.getColor() == Color.WHITE
+        && !bitboardRep.isAttacked(5, 0, Color.BLACK)
+        && !bitboardRep.isAttacked(6, 0, Color.BLACK)
+        && !bitboardRep.isAttacked(4, 0, Color.BLACK)
+        && bitboardRep.getPieceAt(5, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+        && bitboardRep.getPieceAt(6, 0).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+      move.setBit(6); // 6 + 0 * 8
     }
 
-    if (isBlackLongCastle && piece.getColor() == Color.BLACK) {
-      if (!bitboardRep.isAttacked(2, 7, Color.WHITE)
-          && !bitboardRep.isAttacked(3, 7, Color.WHITE)
-          && !bitboardRep.isAttacked(4, 7, Color.WHITE)
-          && bitboardRep.getPieceAt(1, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && bitboardRep.getPieceAt(2, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && bitboardRep.getPieceAt(3, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
-        move.setBit(2 + 7 * 8);
-      }
+    if (isBlackLongCastle
+        && piece.getColor() == Color.BLACK
+        && !bitboardRep.isAttacked(2, 7, Color.WHITE)
+        && !bitboardRep.isAttacked(3, 7, Color.WHITE)
+        && !bitboardRep.isAttacked(4, 7, Color.WHITE)
+        && bitboardRep.getPieceAt(1, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+        && bitboardRep.getPieceAt(2, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+        && bitboardRep.getPieceAt(3, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+      move.setBit(2 + 7 * 8);
     }
 
-    if (isBlackShortCastle && piece.getColor() == Color.BLACK) {
-      if (!bitboardRep.isAttacked(5, 7, Color.WHITE)
-          && !bitboardRep.isAttacked(6, 7, Color.WHITE)
-          && !bitboardRep.isAttacked(4, 7, Color.WHITE)
-          && bitboardRep.getPieceAt(5, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
-          && bitboardRep.getPieceAt(6, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
-        move.setBit(6 + 7 * 8);
-      }
+    if (isBlackShortCastle
+        && piece.getColor() == Color.BLACK
+        && !bitboardRep.isAttacked(5, 7, Color.WHITE)
+        && !bitboardRep.isAttacked(6, 7, Color.WHITE)
+        && !bitboardRep.isAttacked(4, 7, Color.WHITE)
+        && bitboardRep.getPieceAt(5, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))
+        && bitboardRep.getPieceAt(6, 7).equals(new ColoredPiece(Piece.EMPTY, Color.EMPTY))) {
+      move.setBit(6 + 7 * 8);
     }
 
     return move;

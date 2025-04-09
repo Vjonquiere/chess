@@ -20,6 +20,7 @@ import pdp.view.GuiView;
 public class SettingsEditorPopup extends VBox {
   /** Build a new popup to edit settings. */
   public SettingsEditorPopup() {
+    super();
     final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("settings.edit"));
     popupStage.initModality(Modality.APPLICATION_MODAL);

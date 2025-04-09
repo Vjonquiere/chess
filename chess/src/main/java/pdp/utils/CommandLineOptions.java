@@ -194,8 +194,8 @@ public final class CommandLineOptions {
    * @param runtime The runtime to exit.
    */
   private static void handlePathInput(
-      HashMap<OptionType, String> activatedOptions, Runtime runtime) {
-    for (OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
+      final HashMap<OptionType, String> activatedOptions, final Runtime runtime) {
+    for (final OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
       if (activatedOptions.containsKey(type)) {
         final String path = activatedOptions.get(type);
         if (path == null || path.isEmpty()) {

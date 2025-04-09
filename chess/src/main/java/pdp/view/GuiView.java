@@ -62,32 +62,42 @@ public class GuiView implements View {
   private static ColorThemeInterface theme = GREY;
 
   /** Set if the move piece animation has to be done. */
-  public static boolean ANIMATION_ENABLED = true;
+  public static boolean animationEnabled = true;
 
   /** Boolean to indicate whether the GUI View is initialized or not. */
   private boolean initialized;
 
-  private static AiMonitor WhiteAiMonitor;
-  private static AiMonitor BlackAiMonitor;
+  /** Allows the monitoring of performances of the white AI. */
+  private static AiMonitor whiteAiMonitor;
 
-  private static boolean monitoring = false;
+  /** Allows the monitoring of performances of the black AI. */
+  private static AiMonitor blackAiMonitor;
+
+  /** Boolean to indicate whether the AI monitoring needs to be displayed. */
+  private static boolean monitoring;
 
   static {
     Logging.configureLogging(LOGGER);
   }
 
+  /** Displays the correct monitoring windows according to the field monitoring. */
   public static void toggleMonitoring() {
     monitoring = !monitoring;
-    if (WhiteAiMonitor != null && BlackAiMonitor != null && !monitoring) {
-      WhiteAiMonitor.hide();
-      BlackAiMonitor.hide();
+    if (whiteAiMonitor != null && blackAiMonitor != null && !monitoring) {
+      whiteAiMonitor.hide();
+      blackAiMonitor.hide();
     }
-    if (WhiteAiMonitor != null && BlackAiMonitor != null && monitoring) {
-      WhiteAiMonitor.show();
-      BlackAiMonitor.show();
+    if (whiteAiMonitor != null && blackAiMonitor != null && monitoring) {
+      whiteAiMonitor.show();
+      blackAiMonitor.show();
     }
   }
 
+  /**
+   * Retrieves a boolean indicating if the monitoring needs to be activated.
+   *
+   * @return field monitoring
+   */
   public static boolean getMonitoringStatus() {
     return monitoring;
   }
@@ -311,32 +321,32 @@ public class GuiView implements View {
                   menu.displayMessage(TextGetter.getText("guiStartMessagePlayAMove"), false, true);
                 }
 
-                if (WhiteAiMonitor != null) {
-                  WhiteAiMonitor.hide();
-                  WhiteAiMonitor = null;
+                if (whiteAiMonitor != null) {
+                  whiteAiMonitor.hide();
+                  whiteAiMonitor = null;
                 }
-                if (BlackAiMonitor != null) {
-                  BlackAiMonitor.hide();
-                  WhiteAiMonitor = null;
+                if (blackAiMonitor != null) {
+                  blackAiMonitor.hide();
+                  blackAiMonitor = null;
                 }
                 if (Game.getInstance().isWhiteAi()) {
-                  WhiteAiMonitor = new AiMonitor(true);
+                  whiteAiMonitor = new AiMonitor(true);
                 }
                 if (Game.getInstance().isWhiteAi() && monitoring) {
-                  WhiteAiMonitor.show();
+                  whiteAiMonitor.show();
                 }
                 if (Game.getInstance().isBlackAi()) {
-                  BlackAiMonitor = new AiMonitor(false);
+                  blackAiMonitor = new AiMonitor(false);
                   // BlackAiMonitor.show();
                 }
                 if (Game.getInstance().isBlackAi() && monitoring) {
-                  BlackAiMonitor.show();
+                  blackAiMonitor.show();
                 }
 
                 break;
               case MOVE_PLAYED:
                 if (board != null) {
-                  board.updateBoard(ANIMATION_ENABLED);
+                  board.updateBoard(animationEnabled);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);
@@ -345,15 +355,15 @@ public class GuiView implements View {
                   }
                 }
                 if (Game.getInstance().isWhiteAi()
-                    && WhiteAiMonitor != null
-                    && WhiteAiMonitor.isShowing()) {
-                  WhiteAiMonitor.update();
+                    && whiteAiMonitor != null
+                    && whiteAiMonitor.isShowing()) {
+                  whiteAiMonitor.update();
                 }
 
                 if (Game.getInstance().isBlackAi()
-                    && BlackAiMonitor != null
-                    && BlackAiMonitor.isShowing()) {
-                  BlackAiMonitor.update();
+                    && blackAiMonitor != null
+                    && blackAiMonitor.isShowing()) {
+                  blackAiMonitor.update();
                 }
                 menu.getMessageDisplay().clearPreviousMessage();
 
@@ -435,7 +445,7 @@ public class GuiView implements View {
               case MOVE_REDO:
                 menu.displayMessage(TextGetter.getText("moveRedone"), false, false);
                 if (board != null) {
-                  board.updateBoard(ANIMATION_ENABLED);
+                  board.updateBoard(animationEnabled);
                 }
                 if (controlPanel != null) {
                   controlPanel.update(event);

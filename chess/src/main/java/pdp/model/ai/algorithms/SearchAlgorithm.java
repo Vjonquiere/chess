@@ -68,6 +68,11 @@ public abstract class SearchAlgorithm {
     return visitedNodes.get();
   }
 
+  /**
+   * Retrieves the number of visited nodes in the previous run of the algorithm.
+   *
+   * @return last element of the visited nodes list
+   */
   public long getLastVisitedNodeCount() {
     return visitedNodeList.get(visitedNodeList.size() - 1);
   }

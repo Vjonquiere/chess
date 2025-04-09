@@ -49,15 +49,15 @@ public class CustomColorTheme implements ColorThemeInterface {
    * @param textInverted secondary text color (in string format)
    */
   public CustomColorTheme(
-      String name,
-      String primary,
-      String secondary,
-      String tertiary,
-      String accent,
-      String background,
-      String background2,
-      String text,
-      String textInverted) {
+      final String name,
+      final String primary,
+      final String secondary,
+      final String tertiary,
+      final String accent,
+      final String background,
+      final String background2,
+      final String text,
+      final String textInverted) {
 
     if (!isValidHex(primary)
         || !isValidHex(secondary)
@@ -87,7 +87,7 @@ public class CustomColorTheme implements ColorThemeInterface {
    * @param color the string representing the color
    * @return true if the string is valid, false otherwise
    */
-  private static boolean isValidHex(String color) {
+  private static boolean isValidHex(final String color) {
     return color != null && HEX_PATTERN.matcher(color).matches();
   }
 

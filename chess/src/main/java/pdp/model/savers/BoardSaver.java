@@ -8,7 +8,10 @@ import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 
 /** Save board to custom format. */
-public class BoardSaver {
+public final class BoardSaver {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private BoardSaver() {}
 
   /**
    * Generate the String corresponding to the current player and board. (This String can be directly

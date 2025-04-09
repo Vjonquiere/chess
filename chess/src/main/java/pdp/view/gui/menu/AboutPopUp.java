@@ -53,24 +53,24 @@ public class AboutPopUp extends VBox {
     properties.load(CommandLineOptions.class.getClassLoader().getResourceAsStream(".properties"));
 
     // Create bold text elements
-    Text versionTitle = new Text(TextGetter.getText("version") + " ");
+    final Text versionTitle = new Text(TextGetter.getText("version") + " ");
     versionTitle.setStyle("-fx-font-weight: bold;");
 
-    Text authorsTitle = new Text("\n" + TextGetter.getText("authors") + " ");
+    final Text authorsTitle = new Text("\n" + TextGetter.getText("authors") + " ");
     authorsTitle.setStyle("-fx-font-weight: bold;");
 
-    Text projectTitle = new Text("\n" + TextGetter.getText("project") + " ");
+    final Text projectTitle = new Text("\n" + TextGetter.getText("project") + " ");
     projectTitle.setStyle("-fx-font-weight: bold;");
 
     // Create normal text elements
-    Text versionValue = new Text(properties.getProperty("version"));
-    Text authorsValue =
+    final Text versionValue = new Text(properties.getProperty("version"));
+    final Text authorsValue =
         new Text(
             "CHOLLON Mathilde, DEMIRCI Denis, JOMAA Iwen, JONQUIERE Valentin, LANDRY Jonathan");
-    Text projectValue = new Text(TextGetter.getText("projectDescription"));
+    final Text projectValue = new Text(TextGetter.getText("projectDescription"));
 
     // Add texts to TextFlow for proper formatting
-    TextFlow textFlow =
+    final TextFlow textFlow =
         new TextFlow(
             versionTitle,
             versionValue,
@@ -81,7 +81,7 @@ public class AboutPopUp extends VBox {
             projectValue);
 
     // Set the TextFlow as the content of the Label
-    Label aboutLabel = new Label();
+    final Label aboutLabel = new Label();
     aboutLabel.setGraphic(textFlow);
     aboutLabel.setWrapText(true);
 
