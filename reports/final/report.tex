@@ -171,7 +171,7 @@ la pièce maîtresse). Donc finalement, être en \textbf{échecs et mat} signifi
 la possibilité de se défendre, c'est-à-dire que le Roi est capturé par l'adversaire après n'importe quel coup joué.
 
 \subsection{L'échiquier et les pièces}
-Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces :
+Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces dans la disposition présentée en figure \ref{init} :
 \begin{itemize}
     \item 1 roi
     \item 1 dame
@@ -185,6 +185,7 @@ Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joue
     \centering
     \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{jeuDepart.png}
     \caption{Position initiale des pièces}
+    \label{init}
 \end{figure}
 
 Le joueur avec les pièces blanches commence. Ensuite, chaque joueur joue à tour de rôle, un déplacement de pièce par tour.
@@ -366,36 +367,19 @@ performant. En Java, chaque entier sera un long (type primitif).
 dans son entièreté. Effectivement, pour le moment, nous n'avons que l'emplacement des pièces sur l'échiquier. Mais une position
 est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendre en compte sont:\\
 \begin{itemize}
-    \item En passant: Il faut utiliser 1 bit comme flag, 1 si en passant possible et 0 sinon. Il y a au total 16 cases cibles où
-    un en passant peut se produire. On utilise donc 4 bits (16 valeurs) supplémentaires. Au total donc, 5 bits.
-    \item Roques: on compte le grand roque et le petit roque des deux côtés (noirs et blancs). On a donc besoin de 4 bits.
-    \item Temps à la pendule: Pour les blancs et les noirs, on doit savoir combien de temps il reste à chaque état du jeu. Si
-    l'on se dit que chaque joueur dispose de 24h pour une partie en prenant large, il faut coder 86 400 000 (en ms). Pour cela,
-    on a besoin de 27 bits. Mais il s'agit de 27 bits de chaque côté car il y a les blancs et les noirs. Donc au total, 54 bits ici.
-    \item Règle des 50 coups: Pour le nombre de coups sans capture ou mouvement de pion, on se sert de 6 bits (entre 0 et 50).
-    \item Nombre de "FullMoves": Pour se souvenir du nombre de coups total de la partie, on va prendre large et utiliser 10 bits,
-    ce qui nous donne la possibilité d'avoir 1000 coups.\\
+   \item En passant: Il y a au maximum une position où le en-passant est possible, donc on stocke une seule position (int, int).
+    \item Roques: on compte le grand roque et le petit roque des deux côtés (noirs et blancs). On a donc besoin de 4 booléens.
+   \item Temps à la pendule: On doit savoir combien de temps il reste à chaque état du jeu et le temps pour chaque tour, chacune de ces informations est stockée sous un long, et nous devons aussi savoir si le temps est en train de tourner ou pas, pour cela nous utilisons un booléen. Nous devons faire cela pour les blancs et noirs, soit un total de 4 longs et 2 booléens .
+   \item Règle des 50 coups: Pour le nombre de coups sans capture ou mouvement de pion, on se sert d’un entier.
+   \item Nombre de "FullMoves": Pour se souvenir du nombre de coups total de la partie, on va prendre large et utiliser un entier.\\
 \end{itemize}
 
-Si l'on effectue le total, une position est codée sur 12*64 + 5 + 4 + 54 + 6 + 10 = 847 bits.
-C'est un gain très conséquent qui va notamment nous permettre par exemple de chercher à une profondeur plus grande pour la partie
-Intelligence Artificielle. Il y a quelques détails en ce qui concerne les performances dans les parties \ref{DataStruct} Structures de données et
-\ref{AI} Intelligence Artificielle dans le rapport notamment.
-
 \subsection{Historique des coups}
-\par La liste (doublement) chaînée a été choisie par le groupe afin de stocker les coups qui représentent l'historique de jeu.
-En effet, l'insertion et la suppression sont des opérations réalisables en O(1). L'historique est alors plus flexible et les
-modifications sur l'historique sont assez efficaces. Pour revenir à un certain coup de la partie, qu'il s'agisse d'un undo ou redo,
-nous sommes en O(n), n étant le nombre de coups. En revanche, il y a certains cas où cette approche n'est pas très optimale.
-Par exemple, pour les parties (très) longues. En effet, la surcharge en mémoire (due aux références) et le coût en temps pour
-parcourir la liste peuvent devenir problématiques. Notons néanmoins que c'est un problème pour quasiment toutes les structures de
-données pour ce cas-là. Grâce au chaînage, se promener dans l'historique devient très pratique et plutôt performant.
-Cependant, cette solution comporte l'inconvénient d'une complexité plus élevée en termes de maintenance et de gestion de la mémoire.
-\'A titre d'exemple, trois classes différentes dans le code ont dues être créées afin d'implémenter cette solution avec liste doublement chaînée.
-En bref, chaque noeud (ou élément) de la liste est représenté par une configuration de la partie, soit un GameState.
-Ces noeuds sont reliés entre eux par des coups, permettant de jouer ou annuler un coup afin de traverser les états de jeu
-de la partie.\\
-Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
+\par Pour l'historique, nous avons choisi d'utiliser une liste doublement chaînée, où chaque nœud contient une copie complète de l'état du jeu ainsi que le coup qui a été joué.
+Cette structure est très efficace pour notre cas d'utilisation, car nous n'avons besoin que de réaliser les opérations d'undo/redo et de suppressions de groupes d'éléments consécutifs. Dans ce dernier cas, il suffit de modifier le pointeur "suivant" du nœud précédent le groupe concerné et d'initialiser correctement le pointeur "précédent" du nouveau nœud. Le garbage collector se charge ensuite de supprimer les nœuds qui ne sont plus accessibles depuis le reste du programme, même si ces nœuds se réfèrent entre eux.
+D'autres solutions comme une double pile ou un tableau seraient également envisageables, mais elles ne permettent pas de manipuler aussi aisément les liens entre les éléments et nécessitent plus d'opérations pour gérer les suppressions.
+\\
+\\Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
 
 \begin{figure}[h]
     \caption{Exemple historique de coups}
@@ -543,10 +527,18 @@ Nous avons pris la décision de stocker les valeurs les plus lourdes à calculer
 L'utilisation de types élémentaires aurait été une solution pour économiser de l'espace, en utilisant le conteneur Optional présent en Java, néanmoins la nécessité du gain de temps nous oriente vers l'implémentation actuelle, des allocations fréquentes de Optional pouvant ralentir le programme lors de son execution.
 
 \subsection{Bidirectional Map}
-COMPLETER.
+Puisque le stockage du plateau de jeu se fait à l'aide d'un vecteur de 16 bitboards nous avons rapidement eu besoin de lier chacune d'elle à un type pièce pour chaque couleur.
+Nous avons donc implémeneté le type \textit{ColoredPiece} qui permet d'associer une pièce et une couleur. Ceci nous a donc permis d'associer chaque type de pièces à un indice
+de bitboard dans le vecteur. Certaines fonctions necéssitant d'obtenir un indice de bitboard à partir d'un pièce tandis que d'autres avaient besoin de l'inverse, nous avons implémeneté un système
+de Bidirectional Map afin de ne pas avoir à maintenir à jour deux HashMaps qui auraient mené à de la duplication de code. Ces nouvelles tables nous permettent donc de chercher un élément par clé ou par valeur et rend donc la
+correspondance index de bitboard/piece bien plus simple. 
 
 \subsection{Iterative Deepening}
-COMPLETER.
+
+L'algorithme d'approfondissement itératif est utilisé dans notre projet en appui de l'algorithme AlphaBeta et de sa version parallèle. Il réalise des recherches en augmentant progressivement la profondeur (1, 2, 3, etc.) de manière successive. À chaque itération, le meilleur coup trouvé est placé au début de l'arbre de recherche, améliorant l'ordonnancement des coups pour l'algorithme d'élagage. Ainsi, ce procédé permet de réduire considérablement le nombre de positions évaluées.\\
+
+Le véritable avantage de l'approfondissement itératif vient de sa capacité à fournir une solution en temps réel tout en affinant progressivement l'analyse du jeu, optimisant ainsi le processus de décision dans le cas d'une limite de temps appliquée au joueur IA.
+Dans le cadre d'un jeu comme les échecs, il permet également de gagner du temps via l'amélioration de l'élagage.
 
 \subsection{Code propre}
 Nous avons effectué plusieurs refactor afin d'arriver à une architecture plus claire au cours du projet. Dans les dernières semaines de développement, 
