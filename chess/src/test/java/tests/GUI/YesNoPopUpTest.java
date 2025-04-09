@@ -39,8 +39,7 @@ public class YesNoPopUpTest extends ApplicationTest {
 
   @Override
   public void start(Stage stage) {
-    // On ne démarre pas l'UI complète, chaque test affichera sa propre popup
-
+    // We do not launch the complete ui, each test will launch its popup
   }
 
   @Test
