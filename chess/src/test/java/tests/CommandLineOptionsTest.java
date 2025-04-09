@@ -160,10 +160,9 @@ public class CommandLineOptionsTest {
     Logging.setVerbose(false);
   }
 
-  /*
   @Test
   public void testHelp() {
-    //Test that the option displays the right output & exit code with the long option name
+    // Test that the option displays the right output & exit code with the long option name
     Runtime mockRuntime = mock(Runtime.class);
     CommandLineOptions.parseOptions(new String[] {"--help"}, mockRuntime);
     for (String s : expectedHelp) {
@@ -172,7 +171,7 @@ public class CommandLineOptionsTest {
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
-    //Test that the option displays the right output & exit code with the short option name
+    // Test that the option displays the right output & exit code with the short option name
     Runtime mockRuntime2 = mock(Runtime.class);
     CommandLineOptions.parseOptions(new String[] {"-h"}, mockRuntime2);
     for (String s : expectedHelp) {
@@ -181,7 +180,6 @@ public class CommandLineOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
   }
-    */
 
   @Test
   public void testVersion() throws Exception {

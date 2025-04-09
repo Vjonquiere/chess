@@ -105,22 +105,4 @@ public class AlphaBetaTest {
     assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 500);
     assertTrue(remainingTime <= timeLimit);
   }
-  /*
-   @ParameterizedTest
-   @MethodSource("algorithmProvider")
-   public void testTimerOverStartFunction() {
-     long timeLimit = 1;
-     solver.setDepth(20);
-     solver.setTime(timeLimit);
-     long startTime = System.currentTimeMillis();
-     solver.playAIMove(game);
-     long endTime = System.currentTimeMillis();
-
-     long elapsedTime = endTime - startTime;
-     long remainingTime = solver.getTimer().getTimeRemaining();
-
-     assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 100);
-     assertTrue(remainingTime <= timeLimit);
-   }
-  */
 }

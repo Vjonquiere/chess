@@ -63,37 +63,13 @@ class GameInitializerTest {
     assertTrue(controller.getView() instanceof CliView);
   }
 
-  /*
   @Test
-  void testGameInitializationGUI() {
-    options.put(OptionType.GUI, "");
-    GameController controller = GameControllerInit.initialize(options);
-    assertNotNull(controller);
-    assertTrue(controller.getView() instanceof GameView);
-  }
-    */
-
-  /*
-  @Test
-  void testGameInitializationBlitzMode300() {
+  void testGameInitializationBlitzMode() {
     options.put(OptionType.BLITZ, "");
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
     assertNotNull(controller.getModel().getGameState().getMoveTimer());
   }
-    */
-
-  /*
-  @Test
-  void testGameInitializationBlitzMode300() {
-    options.put(OptionType.BLITZ, "");
-    options.put(OptionType.TIME, "300");
-    GameController controller = GameControllerInit.initialize(options);
-    assertNotNull(controller);
-    assertNotNull(controller.getModel().getGameState().getMoveTimer());
-    assertEquals(controller.getModel().getGameState().getMoveTimer().getTimeRemaining(), 300);
-  }
-    */
 
   @Test
   void testGameInitializationAIWhite() {
@@ -115,18 +91,17 @@ class GameInitializerTest {
     assertNotNull(controller.getModel().getBlackSolver());
   }
 
-  /*
-    @Test
-    void testGameInitializationAIAll() {
-      options.put(OptionType.AI, "A");
-      GameController controller = GameControllerInit.initialize(options);
-      assertNotNull(controller);
-      assertTrue(controller.getModel().isWhiteAI());
-      assertTrue(controller.getModel().isBlackAI());
-      assertNotNull(controller.getModel().getWhiteSolver());
-      assertNotNull(controller.getModel().getBlackSolver());
-    }
-  */
+  @Test
+  void testGameInitializationAIAll() {
+    options.put(OptionType.AI, "A");
+    GameController controller = GameControllerInit.initialize(options);
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAi());
+    assertTrue(controller.getModel().isBlackAi());
+    assertNotNull(controller.getModel().getWhiteSolver());
+    assertNotNull(controller.getModel().getBlackSolver());
+  }
+
   @Test
   void testGameInitializationAIIncorrect() {
     options.put(OptionType.AI, "X");

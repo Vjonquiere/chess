@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pdp.utils.MoveHistoryParser;
+import pdp.model.parsers.MoveHistoryParser;
 
 class MoveHistoryParserTest {
 

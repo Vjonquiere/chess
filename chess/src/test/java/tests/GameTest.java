@@ -866,17 +866,4 @@ public class GameTest {
     game.setWhiteSolver(newSolverWhite);
     assertEquals(6, game.getWhiteSolver().getDepth());
   }
-
-  /*  @Test
-  public void testGetInstance(){
-
-    assertThrows(
-      IllegalStateException.class,
-        () -> {
-          Game.getInstance();
-        });
-    Game.initialize(true, true, null, null, null, new HashMap<>());
-    assertEquals(0, Game.getInstance().getGameState().getFullTurn());
-  } */
-
 }

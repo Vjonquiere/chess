@@ -23,8 +23,8 @@ import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
+import pdp.model.parsers.MoveHistoryParser;
 import pdp.utils.CommandLineOptions;
-import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
 
