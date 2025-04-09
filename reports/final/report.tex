@@ -585,15 +585,14 @@ afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui per
 \begin{itemize}
     \item \textbf{Model} : Gère la logique métier du jeu, incluant l'état de la partie, les règles d'échecs et les fonctionnalités comme l'historique et le timer, et même l'Intelligence Artificielle.
     \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les événements utilisateurs et orchestre les interactions entre les différentes couches.
-    \item \textbf{Vue} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
+    \item \textbf{View} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
     \item \textbf{Events} : Implémente un système d'observateurs pour gérer les notifications et la communication asynchrone entre les modules.
-    \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et les algorithmes d'intelligence artificielle pour le jeu.
+    \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et ou la gestion des options.
     \item \textbf{Exceptions} : Contient les types d'exceptions personnalisées qui peuvent survenir dans le programme et nous permettant d'agir en conséquence.
 \end{itemize}
 
 \subsubsection{Model}
 Le Modèle est lui même composé de plusieurs packages, afin de séparer les différentes patie de l'application :
-
 \begin{itemize}
     \item \textbf{AI} : Contient toute la partie IA, soit le solver, les algorithmes et les heuristiques.
     \item \textbf{Board} : 
@@ -603,10 +602,26 @@ Le Modèle est lui même composé de plusieurs packages, afin de séparer les di
     \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
 \end{itemize}
 
-\subsubsection{View}
+Le coeur du projet se situe dans les classes \textit{Game} et \textit{BitboardRepresenation}.
 
+
+\subsubsection{View}
+La vue est composée de plusieurs implémentations : la vue CLI, notre première interface, la vue GUI, qui est une interface graphique, la vue Contest, qui joue un coup, l'affiche et le sauvegarde,
+et enfin la vue UCI qui permet de jouer contre d'autres IA.
+
+Le GUI étant plus complexe, nous disposons d'un package gui regroupant les différentes classes utiles à cette implémentation. Le GUI appelle une classe GUILauncher afin de lancer
+le thread Javafx.
+
+L'ajout d'un autre type de vue est grandement simplifié grâce au pattern Observer. En effet, il permet au Model d'envoyer des notifications lorsqu'un certain nombre d'évènement
+se produisent. La vue doit donc implémeneter les évènements de la manière dont elle le souhaite. Il n'est pas nécéssaire d'implémeneter tous les évènements, ce qui permet d'ajouter des vues minimales,
+comme notre interface UCI qui ne prend en charge que quelques évènements de base.
+
+Nous partons du principe que la vue peut se servir des données de la vue sans passer par le controller, mais ne peut pas y appliquer de modification. Cela permet d'alléger le controller
+et d'afficher automatiquement les mises à jour du model dans la vue, sans avoir besoin d'envoyer de commandes.
 
 \subsubsection{Controller}
+Nous n'avons pas utilisé un controller classique, mais plutôt un Bag of Commands, qui tourne sur son propre thread. Cela permet une extensibilité
+bien plus simple car l'ajout de nouvelles commandes à l'application est facilité avec le pattern Command.
 
 \begin{center}
     \includegraphics[height=\textwidth]{uml_controller}
@@ -614,13 +629,13 @@ Le Modèle est lui même composé de plusieurs packages, afin de séparer les di
 
 \subsubsection{Design Patterns Utilisés}
 
-Les différents design patterns utilisés dans ce projet sont les suivants : 
+Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{itemize}
     \item \textbf{Singleton} : Utilisé pour la classe \texttt{Game} pour s'assurer qu'une seule instance de la partie est présente.
     La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes ne soit gérée que par un seul bag.
     \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
     \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
-    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourrons gérer l'ajout de plusieurs commandes en parallèle.
+    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. On gère l'ajout de plusieurs commandes en parallèle.
     \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle.
     \item \textbf{Prototype} : Utilisé avec la fonction getCopy() qui génère un clone de la classe demandée.
 \end{itemize}
