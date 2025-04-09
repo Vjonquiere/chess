@@ -706,6 +706,7 @@ ou encore la mémoire utilisée par notre programme à tout instant comme le pr�
     \caption{Exemple de trace d'exécution pour visualiser le temps d'exécution découpé par fonctions}
     \label{trace_ex}
 \end{figure}
+\FloatBarrier
 
 Dans cette représentation il est possible de voir clairement quelles sont les fonctions les plus chronophages mais il est également possible 
 de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques \ref{trace_ex2}.
@@ -716,6 +717,7 @@ de comparer deux traces afin de voir les différences de performances entre plus
     \caption{Exemple de comparaison entre deux traces d'exécution}
     \label{trace_ex2}
 \end{figure}
+\FloatBarrier
 
 Dans ce graphique on superpose donc deux traces afin de pouvoir analyser le temps gagné ou perdu pour chaque fonction. Il faut donc définir une trace référente, et les temps
 s'afficheront en fonction de celle-ci. Tous les rectangles verts signifient que l'on gagne du temps par rapport à l'autre exécution tandis que les rectangles rouges représentent
@@ -733,12 +735,15 @@ Nous utiliserons donc ce graphe pour vérifier le caractère parallèle de certa
     \caption{}
     \label{thread_ex}
 \end{figure}
+\FloatBarrier
 
 \subsection{Optimisations Intelligence Artificielle}
 À la suite de l'implémentation des algorithmes d'IA démandés, nous avons remarqué que les performances du programmes étaient assez contrastées. En effet, le facteur
 de branchement moyen étant 35, le passage d'une profondeur à une profondeur+1 demande un temps de calcul beaucoup plus long. Nous avons donc pu atteindre la profondeur 3
 en temps raisonnable sans optimisation. Afin d'améliorer l'IA nous avons donc ensuite mis en place différentes optimisations. Pour commencer nous avons adapté nos heuristiques
-pour qu'elles puissent utiliser directement les bitboard afin de tirer le meilleur de la structure de données et d'enlever des couches d'abstractions. Nous avons par la suite 
+pour qu'elles puissent utiliser directement les bitboard afin de tirer le meilleur de la structure de données et d'enlever des couches d'abstractions.
+\subsubsection{Utilisation du cache}
+ Nous avons par la suite 
 remarqué que le calcul de certaines fonctions était chronophage et ne pouvait pas être diminué en complexité facilement. C'est par exemple le cas des fonction de détection de 
 l'échec, échec et mat, pat qui sont utilisé lors de l'évaluation du plateau mais également lorsque qu'un coup est jouer pour vérifier si le coup est légal (sans compter le fait 
 qu'un plateau peut apparaître plusieurs fois). Grace au Zobrist hashing, nous avons donc implémenté une sorte de cache pour ne pas reclaculer ces fonctions pour le même plateau 
@@ -751,12 +756,49 @@ plateaux. Nous avons donc pu comparer une exécution avec un cache de 10000 entr
     \caption{Comparaison des traces d'exécutions avec et sans cache}
     \label{cache_cmp}
 \end{figure}
+\FloatBarrier
 
 Sur cette trace on remarque un gain temps de l'ordre de 68\% lorsque l'on utilise un cache. Globalement, nous gagnons du temps car il n'y a plus de calculs couteux
 effectués plusieurs fois. Puisque toutes ces fonctions sont calculées afin de pouvoir jouer le coup (car il faut vérifier que le coup ne met pas fin à la partie et 
 est bien légal), la grande différence se fait dans lors de l'évaluation car on économise ici près de 80\% du temps nécessaire sans cache. Mais si cela est moins significatif,
 celui-ci permet de gagner environ 25\% de performance sur la fonction \textit{playMove} car il était obligatoire de vérifier deux fois la mise en échec lorsque qu'un coup était joué,
 une première pour vérifier que le roi n'était pas en échec ainsi que pour vérifier que la partie n'avait pas atteint une situation de pat.\\
+\subsubsection{Move ordering}
+Le move ordering a également été une optimisation non négligeable. En effet, l'idée est de trier les coups avant de les jouer afin d'améliorer le pruning de l'algorithme AlphaBeta. Pour cela,
+nous faisons un tri en 3 critères. Tout d'abord, nous comparons les coups sur la capture. Le coup reçoit un bonus s'il conduit à la capture d'un pièce ennemie, de plus on utilise le score MVV-LVA
+(Most Valuable Victim - Least Valuable Aggressor) pour déterminer quels sont les meilleures captures. L'idée du MVV-LVA est de capturer la pièce la plus précieuse de l'adversaire en utilisant la pièce
+la moins importante possible afin de maximiser l'avantage materiel après la capture. Ensuite, on cherche à privillégier les coups contenant des promotions puisqu'ils permettent d'obtenir un avantage materiel
+en transformant un pion en une pièce de valeur superieure. Pour finir, nous ajoutons un bonus si le coup met en échec l'adversaire. Pour comparer l'efficacité du move ordering sur un coup, nous avons pris la 
+configuration de plateau de la figure \ref{board} et lancer deux recherches avec les même paramètres (même algorithme et profondeur) mais l'une avec move ordering et l'autre sans et obtenu la trace en figure \ref{move_ordering_cmp}.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{trace_move_ordering.png}
+    \caption{Comparaison des traces d'exécutions avec et sans move ordering}
+    \label{move_ordering_cmp}
+\end{figure}
+\FloatBarrier
+
+Lors de la réalisation de cette trace on utilise un AlphaBeta Iterative Deepening à profondeur 6 et on remarque tout de suite une grande différence de temps d'exécution. La trace référente
+étant celle contenant le move ordering on peut en déduire que celui-ci permet des résultats plus rapides. On constate un gain de 85\% de performances à utiliser cette optimisation sur cette trace.
+Le move ordering ayant uniquement un impact sur l'ordre d'évaluation des noeuds, les coups choisi avec et sans sont donc toujours les mêmes. Pour quantifier le gain de noeuds exploré, nous allons 
+utilisé le mode \textit{Monitor} disponible dans notre logiciel et vérifier le nombre de noeuds visité ainsi que le temps necéssaire pour jouer une partie. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_mo.png}
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{without_mo.png}
+    \caption{Comparaison d'un exécution avec (gauche) et sans (droite) move ordering}
+    \label{move_ordering_cmp_monitor}
+\end{figure}
+\FloatBarrier
+
+Nous avons donc simulé une partie complète avec un algorithme AlphaBeta Iterative Deepening à profondeur 4 avec et sans move ordering et obtenu les monitor
+présenté en figure \ref{move_ordering_cmp_monitor}.On peut tout suite remarquer que la plus grande différence n'est pas dans le débit de noeuds visités (pas plus de 10000 noeuds d'écart) mais plutôt dans le nombre de noeuds visités.
+En effet, d'après le monitor on peut remarquer qu'il y a un facteur 4 entre le nombre moyen de noeuds visité en moyenne par coup dans une partie complète. Evidemment cela a des répercutions
+sur le temps moyen d'un recherche avec encore ici un facteur 4 entre avec et sans l'optimisation. Cependant, cette optimisation étant plus efficace dans le millieu de partie, on peut remarquer
+que lorsque les derniers coups de la partie (et plus généralement lorsque l'on approche la fin de partie) sont explorés il ne contiennent pas forcément de capture ou de promotion et l'optimisation
+obtient des résultats moindres. Finalement, puisque le cas de la figure \ref{move_ordering_cmp} se déroule en millieu de partie on parvient à obtenir un résultat légérement meilleur.
+
 
 \subsection{Comparaison des variantes d'Alpha-Beta} Afin d’évaluer les performances de nos différentes versions de l’algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
 
