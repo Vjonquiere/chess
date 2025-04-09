@@ -708,7 +708,33 @@ une première pour vérifier que le roi n'était pas en échec ainsi que pour v�
 COMPARAISON ALPHA\_BETA, ALPHA\_BETA\_PARALLEL, ALPHA\_BETA\_IT
 
 \subsection{Profondeur de recherche}
-d = 6+ très long.
+
+Les performances de l'IA étant tout d'abord dépendante de la machine sur laquelle on exécute le programme, les paramètres optimaux pour obtenir une IA fluide et jouant des coups efficaces 
+ne sont pas fixes. Le facteur ayant le plus grand impact sur la vitesse de reflexion étant la profondeur de recherche, les optimisations mises en place avaient pour principal objectif d'accroitre
+cette limite car elle permet d'obtenir de meilleurs coups. Mais la profondeur de recherche est également le facteur limitant, passer d'un profondeur p à une profondeur p+1 est exponentiel car le facteur
+de branchement moyen des échecs est de 35. Par exemple on retrouve en figure \ref{plot} la comparaison des temps de recherche du meilleur coup pour le plateau figure \ref{board}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{plot_depth.png}
+    \caption{Graphique représentant le temps de recherche pour un coup en fonction de la profondeur}
+    \label{plot}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{board.png}
+    \caption{Graphique représentant le temps de recherche pour un coup en fonction de la profondeur}
+    \label{board}
+\end{figure}
+\pagebreak
+Nous avons choisi cette position car les pièces principales sont toujours sur le plateau et ont une grand possibilité de mouvement afin de d'obtenir des temps de recherche significatifs.
+On peut remarquer que les temps pour les profondeurs 2,3 et 4 sont presque égaux qu'importe l'algorithme utilisé. Cependant, à partir de la profondeur 5 on peut commencer à distinguer
+une différence avec des meilleurs résultats pour les versions itératives. L'explosion combinatoire est visible à profondeur 7 où les temps de l'algorithme AlphaBeta parallèle augmentent fortement. Il en est de même pour l'algorithme AlphaBeta classique,
+mais nous n'avons pas inclu le résultat car l'echelle obtenue ne permettait pas une comparaison des autres algorithmes tant le temps de calculs était élevé (plus de 10min). Les plateaux n'ayant jamais
+la même complexité d'évaluation, il est nécessaire de trouver une profondeur qui pourrait être valable tout au long de la partie. Cependant, il est assez complexe de trouver cette valeur car dès que l'on
+passe sur l'heuristique fin de partie où que les pièces principales (tours, fous et dame) ne se trouvent plus sur le plateau le temps d'évaluation chute et il serait donc possible d'évaluer bien plus de noeuds.
+Pour obtenir un jeu homogène, il vaut donc mieux jouer avec un IA de profondeur 5 ainsi que favoriser les algorithmes \textit{Iterative Deepening}.
 
 \subsection{Vue}
 JavaFX, bien que pratique pour développer des GUI en Java, présente des limites en termes de performance, en particulier en ce qui concerne
