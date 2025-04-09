@@ -375,19 +375,11 @@ est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendr
 \end{itemize}
 
 \subsection{Historique des coups}
-\par La liste (doublement) chaînée a été choisie par le groupe afin de stocker les coups qui représentent l'historique de jeu.
-En effet, l'insertion et la suppression sont des opérations réalisables en O(1). L'historique est alors plus flexible et les
-modifications sur l'historique sont assez efficaces. Pour revenir à un certain coup de la partie, qu'il s'agisse d'un undo ou redo,
-nous sommes en O(n), n étant le nombre de coups. En revanche, il y a certains cas où cette approche n'est pas très optimale.
-Par exemple, pour les parties (très) longues. En effet, la surcharge en mémoire (due aux références) et le coût en temps pour
-parcourir la liste peuvent devenir problématiques. Notons néanmoins que c'est un problème pour quasiment toutes les structures de
-données pour ce cas-là. Grâce au chaînage, se promener dans l'historique devient très pratique et plutôt performant.
-Cependant, cette solution comporte l'inconvénient d'une complexité plus élevée en termes de maintenance et de gestion de la mémoire.
-\'A titre d'exemple, trois classes différentes dans le code ont dues être créées afin d'implémenter cette solution avec liste doublement chaînée.
-En bref, chaque noeud (ou élément) de la liste est représenté par une configuration de la partie, soit un GameState.
-Ces noeuds sont reliés entre eux par des coups, permettant de jouer ou annuler un coup afin de traverser les états de jeu
-de la partie.\\
-Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
+\par Pour l'historique, nous avons choisi d'utiliser une liste doublement chaînée, où chaque nœud contient une copie complète de l'état du jeu ainsi que le coup qui a été joué.
+Cette structure est très efficace pour notre cas d'utilisation, car nous n'avons besoin que de réaliser les opérations d'undo/redo et de suppressions de groupes d'éléments consécutifs. Dans ce dernier cas, il suffit de modifier le pointeur "suivant" du nœud précédent le groupe concerné et d'initialiser correctement le pointeur "précédent" du nouveau nœud. Le garbage collector se charge ensuite de supprimer les nœuds qui ne sont plus accessibles depuis le reste du programme, même si ces nœuds se réfèrent entre eux.
+D'autres solutions comme une double pile ou un tableau seraient également envisageables, mais elles ne permettent pas de manipuler aussi aisément les liens entre les éléments et nécessitent plus d'opérations pour gérer les suppressions.
+\\
+\\Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
 
 \begin{figure}[h]
     \caption{Exemple historique de coups}
