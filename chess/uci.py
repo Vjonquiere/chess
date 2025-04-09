@@ -11,19 +11,19 @@ import pickle
 import logging
 
 # --- Constants ---
-POP_SIZE = 25
-GENS = 50  # Run for multiple generations
-MUTATION_RATE = 0.2
-CROSSOVER_RATE = 0.5
-WEIGHT_RANGE = (0.0, 1.0)
-STOCKFISH_ELO = 1350
+POP_SIZE = 75
+GENS = 100  # Run for multiple generations
+MUTATION_RATE = 0.15
+CROSSOVER_RATE = 0.7
+WEIGHT_RANGE = (0.0, 10.0)
+STOCKFISH_ELO = 1650
 CURRENT_GEN = 0
-NUM_GAMES = 3
+NUM_GAMES = 5
 MAX_RETRIES = 3
 
-RESULT_WEIGHT = 0.8
-MOVES_WEIGHT = 0.1
-CAPTURES_WEIGHT = 0.1
+RESULT_WEIGHT = 0.7
+MOVES_WEIGHT = 0.15
+CAPTURES_WEIGHT = 0.15
 
 JAR_PATH = "target/chess-0.0.4.jar"
 STOCKFISH_PATH = "/usr/games/stockfish"
@@ -103,12 +103,12 @@ def run_single_game(weights):
                 if engines[0] == engine2:
                     result = engines[0].play(board, chess.engine.Limit(time=15000)) # big time to avoid timeout
                 else:
-                    result = engines[0].play(board, chess.engine.Limit(time=0.5))
+                    result = engines[0].play(board, chess.engine.Limit(depth=7))
             else:
                 if engines[1] == engine2:
                     result = engines[1].play(board, chess.engine.Limit(time=15000)) # big time to avoid timeout
                 else:
-                    result = engines[1].play(board, chess.engine.Limit(time=0.5))
+                    result = engines[1].play(board, chess.engine.Limit(depth=7))
 
             if board.is_capture(result.move):
                 if board.is_en_passant(result.move):
@@ -219,19 +219,20 @@ toolbox.register("evaluate", eval_fitness)
 toolbox.register("mate", tools.cxBlend, alpha=0.2)
 
 
-def boundedMutGaussian(individual, mu, sigma, indpb, low=0.0, up=1.0):
+def mutGaussian(individual, mu, sigma, indpb):
     for i in range(len(individual)):
         if random.random() < indpb:
             individual[i] += random.gauss(mu, sigma)
-            individual[i] = min(max(individual[i], low), up)
     return (individual,)
 
-def clip_individual(ind, low=0.0, up=1.0):
-    for i in range(len(ind)):
-        ind[i] = min(max(ind[i], low), up)
 
-toolbox.register("mutate", boundedMutGaussian, mu=0, sigma=0.08, indpb=MUTATION_RATE, low=0.0, up=1.0)
-toolbox.register("select", tools.selTournament, tournsize=3)
+def adaptive_sigma(current_gen, total_gens):
+    base_sigma = 0.3
+    decay = 0.98
+    return base_sigma * (decay ** current_gen)
+
+toolbox.register("mutate", mutGaussian, mu=0, sigma=adaptive_sigma(CURRENT_GEN, GENS), indpb=MUTATION_RATE)
+toolbox.register("select", tools.selTournament, tournsize=4)
 
 def parallel_eval(population):
     with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
@@ -259,9 +260,6 @@ def main():
         print(f"Generation {gen+1}")
         parallel_eval(pop)
         pop = algorithms.varAnd(pop, toolbox, cxpb=CROSSOVER_RATE, mutpb=MUTATION_RATE)
-
-        for ind in pop:
-            clip_individual(ind)
 
         parallel_eval(pop)
         hof.update(pop)
