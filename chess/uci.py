@@ -19,6 +19,11 @@ WEIGHT_RANGE = (0.0, 1.0)
 STOCKFISH_ELO = 1350
 CURRENT_GEN = 0
 NUM_GAMES = 3
+MAX_RETRIES = 3
+
+RESULT_WEIGHT = 0.8
+MOVES_WEIGHT = 0.1
+CAPTURES_WEIGHT = 0.1
 
 JAR_PATH = "target/chess-0.0.4.jar"
 STOCKFISH_PATH = "/usr/games/stockfish"
@@ -81,10 +86,10 @@ def run_single_game(weights):
     engine1 = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
     engine1.configure({"UCI_LimitStrength": True, "UCI_Elo": STOCKFISH_ELO})
 
-    cmdStr = "--ai-weight-w=1000.0"
+    cmdStr = "--ai-weight-w=10000.0"
     cmdStr += "," + ",".join(map(str, weights))
     engine2 = chess.engine.SimpleEngine.popen_uci([
-        "java", "-jar", JAR_PATH, "-uci", "-ai-depth=4", "-a=A", "--ai-endgame-w=STANDARD", cmdStr
+        "java", "-jar", JAR_PATH, "-uci", "--ai-depth=4", "-a=A", "--ai-endgame-w=STANDARD", cmdStr
     ])
 
     engines = [engine1, engine2]
@@ -96,12 +101,12 @@ def run_single_game(weights):
         while not board.is_game_over():
             if turn == 0:
                 if engines[0] == engine2:
-                    result = engines[0].play(board, chess.engine.Limit(time=150))
+                    result = engines[0].play(board, chess.engine.Limit(time=15000)) # big time to avoid timeout
                 else:
                     result = engines[0].play(board, chess.engine.Limit(time=0.5))
             else:
                 if engines[1] == engine2:
-                    result = engines[1].play(board, chess.engine.Limit(time=150))
+                    result = engines[1].play(board, chess.engine.Limit(time=15000)) # big time to avoid timeout
                 else:
                     result = engines[1].play(board, chess.engine.Limit(time=0.5))
 
@@ -172,30 +177,46 @@ def run_single_game(weights):
 
     log_game_result(engine2_is_white, game_result, moves, captures_white, captures_black, weights)
 
-    bonus_moves = 1.0 / moves if moves > 0 else 0.0
-    bonus_captures = (captures_white if engine2_is_white else captures_black) * 0.1
+    bonus_moves = (1.0 / moves if moves > 0 else 0.0)
+    bonus_captures = max(0, (captures_white-captures_black if engine2_is_white else captures_black-captures_white))/39
 
-    bonus = bonus_moves + bonus_captures
+    bonus = bonus_moves*MOVES_WEIGHT + bonus_captures*CAPTURES_WEIGHT
 
-    return (base_score, bonus, engine2_is_white, moves, captures_white, captures_black, game_result)
+    score = base_score*RESULT_WEIGHT
+    if engine2_is_white and game_result == "1-0" or not engine2_is_white and game_result == "0-1":
+        score += bonus
+
+    return (score, engine2_is_white, moves, captures_white, captures_black, game_result)
+
+
+def run_single_game_with_retries(weights):
+    attempts = 0
+    while attempts < MAX_RETRIES:
+        try:
+            result = run_single_game(weights)
+            return result
+        except Exception as e:
+            attempts += 1
+            logging.error(f"Attempt {attempts}: Game failed with error: {e}")
+    return (0.0, None, 0, 0, 0, "Error")
 
 def eval_fitness(weights):
-    total_base = 0.0
-    total_bonus = 0.0
+    total_score = 0.0
 
     for _ in range(NUM_GAMES):
-        (base_score, bonus, engine2_is_white, moves, captures_white, captures_black, game_result) = run_single_game(weights)
-        total_base += base_score
-        total_bonus += bonus
+        (score, engine2_is_white, moves, captures_white, captures_black, game_result) = run_single_game_with_retries(weights)
+        print("SCORE : ", score)
+        total_score += score
 
-    avg_base = total_base / NUM_GAMES
-    avg_bonus = total_bonus / NUM_GAMES
+    print("TOTAL SCORE : ", total_score)
 
-    fitness = avg_base + avg_bonus
-    return (fitness,)
+    avg_score = total_score / NUM_GAMES
+
+    print("AVERAGE SCORE : ", avg_score)
+    return (avg_score,)
 
 toolbox.register("evaluate", eval_fitness)
-toolbox.register("mate", tools.cxBlend, alpha=0.5)
+toolbox.register("mate", tools.cxBlend, alpha=0.2)
 
 
 def boundedMutGaussian(individual, mu, sigma, indpb, low=0.0, up=1.0):
@@ -205,7 +226,11 @@ def boundedMutGaussian(individual, mu, sigma, indpb, low=0.0, up=1.0):
             individual[i] = min(max(individual[i], low), up)
     return (individual,)
 
-toolbox.register("mutate", boundedMutGaussian, mu=0, sigma=0.1, indpb=MUTATION_RATE, low=0.0, up=1.0)
+def clip_individual(ind, low=0.0, up=1.0):
+    for i in range(len(ind)):
+        ind[i] = min(max(ind[i], low), up)
+
+toolbox.register("mutate", boundedMutGaussian, mu=0, sigma=0.08, indpb=MUTATION_RATE, low=0.0, up=1.0)
 toolbox.register("select", tools.selTournament, tournsize=3)
 
 def parallel_eval(population):
@@ -234,6 +259,10 @@ def main():
         print(f"Generation {gen+1}")
         parallel_eval(pop)
         pop = algorithms.varAnd(pop, toolbox, cxpb=CROSSOVER_RATE, mutpb=MUTATION_RATE)
+
+        for ind in pop:
+            clip_individual(ind)
+
         parallel_eval(pop)
         hof.update(pop)
         record = stats.compile(pop)
