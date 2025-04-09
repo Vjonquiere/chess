@@ -29,7 +29,7 @@ public enum ColorTheme implements ColorThemeInterface {
 
   /** Place to save the custom themes of the users. */
   private static final String USER_THEMES_FILE =
-      System.getProperty("user.home") + "/.chessThemes/custom_themes.csv";
+      System.getProperty("user.home") + "/.chessSettings/custom_themes.csv";
 
   /** Map containing the themes of the application (from enum and loaded from the csv). */
   private static final Map<String, ColorThemeInterface> THEMES = new HashMap<>();
