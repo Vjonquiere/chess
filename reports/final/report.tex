@@ -109,7 +109,7 @@ sur la deuxième, 4 grains de riz sur la troisième, etc. jusqu’à la dernièr
     (mais reste miroir, c'est-à-dire que les blancs et les noirs commencent avec la même position). Ce mode favorise la créativité au détriment de la mémorisation des ouvertures.
     \item Les échecs Capablanca : Une version jouée sur un échiquier plus grand (10x8 ou 10x10) avec des pièces supplémentaires comme l'archer et le chancelier. Cette variante a été inventée en 1984 par le créateur de jeux hollandais Christian Freeling.
     \item Les échecs japonais : Le Shôgi, où contrairement aux échecs occidentaux, la partie se termine dès que le roi est capturé, ou lorsque l'un
-    des deux joueurs abandonne. Il n'y a pas d'échec et mat à proprement parler. Les origines de cette variante asiatique reste inconnue,
+    des deux joueurs abandonne. Il n'y a pas d'échec et mat à proprement parler. Les origines de cette variante asiatique restent inconnues,
     mais des rumeurs disent qu'ils ont été inspirés des échecs chinois, à l'époque de Nara (710-794).
 \end{itemize}
 Notre projet concerne les échecs classiques, ou traditionnels. On peut considérer que l'on admet une variation: celle du Blitz, si ce mode
@@ -119,7 +119,7 @@ est vu comme une variante.
 Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment deux très connues que voici :
 \begin{itemize}
     \item Fischer vs. Spassky (1972) : Ce duel de la Guerre Froide a opposé l’Américain Bobby Fischer au Soviétique
-    Boris Spassky. Fischer a remporté le championnat du monde, mettant fin à l'interminable domination des soviétiques
+    Boris Spassky. Fischer a remporté le championnat du monde, mettant fin à l'interminable domination des Soviétiques
     aux échecs. Les États-Unis ressortent ainsi victorieux face à l'URSS.
     \item Kasparov vs. Karpov (1984-1985) : Un des matchs les plus longs de l’histoire, où Anatoli Karpov et Garry Kasparov
     se sont affrontés pendant des mois avant que le match soit interrompu sans vainqueur, puis rejoué et remporté par Kasparov.
@@ -134,7 +134,7 @@ L’intelligence artificielle a pris une place très importante dans le jeu d'é
 sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on retrouve :
 \begin{itemize}
     \item Deep Blue : Programme célèbre pour avoir battu Garry Kasparov en 1997. Ce programme était exécuté par des super-calculateurs
-    de l'époque, avec 32 coeurs, 256 threads au total.
+    de l'époque, avec 32 cœurs, 256 threads au total.
     \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé sur notamment une évaluation positionnelle
     grâce à des heuristiques avancées et des optimisations algorithmiques.
     \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
@@ -142,7 +142,7 @@ sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on
 \end{itemize}
 Ces chess engines sont aujourd’hui utilisés pour analyser des parties, préparer des parties, et même aider les
 joueurs humains à progresser. Au jeu d'échecs, l'Intelligence Artificielle est notamment connue pour être très agressive
-(en terme de stratégie de jeu). Cela fait maintenant presque 30 ans qu'il impossible pour un humain de gagner contre
+(en termes de stratégie de jeu). Cela fait maintenant presque 30 ans qu'il est impossible pour un humain de gagner contre
 le meilleur ordinateur aux échecs (autour des 3600 Élos aujourd'hui, environ 2900 pour Deep Blue en 1997).
 
 Les échecs étant un jeu universel, ils ont été étudiés et un grand nombre de papiers scientifiques
@@ -152,7 +152,7 @@ avec la partie intelligence artificielle du développement. C'est pour cela que 
 choisi de nous baser sur l'article `Programming a computer for playing chess' \cite{Shannon1950}, 
 puisqu'il possède une partie consacrée à la construction d'heuristiques efficace pour les échecs.
 Nous avons également basé nos recherches sur la thèse `Using Monte Carlo Tree Search to play chess' \cite{Kral2021}
-de Jakub Král sur l'utlisation de différents algorithmes au service des échecs, tels que AlphaBeta ou
+de Jakub Král sur l'utilisation de différents algorithmes au service des échecs, tels que AlphaBeta ou
 Monte Carlo Tree Seach. Pour la partie intelligence artificielle, nous avons choisi de nous baser sur le 
 `Zobrist hashing' \cite{ZobristHashing} afin de ne pas réévaluer des positions déjà évaluées lors de la 
 recherche du meilleur coup à jouer par le joueur artificiel \ref{Zobrist}. Nous avons également orienté
@@ -334,7 +334,7 @@ Une partie d'échecs peut se terminer de plusieurs façons :
     \item \textbf{Répétition de position} : une même position exacte apparaît trois fois, entraînant une nulle.
     \item \textbf{Règle des 50 coups} : si aucun pion n'est déplacé ni pièce capturée pendant 50 coups consécutifs, la partie est déclarée nulle.
     \item \textbf{Abandon} : un joueur peut décider d'abandonner si sa position devient trop défavorable.
-    \item \textbf{Accord mutuel} : les deux joueurs conviennent de déclarer une nulle lorsqu'aucun ne voit de progrès réaliste possible.
+    \item \textbf{Accord mutuel} : les deux joueurs conviennent de déclarer une nulle lorsque aucun ne voit de progrès réaliste possible.
     \item \textbf{Dépassement de temps} : un joueur perd si son chronomètre s'écoule avant qu'il ne joue, sauf si l'adversaire n'a pas assez de matériel pour mater.
 \end{itemize}
 
@@ -370,7 +370,7 @@ est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendr
 \begin{itemize}
    \item En passant: Il y a au maximum une position où le en-passant est possible, donc on stocke une seule position (int, int).
     \item Roques: on compte le grand roque et le petit roque des deux côtés (noirs et blancs). On a donc besoin de 4 booléens.
-   \item Temps à la pendule: On doit savoir combien de temps il reste à chaque état du jeu et le temps pour chaque tour, chacune de ces informations est stockée sous un long, et nous devons aussi savoir si le temps est en train de tourner ou pas, pour cela nous utilisons un booléen. Nous devons faire cela pour les blancs et noirs, soit un total de 4 longs et 2 booléens .
+   \item Temps à la pendule: On doit savoir combien de temps il reste à chaque état du jeu et le temps pour chaque tour, chacune de ces informations est stockée sous un long, et nous devons aussi savoir si le temps est en train de tourner ou pas, pour cela nous utilisons un booléen. Nous devons faire cela pour les blancs et noirs, soit un total de 4 longs et 2 booléens.
    \item Règle des 50 coups: Pour le nombre de coups sans capture ou mouvement de pion, on se sert d’un entier.
    \item Nombre de "FullMoves": Pour se souvenir du nombre de coups total de la partie, on va prendre large et utiliser un entier.\\
 \end{itemize}
@@ -413,16 +413,17 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
 \end{itemize}
 
 Seulement ceux-là sont cités ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
-Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. C'est la marche à suivre puisque
-il s'agit d'un jeu à somme nulle, c'est-à-dire que le gain d'un joueur correspond exactement à la perte de l'autre. En d'autres termes, si un joueur gagne (+1), l'autre perd (-1), et si la partie est nulle, aucun des deux joueurs ne gagne ni ne perd (0-0). \\
-Dans ce projet, le groupe a développé une multitude d'heuristiques permettant d'évaluer des positions. Essentiellement, elles peuvent être regroupées
+Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. C'est la marche à suivre puisqu'il 
+s'agit d'un jeu à somme nulle, c'est-à-dire que le gain d'un joueur correspond exactement à la perte de l'autre. En d'autres termes, si un joueur gagne 
+(+1), l'autre perd (-1), et si la partie est nulle, aucun des deux joueurs ne gagne ni ne perd (0-0). \\
+Dans ce projet, nous avons développé une multitude d'heuristiques permettant d'évaluer des positions. Essentiellement, elles peuvent être regroupées
 en deux catégories: Heuristiques "STANDARD" et Heuristiques "ENDGAME" ("Fin de partie"). En se servant du design pattern Composite, on combine les
 heuristiques codées afin de se baser sur "beaucoup" de facteurs dans le but d'obtenir une évaluation d'une position la plus précise possible. Ainsi,
 l'Intelligence Artificielle (MiniMax et AlphaBeta) utilise ces évaluations pour en déduire un "meilleur coup". STANDARD et ENDGAME sont les 
 heuristiques par défaut lorsque l'IA est lancée. Le programme vérifie à tout moment (après chaque coup joué ou après chaque coup repris)
 si le jeu se trouve être dans un stade de fin de partie ou non. Si la configuration est considérée être une fin de partie, alors l'heuristique utilisée
-parl'IA devient ENDGAME, afin de prendre en compte des facteurs propres aux fins de partie. Autrement, elle utilise la STANDARD.\\
-Voici quelques exemples d'heuristiques que le groupe a pu développer:
+par l'IA devient ENDGAME, afin de prendre en compte des facteurs propres aux fins de partie. Autrement, elle utilise la STANDARD.\\
+Voici quelques exemples d'heuristiques que nous avons développé:
 \begin{itemize}
     \item KingSafetyHeuristic : Une heuristique évaluant la sécurité du Roi.
     \item MaterialHeuristic : Une heuristique évaluant le matériel disponible de chaque côté.
@@ -440,7 +441,7 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     En espace, c'est du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
     \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les nœuds de
     l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des nœuds va être une évaluation. La complexité en espace ne change pas, mais
-    en temps nous sommes donc en O($b^p$) où p = d/2.
+    en temps, nous sommes donc en O($b^p$) où p = d/2.
     \item MonteCarloTreeSearch:
     Celui-ci peut se décomposer en quatre étapes : \textbf{Selection}, \textbf{Expansion}, \textbf{Simulation}, et \textbf{BackPropagation}. Pour faire simple, on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup, ou encore des nœuds qui n'ont pas encore été explorés. Il s'agit de l'UCT (Upper Confidence bound applied to Trees).\
     L'UCT est une formule permettant d'équilibrer l'exploration et l'exploitation dans la sélection des coups :
@@ -461,21 +462,21 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau nœud, on simule une partie ou une pseudo-partie
     aléatoirement pour estimer le résultat potentiel. Finalement, lorsque l'on obtient un résultat, on fait remonter l'évaluation (BackPropagation)
     et/ou les informations importantes vers le haut de l'arbre pour plus tard agir en conséquence. En temps, on se rapproche de O(n*d), où n est le
-    nombre de simulations effectuées, et d la profondeur moyenne. En espace, dans le pire des cas, on peut se trouver en O(N) où N est le nombre
+    nombre de simulations effectuées, et de la profondeur moyenne. En espace, dans le pire des cas, on peut se trouver en O(N) où N est le nombre
     de simulations jouées. Maintenant, dans le cas moyen, on est en O($b^p$) avec d la profondeur et b le facteur de branchement.
     Cependant, dans le cadre de ce projet, MCTS n'est pas borné par une profondeur. On peut donc dire que l'on se trouve en O(N).\\
     En ce qui concerne la partie structures de données, le MCTS se base une classe Java, appelée dans le code 'TreeNodeMonteCarlo'.
-    Comme son nom l'indique, il s'agit d'un objet représentant un noeud de l'arbre sur lequel l'algorithme va se dérouler.
+    Comme son nom l'indique, il s'agit d'un objet représentant un nœud de l'arbre sur lequel l'algorithme va se dérouler.
     Essentiellement, cet objet va contenir les informations suivantes:
     \begin{itemize}
         \item GameState représentant la configuration de la partie
-        \item Noeud parent (objet de même type)
-        \item Noeuds enfants (objets de même type)
-        \item Le nombre de victoires constatées depuis ce noeud
-        \item Le nombre de visites de ce noeud (pour l'UCT et le winrate d'un coup)
-        \item Le coup qui a amené à ce noeud depuis une configuration précédente
+        \item Nœud parent (objet de même type)
+        \item Nœuds enfants (objets de même type)
+        \item Le nombre de victoires constatées depuis ce nœud
+        \item Le nombre de visites de ce nœud (pour l'UCT et le winrate d'un coup)
+        \item Le coup qui a amené à ce nœud depuis une configuration précédente
     \end{itemize}
-    En reliant ces noeuds par des coups, on arrive à contruire un (pseudo-)arbre et à appliquer l'algorithme du Monte Carlo Tree Search dessus.
+    En reliant ces nœuds par des coups, on arrive à construire un (pseudo-)arbre et à appliquer l'algorithme du Monte Carlo Tree Search dessus.
 \end{itemize}
 
 \par Notons que tous les algorithmes s'effectuent sur des arbres, et AlphaBeta ainsi que MiniMax se servent d'une heuristique pour évaluer chaque position.
@@ -496,14 +497,14 @@ supplémentaires pour les règles spécifiques.
 \end{itemize}
 
 Nous générons donc au départ des nombres aléatoires pour chaque combinaison possible de case et de pièce, que nous mettons dans le tableau \textit{PIECES}.
-Nous générons également des nombres correspondant aux en passant possibles ainsi qu'aux droits de roque. Il y a 8 configurations possible pour le en passant :
+Nous générons également des nombres correspondant aux en passant possibles ainsi qu'aux droits de roque. Il y a 8 configurations possibles pour l'en-passant :
 une pour chaque colonne ou un en passant pourrait être en cours.
 Il y a 16 configurations possibles pour le roque, le petit et le grand roque de chaque couleur encore possible ou non (2 valeurs pour 4 roques différents soit 2**4).
-Une fois ces nombres générés, on va pouvoir créer des hash correspondant à un état de plateau en faisant un XOR sur chaque pièce sur le plateau aisni que sur
-les droits particuliers que nous avons pour le en passant et le roque. Il faut également XORer le joueur courant.
-Ensuite, lorsqu'un mouvement est fait, il faut mettre à jour le hash, grace au XOR afin de corrrespondre au nouveau plateau de jeu.
+Une fois ces nombres générés, on va pouvoir créer des hash correspondant à un état de plateau en faisant un XOR sur chaque pièce sur le plateau ainsi que sur
+les droits particuliers que nous avons pour l'en-passant et le roque. Il faut également XORer le joueur courant.
+Ensuite, lorsqu'un mouvement est fait, il faut mettre à jour le hash, grâce au XOR afin de correspondre au nouveau plateau de jeu.
 
-Nous avons également implémeneté une version simplifiée du zobrist hashing, qui ne prend en compte que les pièces sur le plateau.
+Nous avons également implémenté une version simplifiée du zobrist hashing, qui ne prend en compte que les pièces sur le plateau.
 
 La version simplifiée est utilisée pour la règle du fifty move rule, où il ne faut pas revoir le même plateau 3 fois au cours d'une partie.
 La version classique est très utile pour l'intelligence artificielle, pour le calcul des heuristiques en particulier, ce qui nous évite de reclaculer des heuristiques 
@@ -603,7 +604,7 @@ Le Modèle est lui même composé de plusieurs packages, afin de séparer les di
     \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
 \end{itemize}
 
-Le coeur du projet se situe dans les classes \textit{Game} et \textit{BitboardRepresenation}.
+Le cœur du projet se situe dans les classes \textit{Game} et \textit{BitboardRepresenation}.
 
 
 \subsubsection{View}
@@ -726,11 +727,24 @@ faire part des points faibles de l'application, de ses points forts, et potentie
 auraient pu voir le jour dans le cadre de cette U.E.
 \subsection{Critiques Négatives}
 \subsubsection{MonteCarloTreeSearch}
-Le Monte Carlo Tree Search (MCTS) est largement utilisé dans les jeux de stratégie tels que le Go, où la non-présence d'heuristiques efficaces rend les méthodes classiques d'IA comme AlphaBeta moins adaptées. Cependant, aux échecs, MCTS est rarement employé à cause d'une multitude de limitations.
-Premièrement, les échecs bénéficient d'évaluations positionnelles efficaces et d'une base théorique bien établie, ce qui permet aux algorithmes classiques comme Minimax avec AlphaBeta d'explorer l'arbre de jeu de manière plus efficace. Contrairement à des derniers, MCTS ne se base pas sur des critères d'évaluation et d'optimisations. Ensuite, MCTS est intrinsèquement plus lent que les méthodes basées sur Minimax. En effet, sans optimisation spécifique, il doit effectuer un grand nombre de simulations pour obtenir une estimation intéressante de la valeur d'un GameState. Dans un jeu comme les échecs, où le facteur de branchement moyen est élevé, MCTS a besoin d'un (très) grand nombre d'itérations pour converger vers des décisions "optimales" comparables à celles d'Alpha-Beta Pruning. La simulation de coups est très "Brute-Force", surtout sans optimisation, car le choix des coups par l'algorithme s'effectue de manière complètement aléatoire (pour la partie simulations).
-Enfin, les engines d'échecs modernes tirent parti d'optimisations telles que le move ordering, des bibliothèques d'ouvertures, améliorant ainsi les performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par des techniques spécifiques d'IA comme les réseaux de neuronnes, son efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs. Maintenant, le groupe admet que son implémentation du MCTS est 
-lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState
-Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité sans optimisation.
+Le Monte Carlo Tree Search (MCTS) est largement utilisé dans les jeux de stratégie tels que le Go, où la non-présence d'heuristiques efficaces rend les méthodes classiques d'IA comme
+AlphaBeta moins adaptées. Cependant, aux échecs, MCTS est rarement employé à cause d'une multitude de limitations.
+Premièrement, les échecs bénéficient d'évaluations positionnelles efficaces et d'une base théorique bien établie, ce qui permet aux algorithmes classiques 
+comme Minimax avec AlphaBeta d'explorer l'arbre de jeu de manière plus efficace. Contrairement à des derniers, MCTS ne se base pas sur des critères 
+d'évaluation et d'optimisations. Ensuite, MCTS est intrinsèquement plus lent que les méthodes basées sur Minimax. En effet, sans optimisation spécifique, 
+il doit effectuer un grand nombre de simulations pour obtenir une estimation intéressante de la valeur d'un GameState. Dans un jeu comme les échecs, où le 
+facteur de branchement moyen est élevé, MCTS a besoin d'un (très) grand nombre d'itérations pour converger vers des décisions "optimales" comparables à 
+celles d'Alpha-Beta Pruning. La simulation de coups est très "Brute-Force", surtout sans optimisation, car le choix des coups par l'algorithme s'effectue 
+de manière complètement aléatoire (pour la partie simulations).
+Enfin, les engines d'échecs modernes tirent parti d'optimisations telles que le move ordering, des bibliothèques d'ouvertures, améliorant ainsi les 
+performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par des techniques spécifiques d'IA comme les réseaux de neuronnes, son 
+efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs, comme vu dans l'article de Dominik Klein \cite{NNChess}, 
+page 121. 
+
+Maintenant, nous admesttons que notre implémentation du MCTS est
+lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState.
+Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité 
+sans optimisation.
 
 \subsubsection{Clean Code}
 Même en enlevant les règles nous paraissant superflues, nous avons toujours environ 500 warning à résoudre.
@@ -782,7 +796,7 @@ Cela ressemblerait à quelque chose du style :\\
 Voici la liste exhaustive des besoins qui ont été réalisés lors de ce projet. Pour chaque besoin, on retrouve un code couleur représentant
 son état de validation. Vert signifie validé, orange semi-validé, rouge non validé. Si ambiguïté ou besoin de détails il y a, une explication
 est fournie afin d'éclaircir les choses. Parfois, le besoin peut être compris d'une autre manière. Nous rappelons qu'il s'agit de notre point de vue.
-Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, mais en tout état de cause, le but n'est pas de tricher.
+Un besoin que nous considérons validé peut ne pas l'être pour d'autres, mais en tout état de cause, le but n'est pas de tricher.
 
 \begin{longtable}{|c|p{5cm}|c|p{5cm}|}
     \hline
@@ -919,7 +933,7 @@ Un besoin que le groupe considère validé peut ne pas l'être pour d'autres, ma
     \hline
 \end{longtable}
 
-Voici aussi une liste présentant les besoins "bonus", qui n'étaient pas présents dans la liste des besoins du cahier des charges.
+Voici aussi une liste présentant les besoins ``bonus'', qui n'étaient pas présents dans la liste des besoins du cahier des charges.
 
 \begin{needbox}[F61: Historique scrollable et cliquable]
     L'historique en GUI est scrollable, de telle manière que les coups sont lisibles même si la partie
@@ -945,7 +959,7 @@ Voici aussi une liste présentant les besoins "bonus", qui n'étaient pas prése
 \end{needbox}
 
 \begin{needbox}[F66: Monitoring de l'IA]
-    Il est possible de suivre les performances de l'IA dans le GUI. En activant l'option Monitor dans le menu Options, celui ci permet d'observer le nombre de noeuds, le temps de recherche, le nombre de noeuds visités par senconde pour chaque coup ainsi que les valeurs moyennes au cours de la partie..
+    Il est possible de suivre les performances de l'IA dans le GUI. En activant l'option Monitor dans le menu Options, celui ci permet d'observer le nombre de nœuds, le temps de recherche, le nombre de nœuds visités par senconde pour chaque coup ainsi que les valeurs moyennes au cours de la partie..
 \end{needbox}
 
 \begin{needbox}[F67: Mode UCI]
