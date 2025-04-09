@@ -733,8 +733,8 @@ Nous utiliserons donc ce graphe pour vérifier le caractère parallèle de certa
 À la suite de l'implémentation des algorithmes d'IA démandés, nous avons remarqué que les performances du programmes étaient assez contrastées. En effet, le facteur
 de branchement moyen étant 35, le passage d'une profondeur à une profondeur+1 demande un temps de calcul beaucoup plus long. Nous avons donc pu atteindre la profondeur 3
 en temps raisonnable sans optimisation. Afin d'améliorer l'IA nous avons donc ensuite mis en place différentes optimisations. Pour commencer nous avons adapté nos heuristiques
-pour qu'elle puissent utiliser directement les bitboard afin de tirer le meilleur de la structure de données et d'enlever des couches d'abstractions. Nous avons par la suite 
-remarqué que le calcul de certaines fonctions était chronophage et ne pouvaient pas être diminué en complexité facilement. C'est par exemple le cas des fonction de détection de 
+pour qu'elles puissent utiliser directement les bitboard afin de tirer le meilleur de la structure de données et d'enlever des couches d'abstractions. Nous avons par la suite 
+remarqué que le calcul de certaines fonctions était chronophage et ne pouvait pas être diminué en complexité facilement. C'est par exemple le cas des fonction de détection de 
 l'échec, échec et mat, pat qui sont utilisé lors de l'évaluation du plateau mais également lorsque qu'un coup est jouer pour vérifier si le coup est légal (sans compter le fait 
 qu'un plateau peut apparaître plusieurs fois). Grace au Zobrist hashing, nous avons donc implémenté une sorte de cache pour ne pas reclaculer ces fonctions pour le même plateau 
 plusieurs fois. Nous avons donc stocké les résultats des fonctions précédentes ainsi que les bitboards de mouvements puisqu'elles sont très solicitées lors de l'évaluation des
@@ -751,8 +751,39 @@ Sur cette trace on remarque un gain temps de l'ordre de 68\% lorsque l'on utilis
 effectués plusieurs fois. Puisque toutes ces fonctions sont calculées afin de pouvoir jouer le coup (car il faut vérifier que le coup ne met pas fin à la partie et 
 est bien légal), la grande différence se fait dans lors de l'évaluation car on économise ici près de 80\% du temps nécessaire sans cache. Mais si cela est moins significatif,
 celui-ci permet de gagner environ 25\% de performance sur la fonction \textit{playMove} car il était obligatoire de vérifier deux fois la mise en échec lorsque qu'un coup était joué,
-une première pour vérifier que le roi n'était pas en échec ainsi que pour vérifier que la partie n'avait pas atteint une situation de pat
-COMPARAISON ALPHA\_BETA, ALPHA\_BETA\_PARALLEL, ALPHA\_BETA\_IT
+une première pour vérifier que le roi n'était pas en échec ainsi que pour vérifier que la partie n'avait pas atteint une situation de pat.\\
+
+\subsection{Comparaison des variantes d'Alpha-Beta} Afin d’évaluer les performances de nos différentes versions de l’algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
+
+Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau.
+
+En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5× plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
+
+À l’inverse, les versions utilisant l’iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s’explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l’élagage alpha-bêta dès les premières itérations.
+
+Enfin, concernant le temps moyen pour jouer un coup, TODO
+
+Cela montre l’effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
+
+\begin{table}[h]
+    \centering
+    \caption{Résumé comparatif des différentes variantes d'Alpha-Beta}
+    \label{tab:ab_comparison}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Version} & \textbf{Nœuds/s} & \textbf{Nœuds explorés par coup} & \textbf{Temps moyen par coup (s)} \\
+        \hline
+        ALPHA\_BETA & TODO & TODO & TODO \\
+        \hline
+        ALPHA\_BETA\_PARALLEL & TODO & TODO & TODO \\
+        \hline
+        ALPHA\_BETA\_ID & TODO & TODO & TODO \\
+        \hline
+        ALPHA\_BETA\_ID\_PARALLEL & TODO & TODO & TODO \\
+        \hline
+    \end{tabular}
+\end{table}
+
 
 \subsection{Profondeur de recherche}
 
