@@ -542,6 +542,11 @@ L'algorithme d'approfondissement itératif est utilisé dans notre projet en app
 Le véritable avantage de l'approfondissement itératif vient de sa capacité à fournir une solution en temps réel tout en affinant progressivement l'analyse du jeu, optimisant ainsi le processus de décision dans le cas d'une limite de temps appliquée au joueur IA.
 Dans le cadre d'un jeu comme les échecs, il permet également de gagner du temps via l'amélioration de l'élagage.
 
+\subsection{AlphaBeta parallèle}
+
+L'algorithme AlphaBeta parallèle utilisé repose sur une stratégie d'ordonnancement des coups (\textit{move ordering}) afin de maximiser l'efficacité de l'élagage alpha-bêta. En effet, le meilleur coup estimé (issu d'un tri préalable ou d'une profondeur précédente via l'approfondissement itératif) est évalué en premier, séquentiellement. Cette première évaluation permet de fixer une valeur initiale pour $\alpha$, améliorant ainsi considérablement l'élagage dans les branches suivantes. Une fois cette valeur d'alpha définie, les autres coups sont explorés en parallèle, chacun dans un sous-arbre indépendant. 
+Cette approche hybride tire profit du parallélisme tout en conservant l'efficacité de l'élagage lorsque cela est possible. Néanmoins, du fait de l'exécution simultanée des branches secondaires, le pruning est souvent moins efficace que dans une version strictement séquentielle, ce qui peut entraîner une exploration plus large de l'espace de recherche.
+
 \subsection{Code propre}
 Nous avons effectué plusieurs refactor afin d'arriver à une architecture plus claire au cours du projet. Dans les dernières semaines de développement, 
 lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que \textit{Checkstyle} ou \textit{PMD}.
