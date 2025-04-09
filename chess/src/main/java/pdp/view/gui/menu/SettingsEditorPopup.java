@@ -42,7 +42,11 @@ public class SettingsEditorPopup extends VBox {
       }
     }
     final TextArea textArea = new TextArea(text);
-    saveButton.setOnAction(e -> ConfigFileSaver.save(path, textArea.getText()));
+    saveButton.setOnAction(
+        e -> {
+          ConfigFileSaver.save(path, textArea.getText());
+          popupStage.close();
+        });
     layout.getChildren().add(textArea);
 
     final Button closeButton = new Button(TextGetter.getText("close"));

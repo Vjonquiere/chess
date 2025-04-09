@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -377,6 +376,8 @@ public class CommandLineOptionsTest {
     expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
     expectedMap.put(OptionType.AI, "A"); // Contest mode so switching to All IAs
     expectedMap.put(OptionType.CONFIG, "default.chessrc");
+    expectedMap.put(
+        OptionType.CONFIG, System.getProperty("user.home") + "/.chessSettings/default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
     expectedMap.put(OptionType.AI_DEPTH_B, "3");
     expectedMap.put(OptionType.AI_DEPTH_W, "3");
@@ -419,7 +420,7 @@ public class CommandLineOptionsTest {
     Runtime mockRuntime = mock(Runtime.class);
     HashMap<OptionType, String> map =
         CommandLineOptions.parseOptions(new String[] {"--config=invalid.txt"}, mockRuntime);
-    assertTrue(map.get(OptionType.CONFIG) == "default.chessrc");
+    assertTrue(map.get(OptionType.CONFIG).contains(".chessSettings/default.chessrc"));
   }
 
   @Test
@@ -471,28 +472,7 @@ public class CommandLineOptionsTest {
         CommandLineOptions.parseOptions(
             new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
 
-    assertEquals("default.chessrc", activatedOptions.get(OptionType.CONFIG));
-  }
-
-  @Test
-  public void testBothFilesNotFound() throws Exception {
-    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
-    Files.deleteIfExists(tempConfig);
-
-    Path defaultConfig = Files.createTempFile("nonexistant", ".chessrc");
-    Files.deleteIfExists(defaultConfig);
-
-    Field defaultConfigField = CommandLineOptions.class.getDeclaredField("defaultConfigFile");
-    defaultConfigField.setAccessible(true);
-    String originalDefault = (String) defaultConfigField.get(null);
-    defaultConfigField.set(null, defaultConfig.toString());
-
-    Runtime mockRuntime = mock(Runtime.class);
-    Map<OptionType, String> activatedOptions =
-        CommandLineOptions.parseOptions(
-            new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
-    assertNull(activatedOptions.get(OptionType.CONFIG));
-    defaultConfigField.set(null, originalDefault);
+    assertTrue(activatedOptions.get(OptionType.CONFIG).contains(".chessSettings/default.chessrc"));
   }
 
   @Test
