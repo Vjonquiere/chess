@@ -525,7 +525,22 @@ La version classique est très utile pour l'intelligence artificielle, pour le c
 à partir du moment où on l'a calculée une fois. Le gain de temps est considérable en particulier lorsqu'on utilise des heuristiques lourdes à calculer.
 
 \subsection{Cache}
-Afin que le programme soit plus performant, le groupe a mis en place un système de "cache". COMPLETER.
+Afin que le programme soit plus performant, nous avons mis en place un système de "cache". Ce dernier permet d'éviter de recalculer plusieurs fois la même valeur en stockant le résultat grâce au Zobrist hashing mentionné précédemment.\\
+
+
+Nous avons pris la décision de stocker les valeurs les plus lourdes à calculer réutilisée par notre programme :
+\begin{itemize}
+    \item Boolean isCheckWhite : Un booléen activé si le roi blanc est attaqué (échec).
+    \item Boolean isCheckMateWhite : Un booléen activé si le joueur blanc est échec et mat.
+    \item Boolean isCheckBlack : Un booléen activé si le roi noir est attaqué (échec).
+    \item Boolean isCheckMateBlack : Un booléen activé si le joueur noir est échec et mat.
+    \item Boolean isStalemateWhite : Un booléen activé si le joueur blanc est en situation de pat.
+    \item Boolean isStalemateBlack : Un booléen activé si le joueur noir est en situation de pat.
+    \item Long whiteAttackBitboard : Un long utilisé comme bitboard représentant les cases attaquées par les pièces blanches.
+    \item Long blackAttackBitboard : Un long utilisé comme bitboard représentant les cases attaquées par les pièces noires.\\
+\end{itemize}
+
+L'utilisation de types élémentaires aurait été une solution pour économiser de l'espace, en utilisant le conteneur Optional présent en Java, néanmoins la nécessité du gain de temps nous oriente vers l'implémentation actuelle, des allocations fréquentes de Optional pouvant ralentir le programme lors de son execution.
 
 \subsection{Bidirectional Map}
 COMPLETER.
