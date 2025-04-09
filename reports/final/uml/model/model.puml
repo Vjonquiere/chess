@@ -3,147 +3,27 @@
 top to bottom direction
 skinparam linetype ortho
 
+interface BoardRepresentation << interface >>
 class Game {
   - Game(boolean, boolean, Solver, Solver, GameState, History, HashMap<OptionType, String>): 
-  - aiPlayedItsLastMove: boolean
-  - whiteAi: boolean
-  - isInitializing: boolean
-  - options: HashMap<OptionType, String>
-  - contestModeOn: boolean
-  - loadedFromFile: boolean
-  - viewLock: Lock
-  - instance: Game
-  - blackAi: boolean
-  + outOfTimeCallback(): void
-  + saveGame(String): void
-  + initialize(boolean, boolean, Solver, Solver, Timer, HashMap<OptionType, String>): Game
-  + getTimer(boolean): Timer
-  + aiPlayedItsLastMove(): boolean
-  + playMove(Move): void
-  + restartGame(): void
-  + startAi(): void
-  + fromHistory(List<Move>, boolean, boolean, Solver, Solver, Timer, HashMap<OptionType, String>): Game
-  + setLoadedFromFile(): void
-  + addObserver(EventObserver): void
-  + loadingFileHasHistory(): boolean
-  - checkAndOverwriteHistory(Move): void
-  + addErrorObserver(EventObserver): void
-  - updateGameStateAfterMove(Move, boolean): void
-  + initialize(boolean, boolean, Solver, Solver, Timer, FileBoard, HashMap<OptionType, String>): Game
-   instance: Game
-   workingViewCondition: Condition
-   contestModeOnOrOff: boolean
-   aiExploring: boolean
-   options: HashMap<OptionType, String>
-   exploration: boolean
-   currentPlayerAi: boolean
-   viewLock: Lock
-   blackAi: boolean
-   whiteSolver: Solver
-   contestFile: String
-   contestModeOn: boolean
-   blackSolver: Solver
-   loadingFileHasHistory: boolean
-   isInitializing: boolean
-   loadedFromFile: boolean
-   gameRepresentation: String
-   stringHistory: String
-   whiteAi: boolean
-   aiPlayedItsLastMove: boolean
 }
 class GameAbstract {
-  + GameAbstract(GameState, History, HashMap<Long, Integer>, ZobristHashing): 
   + GameAbstract(GameState, History, Map<Long, Integer>): 
-  - history: History
-  - stateCount: Map<Long, Integer>
-  - gameState: GameState
-  # isCastleMove(ColoredPiece, Position, Position): boolean
-  # validatePromotionMove(Move): void
-  # validatePieceOwnership(GameState, Position): boolean
-  + isPromotionMove(Move): boolean
-  + nextState(): void
-  + previousState(): void
-  # processMove(GameState, Move): void
-  # addStateToCount(long): boolean
-  + playMove(Move): void
-   zobristHasher: ZobristHashing
-   history: History
-   stateCount: Map<Long, Integer>
-   over: boolean
-   gameState: GameState
-   endGamePhase: boolean
-   board: Board
-   threeFoldLimit: int
+  + GameAbstract(GameState, History, HashMap<Long, Integer>, ZobristHashing): 
 }
 class GameAi {
   - GameAi(GameState, History, HashMap<Long, Integer>, ZobristHashing): 
-  - updateOtherGameStateAfterMove(GameState, Move): void
-  + fromGame(Game): GameAi
-  + copy(): GameAi
-  + playMoveOtherGameState(GameState, Move): void
-  + playMove(Move): void
-  - updateGameStateAfterMove(Move, boolean): void
 }
 class GameState {
-  + GameState(Timer): 
-  + GameState(): 
   + GameState(FileBoard): 
+  + GameState(): 
   + GameState(FileBoard, Timer): 
-  - isGameOver: boolean
-  - undoRequestTurnNumber: int
-  - zobristHashing: long
-  - simplifiedZobristHashing: long
-  - redoRequestTurnNumber: int
-  - hintIntegers: List<Integer>
-  - board: Board
-  - moveTimer: Timer
-  - threefoldRepetition: boolean
-  + applyFiftyMoveRule(): void
-  + updateFrom(GameState): void
-  + activateThreefold(): void
-  + whiteWantsToDraw(): void
-  + undoRequestReset(): void
-  + undoRequest(): void
-  + whiteCancelsDrawRequest(): void
-  + hasBlackResigned(): boolean
-  + hasWhiteLostOnTime(): boolean
-  + incrementsFullTurn(): void
-  + playerOutOfTime(boolean): void
-  + hasBlackRequestedDraw(): boolean
-  + blackResigns(): void
-  + redoRequestReset(): void
-  + blackCancelsDrawRequest(): void
-  + redoRequest(): void
-  + blackWantsToDraw(): void
-  + hasWhiteResigned(): boolean
-  + checkGameStatus(): void
-  - checkDrawAgreement(): boolean
-  + hasBlackLostOnTime(): boolean
-  + switchPlayerTurn(): void
-  + whiteResigns(): void
-  + hasWhiteRequestedDraw(): boolean
-   moveTimer: Timer
-   whiteTurn: boolean
-   zobristHashing: long
-   fiftyMoveRule: boolean
-   undoRequestTurnNumber: int
-   threefoldRepetition: boolean
-   hintIntegers: List<Integer>
-   isGameOver: boolean
-   fullTurn: int
-   copy: GameState
-   simplifiedZobristHashing: long
-   fiftyMoveLimit: int
-   board: Board
-   redoRequestTurnNumber: int
+  - GameState(BitboardRepresentation, Timer, int): 
+  + GameState(Timer): 
 }
-class node6 as "package  pdp.model.ai" << package >>
-class node9 as "package  pdp.model.board" << package >>
-class node1 as "package  pdp.model.history" << package >>
-class node5 as "package  pdp.model.parsers" << package >>
-class node3 as "package  pdp.model.piece" << package >>
-class node7 as "package  pdp.model.savers" << package >>
 
-Game          -[#000082,plain]-^  GameAbstract 
-GameAi        -[#000082,plain]-^  GameAbstract 
+Game                 -[#000082,plain]-^  GameAbstract        
+GameAbstract        "1" *-[#595959,plain]-> "gameState\n1" GameState           
+GameAi               -[#000082,plain]-^  GameAbstract        
+GameState           "1" *-[#595959,plain]-> "board\n1" BoardRepresentation 
 @enduml

@@ -600,12 +600,41 @@ Le Modèle est lui même composé de plusieurs packages, afin de séparer les di
     \item \textbf{Board} : 
     \item \textbf{History} : Structure représentant l'historique de la partie sous forme de liste doublement chainée.
     \item \textbf{Parsers} : Parsing des fichers de configuration et de sauvegarde.
-    \item \textbf{Piece} : 
+    \item \textbf{Piece} : Contient les classes 
     \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
 \end{itemize}
 
-Le cœur du projet se situe dans les classes \textit{Game} et \textit{BitboardRepresenation}.
+L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant toutes les fonctions nécéssaire au déroulement d'une partie 
+(jouer un coup, vérifier si la partie est finie, gestion de l'historique,...) et possède deux implémentations concrètes : \textit{Game} et \textit{GameAi}.
+La deuxième est une version plus légère de Game, utilisée dans les algorithmes d'IA, permettant d'obtenir de meileurs résultats lors de l'exploration.
+\textit{GameState} permet de stocker toutes les informations relatives  à l'état de la partie, telles que l'avancée dans la \textit{50 move rule} ou le plateau de jeu.
+\textit{BoardRepresentation} joue ici le role de façade, regroupant toutes les fonctions nécéssaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
+La figure \ref{umlModel} représente la structuration générale, sans inclure les méthodes ou fields.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{uml_model}
+    \caption{Diagramme UML du model simplifié}
+    \label{umlModel}
+\end{figure}
+\FloatBarrier
+
+Le lien entre le package \textit{AI} et \textit{Model} est fait via les \textit{Solver} présents dans \textit{Game}.
+On peut observer une version simplifiée de ce package dans la Figure \ref{umlAi}. Ce package est axé autour de la classe
+\textit{Solver}, qui contient l'algortihme de recherche (Minimax, AlphaBeta ou MCTS), les heuristiques choisies pour la partie ainsi que pour la fin de partie.
+Il existe deux types d'heuristiques: les heuristiques simples, qui ne dépendent que d'un critère (en une classe) et les heuristiques composées qui combinent 
+plusieurs heuristiques simples afin d'obtenir une évaluation plus précise. Ces dernières sont combinées via le design pattern Composite.
+L'ajout d'heuristiques est simplifié par l'interface \textit{Heuristic} ainsi que l'enum \textit{HeuristicType}, qui permet d'ajouter ses propres heuristiques.
+Il en est de même pour les algorithmes, qui possèdent une interface commune et une enum contenant leur nom.
+Il est possible d'ajouter des poids aux heuristiques, afin d'améliorer leur précision. Ces poids sont également paramétrables via les
+options en ligne de commande pour l'heuristique STANDARD.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{uml_ai}
+    \caption{Diagramme UML du package AI simplifié}
+    \label{umlAi}
+\end{figure}
+\FloatBarrier
 
 \subsubsection{View}
 La vue est composée de plusieurs implémentations : la vue CLI, notre première interface, la vue GUI, qui est une interface graphique, la vue Contest, qui joue un coup, l'affiche et le sauvegarde,
@@ -632,16 +661,18 @@ et d'afficher automatiquement les mises à jour du model dans la vue, sans avoir
 \subsubsection{Controller}
 Nous n'avons pas utilisé un controller classique, mais plutôt un Bag of Commands, qui tourne sur son propre thread. Cela permet une extensibilité
 bien plus simple car l'ajout de nouvelles commandes à l'application est facilité avec le pattern Command.
-
+Notre Bag of Commands étant un singleton, nous avons un point d'accès global, permettant d'ajouter facilement des commandes à celui-ci.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{uml_controller}
     \caption{Diagramme UML du controller (simplifiant les commandes)}
     \label{umlController}
 \end{figure}
-La figure \ref{umlController} est simplifiée, une seule commande concrète apparait, dans notre projet,
-nous en avons implémenté une dizaine, en implémentant l'interface \textit{Command}.
 \FloatBarrier
+La figure \ref{umlController} représente note package controller de manière simplifiée. 
+En effet, une seule commande concrète apparait, dans notre projet,
+nous en avons une dizaine, qui chacune implémente l'interface \textit{Command}.
+
 
 \subsubsection{Design Patterns Utilisés}
 
@@ -654,6 +685,7 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. On gère l'ajout de plusieurs commandes en parallèle.
     \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle.
     \item \textbf{Prototype} : Utilisé avec la fonction getCopy() qui génère un clone de la classe demandée.
+    \item \textbf{Façade} : BoardRepresentation fournit une interface complète pour la gestion du plateau de jeu.
 \end{itemize}
 
 
@@ -739,7 +771,7 @@ de branchement moyen des échecs est de 35. Par exemple on retrouve en figure \r
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{board.png}
-    \caption{Graphique représentant le temps de recherche pour un coup en fonction de la profondeur}
+    \caption{Représentation du plateau utilisé pour le graphique}
     \label{board}
 \end{figure}
 \pagebreak

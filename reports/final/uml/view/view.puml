@@ -72,6 +72,13 @@ class ContestView{
 interface View << interface >> {
   + start(): Thread
 }
+package Events {
+  interface EventObserver << interface >> {
+  + onErrorEvent(Exception): void
+  + onGameEvent(EventType): void
+}
+}
+
 
 CliView       -[#595959,dashed]->  CommandEntry : "«create»"
 CliView      "1" *-[#595959,plain]-> "commands\n*" CommandEntry 
@@ -83,4 +90,5 @@ GuiView       -[#008200,dashed]-^  View
 UciView       -[#595959,dashed]->  CommandEntry : "«create»"
 UciView      "1" *-[#595959,plain]-> "commands\n*" CommandEntry 
 UciView       -[#008200,dashed]-^  View         
+View       -[#008200,dashed]-^  EventObserver         
 @enduml
