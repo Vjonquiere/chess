@@ -546,7 +546,11 @@ L'utilisation de types élémentaires aurait été une solution pour économiser
 COMPLETER.
 
 \subsection{Iterative Deepening}
-COMPLETER.
+
+L'algorithme d'approfondissement itératif est utilisé dans notre projet en appui de l'algorithme AlphaBeta et de sa version parallèle. Il réalise des recherches en augmentant progressivement la profondeur (1, 2, 3, etc.) de manière successive. À chaque itération, le meilleur coup trouvé est placé au début de l'arbre de recherche, améliorant l'ordonnancement des coups pour l'algorithme d'élagage. Ainsi, ce procédé permet de réduire considérablement le nombre de positions évaluées.\\
+
+Le véritable avantage de l'approfondissement itératif vient de sa capacité à fournir une solution en temps réel tout en affinant progressivement l'analyse du jeu, optimisant ainsi le processus de décision dans le cas d'une limite de temps appliquée au joueur IA.
+Dans le cadre d'un jeu comme les échecs, il permet également de gagner du temps via l'amélioration de l'élagage.
 
 \subsection{Code propre}
 Nous avons effectué plusieurs refactor afin d'arriver à une architecture plus claire au cours du projet. Dans les dernières semaines de développement, 
