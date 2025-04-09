@@ -15,6 +15,7 @@
 \usepackage[a4paper, margin=1.5cm]{geometry}  
 \usepackage{longtable}
 \usepackage{float}
+\usepackage{placeins}
 
 \graphicspath{ {./res/} }
 
@@ -480,7 +481,6 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
 \end{itemize}
 
 \par Notons que tous les algorithmes s'effectuent sur des arbres, et AlphaBeta ainsi que MiniMax se servent d'une heuristique pour évaluer chaque position.
-PARLER DES OPTIMISATIONS D'IA MISES EN PLACES ET PEUT-ETRE CELLES ENVISAGÉES OU POSSIBLES;
 
 \subsection{Zobrist hashing} \label{Zobrist}
 Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage "complexe" à
@@ -507,7 +507,7 @@ Ensuite, lorsqu'un mouvement est fait, il faut mettre à jour le hash, grâce au
 Nous avons également implémenté une version simplifiée du zobrist hashing, qui ne prend en compte que les pièces sur le plateau.
 
 La version simplifiée est utilisée pour la règle du fifty move rule, où il ne faut pas revoir le même plateau 3 fois au cours d'une partie.
-La version classique est très utile pour l'intelligence artificielle, pour le calcul des heuristiques en particulier, ce qui nous évite de reclaculer des heuristiques 
+La version classique est très utile pour l'intelligence artificielle, pour le calcul des heuristiques en particulier, ce qui nous évite de recalculer des heuristiques 
 à partir du moment où on l'a calculée une fois. Le gain de temps est considérable en particulier lorsqu'on utilise des heuristiques lourdes à calculer.
 
 \subsection{Cache}
@@ -609,25 +609,39 @@ Le cœur du projet se situe dans les classes \textit{Game} et \textit{BitboardRe
 
 \subsubsection{View}
 La vue est composée de plusieurs implémentations : la vue CLI, notre première interface, la vue GUI, qui est une interface graphique, la vue Contest, qui joue un coup, l'affiche et le sauvegarde,
-et enfin la vue UCI qui permet de jouer contre d'autres IA.
+et enfin la vue UCI qui permet de jouer contre d'autres IA comme on peut le voir sur la figure \ref{umlView}.
 
 Le GUI étant plus complexe, nous disposons d'un package gui regroupant les différentes classes utiles à cette implémentation. Le GUI appelle une classe GUILauncher afin de lancer
-le thread Javafx.
+le thread Javafx. Ce package n'a pas été représenté sur le diagramme de la figure \ref{umlView}, afin de garder celui -ci le plus lisible possible.
 
 L'ajout d'un autre type de vue est grandement simplifié grâce au pattern Observer. En effet, il permet au Model d'envoyer des notifications lorsqu'un certain nombre d'évènement
 se produisent. La vue doit donc implémeneter les évènements de la manière dont elle le souhaite. Il n'est pas nécéssaire d'implémeneter tous les évènements, ce qui permet d'ajouter des vues minimales,
-comme notre interface UCI qui ne prend en charge que quelques évènements de base.
+comme notre interface UCI qui ne prend en charge que quelques évènements de base. Ces évènements sont envoyés à la vue via les fonctions \textit{onGameEvent} et \textit{onErrorEvent}.
 
 Nous partons du principe que la vue peut se servir des données de la vue sans passer par le controller, mais ne peut pas y appliquer de modification. Cela permet d'alléger le controller
 et d'afficher automatiquement les mises à jour du model dans la vue, sans avoir besoin d'envoyer de commandes.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{uml_view}
+    \caption{Diagramme UML de la vue (omettant le sous-package GUI)}
+    \label{umlView}
+\end{figure}
+\FloatBarrier
 
 \subsubsection{Controller}
 Nous n'avons pas utilisé un controller classique, mais plutôt un Bag of Commands, qui tourne sur son propre thread. Cela permet une extensibilité
 bien plus simple car l'ajout de nouvelles commandes à l'application est facilité avec le pattern Command.
 
-\begin{center}
-    \includegraphics[height=\textwidth]{uml_controller}
-\end{center}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{uml_controller}
+    \caption{Diagramme UML du controller (simplifiant les commandes)}
+    \label{umlController}
+\end{figure}
+La figure \ref{umlController} est simplifiée, une seule commande concrète apparait, dans notre projet,
+nous en avons implémenté une dizaine, en implémentant l'interface \textit{Command}.
+\FloatBarrier
 
 \subsubsection{Design Patterns Utilisés}
 

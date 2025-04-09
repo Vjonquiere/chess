@@ -4,7 +4,7 @@ left to right direction
 skinparam linetype ortho
 
 class CliView {
-  + CliView(): 
+  + CliView()
   - undoCommand(String): void
   - quitCommand(String): void
   - restartCommand(String): void
@@ -25,17 +25,17 @@ class CliView {
   + onErrorEvent(Exception): void
 }
 entity CommandEntry << record >> {
-  - CommandEntry(Consumer<String>, String): 
+  - CommandEntry(Consumer<String>, String)
   + action(): Consumer<String>
   + description(): String
 }
 entity CommandEntry << record >> {
-  - CommandEntry(Consumer<String>, String): 
+  - CommandEntry(Consumer<String>, String)
   + description(): String
   + action(): Consumer<String>
 }
 class GuiView {
-  + GuiView(): 
+  + GuiView()
   - theme: ColorTheme
   - init: boolean
   + init(Stage): void
@@ -50,7 +50,7 @@ class GuiView {
    theme: ColorTheme
 }
 class UciView {
-  + UciView(): 
+  + UciView()
   + onErrorEvent(Exception): void
   - startUserInputListener(): Thread
   + onGameEvent(EventType): void
@@ -63,14 +63,20 @@ class UciView {
   + start(): Thread
   - uciCommand(String): void
 }
+class ContestView{
+  + ContestView()
+  + start(): Thread
+  + onGameEvent(EventType): void
+  + onErrorEvent(Exception): void
+}
 interface View << interface >> {
   + start(): Thread
 }
-class node6 as "package  pdp.view.gui" << package >>
 
 CliView       -[#595959,dashed]->  CommandEntry : "«create»"
 CliView      "1" *-[#595959,plain]-> "commands\n*" CommandEntry 
 CliView       -[#008200,dashed]-^  View         
+ContestView       -[#008200,dashed]-^  View         
 CommandEntry  +-[#820000,plain]-  CliView      
 CommandEntry  +-[#820000,plain]-  UciView      
 GuiView       -[#008200,dashed]-^  View         
