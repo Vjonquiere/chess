@@ -573,9 +573,16 @@ comme \textit{isLastMoveDoublePush}.
 Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6000 warnings à moins de 500.
 
 \section{Architecture du projet}
-Nous avons décidé de présenter le projet sous une forme d'architecture MVC personnalisée. Cette architecture est particulièrement pratique pour nous, développeurs, aussi bien en termes de maintenance que d'extensibilité.
+L'architecture principale du projet, sépare clairement la logique métier, l'affichage et la gestion des événements. C'est un MVC modifié,
+grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleur flexibilité dans la
+gestion d'évènements.
+Cette architecture est particulièrement pratique, aussi bien en termes de maintenance que d'extensibilité.
 Le Controller, ou plutôt le Bag Of Commands agit comme interprète entre la vue et le Model, il va recevoir des commandes de la part de la Vue et appeler les fonctions correspondantes dans le Model.
 La vue a tout de même accès au Model, afin de récuperer les changements à afficher, ce qui évite de surcharcher le controller.
+
+L'avantage principal de cette architecture est le fait que le modèle ne connaisse pas la vue, ce qui nous permet de la changer facilement (GUI, CLI, ...).
+Cela pourrait également permettre de faire une application hybride avec Kotlin, important d'autres possibilitées de bibliothèques graphiques telles que Jetpack Compose,
+afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui permet d'avoir un visuel compatible Desktop, Web et Android.
 
 \begin{center}
     \includegraphics[width=0.5\textwidth]{MVC}
@@ -619,9 +626,6 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
 \begin{itemize}
     \item \textbf{Singleton} : Utilisé pour la classe \texttt{Game} pour s'assurer qu'une seule instance de la partie est présente.
     La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes ne soit gérée que par un seul bag.
-    \item \textbf{MVC} : L'architecture principale du projet, séparant clairement la logique métier, l'affichage et la gestion des événements. C'est un MVC modifié,
- grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleur flexibilité dans la
- gestion d'évènements.
     \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
     \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
     \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. Nous pourrons gérer l'ajout de plusieurs commandes en parallèle.
