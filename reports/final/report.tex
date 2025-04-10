@@ -962,7 +962,7 @@ de relever le nombre de noeuds exploré ainsi que le temps mis pour une recherch
 
 \subsubsection{Niveau de l'intelligence artificielle}
 À l'aide des différents algorithmes et heuristiques nous avons pu jouer des parties de manière autonome contre \textit{Stockfish} afin de mesurer le niveau de notre IA.
-Pour obtenir des résultats significatif nous jouons plus de 700 parties à chaque pas d'Élo afin de calculer le winrate ainsi que d'autres métriques pour évaluer notre IA.
+Pour obtenir des résultats significatifs nous jouons plus de 700 parties à chaque pas d'Élo afin de calculer le winrate ainsi que d'autres métriques pour évaluer notre IA.
 Nous avons ici utilisé l'algorithme AlphaBeta Iterative Deepening en depth 4 à toutes les parties. Nous obtenons des résultats satisfaisants (au dessus de 0.5) jusqu’à 1400 élo comme le présente la figure \ref{winRateCmp}.
 
 \begin{figure}[h]
@@ -971,10 +971,12 @@ Nous avons ici utilisé l'algorithme AlphaBeta Iterative Deepening en depth 4 à
     \caption{Graphique représentant le winrate en fonction de l'élo de stockfish}
     \label{winRateCmp}
 \end{figure}
+\FloatBarrier
 
 Ces résultats sont encourageant car on remarque un taux anormal de parties finissant par une égalité comme le montre la figure \ref{drawCountCmp}. Nous savons que notre IA
 est en difficulté lorsque qu'il faut trouver un échec et mat, c'est donc qu'elle arrive à bien se défendre pour aller chercher une égalité
-dans un grand nombre de partie.
+dans un grand nombre de partie. Il faut également noter que \textit{Stockfish} est ici limité en temps et que les coups qu'ils jouent sont donc trouvé à une profondeur superieure à la notre,
+sourtout lors des fins de parties. On peut donc estimer que notre IA depasse les 1400 Élo sur des profondeurs supérieures à 4.
 
 \begin{figure}[h]
     \centering
@@ -982,6 +984,9 @@ dans un grand nombre de partie.
     \caption{Graphique représentant le nombre de parties nulles suivant l'élo de stockfish}
     \label{drawCountCmp}
 \end{figure}
+\FloatBarrier
+
+
 
 \subsection{Perspectives}
 \subsubsection{Mode Multi-joueur}
