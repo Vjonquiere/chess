@@ -816,7 +816,9 @@ ou encore la mémoire utilisée par notre programme à tout instant comme le pr�
 \end{figure}
 \FloatBarrier
 
-Dans cette représentation il est possible de voir clairement quelles sont les fonctions les plus chronophages mais il est également possible 
+Dans cette représentation chaque barre représente une fonction et sa longueur est propotionnelle à la durée de d'exécution de cette fonction. Sur l'axe vertical,
+il y a une représentation de la pile d'appel, les barres empilées indiquent une fonction qui a été appelée à partir d'une autre fonction.
+Il est donc possible de voir clairement quelles sont les fonctions les plus chronophages mais également 
 de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques comme sur la Figure \ref{trace_ex2}.
 
 \begin{figure}[h]
@@ -903,12 +905,12 @@ utilisé le mode \textit{Monitor} disponible dans notre logiciel et vérifier le
 Nous avons donc simulé une partie complète avec un algorithme AlphaBeta Iterative Deepening à profondeur 4 avec et sans move ordering et obtenu les monitor
 présenté en Figure \ref{move_ordering_cmp_monitor}.On peut tout suite remarquer que la plus grande différence n'est pas dans le débit de noeuds visités (pas plus de 10000 noeuds d'écart) mais plutôt dans le nombre de noeuds visités.
 En effet, d'après le monitor on peut remarquer qu'il y a un facteur 4 entre le nombre moyen de noeuds visité en moyenne par coup dans une partie complète. Evidemment cela a des répercutions
-sur le temps moyen d'un recherche avec encore ici un facteur 4 entre avec et sans l'optimisation. Cependant, cette optimisation étant plus efficace dans le millieu de partie, on peut remarquer
+sur le temps moyen d'un recherche avec encore ici un facteur 4 entre avec et sans l'optimisation. Cependant, cette optimisation étant plus efficace dans le milieu de partie, on peut remarquer
 que lorsque les derniers coups de la partie (et plus généralement lorsque l'on approche la fin de partie) sont explorés il ne contiennent pas forcément de capture ou de promotion et l'optimisation
-obtient des résultats moindres. Finalement, puisque le cas de la Figure \ref{move_ordering_cmp} se déroule en millieu de partie on parvient à obtenir un résultat légérement meilleur.
+obtient des résultats moindres. Finalement, puisque le cas de la Figure \ref{move_ordering_cmp} se déroule en milieu de partie on parvient à obtenir un résultat légérement meilleur.
 
 
-\subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière. Les mesures parallèles ont été effectuées sur 24 threads, et les résultats sont présentés dans le tableau \ref{tab:ab_comparison}.
+\subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière. Les mesures parallèles ont été effectuées sur 24 threads, et les résultats sont présentés dans la Table \ref{tab:ab_comparison}.
 
 \begin{table}[h]
     \centering
@@ -930,7 +932,7 @@ obtient des résultats moindres. Finalement, puisque le cas de la Figure \ref{mo
 \end{table}
 \FloatBarrier
 
-Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau \textsuperscript{\ref{no_parallel_trace}}, rendant ainsi les versions parallèles plus performantes \textsuperscript{\ref{parallel_trace}}. 
+Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau (voir Figure \ref{no_parallel_trace}), rendant ainsi les versions parallèles plus performantes (voir Figure \ref{parallel_trace}). 
 Il est néanmoins nécessaire de mentionner que les threads ne terminant pas au même moment (certaines recherches pouvant être plus longues que d'autres), il est possible que certains threads soient inactifs pendant une partie de la recherche. Cela peut entraîner une légère perte d'efficacité dans le traitement parallèle, mais cela reste négligeable par rapport aux gains de performance globaux.
 
 \begin{figure}[h]
@@ -943,7 +945,7 @@ Il est néanmoins nécessaire de mentionner que les threads ne terminant pas au 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_parallel.png}
-    \caption{Trace d'exécution de Alpha-Beta avec parallélisation dut 8 threads}
+    \caption{Trace d'exécution de Alpha-Beta avec parallélisation sur 8 threads}
     \label{parallel_trace}
 \end{figure}
 \FloatBarrier
@@ -953,7 +955,7 @@ En termes de nombre total de nœuds explorés, les versions parallèles exploren
 À l'inverse, les versions utilisant l'iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s'explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l'élagage alpha-bêta dès les premières itérations.
 
 Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2 fois pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1 fois pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures (cf. Figure \ref{plot}), même si le coût d'exploration est plus élevé.
-L'ordonnancement des coups plus précis réalisé par l'iterative deepening permet également une réduction de 15\% du temps de recherche entre les deux versions parallèles, pour une économie de 25\% du nombre de noeuds explorés \textsuperscript{\ref{tab:ab_comparison}}.
+L'ordonnancement des coups plus précis réalisé par l'iterative deepening permet également une réduction de 15\% du temps de recherche entre les deux versions parallèles, pour une économie de 25\% du nombre de noeuds explorés comme le montre la Table \ref{tab:ab_comparison}.
 
 Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
 
@@ -1029,6 +1031,12 @@ Certaines classes possèdent trop de méthodes, elles sont qualifiées de \texti
 Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
 \subsection{Critiques positives}
 \subsubsection{Norme UCI}
+La norme UCI (pour Universal Chess Interface) est un protocole de communication utilisé pour permettre à différents chess engine de communiquer avec des interfaces graphiques ou des programmes d’échecs.
+Elle est utilisée pour réaliser des parties entre IA puisqu'elle rend possible l'automatisation de l'échange de coups joué. En effet, un programme intermédiaire est utilisé pour vérifier la validité des
+coups joués par les deux moteurs, mais aussi pour lancer leurs recherches et configurer leurs paramètres respectifs. Le programme intermédiaire envoie des commandes texte aux moteurs via l’entrée standard (stdin), 
+et lit leurs réponses sur la sortie standard (stdout). Les programmes communiquent à l'aide de différentes commandes tels que \textit{uci} pour initier la communication, \textit{position} pour définir 
+l'état du jeu actuel ou encore \textit{go} pour lancer la recherche du meilleur coup.
+
 Intégrer la norme UCI à notre projet nous a permis de développer une interface standardisée et donc de communiquer avec d'autres projets de chess engine.
 Le plus intéresant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le déterminisme
 de l'algorithme AlphaBeta. En effet, nos algorithmes d'AlphaBeta trouvent toujours le même meilleur coup pour un plateau donné, ce qui donne des déroulements de parties
