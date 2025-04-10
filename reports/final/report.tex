@@ -1021,7 +1021,7 @@ Pour éviter les optimum locaux et favoriser l'exploration de l'espace de recher
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{}
+  \includegraphics[width=\textwidth]{AG_weights.png}
   \caption{Évolution des poids heuristiques au fil des générations.}
   \label{fig:evolution_weights}
 \end{figure}
@@ -1046,15 +1046,15 @@ Les poids finaux obtenus en Table \ref{tab:poids-heuristiques} montrent une domi
       \hline
       \textbf{Classe Java (Heuristique)} & \textbf{Poids optimisé} \\
       \hline
-      \texttt{MaterialHeuristic} & 92.36\\
-      \texttt{MobilityHeuristic} & 5.49\\
-      \texttt{BadPawnHeuristic} & 0.00\\
-      \texttt{PawnChainHeuristic} & 0.00\\
-      \texttt{KingSafetyHeuristic} & 3.41\\
-      \texttt{DevelopmentHeuristic} & 48.35\\
-      \texttt{CheckHeuristic} & 0.00 \\
-      \texttt{SpaceHeuristic} & 9.74 \\
-      \texttt{GamePhaseHeuristic} & 10\,000 \\
+      \texttt{MaterialHeuristic (W2)} & 92.36\\
+      \texttt{MobilityHeuristic (W1)} & 5.49\\
+      \texttt{BadPawnHeuristic (W3)} & 0.00\\
+      \texttt{PawnChainHeuristic (W4)} & 0.00\\
+      \texttt{KingSafetyHeuristic (W5)} & 3.41\\
+      \texttt{DevelopmentHeuristic (W6)} & 48.35\\
+      \texttt{CheckHeuristic (W7)} & 0.00 \\
+      \texttt{SpaceHeuristic (W8)} & 9.74 \\
+      \texttt{GamePhaseHeuristic (W0 - fixe)} & 10\,000 \\
       \hline
     \end{tabular}
   \end{table}
