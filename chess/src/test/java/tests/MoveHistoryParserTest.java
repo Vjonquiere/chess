@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.parsers.MoveHistoryParser;
@@ -13,6 +15,11 @@ import pdp.model.parsers.MoveHistoryParser;
 class MoveHistoryParserTest {
 
   private Method parseMovesMethod;
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   void setUp() throws Exception {

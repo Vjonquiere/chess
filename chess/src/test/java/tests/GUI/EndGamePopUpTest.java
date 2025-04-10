@@ -2,10 +2,12 @@ package tests.GUI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Locale;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -15,6 +17,11 @@ import pdp.utils.TextGetter;
 import pdp.view.gui.popups.EndGamePopUp;
 
 class EndGamePopUpTest extends ApplicationTest {
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   @Tag("gui")

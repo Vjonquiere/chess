@@ -276,16 +276,21 @@ public final class CommandLineOptions {
 
         if (option == OptionType.LANG) {
           switch (value) {
-            case "en" -> debug(LOGGER, "Language = English (already set by default)");
+            case "en" -> {
+              debug(LOGGER, "Language = English (already set by default)");
+              TextGetter.setLocale("en");
+            }
             case "fr" -> {
               debug(LOGGER, "Language = French");
               TextGetter.setLocale("fr");
             }
-            default ->
-                error(
-                    "Language "
-                        + cmd.getOptionValue(option.getLong(), "")
-                        + " not supported, language = english");
+            default -> {
+              error(
+                  "Language "
+                      + cmd.getOptionValue(option.getLong(), "")
+                      + " not supported, language = english");
+              TextGetter.setLocale("en");
+            }
           }
         }
       }

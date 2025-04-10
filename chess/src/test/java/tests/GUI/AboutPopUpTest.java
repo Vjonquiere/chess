@@ -2,12 +2,14 @@ package tests.GUI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Locale;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,6 +19,11 @@ import pdp.view.gui.menu.AboutPopUp;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AboutPopUpTest extends ApplicationTest {
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   @Tag("gui")

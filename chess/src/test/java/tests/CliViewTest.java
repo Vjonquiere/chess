@@ -10,9 +10,11 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.controller.BagOfCommands;
@@ -45,6 +47,11 @@ public class CliViewTest {
   private final PrintStream originalErr = System.err;
   private BagOfCommands mockBagOfCommands;
   private Method handleUserInputMethod;
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   public void testBoardToASCII() {

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Locale;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.*;
 import pdp.utils.Logging;
@@ -13,6 +14,11 @@ public class LoggingTest {
   private ByteArrayOutputStream outContent;
   private PrintStream originalOut;
   private PrintStream originalErr;
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   public void setUp() {

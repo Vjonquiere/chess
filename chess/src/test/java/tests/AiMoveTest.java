@@ -2,12 +2,19 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Locale;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pdp.model.ai.AiMove;
 import pdp.model.board.Move;
 import pdp.utils.Position;
 
 public class AiMoveTest {
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   public void aiMoveTest() {

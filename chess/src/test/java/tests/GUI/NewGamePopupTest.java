@@ -6,6 +6,7 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 import java.util.HashMap;
+import java.util.Locale;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -22,6 +23,11 @@ import pdp.view.gui.popups.NewGamePopup;
 public class NewGamePopupTest extends ApplicationTest {
 
   private HashMap<OptionType, String> options;
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   public void before() {
