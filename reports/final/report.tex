@@ -127,7 +127,7 @@ Le jeu d’échecs a été animé par des confrontations historiques et importan
     \item Kasparov vs. Deep Blue (1997) : Ce fut la première victoire d'un ordinateur contre un champion du monde des échecs en match officiel.
     Cette date marque notamment l'ascension de l'Intelligence Artificielle dans le monde des échecs.
 \end{itemize}
-Ces événements ont façonné l’histoire du jeu. La perception des échecs dans la culture populaire a changé et de nombreuses
+Ces évènements ont façonné l’histoire du jeu. La perception des échecs dans la culture populaire a changé et de nombreuses
 personnes se sont mises à jouer.
 
 \subsection{L’évolution des chess engines}
@@ -572,7 +572,7 @@ comme \textit{isLastMoveDoublePush}.
 Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6000 warnings à moins de 500.
 
 \section{Architecture du projet}
-L'architecture principale du projet, sépare clairement la logique métier, l'affichage et la gestion des événements. C'est un MVC modifié,
+L'architecture principale du projet, sépare clairement la logique métier, l'affichage et la gestion des évènements. C'est un MVC modifié,
 grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleur flexibilité dans la
 gestion d'évènements.
 Cette architecture est particulièrement pratique, aussi bien en termes de maintenance que d'extensibilité.
@@ -591,7 +591,7 @@ afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui per
 
 \begin{itemize}
     \item \textbf{Model} : Gère la logique métier du jeu, incluant l'état de la partie, les règles d'échecs et les fonctionnalités comme l'historique et le timer, et même l'Intelligence Artificielle.
-    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les événements utilisateurs et orchestre les interactions entre les différentes couches.
+    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les évènements utilisateurs et orchestre les interactions entre les différentes couches.
     \item \textbf{View} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
     \item \textbf{Events} : Implémente un système d'observateurs pour gérer les notifications et la communication asynchrone entre les modules.
     \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et ou la gestion des options.
@@ -609,11 +609,13 @@ Le Modèle est lui même composé de plusieurs packages, afin de séparer les di
     \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
 \end{itemize}
 
-L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant toutes les fonctions nécéssaire au déroulement d'une partie 
+L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant toutes les fonctions nécéssaires au déroulement d'une partie 
 (jouer un coup, vérifier si la partie est finie, gestion de l'historique,...) et possède deux implémentations concrètes : \textit{Game} et \textit{GameAi}.
+La première implémentation est un Singleton permettant d'avoir un point d'accès global dans l'application, notemment dans la vue, nous permettant la mise a jour de celle-ci sans avoir à envoyer de nombreux paramètres.
 La deuxième est une version plus légère de Game, utilisée dans les algorithmes d'IA, permettant d'obtenir de meileurs résultats lors de l'exploration.
 \textit{GameState} permet de stocker toutes les informations relatives  à l'état de la partie, telles que l'avancée dans la \textit{50 move rule} ou le plateau de jeu.
-\textit{BoardRepresentation} joue ici le role de façade, regroupant toutes les fonctions nécéssaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
+\textit{BoardRepresentation} joue ici le rôle de façade, regroupant toutes les fonctions nécéssaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
+Cette interface nous offre également l'opportunité de créer différentes implémentations, avec des Bitboard (notre class \textit{BitboardRepresentation}), des tableaux 2D ou d'autres structures de données.
 La figure \ref{umlModel} représente la structuration générale, sans inclure les méthodes ou fields.
 
 \begin{figure}[h]
@@ -674,11 +676,39 @@ Notre Bag of Commands étant un singleton, nous avons un point d'accès global, 
     \label{umlController}
 \end{figure}
 \FloatBarrier
-La figure \ref{umlController} représente note package controller de manière simplifiée. 
+La figure \ref{umlController} représente notre package controller de manière simplifiée. 
 En effet, une seule commande concrète apparait, dans notre projet,
 nous en avons une dizaine, qui chacune implémente l'interface \textit{Command}.
 
+\subsubsection{Utils}
+Notre package \textit{Utils} regroupe des classes auxilliaires, n'ayant pas réellement de lien avec la logique métier.
+On y retrouve par exemple la classe permettant de gérer le temps, \textit{Timer}, l'affichage de messages de grâce à la classe \textit{Logging}
+ou encore l'internationnalisation avec \textit{TextGetter}. Ces deux dernières classes contiennent uniquement des méthodes et fields \textit{static}
+afin de garantir l'unicité ainsi qu'une facilité d'accès au sein de l'application.
 
+\subsubsection{Format d'IO}
+Nous possédons un package \textit{savers} et un package \textit{parsers} dans le modèle, où l'on peut retrouver les différentes classes nous permettant d'écrire ou lire des fichiers.
+C'est par exemple ici que l'on trouve le \textit{BoardFileParser}, utilisant le générateur de parser ANTLR-4 afin de lire les fichiers de sauvegarde sans historique, ou encore le \textit{FenParser} 
+de lire les header en format FEN pour enlever toute ambiguité dans la lecture d'un plateau de jeu.
+
+\subsubsection{Events}
+Le package \textit{events} nous permet de regrouper les différents évènements pouvant se produire au cours d'une partie, afin de pouvoir envoyer des notification à la vue.
+L'enum \textit{EventType} regroupe ces évènements.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{uml_event}
+    \caption{Diagramme UML du package Event (sans les valeur de l'enum)}
+    \label{umlEvents}
+\end{figure}
+\FloatBarrier
+Comme on peut le voir dans la figure \ref{umlEvents}, la classe \textit{Subject} correspond à l'Observable du pattern Observer et \textit{EventObserver} à l'Observeur de celui ci.
+La classe \textit{Subject} est étendue par GameAbstract, ce qui permet aux différentes Games de pouvoir être observées. C'est ce qui permet au modèle de notifier la vue par exemple.
+
+\subsubsection{Classes en dehors des packages}
+Nous possédons trois classes se trouvant en dehors de packages : \textit{Main}, qui permet de lancer l'application, 
+\textit{GameInitializer} et \textit{GameControllerInit}. La deuxième se charge d'initialiser la Game en fonction des options données en lignes de commandes, des options par défaut
+et des options données dans le GUI si c'est l'interface utilisée. La dernière appelle \textit{GameInitializer}, créee la vue demandée et crée le controller de l'application.
+Ces classes étant centrales, nous avons décidé de les mettre à la ``racine'' du projet.
 \subsubsection{Design Patterns Utilisés}
 
 Les différents design patterns utilisés dans ce projet sont les suivants :
@@ -687,10 +717,12 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes ne soit gérée que par un seul bag.
     \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
     \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
-    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. On gère l'ajout de plusieurs commandes en parallèle.
-    \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle.
-    \item \textbf{Prototype} : Utilisé avec la fonction getCopy() qui génère un clone de la classe demandée.
-    \item \textbf{Façade} : BoardRepresentation fournit une interface complète pour la gestion du plateau de jeu.
+    \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle. Cela permet de combiner plusieurs heuristiques en une seule.
+    \item \textbf{Prototype} : La méthode \texttt{getCopy()} applique ce pattern pour générer des copies d’objets, en particulier lors de simulations ou de sauvegardes d’état.
+    \item \textbf{Façade} : La classe \texttt{BoardRepresentation} fournit une interface complète pour la gestion du plateau de jeu.
+    \item \textbf{Bag of Commands} : Il permet de regrouper
+    et gérer plusieurs commandes en parallèle. Bien qu’il ne soit pas un design pattern
+    classique, il structure efficacement les interactions complexes entre commandes.
 \end{itemize}
 
 
