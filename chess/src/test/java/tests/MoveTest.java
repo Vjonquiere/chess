@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
+
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPositionException;
@@ -24,6 +27,11 @@ public class MoveTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   void setUpConsole() {

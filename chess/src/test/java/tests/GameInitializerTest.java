@@ -10,7 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
+
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.GameControllerInit;
@@ -37,6 +40,11 @@ class GameInitializerTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   void setUp() {

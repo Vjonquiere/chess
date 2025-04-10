@@ -18,8 +18,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.FailedSaveException;
@@ -45,6 +47,11 @@ public class GameTest {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   void setUpConsole() {

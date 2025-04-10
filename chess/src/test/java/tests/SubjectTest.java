@@ -1,8 +1,12 @@
 package tests;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
+import java.util.Locale;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.events.EventObserver;
@@ -14,6 +18,11 @@ class SubjectTest {
   private Subject subject;
   private EventObserver observer;
   private EventObserver errorObserver;
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   public void setUp() {

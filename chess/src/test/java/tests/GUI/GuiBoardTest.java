@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -46,6 +48,7 @@ public class GuiBoardTest extends ApplicationTest {
     System.setErr(new PrintStream(outputStream));
     options = new HashMap<>();
     GameInitializer.initialize(options);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @Override

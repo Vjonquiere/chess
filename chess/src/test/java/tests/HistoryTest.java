@@ -3,7 +3,10 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pdp.GameInitializer;
 import pdp.exceptions.FailedRedoException;
@@ -16,6 +19,11 @@ import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class HistoryTest {
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   void testHistoryToString() {

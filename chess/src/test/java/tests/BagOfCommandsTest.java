@@ -4,8 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Constructor;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -18,6 +21,11 @@ import pdp.model.Game;
 public class BagOfCommandsTest {
   private GameController mockController = Mockito.mock(GameController.class);
   private Game mockGame = Mockito.mock(Game.class);
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   void setUp() throws Exception {

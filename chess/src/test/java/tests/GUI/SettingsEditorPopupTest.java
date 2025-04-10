@@ -6,10 +6,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,6 +26,11 @@ import pdp.view.gui.menu.SettingsEditorPopup;
 class SettingsEditorPopupTest extends ApplicationTest {
 
   private File tempConfigFile;
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @BeforeEach
   void setUp() throws IOException {

@@ -3,11 +3,19 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
+import java.util.Locale;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pdp.utils.IniParser;
 
 class IniParserTest {
+
+  @BeforeAll
+  public static void setUpLocale() {
+      Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   void testParseValidIni() throws Exception {
