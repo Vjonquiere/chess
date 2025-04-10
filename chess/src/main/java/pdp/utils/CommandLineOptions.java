@@ -284,12 +284,13 @@ public final class CommandLineOptions {
               debug(LOGGER, "Language = French");
               TextGetter.setLocale("fr");
             }
-            default ->{
-                error(
-                    "Language "
-                        + cmd.getOptionValue(option.getLong(), "")
-                        + " not supported, language = english");
-                TextGetter.setLocale("en");}
+            default -> {
+              error(
+                  "Language "
+                      + cmd.getOptionValue(option.getLong(), "")
+                      + " not supported, language = english");
+              TextGetter.setLocale("en");
+            }
           }
         }
       }

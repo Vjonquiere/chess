@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
  */
 public final class TextGetter {
   /** Locale corresponding to the language of the app, english by default. */
-  private static Locale locale = Locale.getDefault();
+  private static Locale locale = Locale.getDefault() != null ? Locale.getDefault() : Locale.ENGLISH;
 
   /** ResourceBundle to get the strings from. */
   private static ResourceBundle messages = ResourceBundle.getBundle("chessResources", locale);
