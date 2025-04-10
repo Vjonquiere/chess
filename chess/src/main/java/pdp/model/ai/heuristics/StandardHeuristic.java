@@ -28,9 +28,9 @@ public class StandardHeuristic extends AbstractHeuristic {
    */
   public StandardHeuristic(final List<Float> weight) {
     super();
-    super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), weight.get(0)));
+    super.addHeuristic(new WeightedHeuristic(new GameStatus(), weight.get(0)));
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), weight.get(1)));
-    super.addHeuristic(new WeightedHeuristic(new GameStatus(), weight.get(2)));
+    super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), weight.get(2)));
     super.addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), weight.get(3)));
     super.addHeuristic(new WeightedHeuristic(new PawnChainHeuristic(), weight.get(4)));
     super.addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), weight.get(5)));
