@@ -193,7 +193,7 @@ Cette section a été rédigée en se basant sur les règles de la Fédération 
 
 \subsection{L'échiquier et les pièces}
 Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces (1 roi, 1 dame, 2 tours,
-2 cavaliers, 2 fous et 8 pions) dans la disposition présentée en Figure \ref{init}.
+2 cavaliers, 2 fous et 8 pions) dans la disposition présentée en Figure \ref{init}. Chaque pièce possède une valeur matérielle.
 
 
 \begin{figure}[h]
@@ -210,7 +210,7 @@ Le joueur avec les pièces blanches commence. Ensuite, chaque joueur joue à tou
 Les déplacements sont propres à chaque type de pièce :
 
 \subsubsection*{Pion}
-Le pion avance uniquement en ligne droite, d'une case à la fois. Lors de son premier déplacement, il peut avancer de deux cases. Il capture les pièces adverses en diagonale.
+Le pion avance uniquement en ligne droite, d'une case à la fois. Lors de son premier déplacement, il peut avancer de deux cases. Il capture les pièces adverses en diagonale. Le pion vaut 1 point de matériel.
 
 \begin{figure}[h]
     \centering
@@ -220,6 +220,7 @@ Le pion avance uniquement en ligne droite, d'une case à la fois. Lors de son pr
 
 \subsubsection*{Cavalier}
 Le cavalier se déplace en forme de "L" : deux cases dans une direction, puis une case perpendiculaire. Il peut sauter par-dessus d'autres pièces.
+Le cavalier vaut 3 points de matériel.
 
 \begin{figure}[h]
     \centering
@@ -229,6 +230,7 @@ Le cavalier se déplace en forme de "L" : deux cases dans une direction, puis un
 
 \subsubsection*{Fou}
 Le fou se déplace en diagonale sur un nombre illimité de cases, sans sauter d'autres pièces. Il reste toujours sur des cases de la même couleur.
+Le fou vaut 3 points de matériel.
 
 \begin{figure}[h]
     \centering
@@ -237,7 +239,8 @@ Le fou se déplace en diagonale sur un nombre illimité de cases, sans sauter d'
 \end{figure}
 
 \subsubsection*{Tour}
-La tour se déplace horizontalement ou verticalement sur un nombre illimité de cases. Elle contrôle des lignes entières.
+La tour se déplace horizontalement ou verticalement sur un nombre illimité de cases. Elle contrôle des lignes entières. La tour vaut 5 points de
+matériel.
 
 \begin{figure}[h]
     \centering
@@ -246,7 +249,8 @@ La tour se déplace horizontalement ou verticalement sur un nombre illimité de 
 \end{figure}
 
 \subsubsection*{Dame}
-La dame combine les mouvements du fou et de la tour. Elle peut se déplacer horizontalement, verticalement et en diagonale.
+La dame combine les mouvements du fou et de la tour. Elle peut se déplacer horizontalement, verticalement et en diagonale. La dame vaut 9 points 
+de matériel.
 
 \begin{figure}[h]
     \centering
@@ -255,7 +259,9 @@ La dame combine les mouvements du fou et de la tour. Elle peut se déplacer hori
 \end{figure}
 
 \subsubsection*{Roi}
-Le roi se déplace d'une case dans toutes les directions. Il est la pièce la plus importante, mais aussi vulnérable.
+Le roi se déplace d'une case dans toutes les directions. Il est la pièce la plus importante, mais aussi vulnérable. Le Roi n'a pas de valeur 
+matérielle car elle est la pièce clé. Si l'on souhaitait à tout prix lui donner une valeur malgré qu'elle soit inestimable, on lui attribuerait
+une valeur de +infini.
 
 \begin{figure}[h]
     \centering
@@ -353,7 +359,6 @@ Une partie d'échecs peut se terminer de plusieurs façons :
 \end{itemize}
 
 
-
 \section{Structures de données et Algorithmes}
 \label{DataStruct}
 
@@ -408,7 +413,8 @@ D'autres solutions comme une double pile ou un tableau seraient également envis
 Afin de coder une bonne heuristique, aux échecs, il faut prendre en compte beaucoup d'éléments et revenir aux bases du jeu.
 Notamment, il faut savoir ce qui importe, ce qui donne l'avantage ou ce qui assure une égalité dans une position donnée. Essentiellement,
 on se contente de vérifier certains points clés qui vont nous permettre d'émettre une évaluation sur une position.
-Rappelons que le facteur de branchement aux échecs approche les 35.\\
+Rappelons que le facteur de branchement aux échecs approche les 35.
+
 Il y a de nombreux éléments à prendre en compte, et en voici certainement les plus impactants:
 \begin{itemize}
     \item Le Matériel: chaque pièce (sauf peut-être le roi) possède une valeur. On va donc s'occuper de compter pour les 2 camps le "potentiel"
@@ -424,7 +430,7 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
     \item La structure de pions: Plus on aura une structure de pions solide, plus on aura de potentiel d'attaque et de défense puisque les pions sont
     des pièces "faibles" lorsqu'ils sont seuls et/ou non défendus.
     \item La promotion: Plus on a de pions avancés, plus on a de chance d'atteindre la dernière rangée et changer notre pion en une pièce plus importante,
-    comme la Dame par exemple, nous donnant plus d'options.\\
+    comme la Dame par exemple, nous donnant plus d'options.
 \end{itemize}
 
 Seulement une petite partie est citée ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
@@ -462,14 +468,72 @@ Nous considérons une partie en "ENDGAME" lorsque l'algorithme \ref{EndGameAlgor
 Si la configuration est considérée être une fin de partie, alors l'heuristique utilisée
 par l'IA devient ENDGAME, afin de prendre en compte des facteurs propres aux fins de partie. Autrement, elle utilise la STANDARD.
 
-Voici quelques exemples d'heuristiques que nous avons développé:
+Voici la liste des heuristiques développées par le groupe lors de ce projet. La colonne \textbf{Primairre} permet de savoir
+par "OUI" ou "NON" si c'est une heuristique "primitive", c'est-à-dire qu'elle n'est pas composée. On retrouve le même principe
+pour savoir si elle est utilisée pour les fins de partie.
+
+\begin{longtable}{|c|p{5cm}|c|p{5cm}|}
+    \hline
+    \textbf{\#} & \textbf{Nom de l'heuristique} & \textbf{Primaire} & \textbf{Fin de partie} \\
+    \hline
+    \endfirsthead
+
+    \hline
+    \textbf{\#} & \textbf{Nom de l'heuristique} & \textbf{Primaire} & \textbf{Fin de partie} \\
+    \hline
+    \endhead
+
+    \hline
+    1 & BadPawnsHeuristic & OUI & OUI \\
+    \hline
+    2 & BishopEndgameHeuristic & OUI & OUI \\
+    \hline
+    3 & CheckHeuristic & OUI & NON \\
+    \hline
+    4 & DevelopmentHeuristic & OUI & NON \\
+    \hline
+    5 & KingActivityHeuristic & OUI & OUI \\
+    \hline
+    6 & KingOppositionHeuristic & OUI & OUI \\
+    \hline
+    7 & KingSafetyHeuristic & OUI & OUI \\
+    \hline
+    8 & MaterialHeuristic & OUI & OUI \\
+    \hline
+    9 & MobilityHeuristic & OUI & NON \\
+    \hline
+    10 & PawnChainHeuristic & OUI & OUI \\
+    \hline
+    11 & PromotionHeuristic & OUI & OUI \\
+    \hline
+    12 & SpaceControlHeuristic & OUI & NON \\
+    \hline
+    13 & ShannonBasic & NON & NON \\
+    \hline
+    14 & StandardHeuristic & NON & NON \\
+    \hline
+    15 & EndGameHeuristic & NON & OUI \\
+    \hline
+    16 & StandardLightHeuristic & NON & NON \\
+    \hline
+\end{longtable}
+
+Expliquons en quelques unes pour pouvoir mieux comprendre à quoi cela ressemble.
 \begin{itemize}
-    \item KingSafetyHeuristic : Une heuristique évaluant la sécurité du Roi.
-    \item MaterialHeuristic : Une heuristique évaluant le matériel disponible de chaque côté.
-    \item SpaceControlHeuristic : Une heuristique évaluant le contrôle de l'échiquier en se basant notamment sur le nombre
-    de coups possibles.
-    \item DevelopmentHeuristic : Une heuristique évaluant le développement des pièces sur l'échiquier.
-    \item KingActivityHeuristic : Une heuristique évaluant l'activité du Roi (utilisée pour les fins de partie).
+    \item DevelopmentHeuristic : Une heuristique évaluant le développement des pièces sur l'échiquier. Pour chaque camp, on évalue
+    le développement des pièces sur l'échiquier. Pour cela, on compare la position de départ des pièces avec la position actuelle
+    des pièces. On attribue un bon score aux pièces développées, c'est-à-dire les pièces dont la position actuelle est différente
+    de celle de départ. Les pièces qui ont une valeur matérielle "importante" (toutes sauf les pions et le Roi) obitennent un score
+    supérieur aux pions car elles sont généralement (surtout en début et milieu de partie) plus fortes.
+    \item MaterialHeuristic : Une heuristique évaluant le matériel disponible de chaque côté. Chaque pièce possède une valeur matérielle 
+    (mis à part le Roi). Pour chaque camp, on regarde les pièces restantes sur l'échiquier, et on effectue une somme totale de la valeur
+    des pièces. Par exemple, s'il reste aux blancs (en plus du Roi bien sûr) une tour, un fou et deux pions, alors le score des blancs
+    est 5 + 3 + (2 * 1) = 10.
+    \item KingActivityHeuristic : Une heuristique évaluant l'activité du Roi (utilisée pour les fins de partie). Essentiellement, on
+    s'occupe de regarder le nombre de coups possibles du Roi, et on attribue aussi un score en fonction de la position de ce dernier.
+    En fin de partie, lorsqu'il ne reste plus beaucoup de pièces sur le plateau notamment, le Roi est l'une des pièces les plus
+    puissantes. Donc plus le Roi se situe vers le centre, plus il a accès à toutes les directions de l'échiquier, et donc un meilleur
+    contrôle de la partie.
 \end{itemize}
 
 \subsubsection{Algorithmes}
