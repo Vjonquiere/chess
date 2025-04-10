@@ -839,11 +839,11 @@ obtient des résultats moindres. Finalement, puisque le cas de la figure \ref{mo
 
 Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau.
 
-En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5× plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
+En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5 fois plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
 
 À l'inverse, les versions utilisant l'iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s'explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l'élagage alpha-bêta dès les premières itérations.
 
-Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2x pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1x pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures, même si le coût d'exploration est plus élevé.
+Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2 fois pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1 fois pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures, même si le coût d'exploration est plus élevé.
 
 Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
 
