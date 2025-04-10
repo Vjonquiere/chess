@@ -1,0 +1,50 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class BoardFileParser {
+  + BoardFileParser(): 
+  + readFile(String): String
+  + parseGameFile(String, Runtime): FileBoard
+}
+class BoardLoaderListener {
+  + BoardLoaderListener(): 
+  + enterPlayer(PlayerContext): void
+  + enterFen(FenContext): void
+  + exitFen(FenContext): void
+  + enterBoardLine(BoardLineContext): void
+  + enterCastling(CastlingContext): void
+  + enterPiece(PieceContext): void
+   result: FileBoard
+}
+entity FenHeader << record >> {
+  + FenHeader(boolean, boolean, boolean, boolean, Position, int, int): 
+  + fiftyMoveRule(): int
+  + whiteKingCastling(): boolean
+  + blackKingCastling(): boolean
+  + blackQueenCastling(): boolean
+  + playedMoves(): int
+  + whiteQueenCastling(): boolean
+  + enPassant(): Position
+}
+class FenParser {
+  - FenParser(): 
+  + loadBoardFromFen(String): FileBoard
+}
+entity FileBoard << record >> {
+  + FileBoard(BoardRepresentation, boolean, FenHeader): 
+  - isWhiteTurn: boolean
+  + header(): FenHeader
+  + board(): BoardRepresentation
+   isWhiteTurn: boolean
+}
+
+BoardFileParser      -[#595959,dashed]->  BoardLoaderListener : "«create»"
+BoardFileParser      -[#595959,dashed]->  FileBoard           : "«create»"
+BoardLoaderListener  -[#595959,dashed]->  FenHeader           : "«create»"
+BoardLoaderListener "1" *-[#595959,plain]-> "fenHeader\n1" FenHeader           
+BoardLoaderListener  -[#595959,dashed]->  FileBoard           : "«create»"
+FenParser            -[#595959,dashed]->  FenHeader           : "«create»"
+FenParser            -[#595959,dashed]->  FileBoard           : "«create»"
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+
+class BagOfCommands {
+  - BagOfCommands(): 
+  - model: Game
+  - instance: BagOfCommands
+  - controller: GameController
+  - processCommands(): void
+  + addCommand(Command): void
+   model: Game
+   running: boolean
+   controller: GameController
+   instance: BagOfCommands
+}
+
+class ConcreteCommand {
+  + ConcreteCommand(): 
+  + execute(Game, GameController): Optional<Exception>
+}
+
+interface Command << interface >> {
+  + execute(Game, GameController): Optional<Exception>
+}
+class GameController {
+  + GameController(Game, View, BagOfCommands): 
+  - model: Game
+  - view: View
+  + onErrorEvent(Exception): void
+   view: View
+   model: Game
+}
+
+BagOfCommands           "1" *-[#595959,plain]-> "commands\n*" Command                 
+BagOfCommands           "1" *-[#595959,plain]-> "controller\n1" GameController          
+ConcreteCommand        -[#008200,dashed]-^  Command                 
+@enduml

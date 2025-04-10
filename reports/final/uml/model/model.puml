@@ -1,0 +1,29 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+interface BoardRepresentation << interface >>
+class Game {
+  - Game(boolean, boolean, Solver, Solver, GameState, History, HashMap<OptionType, String>): 
+}
+class GameAbstract {
+  + GameAbstract(GameState, History, Map<Long, Integer>): 
+  + GameAbstract(GameState, History, HashMap<Long, Integer>, ZobristHashing): 
+}
+class GameAi {
+  - GameAi(GameState, History, HashMap<Long, Integer>, ZobristHashing): 
+}
+class GameState {
+  + GameState(FileBoard): 
+  + GameState(): 
+  + GameState(FileBoard, Timer): 
+  - GameState(BitboardRepresentation, Timer, int): 
+  + GameState(Timer): 
+}
+
+Game                 -[#000082,plain]-^  GameAbstract        
+GameAbstract        "1" *-[#595959,plain]-> "gameState\n1" GameState           
+GameAi               -[#000082,plain]-^  GameAbstract        
+GameState           "1" *-[#595959,plain]-> "board\n1" BoardRepresentation 
+@enduml

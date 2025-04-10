@@ -1,0 +1,68 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class BiDirectionalMap<K, V> {
+  + BiDirectionalMap(): 
+  + getFromValue(V): K
+  + put(K, V): void
+  + removeByKey(K): void
+  + removeByValue(V): void
+  + getFromKey(K): V
+}
+class CommandLineOptions {
+  - CommandLineOptions(): 
+  - processOptions(CommandLine, Map<String, String>, HashMap<OptionType, String>): void
+  - isFeatureImplemented(OptionType): boolean
+  - loadDefaultArgs(String, HashMap<OptionType, String>): Map<String, String>
+  - handleImmediateExitOptions(CommandLine, Options, Runtime): boolean
+  + parseOptions(String[], Runtime): HashMap<OptionType, String>?
+  + validateAiOptions(HashMap<OptionType, String>): void
+  - handleLoggingOptions(CommandLine, Map<String, String>): void
+}
+class CustomFormatter {
+  + CustomFormatter(): 
+  + format(LogRecord): String
+}
+class IniParser {
+  - IniParser(): 
+  + parseIni(InputStream): Map<String, Map<String, String>>
+}
+class Logging {
+  - Logging(): 
+  + configureLogging(Logger): void
+  + error(String): void
+  + debug(Logger, String): void
+  + verbose(Logger, String): void
+  + print(String): void
+}
+
+enum OptionType << enumeration >> {
+  + OptionType(): 
+  + valueOf(String): OptionType
+  + values(): OptionType[]
+}
+entity Position << record >> {
+  + Position(int, int): 
+  + y(): int
+  + equals(Object): boolean
+  + x(): int
+  + toString(): String
+}
+class TextGetter {
+  - TextGetter(): 
+  + getText(String, Object[]): String
+  + getText(String): String
+}
+class Timer {
+  + Timer(long): 
+  + Timer(long, Runnable): 
+  + start(): void
+  + stop(): void
+  + run(): void
+}
+
+CommandLineOptions  -[#595959,dashed]->  OptionType         : "«create»"
+Logging             -[#595959,dashed]->  CustomFormatter    : "«create»"
+@enduml

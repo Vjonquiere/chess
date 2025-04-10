@@ -1,0 +1,1458 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+\usepackage{lmodern}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{pifont}
+\usepackage[a4paper, margin=1.5cm]{geometry}  
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{placeins}
+
+\graphicspath{ {./res/} }
+
+\definecolor{needcolor}{HTML}{007ACC}
+\definecolor{nonfunctionnalneedcolor}{HTML}{9722ff}
+\definecolor{subneedcolor}{HTML}{28A745}
+\definecolor{duedateassigncolor}{HTML}{FF9800}
+
+\tcbuselibrary{skins, breakable}
+\newtcolorbox{needbox}[1][]{
+  colframe=needcolor,
+  colback=needcolor!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  breakable,
+  enhanced,
+  sharp corners=all
+}
+
+\newtcolorbox{nonfunctionnalneedbox}[1][]{
+  colframe=nonfunctionnalneedcolor,
+  colback=nonfunctionnalneedcolor!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  breakable,
+  enhanced,
+  sharp corners=all
+}
+
+\newtcolorbox{justificationbox}[1][]{
+  colframe=subneedcolor,
+  colback=subneedcolor!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  breakable,
+  enhanced,
+  sharp corners=all
+}
+
+\lstdefinelanguage{pseudocode}{
+  morekeywords={function, return, if, true, false},
+  sensitive=true,
+  morecomment=[l]{//},
+  morestring=[b]",
+}
+
+\lstset{
+  language=pseudocode,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+}
+
+\newcommand{\valid}{\textcolor{green}{\ding{108}}}  % Cercle vert pour validé
+\newcommand{\semivalid}{\textcolor{orange}{\ding{108}}}  % Cercle orange pour semi-validé
+\newcommand{\nonvalid}{\textcolor{red}{\ding{108}}}  % Cercle rouge pour non-validé
+
+\author{
+    Valentin Jonquière,
+    Mathilde Chollon,
+    Denis Demirci,
+    Iwen Jomaa,
+    Jonathan Landry
+}
+
+\title{Rapport Final projet de programmation, Échecs en Java}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+\begin{abstract}
+    Ce rapport synthétise le travail réalisé lors de l'UE Projet de Programmation de Master 1 Informatique à l'Université de Bordeaux.
+ \end{abstract}
+
+\section{Description de l'existant}
+\subsection{Origine des Échecs}
+Le jeu d’échecs, aussi appelé le jeu des Rois, est un jeu de stratégie dans lequel deux joueurs s’affrontent,
+et le but est de faire échec et mat, c’est-à-dire arriver dans une position où il est possible de capturer
+le Roi adverse et donc gagner la partie après n’importe quel coup joué par notre opposant (hormis capturer notre roi).
+Le jeu d’échecs se joue sur un échiquier, un plateau de 8 lignes et 8 colonnes, 64 cases au total avec des pièces
+caractérisées par certaines propriétés uniques. De manière compétitive, le jeu d'échecs effectue un classement
+basé sur un système de points, appelés ``Elo'' \cite{elo}. Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
+à répartir ces joueurs en catégories. Pour donner un ordre d'idée, le champion du monde possède un Elo aux alentours de 2900,
+tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Elo. Ce système d'Elo
+va notamment nous permettre d'approximer le niveau de notre Intelligence Artificielle développée dans le cadre de ce projet.\\
+Les origines de ce jeu restent méconnues, mais la légende la plus célèbre raconte que le précepteur d’un jeune prince en Inde
+voulait simplifier les mécanismes de la société et inventa ainsi un échiquier avec des pièces, chacune jouant un rôle précis,
+avec le Roi, la pièce maîtresse. Le prince fut alors émerveillé et en gage de remerciements, il demanda à son précepteur ce
+qu’il souhaitait avoir comme présent. Ce dernier répondit qu’il voulait 1 grain de riz sur la première case, 2 grains de riz
+sur la deuxième, 4 grains de riz sur la troisième, etc. jusqu’à la dernière case. Sur la 64ème case, il avait donc
+2 puissance 63 grains de riz, soit de quoi recouvrir le pays entier avec une couche de riz.
+
+\subsection{Variantes du jeu d'échecs}
+À travers les années, les échecs ont été popularisés et ont donné naissance à de nombreuses variantes. Parmi les plus connues, on trouve :
+\begin{itemize}
+    \item Les échecs aléatoires de Fischer (Chess960) : Une variante inventée en 1996 par Bobby Fischer où la position initiale des pièces est aléatoire
+    (mais reste miroir, c'est-à-dire que les blancs et les noirs commencent avec la même position). Ce mode favorise la créativité au détriment de la mémorisation des ouvertures.
+    \item Les échecs Capablanca : Une version jouée sur un échiquier plus grand (10x8 ou 10x10) avec des pièces supplémentaires comme l'archer et le chancelier. Cette variante a été inventée en 1984 par le créateur de jeux hollandais Christian Freeling.
+    \item Les échecs japonais : Le Shôgi, où contrairement aux échecs occidentaux, la partie se termine dès que le roi est capturé, ou lorsque l'un
+    des deux joueurs abandonne. Il n'y a pas d'échec et mat à proprement parler. Les origines de cette variante asiatique restent inconnues,
+    mais des rumeurs disent qu'ils ont été inspirés des échecs chinois, à l'époque de Nara (710-794).
+\end{itemize}
+Notre projet concerne les échecs classiques, ou traditionnels. On peut considérer que l'on admet une variation: celle du Blitz, si ce mode
+est vu comme une variante.
+
+\subsection{Moments clés dans l’histoire des échecs}
+Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment trois très connues que voici :
+\begin{itemize}
+    \item Fischer vs. Spassky (1972) : Ce duel de la Guerre Froide a opposé l’Américain Bobby Fischer au Soviétique
+    Boris Spassky. Fischer a remporté le championnat du monde, mettant fin à l'interminable domination des Soviétiques
+    aux échecs. Les États-Unis ressortent ainsi victorieux face à l'URSS.
+    \item Kasparov vs. Karpov (1984-1985) : Un des matchs les plus longs de l’histoire, où Anatoli Karpov et Garry Kasparov
+    se sont affrontés pendant des mois avant que le match soit interrompu sans vainqueur, puis rejoué et remporté par Kasparov.
+    \item Kasparov vs. Deep Blue (1997) : Ce fut la première victoire d'un ordinateur contre un champion du monde des échecs en match officiel.
+    Cette date marque notamment l'ascension de l'Intelligence Artificielle dans le monde des échecs.
+\end{itemize}
+Ces évènements ont façonné l’histoire du jeu. La perception des échecs dans la culture populaire a changé et de nombreuses
+personnes se sont mises à jouer.
+
+\subsection{L’évolution des chess engines}
+L’intelligence artificielle a pris une place très importante dans le jeu d'échecs, à tel point que les échecs
+sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on retrouve :
+\begin{itemize}
+    \item Deep Blue : Programme célèbre pour avoir battu Garry Kasparov en 1997. Ce programme était exécuté par des super-calculateurs
+    de l'époque, avec 32 cœurs, 256 threads au total.
+    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé notamment sur une évaluation positionnelle
+    grâce à des heuristiques avancées et des optimisations algorithmiques.
+    \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
+    modèle AlphaZero de Google DeepMind.
+\end{itemize}
+Ces chess engines sont aujourd’hui utilisés pour analyser ou préparer des parties, et même aider les
+joueurs humains à progresser. Au jeu d'échecs, l'Intelligence Artificielle est notamment connue pour être très agressive
+(en termes de stratégie de jeu). Cela fait maintenant presque 30 ans qu'il est impossible pour un humain de gagner contre
+le meilleur ordinateur aux échecs (autour des 3600 Elo aujourd'hui, environ 2900 pour Deep Blue en 1997).
+
+Les échecs étant un jeu universel, ils ont été étudiés et un grand nombre de papiers scientifiques
+sont disponibles. Ceux-ci nous seront très utiles tout au long du projet, car ils concernent des
+besoins différents. Tout d'abord une grande partie des papiers que nous allons utiliser sont en rapport
+avec la partie intelligence artificielle du développement. C'est pour cela que nous avons par exemple
+choisi de nous baser sur l'article `Programming a computer for playing chess' \cite{Shannon1950}, 
+puisqu'il possède une partie consacrée à la construction d'heuristiques efficace pour les échecs.
+Nous avons également basé nos recherches sur la thèse `Using Monte Carlo Tree Search to play chess' \cite{Kral2021}
+de Jakub Král sur l'utilisation de différents algorithmes au service des échecs, tels que AlphaBeta ou
+Monte Carlo Tree Search. Pour la partie intelligence artificielle, nous avons choisi de nous baser sur le 
+`Zobrist hashing' \cite{ZobristHashing} afin de ne pas réévaluer des positions déjà évaluées lors de la 
+recherche du meilleur coup à jouer par le joueur artificiel \ref{Zobrist}. Nous avons également orienté
+nos recherches sur la représentation du jeu d'échecs par les bitboards (plateau, représentation des coups) \cite{Bijl2021}.
+Pour finir, nous avons utilisé un papier plus général, mais contenant des informations sur le développement
+d'un moteur d'échecs en java \cite{PaulDailly}. Nous nous servons également des deux articles présents sur 
+notre repository Gitlab, \cite{Bitboards} et \cite{GameBitboards}, qui concernent aussi les Bitboards.
+
+\section{Règles du jeu}
+Le jeu d'échecs contient beaucoup de règles, parfois techniques, mais dont l'objectif reste simple à comprendre :
+il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est en \textbf{échec},
+mais n'a aucun coup légal pour se défendre de cette attaque. Il faut différencier la règle \textbf{échec} et 
+\textbf{échec et mat}. Un Roi qui est en situation d'\textbf{échec} est un Roi qui est attaqué par une pièce
+adverse, mais qui a encore la possibilité de se défendre pour échapper à cette menace. En effet, selon les règles du jeu, le Roi ne doit jamais être capturé, car il représente la pièce maîtresse. 
+Donc finalement, être en \textbf{échecs et mat} signifie être en \textbf{échec}, mais sans avoir
+la possibilité de se défendre, c'est-à-dire que le Roi peut être capturé par l'adversaire après n'importe quel coup joué.
+Cette section a été rédigée en se basant sur les règles de la Fédération Internationale des Échecs \cite{FIDE2021}.
+
+\subsection{L'échiquier et les pièces}
+Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces (1 roi, 1 dame, 2 tours,
+2 cavaliers, 2 fous et 8 pions) dans la disposition présentée en Figure \ref{init}. Chaque pièce possède une valeur matérielle.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{jeuDepart.png}
+    \caption{Position initiale des pièces}
+    \label{init}
+\end{figure}
+
+Le joueur avec les pièces blanches commence. Ensuite, chaque joueur joue à tour de rôle, un déplacement de pièce par tour.
+
+\subsection{Déplacements des pièces}
+
+Les déplacements sont propres à chaque type de pièce:
+
+\subsubsection*{Pion}
+Le pion avance uniquement en ligne droite, d'une case à la fois. Lors de son premier déplacement, il peut avancer de deux cases. Il capture les pièces adverses en diagonale. Le pion vaut 1 point de matériel.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{pionMove.png}
+    \caption{Déplacement du pion}
+\end{figure}
+
+\subsubsection*{Cavalier}
+Le cavalier se déplace en forme de ``L'': deux cases dans une direction, puis une case perpendiculaire. Il peut sauter par-dessus d'autres pièces.
+Le cavalier vaut 3 points de matériel.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{cavalierMove.png}
+    \caption{Déplacement du cavalier}
+\end{figure}
+
+\subsubsection*{Fou}
+Le fou se déplace en diagonale sur un nombre illimité de cases, sans sauter d'autres pièces. Il reste toujours sur des cases de la même couleur.
+Le fou vaut 3 points de matériel.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{fouMove.png}
+    \caption{Déplacement du fou}
+\end{figure}
+
+\subsubsection*{Tour}
+La tour se déplace horizontalement ou verticalement sur un nombre illimité de cases. Elle contrôle des lignes entières. La tour vaut 5 points de
+matériel.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{tourMove.png}
+    \caption{Déplacement de la tour}
+\end{figure}
+
+\subsubsection*{Dame}
+La dame combine les mouvements du fou et de la tour. Elle peut se déplacer horizontalement, verticalement et en diagonale. La dame vaut 9 points 
+de matériel.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{dameMove.png}
+    \caption{Déplacement de la dame}
+\end{figure}
+
+\subsubsection*{Roi}
+Le roi se déplace d'une case dans toutes les directions. Il est la pièce la plus importante, mais aussi vulnérable. Le Roi n'a pas de valeur 
+matérielle car elle est la pièce clé. Si l'on souhaitait à tout prix lui donner une valeur malgré qu'elle soit inestimable, on lui attribuerait
+une valeur de +infini.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{roiMove.png}
+    \caption{Déplacement du roi}
+\end{figure}
+
+\subsection{Règles spécifiques}
+
+\subsubsection*{Clouage}
+Lorsqu'une pièce intercepte une menace dirigée contre le roi, elle est \textbf{clouée} : elle ne peut pas bouger, sous peine de mettre le roi en échec.
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{clouage1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{clouage2.png}
+    \end{minipage}
+    \caption{Exemple de Clouage}
+\end{figure}
+
+\subsubsection*{Roque}
+Le \textbf{roque} est un mouvement spécial impliquant le roi et une tour. Il est soumis aux conditions suivantes :
+\begin{itemize}
+    \item Ni le roi ni la tour n'ont bougé.
+    \item Le roi n'est pas en échec.
+    \item Aucune des cases traversées par le roi n'est attaquée.
+    \item Aucune pièce ne se trouve entre le roi et la tour.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{roque1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{roque2.png}
+    \end{minipage}
+    \caption{Exemple de Roque}
+\end{figure}
+
+\subsubsection*{Prise en passant}
+Lorsqu'un pion adverse avance de deux cases depuis sa position initiale et finit à côté de l’un de nos pions, on peut le capturer \textbf{en passant} au coup suivant uniquement.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{enpassant1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{enpassant2.png}
+    \end{minipage}
+    \caption{Exemple d'En passant}
+\end{figure}
+
+\subsubsection*{Promotion du pion}
+Lorsqu'un pion atteint la dernière rangée, il peut être promu en dame, tour, fou ou cavalier. Cette promotion peut représenter un avantage décisif.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{promotion1.png}
+    \end{minipage}
+    \hspace{0.005\textwidth}
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=5cm,keepaspectratio]{promotion2.png}
+    \end{minipage}
+    \caption{Exemple de promotion}
+\end{figure}
+
+\subsection{Fin de Partie}
+Une partie d'échecs peut se terminer de plusieurs façons :
+\begin{itemize}
+    \item \textbf{Échec et mat} : le roi est attaqué et aucun coup légal ne peut le sauver, ce qui donne la victoire à l'adversaire.
+    \item \textbf{Pat} : un joueur n'a aucun coup légal à jouer et son roi n'est pas en échec, entraînant une nulle.
+    \item \textbf{Manque de matériel} : si seuls les rois, ou un roi et un fou/cavalier, restent sur l'échiquier, un mat devient impossible, ce qui entraîne une nulle.
+    \item \textbf{Répétition de position} : une même position exacte apparaît trois fois, entraînant une nulle.
+    \item \textbf{Règle des 50 coups} : si aucun pion n'est déplacé ni pièce capturée pendant 50 coups consécutifs, la partie est déclarée nulle.
+    \item \textbf{Abandon} : un joueur peut décider d'abandonner si sa position devient trop défavorable.
+    \item \textbf{Accord mutuel} : les deux joueurs conviennent de déclarer une nulle lorsque aucun ne voit de progrès réaliste possible.
+    \item \textbf{Dépassement de temps} : un joueur perd si son chronomètre s'écoule avant qu'il ne joue, sauf si l'adversaire n'a pas assez de matériel pour mater.
+\end{itemize}
+
+
+\section{Structures de données et Algorithmes}
+\label{DataStruct}
+
+\subsection{Plateau sous forme de bitboards}
+Un échiquier est finalement une matrice 8x8 (64 cases donc) sur lesquelles il y a une pièce, ou non. On voit ici une
+notion de binaire. Pour une pièce: ``Blanche ou Noire'', ``Présente ou Non'' (pour les cases). Une méthode existe pour
+représenter l'échiquier en se servant de bitboards plutôt que d'utiliser des arrays, vecteurs ou listes en deux dimensions.
+Il s'agit du bitboard. On observe un gain de performance en temps et un gain d'espace énormes pour la représentation
+de l'échiquier (et des règles spécifiques).
+
+Comme on vient de le voir, sur une case, soit il y a une pièce, soit il n'y en a pas.
+Encodons le fait qu'une case soit occupée par 1 et le fait qu'une case soit vide (libre) par 0. Il y a 64 cases au total.
+Donc, en attribuant un indice à chaque case (de 0 à 63), on va pouvoir représenter l'échiquier par un entier de 64 bits.
+Chaque bit de cet entier est à 0 ou à 1. S'il est à 0 pour l'indice i, alors la case i est libre. S'il est à 1, alors la
+case i est occupée. Un entier n'est cependant pas suffisant, car il faut pouvoir différencier les types de pièce, ainsi
+que la couleur des pièces (noires ou blanches). Il y a au total 6 types de pièces aux échecs: le Pion, le Cavalier, le Fou,
+la Tour, la Dame, le Roi. Donc finalement, on aura besoin de 12 entiers codés sur 64 bits, car 6 pour les types de pièces
+blanches et 6 pour les types de pièces noires.
+
+Un désavantage de cette méthode
+est le fait qu'il faudra faire une gymnastique pour ``décoder'' une position en tant qu'humain. En effet, si l'on prend l'entier
+112, on ne visualise pas (du tout) la position, contrairement à l'ordinateur.
+Retenons aussi que l'on aura à faire à des représentations et opérations binaires, pour lesquelles un ordinateur est très
+performant. En Java, chaque entier sera un long (type primitif).
+
+Il faut aussi se pencher sur les règles spécifiques que l'on encode avec les 12 bitboards pour représenter une position
+dans son entièreté. Effectivement, pour le moment, nous n'avons que l'emplacement des pièces sur l'échiquier. Mais une position
+est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendre en compte sont:\\
+\begin{itemize}
+   \item En passant: Il y a au maximum une position où le en-passant est possible, donc on stocke une seule position (int, int).
+    \item Roques: on compte le grand roque et le petit roque des deux côtés (noirs et blancs). On a donc besoin de 4 booléens.
+   \item Temps à la pendule: On doit savoir combien de temps il reste à chaque tour et le temps initial pour chaque tour, chacune de ces informations est stockée sous un long, et nous devons aussi savoir si le temps est en train de tourner ou pas, pour cela nous utilisons un booléen, soit un total de 2 longs et 1 booléen.
+   \item Règle des 50 coups: Pour le nombre de coups sans capture ou mouvement de pion, on se sert d’un entier.
+   \item Nombre de ``FullMoves'': Pour se souvenir du nombre de coups total de la partie, on utilise un entier.\\
+\end{itemize}
+
+\subsection{Historique des coups}
+\par Pour l'historique, nous avons choisi d'utiliser une liste doublement chaînée, où chaque nœud contient une copie complète de l'état du jeu ainsi que le coup qui a été joué.
+Cette structure est très efficace pour notre cas d'utilisation, car nous n'avons besoin que de réaliser les opérations d'undo/redo et de suppressions de groupes d'éléments consécutifs. Dans ce dernier cas, il suffit de modifier le pointeur ``suivant'' du nœud précédent le groupe concerné et d'initialiser correctement le pointeur ``précédent'' du nouveau nœud. Le garbage collector se charge ensuite de supprimer les nœuds qui ne sont plus accessibles depuis le reste du programme, même si ces nœuds se réfèrent entre eux.
+D'autres solutions comme une double pile ou un tableau seraient également envisageables, mais elles ne permettent pas de manipuler aussi aisément les liens entre les éléments et nécessitent plus d'opérations pour gérer les suppressions.
+\\
+\\Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
+
+\begin{figure}[h]
+    \caption{Exemple historique de coups}
+    \centering
+    \includegraphics[width=\textwidth,height=5.0cm,keepaspectratio]{historique-coups}
+\end{figure}
+
+\subsection{Intelligence Artificielle} \label{AI}
+\subsubsection{Heuristiques}
+Afin de coder une bonne heuristique, aux échecs, il faut prendre en compte beaucoup d'éléments et revenir aux bases du jeu.
+Notamment, il faut savoir ce qui importe, ce qui donne l'avantage ou ce qui assure une égalité dans une position donnée. Essentiellement,
+on se contente de vérifier certains points clés qui vont nous permettre d'émettre une évaluation sur une position.
+Rappelons que le facteur de branchement aux échecs approche les 35.
+
+Il y a de nombreux éléments à prendre en compte, et en voici certainement les plus impactants:
+\begin{itemize}
+    \item Le Matériel: chaque pièce (sauf peut-être le roi) possède une valeur. On va donc s'occuper de compter pour les 2 camps le ``potentiel''
+    dans une position. Plus on a de matériel (pièces donc), plus on a de chances d'avoir l'avantage, en particulier par un bon contrôle de l'échiquier.
+    \item La sécurité du Roi: Le Roi est la pièce la plus importante aux échecs, et souvent, le joueur qui a un avantage est celui qui va
+    avoir un Roi qui n'est pas en danger. Pour estimer cela, on peut en particulier vérifier le nombre de coups où l'on peut mettre le Roi en échec,
+    combien de coups permettent de l'en sortir et la fréquence des échecs. Plus un Roi est vulnérable, plus il y aura des possibilités
+    de le mettre en échec.
+    \item Le contrôle du centre: Aux échecs, le centre est un emplacement clé, puisqu'il peut donner un accès efficace à toutes les parties de
+    l'échiquier. Généralement, obtenir un bon contrôle du centre est un facteur qui va jouer dans l'évaluation d'une position.
+    \item L'activité: Si l'on a peu de coups légaux que l'on peut jouer, c'est très souvent parce que l'on est en position de désavantage. Cela peut
+    signifier que l'on est forcé à jouer certains coups.
+    \item La structure de pions: Plus on aura une structure de pions solide, plus on aura de potentiel d'attaque et de défense puisque les pions sont
+    des pièces ``faibles'' lorsqu'ils sont seuls et/ou non défendus.
+    \item La promotion: Plus on a de pions avancés, plus on a de chance d'atteindre la dernière rangée et changer notre pion en une pièce plus importante,
+    comme la Dame par exemple, nous donnant plus d'options.
+\end{itemize}
+
+Seulement une petite partie est citée ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
+Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. C'est la marche à suivre puisqu'il 
+s'agit d'un jeu à somme nulle, c'est-à-dire que le gain d'un joueur correspond exactement à la perte de l'autre. En d'autres termes, si un joueur gagne 
+(+1), l'autre perd (-1), et si la partie est nulle, aucun des deux joueurs ne gagne ni ne perd (0-0).
+
+Dans ce projet, nous avons développé une multitude d'heuristiques permettant d'évaluer des positions. Essentiellement, elles peuvent être regroupées
+en deux catégories: Heuristiques STANDARD'' et Heuristiques ``ENDGAME'' (``Fin de partie''). En se servant du design pattern Composite, on combine les
+heuristiques codées afin de se baser sur ``beaucoup'' de facteurs dans le but d'obtenir une évaluation d'une position la plus précise possible. Ainsi,
+l'Intelligence Artificielle (MiniMax et AlphaBeta) utilise ces évaluations pour en déduire un``meilleur coup''. STANDARD et ENDGAME sont les 
+heuristiques par défaut lorsque l'IA est lancée. Le programme vérifie à tout moment (après chaque coup joué ou après chaque coup repris)
+si le jeu se trouve être dans un stade de fin de partie ou non.
+Nous considérons une partie en ``ENDGAME'' lorsque l'algorithme \ref{EndGameAlgorithme} renvoie vrai:
+
+\begin{lstlisting}[label={EndGameAlgorithme}, caption={Détection de la phase de fin de partie - pseudo-code}]
+    function isEndGamePhase(bitboardRep, ...) {
+    
+      conditions = [
+        bitboardRep.queensOffTheBoard(),
+        bitboardRep.nbPiecesRemaining() <= 16,
+        bitboardRep.areKingsActive(),
+        fullTurn >= 25,
+        bitboardRep.getColorMoveBitboard(true).bitCount()
+          + bitboardRep.getColorMoveBitboard(false).bitCount() <= 25,
+        bitboardRep.pawnsHaveProgressed(white)
+      ]
+    
+      nbConditions = countTrue(conditions)
+    
+      return nbConditions >= 4
+    }
+    \end{lstlisting}
+
+Si la configuration est considérée être une fin de partie, alors l'heuristique utilisée
+par l'IA devient ENDGAME, afin de prendre en compte des facteurs propres aux fins de partie. Autrement, elle utilise la STANDARD.
+
+Loici la liste des heuristiques développées lors de ce projet est présente Table \ref{heur}. La colonne \textbf{Primaire} permet de savoir
+par ``OUI'' ou ``NON'' si c'est une heuristique ``primitive'', c'est-à-dire qu'elle n'est pas composée. On retrouve le même principe
+pour savoir si elle est utilisée pour les fins de partie.
+
+\begin{longtable}{|c|p{5cm}|c|p{5cm}|}
+    \caption{Heuristiques présentes dans les différentes heuristiques composites \label{heur}} \\
+    \hline
+    \textbf{\#} & \textbf{Nom de l'heuristique} & \textbf{Primaire} & \textbf{Fin de partie} \\
+    \hline
+    \endfirsthead
+
+    \hline
+    \textbf{\#} & \textbf{Nom de l'heuristique} & \textbf{Primaire} & \textbf{Fin de partie} \\
+    \hline
+    \endhead
+
+    \hline
+    1 & BadPawnsHeuristic & OUI & OUI \\
+    \hline
+    2 & BishopEndgameHeuristic & OUI & OUI \\
+    \hline
+    3 & CheckHeuristic & OUI & NON \\
+    \hline
+    4 & DevelopmentHeuristic & OUI & NON \\
+    \hline
+    5 & KingActivityHeuristic & OUI & OUI \\
+    \hline
+    6 & KingOppositionHeuristic & OUI & OUI \\
+    \hline
+    7 & KingSafetyHeuristic & OUI & OUI \\
+    \hline
+    8 & MaterialHeuristic & OUI & OUI \\
+    \hline
+    9 & MobilityHeuristic & OUI & NON \\
+    \hline
+    10 & PawnChainHeuristic & OUI & OUI \\
+    \hline
+    11 & PromotionHeuristic & OUI & OUI \\
+    \hline
+    12 & SpaceControlHeuristic & OUI & NON \\
+    \hline
+    13 & ShannonBasic & NON & NON \\
+    \hline
+    14 & StandardHeuristic & NON & NON \\
+    \hline
+    15 & EndGameHeuristic & NON & OUI \\
+    \hline
+    16 & StandardLightHeuristic & NON & NON \\
+    \hline
+\end{longtable}
+
+Expliquons en quelques unes pour mieux comprendre à quoi cela ressemble.
+\begin{itemize}
+    \item DevelopmentHeuristic : Une heuristique évaluant le développement des pièces sur l'échiquier. Pour chaque camp, on évalue
+    le développement des pièces sur l'échiquier. Pour cela, on compare la position de départ des pièces avec la position actuelle
+    des pièces. On attribue un bon score aux pièces développées, c'est-à-dire les pièces dont la position actuelle est différente
+    de celle de départ. Les pièces qui ont une valeur matérielle ``importante'' (toutes sauf les pions et le Roi) obtiennent un score
+    supérieur aux pions car elles sont généralement (surtout en début et milieu de partie) plus fortes.
+    \item MaterialHeuristic : Une heuristique évaluant le matériel disponible de chaque côté. Chaque pièce possède une valeur matérielle 
+    (mis à part le Roi). Pour chaque camp, on regarde les pièces restantes sur l'échiquier, et on effectue une somme totale de la valeur
+    des pièces. Par exemple, s'il reste aux blancs (en plus du Roi bien sûr) une tour, un fou et deux pions, alors le score des blancs
+    est 5 + 3 + (2 * 1) = 10.
+    \item KingActivityHeuristic : Une heuristique évaluant l'activité du Roi (utilisée pour les fins de partie). Essentiellement, on
+    s'occupe de regarder le nombre de coups possibles du Roi, et on attribue aussi un score en fonction de la position de ce dernier.
+    En fin de partie, lorsqu'il ne reste plus beaucoup de pièces sur le plateau notamment, le Roi est l'une des pièces les plus
+    puissantes. Donc plus le Roi se situe vers le centre, plus il a accès à toutes les directions de l'échiquier, et donc un meilleur
+    contrôle de la partie.
+\end{itemize}
+
+\subsubsection{Algorithmes}
+Dans cette partie Intelligence Artificielle, on va essentiellement se servir des 3 algorithmes suivants (dont 2 vus au dernier semestre):
+\begin{itemize}
+    \item MiniMax: Visant à retourner l'option la plus adéquate dans une certaine position, on utilise des arbres pour savoir quelle branche va être la
+    plus intéressante, que ce soit pour le joueur courant, comme pour son adversaire. On est en O($b^d$) en temps, où b est le facteur de branchement et d la profondeur.
+    En espace, l'algorithme propose du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
+    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais permet de réduire le nombre de positions à évaluer, tout en gardant le même résultat final. 
+    Cela repose sur une technique appelée élagage, qui permet de ne pas explorer une branche si elle ne permet pas d'améliorer la situation 
+    d'un joueur. Cela revient à ne pas évaluer les coups moins bons que ce que l'on a trouvé. Dans le meilleur des cas, il est possible d'évaluer uniquement 
+    O($b^p$) où p = d/2 et d la profondeur de recherche, contre O($b^d$) avec Minimax.
+    \item MonteCarloTreeSearch:
+    Celui-ci peut se décomposer en quatre étapes : \textbf{Selection}, \textbf{Expansion}, \textbf{Simulation}, et \textbf{BackPropagation}. Pour faire simple, on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup, ou encore des nœuds qui n'ont pas encore été explorés. Il s'agit de l'UCT (Upper Confidence bound applied to Trees).\
+    L'UCT est une formule permettant d'équilibrer l'exploration et l'exploitation dans la sélection des coups :
+    \begin{equation}
+    UCT = \frac{w(i)}{s(i)} + C \sqrt{\frac{\ln(N)}{s(i)}}
+    \end{equation}
+    où :
+    \begin{itemize}
+        \item $w(i)$ est le nombre de victoires du nœud $i$.
+        \item $s(i)$ est le nombre total de simulations passées par ce nœud.
+        \item $N$ est le nombre total de simulations effectuées depuis la racine de l'arbre.
+        \item $C$ est un coefficient ajustable permettant de pondérer l'exploration.\
+    \end{itemize} 
+
+    L’UCT permet ainsi d’équilibrer l’exploration de nouveaux coups et l’exploitation des meilleurs coups déjà identifiés.
+    Cela permet à l’algorithme MCTS de converger vers des coups optimaux tout en continuant à explorer de nouvelles options lorsque cela est nécessaire.
+    Ensuite, après avoir choisi la branche, on se positionne à la feuille de cette branche,
+    puis on simule un coup aléatoirement (Expansion) et on l'évalue. Maintenant, à partir de ce nouveau nœud, on simule une partie ou une pseudo-partie
+    aléatoirement pour estimer le résultat potentiel. Finalement, lorsque l'on obtient un résultat, on fait remonter l'évaluation (BackPropagation)
+    et/ou les informations importantes vers le haut de l'arbre pour plus tard agir en conséquence. En temps, on se rapproche de O(n*d), où n est le
+    nombre de simulations effectuées, et de la profondeur moyenne. En espace, dans le pire des cas, on peut se trouver en O(N) où N est le nombre
+    de simulations jouées. Maintenant, dans le cas moyen, on est en O($b^p$) avec d la profondeur et b le facteur de branchement.
+    Cependant, dans le cadre de ce projet, MCTS n'est pas borné par une profondeur. On peut donc dire que l'on se trouve en O(N).\\
+    En ce qui concerne la partie structures de données, le MCTS se base sur une classe, appelée dans le code 'TreeNodeMonteCarlo'.
+    Comme son nom l'indique, il s'agit d'un objet représentant un nœud de l'arbre sur lequel l'algorithme va se dérouler.
+    Essentiellement, cet objet va contenir les informations suivantes:
+    \begin{itemize}
+        \item GameState représentant la configuration de la partie
+        \item Nœud parent (objet de même type)
+        \item Nœuds enfants (objets de même type)
+        \item Le nombre de victoires constatées depuis ce nœud
+        \item Le nombre de visites de ce nœud (pour l'UCT et le winrate d'un coup)
+        \item Le coup qui a amené à ce nœud depuis une configuration précédente
+    \end{itemize}
+    En reliant ces nœuds par des coups, on arrive à construire un (pseudo-)arbre et à appliquer l'algorithme du Monte Carlo Tree Search dessus.
+\end{itemize}
+
+Notons que tous les algorithmes s'effectuent sur des arbres, et que AlphaBeta ainsi que MiniMax se servent d'une heuristique pour évaluer chaque position.
+
+\subsection{Zobrist hashing} \label{Zobrist}
+Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage ``complexe'' à
+une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on peut gagner en performance, notamment dans les algorithmes d'IA, où les
+états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des ``tables de transposition'', qui sont des tables de
+hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitboards et quelques booléens
+supplémentaires pour les règles spécifiques.
+Nous disposons des structures suivantes pour générer nos hash:
+\begin{itemize}
+    \item long PIECES[64][12]
+    \item long EN\_PASSANT[8]
+    \item long CASTLING[16]
+    \item long SIDE\_TO\_MOVE
+\end{itemize}
+
+Nous générons donc au départ des nombres aléatoires pour chaque combinaison possible de case et de pièce, que nous mettons dans le tableau \textit{PIECES}.
+Nous générons également des nombres correspondant aux en passant possibles ainsi qu'aux droits de roque. Il y a 8 configurations possibles pour l'en-passant :
+une pour chaque colonne ou un en passant pourrait être en cours.
+Il y a 16 configurations possibles pour le roque, le petit et le grand roque de chaque couleur encore possible ou non (2 valeurs pour 4 roques différents soit 2**4).
+Une fois ces nombres générés, on va pouvoir créer des hash correspondant à un état de plateau en faisant un XOR sur chaque pièce sur le plateau ainsi que sur
+les droits particuliers que nous avons pour l'en-passant et le roque. Il faut également effectuer un xor sur le joueur courant.
+Ensuite, lorsqu'un mouvement est fait, il faut mettre à jour le hash, grâce au XOR afin de correspondre au nouveau plateau de jeu.
+
+Nous avons également implémenté une version simplifiée du zobrist hashing, qui ne prend en compte que les pièces sur le plateau.
+
+La version simplifiée est utilisée pour la règle du fifty move rule, où il ne faut pas revoir le même plateau 3 fois au cours d'une partie.
+La version classique est très utile pour l'intelligence artificielle, pour le calcul des heuristiques en particulier, ce qui nous évite de recalculer des heuristiques
+à partir du moment où on l'a calculée une fois. Le gain de temps est considérable en particulier lorsqu'on utilise des heuristiques lourdes à calculer.
+
+\subsection{Cache}
+Afin que le programme soit plus performant, nous avons mis en place un système de ``cache''. Ce dernier permet d'éviter de recalculer plusieurs fois la même valeur en stockant le résultat grâce au Zobrist hashing mentionné précédemment.
+
+Nous avons pris la décision de stocker les valeurs les plus lourdes à calculer réutilisées par notre programme:
+\begin{itemize}
+    \item Boolean isCheckWhite: Un booléen activé si le roi blanc est attaqué (échec).
+    \item Boolean isCheckMateWhite: Un booléen activé si le joueur blanc est échec et mat.
+    \item Boolean isCheckBlack: Un booléen activé si le roi noir est attaqué (échec).
+    \item Boolean isCheckMateBlack: Un booléen activé si le joueur noir est échec et mat.
+    \item Boolean isStalemateWhite: Un booléen activé si le joueur blanc est en situation de pat.
+    \item Boolean isStalemateBlack: Un booléen activé si le joueur noir est en situation de pat.
+    \item Long whiteAttackBitboard: Un long utilisé comme bitboard représentant les cases attaquées par les pièces blanches.
+    \item Long blackAttackBitboard: Un long utilisé comme bitboard représentant les cases attaquées par les pièces noires.
+\end{itemize}
+
+L'utilisation de types élémentaires aurait été une solution pour économiser de l'espace, en utilisant le conteneur Optional présent en Java, néanmoins la nécessité du gain de temps nous oriente vers l'implémentation actuelle, des allocations fréquentes de Optional pouvant ralentir le programme lors de son exécution.
+
+\subsection{Bidirectional Map}
+Puisque le stockage du plateau de jeu se fait à l'aide d'un vecteur de 16 bitboards, nous avons rapidement eu besoin de lier chacune d'elle à un type de pièce pour chaque couleur.
+Nous avons donc implémenté le type \textit{ColoredPiece} qui permet d'associer une pièce et une couleur. Ceci nous a donc permis d'associer chaque type de pièces à un indice
+de bitboard dans le vecteur. Certaines fonctions nécessitent d'obtenir un indice de bitboard à partir d'un pièce tandis que d'autres avaient besoin de l'inverse, nous avons implémenté un système
+de Bidirectional Map afin de ne pas avoir à maintenir à jour deux HashMaps qui auraient mené à de la duplication de code. Ces nouvelles tables nous permettent donc de chercher un élément par clé ou par valeur et rend donc la
+correspondance index de bitboard/piece bien plus simple.
+
+\subsection{Iterative Deepening}
+
+L'approfondissement itératif (ou iterative deepening) est une stratégie de recherche utilisée dans notre projet pour renforcer l'efficacité de l'algorithme AlphaBeta (cf. pseudo-code \ref{IterativeDeepening} ci-dessous), ainsi que de sa version parallèle. Cette méthode combine les avantages d'une recherche en profondeur fixe avec ceux d'une meilleure gestion du temps, en lançant successivement des recherches jusqu'à une profondeur croissante : d'abord profondeur 1, puis 2, 3, et ce jusqu'à atteindre la profondeur maximale souhaitée ou jusqu'à l'expiration du temps.
+
+À chaque itération, l'algorithme effectue une recherche complète à la profondeur courante. Le meilleur coup trouvé lors de cette recherche est ensuite utilisé en priorité au début de l'itération suivante. Ce mécanisme améliore significativement l'ordonnancement des coups, ce qui est crucial pour l'efficacité de l'élagage AlphaBeta. En effet, un bon ordonnancement permet à l'élagage de couper plus de branches inutiles, réduisant le nombre de nœuds explorés et donc le temps de calcul nécessaire.
+
+Un autre avantage majeur de l'approfondissement itératif est sa robustesse face aux contraintes de temps. Dans un contexte où le temps de réflexion est limité (comme c'est le cas dans les compétitions d'échecs), cette approche garantit que l'IA dispose toujours d'un coup valide et potentiellement bon à jouer, même si l'algorithme n'a pas pu explorer la profondeur maximale souhaitée. Cela assure un comportement temps réel, tout en permettant une amélioration progressive de la qualité du coup à mesure que le temps avance.
+
+Dans notre projet, cette méthode a montré des bénéfices notables en termes de performances et de stabilité. Elle agit non seulement comme une stratégie de repli en cas de limite de temps, mais aussi comme un outil pour maximiser l'efficacité du moteur de recherche, en exploitant intelligemment la mémoire des itérations précédentes pour guider plus efficacement les suivantes.
+
+Enfin, dans le cadre spécifique des échecs, où le nombre de coups possibles peut être considérable, l'approfondissement itératif couplé à l'élagage AlphaBeta permet de réduire drastiquement la complexité de la recherche, tout en maintenant un haut niveau de précision dans l'évaluation des positions.
+
+\begin{lstlisting}[label={IterativeDeepening}, caption={Iterative Deepening avec AlphaBeta - pseudo-code}]
+    function iterativeDeepening(game, maxDepth, player):
+        bestMove <- AiMove(null, -inf)
+
+        rootMoves <- all available moves for player from game
+    
+        for depth from 1 to maxDepth:
+            aiGame <- copy of game as GameAi
+            result <- alphaBeta(aiGame, depth, player, -inf, +inf, player, rootMoves)
+    
+            if result.move != null:
+                bestMove <- result
+
+            rootMoves <- all available moves for player from game with bestMove as the first
+    
+        return bestMove
+    \end{lstlisting}
+    
+
+\subsection{AlphaBeta parallèle}
+
+L'algorithme AlphaBeta parallèle (cf. pseudo-code \ref{AlphaBetaParallel} ci-dessous) utilisé repose sur une stratégie d'ordonnancement des coups (\textit{move ordering}) afin de maximiser l'efficacité de l'élagage alpha-bêta. En effet, le meilleur coup estimé (issu d'un tri préalable ou d'une profondeur précédente via l'approfondissement itératif) est évalué en premier, séquentiellement. Cette première évaluation permet de fixer une valeur initiale pour $\alpha$, améliorant ainsi considérablement l'élagage dans les branches suivantes. Une fois cette valeur d'alpha définie, les autres coups sont explorés en parallèle, chacun dans un sous-arbre indépendant.
+Cette approche hybride tire profit du parallélisme tout en conservant l'efficacité de l'élagage lorsque cela est possible. Néanmoins, du fait de l'exécution simultanée des branches secondaires, le pruning est souvent moins efficace que dans une version strictement séquentielle, ce qui peut entraîner une exploration plus large de l'espace de recherche.
+
+\begin{lstlisting}[label={AlphaBetaParallel}, caption={AlphaBeta version parallèle - pseudo-code}]
+function findBestMove(game, depth, player):
+    aiGame <- copy of game as GameAi
+    nbThreads <- number of processors / 2
+    executor <- thread pool with nbThreads
+    futures <- empty list
+
+    moves <- all available moves for player from aiGame
+
+    sortMoves(moves)
+
+    aiGame.playMove(moves[0])
+    firstResult <- alphaBeta(aiGame, depth-1, not player, -inf, +inf, player)
+    aiGame.previousState()
+    bestMove <- AiMove(moves[0], firstResult.score)
+
+    initialAlpha <- bestMove.score
+
+    for each move in moves[1:]:
+        submit to executor:
+            gameCopy <- deep copy of aiGame
+            move <- promoteMove(move)
+            gameCopy.playMove(move)
+            result <- alphaBeta(gameCopy, depth - 1, not player, initialAlpha, +inf, player)
+            return AiMove(move, result.score)
+
+    bestMove <- AiMove(null, -inf)
+
+    for each future in futures:
+        candidate <- future result
+        if candidate.move != null and candidate.score > bestMove.score:
+            bestMove <- candidate
+
+    shutdown executor
+    return bestMove
+    \end{lstlisting}
+    \FloatBarrier
+
+\section{Architecture du projet}
+L'architecture principale du projet, sépare clairement la logique métier, l'affichage et la gestion des évènements. C'est un MVC modifié voir Figure \ref{MVC},
+grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleure flexibilité dans la
+gestion d'évènements.
+Cette architecture est particulièrement pratique, aussi bien en termes de maintenance que d'extensibilité.
+Le Controller, ou plutôt le Bag Of Commands agit comme interprète entre la Vue et le Model, reçoitva recevoir des commandes de la part de la Vue capables d'appeler les fonctions correspondantes dans le Model.
+La Vue a tout de même accès au Model, afin de récupérer les changements à afficher, ce qui évite de surcharger le Controller.
+
+L'avantage principal de cette architecture est le fait que le modèle ne connaisse pas la Vue, ce qui nous permet de la changer facilement (GUI, CLI, ...).
+Cela pourrait également permettre de faire une application hybride avec Kotlin, important d'autres possibilitées de bibliothèques graphiques telles que Jetpack Compose,
+afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui permet d'avoir un visuel compatible Desktop, Web, Android et IOS.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{MVC}
+    \caption{MVC personnalisé}
+    \label{MVC}
+\end{figure}
+\FloatBarrier
+
+\subsection{Description des Modules}
+
+\begin{itemize}
+    \item \textbf{Model} : Gère la logique métier du jeu, incluant l'état de la partie, les règles d'échecs et les fonctionnalités comme l'historique et le timer, et même l'Intelligence Artificielle.
+    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les évènements utilisateurs et orchestre les interactions entre les différentes couches.
+    \item \textbf{View} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
+    \item \textbf{Events} : Implémente un système d'observateurs pour gérer les notifications et la communication asynchrone entre les modules.
+    \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et ou la gestion des options.
+    \item \textbf{Exceptions} : Contient les types d'exceptions personnalisées qui peuvent survenir dans le programme et nous permettant d'agir en conséquence.
+\end{itemize}
+
+\subsection{Model}
+Le Modèle est lui même composé de plusieurs packages, afin de séparer les différentes partie de l'application :
+\begin{itemize}
+    \item \textbf{AI} : Contient toute la partie IA, soit le solver, les algorithmes et les heuristiques.
+    \item \textbf{Board} : Contient le plateau de jeu, ses représenatations ainsi que des classes utilitaires comme le cache,
+    les différentes représentations de mouvements ou le Zobrist hashing.
+    \item \textbf{History} : Structure représentant l'historique de la partie sous forme de liste doublement chaînée.
+    \item \textbf{Parsers} : Parsing des fichiers de configuration et de sauvegarde.
+    \item \textbf{Piece} : Contient les classes nécessaires à la représentation des pièces.
+    \item \textbf{Savers} : Sauvegarde des fichiers de jeu et de configuration.
+\end{itemize}
+
+L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant toutes les fonctions nécessaires au déroulement d'une partie 
+(jouer un coup, vérifier si la partie est finie, gestion de l'historique,...) et possède deux implémentations concrètes : \textit{Game} et \textit{GameAi}.
+La première implémentation est un Singleton permettant d'avoir un point d'accès global dans l'application, notamment dans la Vue, nous permettant la mise à jour de celle-ci sans avoir à envoyer de nombreux paramètres.
+La deuxième est une version plus légère de Game, utilisée dans les algorithmes d'IA, permettant d'obtenir de meilleurs résultats lors de l'exploration.
+\textit{GameState} permet de stocker toutes les informations relatives à l'état de la partie, telles que l'avancée dans la \textit{50 move rule} ou le plateau de jeu.
+\textit{BoardRepresentation} joue ici le rôle de façade, regroupant toutes les fonctions nécessaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
+Cette interface nous offre également l'opportunité de créer différentes implémentations, avec des Bitboard (notre classe \textit{BitboardRepresentation}), des tableaux 2D ou d'autres structures de données.
+\textit{BitboardRepresentation} sert à unifier toutes les sous classes (génération des mouvements, vérification des règles,..) et sert également à gérer le cache.
+La Figure \ref{umlModel} représente la structuration générale, sans inclure les méthodes ou fields.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{uml_model}
+    \caption{Diagramme UML du Model simplifié}
+    \label{umlModel}
+\end{figure}
+\FloatBarrier
+
+Le lien entre le package \textit{AI} et \textit{Model} est fait via les \textit{Solver} présents dans \textit{Game}.
+On peut observer une version simplifiée de ce package dans la Figure \ref{umlAi}. Ce package est axé autour de la classe
+\textit{Solver}, qui contient l'algorithme de recherche (Minimax, AlphaBeta ou MCTS), les heuristiques choisies pour la partie ainsi que pour la fin de partie.
+Il existe deux types d'heuristiques: les heuristiques simples, qui ne dépendent que d'un critère (en une classe) et les heuristiques composées qui combinent 
+plusieurs heuristiques simples afin d'obtenir une évaluation plus précise. Ces dernières sont combinées via le design pattern Composite.
+L'ajout d'heuristiques est simplifié par l'interface \textit{Heuristic} ainsi que l'enum \textit{HeuristicType}, qui permet d'ajouter ses propres heuristiques.
+Il en est de même pour les algorithmes, qui possèdent une interface commune et une enum contenant leur nom.
+Il est possible d'ajouter des poids aux heuristiques, afin d'améliorer leur précision. Ces poids sont également paramétrables via les
+options en ligne de commande pour l'heuristique STANDARD.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{uml_ai}
+    \caption{Diagramme UML du package AI simplifié}
+    \label{umlAi}
+\end{figure}
+\FloatBarrier
+
+\subsection{View}
+La Vue est composée de plusieurs implémentations : la Vue CLI, notre première interface, la Vue GUI, qui est une interface graphique, la Vue Contest, qui joue un coup, l'affiche et le sauvegarde,
+et enfin la Vue UCI qui permet de jouer contre d'autres IA comme on peut le voir sur la Figure \ref{umlView}.
+
+Le GUI étant plus complexe, nous disposons d'un package gui regroupant les différentes classes utiles à cette implémentation. Le GUI appelle une classe GUILauncher afin de lancer
+le thread Javafx. Ce package n'a pas été représenté sur le diagramme de la Figure \ref{umlView}, afin de garder celui-ci le plus lisible possible.
+
+L'ajout d'un autre type de Vue est grandement simplifié grâce au pattern Observer. En effet, il permet au Model d'envoyer des notifications lorsqu'un certain nombre d'évènement
+se produisent. La Vue doit donc implémenter les évènements de la manière dont elle le souhaite. Il n'est pas nécessaire d'implémeneter tous les évènements, ce qui permet d'ajouter des Vues minimales,
+comme notre interface UCI qui ne prend en charge que quelques évènements de base. Ces évènements sont envoyés à la Vue via les fonctions \textit{onGameEvent} et \textit{onErrorEvent}.
+
+Nous partons du principe que la Vue peut se servir des données du modèle sans passer par le Controller, mais ne peut pas y appliquer de modification. Cela permet d'alléger le Controller
+et d'afficher automatiquement les mises à jour du modèle dans la Vue, sans avoir besoin d'envoyer de commandes.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{uml_view}
+    \caption{Diagramme UML de la Vue (omettant le sous-package GUI)}
+    \label{umlView}
+\end{figure}
+\FloatBarrier
+
+\subsection{Controller}
+Nous n'avons pas utilisé un Controller classique, mais plutôt un Bag of Commands, qui tourne sur son propre thread. Cela permet une extensibilité
+bien plus simple car l'ajout de nouvelles commandes à l'application est facilité avec le pattern Command.
+Notre Bag of Commands étant un singleton, nous avons un point d'accès global, permettant d'ajouter facilement des commandes à celui-ci.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{uml_controller}
+    \caption{Diagramme UML du Controller (simplifiant les commandes)}
+    \label{umlController}
+\end{figure}
+\FloatBarrier
+La Figure \ref{umlController} représente notre package Controller de manière simplifiée. 
+En effet, une seule commande concrète apparaît, dans notre projet,
+nous en avons une dizaine, qui chacune implémente l'interface \textit{Command}.
+Pour communiquer à l'aide du Bag of Commands, il faut y ajouter une commande, il suffit par exemple d'ajouter la commande PlayMove à celui-ci en donnant le coup à jouer si l'on souhaite effectuer un coup dans la partie.
+Le Bag of Commands va donc l'ajouter à sa file d'exécution et la traiter dès que possible. Dès lors, il va appeler la méthode \textit{execute()} de la commande, qui fera jouer le coup au Model.
+
+\subsection{Utils}
+Notre package \textit{Utils} regroupe des classes auxiliaires, n'ayant pas réellement de lien avec la logique métier.
+On y retrouve par exemple la classe permettant de gérer le temps, \textit{Timer}, l'affichage de messages grâce à la classe \textit{Logging}
+ou encore l'internationalisation avec \textit{TextGetter}. Ces deux dernières classes contiennent uniquement des méthodes et fields \textit{static}
+afin de garantir l'unicité ainsi qu'une facilité d'accès au sein de l'application.
+
+\subsection{Format d'IO}
+Nous possédons un package \textit{savers} et un package \textit{parsers} dans le modèle, où l'on peut retrouver les différentes classes nous permettant d'écrire ou lire des fichiers.
+C'est par exemple ici que l'on trouve le \textit{BoardFileParser}, utilisant le générateur de parser ANTLR-4 afin de lire les fichiers de sauvegarde sans historique, ou encore le \textit{FenParser} permettant
+de lire les plateaux de jeu au format FEN pour enlever toute ambiguïté dans la lecture d'un plateau de jeu.
+
+\subsection{Events}
+Le package \textit{events} nous permet de regrouper les différents évènements pouvant se produire au cours d'une partie, afin de pouvoir envoyer des notifications à la Vue.
+L'enum \textit{EventType} regroupe ces évènements.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{uml_event}
+    \caption{Diagramme UML du package Event (sans les valeur de l'enum)}
+    \label{umlEvents}
+\end{figure}
+\FloatBarrier
+Comme on peut le voir dans la Figure \ref{umlEvents}, la classe \textit{Subject} correspond à l'Observable du pattern Observer et \textit{EventObserver} à l'Observeur de celui-ci.
+La classe \textit{Subject} est étendue par GameAbstract, ce qui permet aux différentes Games de pouvoir être observées. C'est ce qui permet au modèle de notifier la Vue par exemple.
+Nous avons implémenté plusieurs évènements. Certains concernent la fin de partie, indiquant la fin de celle-ci (égalité, victoire/défaite), la couleur du gagnant ainsi que le type de fin de partie (échec et mat, pat, manque de matériel,...).
+D'autres évènements concernent le déroulé de la partie, comme indiquer le début d'une partie ou un coup joué.
+Il est facile de rajouter des évènements dans l'enum, ce qui facilite l'extension de l'application et l'ajout de fonctionnalités.
+\subsection{Classes en dehors des packages}
+Nous possédons trois classes se trouvant en dehors de packages: \textit{Main}, qui permet de lancer l'application, 
+\textit{GameInitializer} et \textit{GameControllerInit}. La deuxième se charge d'initialiser la Game en fonction des options données en lignes de commandes, des options par défaut
+et des options données dans le GUI si c'est l'interface utilisée. La dernière appelle \textit{GameInitializer}, crée la Vue demandée et crée le Controller de l'application.
+Ces classes étant centrales, nous avons décidé de les mettre à la ``racine'' du projet.
+\subsection{Design Patterns Utilisés}
+
+Les différents design patterns utilisés dans ce projet sont les suivants:
+\begin{itemize}
+    \item \textbf{Singleton} : Utilisé pour la classe \texttt{Game} pour s'assurer qu'une seule instance de la partie est présente.
+    La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes ne soit gérée que par un seul bag.
+    \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
+    \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
+    \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle. Cela permet de combiner plusieurs heuristiques en une seule.
+    \item \textbf{Prototype} : La méthode \texttt{getCopy()} applique ce pattern pour générer des copies d’objets, en particulier lors de simulations ou de sauvegardes d’état.
+    \item \textbf{Façade} : La classe \texttt{BoardRepresentation} fournit une interface complète pour la gestion du plateau de jeu.
+    \item \textbf{Bag of Commands} : Il permet de regrouper
+    et gérer plusieurs commandes en parallèle. Bien qu’il ne soit pas un design pattern
+    classique, il structure efficacement les interactions complexes entre les commandes.
+\end{itemize}
+
+
+\section{Performances et Limitations}
+\subsection{Traces}
+Pour exprimer les performances de notre programme et plus généralement pour pouvoir comparer des versions différentes, nous avons réalisé plusieurs
+traces à l'aide de \textit{Intellij Profiler}. À l'aide de ce logiciel, il est possible de réaliser des traces comportant le temps d'exécution, l'occupation des threads
+ou encore la mémoire utilisée par notre programme à tout instant comme le présente la Figure \ref{trace_ex}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{trace_example.png}
+    \caption{Exemple de trace d'exécution pour visualiser le temps d'exécution découpé par fonctions}
+    \label{trace_ex}
+\end{figure}
+\FloatBarrier
+
+Dans cette représentation chaque barre représente une fonction et sa longueur est propotionnelle à la durée de l'exécution de cette fonction. Sur l'axe vertical,
+il y a une représentation de la pile d'appel, les barres empilées indiquent une fonction qui a été appelée à partir d'une autre fonction.
+Il est donc possible de voir clairement quelles sont les fonctions les plus chronophages mais également 
+de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques comme sur la Figure \ref{trace_ex2}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{trace_ex2.png}
+    \caption{Exemple de comparaison entre deux traces d'exécution}
+    \label{trace_ex2}
+\end{figure}
+\FloatBarrier
+
+Dans ce graphique on superpose donc deux traces afin de pouvoir analyser le temps gagné ou perdu pour chaque fonction. Il faut donc définir une trace référente, et les temps
+s'afficheront en fonction de celle-ci. Tous les rectangles verts signifient que l'on gagne du temps par rapport à l'autre exécution tandis que les rectangles rouges représentent
+les endroits où l'exécution référente est plus lente. Des informations supplémentaires sont également disponibles notamment pour afficher les temps gagnés/perdus en pourcentage
+que nous utiliserons pour donner des gains/pertes chiffrés.
+
+Enfin il est possible d'obtenir une vue comme le présente la Figure \ref{thread_ex} afin de voir l'état des différents threads de la machine (running, sleeping). Ici, chaque thread est représenté
+par une ligne, et on peut lire sont état au fil du temps de l'exécution à l'horizontal. Dans ces graphiques les rectangles verts
+représentent lorsque le thread est actif, ils sont rouges lorsqu'ils sont endormis. Il permet donc de voir l'équilibre des charges et si la parallélisation est réellement efficace.
+Nous utiliserons donc ce type de graphique pour vérifier le caractère parallèle de certaines optimisations.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{threads_ex.png}
+    \caption{Exemple de trace montrant l'aspect parallèle d'une fonction}
+    \label{thread_ex}
+\end{figure}
+\FloatBarrier
+
+\subsection{Optimisations Intelligence Artificielle}
+À la suite de l'implémentation des algorithmes d'IA demandés, nous avons remarqué que les performances du programme étaient assez contrastées. En effet, le facteur
+de branchement moyen étant 35, le passage d'une profondeur \textit{p} à une profondeur \textit{p+1} demande un temps de calcul beaucoup plus long. Nous avons donc pu atteindre la profondeur 3
+en temps raisonnable sans optimisation. Afin d'améliorer l'IA nous avons ensuite mis en place différentes optimisations. Pour commencer nous avons adapté nos heuristiques
+pour qu'elles puissent utiliser directement les bitboards afin de tirer le meilleur de la structure de données et d'enlever des couches d'abstractions.
+\subsubsection{Utilisation du cache}
+ Nous avons par la suite
+remarqué que le calcul de certaines fonctions était chronophage et ne pouvait pas être diminué en complexité facilement. C'est par exemple le cas des fonction de détection de
+l'échec, échec et mat, pat qui sont utilisé lors de l'évaluation du plateau mais également lorsque qu'un coup est joué pour vérifier si le coup est légal (sans compter le fait
+qu'un plateau peut apparaître plusieurs fois). Grâce au Zobrist hashing, nous avons donc implémenté une sorte de cache pour ne pas recalculer ces fonctions pour le même plateau
+plusieurs fois. Nous avons donc stocké les résultats des fonctions précédentes ainsi que les bitboards de mouvements puisqu'elles sont très sollicitées lors de l'évaluation des
+plateaux. Nous avons pu comparer une exécution avec un cache de 10000 entrées et une autre sans cache comme le présente la Figure \ref{cache_cmp}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{cache_compare.png}
+    \caption{Comparaison des traces d'exécutions avec et sans cache}
+    \label{cache_cmp}
+\end{figure}
+\FloatBarrier
+
+Sur cette trace on remarque un gain de temps de l'ordre de 68\% lorsque l'on utilise un cache. Globalement, nous gagnons du temps car il n'y a plus de calculs coûteux
+effectués plusieurs fois. Puisque toutes ces fonctions sont calculées afin de pouvoir jouer le coup (car il faut vérifier que le coup ne met pas fin à la partie et 
+est bien légal), la grande différence se fait lors de l'évaluation car on économise ici près de 80\% du temps nécessaire sans cache. Mais si cela est moins significatif,
+celui-ci permet de gagner environ 25\% de performance sur la fonction \textit{playMove} car il était obligatoire de vérifier deux fois la mise en échec lorsque qu'un coup était joué,
+une première pour vérifier que le roi n'était pas en échec ainsi que pour vérifier que la partie n'avait pas atteint une situation de pat.\\
+\subsubsection{Move ordering}
+Le move ordering a également été une optimisation non négligeable. En effet, l'idée est de trier les coups avant de les jouer afin d'améliorer le pruning de l'algorithme AlphaBeta. Pour cela,
+nous faisons un tri en 3 critères. Tout d'abord, nous comparons les coups sur la capture. Le coup reçoit un bonus s'il conduit à la capture d'une pièce adverse, de plus on utilise le score MVV-LVA
+(Most Valuable Victim - Least Valuable Aggressor) pour déterminer quelles sont les meilleures captures. L'idée du MVV-LVA est de capturer la pièce la plus précieuse de l'adversaire en utilisant la pièce
+la moins importante possible afin de maximiser l'avantage matériel après la capture. Ensuite, on cherche à privilégier les coups contenant des promotions puisqu'ils permettent d'obtenir un avantage matériel
+en transformant un pion en une pièce de valeur supérieure. Pour finir, nous ajoutons un bonus si le coup met en échec l'adversaire. Pour comparer l'efficacité du move ordering sur un coup, nous avons pris la 
+configuration de plateau de la Figure \ref{board} et lancer deux recherches avec les mêmes paramètres (même algorithme et profondeur) mais l'une avec move ordering et l'autre sans et obtenu la trace en Figure \ref{move_ordering_cmp}.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{trace_move_ordering.png}
+    \caption{Comparaison des traces d'exécutions avec et sans move ordering}
+    \label{move_ordering_cmp}
+\end{figure}
+\FloatBarrier
+
+Lors de la réalisation de cette trace on utilise un AlphaBeta Iterative Deepening à profondeur 6 et on remarque tout de suite une grande différence de temps d'exécution. La trace référente
+étant celle contenant le move ordering on peut en déduire que celui-ci permet des résultats plus rapides. On constate un gain de 85\% de performances à utiliser cette optimisation sur cette trace.
+Le move ordering ayant uniquement un impact sur l'ordre d'évaluation des nœuds, les coups choisis avec et sans sont donc toujours les mêmes. Pour quantifier le gain de nœuds exploré, nous allons 
+utilisé le mode \textit{Monitor} disponible dans notre logiciel et vérifier le nombre de nœuds visité ainsi que le temps nécessaire pour jouer une partie. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_mo.png}
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{without_mo.png}
+    \caption{Comparaison d'une exécution avec (gauche) et sans (droite) move ordering}
+    \label{move_ordering_cmp_monitor}
+\end{figure}
+\FloatBarrier
+
+Nous avons donc simulé une partie complète avec un algorithme AlphaBeta Iterative Deepening à profondeur 4 avec et sans move ordering et obtenu les monitor
+présenté en Figure \ref{move_ordering_cmp_monitor}.On peut tout suite remarquer que la plus grande différence n'est pas dans le débit de nœuds visités (pas plus de 10000 nœuds d'écart) mais plutôt dans le nombre de nœuds visités.
+En effet, d'après le monitor on peut remarquer qu'il y a un facteur 4 entre le nombre moyen de nœuds visité en moyenne par coup dans une partie complète. Evidemment cela a des répercussions
+sur le temps moyen d'une recherche avec encore ici un facteur 4 entre avec et sans l'optimisation. Cependant, cette optimisation étant plus efficace dans le milieu de partie, on peut remarquer
+que lorsque les derniers coups de la partie (et plus généralement lorsque l'on approche la fin de partie) sont explorés il ne contiennent pas forcément de capture ou de promotion et l'optimisation
+obtient des résultats moindres. Finalement, puisque le cas de la Figure \ref{move_ordering_cmp} se déroule en milieu de partie on parvient à obtenir un résultat légèrement meilleur.
+
+\subsubsection{Algorithme Génétique}
+
+Nous avons entraîné un algorithme génétique (AG) afin d'optimiser les poids associés à différentes heuristiques utilisées dans l'heuristique composée STANDARD. Ces heuristiques incluent MobilityHeuristic, MaterialHeuristic, BadPawnsHeuristic, PawnChainHeuristic, KingSafetyHeuristic, DevelopmentHeuristic, CheckHeuristic et SpaceControlHeuristic. L'heuristique « GameState », qui gère les situations de mat, a été exclue de l'entraînement et fixée à une valeur constante de 10000 afin de garantir que le mat est toujours prioritaire.
+
+Les paramètres utilisés pour l'AG étaient les suivants :
+\begin{itemize}
+  \item Taille de la population : 60
+  \item Nombre de générations : 93
+  \item Taux de mutation : 0.4
+  \item Taux de croisement : 0.7
+  \item Domaine des poids : [0.0 ; 100.0]
+  \item Nombre de parties jouées par évaluation : 4
+\end{itemize}
+
+Pour éviter les optimum locaux et favoriser l'exploration de l'espace de recherche, nous utilisons un mécanisme de détection de stagnation : si la valeur de forme (fitness) du meilleur individu ne s'améliore pas pendant 15 générations consécutives, 80\% de la population est remplacée par de nouveaux individus générés aléatoirement. Cette stratégie permet à l'algorithme de s'extraire de régions sous-optimales.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{AG_weights.png}
+  \caption{Évolution des poids heuristiques au fil des générations.}
+  \label{fig:evolution_weights}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{AG_winrate.png}
+    \caption{Évolution du taux de victoire au fil des générations.}
+    \label{fig:evolution_winrate}
+  \end{figure}
+  \FloatBarrier
+
+La figure \ref{fig:evolution_weights} montre l'évolution des poids et la figure \ref{fig:evolution_winrate} montre l'évolution des performances (taux de victoire) au cours de l'entraînement. On y observe plusieurs chutes de performance correspondant aux moments de remplacement de population, où l'algorithme explore de nouvelles zones de l'espace des poids.
+
+Les poids finaux obtenus en Table \ref{tab:poids-heuristiques} montrent une domination constante de l'heuristique « Matériel », ce qui est cohérent avec la stratégie classique aux échecs, où l'avantage matériel est souvent décisif. Les autres heuristiques ont contribué de manière plus contextuelle selon les situations de jeu.
+On constate que le winrate a généralement augmenté au cours des générations. Il aurait fallu augmenter le nombre de générations afin de raffiner les poids. De plus, on peut
+voir des heuristiques avec des poids nuls ou quasi nuls, il faudrait veiller à regarder si ces heuristiques ont un réel intérêt et le cas échéant, les modifier ou les supprimer.
+\begin{table}[H]
+    \centering
+    \caption{Poids finaux optimisés pour chaque heuristique}
+    \label{tab:poids-heuristiques}
+    \begin{tabular}{|l|c|}
+      \hline
+      \textbf{Classe Java (Heuristique)} & \textbf{Poids optimisé} \\
+      \hline
+      \texttt{MaterialHeuristic (W2)} & 92.36\\
+      \texttt{MobilityHeuristic (W1)} & 5.49\\
+      \texttt{BadPawnHeuristic (W3)} & 0.00\\
+      \texttt{PawnChainHeuristic (W4)} & 0.00\\
+      \texttt{KingSafetyHeuristic (W5)} & 3.41\\
+      \texttt{DevelopmentHeuristic (W6)} & 48.35\\
+      \texttt{CheckHeuristic (W7)} & 0.00 \\
+      \texttt{SpaceHeuristic (W8)} & 9.74 \\
+      \texttt{GamePhaseHeuristic (W0 - fixe)} & 10\,000 \\
+      \hline
+    \end{tabular}
+  \end{table}
+
+\subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière. Les mesures parallèles ont été effectuées sur 24 threads, et les résultats sont présentés dans la Table \ref{tab:ab_comparison}.
+
+\begin{table}[h]
+    \centering
+    \caption{Résumé comparatif des différentes variantes d'Alpha-Beta}
+    \label{tab:ab_comparison}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Version} & \textbf{Nœuds/s} & \textbf{Nœuds explorés par coup} & \textbf{Temps moyen par coup (ms)} \\
+        \hline
+        ALPHA\_BETA & 25000 & 173000 & 6700 \\
+        \hline
+        ALPHA\_BETA\_PARALLEL & 94000 & 286000 & 3023 \\
+        \hline
+        ALPHA\_BETA\_ID & 21000 & 166000 & 7847 \\
+        \hline
+        ALPHA\_BETA\_ID\_PARALLEL & 83000 & 213000 & 2546 \\
+        \hline
+    \end{tabular}
+\end{table}
+\FloatBarrier
+
+Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau (voir Figure \ref{no_parallel_trace}), rendant ainsi les versions parallèles plus performantes (voir Figure \ref{parallel_trace}). 
+Il est néanmoins nécessaire de mentionner que les threads ne terminant pas au même moment (certaines recherches pouvant être plus longues que d'autres), il est possible que certains threads soient inactifs pendant une partie de la recherche. Cela peut entraîner une légère perte d'efficacité dans le traitement parallèle, mais cela reste négligeable par rapport aux gains de performance globaux.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{without_parallel.png}
+    \caption{Trace d'exécution de Alpha-Beta sans parallélisation}
+    \label{no_parallel_trace}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_parallel.png}
+    \caption{Trace d'exécution de Alpha-Beta avec parallélisation sur 8 threads}
+    \label{parallel_trace}
+\end{figure}
+\FloatBarrier
+
+En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5 fois plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
+
+À l'inverse, les versions utilisant l'iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s'explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l'élagage alpha-bêta dès les premières itérations.
+
+Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2 fois pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1 fois pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures (cf. Figure \ref{plot}), même si le coût d'exploration est plus élevé.
+L'ordonnancement des coups plus précis réalisé par l'iterative deepening permet également une réduction de 15\% du temps de recherche entre les deux versions parallèles, pour une économie de 25\% du nombre de nœuds explorés comme le montre la Table \ref{tab:ab_comparison}.
+
+Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
+
+
+\subsection{Profondeur de recherche}
+
+Les performances de l'IA étant tout d'abord dépendante de la machine sur laquelle on exécute le programme, les paramètres optimaux pour obtenir une IA fluide et jouant des coups efficaces 
+ne sont pas fixes. Le facteur ayant le plus grand impact sur la vitesse de réflexion étant la profondeur de recherche, les optimisations mises en place avaient pour principal objectif d'accroître
+cette limite car elle permet d'obtenir de meilleurs coups. Mais la profondeur de recherche est également le facteur limitant, passer d'un profondeur p à une profondeur p+1 est exponentiel car le facteur
+de branchement moyen des échecs est de 35. Par exemple on retrouve en Figure \ref{plot} la comparaison des temps de recherche du meilleur coup pour le plateau Figure \ref{board}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{plot_depth.png}
+    \caption{Graphique représentant le temps de recherche pour un coup en fonction de la profondeur}
+    \label{plot}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{board.png}
+    \caption{Représentation du plateau utilisé pour le graphique}
+    \label{board}
+\end{figure}
+\FloatBarrier
+Nous avons choisi cette position car les pièces principales sont toujours sur le plateau et ont une grand possibilité de mouvement afin de d'obtenir des temps de recherche significatifs.
+On peut remarquer que les temps pour les profondeurs 2,3 et 4 sont presque égaux qu'importe l'algorithme utilisé. Cependant, à partir de la profondeur 5 on peut commencer à distinguer
+une différence avec de meilleurs résultats pour les versions itératives. L'explosion combinatoire est visible à profondeur 7 où les temps de l'algorithme AlphaBeta parallèle augmentent fortement. Il en est de même pour l'algorithme AlphaBeta classique,
+mais nous n'avons pas inclus le résultat car l'échelle obtenue ne permettait pas une comparaison des autres algorithmes tant le temps de calculs était élevé (plus de 10min). Les plateaux n'ayant jamais
+la même complexité d'évaluation, il est nécessaire de trouver une profondeur qui pourrait être valable tout au long de la partie. Cependant, il est assez complexe de trouver cette valeur car dès que l'on
+passe sur l'heuristique fin de partie où que les pièces principales (tours, fous et dame) ne se trouvent plus sur le plateau le temps d'évaluation chute et il serait donc possible d'évaluer bien plus de nœuds.
+Pour obtenir un jeu homogène, il vaut donc mieux jouer avec un IA de profondeur 5 ainsi que favoriser les algorithmes \textit{Iterative Deepening}.
+
+\subsection{Vue}
+JavaFX, bien que pratique pour développer des GUI en Java, présente des limites en termes de performance, en particulier en ce qui concerne
+la fluidité et les animations. En effectuant quelques recherches, on se rend compte que l'engine de rendu du framework repose principalement
+sur Java2D et utilise une pipeline GPU limitée, ce qui peut causer des ralentissements, surtout pour les logiciels nécessitant du refresh
+fréquent. Java est globalement un langage rapide, mais il est limité. Si le projet avait été développé en C++, avec notamment
+l'aide d'OpenGL, la Vue serait bien plus efficace. Sinon, en comparaison, l'utilisation d'un engine dédié comme Unity ou Godot permettrait
+un meilleur rendu général, tandis qu'une approche basée sur les technologies web (HTML, CSS, WebGL) offrirait une
+optimisation native des performances. Finalement, JavaFx se trouve être une solution pour l'interface graphique dans notre cas, et même si
+pratique et bien architecturé, reste limité en termes de performances graphiques.
+
+\section{Critiques et Perspectives}
+Ce projet a été décomposé en une soixantaine de besoins à réaliser. Nous pensons avoir atteint cet objectif et allons vous faire part 
+des points forts et des points faibles de notre application ainsi que des points à explorer dans le problème.
+\subsection{Critiques Négatives}
+\subsubsection{MonteCarloTreeSearch}
+Le Monte Carlo Tree Search (MCTS) est largement utilisé dans les jeux de stratégie tels que le Go, où la non-présence d'heuristiques efficaces rend les méthodes classiques d'IA comme
+AlphaBeta moins adaptées. Cependant, aux échecs, MCTS est rarement employé à cause d'une multitude de limitations.
+Premièrement, les échecs bénéficient d'évaluations positionnelles efficaces et d'une base théorique bien établie, ce qui permet aux algorithmes classiques 
+comme Minimax avec AlphaBeta d'explorer l'arbre de jeu de manière plus efficace. Contrairement à des derniers, MCTS ne se base pas sur des critères 
+d'évaluation et d'optimisation. Ensuite, MCTS est intrinsèquement plus lent que les méthodes basées sur Minimax. En effet, sans optimisation spécifique, 
+il doit effectuer un grand nombre de simulations pour obtenir une estimation intéressante de la valeur d'un GameState. Dans un jeu comme les échecs, où le 
+facteur de branchement moyen est élevé, MCTS a besoin d'un (très) grand nombre d'itérations pour converger vers des décisions ``optimales'' comparables à 
+celles d'Alpha-Beta Pruning. La simulation de coups est très ``Brute-Force'', surtout sans optimisation, car le choix des coups par l'algorithme s'effectue 
+de manière complètement aléatoire (pour la partie simulations).
+Enfin, les engines d'échecs modernes tirent parti d'optimisations telles que le move ordering, des bibliothèques d'ouvertures, améliorant ainsi les 
+performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par des techniques spécifiques d'IA comme les réseaux de neuronnes, son 
+efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs, comme vu dans l'article de Dominik Klein \cite{NNChess}, 
+page 121. 
+
+Maintenant, nous admettons que notre implémentation du MCTS est
+lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState.
+Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité 
+sans optimisation.
+
+\subsubsection{Clean Code}
+Nous avons effectué plusieurs refactors afin d'arriver à une architecture plus claire au cours du projet. Dans les dernières semaines de développement,
+lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que \textit{Checkstyle} ou \textit{PMD}.
+
+Nous avons commencé par rajouter de la documentation sur les classes ainsi que sur leurs fields et méthodes.
+Le mot clé final a été ajouté sur les variables et fields le nécessitant. Cela permet de rajouter de la sécurité ainsi que de la lisibilité au code.
+Les noms de fonctions ainsi que de variables ont été modifiés afin de suivre les normes.
+La totalité des \textit{System.out/err} ont été remplacés par des appels à des loggers via les fonctions \textit{print} et \textit{error} dans notre class \textit{Logging}.
+
+Après avoir corrigé de nombreux warnings, environ 500 d'entre eux sont toujours présents, contre plus de 6000 au départ.
+Les règles utilisées dans PMD sont disponibles dans le fichier \textit{pmd-rules.xml}.
+Certains de ces warnings ont été jugés
+comme peu utile comme par exemple les logs devant être entourés de barrières (ce qui est fait dans nos méthodes de logging) ou la taille des commentaires,
+qui correspondait au style Google mais pas à celui de PMD.
+Ayant décidé d'avoir une application multithreadée ( Bag of commands, Vue, IA parallèle), nous avons décidé d'ignorer le warning interdisant l'utilisation de threads.
+En effet, cela concerne les applications utilisant Java Enterprise Edition, ce que nous ne faisons pas.
+Le fait d'avoir au minimum un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
+Le fait de pouvoir faire un return anticipé dans une fonction est quasi nécessaire, si nous ne voulons pas entourer le code dans
+d'énormes blocs de \textit{if}, nous avons donc supprimé la règle correspondante.
+Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujours explicite (comme \textit{x} pour une position).
+D'autres sont trop longues, mais avec la présence d'autocomplétion dans la plupart des IDE, nous avons préféré garder des noms explicites, qui peuvent être compliqués à raccourcir,
+comme \textit{isLastMoveDoublePush}.
+Même en enlevant les règles nous paraissant superflues, nous avons toujours environ 500 warning à résoudre.
+Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce qui correspond à un projet à part entière.
+Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
+
+\subsection{Critiques positives}
+\subsubsection{Norme UCI}
+La norme UCI (pour Universal Chess Interface) est un protocole de communication utilisé pour permettre à différents chess engine de communiquer avec des interfaces graphiques ou des programmes d’échecs.
+Elle est utilisée pour réaliser des parties entre IA puisqu'elle rend possible l'automatisation de l'échange de coups joué. En effet, un programme intermédiaire est utilisé pour vérifier la validité des
+coups joués par les deux moteurs, mais aussi pour lancer leurs recherches et configurer leurs paramètres respectifs. Le programme intermédiaire envoie des commandes texte aux moteurs via l’entrée standard (stdin), 
+et lit leurs réponses sur la sortie standard (stdout). Les programmes communiquent à l'aide de différentes commandes tels que \textit{uci} pour initier la communication, \textit{position} pour définir 
+l'état du jeu actuel ou encore \textit{go} pour lancer la recherche du meilleur coup.
+
+Intégrer la norme UCI à notre projet nous a permis de développer une interface standardisée et donc de communiquer avec d'autres projets de chess engine.
+Le plus intéressant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le déterminisme
+de l'algorithme AlphaBeta. En effet, nos algorithmes d'AlphaBeta trouvent toujours le même meilleur coup pour un plateau donné, ce qui donne des déroulements de parties
+identiques et par conséquent peu de parties différentes possibles. Se mesurer à d'autres projets nous a également permis d'affronter différents algorithmes comme par exemple
+Leela Chess Zero utilisant du deep learning couplé au Monte Carlo Tree Search (voir Explanatory analysis of the chess game \cite{GameEngine} page 24).
+Pour finir, l'implémentation de cette norme nous a permis de trouver certains bugs spécifiques survenant uniquement après certaines séquences de jeu mais nous a également
+obligé à rendre notre programme modulable car certaines règles peuvent changer lorsqu'il s'agit de parties entre IA (threefold repetition devient fivefold repetition par exemple).
+\subsubsection{Mode Monitor}
+L'ajout du mode \textit{monitor} nous a permis de surveiller en temps réel les performances de notre IA et donc de quantifier certaines métriques afin de réaliser différentes mesures de
+performances ou encore donner des perspectives d'amélioration de l'IA. Il est également intéressant car il permet de se comparer au autres chess engine car certains permettent également 
+de relever le nombre de nœuds exploré ainsi que le temps mis pour une recherche.
+
+\subsubsection{Niveau de l'intelligence artificielle}
+À l'aide des différents algorithmes et heuristiques nous avons pu jouer des parties de manière autonome contre \textit{Stockfish} afin de mesurer le niveau de notre IA.
+Pour obtenir des résultats significatifs nous jouons plus de 700 parties à chaque pas d'Elo afin de calculer le winrate ainsi que d'autres métriques pour évaluer notre IA.
+Nous avons ici utilisé l'algorithme AlphaBeta Iterative Deepening en depth 4 à toutes les parties. Nous obtenons des résultats satisfaisants (au dessus de 0.5) jusqu’à 1400 Elo comme le présente la Figure \ref{winRateCmp}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{winRateCmp.png}
+    \caption{Graphique représentant le winrate en fonction de l'Elo de stockfish}
+    \label{winRateCmp}
+\end{figure}
+\FloatBarrier
+
+Ces résultats sont encourageants car on remarque un taux anormal de parties finissant par une égalité comme le montre la Figure \ref{drawCountCmp}. Nous savons que notre IA
+est en difficulté lorsque qu'il faut trouver un échec et mat, c'est donc qu'elle arrive à bien se défendre pour aller chercher une égalité
+dans un grand nombre de parties. Il faut également noter que \textit{Stockfish} est ici limité en temps et que les coups qu'ils jouent sont donc trouvé à une profondeur supérieure à la notre,
+surtout lors des fins de parties. On peut donc estimer que notre IA dépasse les 1400 Elo sur des profondeurs supérieures à 4.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{drawRate.png}
+    \caption{Graphique représentant le nombre de parties nulles suivant l'Elo de stockfish}
+    \label{drawCountCmp}
+\end{figure}
+\FloatBarrier
+
+
+
+\subsection{Perspectives}
+\subsubsection{Surligner des coups}
+L'utilisateur aurait la possibilité de ``surligner'' des coups afin de montrer des déroulements de partie ou d'y voir plus clair dans sa réflexion.
+Cela pourrait ressembler à la Figure \ref{surlignage}:
+\begin{figure}[h]
+    \caption{Exemple surlignage de coups}
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{surlignage-coups}
+    \label{surlignage}
+\end{figure}
+\FloatBarrier
+
+Temps estimé: 1-2 jours.
+
+\subsubsection{Tourner l'échiquier}
+Dans notre application, c'est toujours les pièces blanches qui sont situées en bas. Une amélioration graphique serait la possibilité d'inverser le plateau
+de jeu en pleine partie de telle sorte que les pièces noires seraient en bas. Cela deviendrait plus pratique pour les utilisateurs qui jouent les Noirs.
+
+Temps estimé: 2-3 jours.
+
+\subsubsection{Coups préparés}
+Lorsque le joueur joue contre une IA, il pourrait effectuer un 'pre-move', c'est-à-dire préparer un coup sur l'échiquier avant que l'IA n'ait joué. Dès que
+le joueur IA jouerait son coup, le coup préparé par l'utilisateur serait immédiatement joué. Ceci peut être pratique en début de partie ou en fin de partie
+ou plus souvent lorsqu'il n'y a pas nécessité de réflexion pendant longtemps.
+
+Temps estimé: 2-3 jours.
+
+\subsubsection{Analyser des parties}
+Une fonctionnalité supplémentaire pourrait concerner la Game Review. L'utilisateur serait capable à la fin d'une partie (ou lancer depuis un fichier en mode
+analyse) de se balader dans la partie, dérouler les coups notamment pour voir les erreurs ou les brillances (avec l'aide d'une IA) qu'un joueur aurait fait.
+
+Temps estimé: 2-3 semaines.
+
+\subsubsection{Mode Multi-joueur réseau}
+Certainement l'amélioration la plus intéressante serait un mode multi-joueur, de la même manière que chess.com ou lichess.org pour ne citer qu'eux.
+Le projet prendrait néanmoins une toute autre direction puisque les joueurs devraient se connecter à un serveur afin de jouer en temps réel. Une
+autre solution serait le Peer-To-Peer.
+
+Temps estimé: 4-5 semaines.
+
+\pagebreak
+\section{Bibliographie}
+ \bibliographystyle{plain}
+ \bibliography{references}
+
+\pagebreak
+\section{Besoins réalisés - Annexe}
+\label{Spec}
+
+Voici la liste exhaustive des besoins qui ont été réalisés de notre point de vue lors de ce projet. Pour chaque besoin, on retrouve un code couleur représentant
+son état de validation. Vert signifie validé, orange semi-validé, rouge non validé. Si ambiguïté ou besoin de détails, une explication
+est fournie afin d'éclaircir les choses.
+
+\begin{longtable}{|c|p{5cm}|c|p{5cm}|}
+    \hline
+    \textbf{\#} & \textbf{Nom du besoin} & \textbf{Statut} & \textbf{Explication si ambiguïté} \\
+    \hline
+    \endfirsthead
+
+    \hline
+    \textbf{\#} & \textbf{Nom du besoin} & \textbf{Statut} & \textbf{Explication si ambiguïté} \\
+    \hline
+    \endhead
+
+    \hline
+    1 & Langage de programmation & \valid & \\
+    \hline
+    2 & Style de codage & \valid & \\
+    \hline
+    3 & Langue par défaut dans le code & \valid & \\
+    \hline
+    4 & Système cible & \valid & \\
+    \hline
+    5 & Documentation & \valid & Javadoc, manuel utilisateur (chess/README.md), aide en ligne de commande. \\
+    \hline
+    6 & Tests & \valid & \\
+    \hline
+    7 & Bugs & \valid & \\
+    \hline
+    8 & Performances & \valid & Mesures disponibles dans le rapport. \\
+    \hline
+    9 & Build-system & \valid & \\
+    \hline
+    10 & Frameworks de test & \valid & TestFX a été utilisé pour tester l'interface graphique. \\
+    \hline
+    11 & Gestion des options & \valid & \\
+    \hline
+    12 & Bibliothèque graphique & \valid & \\
+    \hline
+    13 & Internationalisation & \valid & \\
+    \hline
+    14 & Nom de l’exécutable principal & \valid & Le jeu se lance depuis le répertoire chess avec ./chess\\
+    \hline
+    15 & Usage général & \valid & Le bash compile si l'utilisateur est dans chess et lance le programme. Il y a une option --clean afin de supprimer les dossiers créés par l'application. \\
+    \hline
+    16 & Aide en ligne de commande & \valid & \\
+    \hline
+    17 & Version & \valid & \\
+    \hline
+    18 & Mode verbose & \valid & \\
+    \hline
+    19 & Mode debug & \valid & \\
+    \hline
+    20 & Mode Blitz & \valid & Le temps de chaque joueur est donné à tout instant. Chaque joueur a un temps pour chaque coup, et non pour toute la partie afin de suivre la spécification (ce comportement ne correspond pas à la règle officielle du blitz). Affichage du temps restant après chaque coup.\\
+    \hline
+    21 & Durée du Blitz & \valid & \\
+    \hline
+    22 & Mode Contest & \valid & La partie est sauvegardée dans le fichier une fois le coup joué et affiché.\\
+    \hline
+    23 & Mode IA & \valid & \\
+    \hline
+    24 & Interface en ligne de commande & \valid & \\
+    \hline
+    25 & Interface graphique & \valid & \\
+    \hline
+    26 & Affichage de l'échiquier & \valid & Le temps affiché est le temps restant au joueur au moment du coup.\\
+    \hline
+    27 & Notation des coups & \valid & \\
+    \hline
+    28 & Représentation de l'historique & \valid & \\
+    \hline
+    29 & En passant & \valid & \\
+    \hline
+    30 & Roque & \valid & \\
+    \hline
+    31 & Promotion du pion & \valid & \\
+    \hline
+    32 & Abandon & \valid & \\
+    \hline
+    33 & Affichage des messages & \valid & \\
+    \hline
+    34 & Quitter et sauvegarder une partie & \valid & \\
+    \hline
+    35 & Sauvegarde de l’historique & \valid & L'historique est sauvegardé à la suite du plateau de jeu. \\
+    \hline
+    36 & Naviguer dans l'historique & \valid & \\
+    \hline
+    37 & Recommencer une partie & \valid & \\
+    \hline
+    38 & Fin de partie & \valid & \\
+    \hline
+    39 & Rejouer une partie & \valid & \\
+    \hline
+    40 & Format de fichier simplifié & \valid & L'historique est sauvegardé uniquement si le fichier d'origine contient un historique ou que la partie a été jouée depuis le début. Le format proposé étant ambigu (roques, en passant, etc), nous avons décidé d'ajouter un header au format FEN. \\
+    \hline
+    41 & Format de l'historique & \valid & Si un historique est fourni, la partie est chargée depuis ce dernier, sinon elle est chargée depuis le plateau de jeu. \\
+    \hline
+    42 & Fichier de configuration & \valid & \\
+    \hline
+    43 & Plateau de jeu & \valid & \\
+    \hline
+    44 & Module bitboard & \valid & \\
+    \hline
+    45 & État du jeu & \valid & L'historique est stocké dans la classe Game plutôt que GameState (choix d'implémentation).
+    Game et GameState forment une structure contenant le joueur courant, le plateau, le temps (blitz) et l'historique.\\
+    \hline
+    46 & Fonctions de base GUI & \valid & \\
+    \hline
+    47 & Menu 'File' & \valid & \\
+    \hline
+    48 & Menu 'Game' & \valid & \\
+    \hline
+    49 & Menu 'About' & \valid & \\
+    \hline
+    50 & Affichage d'une partie en cours & \valid & \\
+    \hline
+    51 & Affichage des coups joués & \valid & \\
+    \hline
+    52 & Configuration d'une nouvelle partie & \valid & \\
+    \hline
+    53 & Heuristique d'évaluation & \valid & \\
+    \hline
+    54 & Algorithme Minimax & \valid & \\
+    \hline
+    55 & AlphaBeta-pruning & \valid & En plus de la version classique, une version Iterative Deepening a été implémentée. Les deux versions possèdent également une alternative parallèle (avec la moitié des threads disponibles sur la machine). \\
+    \hline
+    56 & Monte Carlo Tree Search & \valid & L'option --ai-simulations permet de paramétrer le nombre de simulations effectuées par l'IA. \\
+    \hline
+    57 & Profondeur de recherche & \valid & L'option n'est pas disponible pour l'algorithme MCTS. \\
+    \hline
+    58 & Choix des heuristiques & \valid & \\
+    \hline
+    59 & Heuristiques de fin de partie & \valid & L'heuristique ENDGAME a été prévue pour la fin de partie, et le solver change automatiquement l'heuristique utilisée en fonction de l'état du plateau. L'option --ai-endgame permet également de choisir l'heuristique de fin de partie utilisée. \\
+    \hline
+    60 & Temps de réflexion IA & \valid & Le temps de l'IA est borné uniquement lorsque l'option est présente. Cependant, les algorithmes possèdent toujours une profondeur de recherche et s'arrêtent lorsque l'une des bornes est atteinte (pour utiliser uniquement le temps, il faut utiliser une profondeur très élevée). \\
+    \hline
+\end{longtable}
+
+Voici aussi une liste présentant les besoins ``bonus'', qui n'étaient pas présents dans la liste des besoins du cahier des charges.
+
+\begin{needbox}[F61: Historique scrollable et cliquable]
+    L'historique en GUI est scrollable, de telle manière que les coups sont lisibles même si la partie
+    comporte un grand nombre de coups. Il est également possible de double-cliquer sur un coup pour revenir à celui-ci si les deux joueurs sont d'accord.
+\end{needbox}
+
+\begin{needbox}[F62: IA paramétrable]
+   Toutes les options d'IA, mis à part --ai-time, sont paramétrables en fonction de la couleur, en ajoutant 
+   -b ou -w au nom de l'option. Par exemple --ai-mode-w.
+\end{needbox}
+
+\begin{needbox}[F63: Algorithmes d'IA supplémentaires]
+   Une version Iterative Deepening est disponible. Elle permet une meilleure précision lorsque l'option time est activée. Cet algorithme est également plus performant que l'AlphaBeta classique.
+   Des versions parallélisées des algorithmes d'AlphaBeta et AlphaBeta Iterative Deepening sont aussi disponibles.
+\end{needbox}
+
+\begin{needbox}[F64: Header FEN]
+   Afin d'éviter toute ambiguité lors de chargement de partie depuis un fichier, nous prenons en charge un header au format FEN. Cela permet de conserver les droits de roque, d'en passant et la fifty move rule à jour.
+\end{needbox}
+
+\begin{needbox}[F65: Thèmes GUI]
+    Différents thèmes sont disponibles dans le menu Options du GUI. Il est également possible de créer et sauvegarder ses propres thèmes.
+\end{needbox}
+
+\begin{needbox}[F66: Monitoring de l'IA]
+    Il est possible de suivre les performances de l'IA dans le GUI. En activant l'option Monitor dans le menu Options, celui-ci permet d'observer le nombre de nœuds, le temps de recherche, le nombre de nœuds visités par seconde pour chaque coup ainsi que les valeurs moyennes au cours de la partie..
+\end{needbox}
+
+\begin{needbox}[F67: Mode UCI]
+    Afin de pouvoir communiquer avec d'autres chess engines, notre programme intègre une version minimale de la norme UCI. Il est possible de réaliser des parties contre Stockfish à l'aide de scripts externes.
+\end{needbox}
+
+\begin{needbox}[F68: Heuristique à poids]
+    Il est possible de configurer l'heuristique Standard en lui ajoutant des poids personnalisés (float), via l'option --ai-weight-b ou --ai-weight-w afin d'améliorer la précision de l'heuristique.
+\end{needbox}
+
+
+\end{document}

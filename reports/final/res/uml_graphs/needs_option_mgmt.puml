@@ -1,0 +1,46 @@
+@startuml OptionManagment
+left to right direction
+skinparam actorStyle awesome
+"User" as User
+"Artificial Intelligence" as AI
+package Chess{
+usecase "F11. Gestion des options" as F11
+usecase "F16. Aide en CLI" as F16
+usecase "F17. Version" as F17
+usecase "F18. Mode verbose" as F18
+usecase "F19. Mode debug" as F19
+usecase "F25. Interface graphique" as F20
+usecase "F20. Mode Blitz" as F20
+usecase "F21. Durée du blitz" as F21
+usecase "F22. Mode contest" as F22
+usecase "F23. Mode IA" as F23
+usecase "F55. AlphaBeta pruning" as F55
+usecase "F56. MonteCarlo Tree Search" as F56
+usecase "F57. Profondeur de recherche" as F57
+usecase "F58. Choix des heuristiques" as F58
+usecase "F60. Temps de réflexion borné" as F60
+}
+
+User -->F11
+
+F11 <.. F16 : <<extend>>
+F11 <.. F17 : <<extend>>
+F11 <.. F18 : <<extend>>
+F11 <.. F19 : <<extend>>
+F11 <.. F23 : <<extend>>
+F11 <.. F22 : <<extend>>
+F11 <.. F20 : <<extend>>
+
+AI -->F23
+
+F20 --> F21 : <<include>>
+
+F23 <.. F57 : <<extend>>
+F23 <.. F58 : <<extend>>
+F23 <.. F60 : <<extend>>
+F23 <.. F55 : <<extend>>
+F23 <.. F56 : <<extend>>
+
+
+
+@enduml
