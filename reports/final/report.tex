@@ -111,9 +111,9 @@ et le but est de faire échec et mat, c’est-à-dire arriver dans une position 
 le Roi adverse et donc gagner la partie après n’importe quel coup joué par notre opposant (hormis capturer notre roi).
 Le jeu d’échecs se joue sur un échiquier, un plateau de 8 lignes et 8 colonnes, 64 cases au total avec des pièces
 caractérisées par certaines propriétés uniques. De manière compétitive, le jeu d'échecs effectue un classement
-basé sur un système de points, appelés ``Élo'' \cite{elo}. Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
-à répartir ces joueurs en catégories. Pour donner un ordre d'idée, le champion du monde possède un Élo aux alentours de 2900,
-tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Élo. Ce système d'Élo
+basé sur un système de points, appelés ``Elo'' \cite{elo}. Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
+à répartir ces joueurs en catégories. Pour donner un ordre d'idée, le champion du monde possède un Elo aux alentours de 2900,
+tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Elo. Ce système d'Elo
 va notamment nous permettre d'approximer le niveau de notre Intelligence Artificielle développée dans le cadre de ce projet.\\
 Les origines de ce jeu restent méconnues, mais la légende la plus célèbre raconte que le précepteur d’un jeune prince en Inde
 voulait simplifier les mécanismes de la société et inventa ainsi un échiquier avec des pièces, chacune jouant un rôle précis,
@@ -163,7 +163,7 @@ sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on
 Ces chess engines sont aujourd’hui utilisés pour analyser ou préparer des parties, et même aider les
 joueurs humains à progresser. Au jeu d'échecs, l'Intelligence Artificielle est notamment connue pour être très agressive
 (en termes de stratégie de jeu). Cela fait maintenant presque 30 ans qu'il est impossible pour un humain de gagner contre
-le meilleur ordinateur aux échecs (autour des 3600 Élos aujourd'hui, environ 2900 pour Deep Blue en 1997).
+le meilleur ordinateur aux échecs (autour des 3600 Elo aujourd'hui, environ 2900 pour Deep Blue en 1997).
 
 Les échecs étant un jeu universel, ils ont été étudiés et un grand nombre de papiers scientifiques
 sont disponibles. Ceux-ci nous seront très utiles tout au long du projet, car ils concernent des
@@ -679,31 +679,6 @@ function findBestMove(game, depth, player):
     \end{lstlisting}
     \FloatBarrier
 
-
-\subsection{Code propre}
-Nous avons effectué plusieurs refactors afin d'arriver à une architecture plus claire au cours du projet. Dans les dernières semaines de développement,
-lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que \textit{Checkstyle} ou \textit{PMD}.
-
-Nous avons commencé par rajouter de la documentation sur les classes ainsi que sur leurs fields et méthodes.
-Le mot clé final a été ajouté sur les variables et fields le nécéssitant. Cela permet de rajouter de la sécurité ainsi que de la lisibilité au code.
-Les noms de fonctions ainsi que de variables ont été modifiés afin de suivre les normes. Nous avons également suprimé la quasi totalité des \textit{System.out/err}.
-
-Après avoir corrigé de nombreux warnings, environ 500 d'entre eux sont toujours présents.
-Les règles utilisées dans PMD sont disponibles dans le fichier \textit{pmd-rules.xml}.
-Certains de ces warnings ont été jugés
-comme peu utile comme par exemple les logs devant être entourés de barrières (ce qui est fait dans nos méthodes de logging) ou la taille des commentaires,
-qui correspondait au style Google mais pas à celui de PMD.
-Ayant décidé d'avoir une application multithreadée ( Bag of commands, Vue, IA parralèle), nous avons décicé d'ignorer le warning interdisant l'utilisation de threads.
-En effet, cela concerne les applications utilisant Java Enterprise Edition, ce que nous ne faisons pas.
-Le fait d'avoir au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
-Le fait de pouvoir faire un return anticpé dans une fonction est quasi nécéssaire, si nous ne voulons pas entourer le code dans
-d'énormes blocs de \textit{if}, nous avons donc supprimé la règle correspondante.
-Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujours explicite (comme \textit{x} pour une position).
-D'autres sont trop longues, mais avec la présence d'autocomplétion dans la plupart des IDE, nous avons préféré garder des noms explicites, qui peuvent être compliqués à raccourcir,
-comme \textit{isLastMoveDoublePush}.
-
-Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6000 warnings à moins de 500.
-
 \section{Architecture du projet}
 L'architecture principale du projet, sépare clairement la logique métier, l'affichage et la gestion des évènements. C'est un MVC modifié voir Figure \ref{MVC},
 grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleure flexibilité dans la
@@ -1088,11 +1063,31 @@ Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son applica
 sans optimisation.
 
 \subsubsection{Clean Code}
+Nous avons effectué plusieurs refactors afin d'arriver à une architecture plus claire au cours du projet. Dans les dernières semaines de développement,
+lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que \textit{Checkstyle} ou \textit{PMD}.
+
+Nous avons commencé par rajouter de la documentation sur les classes ainsi que sur leurs fields et méthodes.
+Le mot clé final a été ajouté sur les variables et fields le nécéssitant. Cela permet de rajouter de la sécurité ainsi que de la lisibilité au code.
+Les noms de fonctions ainsi que de variables ont été modifiés afin de suivre les normes.
+La totalité des \textit{System.out/err} ont été remplacé par des appels à des loggers via les fonctions \textit{print} et \textit{error} dans notre class \textit{Logging}.
+
+Après avoir corrigé de nombreux warnings, environ 500 d'entre eux sont toujours présents, contre plus de 6000 au départ.
+Les règles utilisées dans PMD sont disponibles dans le fichier \textit{pmd-rules.xml}.
+Certains de ces warnings ont été jugés
+comme peu utile comme par exemple les logs devant être entourés de barrières (ce qui est fait dans nos méthodes de logging) ou la taille des commentaires,
+qui correspondait au style Google mais pas à celui de PMD.
+Ayant décidé d'avoir une application multithreadée ( Bag of commands, Vue, IA parralèle), nous avons décicé d'ignorer le warning interdisant l'utilisation de threads.
+En effet, cela concerne les applications utilisant Java Enterprise Edition, ce que nous ne faisons pas.
+Le fait d'avoir au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
+Le fait de pouvoir faire un return anticpé dans une fonction est quasi nécéssaire, si nous ne voulons pas entourer le code dans
+d'énormes blocs de \textit{if}, nous avons donc supprimé la règle correspondante.
+Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujours explicite (comme \textit{x} pour une position).
+D'autres sont trop longues, mais avec la présence d'autocomplétion dans la plupart des IDE, nous avons préféré garder des noms explicites, qui peuvent être compliqués à raccourcir,
+comme \textit{isLastMoveDoublePush}.
 Même en enlevant les règles nous paraissant superflues, nous avons toujours environ 500 warning à résoudre.
-Afin de retirer les \textit{System.out/err}, nous avons crée des fonctions \textit{print} et \textit{error}, qui sont des wrappers de ces fonctions. Il serait plus judicieux de créer
-des loggers pour ces opérations.
 Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce qui correspond à un projet à part entière.
 Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
+
 \subsection{Critiques positives}
 \subsubsection{Norme UCI}
 La norme UCI (pour Universal Chess Interface) est un protocole de communication utilisé pour permettre à différents chess engine de communiquer avec des interfaces graphiques ou des programmes d’échecs.
@@ -1115,13 +1110,13 @@ de relever le nombre de noeuds exploré ainsi que le temps mis pour une recherch
 
 \subsubsection{Niveau de l'intelligence artificielle}
 À l'aide des différents algorithmes et heuristiques nous avons pu jouer des parties de manière autonome contre \textit{Stockfish} afin de mesurer le niveau de notre IA.
-Pour obtenir des résultats significatifs nous jouons plus de 700 parties à chaque pas d'Élo afin de calculer le winrate ainsi que d'autres métriques pour évaluer notre IA.
-Nous avons ici utilisé l'algorithme AlphaBeta Iterative Deepening en depth 4 à toutes les parties. Nous obtenons des résultats satisfaisants (au dessus de 0.5) jusqu’à 1400 élo comme le présente la Figure \ref{winRateCmp}.
+Pour obtenir des résultats significatifs nous jouons plus de 700 parties à chaque pas d'Elo afin de calculer le winrate ainsi que d'autres métriques pour évaluer notre IA.
+Nous avons ici utilisé l'algorithme AlphaBeta Iterative Deepening en depth 4 à toutes les parties. Nous obtenons des résultats satisfaisants (au dessus de 0.5) jusqu’à 1400 Elo comme le présente la Figure \ref{winRateCmp}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{winRateCmp.png}
-    \caption{Graphique représentant le winrate en fonction de l'élo de stockfish}
+    \caption{Graphique représentant le winrate en fonction de l'Elo de stockfish}
     \label{winRateCmp}
 \end{figure}
 \FloatBarrier
@@ -1129,12 +1124,12 @@ Nous avons ici utilisé l'algorithme AlphaBeta Iterative Deepening en depth 4 à
 Ces résultats sont encourageant car on remarque un taux anormal de parties finissant par une égalité comme le montre la Figure \ref{drawCountCmp}. Nous savons que notre IA
 est en difficulté lorsque qu'il faut trouver un échec et mat, c'est donc qu'elle arrive à bien se défendre pour aller chercher une égalité
 dans un grand nombre de partie. Il faut également noter que \textit{Stockfish} est ici limité en temps et que les coups qu'ils jouent sont donc trouvé à une profondeur superieure à la notre,
-sourtout lors des fins de parties. On peut donc estimer que notre IA depasse les 1400 Élo sur des profondeurs supérieures à 4.
+sourtout lors des fins de parties. On peut donc estimer que notre IA depasse les 1400 Elo sur des profondeurs supérieures à 4.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{drawRate.png}
-    \caption{Graphique représentant le nombre de parties nulles suivant l'élo de stockfish}
+    \caption{Graphique représentant le nombre de parties nulles suivant l'Elo de stockfish}
     \label{drawCountCmp}
 \end{figure}
 \FloatBarrier
