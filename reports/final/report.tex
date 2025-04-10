@@ -832,17 +832,17 @@ que lorsque les derniers coups de la partie (et plus généralement lorsque l'on
 obtient des résultats moindres. Finalement, puisque le cas de la figure \ref{move_ordering_cmp} se déroule en millieu de partie on parvient à obtenir un résultat légérement meilleur.
 
 
-\subsection{Comparaison des variantes d'Alpha-Beta} Afin d’évaluer les performances de nos différentes versions de l’algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
+\subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
 
 Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau.
 
 En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5× plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
 
-À l’inverse, les versions utilisant l’iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s’explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l’élagage alpha-bêta dès les premières itérations.
+À l'inverse, les versions utilisant l'iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s'explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l'élagage alpha-bêta dès les premières itérations.
 
-Enfin, concernant le temps moyen pour jouer un coup, TODO
+Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2x pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1x pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures, même si le coût d'exploration est plus élevé.
 
-Cela montre l’effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
+Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
 
 \begin{table}[h]
     \centering
@@ -850,15 +850,15 @@ Cela montre l’effet combiné bénéfique du tri dynamique des coups et de la p
     \label{tab:ab_comparison}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
-        \textbf{Version} & \textbf{Nœuds/s} & \textbf{Nœuds explorés par coup} & \textbf{Temps moyen par coup (s)} \\
+        \textbf{Version} & \textbf{Nœuds/s} & \textbf{Nœuds explorés par coup} & \textbf{Temps moyen par coup (ms)} \\
         \hline
-        ALPHA\_BETA & TODO & TODO & TODO \\
+        ALPHA\_BETA & 25000 & 173000 & 6700 \\
         \hline
-        ALPHA\_BETA\_PARALLEL & TODO & TODO & TODO \\
+        ALPHA\_BETA\_PARALLEL & 94000 & 286000 & 3023 \\
         \hline
-        ALPHA\_BETA\_ID & TODO & TODO & TODO \\
+        ALPHA\_BETA\_ID & 21000 & 166000 & 7847 \\
         \hline
-        ALPHA\_BETA\_ID\_PARALLEL & TODO & TODO & TODO \\
+        ALPHA\_BETA\_ID\_PARALLEL & 83000 & 213000 & 2546 \\
         \hline
     \end{tabular}
 \end{table}
