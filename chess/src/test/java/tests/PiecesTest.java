@@ -3,7 +3,6 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pdp.model.piece.Piece;
@@ -12,7 +11,7 @@ public class PiecesTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @Test

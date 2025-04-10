@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ class MoveHistoryParserTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @BeforeEach

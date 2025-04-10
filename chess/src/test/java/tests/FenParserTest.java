@@ -3,7 +3,6 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Locale;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pdp.model.parsers.FenParser;
@@ -17,9 +16,9 @@ public class FenParserTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
-  
+
   @Test
   public void testParseClassicBoard() {
     FileBoard board =

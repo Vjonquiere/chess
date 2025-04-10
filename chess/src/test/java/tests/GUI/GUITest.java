@@ -8,7 +8,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ public class GUITest extends ApplicationTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @Override

@@ -3,7 +3,6 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +13,7 @@ public class TextGetterTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @BeforeEach

@@ -11,7 +11,6 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +28,7 @@ class SettingsEditorPopupTest extends ApplicationTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @BeforeEach

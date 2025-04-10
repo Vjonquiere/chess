@@ -7,7 +7,6 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ class EndGamePopUpTest extends ApplicationTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @Test

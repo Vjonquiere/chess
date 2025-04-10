@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
-
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;

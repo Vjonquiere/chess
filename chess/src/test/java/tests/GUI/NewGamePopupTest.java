@@ -7,7 +7,6 @@ import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 import java.util.HashMap;
 import java.util.Locale;
-
 import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -27,7 +26,7 @@ public class NewGamePopupTest extends ApplicationTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @BeforeEach

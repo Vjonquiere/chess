@@ -6,7 +6,6 @@ import java.util.Locale;
 import java.util.Optional;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ class InfoPopUpTest extends ApplicationTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @Test

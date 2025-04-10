@@ -3,7 +3,6 @@ package tests.GUI;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Locale;
-
 import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -20,7 +19,7 @@ public class ThemePopUpTest extends ApplicationTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @Override

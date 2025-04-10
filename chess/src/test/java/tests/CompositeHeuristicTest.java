@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +28,7 @@ public class CompositeHeuristicTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @AfterEach

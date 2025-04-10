@@ -7,7 +7,6 @@ import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ public class BagOfCommandsTest {
 
   @BeforeAll
   public static void setUpLocale() {
-      Locale.setDefault(Locale.ENGLISH);
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @BeforeEach
