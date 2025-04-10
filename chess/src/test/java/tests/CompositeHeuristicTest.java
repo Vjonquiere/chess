@@ -121,13 +121,13 @@ public class CompositeHeuristicTest {
     Heuristic checkHeuristic = new CheckHeuristic();
     Heuristic spaceControlHeuristic = new SpaceControlHeuristic();
     score += material.evaluate(game.getBoard(), false) * 100;
-    score += status.evaluate(game.getBoard(), false) * 100;
+    score += status.evaluate(game.getBoard(), false) * 10000;
     score += mobility.evaluate(game.getBoard(), false);
     score += badPawnsHeuristic.evaluate(game.getBoard(), false);
     score += pawnChainHeuristic.evaluate(game.getBoard(), false);
     score += developmentHeuristic.evaluate(game.getBoard(), false) * 3;
     score += kingSafetyHeuristic.evaluate(game.getBoard(), false);
-    score += checkHeuristic.evaluate(game.getBoard(), false) * 5;
+    score += checkHeuristic.evaluate(game.getBoard(), false);
     score += spaceControlHeuristic.evaluate(game.getBoard(), false) * 1;
     assertEquals(score, solver.evaluateBoard(game.getGameState(), false));
   }
