@@ -695,7 +695,6 @@ Enfin, dans le cadre spécifique des échecs, où le nombre de coups possibles p
 L'algorithme AlphaBeta parallèle (cf. pseudo-code \ref{AlphaBetaParallel} ci-dessous) utilisé repose sur une stratégie d'ordonnancement des coups (\textit{move ordering}) afin de maximiser l'efficacité de l'élagage alpha-bêta. En effet, le meilleur coup estimé (issu d'un tri préalable ou d'une profondeur précédente via l'approfondissement itératif) est évalué en premier, séquentiellement. Cette première évaluation permet de fixer une valeur initiale pour $\alpha$, améliorant ainsi considérablement l'élagage dans les branches suivantes. Une fois cette valeur d'alpha définie, les autres coups sont explorés en parallèle, chacun dans un sous-arbre indépendant.
 Cette approche hybride tire profit du parallélisme tout en conservant l'efficacité de l'élagage lorsque cela est possible. Néanmoins, du fait de l'exécution simultanée des branches secondaires, le pruning est souvent moins efficace que dans une version strictement séquentielle, ce qui peut entraîner une exploration plus large de l'espace de recherche.
 
-\pagebreak
 \begin{lstlisting}[label={AlphaBetaParallel}, caption={AlphaBeta version parallèle - pseudo-code}]
 function findBestMove(game, depth, player):
     aiGame <- copy of game as GameAi
@@ -849,6 +848,8 @@ Notre Bag of Commands étant un singleton, nous avons un point d'accès global, 
 La Figure \ref{umlController} représente notre package Controller de manière simplifiée. 
 En effet, une seule commande concrète apparaît, dans notre projet,
 nous en avons une dizaine, qui chacune implémente l'interface \textit{Command}.
+Pour communiquer à l'aide du Bag of Commands, il faut y ajouter une commande, il suffit par exemple d'ajouter la commande PlayMove à celui-ci en donnant le coup à jouer si l'on souhaite effectuer un coup dans la partie.
+Le Bag of Commands va donc l'ajouter à sa file d'exécution et la traiter dès que possible. Dès lors, il va appeler la méthode \textit{execute()} de la commande, qui fera jouer le coup au Model.
 
 \subsection{Utils}
 Notre package \textit{Utils} regroupe des classes auxiliaires, n'ayant pas réellement de lien avec la logique métier.
@@ -873,7 +874,9 @@ L'enum \textit{EventType} regroupe ces évènements.
 \FloatBarrier
 Comme on peut le voir dans la Figure \ref{umlEvents}, la classe \textit{Subject} correspond à l'Observable du pattern Observer et \textit{EventObserver} à l'Observeur de celui-ci.
 La classe \textit{Subject} est étendue par GameAbstract, ce qui permet aux différentes Games de pouvoir être observées. C'est ce qui permet au modèle de notifier la Vue par exemple.
-
+Nous avons implémenté plusieurs évènements. Certains concernent la fin de partie, indiquant la fin de celle-ci (égalité, victoire/défaite), la couleur du gagnant ainsi que le type de fin de partie (échec et mat, pat, manque de matériel,...).
+D'autres évènements concernent le déroulé de la partie, comme indiquer le début d'une partie ou un coup joué.
+Il est facile de rajouter des évènements dans l'enum, ce qui facilite l'extension de l'application et l'ajout de fonctionnalités.
 \subsection{Classes en dehors des packages}
 Nous possédons trois classes se trouvant en dehors de packages: \textit{Main}, qui permet de lancer l'application, 
 \textit{GameInitializer} et \textit{GameControllerInit}. La deuxième se charge d'initialiser la Game en fonction des options données en lignes de commandes, des options par défaut
