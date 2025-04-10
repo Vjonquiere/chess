@@ -468,11 +468,12 @@ Nous considérons une partie en ``ENDGAME'' lorsque l'algorithme \ref{EndGameAlg
 Si la configuration est considérée être une fin de partie, alors l'heuristique utilisée
 par l'IA devient ENDGAME, afin de prendre en compte des facteurs propres aux fins de partie. Autrement, elle utilise la STANDARD.
 
-Voici la liste des heuristiques développées par le groupe lors de ce projet. La colonne \textbf{Primaire} permet de savoir
+Loici la liste des heuristiques développées lors de ce projet est présente Table \ref{heur}. La colonne \textbf{Primaire} permet de savoir
 par ``OUI'' ou ``NON'' si c'est une heuristique ``primitive'', c'est-à-dire qu'elle n'est pas composée. On retrouve le même principe
 pour savoir si elle est utilisée pour les fins de partie.
 
 \begin{longtable}{|c|p{5cm}|c|p{5cm}|}
+    \caption{Heuristiques présentes dans les différentes heuristiques composites \label{heur}} \\
     \hline
     \textbf{\#} & \textbf{Nom de l'heuristique} & \textbf{Primaire} & \textbf{Fin de partie} \\
     \hline
@@ -663,28 +664,6 @@ Enfin, dans le cadre spécifique des échecs, où le nombre de coups possibles p
                 bestMove <- result
 
             rootMoves <- all available moves for player from game with bestMove as the first
-    
-        return bestMove
-    
-    function alphaBeta(game, depth, current_player, alpha, beta, original_player, moves):
-        bestMove <- AiMove(null, -inf)
-    
-        for each move in moves:
-            game.playMove(move)
-            score <- alphaBeta(gameCopy, depth - 1, not player, alpha, beta, player)
-            game.previousState()
-
-            if current_player == original_player:
-                if score > bestMove.score:
-                    bestMove <- AiMove(move, score)
-                alpha <- max(alpha, score)
-            else:
-                if score < bestMove.score:
-                    bestMove <- AiMove(move, score)
-                beta <- min(beta, score)
-    
-            if alpha >= beta:
-                break
     
         return bestMove
     \end{lstlisting}
