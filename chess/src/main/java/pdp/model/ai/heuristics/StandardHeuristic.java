@@ -18,7 +18,7 @@ public class StandardHeuristic extends AbstractHeuristic {
     super.addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new DevelopmentHeuristic(), 3));
     super.addHeuristic(new WeightedHeuristic(new CheckHeuristic(), 5));
-    super.addHeuristic(new WeightedHeuristic(new SpaceControlHeuristic(), 3));
+    super.addHeuristic(new WeightedHeuristic(new SpaceControlHeuristic(), 1));
   }
 
   /**

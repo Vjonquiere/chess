@@ -39,6 +39,7 @@ public final class NewGamePopup {
    * @return A javaFx object to configure AI.
    */
   private static VBox makeAiBox(final boolean isWhite, final HashMap<OptionType, String> options) {
+    options.remove(OptionType.LOAD);
 
     final String colorTag = isWhite ? "white" : "black";
     final String colorText = TextGetter.getText(colorTag);

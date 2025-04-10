@@ -128,7 +128,7 @@ public class CompositeHeuristicTest {
     score += developmentHeuristic.evaluate(game.getBoard(), false) * 3;
     score += kingSafetyHeuristic.evaluate(game.getBoard(), false);
     score += checkHeuristic.evaluate(game.getBoard(), false) * 5;
-    score += spaceControlHeuristic.evaluate(game.getBoard(), false) * 3;
+    score += spaceControlHeuristic.evaluate(game.getBoard(), false) * 1;
     assertEquals(score, solver.evaluateBoard(game.getGameState(), false));
   }
 }
