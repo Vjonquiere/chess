@@ -29,7 +29,7 @@ public enum ColorTheme implements ColorThemeInterface {
 
   /** Place to save the custom themes of the users. */
   private static final String USER_THEMES_FILE =
-      System.getProperty("user.home") + "/.chessThemes/custom_themes.csv";
+      System.getProperty("user.home") + "/.chessSettings/custom_themes.csv";
 
   /** Map containing the themes of the application (from enum and loaded from the csv). */
   private static final Map<String, ColorThemeInterface> THEMES = new HashMap<>();
@@ -154,18 +154,18 @@ public enum ColorTheme implements ColorThemeInterface {
       while ((line = reader.readLine()) != null) {
         final String[] parts = line.split(",");
         if (parts.length == 9) {
-          String name = parts[0].trim().toUpperCase();
+          final String name = parts[0].trim().toUpperCase();
           try {
-            CustomColorTheme customTheme =
+            final CustomColorTheme customTheme =
                 new CustomColorTheme(
                     name, parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7],
                     parts[8]);
             THEMES.put(name, customTheme);
           } catch (IllegalArgumentException e) {
-            System.err.println("Failed to load custom theme " + name + " : " + e.getMessage());
+            print("Failed to load custom theme " + name + " : " + e.getMessage());
           }
         } else {
-          System.err.println("Invalid custom theme format: " + line);
+          error("Invalid custom theme format: " + line);
         }
       }
     } catch (IOException | NullPointerException e) {

@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,7 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.GameControllerInit;
@@ -38,11 +41,17 @@ class GameInitializerTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
     options = new HashMap<>();
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -54,6 +63,7 @@ class GameInitializerTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
@@ -63,37 +73,13 @@ class GameInitializerTest {
     assertTrue(controller.getView() instanceof CliView);
   }
 
-  /*
   @Test
-  void testGameInitializationGUI() {
-    options.put(OptionType.GUI, "");
-    GameController controller = GameControllerInit.initialize(options);
-    assertNotNull(controller);
-    assertTrue(controller.getView() instanceof GameView);
-  }
-    */
-
-  /*
-  @Test
-  void testGameInitializationBlitzMode300() {
+  void testGameInitializationBlitzMode() {
     options.put(OptionType.BLITZ, "");
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
     assertNotNull(controller.getModel().getGameState().getMoveTimer());
   }
-    */
-
-  /*
-  @Test
-  void testGameInitializationBlitzMode300() {
-    options.put(OptionType.BLITZ, "");
-    options.put(OptionType.TIME, "300");
-    GameController controller = GameControllerInit.initialize(options);
-    assertNotNull(controller);
-    assertNotNull(controller.getModel().getGameState().getMoveTimer());
-    assertEquals(controller.getModel().getGameState().getMoveTimer().getTimeRemaining(), 300);
-  }
-    */
 
   @Test
   void testGameInitializationAIWhite() {
@@ -115,18 +101,17 @@ class GameInitializerTest {
     assertNotNull(controller.getModel().getBlackSolver());
   }
 
-  /*
-    @Test
-    void testGameInitializationAIAll() {
-      options.put(OptionType.AI, "A");
-      GameController controller = GameControllerInit.initialize(options);
-      assertNotNull(controller);
-      assertTrue(controller.getModel().isWhiteAI());
-      assertTrue(controller.getModel().isBlackAI());
-      assertNotNull(controller.getModel().getWhiteSolver());
-      assertNotNull(controller.getModel().getBlackSolver());
-    }
-  */
+  @Test
+  void testGameInitializationAIAll() {
+    options.put(OptionType.AI, "A");
+    GameController controller = GameControllerInit.initialize(options);
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAi());
+    assertTrue(controller.getModel().isBlackAi());
+    assertNotNull(controller.getModel().getWhiteSolver());
+    assertNotNull(controller.getModel().getBlackSolver());
+  }
+
   @Test
   void testGameInitializationAIIncorrect() {
     options.put(OptionType.AI, "X");
@@ -375,16 +360,10 @@ class GameInitializerTest {
   void testGameInitializationLoadFallback() {
     options.put(OptionType.LOAD, "non_existent_file.txt");
 
-    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    PrintStream originalErr = System.err;
-    System.setErr(new PrintStream(errContent));
-
     GameController controller = null;
     controller = GameControllerInit.initialize(options);
 
-    String errorOutput = errContent.toString();
-
-    System.setErr(originalErr);
+    String errorOutput = outputStream.toString();
 
     assertTrue(errorOutput.contains("Using the default game start"));
 

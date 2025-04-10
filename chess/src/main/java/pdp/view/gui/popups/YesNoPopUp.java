@@ -24,6 +24,7 @@ public class YesNoPopUp extends VBox {
    *     Can be null.
    */
   public YesNoPopUp(final String title, final Command command, final Runnable action) {
+    super();
     final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText(title));
     popupStage.initModality(Modality.APPLICATION_MODAL);

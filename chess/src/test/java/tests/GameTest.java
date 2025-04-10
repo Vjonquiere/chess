@@ -7,6 +7,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,8 +19,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.FailedSaveException;
@@ -46,10 +49,16 @@ public class GameTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   void setUpConsole() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -57,6 +66,7 @@ public class GameTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
@@ -803,5 +813,67 @@ public class GameTest {
     assert (game.getGameState().getMoveTimer().getTimeRemaining() < 100);
     assertTrue(game.getGameState().getMoveTimer().getTimeRemaining() > 0);
     verify(callback, never()).run();
+  }
+
+  @Test
+  public void testSetBlackAi() {
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+
+    assertFalse(game.isBlackAi());
+    game.setBlackAi(true);
+    assertTrue(game.isBlackAi());
+  }
+
+  @Test
+  public void testSetWhiteAi() {
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+
+    assertFalse(game.isWhiteAi());
+    game.setWhiteAi(true);
+    assertTrue(game.isWhiteAi());
+  }
+
+  @Test
+  public void testSetInit() {
+
+    assertFalse(Game.getInstance().isInitialized());
+    Game.getInstance().setInitializing(true);
+    assertTrue(Game.getInstance().isInitialized());
+  }
+
+  @Test
+  public void testGetStringHistory() {
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+    Move move = new Move(new Position(4, 1), new Position(4, 3));
+    game.playMove(move);
+
+    assertEquals("1. W e2-e4", game.getStringHistory());
+  }
+
+  @Test
+  public void testSetBlackSolver() {
+
+    Game game = spy(Game.initialize(false, false, null, null, null, new HashMap<>()));
+
+    Solver newSolverBlack = new Solver();
+    newSolverBlack.setDepth(2);
+    game.setBlackSolver(newSolverBlack);
+    assertEquals(2, game.getBlackSolver().getDepth());
+    newSolverBlack.setDepth(6);
+    game.setBlackSolver(newSolverBlack);
+    assertEquals(6, game.getBlackSolver().getDepth());
+  }
+
+  @Test
+  public void testSetWhiteSolver() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    Solver newSolverWhite = new Solver();
+    newSolverWhite.setDepth(2);
+    game.setWhiteSolver(newSolverWhite);
+    assertEquals(2, game.getWhiteSolver().getDepth());
+    newSolverWhite.setDepth(6);
+    game.setWhiteSolver(newSolverWhite);
+    assertEquals(6, game.getWhiteSolver().getDepth());
   }
 }

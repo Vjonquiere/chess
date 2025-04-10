@@ -2,6 +2,7 @@ package tests.GUI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Locale;
 import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -17,7 +18,9 @@ import pdp.view.gui.popups.ThemePopUp;
 public class ThemePopUpTest extends ApplicationTest {
 
   @BeforeAll
-  public void setup() {}
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Override
   public void start(Stage stage) {

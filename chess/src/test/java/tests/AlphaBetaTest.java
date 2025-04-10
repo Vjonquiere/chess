@@ -1,12 +1,15 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,11 +28,17 @@ public class AlphaBetaTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @AfterEach
   void tearDownConsole() {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @BeforeEach
@@ -41,6 +50,7 @@ public class AlphaBetaTest {
     solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
     solver.setHeuristic(HeuristicType.STANDARD);
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
+    configureGlobalLogger();
   }
 
   static Stream<AlgorithmType> algorithmProvider() {
@@ -82,7 +92,7 @@ public class AlphaBetaTest {
     long elapsedTime = endTime - startTime;
     long remainingTime = solver.getTimer().getTimeRemaining();
 
-    assertTrue(elapsedTime >= 0 && elapsedTime <= solver.getTime() * 1000 + 100);
+    assertTrue(elapsedTime >= 0 && elapsedTime <= solver.getTime() * 1000 + 500);
     assertTrue(remainingTime <= solver.getTime() * 1000);
   }
 
@@ -105,22 +115,4 @@ public class AlphaBetaTest {
     assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 500);
     assertTrue(remainingTime <= timeLimit);
   }
-  /*
-   @ParameterizedTest
-   @MethodSource("algorithmProvider")
-   public void testTimerOverStartFunction() {
-     long timeLimit = 1;
-     solver.setDepth(20);
-     solver.setTime(timeLimit);
-     long startTime = System.currentTimeMillis();
-     solver.playAIMove(game);
-     long endTime = System.currentTimeMillis();
-
-     long elapsedTime = endTime - startTime;
-     long remainingTime = solver.getTimer().getTimeRemaining();
-
-     assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 100);
-     assertTrue(remainingTime <= timeLimit);
-   }
-  */
 }

@@ -1,0 +1,31 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+interface EventObserver << interface >> {
+  + onErrorEvent(Exception): void
+  + onGameEvent(EventType): void
+}
+enum EventType << enumeration >> {
+  + EventType(): 
+  + valueOf(String): EventType
+  + values(): EventType[]
+}
+class Subject {
+  + Subject(): 
+  - observers: List<EventObserver>
+  - errorObservers: List<EventObserver>
+  + notifyObserver(EventObserver, EventType): void
+  + notifyObservers(EventType): void
+  + addObserver(EventObserver): void
+  + removeObserver(EventObserver): void
+  + removeErrorObserver(EventObserver): void
+  + notifyErrorObservers(Exception): void
+  + addErrorObserver(EventObserver): void
+   errorObservers: List<EventObserver>
+   observers: List<EventObserver>
+}
+
+Subject       "1" *-[#595959,plain]-> "observers\n*" EventObserver 
+@enduml

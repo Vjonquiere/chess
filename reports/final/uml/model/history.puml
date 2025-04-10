@@ -1,0 +1,40 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class History {
+  + History(): 
+  - currentMove: HistoryNode
+  + toUniString(): String
+  + clear(): void
+  + toString(): String
+  + toAlgebraicString(): String
+  + addMove(HistoryState): void
+   currentMove: Optional<HistoryNode>
+}
+class HistoryNode {
+  + HistoryNode(HistoryState, HistoryNode): 
+  - previous: HistoryNode
+  - state: HistoryState
+  - next: HistoryNode
+   state: HistoryState
+   previous: Optional<HistoryNode>
+   next: Optional<HistoryNode>
+}
+class HistoryState {
+  + HistoryState(Move, GameState): 
+  - gameState: GameState
+  - move: Move
+  + toString(): String
+  + toAlgebraicString(): String
+   move: Move
+   fullTurn: int
+   gameState: GameState
+   white: boolean
+}
+
+History      "1" *-[#595959,plain]-> "currentMove\n1" HistoryNode  
+History       -[#595959,dashed]->  HistoryNode  : "«create»"
+HistoryNode  "1" *-[#595959,plain]-> "state\n1" HistoryState 
+@enduml

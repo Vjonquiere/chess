@@ -1,0 +1,356 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class Bitboard {
+  + Bitboard(): 
+  + Bitboard(long): 
+  + bitCount(): int
+  + clearBits(): void
+  + moveLeft(): Bitboard
+  + xor(Bitboard): Bitboard
+  + not(): Bitboard
+  + equals(Object): boolean
+  + moveRight(): Bitboard
+  + moveUpLeft(): Bitboard
+  + toString(): String
+  + clearBit(int): void
+  + moveDownRight(): Bitboard
+  + moveDownLeft(): Bitboard
+  + moveDown(): Bitboard
+  + moveUp(): Bitboard
+  + moveUpRight(): Bitboard
+  + and(Bitboard): Bitboard
+  + toggleBit(int): void
+  + getBit(int): boolean
+  + or(Bitboard): Bitboard
+   copy: Bitboard
+   bit: int
+   setBits: ArrayList<Integer>
+   bits: long
+}
+class BitboardCache {
+  + BitboardCache(int): 
+  - evictIfNecessary(): void
+  + getOrCreate(long): CachedResult
+}
+class BitboardMovesGen {
+  - BitboardMovesGen(): 
+  + getMultipleMovesFromDirection(Bitboard, Bitboard, Bitboard, Function<Bitboard, Bitboard>): Bitboard
+  + getKingMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): List<Move>
+  + getPawnMoves(Position, Bitboard, Bitboard, boolean, BitboardRepresentation, Position, boolean): List<Move>
+  + getQueenMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
+  + getKnightMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
+  + getKingAttackBitboard(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): Bitboard
+  + getDiagonalMoves(Position, Bitboard, Bitboard): Bitboard
+  + retrieveKingMoves(boolean, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): List<Move>
+  + getAttackBitboard(int, int, boolean, BitboardRepresentation, Position, boolean): Bitboard
+  + getColorAttackBitboard(boolean, BitboardRepresentation, Position, boolean): Bitboard
+  + getAllAvailableMoves(boolean, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): List<Move>
+  + bitboardToMoves(Bitboard, Bitboard, Position, ColoredPiece, BitboardRepresentation): List<Move>
+  + getAvailableMoves(int, int, boolean, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): List<Move>
+  + getPawnMoveBitboard(Position, Bitboard, Bitboard, boolean, BitboardRepresentation, Position, boolean): Bitboard
+  + retrieveBishopMoves(boolean, BitboardRepresentation): List<Move>
+  + getInlineMoves(Position, Bitboard, Bitboard): Bitboard
+  + getKnightMoveBitboard(Position, Bitboard): Bitboard
+  + getKingMoveBitboard(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): Bitboard
+  + getRookMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
+  + getBishopMoves(Position, Bitboard, Bitboard, ColoredPiece, BitboardRepresentation): List<Move>
+}
+class BitboardPieces {
+  - BitboardPieces(): 
+  + getWhiteBoard(BitboardRepresentation): Bitboard
+  + getKing(boolean, BitboardRepresentation): List<Position>
+  + getKingOpti(boolean, BitboardRepresentation): int
+  + getBishops(boolean, BitboardRepresentation): List<Position>
+  + getBlackBoard(BitboardRepresentation): Bitboard
+  + getKnights(boolean, BitboardRepresentation): List<Position>
+  + nbPiecesRemaining(BitboardRepresentation): int
+  + getRooks(boolean, BitboardRepresentation): List<Position>
+  + getQueens(boolean, BitboardRepresentation): List<Position>
+  + getPawns(boolean, BitboardRepresentation): List<Position>
+}
+class BitboardRepresentation {
+  + BitboardRepresentation(): 
+  + BitboardRepresentation(Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard, Bitboard): 
+  - NB_COLS: int
+  - whiteShortCastle: boolean
+  - blackLongCastle: boolean
+  - blackShortCastle: boolean
+  - isEnPassantTake: boolean
+  - nbMovesWithNoCaptureOrPawn: int
+  - NB_ROWS: int
+  - enPassantPos: Position
+  - isLastMoveDoublePush: boolean
+  - whiteLongCastle: boolean
+  # addPieceAt(int, int, ColoredPiece): void
+  + isCastleMove(ColoredPiece, Position, Position): boolean
+  + isPawnPromoting(int, int, boolean): boolean
+  + applyLongCastle(Color): void
+  + isCheck(Color): boolean
+  + toString(): String
+  + getAllAvailableMoves(boolean): List<Move>
+  + getKnights(boolean): List<Position>
+  + isDoublePushPossible(Move, boolean): boolean
+  + isCheckAfterMove(Color, Move): boolean
+  + deletePieceAt(int, int): void
+  + retrieveBlackPiecesPos(): List<List<Position>>
+  + isPromotionMove(int, int, int, int, boolean): boolean
+  # getOccupiedSquares(int): List<Position>
+  + retrieveKingMoves(boolean): List<Move>
+  + canCastle(Color, boolean): boolean
+  + getKing(boolean): List<Position>
+  + setSquare(ColoredPiece, int): void
+  + isStaleMate(Color, Color): boolean
+  + retrieveInitialBlackPiecesPos(): List<List<Position>>
+  + getRooks(boolean): List<Position>
+  # getKingMoves(Position, Bitboard, Bitboard, ColoredPiece): List<Move>
+  + queensOffTheBoard(): boolean
+  + retrieveBishopMoves(boolean): List<Move>
+  + applyShortCastle(Color): void
+  + retrieveWhitePiecesPos(): List<List<Position>>
+  + movePiece(Position, Position): void
+  + nbPiecesRemaining(): int
+  + getPieceAt(int, int): ColoredPiece
+  + equals(Object): boolean
+  + getAvailableMoves(int, int, boolean): List<Move>
+  + getColorMoveBitboard(boolean): Bitboard
+  + isEnPassant(int, int, Move, boolean): boolean
+  + isCheckMate(Color): boolean
+  + pawnsHaveProgressed(boolean): boolean
+  + validatePieceOwnership(boolean, Position): boolean
+  + getKingOpti(boolean): int
+  + retrieveInitialWhitePiecesPos(): List<List<Position>>
+  + isEndGamePhase(int, boolean): boolean
+  # squaresToPosition(List<Integer>): List<Position>
+  + isAttacked(int, int, Color): boolean
+  + areKingsActive(): boolean
+  # squareToPosition(int): Position
+  + getPawns(boolean): List<Position>
+  + promotePawn(int, int, boolean, Piece): void
+  + hasEnoughMaterialToMate(boolean): boolean
+  + getQueens(boolean): List<Position>
+  + getColorAttackBitboard(boolean): Bitboard
+  + getBishops(boolean): List<Position>
+   blackBoard: Bitboard
+   isEnPassantTake: boolean
+   nbMovesWithNoCaptureOrPawn: int
+   blackLongCastle: boolean
+   piecesMap: BiDirectionalMap<Integer, ColoredPiece>
+   drawByInsufficientMaterial: boolean
+   player: boolean
+   NB_ROWS: int
+   bitboards: Bitboard[]
+   isLastMoveDoublePush: boolean
+   blackShortCastle: boolean
+   whiteBoard: Bitboard
+   copy: BoardRepresentation
+   whiteShortCastle: boolean
+   NB_COLS: int
+   whiteLongCastle: boolean
+   enPassantPos: Position
+}
+class BitboardRules {
+  - BitboardRules(): 
+  + isCastleMove(ColoredPiece, Position, Position): boolean
+  + setSquare(ColoredPiece, int, BitboardRepresentation): void
+  + isCheck(Color, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): boolean
+  + isPawnPromoting(int, int, boolean, BitboardRepresentation): boolean
+  + promotePawn(int, int, boolean, Piece, BitboardRepresentation): void
+  + isAttacked(int, int, Color, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): boolean
+  + isPromotionMove(int, int, int, int, boolean, BitboardRepresentation): boolean
+  + retrieveInitialWhitePiecesPos(): List<List<Position>>
+  + getBitboards(BitboardRepresentation): Bitboard[]
+  + retrieveInitialBlackPiecesPos(): List<List<Position>>
+  + isDoublePushPossible(Move, boolean, BitboardRepresentation): boolean
+  + validatePieceOwnership(boolean, Position, BitboardRepresentation): boolean
+  + isEnPassant(int, int, Move, boolean, BitboardRepresentation): boolean
+  + retrieveWhitePiecesPos(BitboardRepresentation): List<List<Position>>
+  + isCheckMate(Color, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): boolean
+  + isCheckAfterMove(Color, Move, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): boolean
+  + isDrawByInsufficientMaterial(BitboardRepresentation): boolean
+  + isStaleMate(Color, Color, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): boolean
+  + retrieveBlackPiecesPos(BitboardRepresentation): List<List<Position>>
+  + hasEnoughMaterialToMate(boolean, BitboardRepresentation): boolean
+}
+class BitboardStatusCheck {
+  - BitboardStatusCheck(): 
+  + canCastle(Color, boolean, boolean, boolean, boolean, boolean, BitboardRepresentation, Position, boolean): boolean
+  + isEndGamePhase(int, boolean, BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): boolean
+  + pawnsHaveProgressed(boolean, BitboardRepresentation): boolean
+  + queensOffTheBoard(BitboardRepresentation): boolean
+  + areKingsActive(BitboardRepresentation, Position, boolean, boolean, boolean, boolean, boolean): boolean
+}
+class BitboardUtils {
+  - BitboardUtils(): 
+  + squareToPosition(int): Position
+  + squaresToPosition(List<Integer>): List<Position>
+  + getNbRows(BitboardRepresentation): int
+  + getOccupiedSquares(int, BitboardRepresentation): List<Position>
+  + getNbCols(BitboardRepresentation): int
+}
+class Board {
+  + Board(FileBoard): 
+  + Board(): 
+  - board: BoardRepresentation
+  + makeMove(Move): void
+  + getAvailableMoves(Position): List<Move>
+  + applyCastle(Color, boolean): void
+  + canCastle(Color, boolean): boolean
+  - placePiecesOnBoard(char[][], List<Position>, char): void
+   enPassantTake: boolean
+   boardRep: BoardRepresentation
+   nbMovesWithNoCaptureOrPawn: int
+   castlingRights: boolean[]
+   blackLongCastle: boolean
+   copy: Board
+   board: BoardRepresentation
+   player: boolean
+   nbFullMovesWithNoCaptureOrPawn: int
+   blackShortCastle: boolean
+   lastMoveDoublePush: boolean
+   asciiRepresentation: char[][]
+   whiteShortCastle: boolean
+   whiteLongCastle: boolean
+   enPassantPos: Position
+}
+interface BoardRepresentation << interface >> {
+  + isCastleMove(ColoredPiece, Position, Position): boolean
+  + getKing(boolean): List<Position>
+  + isDoublePushPossible(Move, boolean): boolean
+  + isCheckAfterMove(Color, Move): boolean
+  + retrieveInitialBlackPiecesPos(): List<List<Position>>
+  + retrieveWhitePiecesPos(): List<List<Position>>
+  + getAvailableMoves(int, int, boolean): List<Move>
+  + isAttacked(int, int, Color): boolean
+  + applyLongCastle(Color): void
+  + movePiece(Position, Position): void
+  + getPieceAt(int, int): ColoredPiece
+  + isPromotionMove(int, int, int, int, boolean): boolean
+  + getAllAvailableMoves(boolean): List<Move>
+  + getRooks(boolean): List<Position>
+  + getQueens(boolean): List<Position>
+  + deletePieceAt(int, int): void
+  + queensOffTheBoard(): boolean
+  + hasEnoughMaterialToMate(boolean): boolean
+  + promotePawn(int, int, boolean, Piece): void
+  + retrieveKingMoves(boolean): List<Move>
+  + validatePieceOwnership(boolean, Position): boolean
+  + retrieveInitialWhitePiecesPos(): List<List<Position>>
+  + isCheckMate(Color): boolean
+  + isEndGamePhase(int, boolean): boolean
+  + retrieveBlackPiecesPos(): List<List<Position>>
+  + nbPiecesRemaining(): int
+  + pawnsHaveProgressed(boolean): boolean
+  + applyShortCastle(Color): void
+  + isCheck(Color): boolean
+  + isEnPassant(int, int, Move, boolean): boolean
+  + canCastle(Color, boolean): boolean
+  + getBishops(boolean): List<Position>
+  + getKnights(boolean): List<Position>
+  + getPawns(boolean): List<Position>
+  + areKingsActive(): boolean
+  + retrieveBishopMoves(boolean): List<Move>
+  + isPawnPromoting(int, int, boolean): boolean
+  + isStaleMate(Color, Color): boolean
+   enPassantTake: boolean
+   nbRows: int
+   nbCols: int
+   nbMovesWithNoCaptureOrPawn: int
+   blackLongCastle: boolean
+   drawByInsufficientMaterial: boolean
+   player: boolean
+   blackShortCastle: boolean
+   lastMoveDoublePush: boolean
+   copy: BoardRepresentation
+   whiteShortCastle: boolean
+   whiteLongCastle: boolean
+   enPassantPos: Position
+}
+class CachedResult {
+  + CachedResult(): 
+  + setStaleMate(boolean, Color): void
+  + setAttackBitboard(boolean, Bitboard): void
+  + getAttackBitboard(boolean): Long
+  + setCheckMate(boolean, Color): void
+  + setCheck(boolean, Color): void
+  + isCheckMate(Color): Boolean
+  + isStaleMate(Color): Boolean
+  + isCheck(Color): Boolean
+}
+class Move {
+  + Move(Position, Position, ColoredPiece, boolean, ColoredPiece, Position): 
+  + Move(Position, Position, ColoredPiece, boolean): 
+  + Move(Position, Position, ColoredPiece, boolean, ColoredPiece, boolean, boolean): 
+  + Move(Position, Position): 
+  + Move(Position, Position, ColoredPiece, boolean, ColoredPiece): 
+  - isCheckMate: boolean
+  - piece: ColoredPiece
+  - isCheck: boolean
+  - dest: Position
+  - source: Position
+  - takeDest: Position
+  - isTake: boolean
+  + fromUciString(String): Move
+  + stringToPiece(String): Piece
+  + positionToString(Position): String
+  + isMoveClassical(List<Move>): Optional<Move>
+  + toUciString(): String
+  + toAlgebraicString(): String
+  + toString(): String
+  + fromString(String, boolean): Move
+  + stringToPosition(String): Position
+  + fromString(String): Move
+  + hashCode(): int
+  + equals(Object): boolean
+   piece: ColoredPiece
+   takeDest: Position
+   isCheck: boolean
+   isTake: boolean
+   source: Position
+   dest: Position
+   pieceTaken: ColoredPiece
+   isCheckMate: boolean
+}
+class PromoteMove {
+  + PromoteMove(Position, Position, Piece): 
+  + PromoteMove(Position, Position, Piece, ColoredPiece, boolean, ColoredPiece, boolean, boolean): 
+  + PromoteMove(Position, Position, Piece, ColoredPiece, boolean, ColoredPiece): 
+  - promPiece: Piece
+  + toUciString(): String
+  + toString(): String
+  + toAlgebraicString(): String
+   promPiece: Piece
+}
+class ZobristHashing {
+  + ZobristHashing(ZobristHashing): 
+  + ZobristHashing(): 
+  - translateCastling(Board): int
+  - updatePieceHash(long, Board, Move): long
+  + generateHashFromBitboards(Board): long
+  + updateHashFromBitboards(long, Board, Move): long
+  + generateSimplifiedHashFromBitboards(BoardRepresentation): long
+  + generateSimplifiedHashFromBitboards(Board): long
+  - generatePieceHash(BoardRepresentation): long
+  + updateSimplifiedHashFromBitboards(long, Board, Move): long
+}
+
+BitboardCache           -[#595959,dashed]->  CachedResult           : "«create»"
+BitboardCache          "1" *-[#595959,plain]-> "cache\n*" CachedResult           
+BitboardMovesGen        -[#595959,dashed]->  Bitboard               : "«create»"
+BitboardMovesGen        -[#595959,dashed]->  Move                   : "«create»"
+BitboardMovesGen        -[#595959,dashed]->  PromoteMove            : "«create»"
+BitboardRepresentation "1" *-[#595959,plain]-> "board\n*" Bitboard               
+BitboardRepresentation  -[#595959,dashed]->  Bitboard               : "«create»"
+BitboardRepresentation "1" *-[#595959,plain]-> "cache\n1" BitboardCache          
+BitboardRepresentation  -[#595959,dashed]->  BitboardCache          : "«create»"
+BitboardRepresentation  -[#008200,dashed]-^  BoardRepresentation    
+BitboardRepresentation "1" *-[#595959,plain]-> "zobristHashing\n1" ZobristHashing         
+BitboardRepresentation  -[#595959,dashed]->  ZobristHashing         : "«create»"
+BitboardRules           -[#595959,dashed]->  Bitboard               : "«create»"
+Board                   -[#595959,dashed]->  BitboardRepresentation : "«create»"
+Board                  "1" *-[#595959,plain]-> "board\n1" BoardRepresentation    
+Move                    -[#595959,dashed]->  PromoteMove            : "«create»"
+PromoteMove             -[#000082,plain]-^  Move                   
+@enduml

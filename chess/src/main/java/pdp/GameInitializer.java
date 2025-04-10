@@ -23,8 +23,8 @@ import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.parsers.FileBoard;
+import pdp.model.parsers.MoveHistoryParser;
 import pdp.utils.CommandLineOptions;
-import pdp.utils.MoveHistoryParser;
 import pdp.utils.OptionType;
 import pdp.utils.Timer;
 
@@ -126,7 +126,7 @@ public abstract class GameInitializer {
             for (final String w : weights) {
               weightsFloats.add(Float.parseFloat(w));
             }
-            if (weightsFloats.size() != 7) {
+            if (weightsFloats.size() != 9) {
               throw new ParseException("Invalid number of weights", 0);
             }
             solverWhite.setHeuristic(
@@ -272,7 +272,7 @@ public abstract class GameInitializer {
       }
     }
 
-    Game model = null;
+    Game model;
 
     if (options.containsKey(OptionType.LOAD) || options.containsKey(OptionType.CONTEST)) {
       final String path =

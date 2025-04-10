@@ -1,11 +1,14 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -22,17 +25,24 @@ public class MonteCarloTreeSearchTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @AfterEach
   void tearDownConsole() {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @BeforeEach
   void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     solver = new Solver();
     solver.setAlgorithm(AlgorithmType.MCTS);
     game = Game.initialize(false, false, null, null, null, new HashMap<>());

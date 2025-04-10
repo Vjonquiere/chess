@@ -19,7 +19,10 @@ import pdp.view.gui.themes.ColorTheme;
 import pdp.view.gui.themes.CustomColorTheme;
 
 /** GUI popup to configure a custom theme. */
-public class ThemePopUp {
+public final class ThemePopUp {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private ThemePopUp() {}
 
   /**
    * Creates and launches the Theme popup. Allows the user to choose different colors to customize
@@ -102,7 +105,7 @@ public class ThemePopUp {
             GuiView.setTheme(newTheme);
             BagOfCommands.getInstance().addCommand(new ChangeThemeCommand());
             popupStage.close();
-          } catch (IllegalArgumentException ignore) {
+          } catch (IllegalArgumentException ignored) {
           }
         });
 

@@ -36,6 +36,7 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
    * @param nbIterations max number of simulations
    */
   public MonteCarloTreeSearch(final Solver solver, final int nbIterations) {
+    super();
     this.solver = solver;
     simulationLimit = nbIterations;
   }
@@ -46,6 +47,7 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
    * @param solver Solver to save into the field.
    */
   public MonteCarloTreeSearch(final Solver solver) {
+    super();
     this.solver = solver;
     simulationLimit = 150; // 150 by default
   }

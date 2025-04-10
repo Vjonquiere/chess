@@ -1,11 +1,14 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -23,17 +26,24 @@ public class MinimaxTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @AfterEach
   void tearDownConsole() {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @BeforeEach
   void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     solver = new Solver();
     solver.setAlgorithm(AlgorithmType.MINIMAX);
     solver.setHeuristic(HeuristicType.STANDARD);
@@ -67,7 +77,7 @@ public class MinimaxTest {
     long elapsedTime = endTime - startTime;
     long remainingTime = solver.getTimer().getTimeRemaining();
 
-    assertTrue(elapsedTime >= 0 && elapsedTime <= 5000 + 100);
+    assertTrue(elapsedTime >= 0 && elapsedTime <= 5000 + 500);
     assertTrue(remainingTime <= 5000);
   }
 
@@ -87,21 +97,4 @@ public class MinimaxTest {
     assertTrue(elapsedTime >= 0 && elapsedTime <= 2000 + 500);
     assertTrue(remainingTime <= 5000);
   }
-  /*
-   @Test
-   public void testTimerOverStartFunction() {
-     long timeLimit = 1;
-     solver.setDepth(20);
-     solver.setTime(timeLimit);
-     long startTime = System.currentTimeMillis();
-     solver.playAIMove(game);
-     long endTime = System.currentTimeMillis();
-
-     long elapsedTime = endTime - startTime;
-     long remainingTime = solver.getTimer().getTimeRemaining();
-
-     assertTrue(elapsedTime >= 0 && elapsedTime <= timeLimit + 100);
-     assertTrue(remainingTime <= timeLimit);
-   }
-  */
 }

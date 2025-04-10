@@ -20,6 +20,7 @@ import pdp.view.GuiView;
 public class SettingsEditorPopup extends VBox {
   /** Build a new popup to edit settings. */
   public SettingsEditorPopup() {
+    super();
     final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("settings.edit"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -41,7 +42,11 @@ public class SettingsEditorPopup extends VBox {
       }
     }
     final TextArea textArea = new TextArea(text);
-    saveButton.setOnAction(e -> ConfigFileSaver.save(path, textArea.getText()));
+    saveButton.setOnAction(
+        e -> {
+          ConfigFileSaver.save(path, textArea.getText());
+          popupStage.close();
+        });
     layout.getChildren().add(textArea);
 
     final Button closeButton = new Button(TextGetter.getText("close"));

@@ -3,8 +3,10 @@ package tests.GUI;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
+import java.util.Locale;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,11 @@ public class YesNoPopUpTest extends ApplicationTest {
   private Move move;
   private Move move2;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   void setUp() {
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
@@ -39,8 +46,7 @@ public class YesNoPopUpTest extends ApplicationTest {
 
   @Override
   public void start(Stage stage) {
-    // On ne démarre pas l'UI complète, chaque test affichera sa propre popup
-
+    // We do not launch the complete ui, each test will launch its popup
   }
 
   @Test

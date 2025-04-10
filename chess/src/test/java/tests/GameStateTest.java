@@ -6,11 +6,14 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.events.EventType;
@@ -26,11 +29,17 @@ public class GameStateTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   void setUpConsole() {
-    Game.initialize(false, false, null, null, null, new HashMap<>());
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    Game.initialize(false, false, null, null, null, new HashMap<>());
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -38,6 +47,7 @@ public class GameStateTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test

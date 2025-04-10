@@ -98,13 +98,13 @@ public class AiMonitor extends Stage {
     if (number < 1_000) {
       return String.valueOf(number);
     } else if (number < 10_000) {
-      return (number / 100) / 10 + "k";
+      return number / 100 / 10 + "k";
     } else if (number < 1_000_000) {
-      return (number / 1_000) + "k";
+      return number / 1_000 + "k";
     } else if (number < 10_000_000) {
       return new DecimalFormat("#.##").format(number / 1_000_000.0) + "M";
     } else {
-      return (number / 1_000_000) + "M";
+      return number / 1_000_000 + "M";
     }
   }
 

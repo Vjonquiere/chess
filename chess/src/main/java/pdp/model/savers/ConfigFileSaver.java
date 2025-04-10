@@ -6,7 +6,10 @@ import java.io.IOException;
 import pdp.exceptions.FailedSaveException;
 
 /** Save a string to the given path. */
-public class ConfigFileSaver {
+public final class ConfigFileSaver {
+
+  /** Private constructor to avoid instanciating a utility class. */
+  private ConfigFileSaver() {}
 
   /**
    * Save the supplied text to the given path.

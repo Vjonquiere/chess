@@ -8,7 +8,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.InputMismatchException;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
@@ -92,7 +97,7 @@ public class BoardFileParser {
       return result;
     } catch (RuntimeException e) {
       if (e.getCause() instanceof InputMismatchException) {
-        Token offendingToken = parser.getCurrentToken();
+        final Token offendingToken = parser.getCurrentToken();
         error(
             "Failed to parse board at line "
                 + offendingToken.getLine()

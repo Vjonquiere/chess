@@ -180,8 +180,7 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(final String stringMove, final boolean isWhiteTurn)
-      throws MoveParsingException {
+  public static Move fromString(final String stringMove, final boolean isWhiteTurn) {
     String move = stringMove;
 
     if (move.equalsIgnoreCase("o-o-o")) {
@@ -209,7 +208,7 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromString(final String stringMove) throws MoveParsingException {
+  public static Move fromString(final String stringMove) {
 
     if (stringMove.equalsIgnoreCase("o-o-o") || stringMove.equalsIgnoreCase("o-o")) {
       throw new MoveParsingException(
@@ -238,7 +237,7 @@ public class Move {
    * @return A {@code Move} object representing the parsed move
    * @throws MoveParsingException If the string format is invalid
    */
-  public static Move fromUciString(final String stringMove) throws MoveParsingException {
+  public static Move fromUciString(final String stringMove) {
     if (stringMove.length() == 5) {
       return new PromoteMove(
           stringToPosition(stringMove.substring(0, 2)),
@@ -319,8 +318,7 @@ public class Move {
    * @return The matching move if found
    * @throws IllegalMoveException If the move is not found in the list of available moves
    */
-  public Optional<Move> isMoveClassical(final List<Move> availableMoves)
-      throws IllegalMoveException {
+  public Optional<Move> isMoveClassical(final List<Move> availableMoves) {
     for (final Move move : availableMoves) {
       if (move.equals(this)) {
         if (this instanceof PromoteMove) {

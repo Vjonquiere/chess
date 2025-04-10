@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
@@ -37,6 +38,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBetaIterativeDeepening(final Solver solver) {
+    super();
     this.solver = solver;
   }
 
@@ -51,10 +53,12 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
   @Override
   public AiMove findBestMove(final Game game, final int maxDepth, final boolean player) {
 
+    final GameAi gameAi = GameAi.fromGame(game);
+
     this.stoppedEarly = false;
 
     AiMove bestMove = null;
-    final List<Move> rootMoves = new ArrayList<>(game.getBoard().getAllAvailableMoves(player));
+    final List<Move> rootMoves = new ArrayList<>(gameAi.getBoard().getAllAvailableMoves(player));
 
     for (int depth = 1; depth <= maxDepth; depth++) {
       if (solver.isSearchStopped()) {
@@ -68,7 +72,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
       }
 
       final AiMove currentBest =
-          alphaBeta(game, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player, rootMoves);
+          alphaBeta(gameAi, depth, player, -Float.MAX_VALUE, Float.MAX_VALUE, player, rootMoves);
       if (currentBest != null && !this.stoppedEarly) {
         bestMove = currentBest;
       }
@@ -79,7 +83,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
     }
 
     debug(LOGGER, "Best move: " + bestMove);
-    long visitedNodes = getVisitedNodes();
+    final long visitedNodes = getVisitedNodes();
     clearNode();
     debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
@@ -100,7 +104,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
    * @return The best move with its evaluated score.
    */
   private AiMove alphaBeta(
-      final Game game,
+      final GameAi game,
       final int depth,
       final boolean currentPlayer,
       float alpha,
@@ -150,7 +154,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
         if (alpha >= beta) {
           break;
         }
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Skipping illegal move
       }
     }

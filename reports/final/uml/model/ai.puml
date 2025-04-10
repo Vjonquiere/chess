@@ -1,0 +1,49 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class AbstractHeuristic {
+  + AbstractHeuristic(): 
+}
+class AlphaBeta {
+  + AlphaBeta(Solver): 
+}
+class EndGameHeuristic {
+  + EndGameHeuristic(): 
+}
+interface Heuristic << interface >>
+class KingSafetyHeuristic {
+  + KingSafetyHeuristic(): 
+}
+class Minimax {
+  + Minimax(Solver): 
+}
+class MonteCarloTreeSearch {
+  + MonteCarloTreeSearch(Solver): 
+  + MonteCarloTreeSearch(Solver, int): 
+}
+class SearchAlgorithm {
+  + SearchAlgorithm(): 
+}
+class Solver {
+  + Solver(): 
+}
+class StandardHeuristic {
+  + StandardHeuristic(): 
+  + StandardHeuristic(List<Float>): 
+}
+
+AbstractHeuristic     -[#008200,dashed]-^  Heuristic            
+AlphaBeta             -[#000082,plain]-^  SearchAlgorithm      
+AlphaBeta            "1" *-[#595959,plain]-> "solver\n1" Solver               
+EndGameHeuristic      -[#000082,plain]-^  AbstractHeuristic    
+KingSafetyHeuristic   -[#008200,dashed]-^  Heuristic            
+Minimax               -[#000082,plain]-^  SearchAlgorithm      
+Minimax              "1" *-[#595959,plain]-> "solver\n1" Solver               
+MonteCarloTreeSearch  -[#000082,plain]-^  SearchAlgorithm      
+MonteCarloTreeSearch "1" *-[#595959,plain]-> "solver\n1" Solver               
+Solver               "1" *-[#595959,plain]-> "heuristic\n1" Heuristic            
+Solver               "1" *-[#595959,plain]-> "algorithm\n1" SearchAlgorithm      
+StandardHeuristic     -[#000082,plain]-^  AbstractHeuristic    
+@enduml

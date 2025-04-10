@@ -27,8 +27,8 @@ public class MobilityHeuristic implements Heuristic {
     float score = 0;
     if (board instanceof BitboardRepresentation bitBoard) {
       score +=
-          (bitBoard.getColorMoveBitboard(true).bitCount()
-                  - bitBoard.getColorMoveBitboard(false).bitCount())
+          (bitBoard.getColorAttackBitboard(true).bitCount()
+                  - bitBoard.getColorAttackBitboard(false).bitCount())
               * MOVE_VALUE;
 
       score = Math.min(score, SCORE_CAP); // cap to 100

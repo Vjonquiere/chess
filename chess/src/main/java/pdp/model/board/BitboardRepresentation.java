@@ -41,7 +41,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   private static final BitboardCache CACHE;
 
   /** Zobrist hashing instance used to generate the hash. */
-  private static final ZobristHashing ZOBRIST_HASHING;
+  private ZobristHashing zobristHashing;
 
   /** Zobrist simple hash generated for the board at a given moment. */
   private long simpleHash;
@@ -100,8 +100,6 @@ public class BitboardRepresentation implements BoardRepresentation {
     PIECES.put(10, new ColoredPiece(Piece.KNIGHT, Color.BLACK));
     PIECES.put(11, new ColoredPiece(Piece.PAWN, Color.BLACK));
 
-    ZOBRIST_HASHING = new ZobristHashing();
-
     CACHE = new BitboardCache(CACHE_SIZE);
   }
 
@@ -142,13 +140,14 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[6] = new Bitboard(1_152_921_504_606_846_976L); // BKi
     board[7] = new Bitboard(576_460_752_303_423_488L); // BQ
     board[8] = new Bitboard(2_594_073_385_365_405_696L); // BB
-    board[9] = new Bitboard(); // BR // TODO: Find why overflow ???
+    board[9] = new Bitboard(); // BR // TODO: Find why overflow
     board[9].setBit(56);
     board[9].setBit(63);
     board[10] = new Bitboard(4_755_801_206_503_243_776L); // BKi
     board[11] = new Bitboard(71_776_119_061_217_280L);
 
-    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
+    this.zobristHashing = new ZobristHashing();
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -261,6 +260,8 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[9] = blackRooks;
     board[10] = blackKnights;
     board[11] = blackPawns;
+
+    this.zobristHashing = new ZobristHashing();
   }
 
   /**
@@ -288,13 +289,6 @@ public class BitboardRepresentation implements BoardRepresentation {
           return false;
         }
       }
-      /*
-      if (this.getPlayer() != obj.getPlayer() || this.isLastMoveDoublePush() != obj.isLastMoveDoublePush() || this.getEnPassantPos().equals(obj.getEnPassantPos())
-      || this.isWhiteShortCastle() != obj.isWhiteShortCastle() || this.isBlackShortCastle() != obj.isBlackShortCastle() || this.isWhiteLongCastle() != obj.isWhiteLongCastle()
-      || this.isBlackLongCastle() != obj.isBlackLongCastle() || this.getNbMovesWithNoCaptureOrPawn() != obj.getNbMovesWithNoCaptureOrPawn()) {
-        return false;
-      }
-        */
       return true;
     }
     return false;
@@ -323,6 +317,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     copy.setLastMoveDoublePush(this.isLastMoveDoublePush());
     copy.setEnPassantTake(this.isEnPassantTake());
     copy.setNbMovesWithNoCaptureOrPawn(this.getNbMovesWithNoCaptureOrPawn());
+    copy.setZobristHashing(new ZobristHashing(this.zobristHashing));
 
     copy.simpleHash = this.simpleHash;
 
@@ -375,7 +370,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     board[bitboardIndex].clearBit(fromIndex);
     board[bitboardIndex].setBit(toIndex);
 
-    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -421,7 +416,7 @@ public class BitboardRepresentation implements BoardRepresentation {
     pawnBitboard.clearBit(bitIndex);
     newPieceBitBoard.setBit(bitIndex);
 
-    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -432,7 +427,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   public void setSquare(final ColoredPiece piece, final int squareIndex) {
     board[PIECES.getFromValue(piece)].setBit(squareIndex);
-    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
   }
 
   /**
@@ -454,7 +449,7 @@ public class BitboardRepresentation implements BoardRepresentation {
   public void deletePieceAt(final int x, final int y) {
     final ColoredPiece piece = getPieceAt(x, y);
     board[PIECES.getFromValue(piece)].clearBit(x % 8 + y * 8);
-    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
     debug(LOGGER, "Piece at position " + x + " and position " + y + " was removed");
   }
 
@@ -468,7 +463,7 @@ public class BitboardRepresentation implements BoardRepresentation {
    */
   protected void addPieceAt(final int x, final int y, final ColoredPiece piece) {
     board[PIECES.getFromValue(piece)].setBit(x % 8 + y * 8);
-    this.simpleHash = ZOBRIST_HASHING.generateSimplifiedHashFromBitboards(this);
+    this.simpleHash = zobristHashing.generateSimplifiedHashFromBitboards(this);
     debug(LOGGER, "A " + piece.getColor() + " " + piece.getPiece() + " was added to the board");
   }
 
@@ -608,21 +603,6 @@ public class BitboardRepresentation implements BoardRepresentation {
         whiteShortCastle,
         blackLongCastle,
         blackShortCastle);
-  }
-
-  /**
-   * Generate the possible moves for a player. This function do not apply check after guard.
-   * Optimised for AI.
-   *
-   * @param isWhite {true} if pawn is white, {false} if pawn is black
-   * @return The bitboard containing all possible moves (without special cases)
-   */
-  public Bitboard getColorMoveBitboard(final boolean isWhite) {
-    // TODO: can delete this function ?
-    // Bitboard moves =
-    // BitboardMovesGen.getColorAttackBitboard(isWhite, this, enPassantPos, isLastMoveDoublePush);
-
-    return getColorAttackBitboard(isWhite);
   }
 
   /**
@@ -1230,6 +1210,11 @@ public class BitboardRepresentation implements BoardRepresentation {
     return this.getNbMovesWithNoCaptureOrPawn() / 2;
   }
 
+  public void setZobristHashing(final ZobristHashing zobristHashing) {
+    this.zobristHashing = zobristHashing;
+    this.simpleHash = this.zobristHashing.generateSimplifiedHashFromBitboards(this);
+  }
+
   /**
    * Executes a given move on the board, handling captures, en passant, castling, pawn promotion.
    *
@@ -1258,23 +1243,27 @@ public class BitboardRepresentation implements BoardRepresentation {
 
     if (this.isWhiteLongCastle()
         && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(0, 0)))) { // rook on a1 and king on e1
+            || move.getSource().equals(new Position(0, 0))
+            || move.getDest().equals(new Position(0, 0)))) { // rook on a1 and king on e1
       this.setWhiteLongCastle(false);
     }
     if (this.isWhiteShortCastle()
         && (move.getSource().equals(new Position(4, 0))
-            || move.getSource().equals(new Position(7, 0)))) { // rook on h1 and king on e1
+            || move.getSource().equals(new Position(7, 0))
+            || move.getDest().equals(new Position(7, 0)))) { // rook on h1 and king on e1
       this.setWhiteShortCastle(false);
     }
 
     if (this.isBlackShortCastle()
         && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(7, 7)))) { // rook on h8 and king on e8
+            || move.getSource().equals(new Position(7, 7))
+            || move.getDest().equals(new Position(7, 7)))) { // rook on h8 and king on e8
       this.setBlackShortCastle(false);
     }
     if (this.isBlackLongCastle()
         && (move.getSource().equals(new Position(4, 7))
-            || move.getSource().equals(new Position(0, 7)))) { // rook on a8 and king on e8
+            || move.getSource().equals(new Position(0, 7))
+            || move.getDest().equals(new Position(0, 7)))) { // rook on a8 and king on e8
       this.setBlackLongCastle(false);
     }
     if (this.isPawnPromoting(move.getDest().x(), move.getDest().y(), this.getPlayer())) {

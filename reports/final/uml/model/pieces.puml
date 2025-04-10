@@ -1,0 +1,30 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+enum Color << enumeration >> {
+  + Color(): 
+  + valueOf(String): Color
+  + values(): Color[]
+}
+class ColoredPiece {
+  + ColoredPiece(Piece, Color): 
+  - color: Color
+  - piece: Piece
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   color: Color
+   piece: Piece
+}
+enum Piece << enumeration >> {
+  + Piece(): 
+  + valueOf(String): Piece
+  + getCharRepresentation(boolean): char
+  + values(): Piece[]
+}
+
+ColoredPiece "1" *-[#595959,plain]-> "color\n1" Color        
+ColoredPiece "1" *-[#595959,plain]-> "piece\n1" Piece        
+@enduml

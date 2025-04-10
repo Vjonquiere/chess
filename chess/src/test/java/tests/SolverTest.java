@@ -3,13 +3,16 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -27,17 +30,24 @@ public class SolverTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @AfterEach
   void tearDownConsole() {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @BeforeEach
   void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     solver = new Solver();
   }
 
@@ -152,19 +162,6 @@ public class SolverTest {
     assertEquals("Time must be greater than 0", exception2.getMessage());
   }
 
-  /*
-  @Test
-  public void testNotEnoughTime() {
-    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
-    solver.setTime(1);
-    solver.setDepth(10000);
-    game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
-    solver.playAIMove(game);
-
-    assertTrue(game.getGameState().hasBlackResigned());
-  }
-  */
-
   @Test
   public void testSetHeuristic() {
     solver.setHeuristic(HeuristicType.KING_SAFETY);
@@ -220,7 +217,7 @@ public class SolverTest {
 
   @Test
   public void testSetHeuristicWithWeights() {
-    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f);
+    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f, 0.4f, 0.1f);
 
     solver.setHeuristic(HeuristicType.STANDARD, weights);
     assertInstanceOf(StandardHeuristic.class, solver.getHeuristic());
@@ -240,7 +237,8 @@ public class SolverTest {
             HeuristicType.KING_ACTIVITY,
             HeuristicType.BISHOP_ENDGAME,
             HeuristicType.KING_OPPOSITION,
-            HeuristicType.ENDGAME);
+            HeuristicType.ENDGAME,
+            HeuristicType.CHECK);
 
     for (HeuristicType heuristic : heuristicsToTest) {
       solver.setHeuristic(heuristic, weights);
@@ -261,6 +259,8 @@ public class SolverTest {
         case KING_OPPOSITION ->
             assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
         case ENDGAME -> assertInstanceOf(EndGameHeuristic.class, solver.getHeuristic());
+        case CHECK -> assertInstanceOf(CheckHeuristic.class, solver.getHeuristic());
+
         default -> throw new IllegalArgumentException("Unexpected value: " + heuristic);
       }
 

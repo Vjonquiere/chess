@@ -6,18 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.utils.CommandLineOptions;
@@ -145,11 +147,17 @@ public class CommandLineOptionsTest {
     " -v,--verbose                         Display more information"
   };
 
+  @BeforeAll
+  public static void startSetUp() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   public void setUp() {
     outputStream.reset();
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -158,12 +166,12 @@ public class CommandLineOptionsTest {
     System.setErr(originalErr);
     Logging.setDebug(false);
     Logging.setVerbose(false);
+    configureGlobalLogger();
   }
 
-  /*
   @Test
   public void testHelp() {
-    //Test that the option displays the right output & exit code with the long option name
+    // Test that the option displays the right output & exit code with the long option name
     Runtime mockRuntime = mock(Runtime.class);
     CommandLineOptions.parseOptions(new String[] {"--help"}, mockRuntime);
     for (String s : expectedHelp) {
@@ -172,7 +180,7 @@ public class CommandLineOptionsTest {
     outputStream.reset();
     verify(mockRuntime).exit(0);
 
-    //Test that the option displays the right output & exit code with the short option name
+    // Test that the option displays the right output & exit code with the short option name
     Runtime mockRuntime2 = mock(Runtime.class);
     CommandLineOptions.parseOptions(new String[] {"-h"}, mockRuntime2);
     for (String s : expectedHelp) {
@@ -181,7 +189,6 @@ public class CommandLineOptionsTest {
     outputStream.reset();
     verify(mockRuntime2).exit(0);
   }
-    */
 
   @Test
   public void testVersion() throws Exception {
@@ -377,6 +384,8 @@ public class CommandLineOptionsTest {
     expectedMap.put(OptionType.CONTEST, "myfile.chessrc");
     expectedMap.put(OptionType.AI, "A"); // Contest mode so switching to All IAs
     expectedMap.put(OptionType.CONFIG, "default.chessrc");
+    expectedMap.put(
+        OptionType.CONFIG, System.getProperty("user.home") + "/.chessSettings/default.chessrc");
     expectedMap.put(OptionType.AI_TIME, "5");
     expectedMap.put(OptionType.AI_DEPTH_B, "3");
     expectedMap.put(OptionType.AI_DEPTH_W, "3");
@@ -419,7 +428,7 @@ public class CommandLineOptionsTest {
     Runtime mockRuntime = mock(Runtime.class);
     HashMap<OptionType, String> map =
         CommandLineOptions.parseOptions(new String[] {"--config=invalid.txt"}, mockRuntime);
-    assertTrue(map.get(OptionType.CONFIG) == "default.chessrc");
+    assertTrue(map.get(OptionType.CONFIG).contains(".chessSettings/default.chessrc"));
   }
 
   @Test
@@ -471,28 +480,7 @@ public class CommandLineOptionsTest {
         CommandLineOptions.parseOptions(
             new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
 
-    assertEquals("default.chessrc", activatedOptions.get(OptionType.CONFIG));
-  }
-
-  @Test
-  public void testBothFilesNotFound() throws Exception {
-    Path tempConfig = Files.createTempFile("testConfig", ".chessrc");
-    Files.deleteIfExists(tempConfig);
-
-    Path defaultConfig = Files.createTempFile("nonexistant", ".chessrc");
-    Files.deleteIfExists(defaultConfig);
-
-    Field defaultConfigField = CommandLineOptions.class.getDeclaredField("defaultConfigFile");
-    defaultConfigField.setAccessible(true);
-    String originalDefault = (String) defaultConfigField.get(null);
-    defaultConfigField.set(null, defaultConfig.toString());
-
-    Runtime mockRuntime = mock(Runtime.class);
-    Map<OptionType, String> activatedOptions =
-        CommandLineOptions.parseOptions(
-            new String[] {"--config=" + tempConfig.toString()}, mockRuntime);
-    assertNull(activatedOptions.get(OptionType.CONFIG));
-    defaultConfigField.set(null, originalDefault);
+    assertTrue(activatedOptions.get(OptionType.CONFIG).contains(".chessSettings/default.chessrc"));
   }
 
   @Test

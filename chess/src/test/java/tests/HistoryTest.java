@@ -2,52 +2,57 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import pdp.GameInitializer;
 import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
 import pdp.model.*;
 import pdp.model.board.Move;
+import pdp.model.history.History;
+import pdp.model.history.HistoryState;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
 
 public class HistoryTest {
-  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-  private final PrintStream originalOut = System.out;
-  private final PrintStream originalErr = System.err;
 
-  /* @BeforeEach
-  void setUpConsole() {
-    System.setOut(new PrintStream(outputStream));
-    System.setErr(new PrintStream(outputStream));
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
   }
 
-  @AfterEach
-  void tearDownConsole() {
-    System.setOut(originalOut);
-    System.setErr(originalErr);
-    outputStream.reset();
-  }*/
-
-  /*   @Test
+  @Test
   void testHistoryToString() {
     // Arrange: Create a new history and add moves
     History history = new History();
-    history.addMove(new HistoryState(Move.fromString("e3-e5"), 1, true)); // White move
-    history.addMove(new HistoryState(Move.fromString("h4-h5"), 1, false)); // Black move
-    history.addMove(new HistoryState(Move.fromString("g1-f3"), 2, true)); // White move
-    history.addMove(new HistoryState(Move.fromString("e7-e6"), 2, false)); // Black move
+    GameInitializer.initialize(new HashMap<>());
+    Game.getInstance().playMove(Move.fromString("e2-e4"));
+    history.addMove(
+        new HistoryState(
+            Move.fromString("e2-e4"), Game.getInstance().getGameState().getCopy())); // White move
+    Game.getInstance().playMove(Move.fromString("h7-h5"));
+    history.addMove(
+        new HistoryState(
+            Move.fromString("h7-h5"), Game.getInstance().getGameState().getCopy())); // Black move
+    Game.getInstance().playMove(Move.fromString("g1-f3"));
+    history.addMove(
+        new HistoryState(
+            Move.fromString("g1-f3"), Game.getInstance().getGameState().getCopy())); // White move
+    Game.getInstance().playMove(Move.fromString("e7-e6"));
+    history.addMove(
+        new HistoryState(
+            Move.fromString("e7-e6"), Game.getInstance().getGameState().getCopy())); // Black move
 
     // Act: Convert history to string
     String historyOutput = history.toString();
 
     // Assert: Check expected output
-    String expectedOutput = "1. W e3-e5 B h4-h5\n2. W g1-f3 B e7-e6";
+    String expectedOutput = "1. W e2-e4 B h7-h5\n2. W g1-f3 B e7-e6";
     assertEquals(expectedOutput, historyOutput);
-  } */
+  }
 
   @Test
   public void HistoryTestInGame() {

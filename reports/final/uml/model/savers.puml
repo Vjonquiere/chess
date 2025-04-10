@@ -1,0 +1,19 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class BoardSaver {
+  + BoardSaver(): 
+  + saveBoard(FileBoard): String
+}
+class ConfigFileSaver {
+  + ConfigFileSaver(): 
+  + save(String, String): void
+}
+class FenSaver {
+  + FenSaver(): 
+  + saveBoard(FileBoard): String
+}
+
+@enduml

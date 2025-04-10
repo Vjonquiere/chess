@@ -1,9 +1,11 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Locale;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.*;
 import pdp.utils.Logging;
@@ -14,6 +16,11 @@ public class LoggingTest {
   private PrintStream originalOut;
   private PrintStream originalErr;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   public void setUp() {
     logger = Logger.getLogger("TestLogger");
@@ -23,6 +30,7 @@ public class LoggingTest {
     originalErr = System.err;
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(outContent));
+    configureGlobalLogger();
 
     Logging.setDebug(false);
     Logging.setVerbose(false);
@@ -35,6 +43,7 @@ public class LoggingTest {
     Logging.setVerbose(false);
     System.setOut(originalOut);
     System.setErr(originalErr);
+    configureGlobalLogger();
   }
 
   @Test

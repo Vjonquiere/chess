@@ -4,8 +4,10 @@ import static pdp.utils.Logging.debug;
 import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,11 +24,19 @@ import org.apache.commons.cli.ParseException;
 
 /** Utility class to parse the command line options. */
 public final class CommandLineOptions {
-  /** Logger of the class. */
-  private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
+
+  /** Location of the default configuration folder. */
+  private static final String USER_SETTINGS_DIR =
+      System.getProperty("user.home") + "/.chessSettings";
 
   /** Default name of the configuration file. Not final for test purposes. */
   private static String defaultConfigFile = "default.chessrc";
+
+  /** Location of the default configuration file */
+  private static final String USER_DEFAULT_CONFIG = USER_SETTINGS_DIR + "/default.chessrc";
+
+  /** Logger of the class. */
+  private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
   /** Private constructor to avoid instantiation. */
   private CommandLineOptions() {}
@@ -77,48 +87,40 @@ public final class CommandLineOptions {
     return activatedOptions;
   }
 
-  /**
-   * Loads the default arguments from a specified configuration file.
-   *
-   * <p>The method attempts to load a configuration file with a given ".chessrc" filename. If it
-   * cannot be found, the default configuration file is used instead. If both the specified and
-   * default files are not found, an empty map is returned.
-   *
-   * @param file The filename of the configuration file to load.
-   * @param activatedOptions A map to store the activated options, where the configuration file name
-   *     is stored under the CONFIG key.
-   * @return A map of default arguments read from the configuration file.
-   */
   private static Map<String, String> loadDefaultArgs(
-      String file, final HashMap<OptionType, String> activatedOptions) {
+      String file, final HashMap<OptionType, String> activatedOptions) throws IOException {
     InputStream inputStream = null;
+
     if (file != null && !file.endsWith(".chessrc")) {
       file = null;
-      print("Selected file is not of .chessrc format, defaulting to default options");
+      print("Invalid config file format. Must end with .chessrc. Using defaults.");
       activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
     }
+
     if (file != null) {
       try {
         inputStream = new FileInputStream(file);
+        activatedOptions.put(OptionType.CONFIG, file);
+        debug(LOGGER, "Using user-provided config: " + file);
       } catch (FileNotFoundException e) {
-        error("Error while parsing chessrc file: " + e.getMessage());
-        error("Default options will be used");
+        error("Config file not found: " + file);
         file = null;
-        activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
       }
     }
+
     if (file == null) {
+      final File userConfigFile = new File(USER_DEFAULT_CONFIG);
+      ensureUserConfigExists(userConfigFile);
+
       try {
+        inputStream = new FileInputStream(userConfigFile);
+        activatedOptions.put(OptionType.CONFIG, USER_DEFAULT_CONFIG);
+        debug(LOGGER, "Using user home config: " + USER_DEFAULT_CONFIG);
+      } catch (FileNotFoundException e) {
         inputStream =
             CommandLineOptions.class.getClassLoader().getResourceAsStream(defaultConfigFile);
         activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
-        if (inputStream == null) {
-          throw new FileNotFoundException("config.chessrc not found in classpath!");
-        }
-      } catch (Exception e) {
-        error("Error while parsing chessrc file: " + e.getMessage());
-        activatedOptions.put(OptionType.CONFIG, null);
-        return new HashMap<>();
+        debug(LOGGER, "Falling back to resource config");
       }
     }
 
@@ -127,13 +129,41 @@ public final class CommandLineOptions {
         final Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
         return iniMap.getOrDefault("Default", new HashMap<>());
       } catch (Exception e) {
-        activatedOptions.put(OptionType.CONFIG, null);
+        error("Error parsing config: " + e.getMessage());
         return new HashMap<>();
       }
     }
 
-    activatedOptions.put(OptionType.CONFIG, null);
     return new HashMap<>();
+  }
+
+  /**
+   * Ensures the user config file exists by copying from resources if needed. Returns true if the
+   * file exists or was successfully created.
+   */
+  private static boolean ensureUserConfigExists(File userConfigFile) {
+    if (userConfigFile.exists()) {
+      return true;
+    }
+
+    File parentDir = userConfigFile.getParentFile();
+    if (parentDir != null && !parentDir.exists()) {
+      parentDir.mkdirs();
+    }
+
+    try (InputStream is = CommandLineOptions.class.getResourceAsStream("/" + defaultConfigFile);
+        FileOutputStream fos = new FileOutputStream(userConfigFile)) {
+      byte[] buffer = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = is.read(buffer)) != -1) {
+        fos.write(buffer, 0, bytesRead);
+      }
+      print("Created default config at: " + userConfigFile.getAbsolutePath());
+      return true;
+    } catch (IOException | NullPointerException e) {
+      error("Failed to create user config: " + e.getMessage());
+      return false;
+    }
   }
 
   /**
@@ -194,8 +224,8 @@ public final class CommandLineOptions {
    * @param runtime The runtime to exit.
    */
   private static void handlePathInput(
-      HashMap<OptionType, String> activatedOptions, Runtime runtime) {
-    for (OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
+      final HashMap<OptionType, String> activatedOptions, final Runtime runtime) {
+    for (final OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
       if (activatedOptions.containsKey(type)) {
         final String path = activatedOptions.get(type);
         if (path == null || path.isEmpty()) {
@@ -246,16 +276,21 @@ public final class CommandLineOptions {
 
         if (option == OptionType.LANG) {
           switch (value) {
-            case "en" -> debug(LOGGER, "Language = English (already set by default)");
+            case "en" -> {
+              debug(LOGGER, "Language = English (already set by default)");
+              TextGetter.setLocale("en");
+            }
             case "fr" -> {
               debug(LOGGER, "Language = French");
               TextGetter.setLocale("fr");
             }
-            default ->
-                error(
-                    "Language "
-                        + cmd.getOptionValue(option.getLong(), "")
-                        + " not supported, language = english");
+            default -> {
+              error(
+                  "Language "
+                      + cmd.getOptionValue(option.getLong(), "")
+                      + " not supported, language = english");
+              TextGetter.setLocale("en");
+            }
           }
         }
       }

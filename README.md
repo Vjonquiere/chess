@@ -76,6 +76,12 @@ You can skip the GUI tests by running :
 `mvn clean test -DexcludedGroups=gui`
 
 ### Run the Application
+
+#### Using chess binary
+From the local `chess` or Docker `app` folder :
+- `./chess` followed by the arguments you want to run with. If the project has not been built yet, it will be done without running the tests before execution.
+
+#### Using maven
 From the local `chess` or Docker `app` folder :
 - `mvn javafx:run -Djavafx.args="args"` to run the app with given args
 - To print all available arguments, you can run `mvn javafx:run -Djavafx.args="-h"`
@@ -86,6 +92,13 @@ From the local `chess` or Docker `app` folder :
 - `mvn jacoco:report` to generate the report
 
 The reports will be available under `target/site/jacoco`
+
+### Learn how to use the app
+You can have a small brief by running the programm with `-h` but a complete guide is available in the `chess/README` file. For example, it contains more details on how to play on the different interfaces and explaination on special features (UCI, monitoring, ...).
+
+# Uninstall
+
+A `--clean` option is available with the chess binary. From the local folder, run the `./chess --clean` command to remove all chess sources and resources folder used for themes and settings.
 
 # About
 
@@ -99,8 +112,6 @@ The reports will be available under `target/site/jacoco`
 ### Languages
 Currently available in:
 - English
-
-Targeted languages:
 - French
 
 ### Compatibility

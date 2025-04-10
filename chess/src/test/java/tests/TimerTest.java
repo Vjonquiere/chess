@@ -3,11 +3,18 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Locale;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pdp.utils.Timer;
 
 class TimerTest {
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   void testTimerCallback() throws InterruptedException {

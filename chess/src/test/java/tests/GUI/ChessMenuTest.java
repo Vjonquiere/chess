@@ -3,6 +3,7 @@ package tests.GUI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.Locale;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -22,7 +23,9 @@ public class ChessMenuTest extends ApplicationTest {
   ChessMenu chessMenu;
 
   @BeforeAll
-  public void setup() {}
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Override
   public void start(Stage stage) {

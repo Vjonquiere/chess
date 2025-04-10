@@ -1,0 +1,40 @@
+@startuml GraphicalInterface
+
+skinparam actorStyle awesome
+"User" as User
+package Chess{
+usecase "F25. Interface graphique" as F25
+usecase "F12. Bibliothèque graphique" as F12
+usecase "F46. Fonctions de base" as F46
+usecase "F47. Menu File" as F47
+usecase "F48. Menu Game" as F48
+usecase "F49. Menu About" as F49
+usecase "F50. Affichage d'une partie en cours" as F50
+usecase "F51. Affichage des coups joués" as F51
+usecase "F52. Configuration d'une nouvelle partie" as F52
+usecase "F33. Afficher des messages" as F33
+
+}
+
+User -->F25
+User -->F47
+User -->F48
+User -->F49
+User -->F52
+
+F25 <.. F50 : <<extend>>
+F25 <.. F51 : <<extend>>
+F25 <.. F52 : <<extend>>
+F25 <.. F47 : <<extend>>
+F25 <.. F49 : <<extend>>
+F25 <.. F48 : <<extend>>
+F25 <.. F33 : <<extend>>
+
+
+F12 --> F25 : <<include>>
+F25 --> F46 : <<include>>
+
+
+
+
+@enduml

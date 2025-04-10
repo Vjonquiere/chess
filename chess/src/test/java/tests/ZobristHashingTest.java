@@ -1,11 +1,14 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
@@ -26,10 +29,16 @@ public class ZobristHashingTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   public void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
@@ -39,6 +48,7 @@ public class ZobristHashingTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
@@ -248,8 +258,7 @@ public class ZobristHashingTest {
       bitboardRepresentation.movePiece(new Position(1, 1), new Position(0, 4));
     }
     long hashGenerate = zobristHashing.generateSimplifiedHashFromBitboards(board2);
-    // TODO: find out why bitboard representations are not equals
-    // assertEquals(board.Rep(),board2);
+    assertEquals(board, board2);
     assertEquals(hashUpdate, hashGenerate);
   }
 

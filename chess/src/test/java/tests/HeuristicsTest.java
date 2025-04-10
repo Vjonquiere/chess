@@ -1,13 +1,16 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
@@ -25,17 +28,24 @@ public class HeuristicsTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @AfterEach
   void tearDownConsole() {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @BeforeEach
   public void setup() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     solver = new Solver();
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
@@ -502,10 +512,8 @@ public class HeuristicsTest {
     board.movePiece(initWhiteKingPos, e4);
     board.movePiece(initBlackKingPos, e6);
 
-    // Expected score in this position
-    int expectedScore = 0;
-    // assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true)); // TODO: fix with new
-    // value
+    float expectedScore = 31.25f;
+    assertEquals(expectedScore, heuristic.evaluate(game.getBoard(), true));
   }
 
   @Test
