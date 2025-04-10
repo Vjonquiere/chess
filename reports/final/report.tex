@@ -117,7 +117,7 @@ Notre projet concerne les échecs classiques, ou traditionnels. On peut considé
 est vu comme une variante.
 
 \subsection{Moments clés dans l’histoire des échecs}
-Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment deux très connues que voici :
+Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment trois très connues que voici :
 \begin{itemize}
     \item Fischer vs. Spassky (1972) : Ce duel de la Guerre Froide a opposé l’Américain Bobby Fischer au Soviétique
     Boris Spassky. Fischer a remporté le championnat du monde, mettant fin à l'interminable domination des Soviétiques
@@ -127,7 +127,7 @@ Le jeu d’échecs a été animé par des confrontations historiques et importan
     \item Kasparov vs. Deep Blue (1997) : Ce fut la première victoire d'un ordinateur contre un champion du monde des échecs en match officiel.
     Cette date marque notamment l'ascension de l'Intelligence Artificielle dans le monde des échecs.
 \end{itemize}
-Ces événements ont façonné l’histoire du jeu. La perception des échecs dans la culture populaire a changé et de nombreuses
+Ces évènements ont façonné l’histoire du jeu. La perception des échecs dans la culture populaire a changé et de nombreuses
 personnes se sont mises à jouer.
 
 \subsection{L’évolution des chess engines}
@@ -136,7 +136,7 @@ sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on
 \begin{itemize}
     \item Deep Blue : Programme célèbre pour avoir battu Garry Kasparov en 1997. Ce programme était exécuté par des super-calculateurs
     de l'époque, avec 32 cœurs, 256 threads au total.
-    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé sur notamment une évaluation positionnelle
+    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé notamment sur une évaluation positionnelle
     grâce à des heuristiques avancées et des optimisations algorithmiques.
     \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
     modèle AlphaZero de Google DeepMind.
@@ -167,7 +167,7 @@ Le jeu d'échecs contient beaucoup de règles, parfois techniques, mais dont l'o
 il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est en \textbf{échec},
 mais n'a aucun coup légal pour se défendre de cette attaque. Il faut différencier la règle \textbf{échec} et 
 \textbf{échec et mat}. Un Roi qui est en situation d'\textbf{échec} est un Roi qui est attaqué par une pièce
-ennemie, mais qui peut se défendre pour sortir de cette situation (car en tant que joueur, on ne doit pas capturer notre Roi,
+ennemie, mais qui peut se défendre pour sortir de cette situation (car en tant que joueur, on ne doit pas capturer le Roi,
 la pièce maîtresse). Donc finalement, être en \textbf{échecs et mat} signifie être en \textbf{échec}, mais sans avoir
 la possibilité de se défendre, c'est-à-dire que le Roi est capturé par l'adversaire après n'importe quel coup joué.\\
 Section rédigée en se basant sur les règles de la Fédération Internationale des Échecs \cite{FIDE2021}.
@@ -440,9 +440,10 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     \item MiniMax: Visant à retourner l'option la plus adéquate dans une certaine position, on utilise des arbres pour savoir quelle branche va être la
     plus intéressante, que ce soit pour l'ami, comme pour l'ennemi. On est en O($b^d$) en temps, où b est le facteur de branchement et d la profondeur.
     En espace, c'est du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
-    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les nœuds de
-    l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des nœuds va être une évaluation. La complexité en espace ne change pas, mais
-    en temps, nous sommes donc en O($b^p$) où p = d/2.
+    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais permet de réduire le nombre de positions à évaluer, tout en gardant le même résultat final. 
+    Cela repose sur une technique appelée élagage, qui permet de ne pas explorer une branche si elle ne permet pas d'améliorer la situation 
+    d'un joueur. Cela revient à ne pas évaluer les coups moins bons que ce que l'on a trouvé. Dans le meileur des cas, il est possible d'évaluer uniquement 
+    O($b^p$) où p = d/2 et d la profondeur de recherche, contre O($b^d$) avec Minimax.
     \item MonteCarloTreeSearch:
     Celui-ci peut se décomposer en quatre étapes : \textbf{Selection}, \textbf{Expansion}, \textbf{Simulation}, et \textbf{BackPropagation}. Pour faire simple, on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup, ou encore des nœuds qui n'ont pas encore été explorés. Il s'agit de l'UCT (Upper Confidence bound applied to Trees).\
     L'UCT est une formule permettant d'équilibrer l'exploration et l'exploitation dans la sélection des coups :
@@ -466,7 +467,7 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     nombre de simulations effectuées, et de la profondeur moyenne. En espace, dans le pire des cas, on peut se trouver en O(N) où N est le nombre
     de simulations jouées. Maintenant, dans le cas moyen, on est en O($b^p$) avec d la profondeur et b le facteur de branchement.
     Cependant, dans le cadre de ce projet, MCTS n'est pas borné par une profondeur. On peut donc dire que l'on se trouve en O(N).\\
-    En ce qui concerne la partie structures de données, le MCTS se base une classe Java, appelée dans le code 'TreeNodeMonteCarlo'.
+    En ce qui concerne la partie structures de données, le MCTS se base sur une classe, appelée dans le code 'TreeNodeMonteCarlo'.
     Comme son nom l'indique, il s'agit d'un objet représentant un nœud de l'arbre sur lequel l'algorithme va se dérouler.
     Essentiellement, cet objet va contenir les informations suivantes:
     \begin{itemize}
@@ -562,7 +563,7 @@ comme peu utile comme par exemple les logs devant être entourés de barrières 
 qui correspondait au style Google mais pas à celui de PMD. 
 Ayant décidé d'avoir une application multithreadée ( Bag of commands, vue, IA parralèle), nous avons décicé d'ignorer le warning interdisant l'utilisation de threads.
 En effet, cela concerne les application utilisant Java Enterprise Edition, ce que nous ne faisons pas.
-Le fait d'avoi au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
+Le fait d'avoir au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
 Le fait de pouvoir faire un return anticpé dans une fonction est quasi nécéssaire, si nous ne voulons pas entourer le code dans 
 d'énormes blocs de \textit{if}, nous avons donc supprimé la règle correspondante.
 Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujurs explicite (comme \textit{x} pour une position). 
@@ -572,7 +573,7 @@ comme \textit{isLastMoveDoublePush}.
 Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6000 warnings à moins de 500.
 
 \section{Architecture du projet}
-L'architecture principale du projet, sépare clairement la logique métier, l'affichage et la gestion des événements. C'est un MVC modifié,
+L'architecture principale du projet, sépare clairement la logique métier, l'affichage et la gestion des évènements. C'est un MVC modifié,
 grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleur flexibilité dans la
 gestion d'évènements.
 Cette architecture est particulièrement pratique, aussi bien en termes de maintenance que d'extensibilité.
@@ -591,7 +592,7 @@ afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui per
 
 \begin{itemize}
     \item \textbf{Model} : Gère la logique métier du jeu, incluant l'état de la partie, les règles d'échecs et les fonctionnalités comme l'historique et le timer, et même l'Intelligence Artificielle.
-    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les événements utilisateurs et orchestre les interactions entre les différentes couches.
+    \item \textbf{Controller} : Sert d'intermédiaire entre la Vue et le Model. Il gère les évènements utilisateurs et orchestre les interactions entre les différentes couches.
     \item \textbf{View} : Responsable de l'affichage et des interactions avec l'utilisateur, qu'il s'agisse d'une interface CLI ou graphique.
     \item \textbf{Events} : Implémente un système d'observateurs pour gérer les notifications et la communication asynchrone entre les modules.
     \item \textbf{Utils} : Contient des outils génériques comme le gestionnaire de textes internationalisés (\texttt{TextGetter}) et ou la gestion des options.
@@ -602,18 +603,22 @@ afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui per
 Le Modèle est lui même composé de plusieurs packages, afin de séparer les différentes patie de l'application :
 \begin{itemize}
     \item \textbf{AI} : Contient toute la partie IA, soit le solver, les algorithmes et les heuristiques.
-    \item \textbf{Board} : 
+    \item \textbf{Board} : Contient le plateau de jeu, ses représenatation ainsi que classes utilitaires comme le cache, 
+    les différentes représentations de mouvements ou le Zobrist hashing.
     \item \textbf{History} : Structure représentant l'historique de la partie sous forme de liste doublement chainée.
     \item \textbf{Parsers} : Parsing des fichers de configuration et de sauvegarde.
-    \item \textbf{Piece} : Contient les classes 
-    \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
+    \item \textbf{Piece} : Contient les classes nécéssaires à la représentation des pièces.
+    \item \textbf{Savers} : Sauvegarde des fichiers de jeu et de configuration.
 \end{itemize}
 
-L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant toutes les fonctions nécéssaire au déroulement d'une partie 
+L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant toutes les fonctions nécéssaires au déroulement d'une partie 
 (jouer un coup, vérifier si la partie est finie, gestion de l'historique,...) et possède deux implémentations concrètes : \textit{Game} et \textit{GameAi}.
+La première implémentation est un Singleton permettant d'avoir un point d'accès global dans l'application, notemment dans la vue, nous permettant la mise a jour de celle-ci sans avoir à envoyer de nombreux paramètres.
 La deuxième est une version plus légère de Game, utilisée dans les algorithmes d'IA, permettant d'obtenir de meileurs résultats lors de l'exploration.
 \textit{GameState} permet de stocker toutes les informations relatives  à l'état de la partie, telles que l'avancée dans la \textit{50 move rule} ou le plateau de jeu.
-\textit{BoardRepresentation} joue ici le role de façade, regroupant toutes les fonctions nécéssaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
+\textit{BoardRepresentation} joue ici le rôle de façade, regroupant toutes les fonctions nécéssaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
+Cette interface nous offre également l'opportunité de créer différentes implémentations, avec des Bitboard (notre classe \textit{BitboardRepresentation}), des tableaux 2D ou d'autres structures de données.
+\textit{BitboardRepresentation} sert à unifier toutes les sous classes (génération des mouvements, vérification des règles,..) et sert également à gérer le cache.
 La figure \ref{umlModel} représente la structuration générale, sans inclure les méthodes ou fields.
 
 \begin{figure}[h]
@@ -653,7 +658,7 @@ se produisent. La vue doit donc implémeneter les évènements de la manière do
 comme notre interface UCI qui ne prend en charge que quelques évènements de base. Ces évènements sont envoyés à la vue via les fonctions \textit{onGameEvent} et \textit{onErrorEvent}.
 
 Nous partons du principe que la vue peut se servir des données de la vue sans passer par le controller, mais ne peut pas y appliquer de modification. Cela permet d'alléger le controller
-et d'afficher automatiquement les mises à jour du model dans la vue, sans avoir besoin d'envoyer de commandes.
+et d'afficher automatiquement les mises à jour du modèle dans la vue, sans avoir besoin d'envoyer de commandes.
 
 \begin{figure}[h]
     \centering
@@ -674,11 +679,39 @@ Notre Bag of Commands étant un singleton, nous avons un point d'accès global, 
     \label{umlController}
 \end{figure}
 \FloatBarrier
-La figure \ref{umlController} représente note package controller de manière simplifiée. 
+La figure \ref{umlController} représente notre package controller de manière simplifiée. 
 En effet, une seule commande concrète apparait, dans notre projet,
 nous en avons une dizaine, qui chacune implémente l'interface \textit{Command}.
 
+\subsubsection{Utils}
+Notre package \textit{Utils} regroupe des classes auxilliaires, n'ayant pas réellement de lien avec la logique métier.
+On y retrouve par exemple la classe permettant de gérer le temps, \textit{Timer}, l'affichage de messages de grâce à la classe \textit{Logging}
+ou encore l'internationnalisation avec \textit{TextGetter}. Ces deux dernières classes contiennent uniquement des méthodes et fields \textit{static}
+afin de garantir l'unicité ainsi qu'une facilité d'accès au sein de l'application.
 
+\subsubsection{Format d'IO}
+Nous possédons un package \textit{savers} et un package \textit{parsers} dans le modèle, où l'on peut retrouver les différentes classes nous permettant d'écrire ou lire des fichiers.
+C'est par exemple ici que l'on trouve le \textit{BoardFileParser}, utilisant le générateur de parser ANTLR-4 afin de lire les fichiers de sauvegarde sans historique, ou encore le \textit{FenParser} 
+de lire les header en format FEN pour enlever toute ambiguité dans la lecture d'un plateau de jeu.
+
+\subsubsection{Events}
+Le package \textit{events} nous permet de regrouper les différents évènements pouvant se produire au cours d'une partie, afin de pouvoir envoyer des notification à la vue.
+L'enum \textit{EventType} regroupe ces évènements.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{uml_event}
+    \caption{Diagramme UML du package Event (sans les valeur de l'enum)}
+    \label{umlEvents}
+\end{figure}
+\FloatBarrier
+Comme on peut le voir dans la figure \ref{umlEvents}, la classe \textit{Subject} correspond à l'Observable du pattern Observer et \textit{EventObserver} à l'Observeur de celui ci.
+La classe \textit{Subject} est étendue par GameAbstract, ce qui permet aux différentes Games de pouvoir être observées. C'est ce qui permet au modèle de notifier la vue par exemple.
+
+\subsubsection{Classes en dehors des packages}
+Nous possédons trois classes se trouvant en dehors de packages : \textit{Main}, qui permet de lancer l'application, 
+\textit{GameInitializer} et \textit{GameControllerInit}. La deuxième se charge d'initialiser la Game en fonction des options données en lignes de commandes, des options par défaut
+et des options données dans le GUI si c'est l'interface utilisée. La dernière appelle \textit{GameInitializer}, créee la vue demandée et crée le controller de l'application.
+Ces classes étant centrales, nous avons décidé de les mettre à la ``racine'' du projet.
 \subsubsection{Design Patterns Utilisés}
 
 Les différents design patterns utilisés dans ce projet sont les suivants :
@@ -687,10 +720,12 @@ Les différents design patterns utilisés dans ce projet sont les suivants :
     La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes ne soit gérée que par un seul bag.
     \item \textbf{Observer} : Permet de notifier la Vue des modifications dans le Model.
     \item \textbf{Command} : Utilisé pour simplifier le Controller. Chaque commande a un objectif précis, effectuer un certain traitement dans le Model.
-    \item \textbf{Bag of Commands} : Utilisé pour gérer les Commandes. On gère l'ajout de plusieurs commandes en parallèle.
-    \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle.
-    \item \textbf{Prototype} : Utilisé avec la fonction getCopy() qui génère un clone de la classe demandée.
-    \item \textbf{Façade} : BoardRepresentation fournit une interface complète pour la gestion du plateau de jeu.
+    \item \textbf{Composite} : Utilisé pour combiner les heuristiques qui sont manipulées par l'Intelligence Artificielle. Cela permet de combiner plusieurs heuristiques en une seule.
+    \item \textbf{Prototype} : La méthode \texttt{getCopy()} applique ce pattern pour générer des copies d’objets, en particulier lors de simulations ou de sauvegardes d’état.
+    \item \textbf{Façade} : La classe \texttt{BoardRepresentation} fournit une interface complète pour la gestion du plateau de jeu.
+    \item \textbf{Bag of Commands} : Il permet de regrouper
+    et gérer plusieurs commandes en parallèle. Bien qu’il ne soit pas un design pattern
+    classique, il structure efficacement les interactions complexes entre commandes.
 \end{itemize}
 
 
@@ -709,7 +744,7 @@ ou encore la mémoire utilisée par notre programme à tout instant comme le pr�
 \FloatBarrier
 
 Dans cette représentation il est possible de voir clairement quelles sont les fonctions les plus chronophages mais il est également possible 
-de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques \ref{trace_ex2}.
+de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques comme sur la figure \ref{trace_ex2}.
 
 \begin{figure}[h]
     \centering
@@ -800,17 +835,17 @@ que lorsque les derniers coups de la partie (et plus généralement lorsque l'on
 obtient des résultats moindres. Finalement, puisque le cas de la figure \ref{move_ordering_cmp} se déroule en millieu de partie on parvient à obtenir un résultat légérement meilleur.
 
 
-\subsection{Comparaison des variantes d'Alpha-Beta} Afin d’évaluer les performances de nos différentes versions de l’algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
+\subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
 
 Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau.
 
-En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5× plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
+En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5 fois plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
 
-À l’inverse, les versions utilisant l’iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s’explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l’élagage alpha-bêta dès les premières itérations.
+À l'inverse, les versions utilisant l'iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s'explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l'élagage alpha-bêta dès les premières itérations.
 
-Enfin, concernant le temps moyen pour jouer un coup, TODO
+Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2 fois pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1 fois pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures, même si le coût d'exploration est plus élevé.
 
-Cela montre l’effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
+Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
 
 \begin{table}[h]
     \centering
@@ -818,15 +853,15 @@ Cela montre l’effet combiné bénéfique du tri dynamique des coups et de la p
     \label{tab:ab_comparison}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
-        \textbf{Version} & \textbf{Nœuds/s} & \textbf{Nœuds explorés par coup} & \textbf{Temps moyen par coup (s)} \\
+        \textbf{Version} & \textbf{Nœuds/s} & \textbf{Nœuds explorés par coup} & \textbf{Temps moyen par coup (ms)} \\
         \hline
-        ALPHA\_BETA & TODO & TODO & TODO \\
+        ALPHA\_BETA & 25000 & 173000 & 6700 \\
         \hline
-        ALPHA\_BETA\_PARALLEL & TODO & TODO & TODO \\
+        ALPHA\_BETA\_PARALLEL & 94000 & 286000 & 3023 \\
         \hline
-        ALPHA\_BETA\_ID & TODO & TODO & TODO \\
+        ALPHA\_BETA\_ID & 21000 & 166000 & 7847 \\
         \hline
-        ALPHA\_BETA\_ID\_PARALLEL & TODO & TODO & TODO \\
+        ALPHA\_BETA\_ID\_PARALLEL & 83000 & 213000 & 2546 \\
         \hline
     \end{tabular}
 \end{table}
@@ -835,7 +870,7 @@ Cela montre l’effet combiné bénéfique du tri dynamique des coups et de la p
 \subsection{Profondeur de recherche}
 
 Les performances de l'IA étant tout d'abord dépendante de la machine sur laquelle on exécute le programme, les paramètres optimaux pour obtenir une IA fluide et jouant des coups efficaces 
-ne sont pas fixes. Le facteur ayant le plus grand impact sur la vitesse de reflexion étant la profondeur de recherche, les optimisations mises en place avaient pour principal objectif d'accroitre
+ne sont pas fixes. Le facteur ayant le plus grand impact sur la vitesse de réflexion étant la profondeur de recherche, les optimisations mises en place avaient pour principal objectif d'accroitre
 cette limite car elle permet d'obtenir de meilleurs coups. Mais la profondeur de recherche est également le facteur limitant, passer d'un profondeur p à une profondeur p+1 est exponentiel car le facteur
 de branchement moyen des échecs est de 35. Par exemple on retrouve en figure \ref{plot} la comparaison des temps de recherche du meilleur coup pour le plateau figure \ref{board}.
 
@@ -856,7 +891,7 @@ de branchement moyen des échecs est de 35. Par exemple on retrouve en figure \r
 Nous avons choisi cette position car les pièces principales sont toujours sur le plateau et ont une grand possibilité de mouvement afin de d'obtenir des temps de recherche significatifs.
 On peut remarquer que les temps pour les profondeurs 2,3 et 4 sont presque égaux qu'importe l'algorithme utilisé. Cependant, à partir de la profondeur 5 on peut commencer à distinguer
 une différence avec des meilleurs résultats pour les versions itératives. L'explosion combinatoire est visible à profondeur 7 où les temps de l'algorithme AlphaBeta parallèle augmentent fortement. Il en est de même pour l'algorithme AlphaBeta classique,
-mais nous n'avons pas inclu le résultat car l'echelle obtenue ne permettait pas une comparaison des autres algorithmes tant le temps de calculs était élevé (plus de 10min). Les plateaux n'ayant jamais
+mais nous n'avons pas inclu le résultat car l'échelle obtenue ne permettait pas une comparaison des autres algorithmes tant le temps de calculs était élevé (plus de 10min). Les plateaux n'ayant jamais
 la même complexité d'évaluation, il est nécessaire de trouver une profondeur qui pourrait être valable tout au long de la partie. Cependant, il est assez complexe de trouver cette valeur car dès que l'on
 passe sur l'heuristique fin de partie où que les pièces principales (tours, fous et dame) ne se trouvent plus sur le plateau le temps d'évaluation chute et il serait donc possible d'évaluer bien plus de noeuds.
 Pour obtenir un jeu homogène, il vaut donc mieux jouer avec un IA de profondeur 5 ainsi que favoriser les algorithmes \textit{Iterative Deepening}.
@@ -891,7 +926,7 @@ performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par d
 efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs, comme vu dans l'article de Dominik Klein \cite{NNChess}, 
 page 121. 
 
-Maintenant, nous admesttons que notre implémentation du MCTS est
+Maintenant, nous admettons que notre implémentation du MCTS est
 lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState.
 Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité 
 sans optimisation.
@@ -900,12 +935,12 @@ sans optimisation.
 Même en enlevant les règles nous paraissant superflues, nous avons toujours environ 500 warning à résoudre.
 Afin de retirer les \textit{System.out/err}, nous avons crée des fonctions \textit{print} et \textit{error}, qui sont des wrappers de ces fonctions. Il serait plus judicieux de créer
 des loggers pour ces opérations.
-Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce quicorrespond à un projet à part entière.
+Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce qui correspond à un projet à part entière.
 Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
 \subsection{Critiques positives}
 \subsubsection{Norme UCI}
 Intégrer la norme UCI à notre projet nous a permis de développer une interface standardisée et donc de communiquer avec d'autres projets de chess engine.
-Le plus interresant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le dertiminisme
+Le plus intéresant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le déterminisme
 de l'algorithme AlphaBeta. En effet, nos algorithmes d'AlphaBeta trouvent toujours le même meilleur coup pour un plateau donné, ce qui donne des déroulements de parties
 identiques et par conséquent peu de parties différentes possibles. Se mesurer à d'autres projets nous a également permis d'affronter différents algorithmes comme par exemple
 Leela Chess Zero utilisant du deep learning couplé au Monte Carlo Tree Search (voir Explanatory analysis of the chess game \cite{GameEngine} page 24).
