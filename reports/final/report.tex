@@ -117,7 +117,7 @@ Notre projet concerne les échecs classiques, ou traditionnels. On peut considé
 est vu comme une variante.
 
 \subsection{Moments clés dans l’histoire des échecs}
-Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment deux très connues que voici :
+Le jeu d’échecs a été animé par des confrontations historiques et importantes. Notamment trois très connues que voici :
 \begin{itemize}
     \item Fischer vs. Spassky (1972) : Ce duel de la Guerre Froide a opposé l’Américain Bobby Fischer au Soviétique
     Boris Spassky. Fischer a remporté le championnat du monde, mettant fin à l'interminable domination des Soviétiques
@@ -136,7 +136,7 @@ sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on
 \begin{itemize}
     \item Deep Blue : Programme célèbre pour avoir battu Garry Kasparov en 1997. Ce programme était exécuté par des super-calculateurs
     de l'époque, avec 32 cœurs, 256 threads au total.
-    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé sur notamment une évaluation positionnelle
+    \item Stockfish : Engine open-source extrêmement puissant, probablement le meilleur aujourd'hui, basé notamment sur une évaluation positionnelle
     grâce à des heuristiques avancées et des optimisations algorithmiques.
     \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
     modèle AlphaZero de Google DeepMind.
@@ -167,7 +167,7 @@ Le jeu d'échecs contient beaucoup de règles, parfois techniques, mais dont l'o
 il faut mettre le roi adverse en \textbf{échec et mat} pour gagner la partie. Cela signifie que le roi est en \textbf{échec},
 mais n'a aucun coup légal pour se défendre de cette attaque. Il faut différencier la règle \textbf{échec} et 
 \textbf{échec et mat}. Un Roi qui est en situation d'\textbf{échec} est un Roi qui est attaqué par une pièce
-ennemie, mais qui peut se défendre pour sortir de cette situation (car en tant que joueur, on ne doit pas capturer notre Roi,
+ennemie, mais qui peut se défendre pour sortir de cette situation (car en tant que joueur, on ne doit pas capturer le Roi,
 la pièce maîtresse). Donc finalement, être en \textbf{échecs et mat} signifie être en \textbf{échec}, mais sans avoir
 la possibilité de se défendre, c'est-à-dire que le Roi est capturé par l'adversaire après n'importe quel coup joué.\\
 Section rédigée en se basant sur les règles de la Fédération Internationale des Échecs \cite{FIDE2021}.
@@ -440,9 +440,10 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     \item MiniMax: Visant à retourner l'option la plus adéquate dans une certaine position, on utilise des arbres pour savoir quelle branche va être la
     plus intéressante, que ce soit pour l'ami, comme pour l'ennemi. On est en O($b^d$) en temps, où b est le facteur de branchement et d la profondeur.
     En espace, c'est du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
-    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais peut permettre d'aller à une profondeur deux fois plus grande si les nœuds de
-    l'arbre sont organisés du plus petit au plus grand. Ici, la valeur des nœuds va être une évaluation. La complexité en espace ne change pas, mais
-    en temps, nous sommes donc en O($b^p$) où p = d/2.
+    \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais permet de réduire le nombre de positions à évaluer, tout en gardant le même résultat final. 
+    Cela repose sur une technique appelée élagage, qui permet de ne pas explorer une branche si elle ne permet pas d'améliorer la situation 
+    d'un joueur. Cela revient à ne pas évaluer les coups moins bons que ce que l'on a trouvé. Dans le meileur des cas, il est possible d'évaluer uniquement 
+    O($b^p$) où p = d/2 et d la profondeur de recherche, contre O($b^d$) avec Minimax.
     \item MonteCarloTreeSearch:
     Celui-ci peut se décomposer en quatre étapes : \textbf{Selection}, \textbf{Expansion}, \textbf{Simulation}, et \textbf{BackPropagation}. Pour faire simple, on va choisir (Selection) des branches à explorer. Cela peut être les nœuds qui vont être impactants sur la recherche du meilleur coup, ou encore des nœuds qui n'ont pas encore été explorés. Il s'agit de l'UCT (Upper Confidence bound applied to Trees).\
     L'UCT est une formule permettant d'équilibrer l'exploration et l'exploitation dans la sélection des coups :
@@ -466,7 +467,7 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     nombre de simulations effectuées, et de la profondeur moyenne. En espace, dans le pire des cas, on peut se trouver en O(N) où N est le nombre
     de simulations jouées. Maintenant, dans le cas moyen, on est en O($b^p$) avec d la profondeur et b le facteur de branchement.
     Cependant, dans le cadre de ce projet, MCTS n'est pas borné par une profondeur. On peut donc dire que l'on se trouve en O(N).\\
-    En ce qui concerne la partie structures de données, le MCTS se base une classe Java, appelée dans le code 'TreeNodeMonteCarlo'.
+    En ce qui concerne la partie structures de données, le MCTS se base sur une classe, appelée dans le code 'TreeNodeMonteCarlo'.
     Comme son nom l'indique, il s'agit d'un objet représentant un nœud de l'arbre sur lequel l'algorithme va se dérouler.
     Essentiellement, cet objet va contenir les informations suivantes:
     \begin{itemize}
@@ -562,7 +563,7 @@ comme peu utile comme par exemple les logs devant être entourés de barrières 
 qui correspondait au style Google mais pas à celui de PMD. 
 Ayant décidé d'avoir une application multithreadée ( Bag of commands, vue, IA parralèle), nous avons décicé d'ignorer le warning interdisant l'utilisation de threads.
 En effet, cela concerne les application utilisant Java Enterprise Edition, ce que nous ne faisons pas.
-Le fait d'avoi au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
+Le fait d'avoir au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
 Le fait de pouvoir faire un return anticpé dans une fonction est quasi nécéssaire, si nous ne voulons pas entourer le code dans 
 d'énormes blocs de \textit{if}, nous avons donc supprimé la règle correspondante.
 Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujurs explicite (comme \textit{x} pour une position). 
@@ -602,11 +603,12 @@ afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui per
 Le Modèle est lui même composé de plusieurs packages, afin de séparer les différentes patie de l'application :
 \begin{itemize}
     \item \textbf{AI} : Contient toute la partie IA, soit le solver, les algorithmes et les heuristiques.
-    \item \textbf{Board} : 
+    \item \textbf{Board} : Contient le plateau de jeu, ses représenatation ainsi que classes utilitaires comme le cache, 
+    les différentes représentations de mouvements ou le Zobrist hashing.
     \item \textbf{History} : Structure représentant l'historique de la partie sous forme de liste doublement chainée.
     \item \textbf{Parsers} : Parsing des fichers de configuration et de sauvegarde.
-    \item \textbf{Piece} : Contient les classes 
-    \item \textbf{Savers} : Sauvegarde des fchiers de jeu et de configuration.
+    \item \textbf{Piece} : Contient les classes nécéssaires à la représentation des pièces.
+    \item \textbf{Savers} : Sauvegarde des fichiers de jeu et de configuration.
 \end{itemize}
 
 L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant toutes les fonctions nécéssaires au déroulement d'une partie 
@@ -615,7 +617,8 @@ La première implémentation est un Singleton permettant d'avoir un point d'acc�
 La deuxième est une version plus légère de Game, utilisée dans les algorithmes d'IA, permettant d'obtenir de meileurs résultats lors de l'exploration.
 \textit{GameState} permet de stocker toutes les informations relatives  à l'état de la partie, telles que l'avancée dans la \textit{50 move rule} ou le plateau de jeu.
 \textit{BoardRepresentation} joue ici le rôle de façade, regroupant toutes les fonctions nécéssaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
-Cette interface nous offre également l'opportunité de créer différentes implémentations, avec des Bitboard (notre class \textit{BitboardRepresentation}), des tableaux 2D ou d'autres structures de données.
+Cette interface nous offre également l'opportunité de créer différentes implémentations, avec des Bitboard (notre classe \textit{BitboardRepresentation}), des tableaux 2D ou d'autres structures de données.
+\textit{BitboardRepresentation} sert à unifier toutes les sous classes (génération des mouvements, vérification des règles,..) et sert également à gérer le cache.
 La figure \ref{umlModel} représente la structuration générale, sans inclure les méthodes ou fields.
 
 \begin{figure}[h]
@@ -655,7 +658,7 @@ se produisent. La vue doit donc implémeneter les évènements de la manière do
 comme notre interface UCI qui ne prend en charge que quelques évènements de base. Ces évènements sont envoyés à la vue via les fonctions \textit{onGameEvent} et \textit{onErrorEvent}.
 
 Nous partons du principe que la vue peut se servir des données de la vue sans passer par le controller, mais ne peut pas y appliquer de modification. Cela permet d'alléger le controller
-et d'afficher automatiquement les mises à jour du model dans la vue, sans avoir besoin d'envoyer de commandes.
+et d'afficher automatiquement les mises à jour du modèle dans la vue, sans avoir besoin d'envoyer de commandes.
 
 \begin{figure}[h]
     \centering
@@ -741,7 +744,7 @@ ou encore la mémoire utilisée par notre programme à tout instant comme le pr�
 \FloatBarrier
 
 Dans cette représentation il est possible de voir clairement quelles sont les fonctions les plus chronophages mais il est également possible 
-de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques \ref{trace_ex2}.
+de comparer deux traces afin de voir les différences de performances entre plusieurs versions, algorithmes ou heuristiques comme sur la figure \ref{trace_ex2}.
 
 \begin{figure}[h]
     \centering
@@ -867,7 +870,7 @@ Cela montre l’effet combiné bénéfique du tri dynamique des coups et de la p
 \subsection{Profondeur de recherche}
 
 Les performances de l'IA étant tout d'abord dépendante de la machine sur laquelle on exécute le programme, les paramètres optimaux pour obtenir une IA fluide et jouant des coups efficaces 
-ne sont pas fixes. Le facteur ayant le plus grand impact sur la vitesse de reflexion étant la profondeur de recherche, les optimisations mises en place avaient pour principal objectif d'accroitre
+ne sont pas fixes. Le facteur ayant le plus grand impact sur la vitesse de réflexion étant la profondeur de recherche, les optimisations mises en place avaient pour principal objectif d'accroitre
 cette limite car elle permet d'obtenir de meilleurs coups. Mais la profondeur de recherche est également le facteur limitant, passer d'un profondeur p à une profondeur p+1 est exponentiel car le facteur
 de branchement moyen des échecs est de 35. Par exemple on retrouve en figure \ref{plot} la comparaison des temps de recherche du meilleur coup pour le plateau figure \ref{board}.
 
@@ -888,7 +891,7 @@ de branchement moyen des échecs est de 35. Par exemple on retrouve en figure \r
 Nous avons choisi cette position car les pièces principales sont toujours sur le plateau et ont une grand possibilité de mouvement afin de d'obtenir des temps de recherche significatifs.
 On peut remarquer que les temps pour les profondeurs 2,3 et 4 sont presque égaux qu'importe l'algorithme utilisé. Cependant, à partir de la profondeur 5 on peut commencer à distinguer
 une différence avec des meilleurs résultats pour les versions itératives. L'explosion combinatoire est visible à profondeur 7 où les temps de l'algorithme AlphaBeta parallèle augmentent fortement. Il en est de même pour l'algorithme AlphaBeta classique,
-mais nous n'avons pas inclu le résultat car l'echelle obtenue ne permettait pas une comparaison des autres algorithmes tant le temps de calculs était élevé (plus de 10min). Les plateaux n'ayant jamais
+mais nous n'avons pas inclu le résultat car l'échelle obtenue ne permettait pas une comparaison des autres algorithmes tant le temps de calculs était élevé (plus de 10min). Les plateaux n'ayant jamais
 la même complexité d'évaluation, il est nécessaire de trouver une profondeur qui pourrait être valable tout au long de la partie. Cependant, il est assez complexe de trouver cette valeur car dès que l'on
 passe sur l'heuristique fin de partie où que les pièces principales (tours, fous et dame) ne se trouvent plus sur le plateau le temps d'évaluation chute et il serait donc possible d'évaluer bien plus de noeuds.
 Pour obtenir un jeu homogène, il vaut donc mieux jouer avec un IA de profondeur 5 ainsi que favoriser les algorithmes \textit{Iterative Deepening}.
@@ -923,7 +926,7 @@ performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par d
 efficacité brute sans ces améliorations reste inférieure aux méthodes classiques pour les échecs, comme vu dans l'article de Dominik Klein \cite{NNChess}, 
 page 121. 
 
-Maintenant, nous admesttons que notre implémentation du MCTS est
+Maintenant, nous admettons que notre implémentation du MCTS est
 lente de base, notamment à cause d'un grand nombre de deep copies d'objets GameState.
 Ainsi, bien que MCTS soit une approche puissante pour certains jeux, son application aux échecs reste limitée en raison de sa lenteur et de son inefficacité 
 sans optimisation.
@@ -932,11 +935,11 @@ sans optimisation.
 Même en enlevant les règles nous paraissant superflues, nous avons toujours environ 500 warning à résoudre.
 Afin de retirer les \textit{System.out/err}, nous avons crée des fonctions \textit{print} et \textit{error}, qui sont des wrappers de ces fonctions. Il serait plus judicieux de créer
 des loggers pour ces opérations.
-Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce quicorrespond à un projet à part entière.
+Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce qui correspond à un projet à part entière.
 Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
 \subsection{Critiques positives}
 Intégrer la norme UCI à notre projet nous a permis de développer une interface standardisée et donc de communiquer avec d'autres projets de chess engine.
-Le plus interresant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le dertiminisme
+Le plus intéresant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le déterminisme
 de l'algorithme AlphaBeta. En effet, nos algorithmes d'AlphaBeta trouvent toujours le même meilleur coup pour un plateau donné, ce qui donne des déroulements de parties
 identiques et par conséquent peu de parties différentes possibles. Se mesurer à d'autres projets nous a également permis d'affronter différents algorithmes comme par exemple
 Leela Chess Zero utilisant du deep learning couplé au Monte Carlo Tree Search (voir Explanatory analysis of the chess game \cite{GameEngine} page 24).
