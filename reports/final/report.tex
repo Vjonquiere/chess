@@ -575,10 +575,56 @@ correspondance index de bitboard/piece bien plus simple.
 
 \subsection{Iterative Deepening}
 
-L'algorithme d'approfondissement itératif est utilisé dans notre projet en appui de l'algorithme AlphaBeta et de sa version parallèle. Il réalise des recherches en augmentant progressivement la profondeur (1, 2, 3, etc.) de manière successive. À chaque itération, le meilleur coup trouvé est placé au début de l'arbre de recherche, améliorant l'ordonnancement des coups pour l'algorithme d'élagage. Ainsi, ce procédé permet de réduire considérablement le nombre de positions évaluées.
+L'approfondissement itératif (ou iterative deepening) est une stratégie de recherche utilisée dans notre projet pour renforcer l'efficacité de l'algorithme AlphaBeta (cf. pseudo-code \ref{IterativeDeepening} ci-dessous), ainsi que de sa version parallèle. Cette méthode combine les avantages d'une recherche en profondeur fixe avec ceux d'une meilleure gestion du temps, en lançant successivement des recherches jusqu'à une profondeur croissante : d'abord profondeur 1, puis 2, 3, et ce jusqu'à atteindre la profondeur maximale souhaitée ou jusqu'à l'expiration du temps.
 
-Le véritable avantage de l'approfondissement itératif vient de sa capacité à fournir une solution en temps réel tout en affinant progressivement l'analyse du jeu, optimisant ainsi le processus de décision dans le cas d'une limite de temps appliquée au joueur IA.
-Dans le cadre d'un jeu comme les échecs, il permet également de gagner du temps via l'amélioration de l'élagage.
+À chaque itération, l'algorithme effectue une recherche complète à la profondeur courante. Le meilleur coup trouvé lors de cette recherche est ensuite utilisé en priorité au début de l'itération suivante. Ce mécanisme améliore significativement l'ordonnancement des coups, ce qui est crucial pour l'efficacité de l'élagage AlphaBeta. En effet, un bon ordonnancement permet à l'élagage de couper plus de branches inutiles, réduisant le nombre de nœuds explorés et donc le temps de calcul nécessaire.
+
+Un autre avantage majeur de l'approfondissement itératif est sa robustesse face aux contraintes de temps. Dans un contexte où le temps de réflexion est limité (comme c'est le cas dans les compétitions d'échecs), cette approche garantit que l'IA dispose toujours d'un coup valide et potentiellement bon à jouer, même si l'algorithme n'a pas pu explorer la profondeur maximale souhaitée. Cela assure un comportement temps réel, tout en permettant une amélioration progressive de la qualité du coup à mesure que le temps avance.
+
+Dans notre projet, cette méthode a montré des bénéfices notables en termes de performances et de stabilité. Elle agit non seulement comme une stratégie de repli en cas de limite de temps, mais aussi comme un outil pour maximiser l'efficacité du moteur de recherche, en exploitant intelligemment la mémoire des itérations précédentes pour guider plus efficacement les suivantes.
+
+Enfin, dans le cadre spécifique des échecs, où le nombre de coups possibles peut être considérable, l'approfondissement itératif couplé à l'élagage AlphaBeta permet de réduire drastiquement la complexité de la recherche, tout en maintenant un haut niveau de précision dans l'évaluation des positions.
+
+\begin{lstlisting}[label={IterativeDeepening}, caption={Iterative Deepening avec AlphaBeta - pseudo-code}]
+    function iterativeDeepening(game, maxDepth, player):
+        bestMove <- AiMove(null, -inf)
+
+        rootMoves <- all available moves for player from game
+    
+        for depth from 1 to maxDepth:
+            aiGame <- copy of game as GameAi
+            result <- alphaBeta(aiGame, depth, player, -inf, +inf, player, rootMoves)
+    
+            if result.move != null:
+                bestMove <- result
+
+            rootMoves <- all available moves for player from game with bestMove as the first
+    
+        return bestMove
+    
+    function alphaBeta(game, depth, current_player, alpha, beta, original_player, moves):
+        bestMove <- AiMove(null, -inf)
+    
+        for each move in moves:
+            game.playMove(move)
+            score <- alphaBeta(gameCopy, depth - 1, not player, alpha, beta, player)
+            game.previousState()
+
+            if current_player == original_player:
+                if score > bestMove.score:
+                    bestMove <- AiMove(move, score)
+                alpha <- max(alpha, score)
+            else:
+                if score < bestMove.score:
+                    bestMove <- AiMove(move, score)
+                beta <- min(beta, score)
+    
+            if alpha >= beta:
+                break
+    
+        return bestMove
+    \end{lstlisting}
+    
 
 \subsection{AlphaBeta parallèle}
 
