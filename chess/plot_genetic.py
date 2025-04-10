@@ -6,7 +6,7 @@ df = pd.read_csv("results.csv",  sep=',')
 win_rate = df.groupby('CURRENT_GEN')['win'].mean().reset_index()
 
 sns.lineplot(data=df, x='CURRENT_GEN', y='win', ci='sd')
-plt.title("Average Win Rate per Generation")
+plt.title("Win Rate moyen par Génération")
 plt.ylabel("Win Rate")
 plt.xlabel("Generation")
 plt.show()
@@ -40,7 +40,7 @@ weights_long = df.melt(id_vars='CURRENT_GEN', value_vars=weights_df.columns,
                        var_name='Weight', value_name='Value')
 
 sns.lineplot(data=weights_long, x='CURRENT_GEN', y='Value', hue='Weight')
-plt.title("Evolution of Engine Weights per Generation")
+plt.title("Evolution des poids par génération")
 plt.show()
 
 correlation_df = df[weights_df.columns.tolist() + ['win']].corr()

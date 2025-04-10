@@ -1003,6 +1003,61 @@ sur le temps moyen d'un recherche avec encore ici un facteur 4 entre avec et san
 que lorsque les derniers coups de la partie (et plus généralement lorsque l'on approche la fin de partie) sont explorés il ne contiennent pas forcément de capture ou de promotion et l'optimisation
 obtient des résultats moindres. Finalement, puisque le cas de la Figure \ref{move_ordering_cmp} se déroule en milieu de partie on parvient à obtenir un résultat légérement meilleur.
 
+\subsubsection{Algorithme Génétique}
+
+Nous avons entraîné un algorithme génétique (AG) afin d'optimiser les poids associés à différentes heuristiques utilisées dans l'heuristique composée STANDARD. Ces heuristiques incluent MobilityHeuristic, MaterialHeuristic, BadPawnsHeuristic, PawnChainHeuristic, KingSafetyHeuristic, DevelopmentHeuristic, CheckHeuristic et SpaceControlHeuristic. L'heuristique « GameState », qui gère les situations de mat, a été exclue de l'entraînement et fixée à une valeur constante de 10000 afin de garantir que le mat est toujours prioritaire.
+
+Les paramètres utilisés pour l'AG étaient les suivants :
+\begin{itemize}
+  \item Taille de la population : 60
+  \item Nombre de générations : 93
+  \item Taux de mutation : 0.4
+  \item Taux de croisement : 0.7
+  \item Domaine des poids : [0.0 ; 100.0]
+  \item Nombre de parties jouées par évaluation : 4
+\end{itemize}
+
+Pour éviter les optimum locaux et favoriser l'exploration de l'espace de recherche, nous utilisons un mécanisme de détection de stagnation : si la valeur de forme (fitness) du meilleur individu ne s'améliore pas pendant 15 générations consécutives, 80\% de la population est remplacée par de nouveaux individus générés aléatoirement. Cette stratégie permet à l'algorithme de s'extraire de régions sous-optimales.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{}
+  \caption{Évolution des poids heuristiques au fil des générations.}
+  \label{fig:evolution_weights}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{}
+    \caption{Évolution du taux de victoire au fil des générations.}
+    \label{fig:evolution_winrate}
+  \end{figure}
+  \FloatBarrier
+
+La figure \ref{fig:evolution_weights} montre l'évolution des poids et la figure \ref{fig:evolution_winrate} montre l'évolution des performances (taux de victoire) au cours de l'entraînement. On y observe plusieurs chutes de performance correspondant aux moments de remplacement de population, où l'algorithme explore de nouvelles zones de l'espace des poids.
+
+Les poids finaux obtenus en Table \ref{tab:poids-heuristiques} montrent une domination constante de l'heuristique « Matériel », ce qui est cohérent avec la stratégie classique aux échecs, où l'avantage matériel est souvent décisif. Les autres heuristiques ont contribué de manière plus contextuelle selon les situations de jeu.
+
+\begin{table}[H]
+    \centering
+    \caption{Poids finaux optimisés pour chaque heuristique}
+    \label{tab:poids-heuristiques}
+    \begin{tabular}{|l|c|}
+      \hline
+      \textbf{Classe Java (Heuristique)} & \textbf{Poids optimisé} \\
+      \hline
+      \texttt{MaterialHeuristic} & 92.36\\
+      \texttt{MobilityHeuristic} & 5.49\\
+      \texttt{BadPawnHeuristic} & 0.00\\
+      \texttt{PawnChainHeuristic} & 0.00\\
+      \texttt{KingSafetyHeuristic} & 3.41\\
+      \texttt{DevelopmentHeuristic} & 48.35\\
+      \texttt{CheckHeuristic} & 0.00 \\
+      \texttt{SpaceHeuristic} & 9.74 \\
+      \texttt{GamePhaseHeuristic} & 10\,000 \\
+      \hline
+    \end{tabular}
+  \end{table}
 
 \subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière. Les mesures parallèles ont été effectuées sur 24 threads, et les résultats sont présentés dans la Table \ref{tab:ab_comparison}.
 
