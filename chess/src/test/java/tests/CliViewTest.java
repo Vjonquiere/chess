@@ -3,6 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,6 +54,32 @@ public class CliViewTest {
     Locale.setDefault(Locale.ENGLISH);
   }
 
+  @BeforeEach
+  void setUp() throws Exception {
+    System.setOut(new PrintStream(outputStream));
+    System.setErr(new PrintStream(outputStream));
+
+    outputStream.reset();
+
+    mockBagOfCommands = mock(BagOfCommands.class);
+    BagOfCommands.setInstance(mockBagOfCommands);
+
+    view = new CliView();
+    Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    handleUserInputMethod = CliView.class.getDeclaredMethod("handleUserInput", String.class);
+    handleUserInputMethod.setAccessible(true); // Allows access to private method
+
+    configureGlobalLogger();
+  }
+
+  @AfterEach
+  void tearDown() {
+    System.setOut(originalOut);
+    System.setErr(originalErr);
+    configureGlobalLogger();
+  }
+
   @Test
   public void testBoardToASCII() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
@@ -69,29 +96,6 @@ public class CliViewTest {
     };
 
     assertTrue(Arrays.deepEquals(expectedBoard, game.getBoard().getAsciiRepresentation()));
-  }
-
-  @BeforeEach
-  void setUp() throws Exception {
-    System.setOut(new PrintStream(outputStream));
-    System.setErr(new PrintStream(outputStream));
-
-    outputStream.reset();
-
-    mockBagOfCommands = mock(BagOfCommands.class);
-    BagOfCommands.setInstance(mockBagOfCommands);
-
-    view = new CliView();
-    Game.initialize(false, false, null, null, null, new HashMap<>());
-
-    handleUserInputMethod = CliView.class.getDeclaredMethod("handleUserInput", String.class);
-    handleUserInputMethod.setAccessible(true); // Allows access to private method
-  }
-
-  @AfterEach
-  void tearDown() {
-    System.setOut(originalOut);
-    System.setErr(originalErr);
   }
 
   @Test

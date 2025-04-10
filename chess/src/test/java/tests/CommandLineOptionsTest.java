@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -147,7 +148,7 @@ public class CommandLineOptionsTest {
   };
 
   @BeforeAll
-  public static void setUpLocale() {
+  public static void startSetUp() {
     Locale.setDefault(Locale.ENGLISH);
   }
 
@@ -156,6 +157,7 @@ public class CommandLineOptionsTest {
     outputStream.reset();
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -164,6 +166,7 @@ public class CommandLineOptionsTest {
     System.setErr(originalErr);
     Logging.setDebug(false);
     Logging.setVerbose(false);
+    configureGlobalLogger();
   }
 
   @Test

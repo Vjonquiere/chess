@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,6 +51,7 @@ class GameInitializerTest {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
     options = new HashMap<>();
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -61,6 +63,7 @@ class GameInitializerTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
@@ -357,16 +360,10 @@ class GameInitializerTest {
   void testGameInitializationLoadFallback() {
     options.put(OptionType.LOAD, "non_existent_file.txt");
 
-    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    PrintStream originalErr = System.err;
-    System.setErr(new PrintStream(errContent));
-
     GameController controller = null;
     controller = GameControllerInit.initialize(options);
 
-    String errorOutput = errContent.toString();
-
-    System.setErr(originalErr);
+    String errorOutput = outputStream.toString();
 
     assertTrue(errorOutput.contains("Using the default game start"));
 

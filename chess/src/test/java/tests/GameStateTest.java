@@ -6,6 +6,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -35,9 +36,10 @@ public class GameStateTest {
 
   @BeforeEach
   void setUpConsole() {
-    Game.initialize(false, false, null, null, null, new HashMap<>());
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    Game.initialize(false, false, null, null, null, new HashMap<>());
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -45,6 +47,7 @@ public class GameStateTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test

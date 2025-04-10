@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -37,6 +38,7 @@ public class AlphaBetaTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @BeforeEach
@@ -48,6 +50,7 @@ public class AlphaBetaTest {
     solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
     solver.setHeuristic(HeuristicType.STANDARD);
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
+    configureGlobalLogger();
   }
 
   static Stream<AlgorithmType> algorithmProvider() {

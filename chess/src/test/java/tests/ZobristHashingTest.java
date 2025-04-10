@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -37,6 +38,7 @@ public class ZobristHashingTest {
   public void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
@@ -46,6 +48,7 @@ public class ZobristHashingTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
