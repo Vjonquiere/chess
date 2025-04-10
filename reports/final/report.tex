@@ -92,7 +92,7 @@ et le but est de faire échec et mat, c’est-à-dire arriver dans une position 
 le Roi adverse et donc gagner la partie après n’importe quel coup joué par notre opposant (hormis capturer notre roi).
 Le jeu d’échecs se joue sur un échiquier, un plateau de 8 lignes et 8 colonnes, 64 cases au total avec des pièces
 caractérisées par certaines propriétés uniques. De manière compétitive, le jeu d'échecs effectue un classement
-basé sur un système de points, appelés "Élos". Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
+basé sur un système de points, appelés "Élos" \cite{elo}. Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
 à répartir ces joueurs en catégories. Pour donner un ordre d'idée, le champion du monde possède un Élo aux alentours de 2900,
 tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Élos. Ce système d'Élo
 va notamment nous permettre d'approximer le niveau de notre Intelligence Artificielle développée dans le cadre de ce projet.\\
@@ -141,7 +141,7 @@ sont analysés et perçus d'une autre manière. Parmi les avancées majeures, on
     \item Leela Chess Zero (Lc0) : Engine particulièrement connu pour utiliser un réseau de neurones basé sur le deep learning, inspiré du fameux
     modèle AlphaZero de Google DeepMind.
 \end{itemize}
-Ces chess engines sont aujourd’hui utilisés pour analyser des parties, préparer des parties, et même aider les
+Ces chess engines sont aujourd’hui utilisés pour analyser ou préparer des parties, et même aider les
 joueurs humains à progresser. Au jeu d'échecs, l'Intelligence Artificielle est notamment connue pour être très agressive
 (en termes de stratégie de jeu). Cela fait maintenant presque 30 ans qu'il est impossible pour un humain de gagner contre
 le meilleur ordinateur aux échecs (autour des 3600 Élos aujourd'hui, environ 2900 pour Deep Blue en 1997).
@@ -169,19 +169,13 @@ mais n'a aucun coup légal pour se défendre de cette attaque. Il faut différen
 \textbf{échec et mat}. Un Roi qui est en situation d'\textbf{échec} est un Roi qui est attaqué par une pièce
 ennemie, mais qui peut se défendre pour sortir de cette situation (car en tant que joueur, on ne doit pas capturer le Roi,
 la pièce maîtresse). Donc finalement, être en \textbf{échecs et mat} signifie être en \textbf{échec}, mais sans avoir
-la possibilité de se défendre, c'est-à-dire que le Roi est capturé par l'adversaire après n'importe quel coup joué.\\
-Section rédigée en se basant sur les règles de la Fédération Internationale des Échecs \cite{FIDE2021}.
+la possibilité de se défendre, c'est-à-dire que le Roi est capturé par l'adversaire après n'importe quel coup joué.
+Cette section a été rédigée en se basant sur les règles de la Fédération Internationale des Échecs \cite{FIDE2021}.
 
 \subsection{L'échiquier et les pièces}
-Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces dans la disposition présentée en figure \ref{init} :
-\begin{itemize}
-    \item 1 roi
-    \item 1 dame
-    \item 2 tours
-    \item 2 cavaliers
-    \item 2 fous
-    \item 8 pions
-\end{itemize}
+Les échecs se jouent sur un échiquier de 64 cases disposé en 8x8. Chaque joueur commence la partie avec 16 pièces (1 roi, 1 dame, 2 tours,
+2 cavaliers, 2 fous et 8 pions) dans la disposition présentée en figure \ref{init}.
+
 
 \begin{figure}[h]
     \centering
@@ -349,23 +343,24 @@ Un échiquier est finalement une matrice 8x8 (64 cases donc) sur lesquelles il y
 notion de binaire. Pour une pièce: "Blanche ou Noire", "Présente ou Non" (pour les cases). Une méthode existe pour
 représenter l'échiquier en se servant de bitmaps plutôt que d'utiliser des arrays, vecteurs ou listes en deux dimensions.
 Il s'agit du bitboard. On observera un gain de performance en temps et un gain d'espace énormes pour la représentation
-de l'échiquier (et des règles spécifiques).\\
+de l'échiquier (et des règles spécifiques).
+
 Comme on vient de le voir, sur une case, soit il y a une pièce, soit il n'y en a pas.
 Encodons le fait qu'une case soit occupée par 1 et le fait qu'une case soit vide (libre) par 0. Il y a 64 cases au total.
-Donc, en attribuant un indice à chaque case (de 0 à 63), on va pouvoir chiffrer l'échiquier par un entier de 64 bits.
+Donc, en attribuant un indice à chaque case (de 0 à 63), on va pouvoir représenter l'échiquier par un entier de 64 bits.
 Chaque bit de cet entier est à 0 ou à 1. S'il est à 0 pour l'indice i, alors la case i est libre. S'il est à 1, alors la
 case i est occupée. Un entier n'est cependant pas suffisant, car il faut pouvoir différencier les types de pièce, ainsi
 que la couleur des pièces (noires ou blanches). Il y a au total 6 types de pièces aux échecs: le Pion, le Cavalier, le Fou,
 la Tour, la Dame, le Roi. Donc finalement, on aura besoin de 12 entiers codés sur 64 bits, car 6 pour les types de pièces
 blanches et 6 pour les types de pièces noires.
-\\Il est important de noter que cela n'est pas réalisable pour des ordinateurs qui possèdent une architecture en 32 bits.
-Aujourd'hui, la quasi-totalité des ordinateurs utilise du 64 bits, donc il ne faut pas trop s'en soucier. C'est néanmoins
-crucial de relever les inconvénients des méthodes que l'on va utiliser pour ce projet. Un autre désavantage de cette méthode
-est le fait qu'il faudra faire une gymnastique pour "décoder" pour l'humain une position. En effet, si l'on prend l'entier
-112, on ne visualise pas (du tout) la position, même si l'ordinateur si.
+
+Un désavantage de cette méthode
+est le fait qu'il faudra faire une gymnastique pour "décoder" une position en tant qu'humain. En effet, si l'on prend l'entier
+112, on ne visualise pas (du tout) la position, contrairement à l'ordinateur.
 Retenons aussi que l'on aura à faire à des représentations et opérations binaires, pour lesquelles un ordinateur est très
 performant. En Java, chaque entier sera un long (type primitif).
-\\Il faut aussi se pencher sur les règles spécifiques que l'on encodera avec les 12 bitmaps pour représenter une position
+
+Il faut aussi se pencher sur les règles spécifiques que l'on encodera avec les 12 bitmaps pour représenter une position
 dans son entièreté. Effectivement, pour le moment, nous n'avons que l'emplacement des pièces sur l'échiquier. Mais une position
 est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendre en compte sont:\\
 \begin{itemize}
@@ -392,7 +387,7 @@ D'autres solutions comme une double pile ou un tableau seraient également envis
 \subsection{Intelligence Artificielle} \label{AI}
 \subsubsection{Heuristiques}
 Afin de coder une bonne heuristique, aux échecs, il faut prendre en compte beaucoup d'éléments et revenir aux bases du jeu.
-Notamment, il faut savoir ce qui importe dans une position, ce qui donne l'avantage ou ce qui assure une égalité. Essentiellement,
+Notamment, il faut savoir ce qui importe, ce qui donne l'avantage ou ce qui assure une égalité dans une position donnée. Essentiellement,
 on se contente de vérifier certains points clés qui vont nous permettre d'émettre une évaluation sur une position.
 Rappelons que le facteur de branchement aux échecs approche les 35.\\
 Il y a de nombreux éléments à prendre en compte, et en voici certainement les plus impactants:
@@ -401,7 +396,7 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
     dans une position. Plus on a de matériel (pièces donc), plus on a de chances d'avoir l'avantage, en particulier par un bon contrôle de l'échiquier.
     \item La sécurité du Roi: Le Roi est la pièce la plus importante aux échecs, et souvent, le joueur qui a un avantage est celui qui va
     avoir un Roi qui n'est pas en danger. Pour estimer cela, on peut en particulier vérifier le nombre de coups où l'on peut mettre le Roi en échec,
-    combien de coups permettent de l'en sortir, et la fréquence des échecs. Plus un Roi est vulnérable, plus il y aura des possibilités
+    combien de coups permettent de l'en sortir et la fréquence des échecs. Plus un Roi est vulnérable, plus il y aura des possibilités
     de le mettre en échec.
     \item Le contrôle du centre: Aux échecs, le centre est un emplacement clé, puisqu'il peut donner un accès efficace à toutes les parties de
     l'échiquier. Généralement, obtenir un bon contrôle du centre est un facteur qui va jouer dans l'évaluation d'une position.
@@ -413,7 +408,7 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
     comme la Dame par exemple, nous donnant plus d'options.\\
 \end{itemize}
 
-Seulement ceux-là sont cités ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
+Seulement une petite partie est citée ici, mais en réalité, il y a plus de 20 points clés nous permettant d'évaluer une position de manière efficace.
 Enfin, afin d'obtenir une bonne heuristique aux échecs, il faut considérer tous ces points et faire une somme. C'est la marche à suivre puisqu'il 
 s'agit d'un jeu à somme nulle, c'est-à-dire que le gain d'un joueur correspond exactement à la perte de l'autre. En d'autres termes, si un joueur gagne 
 (+1), l'autre perd (-1), et si la partie est nulle, aucun des deux joueurs ne gagne ni ne perd (0-0). \\
@@ -439,7 +434,7 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
 \begin{itemize}
     \item MiniMax: Visant à retourner l'option la plus adéquate dans une certaine position, on utilise des arbres pour savoir quelle branche va être la
     plus intéressante, que ce soit pour l'ami, comme pour l'ennemi. On est en O($b^d$) en temps, où b est le facteur de branchement et d la profondeur.
-    En espace, c'est du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
+    En espace, l'algorithme propose du O(d), soit le nombre de niveaux dans l'arbre pour une approche basée sur du DFS.
     \item AlphaBeta-pruning: Cet algorithme se repose sur MiniMax, mais permet de réduire le nombre de positions à évaluer, tout en gardant le même résultat final. 
     Cela repose sur une technique appelée élagage, qui permet de ne pas explorer une branche si elle ne permet pas d'améliorer la situation 
     d'un joueur. Cela revient à ne pas évaluer les coups moins bons que ce que l'on a trouvé. Dans le meileur des cas, il est possible d'évaluer uniquement 
@@ -481,7 +476,7 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
     En reliant ces nœuds par des coups, on arrive à construire un (pseudo-)arbre et à appliquer l'algorithme du Monte Carlo Tree Search dessus.
 \end{itemize}
 
-\par Notons que tous les algorithmes s'effectuent sur des arbres, et AlphaBeta ainsi que MiniMax se servent d'une heuristique pour évaluer chaque position.
+Notons que tous les algorithmes s'effectuent sur des arbres, et qu'AlphaBeta ainsi que MiniMax se servent d'une heuristique pour évaluer chaque position.
 
 \subsection{Zobrist hashing} \label{Zobrist}
 Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage "complexe" à
@@ -489,7 +484,7 @@ une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on pe
 états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des "tables de transposition", qui sont des tables de
 hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitmaps et quelques booléens
 supplémentaires pour les règles spécifiques.
-\\Nous disposons des structures suivantes pour générer nos hash:\\
+Nous disposons des structures suivantes pour générer nos hash:
 \begin{itemize}
     \item long PIECES[64][12]
     \item long EN\_PASSANT[8]
@@ -512,33 +507,32 @@ La version classique est très utile pour l'intelligence artificielle, pour le c
 à partir du moment où on l'a calculée une fois. Le gain de temps est considérable en particulier lorsqu'on utilise des heuristiques lourdes à calculer.
 
 \subsection{Cache}
-Afin que le programme soit plus performant, nous avons mis en place un système de "cache". Ce dernier permet d'éviter de recalculer plusieurs fois la même valeur en stockant le résultat grâce au Zobrist hashing mentionné précédemment.\\
+Afin que le programme soit plus performant, nous avons mis en place un système de "cache". Ce dernier permet d'éviter de recalculer plusieurs fois la même valeur en stockant le résultat grâce au Zobrist hashing mentionné précédemment.
 
-
-Nous avons pris la décision de stocker les valeurs les plus lourdes à calculer réutilisée par notre programme :
+Nous avons pris la décision de stocker les valeurs les plus lourdes à calculer réutilisées par notre programme:
 \begin{itemize}
-    \item Boolean isCheckWhite : Un booléen activé si le roi blanc est attaqué (échec).
-    \item Boolean isCheckMateWhite : Un booléen activé si le joueur blanc est échec et mat.
-    \item Boolean isCheckBlack : Un booléen activé si le roi noir est attaqué (échec).
-    \item Boolean isCheckMateBlack : Un booléen activé si le joueur noir est échec et mat.
-    \item Boolean isStalemateWhite : Un booléen activé si le joueur blanc est en situation de pat.
-    \item Boolean isStalemateBlack : Un booléen activé si le joueur noir est en situation de pat.
-    \item Long whiteAttackBitboard : Un long utilisé comme bitboard représentant les cases attaquées par les pièces blanches.
-    \item Long blackAttackBitboard : Un long utilisé comme bitboard représentant les cases attaquées par les pièces noires.\\
+    \item Boolean isCheckWhite: Un booléen activé si le roi blanc est attaqué (échec).
+    \item Boolean isCheckMateWhite: Un booléen activé si le joueur blanc est échec et mat.
+    \item Boolean isCheckBlack: Un booléen activé si le roi noir est attaqué (échec).
+    \item Boolean isCheckMateBlack: Un booléen activé si le joueur noir est échec et mat.
+    \item Boolean isStalemateWhite: Un booléen activé si le joueur blanc est en situation de pat.
+    \item Boolean isStalemateBlack: Un booléen activé si le joueur noir est en situation de pat.
+    \item Long whiteAttackBitboard: Un long utilisé comme bitboard représentant les cases attaquées par les pièces blanches.
+    \item Long blackAttackBitboard: Un long utilisé comme bitboard représentant les cases attaquées par les pièces noires.
 \end{itemize}
 
 L'utilisation de types élémentaires aurait été une solution pour économiser de l'espace, en utilisant le conteneur Optional présent en Java, néanmoins la nécessité du gain de temps nous oriente vers l'implémentation actuelle, des allocations fréquentes de Optional pouvant ralentir le programme lors de son execution.
 
 \subsection{Bidirectional Map}
-Puisque le stockage du plateau de jeu se fait à l'aide d'un vecteur de 16 bitboards nous avons rapidement eu besoin de lier chacune d'elle à un type pièce pour chaque couleur.
+Puisque le stockage du plateau de jeu se fait à l'aide d'un vecteur de 16 bitboards, nous avons rapidement eu besoin de lier chacune d'elle à un type de pièce pour chaque couleur.
 Nous avons donc implémeneté le type \textit{ColoredPiece} qui permet d'associer une pièce et une couleur. Ceci nous a donc permis d'associer chaque type de pièces à un indice
 de bitboard dans le vecteur. Certaines fonctions necéssitant d'obtenir un indice de bitboard à partir d'un pièce tandis que d'autres avaient besoin de l'inverse, nous avons implémeneté un système
 de Bidirectional Map afin de ne pas avoir à maintenir à jour deux HashMaps qui auraient mené à de la duplication de code. Ces nouvelles tables nous permettent donc de chercher un élément par clé ou par valeur et rend donc la
-correspondance index de bitboard/piece bien plus simple. 
+correspondance index de bitboard/piece bien plus simple.
 
 \subsection{Iterative Deepening}
 
-L'algorithme d'approfondissement itératif est utilisé dans notre projet en appui de l'algorithme AlphaBeta et de sa version parallèle. Il réalise des recherches en augmentant progressivement la profondeur (1, 2, 3, etc.) de manière successive. À chaque itération, le meilleur coup trouvé est placé au début de l'arbre de recherche, améliorant l'ordonnancement des coups pour l'algorithme d'élagage. Ainsi, ce procédé permet de réduire considérablement le nombre de positions évaluées.\\
+L'algorithme d'approfondissement itératif est utilisé dans notre projet en appui de l'algorithme AlphaBeta et de sa version parallèle. Il réalise des recherches en augmentant progressivement la profondeur (1, 2, 3, etc.) de manière successive. À chaque itération, le meilleur coup trouvé est placé au début de l'arbre de recherche, améliorant l'ordonnancement des coups pour l'algorithme d'élagage. Ainsi, ce procédé permet de réduire considérablement le nombre de positions évaluées.
 
 Le véritable avantage de l'approfondissement itératif vient de sa capacité à fournir une solution en temps réel tout en affinant progressivement l'analyse du jeu, optimisant ainsi le processus de décision dans le cas d'une limite de temps appliquée au joueur IA.
 Dans le cadre d'un jeu comme les échecs, il permet également de gagner du temps via l'amélioration de l'élagage.
@@ -553,7 +547,7 @@ Nous avons effectué plusieurs refactor afin d'arriver à une architecture plus 
 lorsqu'il y avait moins de nouvelles features ajoutées, nous nous sommes penchés sur les outils de qualité de code tels que \textit{Checkstyle} ou \textit{PMD}.
 
 Nous avons commencé par rajouter de la documentation sur les classes ainsi que sur leurs fields et méthodes. 
-Le mot clé final a été ajouté sur les variables et fields le nécéssitant. Cela permet de rajouter de la sécurité ainsi que la lisibilité du code.
+Le mot clé final a été ajouté sur les variables et fields le nécéssitant. Cela permet de rajouter de la sécurité ainsi que de la lisibilité au code.
 Les noms de fonctions ainsi que de variables on été modifiés afin de suivre les normes. Nous avons également suprimé la quasi totalité des \textit{System.out/err}.
 
 Après avoir corrigé de nombreux warnings, environ 500 d'entre eux sont toujours présents.
@@ -566,8 +560,8 @@ En effet, cela concerne les application utilisant Java Enterprise Edition, ce qu
 Le fait d'avoir au minium un constructeur par classe est également jugé inutile, en effet le compilateur le rajoute automatiquement s'il s'agit d'un constructeur vide.
 Le fait de pouvoir faire un return anticpé dans une fonction est quasi nécéssaire, si nous ne voulons pas entourer le code dans 
 d'énormes blocs de \textit{if}, nous avons donc supprimé la règle correspondante.
-Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujurs explicite (comme \textit{x} pour une position). 
-D'autres sont trop longues, mais avec la présence d'autocomplétion dans la plupart des IDE, nous avons préféré garder des noms explicites, qui peuvent être compliqué à raccoucir,
+Certaines variables sont jugées trop courtes, mais dans certains cas, une variable courte est toujours explicite (comme \textit{x} pour une position). 
+D'autres sont trop longues, mais avec la présence d'autocomplétion dans la plupart des IDE, nous avons préféré garder des noms explicites, qui peuvent être compliqués à raccoucir,
 comme \textit{isLastMoveDoublePush}.
 
 Après avoir utilisé ces outils de clean code, nous sommes passés de plus de 6000 warnings à moins de 500.
@@ -577,12 +571,12 @@ L'architecture principale du projet, sépare clairement la logique métier, l'af
 grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleur flexibilité dans la
 gestion d'évènements.
 Cette architecture est particulièrement pratique, aussi bien en termes de maintenance que d'extensibilité.
-Le Controller, ou plutôt le Bag Of Commands agit comme interprète entre la vue et le Model, il va recevoir des commandes de la part de la Vue et appeler les fonctions correspondantes dans le Model.
+Le Controller, ou plutôt le Bag Of Commands agit comme interprète entre la vue et le Model, il va recevoir des commandes de la part de la Vue capables d'appeler les fonctions correspondantes dans le Model.
 La vue a tout de même accès au Model, afin de récuperer les changements à afficher, ce qui évite de surcharcher le controller.
 
 L'avantage principal de cette architecture est le fait que le modèle ne connaisse pas la vue, ce qui nous permet de la changer facilement (GUI, CLI, ...).
 Cela pourrait également permettre de faire une application hybride avec Kotlin, important d'autres possibilitées de bibliothèques graphiques telles que Jetpack Compose,
-afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui permet d'avoir un visuel compatible Desktop, Web et Android.
+afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui permet d'avoir un visuel compatible Desktop, Web, Android et IOS.
 
 \begin{center}
     \includegraphics[width=0.5\textwidth]{MVC}
@@ -603,7 +597,7 @@ afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui per
 Le Modèle est lui même composé de plusieurs packages, afin de séparer les différentes patie de l'application :
 \begin{itemize}
     \item \textbf{AI} : Contient toute la partie IA, soit le solver, les algorithmes et les heuristiques.
-    \item \textbf{Board} : Contient le plateau de jeu, ses représenatation ainsi que classes utilitaires comme le cache, 
+    \item \textbf{Board} : Contient le plateau de jeu, ses représenatation ainsi que des classes utilitaires comme le cache, 
     les différentes représentations de mouvements ou le Zobrist hashing.
     \item \textbf{History} : Structure représentant l'historique de la partie sous forme de liste doublement chainée.
     \item \textbf{Parsers} : Parsing des fichers de configuration et de sauvegarde.
@@ -615,7 +609,7 @@ L'architecture du modèle est basée autour de \textit{GameAbstract}, contenant 
 (jouer un coup, vérifier si la partie est finie, gestion de l'historique,...) et possède deux implémentations concrètes : \textit{Game} et \textit{GameAi}.
 La première implémentation est un Singleton permettant d'avoir un point d'accès global dans l'application, notemment dans la vue, nous permettant la mise a jour de celle-ci sans avoir à envoyer de nombreux paramètres.
 La deuxième est une version plus légère de Game, utilisée dans les algorithmes d'IA, permettant d'obtenir de meileurs résultats lors de l'exploration.
-\textit{GameState} permet de stocker toutes les informations relatives  à l'état de la partie, telles que l'avancée dans la \textit{50 move rule} ou le plateau de jeu.
+\textit{GameState} permet de stocker toutes les informations relatives à l'état de la partie, telles que l'avancée dans la \textit{50 move rule} ou le plateau de jeu.
 \textit{BoardRepresentation} joue ici le rôle de façade, regroupant toutes les fonctions nécéssaires pour obtenir l'état d'un plateau (génération des coups, déplacement des pièces,...).
 Cette interface nous offre également l'opportunité de créer différentes implémentations, avec des Bitboard (notre classe \textit{BitboardRepresentation}), des tableaux 2D ou d'autres structures de données.
 \textit{BitboardRepresentation} sert à unifier toutes les sous classes (génération des mouvements, vérification des règles,..) et sert également à gérer le cache.
@@ -651,13 +645,13 @@ La vue est composée de plusieurs implémentations : la vue CLI, notre première
 et enfin la vue UCI qui permet de jouer contre d'autres IA comme on peut le voir sur la figure \ref{umlView}.
 
 Le GUI étant plus complexe, nous disposons d'un package gui regroupant les différentes classes utiles à cette implémentation. Le GUI appelle une classe GUILauncher afin de lancer
-le thread Javafx. Ce package n'a pas été représenté sur le diagramme de la figure \ref{umlView}, afin de garder celui -ci le plus lisible possible.
+le thread Javafx. Ce package n'a pas été représenté sur le diagramme de la figure \ref{umlView}, afin de garder celui-ci le plus lisible possible.
 
 L'ajout d'un autre type de vue est grandement simplifié grâce au pattern Observer. En effet, il permet au Model d'envoyer des notifications lorsqu'un certain nombre d'évènement
-se produisent. La vue doit donc implémeneter les évènements de la manière dont elle le souhaite. Il n'est pas nécéssaire d'implémeneter tous les évènements, ce qui permet d'ajouter des vues minimales,
+se produisent. La vue doit donc implémenter les évènements de la manière dont elle le souhaite. Il n'est pas nécéssaire d'implémeneter tous les évènements, ce qui permet d'ajouter des vues minimales,
 comme notre interface UCI qui ne prend en charge que quelques évènements de base. Ces évènements sont envoyés à la vue via les fonctions \textit{onGameEvent} et \textit{onErrorEvent}.
 
-Nous partons du principe que la vue peut se servir des données de la vue sans passer par le controller, mais ne peut pas y appliquer de modification. Cela permet d'alléger le controller
+Nous partons du principe que la vue peut se servir des données du modèle sans passer par le controller, mais ne peut pas y appliquer de modification. Cela permet d'alléger le controller
 et d'afficher automatiquement les mises à jour du modèle dans la vue, sans avoir besoin d'envoyer de commandes.
 
 \begin{figure}[h]
