@@ -679,14 +679,14 @@ nous en avons une dizaine, qui chacune implémente l'interface \textit{Command}.
 
 \subsubsection{Utils}
 Notre package \textit{Utils} regroupe des classes auxilliaires, n'ayant pas réellement de lien avec la logique métier.
-On y retrouve par exemple la classe permettant de gérer le temps, \textit{Timer}, l'affichage de messages de grâce à la classe \textit{Logging}
+On y retrouve par exemple la classe permettant de gérer le temps, \textit{Timer}, l'affichage de messages grâce à la classe \textit{Logging}
 ou encore l'internationnalisation avec \textit{TextGetter}. Ces deux dernières classes contiennent uniquement des méthodes et fields \textit{static}
 afin de garantir l'unicité ainsi qu'une facilité d'accès au sein de l'application.
 
 \subsubsection{Format d'IO}
 Nous possédons un package \textit{savers} et un package \textit{parsers} dans le modèle, où l'on peut retrouver les différentes classes nous permettant d'écrire ou lire des fichiers.
-C'est par exemple ici que l'on trouve le \textit{BoardFileParser}, utilisant le générateur de parser ANTLR-4 afin de lire les fichiers de sauvegarde sans historique, ou encore le \textit{FenParser} 
-de lire les header en format FEN pour enlever toute ambiguité dans la lecture d'un plateau de jeu.
+C'est par exemple ici que l'on trouve le \textit{BoardFileParser}, utilisant le générateur de parser ANTLR-4 afin de lire les fichiers de sauvegarde sans historique, ou encore le \textit{FenParser} permettant
+de lire les pateaux de jeu au format FEN pour enlever toute ambiguité dans la lecture d'un plateau de jeu.
 
 \subsubsection{Events}
 Le package \textit{events} nous permet de regrouper les différents évènements pouvant se produire au cours d'une partie, afin de pouvoir envoyer des notification à la vue.
@@ -702,13 +702,13 @@ Comme on peut le voir dans la figure \ref{umlEvents}, la classe \textit{Subject}
 La classe \textit{Subject} est étendue par GameAbstract, ce qui permet aux différentes Games de pouvoir être observées. C'est ce qui permet au modèle de notifier la vue par exemple.
 
 \subsubsection{Classes en dehors des packages}
-Nous possédons trois classes se trouvant en dehors de packages : \textit{Main}, qui permet de lancer l'application, 
+Nous possédons trois classes se trouvant en dehors de packages: \textit{Main}, qui permet de lancer l'application, 
 \textit{GameInitializer} et \textit{GameControllerInit}. La deuxième se charge d'initialiser la Game en fonction des options données en lignes de commandes, des options par défaut
 et des options données dans le GUI si c'est l'interface utilisée. La dernière appelle \textit{GameInitializer}, créee la vue demandée et crée le controller de l'application.
 Ces classes étant centrales, nous avons décidé de les mettre à la ``racine'' du projet.
 \subsubsection{Design Patterns Utilisés}
 
-Les différents design patterns utilisés dans ce projet sont les suivants :
+Les différents design patterns utilisés dans ce projet sont les suivants:
 \begin{itemize}
     \item \textbf{Singleton} : Utilisé pour la classe \texttt{Game} pour s'assurer qu'une seule instance de la partie est présente.
     La classe \texttt{BagOfCommands} utilise ce design pattern afin que la gestion des commandes ne soit gérée que par un seul bag.
@@ -767,17 +767,17 @@ Nous utiliserons donc ce graphe pour vérifier le caractère parallèle de certa
 \FloatBarrier
 
 \subsection{Optimisations Intelligence Artificielle}
-À la suite de l'implémentation des algorithmes d'IA démandés, nous avons remarqué que les performances du programmes étaient assez contrastées. En effet, le facteur
+À la suite de l'implémentation des algorithmes d'IA demandés, nous avons remarqué que les performances du programmes étaient assez contrastées. En effet, le facteur
 de branchement moyen étant 35, le passage d'une profondeur à une profondeur+1 demande un temps de calcul beaucoup plus long. Nous avons donc pu atteindre la profondeur 3
 en temps raisonnable sans optimisation. Afin d'améliorer l'IA nous avons donc ensuite mis en place différentes optimisations. Pour commencer nous avons adapté nos heuristiques
 pour qu'elles puissent utiliser directement les bitboard afin de tirer le meilleur de la structure de données et d'enlever des couches d'abstractions.
 \subsubsection{Utilisation du cache}
  Nous avons par la suite 
 remarqué que le calcul de certaines fonctions était chronophage et ne pouvait pas être diminué en complexité facilement. C'est par exemple le cas des fonction de détection de 
-l'échec, échec et mat, pat qui sont utilisé lors de l'évaluation du plateau mais également lorsque qu'un coup est jouer pour vérifier si le coup est légal (sans compter le fait 
+l'échec, échec et mat, pat qui sont utilisé lors de l'évaluation du plateau mais également lorsque qu'un coup est joué pour vérifier si le coup est légal (sans compter le fait 
 qu'un plateau peut apparaître plusieurs fois). Grace au Zobrist hashing, nous avons donc implémenté une sorte de cache pour ne pas reclaculer ces fonctions pour le même plateau 
 plusieurs fois. Nous avons donc stocké les résultats des fonctions précédentes ainsi que les bitboards de mouvements puisqu'elles sont très solicitées lors de l'évaluation des
-plateaux. Nous avons donc pu comparer une exécution avec un cache de 10000 entré et une autre sans cache comme le présente la figure \ref{cache_cmp}.
+plateaux. Nous avons pu comparer une exécution avec un cache de 10000 entré et une autre sans cache comme le présente la figure \ref{cache_cmp}.
 
 \begin{figure}[h]
     \centering
