@@ -822,7 +822,7 @@ utilisé le mode \textit{Monitor} disponible dans notre logiciel et vérifier le
     \centering
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_mo.png}
     \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{without_mo.png}
-    \caption{Comparaison d'un exécution avec (gauche) et sans (droite) move ordering}
+    \caption{Comparaison d'une exécution avec (gauche) et sans (droite) move ordering}
     \label{move_ordering_cmp_monitor}
 \end{figure}
 \FloatBarrier
@@ -835,26 +835,7 @@ que lorsque les derniers coups de la partie (et plus généralement lorsque l'on
 obtient des résultats moindres. Finalement, puisque le cas de la figure \ref{move_ordering_cmp} se déroule en millieu de partie on parvient à obtenir un résultat légérement meilleur.
 
 
-\subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
-
-Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau, rendant ainsi les versions parallèles plus performantes \ref{parallel_cmp_trace}.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_parallel.png}
-    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{without_parallel.png}
-    \caption{Comparaison d'un exécution de Alpha-Beta avec (gauche) et sans (droite) parallélisation}
-    \label{parallel_cmp_trace}
-\end{figure}
-\FloatBarrier
-
-En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5 fois plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
-
-À l'inverse, les versions utilisant l'iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s'explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l'élagage alpha-bêta dès les premières itérations.
-
-Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2 fois pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1 fois pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures, même si le coût d'exploration est plus élevé.
-
-Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
+\subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière. Les mesures parallèles ont été effectuées sur 24 threads, et les résultats sont présentés dans le tableau \ref{tab:ab_comparison}.
 
 \begin{table}[h]
     \centering
@@ -874,6 +855,34 @@ Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la par
         \hline
     \end{tabular}
 \end{table}
+\FloatBarrier
+
+Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau \textsuperscript{\ref{no_parallel_trace}}, rendant ainsi les versions parallèles plus performantes \textsuperscript{\ref{parallel_trace}}. 
+Il est néanmoins nécessaire de mentionner que les threads ne terminant pas au même moment (certaines recherches pouvant être plus longues que d'autres), il est possible que certains threads soient inactifs pendant une partie de la recherche. Cela peut entraîner une légère perte d'efficacité dans le traitement parallèle, mais cela reste négligeable par rapport aux gains de performance globaux.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{without_parallel.png}
+    \caption{Trace d'exécution de Alpha-Beta sans parallélisation}
+    \label{no_parallel_trace}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_parallel.png}
+    \caption{Trace d'exécution de Alpha-Beta avec parallélisation dut 8 threads}
+    \label{parallel_trace}
+\end{figure}
+\FloatBarrier
+
+En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5 fois plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
+
+À l'inverse, les versions utilisant l'iterative deepening (\texttt{ALPHA\_BETA\_ID} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) explorent moins de nœuds que leurs homologues non-itératifs. Cela s'explique par un meilleur tri des coups (move ordering), qui améliore significativement l'efficacité de l'élagage alpha-bêta dès les premières itérations.
+
+Enfin, concernant le temps moyen pour jouer un coup, les versions parallèles sont plus rapides que les versions séquentielles, avec un gain de 2.2 fois pour \texttt{ALPHA\_BETA\_PARALLEL} et de 3.1 fois pour \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Ces résultats montrent que la parallélisation permet d'atteindre des performances nettement supérieures \textsuperscript{\ref{plot}}, même si le coût d'exploration est plus élevé. 
+L'ordonnancement des coups plus précis réalisé par l'iterative deepening permet également une réduction de 15\% du temps de recherche entre les deux versions parallèles, pour une économie de 25\% du nombre de noeuds explorés \textsuperscript{\ref{tab:ab_comparison}}.
+
+Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la parallélisation, tout en conservant une qualité de décision constante entre toutes les variantes.
 
 
 \subsection{Profondeur de recherche}
