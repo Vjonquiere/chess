@@ -837,7 +837,16 @@ obtient des résultats moindres. Finalement, puisque le cas de la figure \ref{mo
 
 \subsection{Comparaison des variantes d'Alpha-Beta} Afin d'évaluer les performances de nos différentes versions de l'algorithme Alpha-Beta, nous avons comparé les variantes suivantes : \texttt{ALPHA\_BETA}, \texttt{ALPHA\_BETA\_PARALLEL}, \texttt{ALPHA\_BETA\_ID}, et \texttt{ALPHA\_BETA\_ID\_PARALLEL}. Toutes ont été testées dans les mêmes conditions, une partie en tant que blanc avec une profondeur de 5. Les moyennes correspondent aux données récoltées sur une partie entière.
 
-Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau.
+Les versions parallèles (\texttt{ALPHA\_BETA\_PARALLEL} et \texttt{ALPHA\_BETA\_ID\_PARALLEL}) traitent plus de nœuds par seconde, avec des performances similaires entre elles. En revanche, les versions séquentielles sont plus lentes à ce niveau, rendant ainsi les versions parallèles plus performantes \ref{parallel_cmp_trace}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{with_parallel.png}
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{without_parallel.png}
+    \caption{Comparaison d'un exécution de Alpha-Beta avec (gauche) et sans (droite) parallélisation}
+    \label{parallel_cmp_trace}
+\end{figure}
+\FloatBarrier
 
 En termes de nombre total de nœuds explorés, les versions parallèles explorent environ 1.5 fois plus de nœuds que leurs équivalents séquentiels. Ce surcoût est dû à un élagage moins efficace, un premier sous-arbre est évalué pour fixer $\alpha$, mais les autres sous-arbres sont évalués en parallèle, ce qui réduit l'effet des coupures alpha-bêta dans les branches explorées ensuite.
 
