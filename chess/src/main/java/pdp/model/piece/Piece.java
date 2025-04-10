@@ -4,43 +4,43 @@ package pdp.model.piece;
 public enum Piece {
   PAWN {
     @Override
-    public char getCharRepresentation(boolean white) {
+    public char getCharRepresentation(final boolean white) {
       return white ? 'P' : 'p';
     }
   },
   ROOK {
     @Override
-    public char getCharRepresentation(boolean white) {
+    public char getCharRepresentation(final boolean white) {
       return white ? 'R' : 'r';
     }
   },
   BISHOP {
     @Override
-    public char getCharRepresentation(boolean white) {
+    public char getCharRepresentation(final boolean white) {
       return white ? 'B' : 'b';
     }
   },
   KNIGHT {
     @Override
-    public char getCharRepresentation(boolean white) {
+    public char getCharRepresentation(final boolean white) {
       return white ? 'N' : 'n';
     }
   },
   QUEEN {
     @Override
-    public char getCharRepresentation(boolean white) {
+    public char getCharRepresentation(final boolean white) {
       return white ? 'Q' : 'q';
     }
   },
   KING {
     @Override
-    public char getCharRepresentation(boolean white) {
+    public char getCharRepresentation(final boolean white) {
       return white ? 'K' : 'k';
     }
   },
   EMPTY {
     @Override
-    public char getCharRepresentation(boolean white) {
+    public char getCharRepresentation(final boolean white) {
       return '_';
     }
   };

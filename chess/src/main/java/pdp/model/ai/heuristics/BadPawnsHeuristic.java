@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import pdp.model.board.Board;
 import pdp.model.board.BoardRepresentation;
 import pdp.utils.Position;
 
@@ -15,8 +14,25 @@ import pdp.utils.Position;
  */
 public class BadPawnsHeuristic implements Heuristic {
 
+  /** Score cap for the heuristic (absolute value cap). */
+  private static final float SCORE_CAP = 100f;
+
   /** Penalty for the backward pawns. */
-  private static final int PENALTY_FOR_BACKWARDS_PAWN = 4;
+  private static final float PENALTY_FOR_BACKWARDS_PAWN = -4f;
+
+  /** Penalty for the isolated pawns. */
+  private static final float PENALTY_FOR_ISOLATED_PAWN = -1f;
+
+  /** Penalty for the doubled pawns. */
+  private static final float PENALTY_FOR_DOUBLED_PAWN = -1f;
+
+  /** The multiplier used to keep the values under SCORE_CAP. */
+  private static final float MULTIPLIER =
+      SCORE_CAP
+          / Math.abs(
+              PENALTY_FOR_BACKWARDS_PAWN * 4
+                  + PENALTY_FOR_DOUBLED_PAWN * 4
+                  + PENALTY_FOR_ISOLATED_PAWN * 8);
 
   /**
    * Computes a score according to the potential weaknesses in the observed pawn structures.
@@ -26,12 +42,15 @@ public class BadPawnsHeuristic implements Heuristic {
    * @return a score based on how bad pawns are for the corresponding player
    */
   @Override
-  public float evaluate(final Board board, final boolean isWhite) {
-    int score = 0;
-    score += doubledPawns(board, true) - doubledPawns(board, false);
-    score += isolatedPawns(board, true) - isolatedPawns(board, false);
-    score += backwardsPawns(board, true) - backwardsPawns(board, false);
-    return isWhite ? (int) (-0.5 * score) : (int) (-0.5 * -score);
+  public float evaluate(final BoardRepresentation board, final boolean isWhite) {
+    float score = 0;
+    score += (doubledPawns(board, true) - doubledPawns(board, false)) * PENALTY_FOR_DOUBLED_PAWN;
+    score += (isolatedPawns(board, true) - isolatedPawns(board, false)) * PENALTY_FOR_ISOLATED_PAWN;
+    score +=
+        (backwardsPawns(board, true) - backwardsPawns(board, false)) * PENALTY_FOR_BACKWARDS_PAWN;
+
+    score *= MULTIPLIER;
+    return isWhite ? score : -score;
   }
 
   /**
@@ -41,10 +60,10 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if the player is White, false if he is black
    * @return number of doubled pawns
    */
-  private int doubledPawns(final Board board, final boolean isWhite) {
+  private int doubledPawns(final BoardRepresentation board, final boolean isWhite) {
     final Map<Integer, Integer> colCount = new HashMap<>();
     int count = 0;
-    for (final Position p : board.getBoardRep().getPawns(isWhite)) {
+    for (final Position p : board.getPawns(isWhite)) {
       colCount.put(p.x(), colCount.getOrDefault(p.x(), 0) + 1);
     }
     for (final int c : colCount.keySet()) {
@@ -62,9 +81,9 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if the player is White, false if he is black
    * @return number of isolated pawns
    */
-  private int isolatedPawns(final Board board, final boolean isWhite) {
+  private int isolatedPawns(final BoardRepresentation board, final boolean isWhite) {
     final Set<Integer> occupiedFiles = new HashSet<>();
-    final List<Position> pawns = board.getBoardRep().getPawns(isWhite);
+    final List<Position> pawns = board.getPawns(isWhite);
     for (final Position p : pawns) {
       occupiedFiles.add(p.x());
     }
@@ -91,10 +110,9 @@ public class BadPawnsHeuristic implements Heuristic {
    * @param isWhite true if white, false otherwise
    * @return score based on the number of backward pawns
    */
-  private int backwardsPawns(final Board board, final boolean isWhite) {
-    final BoardRepresentation bitboard = board.getBoardRep();
-    final List<Position> pawns = bitboard.getPawns(isWhite);
-    final List<Position> enemyPawns = bitboard.getPawns(!isWhite);
+  private int backwardsPawns(final BoardRepresentation board, final boolean isWhite) {
+    final List<Position> pawns = board.getPawns(isWhite);
+    final List<Position> enemyPawns = board.getPawns(!isWhite);
 
     int count = 0;
 
@@ -150,6 +168,6 @@ public class BadPawnsHeuristic implements Heuristic {
       }
     }
 
-    return count * PENALTY_FOR_BACKWARDS_PAWN;
+    return count;
   }
 }

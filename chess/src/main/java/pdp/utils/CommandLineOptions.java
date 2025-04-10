@@ -4,11 +4,14 @@ import static pdp.utils.Logging.debug;
 import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -21,11 +24,19 @@ import org.apache.commons.cli.ParseException;
 
 /** Utility class to parse the command line options. */
 public final class CommandLineOptions {
-  /** Logger of the class. */
-  private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
+
+  /** Location of the default configuration folder. */
+  private static final String USER_SETTINGS_DIR =
+      System.getProperty("user.home") + "/.chessSettings";
 
   /** Default name of the configuration file. Not final for test purposes. */
   private static String defaultConfigFile = "default.chessrc";
+
+  /** Location of the default configuration file */
+  private static final String USER_DEFAULT_CONFIG = USER_SETTINGS_DIR + "/default.chessrc";
+
+  /** Logger of the class. */
+  private static final Logger LOGGER = Logger.getLogger(CommandLineOptions.class.getName());
 
   /** Private constructor to avoid instantiation. */
   private CommandLineOptions() {}
@@ -59,7 +70,7 @@ public final class CommandLineOptions {
       if (handleImmediateExitOptions(cmd, options, runtime)) {
         return null;
       }
-      processOptions(cmd, defaultArgs, activatedOptions);
+      processOptions(cmd, defaultArgs, activatedOptions, options, runtime);
 
       if (!cmd.getArgList().isEmpty()) {
         final String loadFile = cmd.getArgList().get(0);
@@ -76,48 +87,40 @@ public final class CommandLineOptions {
     return activatedOptions;
   }
 
-  /**
-   * Loads the default arguments from a specified configuration file.
-   *
-   * <p>The method attempts to load a configuration file with a given ".chessrc" filename. If it
-   * cannot be found, the default configuration file is used instead. If both the specified and
-   * default files are not found, an empty map is returned.
-   *
-   * @param file The filename of the configuration file to load.
-   * @param activatedOptions A map to store the activated options, where the configuration file name
-   *     is stored under the CONFIG key.
-   * @return A map of default arguments read from the configuration file.
-   */
   private static Map<String, String> loadDefaultArgs(
-      String file, final HashMap<OptionType, String> activatedOptions) {
+      String file, final HashMap<OptionType, String> activatedOptions) throws IOException {
     InputStream inputStream = null;
+
     if (file != null && !file.endsWith(".chessrc")) {
       file = null;
-      print("Selected file is not of .chessrc format, defaulting to default options");
+      print("Invalid config file format. Must end with .chessrc. Using defaults.");
       activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
     }
+
     if (file != null) {
       try {
         inputStream = new FileInputStream(file);
+        activatedOptions.put(OptionType.CONFIG, file);
+        debug(LOGGER, "Using user-provided config: " + file);
       } catch (FileNotFoundException e) {
-        error("Error while parsing chessrc file: " + e.getMessage());
-        error("Default options will be used");
+        error("Config file not found: " + file);
         file = null;
-        activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
       }
     }
+
     if (file == null) {
+      final File userConfigFile = new File(USER_DEFAULT_CONFIG);
+      ensureUserConfigExists(userConfigFile);
+
       try {
+        inputStream = new FileInputStream(userConfigFile);
+        activatedOptions.put(OptionType.CONFIG, USER_DEFAULT_CONFIG);
+        debug(LOGGER, "Using user home config: " + USER_DEFAULT_CONFIG);
+      } catch (FileNotFoundException e) {
         inputStream =
             CommandLineOptions.class.getClassLoader().getResourceAsStream(defaultConfigFile);
         activatedOptions.put(OptionType.CONFIG, defaultConfigFile);
-        if (inputStream == null) {
-          throw new FileNotFoundException("config.chessrc not found in classpath!");
-        }
-      } catch (Exception e) {
-        error("Error while parsing chessrc file: " + e.getMessage());
-        activatedOptions.put(OptionType.CONFIG, null);
-        return new HashMap<>();
+        debug(LOGGER, "Falling back to resource config");
       }
     }
 
@@ -126,13 +129,41 @@ public final class CommandLineOptions {
         final Map<String, Map<String, String>> iniMap = IniParser.parseIni(inputStream);
         return iniMap.getOrDefault("Default", new HashMap<>());
       } catch (Exception e) {
-        activatedOptions.put(OptionType.CONFIG, null);
+        error("Error parsing config: " + e.getMessage());
         return new HashMap<>();
       }
     }
 
-    activatedOptions.put(OptionType.CONFIG, null);
     return new HashMap<>();
+  }
+
+  /**
+   * Ensures the user config file exists by copying from resources if needed. Returns true if the
+   * file exists or was successfully created.
+   */
+  private static boolean ensureUserConfigExists(File userConfigFile) {
+    if (userConfigFile.exists()) {
+      return true;
+    }
+
+    File parentDir = userConfigFile.getParentFile();
+    if (parentDir != null && !parentDir.exists()) {
+      parentDir.mkdirs();
+    }
+
+    try (InputStream is = CommandLineOptions.class.getResourceAsStream("/" + defaultConfigFile);
+        FileOutputStream fos = new FileOutputStream(userConfigFile)) {
+      byte[] buffer = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = is.read(buffer)) != -1) {
+        fos.write(buffer, 0, bytesRead);
+      }
+      print("Created default config at: " + userConfigFile.getAbsolutePath());
+      return true;
+    } catch (IOException | NullPointerException e) {
+      error("Failed to create user config: " + e.getMessage());
+      return false;
+    }
   }
 
   /**
@@ -185,6 +216,29 @@ public final class CommandLineOptions {
   }
 
   /**
+   * Handles the command line options that require a valid file path. This method checks for the
+   * presence of the --contest, --load, and --config options and if the path provided is null or
+   * empty.
+   *
+   * @param activatedOptions The map of activated command line options.
+   * @param runtime The runtime to exit.
+   */
+  private static void handlePathInput(
+      final HashMap<OptionType, String> activatedOptions, final Runtime runtime) {
+    for (final OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
+      if (activatedOptions.containsKey(type)) {
+        final String path = activatedOptions.get(type);
+        if (path == null || path.isEmpty()) {
+          error("Error: --" + type.getLong() + " option requires a valid file path.");
+          error("Use '-h' option for a list of available options.");
+          activatedOptions.remove(type);
+          runtime.exit(1);
+        }
+      }
+    }
+  }
+
+  /**
    * Processes the command line general options and the default arguments to build a map of the
    * activated options. The map contains the option name as the key and the option value as the
    * value.
@@ -196,7 +250,9 @@ public final class CommandLineOptions {
   private static void processOptions(
       final CommandLine cmd,
       final Map<String, String> defaultArgs,
-      final HashMap<OptionType, String> activatedOptions) {
+      final HashMap<OptionType, String> activatedOptions,
+      final Options options,
+      final Runtime runtime) {
     for (final OptionType option : OptionType.values()) {
 
       if (option == OptionType.CONFIG) {
@@ -219,34 +275,34 @@ public final class CommandLineOptions {
         debug(LOGGER, option.getLong() + " option activated");
 
         if (option == OptionType.LANG) {
-          if (value.equals("en")) {
-            debug(LOGGER, "Language = English (already set by default)");
-            // TODO: de-comment when french file finished
-          } else if (value.equals("fr")) {
-            debug(LOGGER, "Language = French");
-            TextGetter.setLocale("fr");
-          } else {
-            error(
-                "Language "
-                    + cmd.getOptionValue(option.getLong(), "")
-                    + " not supported, language = english");
+          switch (value) {
+            case "en" -> {
+              debug(LOGGER, "Language = English (already set by default)");
+              TextGetter.setLocale("en");
+            }
+            case "fr" -> {
+              debug(LOGGER, "Language = French");
+              TextGetter.setLocale("fr");
+            }
+            default -> {
+              error(
+                  "Language "
+                      + cmd.getOptionValue(option.getLong(), "")
+                      + " not supported, language = english");
+              TextGetter.setLocale("en");
+            }
           }
-        }
-
-        if (!isFeatureImplemented(option)) {
-          error(option.getLong() + " not implemented yet");
         }
       }
     }
 
+    handlePathInput(activatedOptions, runtime);
+
     if (activatedOptions.containsKey(OptionType.CONTEST)) {
-      String contestFile = activatedOptions.get(OptionType.CONTEST);
-      if (contestFile == null || contestFile.isEmpty()) {
-        System.err.println("Error: --contest option requires a valid file path.");
-        activatedOptions.remove(OptionType.CONTEST);
-      } else {
-        debug(LOGGER, "Contest mode activated with file: " + contestFile);
-      }
+      activatedOptions.put(OptionType.AI, "A");
+      activatedOptions.remove(OptionType.LOAD);
+      debug(
+          LOGGER, "Contest mode activated with file: " + activatedOptions.get(OptionType.CONTEST));
     }
 
     if (activatedOptions.containsKey(OptionType.TIME)
@@ -259,7 +315,7 @@ public final class CommandLineOptions {
     }
 
     if (activatedOptions.containsKey(OptionType.AI)
-        && activatedOptions.get(OptionType.AI).equals("")) {
+        && activatedOptions.get(OptionType.AI).isEmpty()) {
       activatedOptions.put(OptionType.AI, "W");
     }
 
@@ -366,24 +422,9 @@ public final class CommandLineOptions {
       activatedOptions.remove(OptionType.AI_HEURISTIC);
 
       if (activatedOptions.containsKey(OptionType.AI_TIME)
-          && activatedOptions.get(OptionType.AI_TIME).equals("")) {
+          && activatedOptions.get(OptionType.AI_TIME).isEmpty()) {
         activatedOptions.put(OptionType.AI_TIME, "5");
       }
     }
-  }
-
-  /**
-   * Returns whether the given option is implemented in the program or not.
-   *
-   * <p>This method is used to check if a given option is implemented in the program in order to
-   * warn the user.
-   *
-   * @param option The option to check.
-   * @return Whether the given option is implemented.
-   */
-  private static boolean isFeatureImplemented(final OptionType option) {
-    return switch (option) {
-      default -> true;
-    };
   }
 }

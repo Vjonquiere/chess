@@ -23,15 +23,27 @@
     <rule ref="category/java/codestyle.xml">
         <!--At least one constructor and no empty constructor were present, cannot satisfy both in some simple classes -->
         <exclude name="AtLeastOneConstructor"/>
+        <exclude name="ShortVariable" />
+        <exclude name="OnlyOneReturn"/>
+        <exclude name="LongVariable"/>
     </rule>
-    <rule ref="category/java/design.xml"/>
+    <rule ref="category/java/design.xml">
+        <exclude name="AvoidCatchingGenericException"/>
+    </rule>
     <rule ref="category/java/design.xml/LawOfDemeter">
-    <properties>
-        <property name="trustRadius" value="2" />
-    </properties>
-</rule>
+        <properties>
+            <property name="trustRadius" value="2" />
+        </properties>
+    </rule>
 
     <rule ref="category/java/errorprone.xml"/>
+
+    <rule ref="category/java/errorprone.xml/EmptyCatchBlock">
+        <properties>
+            <property name="allowCommentedBlocks" value="false" />
+            <property name="allowExceptionNameRegex" value="^(ignored|expected)$" />
+        </properties>
+    </rule>
 
     <rule ref="category/java/multithreading.xml">
         <exclude name="DoNotUseThreads"/>

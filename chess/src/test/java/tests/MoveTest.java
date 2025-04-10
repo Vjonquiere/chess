@@ -1,15 +1,20 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.InvalidPositionException;
 import pdp.model.Game;
+import pdp.model.board.CastlingMove;
+import pdp.model.board.EnPassantMove;
 import pdp.model.board.Move;
 import pdp.model.board.PromoteMove;
 import pdp.model.piece.Color;
@@ -23,10 +28,16 @@ public class MoveTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   void setUpConsole() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -34,6 +45,7 @@ public class MoveTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
@@ -279,10 +291,67 @@ public class MoveTest {
     assertEquals(new Position(4, 1), move.getSource());
     assertEquals(new Position(4, 3), move.getDest());
     assertEquals(Move.fromString("e2-e4"), move);
+  }
 
-    /*move = Move.fromUciString("e7e8R");
-    assertEquals(new Position(4, 6), move.getSource());
-    assertEquals(new Position(4, 4), move.getDest());
-    assertEquals(Move.fromString("e7-e5"), move);*/
+  @Test
+  public void testWhiteShortCastlingMoveToUciString() {
+    CastlingMove cm =
+        new CastlingMove(
+            new Position(4, 0),
+            new Position(6, 0),
+            new ColoredPiece(Piece.KING, Color.WHITE),
+            true);
+    assertEquals("e1g1", cm.toUciString());
+    assertNotEquals(cm.toString(), cm.toUciString());
+  }
+
+  @Test
+  public void testWhiteLongCastlingMoveToUciString() {
+    CastlingMove cm =
+        new CastlingMove(
+            new Position(4, 0),
+            new Position(1, 0),
+            new ColoredPiece(Piece.KING, Color.WHITE),
+            false);
+    assertEquals("e1b1", cm.toUciString());
+    assertNotEquals(cm.toString(), cm.toUciString());
+  }
+
+  @Test
+  public void testBlackShortCastlingMoveToUciString() {
+    CastlingMove cm =
+        new CastlingMove(
+            new Position(4, 7),
+            new Position(6, 7),
+            new ColoredPiece(Piece.KING, Color.BLACK),
+            true);
+    assertEquals("e8g8", cm.toUciString());
+    assertNotEquals(cm.toString(), cm.toUciString());
+  }
+
+  @Test
+  public void testBlackLongCastlingMoveToUciString() {
+    CastlingMove cm =
+        new CastlingMove(
+            new Position(4, 7),
+            new Position(1, 7),
+            new ColoredPiece(Piece.KING, Color.BLACK),
+            false);
+    assertEquals("e8b8", cm.toUciString());
+    assertNotEquals(cm.toString(), cm.toUciString());
+  }
+
+  @Test
+  public void testEnPassantMoveToUciString() {
+    EnPassantMove em =
+        new EnPassantMove(
+            new Position(1, 4),
+            new Position(2, 5),
+            new ColoredPiece(Piece.PAWN, Color.WHITE),
+            new Position(2, 4),
+            new ColoredPiece(Piece.PAWN, Color.BLACK));
+    assertEquals("b5c6", em.toUciString());
+    assertNotEquals(em.toString(), em.toUciString());
+    assertEquals(em.toString().replace("x", ""), em.toUciString());
   }
 }

@@ -20,31 +20,36 @@ import pdp.view.GuiView;
 public class SettingsEditorPopup extends VBox {
   /** Build a new popup to edit settings. */
   public SettingsEditorPopup() {
-    Stage popupStage = new Stage();
+    super();
+    final Stage popupStage = new Stage();
     popupStage.setTitle(TextGetter.getText("settings.edit"));
     popupStage.initModality(Modality.APPLICATION_MODAL);
-    VBox layout = new VBox(10);
+    final VBox layout = new VBox(10);
 
-    Button saveButton = new Button(TextGetter.getText("save"));
+    final Button saveButton = new Button(TextGetter.getText("save"));
 
-    String path = Game.getInstance().getOptions().get(OptionType.CONFIG);
+    final String path = Game.getInstance().getOptions().get(OptionType.CONFIG);
     String text = "";
 
     try {
       text = new BoardFileParser().readFile(path);
     } catch (FileNotFoundException e) {
       try {
-        URL filePath = getClass().getClassLoader().getResource("default.chessrc");
+        final URL filePath = getClass().getClassLoader().getResource("default.chessrc");
         text = new BoardFileParser().readFile(filePath.getPath());
       } catch (Exception ex) {
         ex.printStackTrace();
       }
     }
-    TextArea textArea = new TextArea(text);
-    saveButton.setOnAction(e -> ConfigFileSaver.save(path, textArea.getText()));
+    final TextArea textArea = new TextArea(text);
+    saveButton.setOnAction(
+        e -> {
+          ConfigFileSaver.save(path, textArea.getText());
+          popupStage.close();
+        });
     layout.getChildren().add(textArea);
 
-    Button closeButton = new Button(TextGetter.getText("close"));
+    final Button closeButton = new Button(TextGetter.getText("close"));
     closeButton.setOnAction(e -> popupStage.close());
     layout.getChildren().add(closeButton);
 
@@ -52,7 +57,7 @@ public class SettingsEditorPopup extends VBox {
 
     layout.setAlignment(Pos.TOP_CENTER);
     layout.setStyle("-fx-padding: 15;");
-    Scene scene = new Scene(layout);
+    final Scene scene = new Scene(layout);
     GuiView.applyCss(scene);
     popupStage.setScene(scene);
     popupStage.showAndWait();

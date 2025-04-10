@@ -4,9 +4,7 @@ import static pdp.utils.Logging.debug;
 import static pdp.utils.Logging.error;
 import static pdp.utils.Logging.print;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import pdp.controller.BagOfCommands;
@@ -23,16 +21,25 @@ import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.model.GameAbstract;
 import pdp.model.GameState;
+import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.utils.Logging;
+import pdp.utils.OptionType;
 
 /** View used to communicate with other chess engines. */
 public class UciView implements View {
-  private boolean running = false;
+  /** Boolean to indicate whether the view is running or not. */
+  private boolean running;
+
+  /** Map making a correspondance between a string and the command it represents. */
   private final Map<String, CommandEntry> commands = new HashMap<>();
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(UciView.class.getName());
+
+  /** Solver to make the moves against another AI. */
   private final Solver solver = new Solver();
 
   static {
@@ -44,7 +51,7 @@ public class UciView implements View {
    * move rule and threefold repetition. The other chess engine use a 5-fold repetition and a 75
    * move rule, we adapt our game the same way.
    */
-  public UciView() {
+  public UciView(final HashMap<OptionType, String> options) {
     commands.put("uci", new CommandEntry(this::uciCommand, "uci"));
     commands.put("ucinewgame", new CommandEntry(this::uciNewGameCommand, "uci new game"));
     commands.put("position", new CommandEntry(this::positionCommand, "position"));
@@ -53,7 +60,30 @@ public class UciView implements View {
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
     GameAbstract.setThreeFoldLimit(5);
     GameState.setFiftyMoveLimit(75);
-    solver.setEndgameHeuristic(HeuristicType.STANDARD);
+    final Solver aiConfiguration = Game.getInstance().getWhiteSolver();
+    if (aiConfiguration != null) {
+      solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
+      solver.setDepth(aiConfiguration.getDepth());
+      solver.setHeuristic(aiConfiguration.getStartHeuristic());
+      solver.setEndgameHeuristic(aiConfiguration.getEndgameHeuristic());
+      if (options.containsKey(OptionType.AI_WEIGHT_W)
+          && HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W))
+              .equals(HeuristicType.STANDARD)) {
+        final String weight = options.get(OptionType.AI_WEIGHT_W);
+        final String[] weights = weight.split(",");
+        final List<Float> weightsFloats = new ArrayList<>();
+        for (final String w : weights) {
+          weightsFloats.add(Float.parseFloat(w));
+        }
+        if (weightsFloats.size() != 9) {
+          print("Invalid number of weights");
+        }
+        solver.setHeuristic(
+            HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)), weightsFloats);
+      } else {
+        solver.setHeuristic(HeuristicType.valueOf(options.get(OptionType.AI_HEURISTIC_W)));
+      }
+    }
   }
 
   /**
@@ -74,7 +104,7 @@ public class UciView implements View {
    * @param event The type of event that occurred.
    */
   @Override
-  public void onGameEvent(EventType event) {
+  public void onGameEvent(final EventType event) {
     switch (event) {
       case WIN_BLACK -> print("Black won!");
       case WIN_WHITE -> print("White won!");
@@ -91,7 +121,7 @@ public class UciView implements View {
    * @param exception The exception that was thrown.
    */
   @Override
-  public void onErrorEvent(Exception exception) {
+  public void onErrorEvent(final Exception exception) {
     if (exception instanceof IllegalMoveException
         || exception instanceof MoveParsingException
         || exception instanceof InvalidPositionException
@@ -114,12 +144,12 @@ public class UciView implements View {
    * @return The thread that listens for user input.
    */
   private Thread startUserInputListener() {
-    Thread inputThread =
+    final Thread inputThread =
         new Thread(
             () -> {
-              Scanner scanner = new Scanner(System.in);
+              final Scanner scanner = new Scanner(System.in);
               while (running) {
-                String input = scanner.nextLine();
+                final String input = scanner.nextLine();
                 handleUserInput(input);
               }
               scanner.close();
@@ -138,25 +168,26 @@ public class UciView implements View {
    */
   private void handleUserInput(String input) {
     input = input.trim();
-    String[] parts = input.split(" ", 2);
+    final String[] parts = input.split(" ", 2);
 
-    CommandEntry ce = commands.get(parts[0]);
+    final CommandEntry commandEntry = commands.get(parts[0]);
 
-    if (ce != null) {
-      Consumer<String> command = commands.get(parts[0]).action();
+    if (commandEntry != null) {
+      final Consumer<String> command = commands.get(parts[0]).action();
       command.accept(parts.length > 1 ? parts[1] : "");
     } else {
       print("unknown command: " + input + " received\n");
     }
   }
 
-  private void uciCommand(String args) {
-    print("Chess 2\nMade by PDP team\nuciok\n");
-    // TODO: add ai config
+  private void uciCommand(final String args) {
+    print("Chess 2\nMade by PDP team");
+    print("Ai configuration: " + solver);
+    print("uciok\n");
   }
 
-  private void positionCommand(String args) {
-    String[] args2 = args.split(" ");
+  private void positionCommand(final String args) {
+    final String[] args2 = args.split(" ");
     if (args2.length > 2 && args2[0].equals("fen")) {
       print("can't handle fen boards");
     } else if (args2.length > 2 && args2[0].equals("startpos")) {
@@ -184,7 +215,7 @@ public class UciView implements View {
 
   private void goCommand(String args) {
     debug(LOGGER, "Searching for best move");
-    Move move = solver.getBestMove(Game.getInstance());
+    final Move move = solver.getBestMove(Game.getInstance());
     if (move == null) {
       error(Game.getInstance().getGameRepresentation());
     }

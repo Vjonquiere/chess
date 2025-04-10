@@ -6,5 +6,6 @@ public enum AlgorithmType {
   ALPHA_BETA,
   ALPHA_BETA_PARALLEL,
   ALPHA_BETA_ID,
-  MCTS;
+  ALPHA_BETA_ID_PARALLEL,
+  MCTS
 }

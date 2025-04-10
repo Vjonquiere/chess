@@ -3,7 +3,9 @@ package pdp.utils;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 /**
  * Logging class abstracting java.util.logging Usage : in each class, create a logger from
@@ -19,13 +21,17 @@ public final class Logging {
   /** Boolean to indicate whether verbose is enabled. */
   private static boolean verboseOn;
 
-  /*
-   private static final Logger GLOBAL_LOGGER = Logger.getLogger("GlobalLogger");
+  /** Private static logger for generic logging (used by print). */
+  private static final Logger GENERIC_LOGGER = Logger.getLogger(Logging.class.getName());
 
-   static {
-     configureGlobalLogger();
-   }
-  */
+  /** Private static logger for error logging (used by error). */
+  private static final Logger GENERIC_ERROR_LOGGER =
+      Logger.getLogger(Logging.class.getName() + "_error");
+
+  static {
+    configureGlobalLogger();
+  }
+
   /*Private constructor to avoid instantiation.*/
   private Logging() {}
 
@@ -100,33 +106,51 @@ public final class Logging {
     logger.setUseParentHandlers(false);
   }
 
-  /*
-    /** Configures the global logger for print and error messages.
-    private static void configureGlobalLogger() {
-      GLOBAL_LOGGER.setLevel(Level.INFO);
-      ConsoleHandler consoleHandler = new ConsoleHandler();
-      consoleHandler.setLevel(Level.INFO);
-      consoleHandler.setFormatter(new SimpleFormatter() {
-        @Override
-        public String format(LogRecord record) {
-          return record.getMessage() + System.lineSeparator();
-        }
-      });
+  /** Configures the global logger for print and error messages. */
+  public static void configureGlobalLogger() {
 
-      for (Handler handler : GLOBAL_LOGGER.getHandlers()) {
-        GLOBAL_LOGGER.removeHandler(handler);
-      }
-      GLOBAL_LOGGER.addHandler(consoleHandler);
-      GLOBAL_LOGGER.setUseParentHandlers(false);
+    for (final Handler handler : GENERIC_ERROR_LOGGER.getHandlers()) {
+      GENERIC_ERROR_LOGGER.removeHandler(handler);
     }
-  */
-  /** Logs a normal message (replaces System.out in the rest of the code). */
-  public static void print(final String message) {
-    System.out.println(message);
+
+    for (final Handler handler : GENERIC_LOGGER.getHandlers()) {
+      GENERIC_LOGGER.removeHandler(handler);
+    }
+
+    Handler infoHandler =
+        new StreamHandler(System.out, new MinimalFormatter()) {
+          @Override
+          public void publish(LogRecord record) {
+            super.publish(record);
+            flush();
+          }
+        };
+    infoHandler.setLevel(Level.INFO);
+
+    Handler errorHandler =
+        new StreamHandler(System.err, new MinimalFormatter()) {
+          @Override
+          public void publish(LogRecord record) {
+            super.publish(record);
+            flush();
+          }
+        };
+    errorHandler.setLevel(Level.SEVERE);
+
+    GENERIC_LOGGER.addHandler(infoHandler);
+    GENERIC_ERROR_LOGGER.addHandler(errorHandler);
+
+    GENERIC_LOGGER.setUseParentHandlers(false);
+    GENERIC_ERROR_LOGGER.setUseParentHandlers(false);
   }
 
-  /** Logs an error message (replaces System.err in the rest of the code). */
+  /** Logs a normal message. */
+  public static void print(final String message) {
+    GENERIC_LOGGER.log(Level.INFO, message);
+  }
+
+  /** Logs an error message. */
   public static void error(final String message) {
-    System.err.println(message);
+    GENERIC_ERROR_LOGGER.log(Level.SEVERE, message);
   }
 }

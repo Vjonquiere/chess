@@ -1,23 +1,26 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.*;
 import pdp.model.board.BitboardRepresentation;
-import pdp.model.board.Board;
+import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
 import pdp.utils.Position;
-import tests.helpers.MockBoard;
+import tests.helpers.DummyBoardRepresentation;
 
 public class ZobristHashingTest {
   Game game;
@@ -26,10 +29,16 @@ public class ZobristHashingTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   public void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     game = Game.initialize(false, false, null, null, null, new HashMap<>());
   }
 
@@ -39,12 +48,13 @@ public class ZobristHashingTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
   public void testGenerateZobristHashing() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = new Board();
+    BoardRepresentation board = new BitboardRepresentation();
     long hash1 = zobristHashing.generateHashFromBitboards(board);
     long hash2 = zobristHashing.generateHashFromBitboards(board);
     // same hash for the same board
@@ -54,7 +64,7 @@ public class ZobristHashingTest {
     board.setPlayer(!board.getPlayer());
     // different hash for different board
     assertNotEquals(hash1, zobristHashing.generateHashFromBitboards(board));
-    board.getBoardRep().movePiece(new Position(0, 2), new Position(0, 1));
+    board.movePiece(new Position(0, 2), new Position(0, 1));
 
     // player changed but board the same
     assertNotEquals(hash1, zobristHashing.generateHashFromBitboards(board));
@@ -63,7 +73,7 @@ public class ZobristHashingTest {
   @Test
   public void testGenerateZobristHashingEnPassant() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
     // generate en passant
     game.playMove(new Move(new Position(0, 1), new Position(0, 3)));
     long hashEnPassant = zobristHashing.generateHashFromBitboards(board);
@@ -83,7 +93,7 @@ public class ZobristHashingTest {
   @Test
   public void testGenerateSimplifiedZobristHashingEnPassant() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
     // generate en passant
     game.playMove(new Move(new Position(0, 1), new Position(0, 3)));
     long hashEnPassant = zobristHashing.generateSimplifiedHashFromBitboards(board);
@@ -103,7 +113,7 @@ public class ZobristHashingTest {
   @Test
   public void testGenerateSimplifiedZobristHashing() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = new Board();
+    BoardRepresentation board = new BitboardRepresentation();
     long hash1 = zobristHashing.generateSimplifiedHashFromBitboards(board);
     long hash2 = zobristHashing.generateSimplifiedHashFromBitboards(board);
     assertEquals(hash1, hash2);
@@ -111,14 +121,14 @@ public class ZobristHashingTest {
     board.makeMove(new Move(new Position(0, 1), new Position(0, 3)));
     board.setPlayer(!board.getPlayer());
     assertNotEquals(hash1, zobristHashing.generateSimplifiedHashFromBitboards(board));
-    board.getBoardRep().movePiece(new Position(0, 3), new Position(0, 1));
+    board.movePiece(new Position(0, 3), new Position(0, 1));
     assertEquals(hash1, zobristHashing.generateSimplifiedHashFromBitboards(board));
   }
 
   @Test
   public void testUpdateZobristHashing() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = new Board(); // Initialize standard board
+    BoardRepresentation board = new BitboardRepresentation(); // Initialize standard board
 
     long hash1 = zobristHashing.generateHashFromBitboards(board);
 
@@ -149,7 +159,7 @@ public class ZobristHashingTest {
 
   @Test
   void testUpdateSimplifiedZobristHashing() {
-    Board board = new Board();
+    BoardRepresentation board = new BitboardRepresentation();
     ZobristHashing zobrist = new ZobristHashing();
 
     long initialHash = zobrist.generateSimplifiedHashFromBitboards(board);
@@ -172,7 +182,7 @@ public class ZobristHashingTest {
   @Test
   public void testUpdateZobristHashingEnPassant() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
     // generate en passant
     long hashUpdate = zobristHashing.generateHashFromBitboards(board);
     game.playMove(new Move(new Position(0, 1), new Position(0, 3)));
@@ -207,7 +217,7 @@ public class ZobristHashingTest {
   @Test
   public void testSimplifiedZobristHashingCapture() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
     // capture
     long hashUpdate = zobristHashing.generateSimplifiedHashFromBitboards(board);
     game.playMove(new Move(new Position(1, 1), new Position(1, 3)));
@@ -242,21 +252,20 @@ public class ZobristHashingTest {
                 true,
                 new ColoredPiece(Piece.PAWN, Color.BLACK)));
 
-    Board board2 = new Board();
-    if (board2.getBoardRep() instanceof BitboardRepresentation bitboardRepresentation) {
+    BoardRepresentation board2 = new BitboardRepresentation();
+    if (board2 instanceof BitboardRepresentation bitboardRepresentation) {
       bitboardRepresentation.deletePieceAt(0, 6);
       bitboardRepresentation.movePiece(new Position(1, 1), new Position(0, 4));
     }
     long hashGenerate = zobristHashing.generateSimplifiedHashFromBitboards(board2);
-    // TODO: find out why bitboard representations are not equals
-    // assertEquals(board.Rep(),board2.getBoardRep());
+    assertEquals(board, board2);
     assertEquals(hashUpdate, hashGenerate);
   }
 
   @Test
   public void testZobristHashingWhiteLongCastle() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
 
     game.playMove(new Move(new Position(0, 1), new Position(0, 3)));
     long hashOnlyPawn = zobristHashing.generateHashFromBitboards(board);
@@ -310,7 +319,7 @@ public class ZobristHashingTest {
   @Test
   public void testZobristHashingBlackShortCastle() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
 
     game.playMove(new Move(new Position(1, 0), new Position(2, 2)));
     long hashWithCastling = zobristHashing.generateHashFromBitboards(board);
@@ -374,7 +383,7 @@ public class ZobristHashingTest {
   @Test
   public void testZobristHashingBlackLongCastle() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
 
     game.playMove(new Move(new Position(1, 0), new Position(2, 2)));
     long hashWithCastling = zobristHashing.generateHashFromBitboards(board);
@@ -438,7 +447,7 @@ public class ZobristHashingTest {
   @Test
   public void testZobristHashingNoCastle() {
     ZobristHashing zobristHashing = new ZobristHashing();
-    Board board = game.getBoard();
+    BoardRepresentation board = game.getBoard();
 
     game.playMove(new Move(new Position(4, 1), new Position(4, 2)));
     long hashWithCastling = zobristHashing.generateHashFromBitboards(board);
@@ -501,7 +510,7 @@ public class ZobristHashingTest {
 
   @Test
   void testGenerateHashThrowsExceptionForNonBitboard() {
-    MockBoard board = new MockBoard();
+    DummyBoardRepresentation board = new DummyBoardRepresentation();
 
     ZobristHashing zobrist = new ZobristHashing();
 
@@ -517,7 +526,7 @@ public class ZobristHashingTest {
 
   @Test
   void testUpdateHashThrowsExceptionForNonBitboard() {
-    MockBoard board = new MockBoard();
+    DummyBoardRepresentation board = new DummyBoardRepresentation();
 
     ZobristHashing zobrist = new ZobristHashing();
 

@@ -3,6 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,9 +11,11 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.controller.BagOfCommands;
@@ -46,22 +49,9 @@ public class CliViewTest {
   private BagOfCommands mockBagOfCommands;
   private Method handleUserInputMethod;
 
-  @Test
-  public void testBoardToASCII() {
-    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
-
-    char[][] expectedBoard = {
-      {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
-      {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-      {'_', '_', '_', '_', '_', '_', '_', '_'},
-      {'_', '_', '_', '_', '_', '_', '_', '_'},
-      {'_', '_', '_', '_', '_', '_', '_', '_'},
-      {'_', '_', '_', '_', '_', '_', '_', '_'},
-      {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-      {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
-    };
-
-    assertTrue(Arrays.deepEquals(expectedBoard, game.getBoard().getAsciiRepresentation()));
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
   }
 
   @BeforeEach
@@ -79,12 +69,33 @@ public class CliViewTest {
 
     handleUserInputMethod = CliView.class.getDeclaredMethod("handleUserInput", String.class);
     handleUserInputMethod.setAccessible(true); // Allows access to private method
+
+    configureGlobalLogger();
   }
 
   @AfterEach
   void tearDown() {
     System.setOut(originalOut);
     System.setErr(originalErr);
+    configureGlobalLogger();
+  }
+
+  @Test
+  public void testBoardToASCII() {
+    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
+    char[][] expectedBoard = {
+      {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+      {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'_', '_', '_', '_', '_', '_', '_', '_'},
+      {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+      {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+    };
+
+    assertTrue(Arrays.deepEquals(expectedBoard, game.getBoard().getAsciiRepresentation()));
   }
 
   @Test

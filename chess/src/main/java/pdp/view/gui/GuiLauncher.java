@@ -6,6 +6,7 @@ import pdp.view.GuiView;
 
 /** Launcher for GUI view. */
 public class GuiLauncher extends Application {
+  /** View made with JavaFX to be launched. */
   private static GuiView guiView;
 
   /**
@@ -13,9 +14,9 @@ public class GuiLauncher extends Application {
    *
    * @param view the GuiView managing the graphical interface
    */
-  public static void launchGui(GuiView view) {
+  public static void launchGui(final GuiView view) {
     guiView = view;
-    Application.launch();
+    launch();
   }
 
   /**
@@ -24,7 +25,7 @@ public class GuiLauncher extends Application {
    * @param primaryStage the primary stage for the JavaFX application
    */
   @Override
-  public void start(Stage primaryStage) {
+  public void start(final Stage primaryStage) {
     guiView.init(primaryStage);
     guiView.show();
   }

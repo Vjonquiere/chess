@@ -25,8 +25,7 @@ public class CancelMoveCommand implements Command {
         model.previousState();
         try {
           model.previousState();
-        } catch (FailedUndoException e) {
-          // TODO: add an event to send to the view
+        } catch (FailedUndoException ignored) {
         }
         if (model.isBlackAi() && !model.getGameState().isWhiteTurn()) {
           model.getBlackSolver().playAiMove(model);

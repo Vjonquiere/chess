@@ -19,3 +19,6 @@ buildNumber.properties
 # Idea
 .idea/
 ../.idea/
+
+chess_env/
+error.log

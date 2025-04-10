@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,7 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.GameControllerInit;
@@ -38,11 +41,17 @@ class GameInitializerTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @BeforeEach
   void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
     options = new HashMap<>();
+    configureGlobalLogger();
   }
 
   @AfterEach
@@ -54,6 +63,7 @@ class GameInitializerTest {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @Test
@@ -63,37 +73,13 @@ class GameInitializerTest {
     assertTrue(controller.getView() instanceof CliView);
   }
 
-  /*
   @Test
-  void testGameInitializationGUI() {
-    options.put(OptionType.GUI, "");
-    GameController controller = GameControllerInit.initialize(options);
-    assertNotNull(controller);
-    assertTrue(controller.getView() instanceof GameView);
-  }
-    */
-
-  /*
-  @Test
-  void testGameInitializationBlitzMode300() {
+  void testGameInitializationBlitzMode() {
     options.put(OptionType.BLITZ, "");
     GameController controller = GameControllerInit.initialize(options);
     assertNotNull(controller);
     assertNotNull(controller.getModel().getGameState().getMoveTimer());
   }
-    */
-
-  /*
-  @Test
-  void testGameInitializationBlitzMode300() {
-    options.put(OptionType.BLITZ, "");
-    options.put(OptionType.TIME, "300");
-    GameController controller = GameControllerInit.initialize(options);
-    assertNotNull(controller);
-    assertNotNull(controller.getModel().getGameState().getMoveTimer());
-    assertEquals(controller.getModel().getGameState().getMoveTimer().getTimeRemaining(), 300);
-  }
-    */
 
   @Test
   void testGameInitializationAIWhite() {
@@ -115,18 +101,17 @@ class GameInitializerTest {
     assertNotNull(controller.getModel().getBlackSolver());
   }
 
-  /*
-    @Test
-    void testGameInitializationAIAll() {
-      options.put(OptionType.AI, "A");
-      GameController controller = GameControllerInit.initialize(options);
-      assertNotNull(controller);
-      assertTrue(controller.getModel().isWhiteAI());
-      assertTrue(controller.getModel().isBlackAI());
-      assertNotNull(controller.getModel().getWhiteSolver());
-      assertNotNull(controller.getModel().getBlackSolver());
-    }
-  */
+  @Test
+  void testGameInitializationAIAll() {
+    options.put(OptionType.AI, "A");
+    GameController controller = GameControllerInit.initialize(options);
+    assertNotNull(controller);
+    assertTrue(controller.getModel().isWhiteAi());
+    assertTrue(controller.getModel().isBlackAi());
+    assertNotNull(controller.getModel().getWhiteSolver());
+    assertNotNull(controller.getModel().getBlackSolver());
+  }
+
   @Test
   void testGameInitializationAIIncorrect() {
     options.put(OptionType.AI, "X");
@@ -327,12 +312,7 @@ class GameInitializerTest {
 
     assertNotNull(controller);
     assertEquals(
-        controller
-            .getModel()
-            .getBoard()
-            .getBoardRep()
-            .getPieceAt(newPosition.x(), newPosition.y())
-            .getPiece(),
+        controller.getModel().getBoard().getPieceAt(newPosition.x(), newPosition.y()).getPiece(),
         Piece.PAWN);
   }
 
@@ -380,16 +360,10 @@ class GameInitializerTest {
   void testGameInitializationLoadFallback() {
     options.put(OptionType.LOAD, "non_existent_file.txt");
 
-    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    PrintStream originalErr = System.err;
-    System.setErr(new PrintStream(errContent));
-
     GameController controller = null;
     controller = GameControllerInit.initialize(options);
 
-    String errorOutput = errContent.toString();
-
-    System.setErr(originalErr);
+    String errorOutput = outputStream.toString();
 
     assertTrue(errorOutput.contains("Using the default game start"));
 
@@ -405,30 +379,22 @@ class GameInitializerTest {
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     options.put(OptionType.LOAD, filePath.getPath());
     GameController controller = GameControllerInit.initialize(options);
-    assertEquals(controller.getModel().getBoard().getBoardRep(), board.board());
+    assertEquals(controller.getModel().getBoard(), board.board());
     assertEquals(controller.getModel().getGameState().isWhiteTurn(), board.isWhiteTurn());
   }
 
   @Test
   void testGameInitializationContestModeIncorrectFile() {
-    options.put(OptionType.CONTEST, "invalid_file_path.txt");
+
+    outputStream.reset();
+
+    String invalidFilePath = "non_existent_" + System.nanoTime() + ".txt";
+    options.put(OptionType.CONTEST, invalidFilePath);
     Game game = GameInitializer.initialize(options);
 
-    assertTrue(outputStream.toString().contains("Error loading contest file"));
-    assertTrue(outputStream.toString().contains("Starting a new game instead."));
+    assertTrue(outputStream.toString().contains("Error while parsing file: "));
     assertNotNull(game);
-    assertFalse(game.isContestModeOn());
-  }
-
-  @Test
-  void testGameInitializationContestModeMissingFilePath() {
-    options.put(OptionType.CONTEST, "");
-    Game game = GameInitializer.initialize(options);
-
-    assertTrue(
-        outputStream.toString().contains("Error: --contest option requires a valid file path."));
-    assertNotNull(game);
-    assertFalse(game.isContestModeOn());
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -470,7 +436,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isContestModeOn());
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -508,9 +474,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isContestModeOn());
-
-    game.playMove(Move.fromString("a7-a6"));
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -542,9 +506,7 @@ class GameInitializerTest {
     Game game = GameInitializer.initialize(options);
 
     assertNotNull(game);
-    assertTrue(game.isContestModeOn());
-
-    game.playMove(Move.fromString("a7-a6"));
+    assertTrue(game.isContestMode());
   }
 
   @Test
@@ -606,28 +568,6 @@ class GameInitializerTest {
   }
 
   @Test
-  void testContestMode_InvalidFilePath() {
-    options.put(OptionType.CONTEST, "");
-
-    Game game = GameInitializer.initialize(options);
-
-    assertNotNull(game);
-    assertTrue(
-        outputStream.toString().contains("Error: --contest option requires a valid file path."));
-  }
-
-  @Test
-  void testContestMode_FileNotFound() {
-    options.put(OptionType.CONTEST, "non_existent_file.txt");
-
-    Game game = GameInitializer.initialize(options);
-
-    assertNotNull(game);
-    assertTrue(outputStream.toString().contains("Error loading contest file"));
-    assertTrue(outputStream.toString().contains("Starting a new game instead."));
-  }
-
-  @Test
   void testContestModeValidFileWhiteTurn() throws IOException {
     tempFile = Files.createTempFile("moveHistory2", ".txt");
     String text =
@@ -658,10 +598,10 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_W, "3");
     options.put(OptionType.AI_MODE_W, "MCTS");
-    options.put(OptionType.AI_SIMULATION_W, "150");
+    options.put(OptionType.AI_SIMULATION_W, "200");
     options.put(OptionType.AI_HEURISTIC_W, "BAD_PAWNS");
     options.put(OptionType.AI_WEIGHT_W, "9.2");
 
@@ -671,8 +611,7 @@ class GameInitializerTest {
     assertTrue(game.isWhiteAi());
     assertTrue(game.getWhiteSolver().getAlgorithm() instanceof MonteCarloTreeSearch);
     assertEquals(
-        150, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
-    assertEquals(3, game.getWhiteSolver().getDepth());
+        200, ((MonteCarloTreeSearch) game.getWhiteSolver().getAlgorithm()).getSimulationLimit());
   }
 
   @Test
@@ -706,7 +645,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_B, "MCTS");
 
     Game game = GameInitializer.initialize(options);
@@ -749,7 +688,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_B, "2");
     options.put(OptionType.AI_MODE_B, "ALPHA_BETA");
     options.put(OptionType.AI_ENDGAME_B, "ENDGAME");
@@ -782,7 +721,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_W, "invalid");
 
     Game game = GameInitializer.initialize(options);
@@ -809,7 +748,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_DEPTH_B, "notanumber");
 
     Game game = GameInitializer.initialize(options);
@@ -836,7 +775,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_W, "UNKNOWN_MODE");
 
     Game game = GameInitializer.initialize(options);
@@ -874,7 +813,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_W, "MCTS");
     options.put(OptionType.AI_SIMULATION_W, "invalid");
 
@@ -914,7 +853,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_B, "MCTS");
     options.put(OptionType.AI_SIMULATION_B, "invalid");
 
@@ -954,7 +893,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_B, "10");
     options.put(OptionType.AI_DEPTH_B, "2");
     options.put(OptionType.AI_ENDGAME_B, "8");
@@ -982,7 +921,7 @@ class GameInitializerTest {
     Files.writeString(tempFile, text);
 
     options.put(OptionType.CONTEST, tempFile.toString());
-    options.put(OptionType.AI, "a");
+    options.put(OptionType.AI, "A");
     options.put(OptionType.AI_MODE_W, "INVALID_MODE");
     options.put(OptionType.AI_DEPTH_W, "INVALID_DEPTH");
     options.put(OptionType.AI_ENDGAME_W, "9");

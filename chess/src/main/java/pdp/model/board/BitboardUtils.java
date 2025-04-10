@@ -8,6 +8,8 @@ import pdp.utils.Position;
 
 /** Utility class to remove complexity for BitboardRepresentation. */
 public final class BitboardUtils {
+
+  /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(BitboardUtils.class.getName());
 
   /** Private constructor to avoid instantiation. */
@@ -26,8 +28,8 @@ public final class BitboardUtils {
    * @return A list of positions
    */
   public static List<Position> getOccupiedSquares(
-      int bitBoardIndex, BitboardRepresentation bitboardRepresentation) {
-    return squaresToPosition(bitboardRepresentation.getBitboards()[bitBoardIndex].getSetBits());
+      final int bitBoardIndex, final BitboardRepresentation bitboardRep) {
+    return squaresToPosition(bitboardRep.getBitboards()[bitBoardIndex].getSetBits());
   }
 
   /**
@@ -36,7 +38,7 @@ public final class BitboardUtils {
    * @param square The square to change to position
    * @return A Position containing the translations
    */
-  public static Position squareToPosition(int square) {
+  public static Position squareToPosition(final int square) {
     return new Position(square % 8, square / 8);
   }
 
@@ -46,9 +48,9 @@ public final class BitboardUtils {
    * @param squares The list of squares to change to position
    * @return A new list containing the translations
    */
-  public static List<Position> squaresToPosition(List<Integer> squares) {
-    List<Position> positions = new ArrayList<>();
-    for (Integer i : squares) {
+  public static List<Position> squaresToPosition(final List<Integer> squares) {
+    final List<Position> positions = new ArrayList<>();
+    for (final Integer i : squares) {
       positions.add(new Position(i % 8, i / 8));
     }
     return positions;
@@ -59,8 +61,8 @@ public final class BitboardUtils {
    *
    * @return The horizontal size of the board
    */
-  public static int getNbCols(BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation.getNbCols();
+  public static int getNbCols(final BitboardRepresentation bitboardRep) {
+    return bitboardRep.getNbCols();
   }
 
   /**
@@ -68,7 +70,7 @@ public final class BitboardUtils {
    *
    * @return The vertical size of the board
    */
-  public static int getNbRows(BitboardRepresentation bitboardRepresentation) {
-    return bitboardRepresentation.getNbRows();
+  public static int getNbRows(final BitboardRepresentation bitboardRep) {
+    return bitboardRep.getNbRows();
   }
 }

@@ -17,7 +17,7 @@ import pdp.model.board.Move;
 import pdp.utils.Logging;
 
 /** Algorithm of artificial intelligence Alpha beta pruning. */
-public class AlphaBeta implements SearchAlgorithm {
+public class AlphaBeta extends SearchAlgorithm {
   /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
   private final Solver solver;
 
@@ -34,6 +34,7 @@ public class AlphaBeta implements SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBeta(final Solver solver) {
+    super();
     this.solver = solver;
   }
 
@@ -69,6 +70,9 @@ public class AlphaBeta implements SearchAlgorithm {
     executor.shutdown();
 
     debug(LOGGER, "Best move: " + bestMove);
+    final long visitedNodes = getVisitedNodes();
+    clearNode();
+    debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
     return bestMove;
   }
 
@@ -93,23 +97,23 @@ public class AlphaBeta implements SearchAlgorithm {
       float alpha,
       float beta,
       final boolean originalPlayer) {
+    addNode();
     if (solver.isSearchStopped()) {
       return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
     }
     if (depth == 0 || game.isOver()) {
-      final float evaluation = solver.evaluateBoard(game.getBoard(), originalPlayer);
+      final float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
       return new AiMove(null, evaluation);
     }
     AiMove bestMove =
         new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    final List<Move> moves = game.getBoard().getBoardRep().getAllAvailableMoves(currentPlayer);
-    for (Move move : moves) {
+    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
+    MoveOrdering.moveOrder(moves);
+    for (final Move move : moves) {
       if (solver.isSearchStopped()) {
         break;
       }
       try {
-
-        move = AlgorithmHelpers.promoteMove(move);
         game.playMove(move);
         final AiMove currMove =
             alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
@@ -128,10 +132,15 @@ public class AlphaBeta implements SearchAlgorithm {
         if (alpha >= beta) {
           break;
         }
-      } catch (IllegalMoveException e) {
+      } catch (IllegalMoveException ignored) {
         // Skipping illegal move
       }
     }
     return bestMove;
+  }
+
+  @Override
+  public String toString() {
+    return "Alpha-Beta";
   }
 }

@@ -1,22 +1,28 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static pdp.utils.Logging.configureGlobalLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.model.Game;
+import pdp.model.GameState;
 import pdp.model.ai.HeuristicType;
 import pdp.model.ai.Solver;
 import pdp.model.ai.heuristics.*;
 import pdp.model.board.Move;
 import pdp.utils.Position;
-import tests.helpers.MockBoard;
+import tests.helpers.DummyBoardRepresentation;
 
 public class SolverTest {
   private Solver solver;
@@ -24,17 +30,24 @@ public class SolverTest {
   private final PrintStream originalOut = System.out;
   private final PrintStream originalErr = System.err;
 
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+
   @AfterEach
   void tearDownConsole() {
     System.setOut(originalOut);
     System.setErr(originalErr);
     outputStream.reset();
+    configureGlobalLogger();
   }
 
   @BeforeEach
   void setUp() {
     System.setOut(new PrintStream(outputStream));
     System.setErr(new PrintStream(outputStream));
+    configureGlobalLogger();
     solver = new Solver();
   }
 
@@ -42,7 +55,7 @@ public class SolverTest {
   public void testEvaluationMaterial() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
-    assertEquals(0, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(0, solver.evaluateBoard(game.getGameState(), true));
 
     game.playMove(new Move(new Position(4, 1), new Position(4, 2)));
     game.playMove(new Move(new Position(3, 6), new Position(3, 5)));
@@ -53,10 +66,11 @@ public class SolverTest {
     game.playMove(new Move(new Position(1, 6), new Position(2, 7)));
     // white player has one more pawn and one more bishop than black player
     // position score for black
-    assertEquals(-4, solver.evaluateBoard(game.getBoard(), false));
+    float expected = 4 * (100f / 103);
+    assertEquals(-expected, solver.evaluateBoard(game.getGameState(), false)); // rounded value
     // position score for white
     game.playMove(new Move(new Position(0, 6), new Position(0, 5)));
-    assertEquals(4, solver.evaluateBoard(game.getBoard(), true));
+    assertEquals(expected, solver.evaluateBoard(game.getGameState(), true)); // rounded value
   }
 
   @Test
@@ -74,15 +88,16 @@ public class SolverTest {
 
   @Test
   public void testEvaluationErrorBoardNonBitboardRepresentation() {
-    MockBoard board = new MockBoard();
-
+    DummyBoardRepresentation board = new DummyBoardRepresentation();
+    GameState gameState = mock(GameState.class);
+    when(gameState.getBoard()).thenReturn(board);
     solver.setHeuristic(HeuristicType.MATERIAL);
 
     Exception exception =
         assertThrows(
             RuntimeException.class,
             () -> {
-              solver.evaluateBoard(board, true);
+              solver.evaluateBoard(gameState, true);
             });
     assertEquals("Only available for bitboards.", exception.getMessage());
   }
@@ -92,12 +107,12 @@ public class SolverTest {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     solver.setHeuristic(HeuristicType.MATERIAL);
     // same positions and rights --> will use the hash
-    float score1 = solver.evaluateBoard(game.getBoard(), true);
+    float score1 = solver.evaluateBoard(game.getGameState(), true);
     game.playMove(new Move(new Position(1, 0), new Position(2, 2)));
     game.playMove(new Move(new Position(1, 7), new Position(0, 5)));
     game.playMove(new Move(new Position(2, 2), new Position(1, 0)));
     game.playMove(new Move(new Position(0, 5), new Position(1, 7)));
-    float score2 = solver.evaluateBoard(game.getBoard(), true);
+    float score2 = solver.evaluateBoard(game.getGameState(), true);
 
     assertEquals(score1, score2);
   }
@@ -146,19 +161,6 @@ public class SolverTest {
             });
     assertEquals("Time must be greater than 0", exception2.getMessage());
   }
-
-  /*
-  @Test
-  public void testNotEnoughTime() {
-    Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
-    solver.setTime(1);
-    solver.setDepth(10000);
-    game.playMove(new Move(new Position(0, 1), new Position(0, 2)));
-    solver.playAIMove(game);
-
-    assertTrue(game.getGameState().hasBlackResigned());
-  }
-  */
 
   @Test
   public void testSetHeuristic() {
@@ -215,7 +217,7 @@ public class SolverTest {
 
   @Test
   public void testSetHeuristicWithWeights() {
-    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f);
+    List<Float> weights = Arrays.asList(0.5f, 0.3f, 0.2f, 0.5f, 0.3f, 0.2f, 0.1f, 0.4f, 0.1f);
 
     solver.setHeuristic(HeuristicType.STANDARD, weights);
     assertInstanceOf(StandardHeuristic.class, solver.getHeuristic());
@@ -235,7 +237,8 @@ public class SolverTest {
             HeuristicType.KING_ACTIVITY,
             HeuristicType.BISHOP_ENDGAME,
             HeuristicType.KING_OPPOSITION,
-            HeuristicType.ENDGAME);
+            HeuristicType.ENDGAME,
+            HeuristicType.CHECK);
 
     for (HeuristicType heuristic : heuristicsToTest) {
       solver.setHeuristic(heuristic, weights);
@@ -256,6 +259,8 @@ public class SolverTest {
         case KING_OPPOSITION ->
             assertInstanceOf(KingOppositionHeuristic.class, solver.getHeuristic());
         case ENDGAME -> assertInstanceOf(EndGameHeuristic.class, solver.getHeuristic());
+        case CHECK -> assertInstanceOf(CheckHeuristic.class, solver.getHeuristic());
+
         default -> throw new IllegalArgumentException("Unexpected value: " + heuristic);
       }
 

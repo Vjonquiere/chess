@@ -6,6 +6,7 @@ import java.util.Optional;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -15,8 +16,8 @@ import pdp.GameInitializer;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.AskHintCommand;
 import pdp.controller.commands.CancelMoveCommand;
-import pdp.controller.commands.ChangeLang;
-import pdp.controller.commands.ChangeTheme;
+import pdp.controller.commands.ChangeLangCommand;
+import pdp.controller.commands.ChangeThemeCommand;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
@@ -37,15 +38,17 @@ import pdp.view.gui.themes.ColorTheme;
 
 /** Menu of the application. */
 public class ChessMenu extends HBox {
-  private MessageDisplay messageDisplay;
+  /** Place to display messages for the user in the menu. */
+  private final MessageDisplay messageDisplay;
 
   /**
    * Creates the menu of out application. Composed of different menus : File, Game, About and
    * Options.
    */
   public ChessMenu() {
+    super();
     messageDisplay = new MessageDisplay();
-    MenuBar menuBar = new MenuBar();
+    final MenuBar menuBar = new MenuBar();
     menuBar.setId("menuBar");
     menuBar.getMenus().add(createFileMenu());
     menuBar.getMenus().add(createGameMenu());
@@ -55,25 +58,34 @@ public class ChessMenu extends HBox {
   }
 
   /**
+   * Retrieves the message display. Used for tests.
+   *
+   * @return messageDisplay
+   */
+  public MessageDisplay getMessageDisplay() {
+    return messageDisplay;
+  }
+
+  /**
    * Creates the File menu. Composed of the following items : New game, Save Game, Load Game, Help,
    * Settings and Quit.
    *
    * @return Menu File
    */
   private Menu createFileMenu() {
-    Menu fileMenu = new Menu(TextGetter.getText("file"));
+    final Menu fileMenu = new Menu(TextGetter.getText("file"));
     fileMenu.setId("filemenu");
-    MenuItem newGameItem = new MenuItem(TextGetter.getText("newGame"));
+    final MenuItem newGameItem = new MenuItem(TextGetter.getText("newGame"));
     newGameItem.setId("newGameItem");
-    MenuItem loadGameItem = new MenuItem(TextGetter.getText("loadGame"));
+    final MenuItem loadGameItem = new MenuItem(TextGetter.getText("loadGame"));
     loadGameItem.setId("loadGameItem");
-    MenuItem saveGameItem = new MenuItem(TextGetter.getText("saveGame"));
+    final MenuItem saveGameItem = new MenuItem(TextGetter.getText("saveGame"));
     saveGameItem.setId("saveGameItem");
-    MenuItem helpItem = new MenuItem(TextGetter.getText("help"));
+    final MenuItem helpItem = new MenuItem(TextGetter.getText("help"));
     helpItem.setId("helpItem");
-    MenuItem quitItem = new MenuItem(TextGetter.getText("quit"));
+    final MenuItem quitItem = new MenuItem(TextGetter.getText("quit"));
     quitItem.setId("quitItem");
-    MenuItem settingItem = new MenuItem(TextGetter.getText("settings"));
+    final MenuItem settingItem = new MenuItem(TextGetter.getText("settings"));
     settingItem.setId("settingsItem");
     newGameItem.setOnAction(event -> openNewGamePopup());
     quitItem.setOnAction(event -> Runtime.getRuntime().exit(0));
@@ -81,16 +93,16 @@ public class ChessMenu extends HBox {
     settingItem.setOnAction(event -> new SettingsEditorPopup());
     saveGameItem.setOnAction(
         event -> {
-          String path = fileSaver();
+          final String path = fileSaver();
           if (path != null && !path.isEmpty()) {
             BagOfCommands.getInstance().addCommand(new SaveGameCommand("./" + path));
           }
         });
     loadGameItem.setOnAction(
         event -> {
-          File file = fileChooser();
+          final File file = fileChooser();
           if (file != null) {
-            HashMap<OptionType, String> map = Game.getInstance().getOptions();
+            final HashMap<OptionType, String> map = Game.getInstance().getOptions();
             map.put(OptionType.LOAD, file.getAbsolutePath());
             GameInitializer.initialize(map);
           }
@@ -107,11 +119,11 @@ public class ChessMenu extends HBox {
    * @return The file corresponding to the path
    */
   private File fileChooser() {
-    Stage popupStage = new Stage();
+    final Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
     popupStage.setTitle(TextGetter.getText("fileChooser.title"));
 
-    FileChooser fileChooser = new FileChooser();
+    final FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle(TextGetter.getText("fileChooser.open"));
     fileChooser
         .getExtensionFilters()
@@ -126,15 +138,15 @@ public class ChessMenu extends HBox {
    *
    * @return The path given by the user
    */
-  private String fileSaver() {
-    TextInputDialog dialog = new TextInputDialog();
+  public static String fileSaver() {
+    final TextInputDialog dialog = new TextInputDialog();
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.setHeaderText(null);
     dialog.setTitle(TextGetter.getText("fileSaver.title"));
     dialog.setContentText(TextGetter.getText("fileSaver.name"));
     GuiView.applyCss(dialog.getDialogPane().getScene());
 
-    Optional<String> result = dialog.showAndWait();
+    final Optional<String> result = dialog.showAndWait();
     return result.orElse(null);
   }
 
@@ -144,12 +156,9 @@ public class ChessMenu extends HBox {
    * @return Menu Game
    */
   private Menu createGameMenu() {
-    MenuItem start = new MenuItem(TextGetter.getText("start"));
-    start.setOnAction(
-        e -> {
-          BagOfCommands.getInstance().addCommand(new StartGameCommand());
-        });
-    MenuItem undo = new MenuItem(TextGetter.getText("undo"));
+    final MenuItem start = new MenuItem(TextGetter.getText("start"));
+    start.setOnAction(e -> BagOfCommands.getInstance().addCommand(new StartGameCommand()));
+    final MenuItem undo = new MenuItem(TextGetter.getText("undo"));
     undo.setOnAction(
         e -> {
           if (Game.getInstance().getGameState().getFullTurn() > 0) {
@@ -168,7 +177,7 @@ public class ChessMenu extends HBox {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
-    MenuItem redo = new MenuItem(TextGetter.getText("redo"));
+    final MenuItem redo = new MenuItem(TextGetter.getText("redo"));
     redo.setOnAction(
         e -> {
           if (Game.getInstance().getHistory().getCurrentMove().orElse(null) != null
@@ -188,18 +197,15 @@ public class ChessMenu extends HBox {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
-    MenuItem restart = new MenuItem(TextGetter.getText("restart"));
+    final MenuItem restart = new MenuItem(TextGetter.getText("restart"));
     restart.setOnAction(
         e -> {
           BagOfCommands.getInstance().addCommand(new RestartCommand());
           new YesNoPopUp("restartInstructionsGui", new RestartCommand(), null);
         });
-    MenuItem hint = new MenuItem(TextGetter.getText("hint"));
-    hint.setOnAction(
-        e -> {
-          new YesNoPopUp("hintInstructionsGui", new AskHintCommand(), null);
-        });
-    Menu gameMenu = new Menu(TextGetter.getText("game"));
+    final MenuItem hint = new MenuItem(TextGetter.getText("hint"));
+    hint.setOnAction(e -> new YesNoPopUp("hintInstructionsGui", new AskHintCommand(), null));
+    final Menu gameMenu = new Menu(TextGetter.getText("game"));
     gameMenu.getItems().add(start);
     gameMenu.getItems().add(undo);
     gameMenu.getItems().add(redo);
@@ -214,9 +220,9 @@ public class ChessMenu extends HBox {
    * @return Menu About
    */
   private Menu createAboutMenu() {
-    Menu aboutMenu = new Menu(TextGetter.getText("about"));
+    final Menu aboutMenu = new Menu(TextGetter.getText("about"));
     aboutMenu.setId("aboutMenu");
-    MenuItem about = new MenuItem(TextGetter.getText("about"));
+    final MenuItem about = new MenuItem(TextGetter.getText("about"));
     about.setOnAction(event -> new AboutPopUp());
     aboutMenu.getItems().add(about);
     return aboutMenu;
@@ -228,8 +234,11 @@ public class ChessMenu extends HBox {
    * @return Menu Options
    */
   private Menu createOptionsMenu() {
-    Menu optionsMenu = new Menu(TextGetter.getText("options"));
-    optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu());
+    final Menu optionsMenu = new Menu(TextGetter.getText("options"));
+    final RadioMenuItem monitor = new RadioMenuItem(TextGetter.getText("monitor"));
+    monitor.setSelected(GuiView.getMonitoringStatus());
+    monitor.setOnAction(event -> GuiView.toggleMonitoring());
+    optionsMenu.getItems().addAll(createThemeMenuItem(), createLangMenu(), monitor);
     return optionsMenu;
   }
 
@@ -250,22 +259,19 @@ public class ChessMenu extends HBox {
    * @return Menu Game
    */
   private Menu createThemeMenuItem() {
-    Menu themes = new Menu(TextGetter.getText("theme"), null);
+    final Menu themes = new Menu(TextGetter.getText("theme"), null);
 
-    for (ColorTheme c : ColorTheme.values()) {
-      MenuItem theme = new MenuItem(c.name());
+    for (final String name : ColorTheme.getAllThemes().keySet()) {
+      final MenuItem theme = new MenuItem(name);
       theme.setOnAction(
           e -> {
-            GuiView.setTheme(c);
-            BagOfCommands.getInstance().addCommand(new ChangeTheme());
+            GuiView.setTheme(ColorTheme.getTheme(name));
+            BagOfCommands.getInstance().addCommand(new ChangeThemeCommand());
           });
       themes.getItems().add(theme);
     }
-    MenuItem customize = new MenuItem("Customize");
-    customize.setOnAction(
-        e -> {
-          openThemePopup();
-        });
+    final MenuItem customize = new MenuItem("Customize");
+    customize.setOnAction(e -> openThemePopup());
     themes.getItems().add(customize);
     return themes;
   }
@@ -277,20 +283,20 @@ public class ChessMenu extends HBox {
    * @return Menu Game
    */
   private Menu createLangMenu() {
-    Menu lang = new Menu(TextGetter.getText("language"), null);
+    final Menu lang = new Menu(TextGetter.getText("language"), null);
     lang.setId("language");
-    MenuItem english = new MenuItem(TextGetter.getText("english"));
+    final MenuItem english = new MenuItem(TextGetter.getText("english"));
     english.setOnAction(
         e -> {
           TextGetter.setLocale("en");
-          BagOfCommands.getInstance().addCommand(new ChangeLang());
+          BagOfCommands.getInstance().addCommand(new ChangeLangCommand());
         });
-    MenuItem french = new MenuItem(TextGetter.getText("french"));
+    final MenuItem french = new MenuItem(TextGetter.getText("french"));
     french.setId("french");
     french.setOnAction(
         e -> {
           TextGetter.setLocale("fr");
-          BagOfCommands.getInstance().addCommand(new ChangeLang());
+          BagOfCommands.getInstance().addCommand(new ChangeLangCommand());
         });
     lang.getItems().addAll(english, french);
 
@@ -305,7 +311,7 @@ public class ChessMenu extends HBox {
    * @param infinite true if the message needs to be kept while no new message arrived, false
    *     otherwise.
    */
-  public void displayMessage(String message, boolean error, boolean infinite) {
+  public void displayMessage(final String message, final boolean error, final boolean infinite) {
     if (error) {
       messageDisplay.displayError(message, infinite);
     } else {

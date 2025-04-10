@@ -3,10 +3,17 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Locale;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pdp.model.board.Bitboard;
 
 public class BitboardTest {
+
+  @BeforeAll
+  public static void setUpLocale() {
+    Locale.setDefault(Locale.ENGLISH);
+  }
 
   @Test
   public void testInitialisation() {
