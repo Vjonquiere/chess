@@ -705,12 +705,21 @@ function findBestMove(game, depth, player):
 
     moves <- all available moves for player from aiGame
 
-    for each move in moves:
+    sortMoves(moves)
+
+    aiGame.playMove(moves[0])
+    firstResult <- alphaBeta(aiGame, depth-1, not player, -inf, +inf, player)
+    aiGame.previousState()
+    bestMove <- AiMove(moves[0], firstResult.score)
+
+    initialAlpha <- bestMove.score
+
+    for each move in moves[1:]:
         submit to executor:
             gameCopy <- deep copy of aiGame
             move <- promoteMove(move)
             gameCopy.playMove(move)
-            result <- alphaBeta(gameCopy, depth - 1, not player, -inf, +inf, player)
+            result <- alphaBeta(gameCopy, depth - 1, not player, initialAlpha, +inf, player)
             return AiMove(move, result.score)
 
     bestMove <- AiMove(null, -inf)
