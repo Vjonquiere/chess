@@ -1019,7 +1019,8 @@ Pour éviter les optimum locaux et favoriser l'exploration de l'espace de recher
 La figure \ref{fig:evolution_weights} montre l'évolution des poids et la figure \ref{fig:evolution_winrate} montre l'évolution des performances (taux de victoire) au cours de l'entraînement. On y observe plusieurs chutes de performance correspondant aux moments de remplacement de population, où l'algorithme explore de nouvelles zones de l'espace des poids.
 
 Les poids finaux obtenus en Table \ref{tab:poids-heuristiques} montrent une domination constante de l'heuristique « Matériel », ce qui est cohérent avec la stratégie classique aux échecs, où l'avantage matériel est souvent décisif. Les autres heuristiques ont contribué de manière plus contextuelle selon les situations de jeu.
-
+On constate que le winrate a généralement augmenté au cours des générations. Il aurait fallu augmenter le nombre de générations afin de raffiner les poids. De plus, on peut
+voir des heuristiques avec des poids nuls ou quasi nuls, il faudrait veiller à regarder si ces heuristiques ont un réel intérêt et le cas échéant, les modifier ou les supprimer.
 \begin{table}[H]
     \centering
     \caption{Poids finaux optimisés pour chaque heuristique}
