@@ -947,6 +947,7 @@ des loggers pour ces opérations.
 Certaines classes possèdent trop de méthodes, elles sont qualifiées de \textit{God Class}. Il serait nécessaire de faire un refactor total du projet, ce qui correspond à un projet à part entière.
 Il en est de même pour les méthodes trop complexes, qu'il faudrait découper en sous parties.
 \subsection{Critiques positives}
+\subsubsection{Norme UCI}
 Intégrer la norme UCI à notre projet nous a permis de développer une interface standardisée et donc de communiquer avec d'autres projets de chess engine.
 Le plus intéresant à été de pouvoir jouer des parties complètes contre d'autres programmes complètement paramétrables et d'éviter par exemple le déterminisme
 de l'algorithme AlphaBeta. En effet, nos algorithmes d'AlphaBeta trouvent toujours le même meilleur coup pour un plateau donné, ce qui donne des déroulements de parties
@@ -954,6 +955,33 @@ identiques et par conséquent peu de parties différentes possibles. Se mesurer 
 Leela Chess Zero utilisant du deep learning couplé au Monte Carlo Tree Search (voir Explanatory analysis of the chess game \cite{GameEngine} page 24).
 Pour finir, l'implémentation de cette norme nous a permis de trouver certains bugs spécifiques survenant uniquement après certaines séquences de jeu mais nous a également
 obligé à rendre notre programme modulable car certaines règles peuvent changer lorsqu'il s'agit de parties entre IA (threefold repetition devient fivefold repetition par exemple).
+\subsubsection{Mode Monitor}
+L'ajout du mode \textit{monitor} nous a permis de surveiller en temps réel les performances de notre IA et donc de quantifier certaines métriques afin de réaliser différentes mesures de
+performances ou encore donner des perspectives d'amélioration de l'IA. Il est également intéressant car il permet de se comparer au autres chess engine car certains permettent également 
+de relever le nombre de noeuds exploré ainsi que le temps mis pour une recherche.
+
+\subsubsection{Niveau de l'intelligence artificielle}
+À l'aide des différents algorithmes et heuristiques nous avons pu jouer des parties de manière autonome contre \textit{Stockfish} afin de mesurer le niveau de notre IA.
+Pour obtenir des résultats significatif nous jouons plus de 700 parties à chaque pas d'Élo afin de calculer le winrate ainsi que d'autres métriques pour évaluer notre IA.
+Nous avons ici utilisé l'algorithme AlphaBeta Iterative Deepening en depth 4 à toutes les parties. Nous obtenons des résultats satisfaisants (au dessus de 0.5) jusqu’à 1400 élo comme le présente la figure \ref{winRateCmp}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{winRateCmp.png}
+    \caption{Graphique représentant le winrate en fonction de l'élo de stockfish}
+    \label{winRateCmp}
+\end{figure}
+
+Ces résultats sont encourageant car on remarque un taux anormal de parties finissant par une égalité comme le montre la figure \ref{drawCountCmp}. Nous savons que notre IA
+est en difficulté lorsque qu'il faut trouver un échec et mat, c'est donc qu'elle arrive à bien se défendre pour aller chercher une égalité
+dans un grand nombre de partie.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=6.0cm,keepaspectratio]{drawRate.png}
+    \caption{Graphique représentant le nombre de parties nulles suivant l'élo de stockfish}
+    \label{drawCountCmp}
+\end{figure}
 
 \subsection{Perspectives}
 \subsubsection{Mode Multi-joueur}
