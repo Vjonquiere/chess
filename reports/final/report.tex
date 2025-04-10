@@ -111,9 +111,9 @@ et le but est de faire échec et mat, c’est-à-dire arriver dans une position 
 le Roi adverse et donc gagner la partie après n’importe quel coup joué par notre opposant (hormis capturer notre roi).
 Le jeu d’échecs se joue sur un échiquier, un plateau de 8 lignes et 8 colonnes, 64 cases au total avec des pièces
 caractérisées par certaines propriétés uniques. De manière compétitive, le jeu d'échecs effectue un classement
-basé sur un système de points, appelés "Élos" \cite{elo}. Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
+basé sur un système de points, appelés ``Élo'' \cite{elo}. Il sert à estimer le niveau d'un joueur (humain comme ordinateur) et
 à répartir ces joueurs en catégories. Pour donner un ordre d'idée, le champion du monde possède un Élo aux alentours de 2900,
-tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Élos. Ce système d'Élo
+tandis qu'un joueur débutant qui connaît comment les pièces se déplacent est aux alentours des 400 Élo. Ce système d'Élo
 va notamment nous permettre d'approximer le niveau de notre Intelligence Artificielle développée dans le cadre de ce projet.\\
 Les origines de ce jeu restent méconnues, mais la légende la plus célèbre raconte que le précepteur d’un jeune prince en Inde
 voulait simplifier les mécanismes de la société et inventa ainsi un échiquier avec des pièces, chacune jouant un rôle précis,
@@ -207,7 +207,7 @@ Le joueur avec les pièces blanches commence. Ensuite, chaque joueur joue à tou
 
 \subsection{Déplacements des pièces}
 
-Les déplacements sont propres à chaque type de pièce :
+Les déplacements sont propres à chaque type de pièce:
 
 \subsubsection*{Pion}
 Le pion avance uniquement en ligne droite, d'une case à la fois. Lors de son premier déplacement, il peut avancer de deux cases. Il capture les pièces adverses en diagonale. Le pion vaut 1 point de matériel.
@@ -219,7 +219,7 @@ Le pion avance uniquement en ligne droite, d'une case à la fois. Lors de son pr
 \end{figure}
 
 \subsubsection*{Cavalier}
-Le cavalier se déplace en forme de "L" : deux cases dans une direction, puis une case perpendiculaire. Il peut sauter par-dessus d'autres pièces.
+Le cavalier se déplace en forme de ``L'': deux cases dans une direction, puis une case perpendiculaire. Il peut sauter par-dessus d'autres pièces.
 Le cavalier vaut 3 points de matériel.
 
 \begin{figure}[h]
@@ -364,7 +364,7 @@ Une partie d'échecs peut se terminer de plusieurs façons :
 
 \subsection{Plateau sous forme de bitboards}
 Un échiquier est finalement une matrice 8x8 (64 cases donc) sur lesquelles il y a une pièce, ou non. On voit ici une
-notion de binaire. Pour une pièce: "Blanche ou Noire", "Présente ou Non" (pour les cases). Une méthode existe pour
+notion de binaire. Pour une pièce: ``Blanche ou Noire'', ``Présente ou Non'' (pour les cases). Une méthode existe pour
 représenter l'échiquier en se servant de bitboards plutôt que d'utiliser des arrays, vecteurs ou listes en deux dimensions.
 Il s'agit du bitboard. On observera un gain de performance en temps et un gain d'espace énormes pour la représentation
 de l'échiquier (et des règles spécifiques).
@@ -379,7 +379,7 @@ la Tour, la Dame, le Roi. Donc finalement, on aura besoin de 12 entiers codés s
 blanches et 6 pour les types de pièces noires.
 
 Un désavantage de cette méthode
-est le fait qu'il faudra faire une gymnastique pour "décoder" une position en tant qu'humain. En effet, si l'on prend l'entier
+est le fait qu'il faudra faire une gymnastique pour ``décoder'' une position en tant qu'humain. En effet, si l'on prend l'entier
 112, on ne visualise pas (du tout) la position, contrairement à l'ordinateur.
 Retenons aussi que l'on aura à faire à des représentations et opérations binaires, pour lesquelles un ordinateur est très
 performant. En Java, chaque entier sera un long (type primitif).
@@ -392,12 +392,12 @@ est aussi décrite par ses règles, c'est un état de jeu. Les règles à prendr
     \item Roques: on compte le grand roque et le petit roque des deux côtés (noirs et blancs). On a donc besoin de 4 booléens.
    \item Temps à la pendule: On doit savoir combien de temps il reste à chaque tour et le temps initial pour chaque tour, chacune de ces informations est stockée sous un long, et nous devons aussi savoir si le temps est en train de tourner ou pas, pour cela nous utilisons un booléen, soit un total de 2 longs et 1 booléen.
    \item Règle des 50 coups: Pour le nombre de coups sans capture ou mouvement de pion, on se sert d’un entier.
-   \item Nombre de "FullMoves": Pour se souvenir du nombre de coups total de la partie, on utilise un entier.\\
+   \item Nombre de ``FullMoves'': Pour se souvenir du nombre de coups total de la partie, on utilise un entier.\\
 \end{itemize}
 
 \subsection{Historique des coups}
 \par Pour l'historique, nous avons choisi d'utiliser une liste doublement chaînée, où chaque nœud contient une copie complète de l'état du jeu ainsi que le coup qui a été joué.
-Cette structure est très efficace pour notre cas d'utilisation, car nous n'avons besoin que de réaliser les opérations d'undo/redo et de suppressions de groupes d'éléments consécutifs. Dans ce dernier cas, il suffit de modifier le pointeur "suivant" du nœud précédent le groupe concerné et d'initialiser correctement le pointeur "précédent" du nouveau nœud. Le garbage collector se charge ensuite de supprimer les nœuds qui ne sont plus accessibles depuis le reste du programme, même si ces nœuds se réfèrent entre eux.
+Cette structure est très efficace pour notre cas d'utilisation, car nous n'avons besoin que de réaliser les opérations d'undo/redo et de suppressions de groupes d'éléments consécutifs. Dans ce dernier cas, il suffit de modifier le pointeur ``suivant'' du nœud précédent le groupe concerné et d'initialiser correctement le pointeur ``précédent'' du nouveau nœud. Le garbage collector se charge ensuite de supprimer les nœuds qui ne sont plus accessibles depuis le reste du programme, même si ces nœuds se réfèrent entre eux.
 D'autres solutions comme une double pile ou un tableau seraient également envisageables, mais elles ne permettent pas de manipuler aussi aisément les liens entre les éléments et nécessitent plus d'opérations pour gérer les suppressions.
 \\
 \\Voici à quoi ressemble l'historique des coups d'une partie dans notre jeu en GUI:\\
@@ -417,7 +417,7 @@ Rappelons que le facteur de branchement aux échecs approche les 35.
 
 Il y a de nombreux éléments à prendre en compte, et en voici certainement les plus impactants:
 \begin{itemize}
-    \item Le Matériel: chaque pièce (sauf peut-être le roi) possède une valeur. On va donc s'occuper de compter pour les 2 camps le "potentiel"
+    \item Le Matériel: chaque pièce (sauf peut-être le roi) possède une valeur. On va donc s'occuper de compter pour les 2 camps le ``potentiel''
     dans une position. Plus on a de matériel (pièces donc), plus on a de chances d'avoir l'avantage, en particulier par un bon contrôle de l'échiquier.
     \item La sécurité du Roi: Le Roi est la pièce la plus importante aux échecs, et souvent, le joueur qui a un avantage est celui qui va
     avoir un Roi qui n'est pas en danger. Pour estimer cela, on peut en particulier vérifier le nombre de coups où l'on peut mettre le Roi en échec,
@@ -428,7 +428,7 @@ Il y a de nombreux éléments à prendre en compte, et en voici certainement les
     \item L'activité: Si l'on a peu de coups légaux que l'on peut jouer, c'est très souvent parce que l'on est en position de désavantage. Cela peut
     signifier que l'on est forcé à jouer certains coups.
     \item La structure de pions: Plus on aura une structure de pions solide, plus on aura de potentiel d'attaque et de défense puisque les pions sont
-    des pièces "faibles" lorsqu'ils sont seuls et/ou non défendus.
+    des pièces ``faibles'' lorsqu'ils sont seuls et/ou non défendus.
     \item La promotion: Plus on a de pions avancés, plus on a de chance d'atteindre la dernière rangée et changer notre pion en une pièce plus importante,
     comme la Dame par exemple, nous donnant plus d'options.
 \end{itemize}
@@ -439,12 +439,12 @@ s'agit d'un jeu à somme nulle, c'est-à-dire que le gain d'un joueur correspond
 (+1), l'autre perd (-1), et si la partie est nulle, aucun des deux joueurs ne gagne ni ne perd (0-0).
 
 Dans ce projet, nous avons développé une multitude d'heuristiques permettant d'évaluer des positions. Essentiellement, elles peuvent être regroupées
-en deux catégories: Heuristiques "STANDARD" et Heuristiques "ENDGAME" ("Fin de partie"). En se servant du design pattern Composite, on combine les
-heuristiques codées afin de se baser sur "beaucoup" de facteurs dans le but d'obtenir une évaluation d'une position la plus précise possible. Ainsi,
-l'Intelligence Artificielle (MiniMax et AlphaBeta) utilise ces évaluations pour en déduire un "meilleur coup". STANDARD et ENDGAME sont les 
+en deux catégories: Heuristiques STANDARD'' et Heuristiques ``ENDGAME'' (``Fin de partie''). En se servant du design pattern Composite, on combine les
+heuristiques codées afin de se baser sur ``beaucoup'' de facteurs dans le but d'obtenir une évaluation d'une position la plus précise possible. Ainsi,
+l'Intelligence Artificielle (MiniMax et AlphaBeta) utilise ces évaluations pour en déduire un``meilleur coup''. STANDARD et ENDGAME sont les 
 heuristiques par défaut lorsque l'IA est lancée. Le programme vérifie à tout moment (après chaque coup joué ou après chaque coup repris)
 si le jeu se trouve être dans un stade de fin de partie ou non.
-Nous considérons une partie en "ENDGAME" lorsque l'algorithme \ref{EndGameAlgorithme} renvoie vrai:
+Nous considérons une partie en ``ENDGAME'' lorsque l'algorithme \ref{EndGameAlgorithme} renvoie vrai:
 
 \begin{lstlisting}[label={EndGameAlgorithme}, caption={Détection de la phase de fin de partie - pseudo-code}]
     function isEndGamePhase(bitboardRep, ...) {
@@ -468,8 +468,8 @@ Nous considérons une partie en "ENDGAME" lorsque l'algorithme \ref{EndGameAlgor
 Si la configuration est considérée être une fin de partie, alors l'heuristique utilisée
 par l'IA devient ENDGAME, afin de prendre en compte des facteurs propres aux fins de partie. Autrement, elle utilise la STANDARD.
 
-Voici la liste des heuristiques développées par le groupe lors de ce projet. La colonne \textbf{Primairre} permet de savoir
-par "OUI" ou "NON" si c'est une heuristique "primitive", c'est-à-dire qu'elle n'est pas composée. On retrouve le même principe
+Voici la liste des heuristiques développées par le groupe lors de ce projet. La colonne \textbf{Primaire} permet de savoir
+par ``OUI'' ou ``NON'' si c'est une heuristique ``primitive'', c'est-à-dire qu'elle n'est pas composée. On retrouve le même principe
 pour savoir si elle est utilisée pour les fins de partie.
 
 \begin{longtable}{|c|p{5cm}|c|p{5cm}|}
@@ -523,7 +523,7 @@ Expliquons en quelques unes pour pouvoir mieux comprendre à quoi cela ressemble
     \item DevelopmentHeuristic : Une heuristique évaluant le développement des pièces sur l'échiquier. Pour chaque camp, on évalue
     le développement des pièces sur l'échiquier. Pour cela, on compare la position de départ des pièces avec la position actuelle
     des pièces. On attribue un bon score aux pièces développées, c'est-à-dire les pièces dont la position actuelle est différente
-    de celle de départ. Les pièces qui ont une valeur matérielle "importante" (toutes sauf les pions et le Roi) obitennent un score
+    de celle de départ. Les pièces qui ont une valeur matérielle ``importante'' (toutes sauf les pions et le Roi) obitennent un score
     supérieur aux pions car elles sont généralement (surtout en début et milieu de partie) plus fortes.
     \item MaterialHeuristic : Une heuristique évaluant le matériel disponible de chaque côté. Chaque pièce possède une valeur matérielle 
     (mis à part le Roi). Pour chaque camp, on regarde les pièces restantes sur l'échiquier, et on effectue une somme totale de la valeur
@@ -586,9 +586,9 @@ Dans cette partie Intelligence Artificielle, on va essentiellement se servir des
 Notons que tous les algorithmes s'effectuent sur des arbres, et qu'AlphaBeta ainsi que MiniMax se servent d'une heuristique pour évaluer chaque position.
 
 \subsection{Zobrist hashing} \label{Zobrist}
-Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage "complexe" à
+Le Zobrist hashing est une fonction utilisée en particulier dans les jeux comme les échecs ou le Go, où le but est d'attribuer un codage ``complexe'' à
 une position, pour éviter d'analyser une position plus d'une fois. Ainsi, on peut gagner en performance, notamment dans les algorithmes d'IA, où les
-états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des "tables de transposition", qui sont des tables de
+états de jeu peuvent se répéter un grand nombre de fois. On va se servir de ce qu'on appelle des ``tables de transposition'', qui sont des tables de
 hachage indexées par une position. Dans notre cas, les positions sont encodées par 12 bitboards et quelques booléens
 supplémentaires pour les règles spécifiques.
 Nous disposons des structures suivantes pour générer nos hash:
@@ -614,7 +614,7 @@ La version classique est très utile pour l'intelligence artificielle, pour le c
 à partir du moment où on l'a calculée une fois. Le gain de temps est considérable en particulier lorsqu'on utilise des heuristiques lourdes à calculer.
 
 \subsection{Cache}
-Afin que le programme soit plus performant, nous avons mis en place un système de "cache". Ce dernier permet d'éviter de recalculer plusieurs fois la même valeur en stockant le résultat grâce au Zobrist hashing mentionné précédemment.
+Afin que le programme soit plus performant, nous avons mis en place un système de ``cache''. Ce dernier permet d'éviter de recalculer plusieurs fois la même valeur en stockant le résultat grâce au Zobrist hashing mentionné précédemment.
 
 Nous avons pris la décision de stocker les valeurs les plus lourdes à calculer réutilisées par notre programme:
 \begin{itemize}
@@ -1074,8 +1074,8 @@ Premièrement, les échecs bénéficient d'évaluations positionnelles efficaces
 comme Minimax avec AlphaBeta d'explorer l'arbre de jeu de manière plus efficace. Contrairement à des derniers, MCTS ne se base pas sur des critères 
 d'évaluation et d'optimisations. Ensuite, MCTS est intrinsèquement plus lent que les méthodes basées sur Minimax. En effet, sans optimisation spécifique, 
 il doit effectuer un grand nombre de simulations pour obtenir une estimation intéressante de la valeur d'un GameState. Dans un jeu comme les échecs, où le 
-facteur de branchement moyen est élevé, MCTS a besoin d'un (très) grand nombre d'itérations pour converger vers des décisions "optimales" comparables à 
-celles d'Alpha-Beta Pruning. La simulation de coups est très "Brute-Force", surtout sans optimisation, car le choix des coups par l'algorithme s'effectue 
+facteur de branchement moyen est élevé, MCTS a besoin d'un (très) grand nombre d'itérations pour converger vers des décisions ``optimales'' comparables à 
+celles d'Alpha-Beta Pruning. La simulation de coups est très ``Brute-Force'', surtout sans optimisation, car le choix des coups par l'algorithme s'effectue 
 de manière complètement aléatoire (pour la partie simulations).
 Enfin, les engines d'échecs modernes tirent parti d'optimisations telles que le move ordering, des bibliothèques d'ouvertures, améliorant ainsi les 
 performances d'Alpha-Beta Pruning. Bien que le MCTS puisse être optimisé par des techniques spécifiques d'IA comme les réseaux de neuronnes, son 
@@ -1143,7 +1143,7 @@ sourtout lors des fins de parties. On peut donc estimer que notre IA depasse les
 
 \subsection{Perspectives}
 \subsubsection{Surligner des coups}
-L'utilisateur aurait la possibilité de "surligner" des coups afin de montrer des déroulements de partie ou d'y voir plus clair dans sa réflexion.
+L'utilisateur aurait la possibilité de ``surligner'' des coups afin de montrer des déroulements de partie ou d'y voir plus clair dans sa réflexion.
 Cela pourrait ressembler a la Figure \ref{surlignage}:
 \begin{figure}[h]
     \caption{Exemple surlignage de coups}
