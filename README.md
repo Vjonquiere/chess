@@ -1,11 +1,11 @@
-# Projet de Programmation M1 - Java Chess
+# Java Chess Project
 
 # Setup
 
 ### Clone the repository
 ```bash
-git clone git@gitlab.emi.u-bordeaux.fr:pdp-2025/chess-2.git
-cd chess-2/
+git clone git@github.com:Vjonquiere/chess.git
+cd chess/
 ```
 
 ### For contributors
@@ -20,7 +20,7 @@ It is possible that your IDE don't find the _BoardLoaderBaseListener_ class. It'
 some of them don't use the `target/` folder for sources.
 Here is how to fix:
 
-  - Intellij: 
+  - IntelliJ: 
     - Build the project 
     - Go to file -> project structure -> modules
     - Change `target/generated-sources/antlr4` from Excluded to **Sources**
@@ -62,7 +62,7 @@ The following are required to run the project:
 - Java 17
 
 ### Run the App
-- Download the latest release on the GitLab page ([here](https://gitlab.emi.u-bordeaux.fr/pdp-2025/chess-2/-/releases))
+- Download the latest release on the Github page ([here](https://github.com/Vjonquiere/chess/releases))
 - Run the jar with `java -jar chess-x.x.x.jar` (x.x.x = version number)
 
 # Usage
@@ -94,7 +94,7 @@ From the local `chess` or Docker `app` folder :
 The reports will be available under `target/site/jacoco`
 
 ### Learn how to use the app
-You can have a small brief by running the programm with `-h` but a complete guide is available in the `chess/README` file. For example, it contains more details on how to play on the different interfaces and explaination on special features (UCI, monitoring, ...).
+You can have a small brief by running the program with `-h`, but a complete guide is available in the `chess/README` file. For example, it contains more details on how to play on the different interfaces and explanation on special features (UCI, monitoring, ...).
 
 # Uninstall
 
