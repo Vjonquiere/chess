@@ -12,7 +12,7 @@ public class StandardHeuristic extends AbstractHeuristic {
     super();
     super.addHeuristic(new WeightedHeuristic(new MaterialHeuristic(), 100));
     super.addHeuristic(new WeightedHeuristic(new MobilityHeuristic(), 1));
-    super.addHeuristic(new WeightedHeuristic(new GameStatus(), 10000));
+    super.addHeuristic(new WeightedHeuristic(new GameStatus(), 10_000));
     super.addHeuristic(new WeightedHeuristic(new BadPawnsHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new PawnChainHeuristic(), 1));
     super.addHeuristic(new WeightedHeuristic(new KingSafetyHeuristic(), 1));

@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import pdp.events.EventType;
+import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.GameState;
 import pdp.model.ai.algorithms.AlphaBeta;
@@ -83,7 +84,7 @@ public class Solver {
   private long time;
 
   /** Boolean to indicate whether the algorithm is searching for a move. */
-  private boolean searchStopped = false;
+  private boolean searchStopped;
 
   /** Boolean to indicate if the move needs to be played. Used for the hint of gui. */
   private boolean isMoveToPlay = true;
@@ -332,7 +333,7 @@ public class Solver {
     if (isMoveToPlay) {
       try {
         game.playMove(bestMove.move());
-      } catch (Exception e) {
+      } catch (IllegalMoveException e) {
         game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
         error(e.getMessage());
         if (game.getGameState().isWhiteTurn()) {

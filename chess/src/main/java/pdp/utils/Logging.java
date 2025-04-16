@@ -117,20 +117,20 @@ public final class Logging {
       GENERIC_LOGGER.removeHandler(handler);
     }
 
-    Handler infoHandler =
+    final Handler infoHandler =
         new StreamHandler(System.out, new MinimalFormatter()) {
           @Override
-          public void publish(LogRecord record) {
+          public void publish(final LogRecord record) {
             super.publish(record);
             flush();
           }
         };
     infoHandler.setLevel(Level.INFO);
 
-    Handler errorHandler =
+    final Handler errorHandler =
         new StreamHandler(System.err, new MinimalFormatter()) {
           @Override
-          public void publish(LogRecord record) {
+          public void publish(final LogRecord record) {
             super.publish(record);
             flush();
           }

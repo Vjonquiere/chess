@@ -37,7 +37,7 @@ public class SettingsEditorPopup extends VBox {
       try {
         final URL filePath = getClass().getClassLoader().getResource("default.chessrc");
         text = new BoardFileParser().readFile(filePath.getPath());
-      } catch (Exception ex) {
+      } catch (FileNotFoundException ex) {
         ex.printStackTrace();
       }
     }

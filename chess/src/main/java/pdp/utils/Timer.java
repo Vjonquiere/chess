@@ -79,7 +79,7 @@ public class Timer implements Runnable {
       if (running && this.timeOverCallback != null) {
         this.timeOverCallback.run();
       }
-    } catch (Exception ignored) {
+    } catch (InterruptedException ignored) {
       // System.err.println(e.getMessage());
     }
     running = false;

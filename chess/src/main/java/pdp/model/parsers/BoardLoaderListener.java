@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import pdp.BoardLoaderBaseListener;
 import pdp.BoardLoaderParser;
+import pdp.exceptions.ChessException;
 import pdp.model.board.Bitboard;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Move;
@@ -51,8 +52,8 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
   /** Row at the start of the parsing. */
   private int y = 8;
 
-  /** Column at the start of the parsing. */
-  private int x = 0;
+  /** Column at the start of the parsing (0 by default). */
+  private int x;
 
   /** Boolean to indicate whether it is the white player's turn or not. */
   private boolean whiteTurn;
@@ -110,7 +111,7 @@ public class BoardLoaderListener extends BoardLoaderBaseListener {
     final ColoredPiece piece = PIECES.get(ctx.getText());
     final int square = x + (y * 8);
     if (piece == null) {
-      throw new RuntimeException(
+      throw new ChessException(
           "Piece `" + ctx.getText() + "` at square " + square + " is not recognized");
     } else {
       bitboardRep.setSquare(piece, square);

@@ -23,6 +23,9 @@ public class KingActivityHeuristic implements Heuristic {
   /** Score penalty calculated based on the distance between the king and the center. */
   private static final float CENTER_DISTANCE_DECREASE = 3f;
 
+  /** Minimum number of available moves of the king to be considered active. */
+  private static final int MOVES_ACTIVE_KING = 5;
+
   /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER = SCORE_CAP / (ACTIVITY_SCORE + CENTER_SCORE);
 
@@ -100,7 +103,7 @@ public class KingActivityHeuristic implements Heuristic {
     float score = 0;
     // Check the activity of the King
     final List<Move> kingMoves = board.retrieveKingMoves(isWhite);
-    if (kingMoves.size() >= 5) {
+    if (kingMoves.size() >= MOVES_ACTIVE_KING) {
       score += ACTIVITY_SCORE;
     }
 

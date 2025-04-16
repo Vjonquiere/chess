@@ -26,8 +26,17 @@ public class SpaceControlHeuristic implements Heuristic {
   /** Bonus score for a move elsewhere on the board. */
   private static final float BONUS_MOVE_ELSEWHERE = 0.5f;
 
-  private static int MAX_MOVES_CENTER = 4;
-  private static int MAX_MOVES_FLANKS = 2 * 8;
+  /**
+   * Maximum number of moves in the center considered to equilibrate the distribution in the
+   * multiplier.
+   */
+  private static final int MAX_MOVES_CENTER = 4;
+
+  /**
+   * Maximum number of moves in the flanks considered to equilibrate the distribution in the
+   * multiplier.
+   */
+  private static final int MAX_MOVES_FLANKS = 2 * 8;
 
   /** The multiplier used to keep the values under SCORE_CAP. */
   private static final float MULTIPLIER =
@@ -86,8 +95,8 @@ public class SpaceControlHeuristic implements Heuristic {
     int movesElsewhere = 0;
 
     if (board instanceof BitboardRepresentation bitboard) {
-      Bitboard moves = bitboard.getColorAttackBitboard(isWhite);
-      for (Integer moveSquare : moves.getSetBits()) {
+      final Bitboard moves = bitboard.getColorAttackBitboard(isWhite);
+      for (final Integer moveSquare : moves.getSetBits()) {
         final Position posDest = BitboardUtils.squareToPosition(moveSquare);
         if (isInCenter(posDest)) {
           movesInCenter += 1;
@@ -103,7 +112,7 @@ public class SpaceControlHeuristic implements Heuristic {
 
     final List<Move> allPossibleMoves = board.getAllAvailableMoves(isWhite);
 
-    List<Position> toEval = new ArrayList<>();
+    final List<Position> toEval = new ArrayList<>();
     for (final Move move : allPossibleMoves) {
       final Position posDest = move.getDest();
       if (toEval.contains(posDest)) {
@@ -125,7 +134,17 @@ public class SpaceControlHeuristic implements Heuristic {
     return compileScores(movesInCenter, movesOnFlanks, movesElsewhere);
   }
 
-  public float compileScores(int movesInCenter, int movesOnFlanks, int movesElsewhere) {
+  /**
+   * Computes a score based on the location of moves in the board. The moves in the center and in
+   * the flanks are more valuable than the other areas.
+   *
+   * @param movesInCenter the number of moves made in the center of the board
+   * @param movesOnFlanks the number of moves made on the flanks of the board
+   * @param movesElsewhere the number of moves made in the other areas
+   * @return score for the given move distribution
+   */
+  public float compileScores(
+      final int movesInCenter, final int movesOnFlanks, final int movesElsewhere) {
     int movesConsidered = 0;
     float score = 0;
 
@@ -146,11 +165,9 @@ public class SpaceControlHeuristic implements Heuristic {
     }
 
     if (movesConsidered + movesElsewhere < MAX_MOVES_CONSIDERED) {
-      movesConsidered += movesElsewhere;
       score += movesElsewhere * BONUS_MOVE_ELSEWHERE;
     } else {
       score += (MAX_MOVES_CONSIDERED - movesConsidered) * BONUS_MOVE_ELSEWHERE;
-      return score;
     }
 
     return score;

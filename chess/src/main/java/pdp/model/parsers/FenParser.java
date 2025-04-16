@@ -3,6 +3,7 @@ package pdp.model.parsers;
 import static java.util.Map.entry;
 
 import java.util.Map;
+import pdp.exceptions.ChessException;
 import pdp.model.board.Bitboard;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Move;
@@ -91,7 +92,7 @@ public final class FenParser {
         case 'Q' -> whiteQueenCastling = true;
         case 'k' -> blackKingCastling = true;
         case 'q' -> blackQueenCastling = true;
-        default -> throw new RuntimeException("Unknown castling right");
+        default -> throw new ChessException("Unknown castling right");
       }
     }
 

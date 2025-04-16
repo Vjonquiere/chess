@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
+import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
 import pdp.model.GameAi;
 import pdp.model.board.BoardRepresentation;
@@ -276,7 +277,7 @@ public class Board extends GridPane {
         game.playMove(move);
         pieces.get(move.getDest()).setReachable(true, move.isTake());
         reachableSquares.add(move.getDest());
-      } catch (Exception ignored) {
+      } catch (IllegalMoveException expected) {
         // Illegal move
       }
     }
