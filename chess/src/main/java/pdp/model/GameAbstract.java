@@ -382,13 +382,13 @@ public abstract class GameAbstract extends Subject {
     if (move instanceof CastlingMove || move instanceof PromoteMove) {
       this.getGameState()
           .setSimplifiedZobristHashing(
-              this.getZobristHasher()
-                  .updateSimplifiedHashFromBitboards(
-                      this.getGameState().getSimplifiedZobristHashing(), getBoard(), move));
+              this.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
     } else {
       this.getGameState()
           .setSimplifiedZobristHashing(
-              this.getZobristHasher().generateSimplifiedHashFromBitboards(getBoard()));
+              this.getZobristHasher()
+                  .updateSimplifiedHashFromBitboards(
+                      this.getGameState().getSimplifiedZobristHashing(), getBoard(), move));
     }
 
     debug(LOGGER, "Checking threefold repetition...");
