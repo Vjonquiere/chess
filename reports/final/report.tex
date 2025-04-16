@@ -717,7 +717,7 @@ L'architecture principale du projet, sépare clairement la logique métier, l'af
 grâce au design pattern Observer qui va permettre d'envoyer des messages du Model vers la Vue. Cela permet notamment une meilleure flexibilité dans la
 gestion d'évènements.
 Cette architecture est particulièrement pratique, aussi bien en termes de maintenance que d'extensibilité.
-Le Controller, ou plutôt le Bag Of Commands agit comme interprète entre la Vue et le Model, reçoitva recevoir des commandes de la part de la Vue capables d'appeler les fonctions correspondantes dans le Model.
+Le Controller, ou plutôt le Bag Of Commands agit comme interprète entre la Vue et le Model, va recevoir des commandes de la part de la Vue capables d'appeler les fonctions correspondantes dans le Model.
 La Vue a tout de même accès au Model, afin de récupérer les changements à afficher, ce qui évite de surcharger le Controller.
 
 L'avantage principal de cette architecture est le fait que le modèle ne connaisse pas la Vue, ce qui nous permet de la changer facilement (GUI, CLI, ...).
@@ -748,7 +748,7 @@ afin d'avoir une compatibilité Android ou encore Compose Multiplatform, qui per
 Le Modèle est lui même composé de plusieurs packages, afin de séparer les différentes partie de l'application :
 \begin{itemize}
     \item \textbf{AI} : Contient toute la partie IA, soit le solver, les algorithmes et les heuristiques.
-    \item \textbf{Board} : Contient le plateau de jeu, ses représenatations ainsi que des classes utilitaires comme le cache,
+    \item \textbf{Board} : Contient le plateau de jeu, ses représentations ainsi que des classes utilitaires comme le cache,
     les différentes représentations de mouvements ou le Zobrist hashing.
     \item \textbf{History} : Structure représentant l'historique de la partie sous forme de liste doublement chaînée.
     \item \textbf{Parsers} : Parsing des fichiers de configuration et de sauvegarde.
@@ -1096,7 +1096,7 @@ Cela montre l'effet combiné bénéfique du tri dynamique des coups et de la par
 
 Les performances de l'IA étant tout d'abord dépendante de la machine sur laquelle on exécute le programme, les paramètres optimaux pour obtenir une IA fluide et jouant des coups efficaces 
 ne sont pas fixes. Le facteur ayant le plus grand impact sur la vitesse de réflexion étant la profondeur de recherche, les optimisations mises en place avaient pour principal objectif d'accroître
-cette limite car elle permet d'obtenir de meilleurs coups. Mais la profondeur de recherche est également le facteur limitant, passer d'un profondeur p à une profondeur p+1 est exponentiel car le facteur
+cette limite car elle permet d'obtenir de meilleurs coups. Mais la profondeur de recherche est également le facteur limitant, passer d'une profondeur p à une profondeur p+1 est exponentiel car le facteur
 de branchement moyen des échecs est de 35. Par exemple on retrouve en Figure \ref{plot} la comparaison des temps de recherche du meilleur coup pour le plateau Figure \ref{board}.
 
 \begin{figure}[h]
