@@ -632,7 +632,7 @@ Nous avons pris la décision de stocker les valeurs les plus lourdes à calculer
 L'utilisation de types élémentaires aurait été une solution pour économiser de l'espace, en utilisant le conteneur Optional présent en Java, néanmoins la nécessité du gain de temps nous oriente vers l'implémentation actuelle, des allocations fréquentes de Optional pouvant ralentir le programme lors de son exécution.
 
 \subsection{Bidirectional Map}
-Puisque le stockage du plateau de jeu se fait à l'aide d'un vecteur de 16 bitboards, nous avons rapidement eu besoin de lier chacune d'elle à un type de pièce pour chaque couleur.
+Puisque le stockage du plateau de jeu se fait à l'aide d'un vecteur de 12 bitboards, nous avons rapidement eu besoin de lier chacune d'elle à un type de pièce pour chaque couleur.
 Nous avons donc implémenté le type \textit{ColoredPiece} qui permet d'associer une pièce et une couleur. Ceci nous a donc permis d'associer chaque type de pièces à un indice
 de bitboard dans le vecteur. Certaines fonctions nécessitent d'obtenir un indice de bitboard à partir d'un pièce tandis que d'autres avaient besoin de l'inverse, nous avons implémenté un système
 de Bidirectional Map afin de ne pas avoir à maintenir à jour deux HashMaps qui auraient mené à de la duplication de code. Ces nouvelles tables nous permettent donc de chercher un élément par clé ou par valeur et rend donc la
