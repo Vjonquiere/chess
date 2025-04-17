@@ -4,6 +4,7 @@ import static pdp.utils.Logging.debug;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
@@ -26,7 +27,7 @@ public final class GameAi extends GameAbstract {
   private GameAi(
       final GameState gameState,
       final History history,
-      final HashMap<Long, Integer> stateCount,
+      final Map<Long, Integer> stateCount,
       final ZobristHashing zobristHashing) {
     super(gameState, history, stateCount, zobristHashing);
   }
@@ -155,7 +156,7 @@ public final class GameAi extends GameAbstract {
 
     final GameState gameState = game.getGameState().getCopy();
 
-    final HashMap<Long, Integer> stateCount = new HashMap<>(game.getStateCount());
+    final Map<Long, Integer> stateCount = new HashMap<>(game.getStateCount());
 
     final ZobristHashing zobristHashing = new ZobristHashing(game.getZobristHasher());
 

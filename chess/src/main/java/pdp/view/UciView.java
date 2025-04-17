@@ -51,7 +51,7 @@ public class UciView implements View {
    * move rule and threefold repetition. The other chess engine use a 5-fold repetition and a 75
    * move rule, we adapt our game the same way.
    */
-  public UciView(final HashMap<OptionType, String> options) {
+  public UciView(final Map<OptionType, String> options) {
     commands.put("uci", new CommandEntry(this::uciCommand, "uci"));
     commands.put("ucinewgame", new CommandEntry(this::uciNewGameCommand, "uci new game"));
     commands.put("position", new CommandEntry(this::positionCommand, "position"));

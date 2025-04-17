@@ -5,6 +5,7 @@ import static pdp.utils.Logging.error;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import pdp.events.EventType;
@@ -50,7 +51,7 @@ public class Solver {
   private final ZobristHashing zobristHashing = new ZobristHashing();
 
   /** Map containing evaluations of boards, stored thanks to zobrist. */
-  private ConcurrentHashMap<Long, Float> evaluatedBoards;
+  private ConcurrentMap<Long, Float> evaluatedBoards;
 
   /** AI algorithm to find the best move. */
   private SearchAlgorithm algorithm;

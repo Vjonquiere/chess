@@ -1,6 +1,6 @@
 package pdp;
 
-import java.util.HashMap;
+import java.util.Map;
 import pdp.controller.BagOfCommands;
 import pdp.controller.GameController;
 import pdp.model.Game;
@@ -19,7 +19,7 @@ public abstract class GameControllerInit {
    * @param options The options to use to initialize the game.
    * @return A new GameController instance.
    */
-  public static GameController initialize(final HashMap<OptionType, String> options) {
+  public static GameController initialize(final Map<OptionType, String> options) {
 
     final Game model = GameInitializer.initialize(options);
 

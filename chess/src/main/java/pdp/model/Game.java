@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -64,8 +65,8 @@ public final class Game extends GameAbstract {
   /** Boolean to indicate whether the game is in contest mode or not. */
   private boolean isContestMode;
 
-  /** Map containing th options of the game and their values. */
-  private final HashMap<OptionType, String> options;
+  /** Map containing the options of the game and their values. */
+  private final Map<OptionType, String> options;
 
   /** Lock of the view, to avoid desynchronization between the view and the model. */
   private final ReentrantLock viewLock = new ReentrantLock();
@@ -98,7 +99,7 @@ public final class Game extends GameAbstract {
       final Solver solverBlack,
       final GameState gameState,
       final History history,
-      final HashMap<OptionType, String> options) {
+      final Map<OptionType, String> options) {
 
     super(gameState, history, new HashMap<>());
 
@@ -151,7 +152,7 @@ public final class Game extends GameAbstract {
    *
    * @return map of options and values
    */
-  public HashMap<OptionType, String> getOptions() {
+  public Map<OptionType, String> getOptions() {
     return options;
   }
 
@@ -405,7 +406,7 @@ public final class Game extends GameAbstract {
       final Solver solverWhite,
       final Solver solverBlack,
       final Timer timer,
-      final HashMap<OptionType, String> options) {
+      final Map<OptionType, String> options) {
     return initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, null, options);
   }
 
@@ -427,7 +428,7 @@ public final class Game extends GameAbstract {
       final Solver solverBlack,
       final Timer timer,
       final FileBoard board,
-      final HashMap<OptionType, String> options) {
+      final Map<OptionType, String> options) {
     debug(LOGGER, board == null ? "Initializing Game..." : "Initializing Game from given board...");
     instance =
         createGameInstance(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
@@ -456,7 +457,7 @@ public final class Game extends GameAbstract {
       final Solver solverBlack,
       final Timer timer,
       final FileBoard board,
-      final HashMap<OptionType, String> options) {
+      final Map<OptionType, String> options) {
     final GameState gameState =
         (board == null) ? new GameState(timer) : new GameState(board, timer);
     final Game game =
@@ -726,7 +727,7 @@ public final class Game extends GameAbstract {
       final Solver solverWhite,
       final Solver solverBlack,
       final Timer timer,
-      final HashMap<OptionType, String> options) {
+      final Map<OptionType, String> options) {
     instance =
         new Game(
             isWhiteAi,

@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
@@ -40,7 +40,7 @@ public abstract class GameInitializer {
    * @param options The options to use to initialize the game.
    * @return A new Game instance.
    */
-  public static Game initialize(final HashMap<OptionType, String> options) {
+  public static Game initialize(final Map<OptionType, String> options) {
 
     CommandLineOptions.validateAiOptions(options);
 
