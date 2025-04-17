@@ -20,10 +20,7 @@ import pdp.utils.Logging;
  * Algorithm of artificial intelligence Alpha beta pruning, with parallelization (threads) to have
  * more efficient search.
  */
-public class AlphaBetaParallel extends SearchAlgorithm {
-  /** Solver used for calling the evaluation of the board once depth is reached or time is up. */
-  private final Solver solver;
-
+public class AlphaBetaParallel extends AlphaBeta {
   /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(AlphaBetaParallel.class.getName());
 
@@ -37,7 +34,7 @@ public class AlphaBetaParallel extends SearchAlgorithm {
    * @param solver Solver needed to call the evaluation
    */
   public AlphaBetaParallel(final Solver solver) {
-    this.solver = solver;
+    super(solver);
   }
 
   /**
@@ -109,75 +106,6 @@ public class AlphaBetaParallel extends SearchAlgorithm {
     final long visitedNodes = getVisitedNodes();
     clearNode();
     debug(LOGGER, "This search: " + visitedNodes + ", mean: " + getMean());
-    return bestMove;
-  }
-
-  /**
-   * Finds the best move for the given player. It cuts the uninteresting branches with the
-   * AlphaBetaPruning.
-   *
-   * <p>The method evaluates recursively the game state to select the optimal move.
-   *
-   * @param game The current game
-   * @param depth The number of moves remaining in the search
-   * @param currentPlayer The current player (true for white, false for black).
-   * @param alpha The best option for the maximizing player
-   * @param beta The best option for the minimizing player
-   * @param originalPlayer The player at root
-   * @return The best move with its evaluated score.
-   */
-  private AiMove alphaBeta(
-      final GameAi game,
-      final int depth,
-      final boolean currentPlayer,
-      float alpha,
-      float beta,
-      final boolean originalPlayer) {
-    addNode();
-    if (solver.isSearchStopped()) {
-      return new AiMove(null, originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    }
-    if (depth == 0 || game.isOver()) {
-      final float evaluation = solver.evaluateBoard(game.getGameState(), originalPlayer);
-      return new AiMove(null, evaluation);
-    }
-
-    AiMove bestMove =
-        new AiMove(null, currentPlayer == originalPlayer ? -Float.MAX_VALUE : Float.MAX_VALUE);
-    final List<Move> moves = game.getBoard().getAllAvailableMoves(currentPlayer);
-    MoveOrdering.moveOrder(moves);
-
-    for (final Move move : moves) {
-      if (solver.isSearchStopped()) {
-        break;
-      }
-      try {
-        game.playMove(move);
-        final AiMove currMove =
-            alphaBeta(game, depth - 1, !currentPlayer, alpha, beta, originalPlayer);
-
-        game.previousState();
-
-        if (currentPlayer == originalPlayer) { // Maximizing
-          if (currMove.score() > bestMove.score() || bestMove.move() == null) {
-            bestMove = new AiMove(move, currMove.score());
-          }
-          alpha = Math.max(alpha, bestMove.score());
-        } else { // Minimizing
-          if (currMove.score() < bestMove.score() || bestMove.move() == null) {
-            bestMove = new AiMove(move, currMove.score());
-          }
-          beta = Math.min(beta, bestMove.score());
-        }
-
-        if (alpha >= beta) {
-          break;
-        }
-      } catch (IllegalMoveException ignored) {
-        // Skipping illegal move
-      }
-    }
-
     return bestMove;
   }
 

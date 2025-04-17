@@ -90,7 +90,7 @@ public class AlphaBeta extends SearchAlgorithm {
    * @param originalPlayer The player at root
    * @return The best move with its evaluated score.
    */
-  private AiMove alphaBeta(
+  public AiMove alphaBeta(
       final GameAi game,
       final int depth,
       final boolean currentPlayer,
