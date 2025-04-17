@@ -85,7 +85,7 @@ public class Minimax extends SearchAlgorithm {
             bestMove = new AiMove(move, currMove.score());
           }
         }
-      } catch (Exception ignored) {
+      } catch (Exception expected) {
         // Handle illegal move
       }
     }

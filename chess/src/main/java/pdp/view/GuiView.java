@@ -4,10 +4,7 @@ import static pdp.utils.Logging.debug;
 import static pdp.utils.Logging.error;
 import static pdp.view.gui.themes.ColorTheme.GREY;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
@@ -181,7 +178,7 @@ public class GuiView implements View {
 
       scene.getStylesheets().clear();
       scene.getStylesheets().add(tempFile.toURI().toString());
-    } catch (Exception ex) {
+    } catch (IOException ex) {
       error(ex.toString());
     }
   }

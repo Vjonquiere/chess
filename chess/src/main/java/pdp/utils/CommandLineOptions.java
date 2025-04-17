@@ -140,19 +140,19 @@ public final class CommandLineOptions {
    * Ensures the user config file exists by copying from resources if needed. Returns true if the
    * file exists or was successfully created.
    */
-  private static boolean ensureUserConfigExists(File userConfigFile) {
+  private static boolean ensureUserConfigExists(final File userConfigFile) {
     if (userConfigFile.exists()) {
       return true;
     }
 
-    File parentDir = userConfigFile.getParentFile();
+    final File parentDir = userConfigFile.getParentFile();
     if (parentDir != null && !parentDir.exists()) {
       parentDir.mkdirs();
     }
 
     try (InputStream is = CommandLineOptions.class.getResourceAsStream("/" + defaultConfigFile);
         FileOutputStream fos = new FileOutputStream(userConfigFile)) {
-      byte[] buffer = new byte[1024];
+      final byte[] buffer = new byte[1024];
       int bytesRead;
       while ((bytesRead = is.read(buffer)) != -1) {
         fos.write(buffer, 0, bytesRead);

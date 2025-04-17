@@ -55,7 +55,7 @@ public abstract class GameInitializer {
       int time;
       try {
         time = Integer.parseInt(options.get(OptionType.TIME));
-      } catch (Exception e) {
+      } catch (NumberFormatException e) {
         error("Not an int for the blitz time");
         error("Defaulting to a 30 minutes timer");
         time = 30;
@@ -96,7 +96,7 @@ public abstract class GameInitializer {
           final AlgorithmType algorithmType =
               AlgorithmType.valueOf(options.get(OptionType.AI_MODE_W));
           solverWhite.setAlgorithm(algorithmType);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
           error("Unknown AI mode option: " + options.get(OptionType.AI_MODE));
           error("Defaulting to ALPHABETA.");
           solverWhite.setAlgorithm(AlgorithmType.ALPHA_BETA);
@@ -108,7 +108,7 @@ public abstract class GameInitializer {
           final AlgorithmType algorithmType =
               AlgorithmType.valueOf(options.get(OptionType.AI_MODE_B));
           solverBlack.setAlgorithm(algorithmType);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
           error("Unknown AI mode option: " + options.get(OptionType.AI_MODE_B));
           error("Defaulting to ALPHABETA.");
           solverBlack.setAlgorithm(AlgorithmType.ALPHA_BETA);
@@ -209,7 +209,7 @@ public abstract class GameInitializer {
         try {
           final int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_W));
           solverWhite.setDepth(depth);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
           error("Not an integer for the depth of white AI");
           error("Defaulting to depth " + solverWhite.getDepth());
         }
@@ -220,7 +220,7 @@ public abstract class GameInitializer {
         try {
           final int depth = Integer.parseInt(options.get(OptionType.AI_DEPTH_B));
           solverBlack.setDepth(depth);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
           error("Not an integer for the depth of black AI");
           error("Defaulting to depth " + solverBlack.getDepth());
         }
@@ -231,7 +231,7 @@ public abstract class GameInitializer {
         try {
           final int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_W));
           solverWhite.setMonteCarloAlgorithm(simulations);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
           error("Not an integer for the simulations of AI");
           error(
               "Defaulting to depth "
@@ -244,7 +244,7 @@ public abstract class GameInitializer {
         try {
           final int simulations = Integer.parseInt(options.get(OptionType.AI_SIMULATION_B));
           solverBlack.setMonteCarloAlgorithm(simulations);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
           error("Not an integer for the simulations of AI");
           error(
               "Defaulting to simulations "
@@ -260,7 +260,7 @@ public abstract class GameInitializer {
           }
           solverWhite.setTime(time);
           solverBlack.setTime(time);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
           error("Not an int for the time of AI (in seconds)");
           error("Defaulting to a 5 seconds timer");
           solverWhite.setTime(5);

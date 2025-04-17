@@ -53,7 +53,7 @@ public final class BagOfCommands {
                   }
                   Thread.sleep(1); // Prevent CPU overuse
                 }
-              } catch (Exception e) {
+              } catch (InterruptedException e) {
                 error("Error in processCommands: " + e.getMessage());
               } finally {
                 bagRunning = false;

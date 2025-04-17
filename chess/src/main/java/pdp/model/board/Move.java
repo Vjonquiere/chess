@@ -93,7 +93,7 @@ public class Move {
    *
    * @param source The starting Position of the move.
    * @param dest The destination Position of the move.
-   * @param piece The being moved.
+   * @param piece The piece being moved.
    * @param isTake A boolean indicating whether the move is a capture (true if it's a capture, false
    *     otherwise).
    * @param takenPiece The ColoredPiece that was captured, or null if no piece was captured.
@@ -183,13 +183,13 @@ public class Move {
   public static Move fromString(final String stringMove, final boolean isWhiteTurn) {
     String move = stringMove;
 
-    if (move.equalsIgnoreCase("o-o-o")) {
+    if ("o-o-o".equalsIgnoreCase(move)) {
       if (isWhiteTurn) {
         move = "e1-c1";
       } else {
         move = "e8-c8";
       }
-    } else if (move.equalsIgnoreCase("o-o")) {
+    } else if ("o-o".equalsIgnoreCase(move)) {
       if (isWhiteTurn) {
         move = "e1-g1";
       } else {
@@ -210,7 +210,7 @@ public class Move {
    */
   public static Move fromString(final String stringMove) {
 
-    if (stringMove.equalsIgnoreCase("o-o-o") || stringMove.equalsIgnoreCase("o-o")) {
+    if ("o-o-o".equalsIgnoreCase(stringMove) || "o-o".equalsIgnoreCase(stringMove)) {
       throw new MoveParsingException(
           "Castling notation ('o-o' or 'o-o-o') is not supported in this method.");
     }

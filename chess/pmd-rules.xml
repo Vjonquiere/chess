@@ -28,7 +28,6 @@
         <exclude name="LongVariable"/>
     </rule>
     <rule ref="category/java/design.xml">
-        <exclude name="AvoidCatchingGenericException"/>
     </rule>
     <rule ref="category/java/design.xml/LawOfDemeter">
         <properties>

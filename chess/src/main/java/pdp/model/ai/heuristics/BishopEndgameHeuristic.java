@@ -82,8 +82,9 @@ public class BishopEndgameHeuristic implements Heuristic {
    */
   private float evaluateSameColorBishopsSamePlayer(
       final BoardRepresentation board, final boolean isWhite) {
+    final int MIN_BISHOPS_FOR_SAME_COLOR_CHECK = 2;
     final List<Position> bishops = board.getBishops(isWhite);
-    if (bishops.size() < 2) {
+    if (bishops.size() < MIN_BISHOPS_FOR_SAME_COLOR_CHECK) {
       return 0;
     }
     // if at least one bishop.

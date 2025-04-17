@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import pdp.BoardLoaderLexer;
 import pdp.BoardLoaderParser;
+import pdp.exceptions.ChessException;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.piece.Color;
 import pdp.utils.Logging;
@@ -91,7 +92,7 @@ public class BoardFileParser {
           || result.board().getKing(false).size() != 1
           || result.board().isCheckMate(Color.WHITE)
           || result.board().isCheckMate(Color.BLACK)) {
-        throw new RuntimeException(
+        throw new ChessException(
             "Board do not satisfy load requirements (no check mate and one king by player)");
       }
       return result;

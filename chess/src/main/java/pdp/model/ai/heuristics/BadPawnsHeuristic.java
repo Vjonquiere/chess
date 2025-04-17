@@ -54,20 +54,21 @@ public class BadPawnsHeuristic implements Heuristic {
   }
 
   /**
-   * Counts the doubled pawns ( 2 or more pawns on the same column).
+   * Counts the doubled pawns (2 or more pawns on the same column).
    *
    * @param board Current board
    * @param isWhite true if the player is White, false if he is black
    * @return number of doubled pawns
    */
   private int doubledPawns(final BoardRepresentation board, final boolean isWhite) {
+    final int MAX_PAWN_IN_COLUMN = 1;
     final Map<Integer, Integer> colCount = new HashMap<>();
     int count = 0;
     for (final Position p : board.getPawns(isWhite)) {
       colCount.put(p.x(), colCount.getOrDefault(p.x(), 0) + 1);
     }
     for (final int c : colCount.keySet()) {
-      if (colCount.get(c) > 1) {
+      if (colCount.get(c) > MAX_PAWN_IN_COLUMN) {
         count++;
       }
     }
