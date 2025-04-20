@@ -2,6 +2,7 @@ package pdp.controller;
 
 import java.util.logging.Logger;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.Logging;
 import pdp.view.View;
 
@@ -11,7 +12,7 @@ public class GameController {
   private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
 
   /** Model, for MVC architecture. */
-  private Game model;
+  private GameAbstract model;
 
   /** View, for MVC architecture. */
   private View view;
@@ -47,7 +48,7 @@ public class GameController {
    *
    * @return The Game model of the controller.
    */
-  public Game getModel() {
+  public GameAbstract getModel() {
     return this.model;
   }
 
@@ -65,7 +66,7 @@ public class GameController {
    *
    * @param model Current model
    */
-  public void setModel(final Game model) {
+  public void setModel(final GameAbstract model) {
     this.model = model;
   }
 

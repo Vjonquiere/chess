@@ -33,7 +33,7 @@ public class UciView implements View {
   /** Boolean to indicate whether the view is running or not. */
   private boolean running;
 
-  /** Map making a correspondance between a string and the command it represents. */
+  /** Map making a correspondence between a string and the command it represents. */
   private final Map<String, CommandEntry> commands = new HashMap<>();
 
   /** Logger of the class. */
@@ -47,9 +47,9 @@ public class UciView implements View {
   }
 
   /**
-   * Initializes the view by settings the commands and parametrizing the game with the correct fifty
-   * move rule and threefold repetition. The other chess engine use a 5-fold repetition and a 75
-   * move rule, we adapt our game the same way.
+   * Initializes the view by settings the commands and parametrizing the game with the correct
+   * fifty-move rule and threefold repetition. The other chess engine uses a 5-fold repetition and a
+   * 75-move rule, we adapt our game the same way.
    */
   public UciView(final Map<OptionType, String> options) {
     commands.put("uci", new CommandEntry(this::uciCommand, "uci"));
@@ -60,7 +60,7 @@ public class UciView implements View {
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
     GameAbstract.setThreeFoldLimit(5);
     GameState.setFiftyMoveLimit(75);
-    final Solver aiConfiguration = Game.getInstance().getWhiteSolver();
+    final Solver aiConfiguration = GameAbstract.getInstance().getWhiteSolver();
     if (aiConfiguration != null) {
       solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
       solver.setDepth(aiConfiguration.getDepth());
@@ -132,7 +132,7 @@ public class UciView implements View {
         || exception instanceof FailedRedoException) {
       error(exception.getMessage());
     } else {
-      print(Game.getInstance().getGameRepresentation());
+      print(GameAbstract.getInstance().getGameRepresentation());
       error(String.valueOf(exception));
       running = false;
     }
@@ -196,10 +196,10 @@ public class UciView implements View {
           false,
           null,
           null,
-          Game.getInstance().getGameState().getMoveTimer(),
-          Game.getInstance().getOptions());
+          GameAbstract.getInstance().getGameState().getMoveTimer(),
+          GameAbstract.getInstance().getOptions());
       for (int i = 2; i < args2.length; i++) {
-        Game.getInstance().playMove(Move.fromUciString(args2[i]));
+        GameAbstract.getInstance().playMove(Move.fromUciString(args2[i]));
       }
 
     } else if (args2.length == 1 && "startpos".equals(args2[0])) {
@@ -208,16 +208,16 @@ public class UciView implements View {
           false,
           null,
           null,
-          Game.getInstance().getGameState().getMoveTimer(),
-          Game.getInstance().getOptions());
+          GameAbstract.getInstance().getGameState().getMoveTimer(),
+          GameAbstract.getInstance().getOptions());
     }
   }
 
   private void goCommand(String args) {
     debug(LOGGER, "Searching for best move");
-    final Move move = solver.getBestMove(Game.getInstance());
+    final Move move = solver.getBestMove(GameAbstract.getInstance());
     if (move == null) {
-      error(Game.getInstance().getGameRepresentation());
+      error(GameAbstract.getInstance().getGameRepresentation());
     }
     print("bestmove " + move.toUciString());
   }

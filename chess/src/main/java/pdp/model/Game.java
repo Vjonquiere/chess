@@ -30,16 +30,12 @@ import pdp.model.savers.BoardSaver;
 import pdp.utils.Logging;
 import pdp.utils.OptionType;
 import pdp.utils.Position;
-import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 
 /** Model of our MVC architecture. Uses the Singleton design pattern. */
 public final class Game extends GameAbstract {
   /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
-
-  /** Instance of Game, design pattern singleton. */
-  private static Game instance;
 
   /** Solver of the White AI player. */
   private Solver solverWhite;
@@ -56,10 +52,10 @@ public final class Game extends GameAbstract {
   /** Boolean to indicate whether the game instance is initializing or is ready to use. */
   private boolean isInitializing;
 
-  /** Boolean to indicate whether the game was load from a file or not. */
+  /** Boolean to indicate whether the game was loaded from a file or not. */
   private boolean loadedFromFile;
 
-  /** Boolean to indicate whether the game was load from a file which had a history or not. */
+  /** Boolean to indicate whether the game was loaded from a file which had a history or not. */
   private boolean loadingFileWithHistory;
 
   /** Boolean to indicate whether the game is in contest mode or not. */
@@ -120,26 +116,26 @@ public final class Game extends GameAbstract {
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
 
-    if (instance != null) {
-      if (instance.getTimer(true) != null) {
-        instance.getTimer(true).stop();
+    if (GameAbstract.isInstanceInitialized()) {
+      if (GameAbstract.getInstance().getTimer(true) != null) {
+        GameAbstract.getInstance().getTimer(true).stop();
       }
-      if (instance.getTimer(false) != null) {
-        instance.getTimer(false).stop();
-      }
-
-      if (instance.getBlackSolver() != null) {
-        instance.getBlackSolver().stopSearch(false);
-      }
-      if (instance.getWhiteSolver() != null) {
-        instance.getWhiteSolver().stopSearch(false);
+      if (GameAbstract.getInstance().getTimer(false) != null) {
+        GameAbstract.getInstance().getTimer(false).stop();
       }
 
-      for (final EventObserver observer : instance.getObservers()) {
+      if (GameAbstract.getInstance().getBlackSolver() != null) {
+        GameAbstract.getInstance().getBlackSolver().stopSearch(false);
+      }
+      if (GameAbstract.getInstance().getWhiteSolver() != null) {
+        GameAbstract.getInstance().getWhiteSolver().stopSearch(false);
+      }
+
+      for (final EventObserver observer : GameAbstract.getInstance().getObservers()) {
         this.addObserver(observer);
       }
 
-      for (final EventObserver observer : instance.getErrorObservers()) {
+      for (final EventObserver observer : GameAbstract.getInstance().getErrorObservers()) {
         this.addErrorObserver(observer);
       }
     }
@@ -154,6 +150,26 @@ public final class Game extends GameAbstract {
    */
   public Map<OptionType, String> getOptions() {
     return options;
+  }
+
+  @Override
+  public void lockView() {
+    this.viewLock.lock();
+  }
+
+  @Override
+  public void unlockView() {
+    this.viewLock.unlock();
+  }
+
+  @Override
+  public boolean isViewLocked() {
+    return this.viewLock.isLocked();
+  }
+
+  @Override
+  public void signalWorkingViewCondition() {
+    this.workingView.signal();
   }
 
   /**
@@ -430,9 +446,10 @@ public final class Game extends GameAbstract {
       final FileBoard board,
       final Map<OptionType, String> options) {
     debug(LOGGER, board == null ? "Initializing Game..." : "Initializing Game from given board...");
-    instance =
+    Game instance =
         createGameInstance(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
-    setupTimer(timer);
+    GameAbstract.setInstance(instance);
+    instance.setupTimer(timer);
     debug(LOGGER, "Game initialized!");
     instance.notifyObservers(EventType.GAME_STARTED);
     return instance;
@@ -472,10 +489,10 @@ public final class Game extends GameAbstract {
    *
    * @param timer The timer to be set up for the game.
    */
-  private static void setupTimer(final Timer timer) {
+  private void setupTimer(final Timer timer) {
     if (timer != null) {
-      timer.setCallback(instance::outOfTimeCallback);
-      if (!instance.isCurrentPlayerAi()) {
+      timer.setCallback(this::outOfTimeCallback);
+      if (!this.isCurrentPlayerAi()) {
         timer.start();
       }
     }
@@ -669,11 +686,11 @@ public final class Game extends GameAbstract {
 
     debug(LOGGER, "Restarting game");
 
-    if (instance.getTimer(true) != null) {
-      instance.getTimer(true).stop();
+    if (this.getTimer(true) != null) {
+      this.getTimer(true).stop();
     }
-    if (instance.getTimer(false) != null) {
-      instance.getTimer(false).stop();
+    if (this.getTimer(false) != null) {
+      this.getTimer(false).stop();
     }
 
     super.getGameState().updateFrom(new GameState(super.getGameState().getMoveTimer()));
@@ -695,7 +712,7 @@ public final class Game extends GameAbstract {
     this.notifyObservers(EventType.GAME_RESTART);
 
     if (super.getGameState().getMoveTimer() != null) {
-      if (!instance.isCurrentPlayerAi()) {
+      if (!this.isCurrentPlayerAi()) {
         super.getGameState().getMoveTimer().start();
       }
     }
@@ -728,7 +745,8 @@ public final class Game extends GameAbstract {
       final Solver solverBlack,
       final Timer timer,
       final Map<OptionType, String> options) {
-    instance =
+
+    Game instance =
         new Game(
             isWhiteAi,
             isBlackAi,
@@ -737,6 +755,7 @@ public final class Game extends GameAbstract {
             new GameState(timer),
             new History(),
             options);
+    GameAbstract.setInstance(instance);
     BagOfCommands.getInstance().setModel(instance);
     instance.setInitializing(true);
     for (final Move move : moves) {
@@ -754,78 +773,5 @@ public final class Game extends GameAbstract {
     instance.notifyObservers(EventType.GAME_STARTED);
 
     return instance;
-  }
-
-  /**
-   * Returns a string representation of the game. Includes the ASCII representation of the board,
-   * the time remaining (if timer is not null), and the color of the player to play.
-   *
-   * @return A string representation of the game.
-   */
-  public String getGameRepresentation() {
-    final char[][] board = super.getGameState().getBoard().getAsciiRepresentation();
-    final StringBuilder stringBuilder = new StringBuilder();
-
-    final Timer timer = this.getTimer(!super.getGameState().isWhiteTurn());
-    if (timer != null) {
-      stringBuilder.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
-    }
-
-    stringBuilder.append('\n');
-
-    final int size = board.length;
-
-    for (int row = 0; row < size; row++) {
-      stringBuilder.append(size - row).append(" | ");
-      for (int col = 0; col < size; col++) {
-        stringBuilder.append(board[row][col]).append(' ');
-      }
-      stringBuilder.append('\n');
-    }
-
-    stringBuilder.append("    "); // Offset for row numbers
-    stringBuilder.append("- ".repeat(size));
-    stringBuilder.append("\n    ");
-    for (char c = 'A'; c < 'A' + size; c++) {
-      stringBuilder.append(c).append(' ');
-    }
-    stringBuilder.append("\n\n");
-
-    if (!super.getGameState().isGameOver()) {
-      stringBuilder.append(
-          TextGetter.getText(
-              "toPlay",
-              super.getGameState().isWhiteTurn()
-                  ? TextGetter.getText("white")
-                  : TextGetter.getText("black")));
-    } else {
-      stringBuilder.append(TextGetter.getText("gameOver"));
-    }
-
-    stringBuilder.append('\n');
-
-    return stringBuilder.toString();
-  }
-
-  /**
-   * Retrieves the singleton instance of the Game.
-   *
-   * @return The single instance of Game.
-   * @throws IllegalStateException If the Game has not been initialized.
-   */
-  public static Game getInstance() {
-    if (instance == null) {
-      throw new IllegalStateException("Game has not been initialized");
-    }
-    return instance;
-  }
-
-  /**
-   * Indicates whether the object has been fully initialized.
-   *
-   * @return {@code true} if initialization is complete, otherwise {@code false}.
-   */
-  public boolean isInitialized() {
-    return this.isInitializing;
   }
 }

@@ -3,7 +3,7 @@ package pdp.model.ai.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameAi;
 import pdp.model.GameState;
 import pdp.model.ai.AiMove;
@@ -70,7 +70,7 @@ public class MonteCarloTreeSearch extends SearchAlgorithm {
    * @return The best move for the player
    */
   @Override
-  public AiMove findBestMove(final Game game, int depth, boolean player) {
+  public AiMove findBestMove(final GameAbstract game, int depth, boolean player) {
     final GameAi aiGame = GameAi.fromGame(game);
     final GameState gameStateCopy = aiGame.getGameState().getCopy();
     // Give the root a copy of the game state to work on new ones

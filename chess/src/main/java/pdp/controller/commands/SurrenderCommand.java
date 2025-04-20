@@ -4,7 +4,7 @@ import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.exceptions.CommandNotAvailableNowException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 
 /**
  * Part of Command Design pattern. Creates a command for the surrender of the player of the color
@@ -23,7 +23,7 @@ public record SurrenderCommand(boolean isWhite) implements Command {
    *     successful.
    */
   @Override
-  public Optional<Exception> execute(final Game model, GameController controller) {
+  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }

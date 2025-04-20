@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.exceptions.IllegalMoveException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameState;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
@@ -316,7 +316,7 @@ public class Solver {
    *
    * @param game current game
    */
-  public void playAiMove(final Game game) {
+  public void playAiMove(final GameAbstract game) {
     if (timer != null) {
       timer.start();
     }
@@ -352,7 +352,7 @@ public class Solver {
    * @param game Game to find the best move in
    * @return best move according to the game in parameter
    */
-  public Move getBestMove(final Game game) {
+  public Move getBestMove(final GameAbstract game) {
     if (timer != null) {
       timer.start();
     }

@@ -8,12 +8,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
+import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.board.ZobristHashing;
 import pdp.model.history.History;
 import pdp.model.history.HistoryState;
 import pdp.utils.Logging;
+import pdp.utils.OptionType;
 import pdp.utils.Position;
+import pdp.utils.Timer;
 
 /** Specific implementation of game for AI players. */
 public final class GameAi extends GameAbstract {
@@ -63,6 +66,66 @@ public final class GameAi extends GameAbstract {
 
     this.updateGameStateAfterMove(moveToProcess);
   }
+
+  @Override
+  public Timer getTimer(boolean isWhite) {
+    return null;
+  }
+
+  @Override
+  public Solver getBlackSolver() {
+    return null;
+  }
+
+  @Override
+  public Solver getWhiteSolver() {
+    return null;
+  }
+
+  @Override
+  public boolean isCurrentPlayerAi() {
+    return false;
+  }
+
+  @Override
+  public Map<OptionType, String> getOptions() {
+    return Map.of();
+  }
+
+  @Override
+  public void lockView() {}
+
+  @Override
+  public void unlockView() {}
+
+  @Override
+  public boolean isViewLocked() {
+    return false;
+  }
+
+  @Override
+  public void signalWorkingViewCondition() {}
+
+  @Override
+  public boolean isWhiteAi() {
+    return false;
+  }
+
+  @Override
+  public boolean isBlackAi() {
+    return false;
+  }
+
+  @Override
+  public void restartGame() {
+    // TODO
+  }
+
+  @Override
+  public void saveGame(String filepath) {}
+
+  @Override
+  public void startAi() {}
 
   @Override
   protected void updateGameStateAfterMove(final Move move) {
@@ -148,7 +211,7 @@ public final class GameAi extends GameAbstract {
    * @param game game to transform into a GameAI
    * @return a gameAI from the given game
    */
-  public static GameAi fromGame(final Game game) {
+  public static GameAi fromGame(final GameAbstract game) {
     final History history = new History();
     history.addMove(
         new HistoryState(

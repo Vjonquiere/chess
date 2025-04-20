@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.PlayMoveCommand;
 import pdp.exceptions.IllegalMoveException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameAi;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.Move;
@@ -66,7 +66,7 @@ public class Board extends GridPane {
    * @param game The game to get the board data.
    * @param stage The stage to add the board.
    */
-  public Board(final Game game, final Stage stage) {
+  public Board(final GameAbstract game, final Stage stage) {
     super();
     this.boardRep = game.getBoard();
     this.boardColumns = boardRep.getNbCols();
@@ -137,7 +137,7 @@ public class Board extends GridPane {
     clearCheckSquare();
     clearLastMoveSquares();
     if (withAnimation) {
-      Game.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece);
+      GameAbstract.getInstance().getHistory().getCurrentMove().ifPresent(this::movePiece);
     } else {
       updateAfterAnimation();
     }
@@ -145,14 +145,14 @@ public class Board extends GridPane {
 
   /** Used to update the board after the move animation finished. */
   private void updateAfterAnimation() {
-    boardRep = Game.getInstance().getBoard();
+    boardRep = GameAbstract.getInstance().getBoard();
     for (int x = 0; x < boardColumns; x++) {
       for (int y = 0; y < boardRows; y++) {
         final ColoredPiece piece = boardRep.getPieceAt(x, boardRows - 1 - y);
         pieces.get(new Position(x, boardRows - 1 - y)).updatePiece(piece);
       }
     }
-    final Game game = Game.getInstance();
+    final GameAbstract game = GameAbstract.getInstance();
     if (boardRep.isCheck(game.getGameState().isWhiteTurn() ? Color.WHITE : Color.BLACK)) {
       checkSquare = boardRep.getKing(game.getGameState().isWhiteTurn()).get(0);
       setCheckSquare(checkSquare);
@@ -172,15 +172,15 @@ public class Board extends GridPane {
    */
   private void movePiece(final HistoryNode historyNode) {
     try {
-      if (Game.getInstance().getGameState().isWhiteTurn()
-          && Game.getInstance().isBlackAi()
-          && Game.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
+      if (GameAbstract.getInstance().getGameState().isWhiteTurn()
+          && GameAbstract.getInstance().isBlackAi()
+          && GameAbstract.getInstance().getBlackSolver().getLastMoveTime() < 2_000_000_000L) {
         updateAfterAnimation();
         return;
       }
-      if (!Game.getInstance().getGameState().isWhiteTurn()
-          && Game.getInstance().isWhiteAi()
-          && Game.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
+      if (!GameAbstract.getInstance().getGameState().isWhiteTurn()
+          && GameAbstract.getInstance().isWhiteAi()
+          && GameAbstract.getInstance().getWhiteSolver().getLastMoveTime() < 2_000_000_000L) {
         updateAfterAnimation();
         return;
       }
@@ -219,13 +219,13 @@ public class Board extends GridPane {
    * @param y y coordinate of the selected square
    */
   private void switchSelectedSquare(final int x, final int y) {
-    final boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
-    final Color squareColor = Game.getInstance().getBoard().getPieceAt(x, y).getColor();
+    final boolean isWhiteTurn = GameAbstract.getInstance().getGameState().isWhiteTurn();
+    final Color squareColor = GameAbstract.getInstance().getBoard().getPieceAt(x, y).getColor();
     if (from == null) {
-      if (isWhiteTurn && Game.getInstance().isWhiteAi() && squareColor == Color.WHITE) {
+      if (isWhiteTurn && GameAbstract.getInstance().isWhiteAi() && squareColor == Color.WHITE) {
         return;
       }
-      if (!isWhiteTurn && Game.getInstance().isBlackAi() && squareColor == Color.BLACK) {
+      if (!isWhiteTurn && GameAbstract.getInstance().isBlackAi() && squareColor == Color.BLACK) {
         return;
       }
       if ((isWhiteTurn && squareColor != Color.WHITE)
@@ -270,9 +270,9 @@ public class Board extends GridPane {
    */
   public void setReachableSquares(final int x, final int y) {
     reachableSquares = new ArrayList<>();
-    final List<Move> moves = Game.getInstance().getBoard().getAvailableMoves(x, y, false);
+    final List<Move> moves = GameAbstract.getInstance().getBoard().getAvailableMoves(x, y, false);
     for (final Move move : moves) {
-      final GameAi game = GameAi.fromGame(Game.getInstance());
+      final GameAi game = GameAi.fromGame(GameAbstract.getInstance());
       try {
         game.playMove(move);
         pieces.get(move.getDest()).setReachable(true, move.isTake());
@@ -301,7 +301,7 @@ public class Board extends GridPane {
    * @return Move as string format
    */
   public boolean processPawnPromoting(final int x, final int y) {
-    final ColoredPiece piece = Game.getInstance().getBoard().getPieceAt(from.x(), from.y());
+    final ColoredPiece piece = GameAbstract.getInstance().getBoard().getPieceAt(from.x(), from.y());
     if (piece.getPiece() == Piece.PAWN
         && piece.getColor() == Color.BLACK
         && y == 0

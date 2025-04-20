@@ -1,7 +1,7 @@
 package pdp.view.gui.controls;
 
 import javafx.scene.layout.VBox;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.TextGetter;
 
 /** GUI widget to display all the player information. */
@@ -17,15 +17,17 @@ public class PlayerPanel extends VBox {
     super();
     setSpacing(5);
     whitePlayer =
-        new PlayerInfos(TextGetter.getText("whitePlayer"), Game.getInstance().isWhiteAi(), true);
+        new PlayerInfos(
+            TextGetter.getText("whitePlayer"), GameAbstract.getInstance().isWhiteAi(), true);
     blackPlayer =
-        new PlayerInfos(TextGetter.getText("blackPlayer"), Game.getInstance().isBlackAi(), false);
+        new PlayerInfos(
+            TextGetter.getText("blackPlayer"), GameAbstract.getInstance().isBlackAi(), false);
     this.getChildren().addAll(whitePlayer, blackPlayer);
   }
 
   /** Switch the current player relying on game status. */
   public void switchCurrentPlayer() {
-    final boolean isWhiteTurn = Game.getInstance().getGameState().isWhiteTurn();
+    final boolean isWhiteTurn = GameAbstract.getInstance().getGameState().isWhiteTurn();
     whitePlayer.setCurrentPlayer(isWhiteTurn);
     blackPlayer.setCurrentPlayer(!isWhiteTurn);
   }

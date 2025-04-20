@@ -2,6 +2,7 @@ package pdp.model;
 
 import static pdp.utils.Logging.debug;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -11,6 +12,7 @@ import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPromoteFormatException;
+import pdp.model.ai.Solver;
 import pdp.model.board.BoardRepresentation;
 import pdp.model.board.CastlingMove;
 import pdp.model.board.Move;
@@ -22,8 +24,7 @@ import pdp.model.history.HistoryState;
 import pdp.model.piece.Color;
 import pdp.model.piece.ColoredPiece;
 import pdp.model.piece.Piece;
-import pdp.utils.Logging;
-import pdp.utils.Position;
+import pdp.utils.*;
 
 /** Class containing common methods for GameAI and Game. */
 public abstract class GameAbstract extends Subject {
@@ -44,6 +45,8 @@ public abstract class GameAbstract extends Subject {
 
   /** History of the game, used for undo and redo. */
   private final History history;
+
+  private static GameAbstract instance;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -110,6 +113,34 @@ public abstract class GameAbstract extends Subject {
    */
   public abstract void playMove(Move move);
 
+  public abstract Timer getTimer(final boolean isWhite);
+
+  public abstract Solver getBlackSolver();
+
+  public abstract Solver getWhiteSolver();
+
+  public abstract boolean isCurrentPlayerAi();
+
+  public abstract Map<OptionType, String> getOptions();
+
+  public abstract void lockView();
+
+  public abstract void unlockView();
+
+  public abstract boolean isViewLocked();
+
+  public abstract void signalWorkingViewCondition();
+
+  public abstract boolean isWhiteAi();
+
+  public abstract boolean isBlackAi();
+
+  public abstract void restartGame();
+
+  public abstract void saveGame(String filepath);
+
+  public abstract void startAi();
+
   /**
    * Add a state to the count of seen states. If the state has been seen 3 times, returns true.
    *
@@ -174,6 +205,19 @@ public abstract class GameAbstract extends Subject {
    */
   public Map<Long, Integer> getStateCount() {
     return stateCount;
+  }
+
+  /**
+   * Retrieves the boolean indicating if the current player is white or black.
+   *
+   * @return true if the current player is white, false if the current player is black
+   */
+  public boolean isWhiteTurn() {
+    return getGameState().isWhiteTurn();
+  }
+
+  public List<Integer> getHintIntegers() {
+    return getGameState().getHintIntegers();
   }
 
   /**
@@ -402,5 +446,68 @@ public abstract class GameAbstract extends Subject {
     this.getGameState().checkGameStatus();
 
     this.getHistory().addMove(new HistoryState(move, this.getGameState().getCopy()));
+  }
+
+  public static GameAbstract getInstance() {
+    if (instance == null) {
+      throw new IllegalStateException("Game instance not initialized");
+    }
+    return instance;
+  }
+
+  public static void setInstance(GameAbstract newInstance) {
+    instance = newInstance;
+  }
+
+  public static boolean isInstanceInitialized() {
+    return instance != null;
+  }
+
+  /**
+   * Returns a string representation of the game. Includes the ASCII representation of the board,
+   * the time remaining (if timer is not null), and the color of the player to play.
+   *
+   * @return A string representation of the game.
+   */
+  public String getGameRepresentation() {
+    final char[][] board = getGameState().getBoard().getAsciiRepresentation();
+    final StringBuilder stringBuilder = new StringBuilder();
+
+    final Timer timer = this.getTimer(!isWhiteTurn());
+    if (timer != null) {
+      stringBuilder.append(TextGetter.getText("timeRemaining", timer.getTimeRemainingString()));
+    }
+
+    stringBuilder.append('\n');
+
+    final int size = board.length;
+
+    for (int row = 0; row < size; row++) {
+      stringBuilder.append(size - row).append(" | ");
+      for (int col = 0; col < size; col++) {
+        stringBuilder.append(board[row][col]).append(' ');
+      }
+      stringBuilder.append('\n');
+    }
+
+    stringBuilder.append("    "); // Offset for row numbers
+    stringBuilder.append("- ".repeat(size));
+    stringBuilder.append("\n    ");
+    for (char c = 'A'; c < 'A' + size; c++) {
+      stringBuilder.append(c).append(' ');
+    }
+    stringBuilder.append("\n\n");
+
+    if (!getGameState().isGameOver()) {
+      stringBuilder.append(
+          TextGetter.getText(
+              "toPlay", isWhiteTurn() ? TextGetter.getText("white") : TextGetter.getText("black")));
+    } else {
+      stringBuilder.append(TextGetter.getText("gameOver"));
+    }
+
+    stringBuilder.append('\n');
+
+    return stringBuilder.toString();
   }
 }

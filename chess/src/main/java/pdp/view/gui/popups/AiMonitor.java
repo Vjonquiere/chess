@@ -12,7 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.ai.Solver;
 import pdp.model.ai.algorithms.MonteCarloTreeSearch;
 import pdp.utils.TextGetter;
@@ -46,7 +46,10 @@ public class AiMonitor extends Stage {
             : TextGetter.getText("monitoringBlackWindowTitle");
     this.setTitle(title);
 
-    solver = isWhite ? Game.getInstance().getWhiteSolver() : Game.getInstance().getBlackSolver();
+    solver =
+        isWhite
+            ? GameAbstract.getInstance().getWhiteSolver()
+            : GameAbstract.getInstance().getBlackSolver();
 
     table = new TableView<>();
 

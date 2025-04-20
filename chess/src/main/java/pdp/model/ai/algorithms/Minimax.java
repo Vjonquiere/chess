@@ -1,7 +1,7 @@
 package pdp.model.ai.algorithms;
 
 import java.util.List;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
@@ -31,7 +31,7 @@ public class Minimax extends SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AiMove findBestMove(final Game game, final int depth, final boolean player) {
+  public AiMove findBestMove(final GameAbstract game, final int depth, final boolean player) {
     final GameAi aiGame = GameAi.fromGame(game);
     final AiMove bestMove = minimax(aiGame, depth, player, player);
     clearNode();

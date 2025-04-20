@@ -4,7 +4,7 @@ import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.exceptions.FailedUndoException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 
 /**
  * Part of Command Design pattern. Creates a command to cancel the last move. Corresponds to an
@@ -19,7 +19,7 @@ public class CancelMoveCommand implements Command {
    * @return An Optional containing an exception if an error occurred, or empty if successful
    */
   @Override
-  public Optional<Exception> execute(final Game model, GameController controller) {
+  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
     try {
       if (model.isBlackAi() || model.isWhiteAi()) {
         model.previousState();

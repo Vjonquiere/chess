@@ -11,7 +11,7 @@ import pdp.controller.commands.ProposeDrawCommand;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SurrenderCommand;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.TextGetter;
 import pdp.view.gui.popups.InfoPopUp;
 import pdp.view.gui.popups.YesNoPopUp;
@@ -49,18 +49,19 @@ public class ButtonsPanel extends GridPane {
     undoButton.setMinWidth(100);
     undoButton.setOnAction(
         event -> {
-          if (Game.getInstance().getGameState().getFullTurn() > 0) {
+          if (GameAbstract.getInstance().getGameState().getFullTurn() > 0) {
             BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+            if (!GameAbstract.getInstance().isWhiteAi()
+                && !GameAbstract.getInstance().isBlackAi()) {
               new YesNoPopUp(
                   "undoInstructionsGui",
                   new CancelMoveCommand(),
-                  () -> Game.getInstance().getGameState().undoRequestReset());
+                  () -> GameAbstract.getInstance().getGameState().undoRequestReset());
             }
           } else {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
-          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+          if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
@@ -77,21 +78,27 @@ public class ButtonsPanel extends GridPane {
     redoButton.setMinWidth(100);
     redoButton.setOnAction(
         event -> {
-          if (Game.getInstance().getHistory().getCurrentMove().orElse(null) != null
-              && Game.getInstance().getHistory().getCurrentMove().get().getNext().orElse(null)
+          if (GameAbstract.getInstance().getHistory().getCurrentMove().orElse(null) != null
+              && GameAbstract.getInstance()
+                      .getHistory()
+                      .getCurrentMove()
+                      .get()
+                      .getNext()
+                      .orElse(null)
                   != null) {
             BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+            if (!GameAbstract.getInstance().isWhiteAi()
+                && !GameAbstract.getInstance().isBlackAi()) {
               new YesNoPopUp(
                   "redoInstructionsGui",
                   new RestoreMoveCommand(),
-                  () -> Game.getInstance().getGameState().redoRequestReset());
+                  () -> GameAbstract.getInstance().getGameState().redoRequestReset());
             }
           } else {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
 
-          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+          if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
@@ -108,13 +115,13 @@ public class ButtonsPanel extends GridPane {
     drawButton.setMinWidth(100);
     drawButton.setOnAction(
         event -> {
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+          if (!GameAbstract.getInstance().isWhiteAi() && !GameAbstract.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "drawInstructionsGui",
-                new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()),
+                new ProposeDrawCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+            if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
             }
           }
@@ -132,13 +139,13 @@ public class ButtonsPanel extends GridPane {
     undrawButton.setMinWidth(100);
     undrawButton.setOnAction(
         event -> {
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+          if (!GameAbstract.getInstance().isWhiteAi() && !GameAbstract.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "undrawInstructionsGui",
-                new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()),
+                new CancelDrawCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+            if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
             }
           }
@@ -156,13 +163,13 @@ public class ButtonsPanel extends GridPane {
     resignButton.setMinWidth(100);
     resignButton.setOnAction(
         event -> {
-          if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+          if (!GameAbstract.getInstance().isWhiteAi() && !GameAbstract.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "resignInstructionsGui",
-                new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()),
+                new SurrenderCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()),
                 null);
           } else {
-            if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+            if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
             }
           }

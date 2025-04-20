@@ -3,7 +3,7 @@ package pdp.controller.commands;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 
 /** Part of Command Design pattern. Creates a command used to save the game into a file. */
 public class SaveGameCommand implements Command {
@@ -35,7 +35,7 @@ public class SaveGameCommand implements Command {
    *     if the save was successful.
    */
   @Override
-  public Optional<Exception> execute(final Game model, GameController controller) {
+  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
     try {
       model.saveGame(filepath);
       return Optional.empty();

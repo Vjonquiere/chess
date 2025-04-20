@@ -7,7 +7,7 @@ import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.exceptions.CommandNotAvailableNowException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 
@@ -21,17 +21,14 @@ public class AskHintCommand implements Command {
    * @return An Optional containing an exception if an error occurred, or empty if successful
    */
   @Override
-  public Optional<Exception> execute(final Game model, GameController controller) {
+  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }
     try {
       final Solver hintSolver = new Solver();
       final Move hintMove =
-          hintSolver
-              .getAlgorithm()
-              .findBestMove(Game.getInstance(), 4, Game.getInstance().getGameState().isWhiteTurn())
-              .move();
+          hintSolver.getAlgorithm().findBestMove(model, 4, model.isWhiteTurn()).move();
       final List<Integer> hintIntegers =
           new ArrayList<>(
               Arrays.asList(
@@ -40,7 +37,7 @@ public class AskHintCommand implements Command {
                   hintMove.getDest().x(),
                   hintMove.getDest().y()));
 
-      Game.getInstance().getGameState().setHintIntegers(hintIntegers);
+      GameAbstract.getInstance().getGameState().setHintIntegers(hintIntegers);
       return Optional.empty();
     } catch (Exception e) {
       return Optional.of(e);

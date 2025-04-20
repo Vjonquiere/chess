@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
@@ -47,7 +47,7 @@ public class AlphaBeta extends SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AiMove findBestMove(final Game game, final int depth, final boolean player) {
+  public AiMove findBestMove(final GameAbstract game, final int depth, final boolean player) {
     final GameAi aiGame = GameAi.fromGame(game);
     final ExecutorService executor =
         Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());

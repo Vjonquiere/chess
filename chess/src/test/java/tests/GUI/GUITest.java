@@ -17,6 +17,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import pdp.events.EventType;
 import pdp.exceptions.FailedRedoException;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
 import pdp.model.piece.Color;
@@ -77,7 +78,7 @@ public class GUITest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
     Square square1 = from(guiView.getBoard()).lookup("#square41").query();
     assertEquals(new ColoredPiece(Piece.PAWN, Color.WHITE), square1.getCurrentPiece());
-    Game.getInstance().playMove(new Move(new Position(4, 1), new Position(4, 2)));
+    GameAbstract.getInstance().playMove(new Move(new Position(4, 1), new Position(4, 2)));
     guiView.onGameEvent(EventType.MOVE_PLAYED);
     WaitForAsyncUtils.waitForFxEvents();
     square1 = from(guiView.getBoard()).lookup("#square41").query();

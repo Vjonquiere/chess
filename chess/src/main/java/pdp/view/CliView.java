@@ -28,7 +28,7 @@ import pdp.exceptions.IllegalMoveException;
 import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 
@@ -97,16 +97,16 @@ public class CliView implements View {
    */
   @Override
   public void onGameEvent(final EventType event) {
-    Game.getInstance().getViewLock().lock();
+    GameAbstract.getInstance().lockView();
     try {
       switch (event) {
         case GAME_STARTED:
           print(TextGetter.getText("welcomeCLI"));
           print(TextGetter.getText("welcomeInstructions"));
-          print(Game.getInstance().getGameRepresentation());
+          print(GameAbstract.getInstance().getGameRepresentation());
           break;
         case MOVE_PLAYED:
-          print(Game.getInstance().getGameRepresentation());
+          print(GameAbstract.getInstance().getGameRepresentation());
           break;
         case WIN_WHITE:
           print(TextGetter.getText("whiteWin"));
@@ -137,7 +137,7 @@ public class CliView implements View {
           break;
         case MOVE_UNDO:
           print(TextGetter.getText("moveUndone"));
-          print(Game.getInstance().getGameRepresentation());
+          print(GameAbstract.getInstance().getGameRepresentation());
           break;
         case WHITE_UNDO_PROPOSAL:
           print(TextGetter.getText("undoProposal", TextGetter.getText("white")));
@@ -149,7 +149,7 @@ public class CliView implements View {
           break;
         case MOVE_REDO:
           print(TextGetter.getText("moveRedone"));
-          print(Game.getInstance().getGameRepresentation());
+          print(GameAbstract.getInstance().getGameRepresentation());
           break;
         case WHITE_REDO_PROPOSAL:
           print(TextGetter.getText("redoProposal", TextGetter.getText("white")));
@@ -200,15 +200,15 @@ public class CliView implements View {
           print(TextGetter.getText("gameRestart"));
           print(TextGetter.getText("welcomeCLI"));
           print(TextGetter.getText("welcomeInstructions"));
-          print(Game.getInstance().getGameRepresentation());
+          print(GameAbstract.getInstance().getGameRepresentation());
           break;
         default:
           debug(LOGGER, "Received unknown game event: " + event);
           break;
       }
-      Game.getInstance().getWorkingViewCondition().signal();
+      GameAbstract.getInstance().signalWorkingViewCondition();
     } finally {
-      Game.getInstance().getViewLock().unlock();
+      GameAbstract.getInstance().unlockView();
     }
   }
 
@@ -285,7 +285,7 @@ public class CliView implements View {
    * @param args Unused argument
    */
   private void displayBoardCommand(final String args) {
-    print(Game.getInstance().getGameRepresentation());
+    print(GameAbstract.getInstance().getGameRepresentation());
   }
 
   /**
@@ -295,7 +295,7 @@ public class CliView implements View {
    */
   private void historyCommand(final String args) {
     print(TextGetter.getText("historyTitle"));
-    print(Game.getInstance().getHistory().toString());
+    print(GameAbstract.getInstance().getHistory().toString());
   }
 
   /**
@@ -335,7 +335,8 @@ public class CliView implements View {
    */
   private void drawCommand(final String args) {
     BagOfCommands.getInstance()
-        .addCommand(new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
+        .addCommand(
+            new ProposeDrawCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()));
   }
 
   /**
@@ -345,7 +346,7 @@ public class CliView implements View {
    */
   private void undrawCommand(final String args) {
     BagOfCommands.getInstance()
-        .addCommand(new CancelDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
+        .addCommand(new CancelDrawCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()));
   }
 
   /**
@@ -392,7 +393,7 @@ public class CliView implements View {
    */
   private void surrenderCommand(final String args) {
     BagOfCommands.getInstance()
-        .addCommand(new SurrenderCommand(Game.getInstance().getGameState().isWhiteTurn()));
+        .addCommand(new SurrenderCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()));
   }
 
   /**
@@ -402,7 +403,8 @@ public class CliView implements View {
    */
   private void timeCommand(final String args) {
     final Timer timer =
-        Game.getInstance().getTimer(Game.getInstance().getGameState().isWhiteTurn());
+        GameAbstract.getInstance()
+            .getTimer(GameAbstract.getInstance().getGameState().isWhiteTurn());
     if (timer != null) {
       print(TextGetter.getText("timeRemainingCurrent", timer.getTimeRemainingString()));
     } else {

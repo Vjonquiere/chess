@@ -22,7 +22,7 @@ import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.FailedUndoException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameState;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
@@ -31,10 +31,10 @@ import pdp.model.board.Move;
 import pdp.utils.Position;
 
 public class CommandsTest {
-  private Game model;
+  private GameAbstract model;
   private GameController controller;
   private GameState gameState;
-  private MockedStatic<Game> gameMock;
+  private MockedStatic<GameAbstract> gameMock;
 
   @BeforeAll
   public static void setUpLocale() {
@@ -43,13 +43,13 @@ public class CommandsTest {
 
   @BeforeEach
   public void setUp() {
-    model = mock(Game.class);
+    model = mock(GameAbstract.class);
     controller = mock(GameController.class);
     gameState = mock(GameState.class);
     when(model.getGameState()).thenReturn(gameState);
 
-    gameMock = mockStatic(Game.class);
-    gameMock.when(Game::getInstance).thenReturn(model);
+    gameMock = mockStatic(GameAbstract.class);
+    gameMock.when(GameAbstract::getInstance).thenReturn(model);
   }
 
   @AfterEach
@@ -536,7 +536,7 @@ public class CommandsTest {
 
     when(model.isBlackAi()).thenReturn(false);
     when(model.isWhiteAi()).thenReturn(true);
-    when(gameState.isWhiteTurn()).thenReturn(true);
+    when(model.isWhiteTurn()).thenReturn(true);
 
     doNothing() // first call
         .doNothing() // second call
@@ -545,7 +545,7 @@ public class CommandsTest {
         .when(model)
         .previousState();
 
-    pdp.model.ai.Solver whiteSolver = mock(pdp.model.ai.Solver.class);
+    Solver whiteSolver = mock(Solver.class);
     when(model.getWhiteSolver()).thenReturn(whiteSolver);
     doNothing().when(whiteSolver).playAiMove(model);
 
@@ -773,7 +773,7 @@ public class CommandsTest {
     SearchAlgorithm mockAlgorithm = mock(SearchAlgorithm.class);
     when(mockMove.getSource()).thenReturn(new Position(0, 0));
     when(mockMove.getDest()).thenReturn(new Position(1, 1));
-    when(mockAlgorithm.findBestMove(any(Game.class), anyInt(), anyBoolean()))
+    when(mockAlgorithm.findBestMove(any(GameAbstract.class), anyInt(), anyBoolean()))
         .thenReturn(new AiMove(mockMove, 0));
 
     try (MockedConstruction<Solver> mockedSolver =
@@ -785,7 +785,7 @@ public class CommandsTest {
       AskHintCommand command = new AskHintCommand();
       Optional<Exception> result = command.execute(model, controller);
 
-      verify(mockAlgorithm).findBestMove(any(Game.class), anyInt(), anyBoolean());
+      verify(mockAlgorithm).findBestMove(any(GameAbstract.class), anyInt(), anyBoolean());
 
       assertTrue(result.isEmpty());
     }

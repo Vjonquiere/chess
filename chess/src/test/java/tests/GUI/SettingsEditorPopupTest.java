@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 import pdp.view.gui.menu.SettingsEditorPopup;
@@ -45,7 +46,9 @@ class SettingsEditorPopupTest extends ApplicationTest {
     }
 
     // Set the temporary file path in the Game instance to simulate the configuration
-    Game.getInstance().getOptions().put(OptionType.CONFIG, tempConfigFile.getAbsolutePath());
+    GameAbstract.getInstance()
+        .getOptions()
+        .put(OptionType.CONFIG, tempConfigFile.getAbsolutePath());
   }
 
   @Test

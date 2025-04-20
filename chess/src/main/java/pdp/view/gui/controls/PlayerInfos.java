@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.ai.Solver;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
@@ -39,7 +39,7 @@ public class PlayerInfos extends HBox {
     super();
     this.setAlignment(Pos.CENTER_LEFT);
     currentPlayer = new Canvas(20, 20);
-    final Timer timer = Game.getInstance().getTimer(isWhite);
+    final Timer timer = GameAbstract.getInstance().getTimer(isWhite);
     if (timer != null) {
       timerLabel.setText(timer.getTimeRemainingString());
       updateTimer(isWhite);
@@ -51,9 +51,9 @@ public class PlayerInfos extends HBox {
       final ImageView info = getInfoIcon();
       final Solver solver;
       if (isWhite) {
-        solver = Game.getInstance().getWhiteSolver();
+        solver = GameAbstract.getInstance().getWhiteSolver();
       } else {
-        solver = Game.getInstance().getBlackSolver();
+        solver = GameAbstract.getInstance().getBlackSolver();
       }
       Tooltip.install(info, new Tooltip(solver.toString()));
       this.getChildren().add(info);
@@ -104,7 +104,7 @@ public class PlayerInfos extends HBox {
             new KeyFrame(
                 Duration.seconds(0.5),
                 event -> {
-                  final Timer timer = Game.getInstance().getTimer(isWhite);
+                  final Timer timer = GameAbstract.getInstance().getTimer(isWhite);
                   if (timer != null) {
                     timerLabel.setText(timer.getTimeRemainingString());
                   }
@@ -118,7 +118,7 @@ public class PlayerInfos extends HBox {
    * @param isWhite true if the player is white, false otherwise.
    */
   public void updateTimerOnce(final boolean isWhite) {
-    final Timer timer = Game.getInstance().getTimer(isWhite);
+    final Timer timer = GameAbstract.getInstance().getTimer(isWhite);
     if (timer != null) {
       timerLabel.setText(timer.getTimeRemainingString());
     }

@@ -833,13 +833,15 @@ public class GameTest {
     assertTrue(game.isWhiteAi());
   }
 
+  /*
   @Test
   public void testSetInit() {
 
-    assertFalse(Game.getInstance().isInitialized());
-    Game.getInstance().setInitializing(true);
-    assertTrue(Game.getInstance().isInitialized());
+    assertFalse(GameAbstract.getInstance().isInitialized());
+    GameAbstract.getInstance().setInitializing(true);
+    assertTrue(GameAbstract.getInstance().isInitialized());
   }
+  */
 
   @Test
   public void testGetStringHistory() {

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
@@ -377,14 +378,14 @@ public class GameFileParserTest {
     assertEquals(49, game.getBoard().getNbFullMovesWithNoCaptureOrPawn());
     assertEquals(140, game.getGameState().getFullTurn());
 
-    assertFalse(Game.getInstance().isOver());
+    assertFalse(GameAbstract.getInstance().isOver());
     game.playMove(
         new Move(
             new Position(3, 0),
             new Position(5, 2),
             new ColoredPiece(Piece.QUEEN, Color.WHITE),
             false)); // Play a move to force 50 move rule
-    assertTrue(Game.getInstance().isOver());
+    assertTrue(GameAbstract.getInstance().isOver());
   }
 
   @Test
@@ -405,6 +406,6 @@ public class GameFileParserTest {
     assertEquals(0, game.getBoard().getNbFullMovesWithNoCaptureOrPawn());
     assertEquals(141, game.getGameState().getFullTurn());
     assertEquals(new Position(0, 2), game.getBoard().getEnPassantPos());
-    assertFalse(Game.getInstance().isOver());
+    assertFalse(GameAbstract.getInstance().isOver());
   }
 }

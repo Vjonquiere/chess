@@ -14,7 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pdp.events.EventType;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.Logging;
 import pdp.utils.Position;
 import pdp.utils.TextGetter;
@@ -288,7 +288,7 @@ public class GuiView implements View {
     }
     Platform.runLater(
         () -> {
-          Game.getInstance().getViewLock().lock();
+          GameAbstract.getInstance().lockView();
           debug(LOGGER, "View handling event " + event);
           try {
             switch (event) {
@@ -297,7 +297,7 @@ public class GuiView implements View {
                 if (board != null) {
                   root.getChildren().remove(board);
                 }
-                board = new Board(Game.getInstance(), stage);
+                board = new Board(GameAbstract.getInstance(), stage);
                 root.setLeft(board);
                 BorderPane.setAlignment(board, Pos.CENTER_LEFT);
                 debug(LOGGER, "Board view initialized");
@@ -312,7 +312,7 @@ public class GuiView implements View {
                 }
                 menu = new ChessMenu();
                 root.setTop(menu);
-                if (Game.getInstance().isWhiteAi()) {
+                if (GameAbstract.getInstance().isWhiteAi()) {
                   menu.displayMessage(TextGetter.getText("guiStartMessageGameStart"), false, true);
                 } else {
                   menu.displayMessage(TextGetter.getText("guiStartMessagePlayAMove"), false, true);
@@ -326,17 +326,17 @@ public class GuiView implements View {
                   blackAiMonitor.hide();
                   blackAiMonitor = null;
                 }
-                if (Game.getInstance().isWhiteAi()) {
+                if (GameAbstract.getInstance().isWhiteAi()) {
                   whiteAiMonitor = new AiMonitor(true);
                 }
-                if (Game.getInstance().isWhiteAi() && monitoring) {
+                if (GameAbstract.getInstance().isWhiteAi() && monitoring) {
                   whiteAiMonitor.show();
                 }
-                if (Game.getInstance().isBlackAi()) {
+                if (GameAbstract.getInstance().isBlackAi()) {
                   blackAiMonitor = new AiMonitor(false);
                   // BlackAiMonitor.show();
                 }
-                if (Game.getInstance().isBlackAi() && monitoring) {
+                if (GameAbstract.getInstance().isBlackAi() && monitoring) {
                   blackAiMonitor.show();
                 }
 
@@ -351,13 +351,13 @@ public class GuiView implements View {
                     controlPanel.getHistoryPanel().updateHistoryPanel();
                   }
                 }
-                if (Game.getInstance().isWhiteAi()
+                if (GameAbstract.getInstance().isWhiteAi()
                     && whiteAiMonitor != null
                     && whiteAiMonitor.isShowing()) {
                   whiteAiMonitor.update();
                 }
 
-                if (Game.getInstance().isBlackAi()
+                if (GameAbstract.getInstance().isBlackAi()
                     && blackAiMonitor != null
                     && blackAiMonitor.isShowing()) {
                   blackAiMonitor.update();
@@ -480,7 +480,7 @@ public class GuiView implements View {
               case MOVE_HINT:
                 if (board != null) {
                   final List<Integer> hintIntegers =
-                      Game.getInstance().getGameState().getHintIntegers();
+                      GameAbstract.getInstance().getGameState().getHintIntegers();
                   board.setHintSquares(
                       new Position(hintIntegers.get(0), hintIntegers.get(1)),
                       new Position(hintIntegers.get(2), hintIntegers.get(3)));
@@ -491,9 +491,9 @@ public class GuiView implements View {
                 break;
             }
           } finally {
-            if (Game.getInstance().getViewLock().isLocked()) {
-              Game.getInstance().getWorkingViewCondition().signal();
-              Game.getInstance().getViewLock().unlock();
+            if (GameAbstract.getInstance().isViewLocked()) {
+              GameAbstract.getInstance().signalWorkingViewCondition();
+              GameAbstract.getInstance().unlockView();
             }
           }
         });

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.model.GameAi;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
@@ -51,7 +51,7 @@ public class AlphaBetaIterativeDeepening extends SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AiMove findBestMove(final Game game, final int maxDepth, final boolean player) {
+  public AiMove findBestMove(final GameAbstract game, final int maxDepth, final boolean player) {
 
     final GameAi gameAi = GameAi.fromGame(game);
 

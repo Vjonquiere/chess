@@ -36,6 +36,7 @@ import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.TextGetter;
 import pdp.utils.Timer;
 import pdp.view.CliView;
@@ -153,7 +154,7 @@ public class CliViewTest {
     handleUserInputMethod.invoke(view, "board");
 
     String output = outputStream.toString();
-    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+    assertTrue(output.contains(GameAbstract.getInstance().getGameRepresentation()));
   }
 
   @Test
@@ -162,7 +163,7 @@ public class CliViewTest {
     handleUserInputMethod.invoke(view, "history");
 
     String output = outputStream.toString();
-    assertTrue(output.contains(Game.getInstance().getHistory().toString()));
+    assertTrue(output.contains(GameAbstract.getInstance().getHistory().toString()));
   }
 
   @Test
@@ -247,7 +248,7 @@ public class CliViewTest {
 
     String output = outputStream.toString();
 
-    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+    assertTrue(output.contains(GameAbstract.getInstance().getGameRepresentation()));
   }
 
   @Test
@@ -256,7 +257,7 @@ public class CliViewTest {
 
     String output = outputStream.toString();
 
-    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+    assertTrue(output.contains(GameAbstract.getInstance().getGameRepresentation()));
   }
 
   @Test
@@ -283,7 +284,7 @@ public class CliViewTest {
 
     String output = outputStream.toString();
 
-    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+    assertTrue(output.contains(GameAbstract.getInstance().getGameRepresentation()));
   }
 
   @Test
@@ -292,7 +293,7 @@ public class CliViewTest {
 
     String output = outputStream.toString();
 
-    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+    assertTrue(output.contains(GameAbstract.getInstance().getGameRepresentation()));
   }
 
   @Test
@@ -372,7 +373,7 @@ public class CliViewTest {
     String expected = TextGetter.getText("moveUndone");
 
     assertTrue(output.contains(expected));
-    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+    assertTrue(output.contains(GameAbstract.getInstance().getGameRepresentation()));
   }
 
   @Test
@@ -383,7 +384,7 @@ public class CliViewTest {
     String expected = TextGetter.getText("moveRedone");
 
     assertTrue(output.contains(expected));
-    assertTrue(output.contains(Game.getInstance().getGameRepresentation()));
+    assertTrue(output.contains(GameAbstract.getInstance().getGameRepresentation()));
   }
 
   @Test

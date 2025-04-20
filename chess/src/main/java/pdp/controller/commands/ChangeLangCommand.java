@@ -6,7 +6,7 @@ import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.events.EventType;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 
 /**
  * Part of Command Design pattern. Creates a command to update the Application due to a language
@@ -21,9 +21,9 @@ public class ChangeLangCommand implements Command {
    * @param controller The game controller managing game commands.
    */
   @Override
-  public Optional<Exception> execute(Game model, GameController controller) {
+  public Optional<Exception> execute(GameAbstract model, GameController controller) {
     try {
-      Game.getInstance().notifyObservers(EventType.UPDATE_LANG);
+      model.notifyObservers(EventType.UPDATE_LANG);
       return Optional.empty();
     } catch (Exception e) {
       error(e.getMessage());

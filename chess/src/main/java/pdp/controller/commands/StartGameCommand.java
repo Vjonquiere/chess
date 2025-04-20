@@ -3,7 +3,7 @@ package pdp.controller.commands;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 
 /**
  * Part of Command Design pattern. Starts the AI player. Useful in GUI where the AI player white is
@@ -11,7 +11,7 @@ import pdp.model.Game;
  */
 public class StartGameCommand implements Command {
   @Override
-  public Optional<Exception> execute(final Game model, GameController controller) {
+  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
     try {
       model.startAi();
       return Optional.empty();

@@ -5,7 +5,7 @@ import static pdp.utils.Logging.error;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.Logging;
 
 /** Variation of the design pattern command to execute several commands at once. */
@@ -20,7 +20,7 @@ public final class BagOfCommands {
   private final ConcurrentLinkedQueue<Command> commands = new ConcurrentLinkedQueue<>();
 
   /** Model of the MVC app. */
-  private Game model;
+  private GameAbstract model;
 
   /** Controller of the MVC app. */
   private GameController controller;
@@ -85,7 +85,7 @@ public final class BagOfCommands {
    *
    * @param model The game model to set.
    */
-  public void setModel(final Game model) {
+  public void setModel(final GameAbstract model) {
     this.model = model;
     if (this.controller != null) {
       this.controller.setModel(model);

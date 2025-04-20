@@ -22,7 +22,7 @@ import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.controller.commands.StartGameCommand;
-import pdp.model.Game;
+import pdp.model.GameAbstract;
 import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
@@ -102,7 +102,7 @@ public class ChessMenu extends HBox {
         event -> {
           final File file = fileChooser();
           if (file != null) {
-            final Map<OptionType, String> map = Game.getInstance().getOptions();
+            final Map<OptionType, String> map = GameAbstract.getInstance().getOptions();
             map.put(OptionType.LOAD, file.getAbsolutePath());
             GameInitializer.initialize(map);
           }
@@ -161,39 +161,46 @@ public class ChessMenu extends HBox {
     final MenuItem undo = new MenuItem(TextGetter.getText("undo"));
     undo.setOnAction(
         e -> {
-          if (Game.getInstance().getGameState().getFullTurn() > 0) {
+          if (GameAbstract.getInstance().getGameState().getFullTurn() > 0) {
             BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+            if (!GameAbstract.getInstance().isWhiteAi()
+                && !GameAbstract.getInstance().isBlackAi()) {
               new YesNoPopUp(
                   "undoInstructionsGui",
                   new CancelMoveCommand(),
-                  () -> Game.getInstance().getGameState().undoRequestReset());
+                  () -> GameAbstract.getInstance().getGameState().undoRequestReset());
             }
           } else {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
 
-          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+          if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
     final MenuItem redo = new MenuItem(TextGetter.getText("redo"));
     redo.setOnAction(
         e -> {
-          if (Game.getInstance().getHistory().getCurrentMove().orElse(null) != null
-              && Game.getInstance().getHistory().getCurrentMove().get().getNext().orElse(null)
+          if (GameAbstract.getInstance().getHistory().getCurrentMove().orElse(null) != null
+              && GameAbstract.getInstance()
+                      .getHistory()
+                      .getCurrentMove()
+                      .get()
+                      .getNext()
+                      .orElse(null)
                   != null) {
             BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-            if (!Game.getInstance().isWhiteAi() && !Game.getInstance().isBlackAi()) {
+            if (!GameAbstract.getInstance().isWhiteAi()
+                && !GameAbstract.getInstance().isBlackAi()) {
               new YesNoPopUp(
                   "redoInstructionsGui",
                   new RestoreMoveCommand(),
-                  () -> Game.getInstance().getGameState().redoRequestReset());
+                  () -> GameAbstract.getInstance().getGameState().redoRequestReset());
             }
           } else {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
-          if (Game.getInstance().isWhiteAi() && Game.getInstance().isBlackAi()) {
+          if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
@@ -244,7 +251,7 @@ public class ChessMenu extends HBox {
 
   /** Launches a popup to customize a new game. */
   private void openNewGamePopup() {
-    NewGamePopup.show(Game.getInstance().getOptions());
+    NewGamePopup.show(GameAbstract.getInstance().getOptions());
   }
 
   /** Launches a popup to customize the application's theme. */
