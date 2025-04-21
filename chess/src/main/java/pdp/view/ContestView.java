@@ -18,6 +18,7 @@ import pdp.exceptions.InvalidPositionException;
 import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.model.GameState;
 import pdp.model.history.HistoryNode;
 import pdp.utils.Logging;
@@ -80,9 +81,9 @@ public class ContestView implements View {
   @Override
   public void onGameEvent(final EventType event) {
     if (Objects.requireNonNull(event) == EventType.MOVE_PLAYED) {
-      print(GameAbstract.getInstance().getGameRepresentation());
+      print(GameManager.getInstance().getGameRepresentation());
       final Optional<HistoryNode> lastMove =
-          GameAbstract.getInstance().getHistory().getCurrentMove();
+          GameManager.getInstance().getHistory().getCurrentMove();
       if (lastMove.isPresent()) {
         print(TextGetter.getText("movePlayed", lastMove.get().getState().getMove().toString()));
       }
@@ -109,7 +110,7 @@ public class ContestView implements View {
         || exception instanceof FailedRedoException) {
       error(exception.getMessage());
     } else {
-      print(GameAbstract.getInstance().getGameRepresentation());
+      print(GameManager.getInstance().getGameRepresentation());
       error(String.valueOf(exception));
     }
   }

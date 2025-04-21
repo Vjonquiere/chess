@@ -3,7 +3,7 @@ package pdp.model.ai.algorithms;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
-import pdp.model.GameAbstract;
+import pdp.model.GameInterface;
 import pdp.model.ai.AiMove;
 
 /** Common interface for all AI algorithms to be able to change the solver's algorithm with ease. */
@@ -22,7 +22,7 @@ public abstract class SearchAlgorithm {
    * @param player The current player (true for white, false for black).
    * @return The best move for the player.
    */
-  public abstract AiMove findBestMove(GameAbstract game, int depth, boolean player);
+  public abstract AiMove findBestMove(GameInterface game, int depth, boolean player);
 
   /** Adds a node to the field visitedNodes. */
   public void addNode() {

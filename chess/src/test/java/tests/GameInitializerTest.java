@@ -380,7 +380,7 @@ class GameInitializerTest {
     options.put(OptionType.LOAD, filePath.getPath());
     GameController controller = GameControllerInit.initialize(options);
     assertEquals(controller.getModel().getBoard(), board.board());
-    assertEquals(controller.getModel().getGameState().isWhiteTurn(), board.isWhiteTurn());
+    assertEquals(controller.getModel().isWhiteTurn(), board.isWhiteTurn());
   }
 
   @Test

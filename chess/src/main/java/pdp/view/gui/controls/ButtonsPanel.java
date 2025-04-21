@@ -11,7 +11,7 @@ import pdp.controller.commands.ProposeDrawCommand;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.RestoreMoveCommand;
 import pdp.controller.commands.SurrenderCommand;
-import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.utils.TextGetter;
 import pdp.view.gui.popups.InfoPopUp;
 import pdp.view.gui.popups.YesNoPopUp;
@@ -49,19 +49,18 @@ public class ButtonsPanel extends GridPane {
     undoButton.setMinWidth(100);
     undoButton.setOnAction(
         event -> {
-          if (GameAbstract.getInstance().getGameState().getFullTurn() > 0) {
+          if (GameManager.getInstance().getGameState().getFullTurn() > 0) {
             BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-            if (!GameAbstract.getInstance().isWhiteAi()
-                && !GameAbstract.getInstance().isBlackAi()) {
+            if (!GameManager.getInstance().isWhiteAi() && !GameManager.getInstance().isBlackAi()) {
               new YesNoPopUp(
                   "undoInstructionsGui",
                   new CancelMoveCommand(),
-                  () -> GameAbstract.getInstance().getGameState().undoRequestReset());
+                  () -> GameManager.getInstance().getGameState().undoRequestReset());
             }
           } else {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
-          if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
+          if (GameManager.getInstance().isWhiteAi() && GameManager.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
@@ -78,8 +77,8 @@ public class ButtonsPanel extends GridPane {
     redoButton.setMinWidth(100);
     redoButton.setOnAction(
         event -> {
-          if (GameAbstract.getInstance().getHistory().getCurrentMove().orElse(null) != null
-              && GameAbstract.getInstance()
+          if (GameManager.getInstance().getHistory().getCurrentMove().orElse(null) != null
+              && GameManager.getInstance()
                       .getHistory()
                       .getCurrentMove()
                       .get()
@@ -87,18 +86,17 @@ public class ButtonsPanel extends GridPane {
                       .orElse(null)
                   != null) {
             BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-            if (!GameAbstract.getInstance().isWhiteAi()
-                && !GameAbstract.getInstance().isBlackAi()) {
+            if (!GameManager.getInstance().isWhiteAi() && !GameManager.getInstance().isBlackAi()) {
               new YesNoPopUp(
                   "redoInstructionsGui",
                   new RestoreMoveCommand(),
-                  () -> GameAbstract.getInstance().getGameState().redoRequestReset());
+                  () -> GameManager.getInstance().getGameState().redoRequestReset());
             }
           } else {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
 
-          if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
+          if (GameManager.getInstance().isWhiteAi() && GameManager.getInstance().isBlackAi()) {
             InfoPopUp.show(TextGetter.getText("notAllowed"));
           }
         });
@@ -115,13 +113,13 @@ public class ButtonsPanel extends GridPane {
     drawButton.setMinWidth(100);
     drawButton.setOnAction(
         event -> {
-          if (!GameAbstract.getInstance().isWhiteAi() && !GameAbstract.getInstance().isBlackAi()) {
+          if (!GameManager.getInstance().isWhiteAi() && !GameManager.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "drawInstructionsGui",
-                new ProposeDrawCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()),
+                new ProposeDrawCommand(GameManager.getInstance().isWhiteTurn()),
                 null);
           } else {
-            if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
+            if (GameManager.getInstance().isWhiteAi() && GameManager.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
             }
           }
@@ -139,13 +137,13 @@ public class ButtonsPanel extends GridPane {
     undrawButton.setMinWidth(100);
     undrawButton.setOnAction(
         event -> {
-          if (!GameAbstract.getInstance().isWhiteAi() && !GameAbstract.getInstance().isBlackAi()) {
+          if (!GameManager.getInstance().isWhiteAi() && !GameManager.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "undrawInstructionsGui",
-                new CancelDrawCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()),
+                new CancelDrawCommand(GameManager.getInstance().isWhiteTurn()),
                 null);
           } else {
-            if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
+            if (GameManager.getInstance().isWhiteAi() && GameManager.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
             }
           }
@@ -163,13 +161,13 @@ public class ButtonsPanel extends GridPane {
     resignButton.setMinWidth(100);
     resignButton.setOnAction(
         event -> {
-          if (!GameAbstract.getInstance().isWhiteAi() && !GameAbstract.getInstance().isBlackAi()) {
+          if (!GameManager.getInstance().isWhiteAi() && !GameManager.getInstance().isBlackAi()) {
             new YesNoPopUp(
                 "resignInstructionsGui",
-                new SurrenderCommand(GameAbstract.getInstance().getGameState().isWhiteTurn()),
+                new SurrenderCommand(GameManager.getInstance().isWhiteTurn()),
                 null);
           } else {
-            if (GameAbstract.getInstance().isWhiteAi() && GameAbstract.getInstance().isBlackAi()) {
+            if (GameManager.getInstance().isWhiteAi() && GameManager.getInstance().isBlackAi()) {
               InfoPopUp.show(TextGetter.getText("notAllowed"));
             }
           }

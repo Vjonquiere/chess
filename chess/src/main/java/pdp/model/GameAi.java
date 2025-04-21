@@ -211,7 +211,7 @@ public final class GameAi extends GameAbstract {
    * @param game game to transform into a GameAI
    * @return a gameAI from the given game
    */
-  public static GameAi fromGame(final GameAbstract game) {
+  public static GameAi fromGame(final GameInterface game) {
     final History history = new History();
     history.addMove(
         new HistoryState(

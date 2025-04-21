@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pdp.exceptions.IllegalMoveException;
 import pdp.model.Game;
-import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.model.board.BitboardRepresentation;
 import pdp.model.board.Move;
 import pdp.model.parsers.BoardFileParser;
@@ -66,6 +66,7 @@ public class GameFileParserTest {
     assertEquals(new BitboardRepresentation(), board.board());
     assertTrue(board.isWhiteTurn());
     Game game = Game.initialize(false, false, null, null, null, board, options);
+
     game.setLoadedFromFile();
     game.setLoadingFileHasHistory(false);
     game.playMove(Move.fromString("e2-e4"));
@@ -78,7 +79,8 @@ public class GameFileParserTest {
     assertEquals(new BitboardRepresentation(), board.board());
     assertFalse(board.isWhiteTurn());
     Game game = Game.initialize(false, false, null, null, null, board, new HashMap<>());
-    assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
+
+    assertEquals(game.isWhiteTurn(), board.isWhiteTurn());
     assertEquals(game.getBoard(), board.board());
     assertThrows(
         IllegalMoveException.class,
@@ -168,6 +170,7 @@ public class GameFileParserTest {
     options.put(OptionType.LOAD, filePath.getPath());
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game game = Game.initialize(false, false, null, null, null, board, options);
+
     game.setLoadedFromFile();
     game.setLoadingFileHasHistory(true);
     Move move = Move.fromString("g4-f6");
@@ -181,6 +184,7 @@ public class GameFileParserTest {
     options.put(OptionType.LOAD, filePath.getPath());
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game game = Game.initialize(false, false, null, null, null, board, options);
+
     game.setLoadedFromFile();
     game.setLoadingFileHasHistory(true);
     Move move = Move.fromString("g4-f6");
@@ -196,6 +200,7 @@ public class GameFileParserTest {
     options.put(OptionType.LOAD, filePath.getPath());
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game game = Game.initialize(false, false, null, null, null, board, options);
+
     game.setLoadedFromFile();
     game.setLoadingFileHasHistory(true);
     Move move = Move.fromString("g4-f6");
@@ -209,6 +214,7 @@ public class GameFileParserTest {
     URL filePath = classLoader.getResource("gameBoards/gameExample1");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -241,7 +247,7 @@ public class GameFileParserTest {
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
     assertEquals(game.getBoard(), board.board());
-    assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
+    assertEquals(game.isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
 
@@ -251,6 +257,7 @@ public class GameFileParserTest {
     URL filePath = classLoader.getResource("gameBoards/gameExample1WithHistory");
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
+
     game.playMove(
         new Move(
             new Position(0, 1),
@@ -283,7 +290,7 @@ public class GameFileParserTest {
             new ColoredPiece(Piece.BISHOP, Color.WHITE),
             false));
     assertEquals(game.getBoard(), board.board());
-    assertEquals(game.getGameState().isWhiteTurn(), board.isWhiteTurn());
+    assertEquals(game.isWhiteTurn(), board.isWhiteTurn());
     assertFalse(board.isWhiteTurn());
   }
 
@@ -378,14 +385,14 @@ public class GameFileParserTest {
     assertEquals(49, game.getBoard().getNbFullMovesWithNoCaptureOrPawn());
     assertEquals(140, game.getGameState().getFullTurn());
 
-    assertFalse(GameAbstract.getInstance().isOver());
+    assertFalse(GameManager.getInstance().isOver());
     game.playMove(
         new Move(
             new Position(3, 0),
             new Position(5, 2),
             new ColoredPiece(Piece.QUEEN, Color.WHITE),
             false)); // Play a move to force 50 move rule
-    assertTrue(GameAbstract.getInstance().isOver());
+    assertTrue(GameManager.getInstance().isOver());
   }
 
   @Test
@@ -406,6 +413,6 @@ public class GameFileParserTest {
     assertEquals(0, game.getBoard().getNbFullMovesWithNoCaptureOrPawn());
     assertEquals(141, game.getGameState().getFullTurn());
     assertEquals(new Position(0, 2), game.getBoard().getEnPassantPos());
-    assertFalse(GameAbstract.getInstance().isOver());
+    assertFalse(GameManager.getInstance().isOver());
   }
 }

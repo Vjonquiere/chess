@@ -6,7 +6,7 @@ import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.exceptions.CommandNotAvailableNowException;
-import pdp.model.GameAbstract;
+import pdp.model.GameInterface;
 import pdp.model.board.Move;
 
 /** Part of Command Design pattern. Creates a command to play the given move. */
@@ -30,7 +30,7 @@ public class PlayMoveCommand implements Command {
    * @param controller The game controller managing game commands.
    */
   @Override
-  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
+  public Optional<Exception> execute(final GameInterface model, GameController controller) {
     if (model.getGameState().isGameOver()) {
       return Optional.of(new CommandNotAvailableNowException());
     }

@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import pdp.events.EventType;
 import pdp.exceptions.IllegalMoveException;
-import pdp.model.GameAbstract;
+import pdp.model.GameInterface;
 import pdp.model.GameState;
 import pdp.model.ai.algorithms.AlphaBeta;
 import pdp.model.ai.algorithms.AlphaBetaIterativeDeepening;
@@ -316,14 +316,14 @@ public class Solver {
    *
    * @param game current game
    */
-  public void playAiMove(final GameAbstract game) {
+  public void playAiMove(final GameInterface game) {
     if (timer != null) {
       timer.start();
     }
     final long startTime = System.nanoTime();
     searchStopped = false;
     isMoveToPlay = true;
-    final AiMove bestMove = algorithm.findBestMove(game, depth, game.getGameState().isWhiteTurn());
+    final AiMove bestMove = algorithm.findBestMove(game, depth, game.isWhiteTurn());
     if (timer != null) {
       timer.stop();
     }
@@ -337,7 +337,7 @@ public class Solver {
       } catch (IllegalMoveException e) {
         game.notifyObservers(EventType.AI_NOT_ENOUGH_TIME);
         error(e.getMessage());
-        if (game.getGameState().isWhiteTurn()) {
+        if (game.isWhiteTurn()) {
           game.getGameState().whiteResigns();
         } else {
           game.getGameState().blackResigns();
@@ -352,7 +352,7 @@ public class Solver {
    * @param game Game to find the best move in
    * @return best move according to the game in parameter
    */
-  public Move getBestMove(final GameAbstract game) {
+  public Move getBestMove(final GameInterface game) {
     if (timer != null) {
       timer.start();
     }

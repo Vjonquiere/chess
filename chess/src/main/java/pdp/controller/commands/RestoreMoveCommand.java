@@ -3,7 +3,7 @@ package pdp.controller.commands;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
-import pdp.model.GameAbstract;
+import pdp.model.GameInterface;
 
 /**
  * Part of Command Design pattern. Creates a command to replay the last move. Corresponds to a redo.
@@ -18,23 +18,23 @@ public class RestoreMoveCommand implements Command {
    * @return An Optional containing an exception if an error occurred or empty if successful.
    */
   @Override
-  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
+  public Optional<Exception> execute(final GameInterface model, GameController controller) {
     try {
       if (model.getGameState().getRedoRequestTurnNumber() == model.getGameState().getFullTurn()) {
         model.nextState();
         if (model.isBlackAi() && !model.isWhiteTurn()) {
           model.getBlackSolver().playAiMove(model);
         }
-        if (model.isWhiteAi() && model.getGameState().isWhiteTurn()) {
+        if (model.isWhiteAi() && model.isWhiteTurn()) {
           model.getWhiteSolver().playAiMove(model);
         }
       } else {
         if (model.isBlackAi() || model.isWhiteAi()) {
           model.nextState();
-          if (model.isBlackAi() && !model.getGameState().isWhiteTurn()) {
+          if (model.isBlackAi() && !model.isWhiteTurn()) {
             model.getBlackSolver().playAiMove(model);
           }
-          if (model.isWhiteAi() && model.getGameState().isWhiteTurn()) {
+          if (model.isWhiteAi() && model.isWhiteTurn()) {
             model.getWhiteSolver().playAiMove(model);
           }
         } else {

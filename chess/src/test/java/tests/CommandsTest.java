@@ -22,7 +22,8 @@ import pdp.exceptions.CommandNotAvailableNowException;
 import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedSaveException;
 import pdp.exceptions.FailedUndoException;
-import pdp.model.GameAbstract;
+import pdp.model.GameInterface;
+import pdp.model.GameManager;
 import pdp.model.GameState;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
@@ -31,10 +32,10 @@ import pdp.model.board.Move;
 import pdp.utils.Position;
 
 public class CommandsTest {
-  private GameAbstract model;
+  private GameInterface model;
   private GameController controller;
   private GameState gameState;
-  private MockedStatic<GameAbstract> gameMock;
+  private MockedStatic<GameManager> gameMock;
 
   @BeforeAll
   public static void setUpLocale() {
@@ -43,13 +44,13 @@ public class CommandsTest {
 
   @BeforeEach
   public void setUp() {
-    model = mock(GameAbstract.class);
+    model = mock(GameInterface.class);
     controller = mock(GameController.class);
     gameState = mock(GameState.class);
     when(model.getGameState()).thenReturn(gameState);
 
-    gameMock = mockStatic(GameAbstract.class);
-    gameMock.when(GameAbstract::getInstance).thenReturn(model);
+    gameMock = mockStatic(GameManager.class);
+    gameMock.when(GameManager::getInstance).thenReturn(model);
   }
 
   @AfterEach
@@ -235,7 +236,7 @@ public class CommandsTest {
   public void testCancelMoveCommandAiWhiteSuccess() {
     when(model.isBlackAi()).thenReturn(false);
     when(model.isWhiteAi()).thenReturn(true);
-    when(gameState.isWhiteTurn()).thenReturn(true);
+    when(model.isWhiteTurn()).thenReturn(true);
 
     doNothing().doThrow(new pdp.exceptions.FailedUndoException()).when(model).previousState();
 
@@ -336,7 +337,7 @@ public class CommandsTest {
     when(model.isWhiteAi()).thenReturn(false);
     when(gameState.isWhiteTurn()).thenReturn(false);
 
-    pdp.model.ai.Solver blackSolver = mock(pdp.model.ai.Solver.class);
+    Solver blackSolver = mock(Solver.class);
     when(model.getBlackSolver()).thenReturn(blackSolver);
     doNothing().when(blackSolver).playAiMove(model);
 
@@ -357,9 +358,9 @@ public class CommandsTest {
 
     when(model.isBlackAi()).thenReturn(false);
     when(model.isWhiteAi()).thenReturn(true);
-    when(gameState.isWhiteTurn()).thenReturn(true);
+    when(model.isWhiteTurn()).thenReturn(true);
 
-    pdp.model.ai.Solver whiteSolver = mock(pdp.model.ai.Solver.class);
+    Solver whiteSolver = mock(Solver.class);
     when(model.getWhiteSolver()).thenReturn(whiteSolver);
     doNothing().when(whiteSolver).playAiMove(model);
 
@@ -441,9 +442,9 @@ public class CommandsTest {
 
     when(model.isBlackAi()).thenReturn(false);
     when(model.isWhiteAi()).thenReturn(true);
-    when(gameState.isWhiteTurn()).thenReturn(true);
+    when(model.isWhiteTurn()).thenReturn(true);
 
-    pdp.model.ai.Solver whiteSolver = mock(pdp.model.ai.Solver.class);
+    Solver whiteSolver = mock(Solver.class);
     when(model.getWhiteSolver()).thenReturn(whiteSolver);
     doNothing().when(whiteSolver).playAiMove(model);
 
@@ -463,9 +464,9 @@ public class CommandsTest {
     doNothing().when(model).nextState();
     when(model.isBlackAi()).thenReturn(true);
     when(model.isWhiteAi()).thenReturn(true);
-    when(gameState.isWhiteTurn()).thenReturn(true);
+    when(model.isWhiteTurn()).thenReturn(true);
 
-    pdp.model.ai.Solver whiteSolver = mock(pdp.model.ai.Solver.class);
+    Solver whiteSolver = mock(Solver.class);
     when(model.getWhiteSolver()).thenReturn(whiteSolver);
     doNothing().when(whiteSolver).playAiMove(model);
 
@@ -489,7 +490,7 @@ public class CommandsTest {
     when(model.isWhiteAi()).thenReturn(true);
     when(gameState.isWhiteTurn()).thenReturn(false);
 
-    pdp.model.ai.Solver blackSolver = mock(pdp.model.ai.Solver.class);
+    Solver blackSolver = mock(Solver.class);
     when(model.getBlackSolver()).thenReturn(blackSolver);
     doNothing().when(blackSolver).playAiMove(model);
 
@@ -519,7 +520,7 @@ public class CommandsTest {
         .when(model)
         .previousState();
 
-    pdp.model.ai.Solver blackSolver = mock(pdp.model.ai.Solver.class);
+    Solver blackSolver = mock(Solver.class);
     when(model.getBlackSolver()).thenReturn(blackSolver);
     doNothing().when(blackSolver).playAiMove(model);
 
@@ -773,7 +774,7 @@ public class CommandsTest {
     SearchAlgorithm mockAlgorithm = mock(SearchAlgorithm.class);
     when(mockMove.getSource()).thenReturn(new Position(0, 0));
     when(mockMove.getDest()).thenReturn(new Position(1, 1));
-    when(mockAlgorithm.findBestMove(any(GameAbstract.class), anyInt(), anyBoolean()))
+    when(mockAlgorithm.findBestMove(any(GameInterface.class), anyInt(), anyBoolean()))
         .thenReturn(new AiMove(mockMove, 0));
 
     try (MockedConstruction<Solver> mockedSolver =
@@ -785,7 +786,7 @@ public class CommandsTest {
       AskHintCommand command = new AskHintCommand();
       Optional<Exception> result = command.execute(model, controller);
 
-      verify(mockAlgorithm).findBestMove(any(GameAbstract.class), anyInt(), anyBoolean());
+      verify(mockAlgorithm).findBestMove(any(GameInterface.class), anyInt(), anyBoolean());
 
       assertTrue(result.isEmpty());
     }

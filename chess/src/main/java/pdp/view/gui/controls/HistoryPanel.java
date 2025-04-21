@@ -8,7 +8,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import pdp.controller.BagOfCommands;
 import pdp.controller.commands.UndoMultipleMoveCommand;
-import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.model.history.History;
 import pdp.model.history.HistoryNode;
 import pdp.utils.TextGetter;
@@ -29,7 +29,7 @@ public class HistoryPanel extends VBox {
     final ObservableList<String> currentItems = this.list.getItems();
     items.addAll(currentItems);
 
-    final History history = GameAbstract.getInstance().getHistory();
+    final History history = GameManager.getInstance().getHistory();
 
     HistoryNode currentNode = history.getCurrentMove().orElse(null);
     while (currentNode != null) {
@@ -56,7 +56,7 @@ public class HistoryPanel extends VBox {
 
     final ObservableList<String> items = FXCollections.observableArrayList();
 
-    final History history = GameAbstract.getInstance().getHistory();
+    final History history = GameManager.getInstance().getHistory();
 
     HistoryNode currentNode = history.getCurrentMove().orElse(null);
 
@@ -78,21 +78,20 @@ public class HistoryPanel extends VBox {
           if (event.getClickCount() == 2) {
             final int selectedItem = list.getSelectionModel().getSelectedIndex();
             if (selectedItem != -1) {
-              if (GameAbstract.getInstance().getGameState().getFullTurn() > 0) {
+              if (GameManager.getInstance().getGameState().getFullTurn() > 0) {
                 BagOfCommands.getInstance()
                     .addCommand(new UndoMultipleMoveCommand(items.size() - selectedItem - 1));
-                if (!GameAbstract.getInstance().isWhiteAi()
-                    && !GameAbstract.getInstance().isBlackAi()) {
+                if (!GameManager.getInstance().isWhiteAi()
+                    && !GameManager.getInstance().isBlackAi()) {
                   new YesNoPopUp(
                       "undoInstructionsGui",
                       new UndoMultipleMoveCommand(items.size() - selectedItem - 1),
-                      () -> GameAbstract.getInstance().getGameState().undoRequestReset());
+                      () -> GameManager.getInstance().getGameState().undoRequestReset());
                 }
               } else {
                 InfoPopUp.show(TextGetter.getText("notAllowed"));
               }
-              if (GameAbstract.getInstance().isWhiteAi()
-                  && GameAbstract.getInstance().isBlackAi()) {
+              if (GameManager.getInstance().isWhiteAi() && GameManager.getInstance().isBlackAi()) {
                 InfoPopUp.show(TextGetter.getText("notAllowed"));
               }
             }

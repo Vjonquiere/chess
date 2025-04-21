@@ -651,8 +651,8 @@ public class GameTest {
     game.startAi();
     // AI white and white's turn
     assertNotEquals(
-        game.getGameState().isWhiteTurn(),
-        Game.initialize(true, false, s, s, null, new HashMap<>()).getGameState().isWhiteTurn());
+        game.isWhiteTurn(),
+        Game.initialize(true, false, s, s, null, new HashMap<>()).isWhiteTurn());
     assertNotEquals(
         game.getGameState().getBoard(),
         Game.initialize(true, false, s, s, null, new HashMap<>()).getGameState().getBoard());
@@ -665,8 +665,8 @@ public class GameTest {
     game.startAi();
     // AI black and white's turn
     assertEquals(
-        game.getGameState().isWhiteTurn(),
-        Game.initialize(false, true, s, s, null, new HashMap<>()).getGameState().isWhiteTurn());
+        game.isWhiteTurn(),
+        Game.initialize(false, true, s, s, null, new HashMap<>()).isWhiteTurn());
     assertEquals(
         game.getGameState().getBoard(),
         Game.initialize(false, true, s, s, null, new HashMap<>()).getGameState().getBoard());
@@ -837,9 +837,9 @@ public class GameTest {
   @Test
   public void testSetInit() {
 
-    assertFalse(GameAbstract.getInstance().isInitialized());
-    GameAbstract.getInstance().setInitializing(true);
-    assertTrue(GameAbstract.getInstance().isInitialized());
+    assertFalse(GameManager.getInstance().isInitialized());
+    GameManager.getInstance().setInitializing(true);
+    assertTrue(GameManager.getInstance().isInitialized());
   }
   */
 

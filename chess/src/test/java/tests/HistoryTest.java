@@ -29,26 +29,26 @@ public class HistoryTest {
     // Arrange: Create a new history and add moves
     History history = new History();
     GameInitializer.initialize(new HashMap<>());
-    GameAbstract.getInstance().playMove(Move.fromString("e2-e4"));
+    GameManager.getInstance().playMove(Move.fromString("e2-e4"));
     history.addMove(
         new HistoryState(
             Move.fromString("e2-e4"),
-            GameAbstract.getInstance().getGameState().getCopy())); // White move
-    GameAbstract.getInstance().playMove(Move.fromString("h7-h5"));
+            GameManager.getInstance().getGameState().getCopy())); // White move
+    GameManager.getInstance().playMove(Move.fromString("h7-h5"));
     history.addMove(
         new HistoryState(
             Move.fromString("h7-h5"),
-            GameAbstract.getInstance().getGameState().getCopy())); // Black move
-    GameAbstract.getInstance().playMove(Move.fromString("g1-f3"));
+            GameManager.getInstance().getGameState().getCopy())); // Black move
+    GameManager.getInstance().playMove(Move.fromString("g1-f3"));
     history.addMove(
         new HistoryState(
             Move.fromString("g1-f3"),
-            GameAbstract.getInstance().getGameState().getCopy())); // White move
-    GameAbstract.getInstance().playMove(Move.fromString("e7-e6"));
+            GameManager.getInstance().getGameState().getCopy())); // White move
+    GameManager.getInstance().playMove(Move.fromString("e7-e6"));
     history.addMove(
         new HistoryState(
             Move.fromString("e7-e6"),
-            GameAbstract.getInstance().getGameState().getCopy())); // Black move
+            GameManager.getInstance().getGameState().getCopy())); // Black move
 
     // Act: Convert history to string
     String historyOutput = history.toString();

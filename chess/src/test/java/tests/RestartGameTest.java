@@ -151,8 +151,8 @@ public class RestartGameTest {
     Move move = new Move(new Position(6, 0), new Position(5, 2));
     game.playMove(move);
 
-    assertFalse(game.getGameState().isWhiteTurn());
+    assertFalse(game.isWhiteTurn());
     game.restartGame();
-    assertTrue(game.getGameState().isWhiteTurn());
+    assertTrue(game.isWhiteTurn());
   }
 }

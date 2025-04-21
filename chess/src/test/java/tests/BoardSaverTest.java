@@ -51,8 +51,7 @@ public class BoardSaverTest {
   public void testDefaultBoardSave() {
     Game game = Game.initialize(false, false, null, null, null, new HashMap<>());
     String boardString =
-        BoardSaver.saveBoard(
-            new FileBoard(game.getBoard(), game.getGameState().isWhiteTurn(), null));
+        BoardSaver.saveBoard(new FileBoard(game.getBoard(), game.isWhiteTurn(), null));
     String[] expectedBoardString = {
       "W",
       "r n b q k b n r",
@@ -79,8 +78,7 @@ public class BoardSaverTest {
             new ColoredPiece(Piece.PAWN, Color.WHITE),
             false));
     String boardString =
-        BoardSaver.saveBoard(
-            new FileBoard(game.getBoard(), game.getGameState().isWhiteTurn(), null));
+        BoardSaver.saveBoard(new FileBoard(game.getBoard(), game.isWhiteTurn(), null));
     String[] expectedBoardString = {
       "B",
       "r n b q k b n r",
@@ -105,8 +103,7 @@ public class BoardSaverTest {
     FileBoard board = parser.parseGameFile(filePath.getPath(), Runtime.getRuntime());
     Game game = Game.initialize(false, false, null, null, null, board, new HashMap<>());
     String boardString =
-        BoardSaver.saveBoard(
-            new FileBoard(game.getBoard(), game.getGameState().isWhiteTurn(), null));
+        BoardSaver.saveBoard(new FileBoard(game.getBoard(), game.isWhiteTurn(), null));
     String[] expectedBoardString = {
       "B",
       "r n b q k b _ r",

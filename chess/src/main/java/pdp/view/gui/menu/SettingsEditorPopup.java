@@ -9,7 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.model.parsers.BoardFileParser;
 import pdp.model.savers.ConfigFileSaver;
 import pdp.utils.OptionType;
@@ -28,7 +28,7 @@ public class SettingsEditorPopup extends VBox {
 
     final Button saveButton = new Button(TextGetter.getText("save"));
 
-    final String path = GameAbstract.getInstance().getOptions().get(OptionType.CONFIG);
+    final String path = GameManager.getInstance().getOptions().get(OptionType.CONFIG);
     String text = "";
 
     try {

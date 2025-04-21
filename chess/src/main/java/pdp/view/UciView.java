@@ -20,6 +20,7 @@ import pdp.exceptions.InvalidPromoteFormatException;
 import pdp.exceptions.MoveParsingException;
 import pdp.model.Game;
 import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.model.GameState;
 import pdp.model.ai.AlgorithmType;
 import pdp.model.ai.HeuristicType;
@@ -60,7 +61,7 @@ public class UciView implements View {
     commands.put("quit", new CommandEntry(this::quitCommand, "quit"));
     GameAbstract.setThreeFoldLimit(5);
     GameState.setFiftyMoveLimit(75);
-    final Solver aiConfiguration = GameAbstract.getInstance().getWhiteSolver();
+    final Solver aiConfiguration = GameManager.getInstance().getWhiteSolver();
     if (aiConfiguration != null) {
       solver.setAlgorithm(AlgorithmType.ALPHA_BETA);
       solver.setDepth(aiConfiguration.getDepth());
@@ -132,7 +133,7 @@ public class UciView implements View {
         || exception instanceof FailedRedoException) {
       error(exception.getMessage());
     } else {
-      print(GameAbstract.getInstance().getGameRepresentation());
+      print(GameManager.getInstance().getGameRepresentation());
       error(String.valueOf(exception));
       running = false;
     }
@@ -191,33 +192,35 @@ public class UciView implements View {
     if (args2.length > 2 && "fen".equals(args2[0])) {
       print("can't handle fen boards");
     } else if (args2.length > 2 && "startpos".equals(args2[0])) {
-      Game.initialize(
-          false,
-          false,
-          null,
-          null,
-          GameAbstract.getInstance().getGameState().getMoveTimer(),
-          GameAbstract.getInstance().getOptions());
+      Game game =
+          Game.initialize(
+              false,
+              false,
+              null,
+              null,
+              GameManager.getInstance().getGameState().getMoveTimer(),
+              GameManager.getInstance().getOptions());
       for (int i = 2; i < args2.length; i++) {
-        GameAbstract.getInstance().playMove(Move.fromUciString(args2[i]));
+        GameManager.getInstance().playMove(Move.fromUciString(args2[i]));
       }
 
     } else if (args2.length == 1 && "startpos".equals(args2[0])) {
-      Game.initialize(
-          false,
-          false,
-          null,
-          null,
-          GameAbstract.getInstance().getGameState().getMoveTimer(),
-          GameAbstract.getInstance().getOptions());
+      Game game =
+          Game.initialize(
+              false,
+              false,
+              null,
+              null,
+              GameManager.getInstance().getGameState().getMoveTimer(),
+              GameManager.getInstance().getOptions());
     }
   }
 
   private void goCommand(String args) {
     debug(LOGGER, "Searching for best move");
-    final Move move = solver.getBestMove(GameAbstract.getInstance());
+    final Move move = solver.getBestMove(GameManager.getInstance());
     if (move == null) {
-      error(GameAbstract.getInstance().getGameRepresentation());
+      error(GameManager.getInstance().getGameRepresentation());
     }
     print("bestmove " + move.toUciString());
   }

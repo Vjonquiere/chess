@@ -318,7 +318,7 @@ public abstract class GameInitializer {
         error("Error while parsing file: " + e.getMessage());
         error("Using the default game start");
         model = Game.initialize(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, options);
-        model.setLoadedFromFile();
+        model.setLoadedFromFile(); // TODO Check if this is correct
         model.setLoadingFileHasHistory(true);
         model.setContestMode(options.containsKey(OptionType.CONTEST));
       }

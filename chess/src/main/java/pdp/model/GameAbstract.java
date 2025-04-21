@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import pdp.events.EventType;
-import pdp.events.Subject;
 import pdp.exceptions.FailedRedoException;
 import pdp.exceptions.FailedUndoException;
 import pdp.exceptions.IllegalMoveException;
@@ -27,7 +26,7 @@ import pdp.model.piece.Piece;
 import pdp.utils.*;
 
 /** Class containing common methods for GameAI and Game. */
-public abstract class GameAbstract extends Subject {
+public abstract class GameAbstract extends GameInterface {
   /** Three-fold repetition, in games against external AI, it turns into a five-fold repetition. */
   private static int nFoldRepetition = 3;
 
@@ -45,8 +44,6 @@ public abstract class GameAbstract extends Subject {
 
   /** History of the game, used for undo and redo. */
   private final History history;
-
-  private static GameAbstract instance;
 
   static {
     Logging.configureLogging(LOGGER);
@@ -311,7 +308,7 @@ public abstract class GameAbstract extends Subject {
    * @return true if we're in an endgame (according to the chosen criteria)
    */
   public boolean isEndGamePhase() {
-    return getBoard().isEndGamePhase(getGameState().getFullTurn(), getGameState().isWhiteTurn());
+    return getBoard().isEndGamePhase(getGameState().getFullTurn(), isWhiteTurn());
   }
 
   /**
@@ -397,7 +394,7 @@ public abstract class GameAbstract extends Subject {
             move.getSource().y(),
             move.getDest().x(),
             move.getDest().y(),
-            getGameState().isWhiteTurn());
+            isWhiteTurn());
   }
 
   /**
@@ -417,7 +414,7 @@ public abstract class GameAbstract extends Subject {
    * </ul>
    */
   protected void updateGameStateAfterMove(final Move move) {
-    if (this.getGameState().isWhiteTurn()) {
+    if (this.isWhiteTurn()) {
       this.getGameState().incrementsFullTurn();
     }
 
@@ -446,21 +443,6 @@ public abstract class GameAbstract extends Subject {
     this.getGameState().checkGameStatus();
 
     this.getHistory().addMove(new HistoryState(move, this.getGameState().getCopy()));
-  }
-
-  public static GameAbstract getInstance() {
-    if (instance == null) {
-      throw new IllegalStateException("Game instance not initialized");
-    }
-    return instance;
-  }
-
-  public static void setInstance(GameAbstract newInstance) {
-    instance = newInstance;
-  }
-
-  public static boolean isInstanceInitialized() {
-    return instance != null;
   }
 
   /**

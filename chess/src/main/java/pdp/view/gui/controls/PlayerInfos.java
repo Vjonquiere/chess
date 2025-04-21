@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.model.ai.Solver;
 import pdp.utils.Timer;
 import pdp.view.GuiView;
@@ -39,7 +39,7 @@ public class PlayerInfos extends HBox {
     super();
     this.setAlignment(Pos.CENTER_LEFT);
     currentPlayer = new Canvas(20, 20);
-    final Timer timer = GameAbstract.getInstance().getTimer(isWhite);
+    final Timer timer = GameManager.getInstance().getTimer(isWhite);
     if (timer != null) {
       timerLabel.setText(timer.getTimeRemainingString());
       updateTimer(isWhite);
@@ -51,9 +51,9 @@ public class PlayerInfos extends HBox {
       final ImageView info = getInfoIcon();
       final Solver solver;
       if (isWhite) {
-        solver = GameAbstract.getInstance().getWhiteSolver();
+        solver = GameManager.getInstance().getWhiteSolver();
       } else {
-        solver = GameAbstract.getInstance().getBlackSolver();
+        solver = GameManager.getInstance().getBlackSolver();
       }
       Tooltip.install(info, new Tooltip(solver.toString()));
       this.getChildren().add(info);
@@ -104,7 +104,7 @@ public class PlayerInfos extends HBox {
             new KeyFrame(
                 Duration.seconds(0.5),
                 event -> {
-                  final Timer timer = GameAbstract.getInstance().getTimer(isWhite);
+                  final Timer timer = GameManager.getInstance().getTimer(isWhite);
                   if (timer != null) {
                     timerLabel.setText(timer.getTimeRemainingString());
                   }
@@ -118,7 +118,7 @@ public class PlayerInfos extends HBox {
    * @param isWhite true if the player is white, false otherwise.
    */
   public void updateTimerOnce(final boolean isWhite) {
-    final Timer timer = GameAbstract.getInstance().getTimer(isWhite);
+    final Timer timer = GameManager.getInstance().getTimer(isWhite);
     if (timer != null) {
       timerLabel.setText(timer.getTimeRemainingString());
     }

@@ -13,7 +13,7 @@ import pdp.controller.BagOfCommands;
 import pdp.controller.commands.RestartCommand;
 import pdp.controller.commands.SaveGameCommand;
 import pdp.events.EventType;
-import pdp.model.GameAbstract;
+import pdp.model.GameManager;
 import pdp.utils.TextGetter;
 import pdp.view.GuiView;
 import pdp.view.gui.ChessMenu;
@@ -99,7 +99,7 @@ public final class EndGamePopUp {
     newGameButton.setOnAction(
         e -> {
           Platform.runLater(popupStage::close);
-          NewGamePopup.show(GameAbstract.getInstance().getOptions());
+          NewGamePopup.show(GameManager.getInstance().getOptions());
         });
 
     final Button restartButton = new Button(TextGetter.getText("restart"));

@@ -6,7 +6,7 @@ import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
 import pdp.events.EventType;
-import pdp.model.GameAbstract;
+import pdp.model.GameInterface;
 
 /**
  * Part of Command Design pattern. Creates a command to update the view (GUI) after a change of
@@ -21,7 +21,7 @@ public class ChangeThemeCommand implements Command {
    * @param controller The game controller managing game commands.
    */
   @Override
-  public Optional<Exception> execute(GameAbstract model, GameController controller) {
+  public Optional<Exception> execute(GameInterface model, GameController controller) {
     try {
       model.notifyObservers(EventType.UPDATE_THEME);
       return Optional.empty();

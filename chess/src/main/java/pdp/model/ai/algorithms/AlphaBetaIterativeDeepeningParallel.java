@@ -11,8 +11,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import pdp.exceptions.IllegalMoveException;
-import pdp.model.GameAbstract;
 import pdp.model.GameAi;
+import pdp.model.GameInterface;
 import pdp.model.ai.AiMove;
 import pdp.model.ai.Solver;
 import pdp.model.board.Move;
@@ -57,7 +57,7 @@ public class AlphaBetaIterativeDeepeningParallel extends SearchAlgorithm {
    * @return The best move for the player.
    */
   @Override
-  public AiMove findBestMove(final GameAbstract game, final int maxDepth, final boolean player) {
+  public AiMove findBestMove(final GameInterface game, final int maxDepth, final boolean player) {
     stoppedEarly.set(false);
     AiMove bestMove = null;
     final GameAi gameAi = GameAi.fromGame(game);

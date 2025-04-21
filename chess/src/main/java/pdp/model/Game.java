@@ -116,26 +116,26 @@ public final class Game extends GameAbstract {
     this.solverWhite = solverWhite;
     this.solverBlack = solverBlack;
 
-    if (GameAbstract.isInstanceInitialized()) {
-      if (GameAbstract.getInstance().getTimer(true) != null) {
-        GameAbstract.getInstance().getTimer(true).stop();
+    if (GameManager.isInstanceInitialized()) {
+      if (GameManager.getInstance().getTimer(true) != null) {
+        GameManager.getInstance().getTimer(true).stop();
       }
-      if (GameAbstract.getInstance().getTimer(false) != null) {
-        GameAbstract.getInstance().getTimer(false).stop();
-      }
-
-      if (GameAbstract.getInstance().getBlackSolver() != null) {
-        GameAbstract.getInstance().getBlackSolver().stopSearch(false);
-      }
-      if (GameAbstract.getInstance().getWhiteSolver() != null) {
-        GameAbstract.getInstance().getWhiteSolver().stopSearch(false);
+      if (GameManager.getInstance().getTimer(false) != null) {
+        GameManager.getInstance().getTimer(false).stop();
       }
 
-      for (final EventObserver observer : GameAbstract.getInstance().getObservers()) {
+      if (GameManager.getInstance().getBlackSolver() != null) {
+        GameManager.getInstance().getBlackSolver().stopSearch(false);
+      }
+      if (GameManager.getInstance().getWhiteSolver() != null) {
+        GameManager.getInstance().getWhiteSolver().stopSearch(false);
+      }
+
+      for (final EventObserver observer : GameManager.getInstance().getObservers()) {
         this.addObserver(observer);
       }
 
-      for (final EventObserver observer : GameAbstract.getInstance().getErrorObservers()) {
+      for (final EventObserver observer : GameManager.getInstance().getErrorObservers()) {
         this.addErrorObserver(observer);
       }
     }
@@ -212,7 +212,7 @@ public final class Game extends GameAbstract {
    * @return true if the current player is an AI
    */
   public boolean isCurrentPlayerAi() {
-    final boolean player = super.getGameState().isWhiteTurn();
+    final boolean player = super.isWhiteTurn();
     if (player && this.whiteAi) {
       return true;
     }
@@ -368,10 +368,10 @@ public final class Game extends GameAbstract {
    * Game#updateGameStateAfterMove}
    */
   public void startAi() {
-    if (whiteAi && this.getGameState().isWhiteTurn()) {
+    if (whiteAi && this.isWhiteTurn()) {
       this.notifyObservers(EventType.AI_PLAYING);
       solverWhite.playAiMove(this);
-    } else if (blackAi && !this.getGameState().isWhiteTurn()) {
+    } else if (blackAi && !this.isWhiteTurn()) {
       this.notifyObservers(EventType.AI_PLAYING);
       solverBlack.playAiMove(this);
     }
@@ -448,7 +448,10 @@ public final class Game extends GameAbstract {
     debug(LOGGER, board == null ? "Initializing Game..." : "Initializing Game from given board...");
     Game instance =
         createGameInstance(isWhiteAi, isBlackAi, solverWhite, solverBlack, timer, board, options);
-    GameAbstract.setInstance(instance);
+
+    GameManager.setInstance(instance);
+    BagOfCommands.getInstance().setModel(instance);
+
     instance.setupTimer(timer);
     debug(LOGGER, "Game initialized!");
     instance.notifyObservers(EventType.GAME_STARTED);
@@ -501,7 +504,7 @@ public final class Game extends GameAbstract {
   /** When out of time, the callback will be sent and the game will end. */
   public void outOfTimeCallback() {
     debug(LOGGER, "outOfTimeCallback called");
-    super.getGameState().playerOutOfTime(super.getGameState().isWhiteTurn());
+    super.getGameState().playerOutOfTime(super.isWhiteTurn());
   }
 
   /**
@@ -610,8 +613,7 @@ public final class Game extends GameAbstract {
     if (!isInitializing
         && !isOver()
         && !isContestMode()
-        && ((super.getGameState().isWhiteTurn() && whiteAi)
-            || (!super.getGameState().isWhiteTurn() && blackAi))) {
+        && ((super.isWhiteTurn() && whiteAi) || (!super.isWhiteTurn() && blackAi))) {
 
       if (viewOnOtherThread) {
         viewLock.lock();
@@ -626,7 +628,7 @@ public final class Game extends GameAbstract {
       } else {
         this.notifyObservers(EventType.AI_PLAYING);
       }
-      if (super.getGameState().isWhiteTurn()) {
+      if (super.isWhiteTurn()) {
         solverWhite.playAiMove(this);
       } else {
         solverBlack.playAiMove(this);
@@ -649,7 +651,7 @@ public final class Game extends GameAbstract {
         BoardSaver.saveBoard(
             new FileBoard(
                 this.getBoard(),
-                this.getGameState().isWhiteTurn(),
+                this.isWhiteTurn(),
                 new FenHeader(
                     castlingRights[0],
                     castlingRights[1],
@@ -755,8 +757,6 @@ public final class Game extends GameAbstract {
             new GameState(timer),
             new History(),
             options);
-    GameAbstract.setInstance(instance);
-    BagOfCommands.getInstance().setModel(instance);
     instance.setInitializing(true);
     for (final Move move : moves) {
       instance.playMove(move);

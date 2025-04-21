@@ -3,7 +3,7 @@ package pdp.controller.commands;
 import java.util.Optional;
 import pdp.controller.Command;
 import pdp.controller.GameController;
-import pdp.model.GameAbstract;
+import pdp.model.GameInterface;
 
 /** Part of Command Design pattern. Creates a command to restart the game. */
 public class RestartCommand implements Command {
@@ -16,7 +16,7 @@ public class RestartCommand implements Command {
    * @return an Optional containing an exception if an error occurred, or empty if successful
    */
   @Override
-  public Optional<Exception> execute(final GameAbstract model, GameController controller) {
+  public Optional<Exception> execute(final GameInterface model, GameController controller) {
     try {
       model.restartGame();
       return Optional.empty();
