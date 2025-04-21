@@ -1,7 +1,7 @@
 package pdp.view.gui;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -102,7 +102,7 @@ public class ChessMenu extends HBox {
         event -> {
           final File file = fileChooser();
           if (file != null) {
-            final HashMap<OptionType, String> map = Game.getInstance().getOptions();
+            final Map<OptionType, String> map = Game.getInstance().getOptions();
             map.put(OptionType.LOAD, file.getAbsolutePath());
             GameInitializer.initialize(map);
           }

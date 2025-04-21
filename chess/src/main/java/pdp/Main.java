@@ -2,7 +2,7 @@ package pdp;
 
 import static pdp.utils.Logging.print;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import pdp.controller.GameController;
 import pdp.utils.CommandLineOptions;
@@ -26,7 +26,7 @@ public final class Main {
    * @param args Command line arguments.
    */
   public static void main(final String[] args) {
-    final HashMap<OptionType, String> options =
+    final Map<OptionType, String> options =
         CommandLineOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
     if (!options.containsKey(OptionType.UCI)) {

@@ -1,7 +1,7 @@
 package pdp.view.gui.popups;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -38,7 +38,7 @@ public final class NewGamePopup {
    * @param options Current options.
    * @return A javaFx object to configure AI.
    */
-  private static VBox makeAiBox(final boolean isWhite, final HashMap<OptionType, String> options) {
+  private static VBox makeAiBox(final boolean isWhite, final Map<OptionType, String> options) {
     options.remove(OptionType.LOAD);
 
     final String colorTag = isWhite ? "white" : "black";
@@ -207,7 +207,7 @@ public final class NewGamePopup {
     return aiContainer;
   }
 
-  private static VBox makeAiTimeBox(final HashMap<OptionType, String> options) {
+  private static VBox makeAiTimeBox(final Map<OptionType, String> options) {
 
     final VBox aiTimeFull = new VBox();
 
@@ -266,7 +266,7 @@ public final class NewGamePopup {
    *
    * @param options Current options.
    */
-  public static void show(final HashMap<OptionType, String> options) {
+  public static void show(final Map<OptionType, String> options) {
     final Stage popupStage = new Stage();
     popupStage.initModality(Modality.APPLICATION_MODAL);
     popupStage.setTitle(TextGetter.getText("newGame.options"));

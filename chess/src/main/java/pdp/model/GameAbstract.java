@@ -2,7 +2,6 @@ package pdp.model;
 
 import static pdp.utils.Logging.debug;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -95,7 +94,7 @@ public abstract class GameAbstract extends Subject {
   public GameAbstract(
       final GameState gameState,
       final History history,
-      final HashMap<Long, Integer> stateCount,
+      final Map<Long, Integer> stateCount,
       final ZobristHashing zobristHashing) {
     super();
     this.gameState = gameState;

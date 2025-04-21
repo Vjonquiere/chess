@@ -51,8 +51,7 @@ public final class CommandLineOptions {
    * @param runtime The runtime.
    * @return A map of the activated options.
    */
-  public static HashMap<OptionType, String> parseOptions(
-      final String[] args, final Runtime runtime) {
+  public static Map<OptionType, String> parseOptions(final String[] args, final Runtime runtime) {
     final Options options = new Options();
     for (final OptionType optionType : OptionType.values()) {
       options.addOption(optionType.getOption());
@@ -60,7 +59,7 @@ public final class CommandLineOptions {
 
     final Map<String, String> defaultArgs;
     final CommandLineParser parser = new DefaultParser();
-    final HashMap<OptionType, String> activatedOptions = new HashMap<>();
+    final Map<OptionType, String> activatedOptions = new HashMap<>();
 
     try {
       final CommandLine cmd = parser.parse(options, args);
@@ -88,7 +87,7 @@ public final class CommandLineOptions {
   }
 
   private static Map<String, String> loadDefaultArgs(
-      String file, final HashMap<OptionType, String> activatedOptions) throws IOException {
+      String file, final Map<OptionType, String> activatedOptions) throws IOException {
     InputStream inputStream = null;
 
     if (file != null && !file.endsWith(".chessrc")) {
@@ -224,7 +223,7 @@ public final class CommandLineOptions {
    * @param runtime The runtime to exit.
    */
   private static void handlePathInput(
-      final HashMap<OptionType, String> activatedOptions, final Runtime runtime) {
+      final Map<OptionType, String> activatedOptions, final Runtime runtime) {
     for (final OptionType type : List.of(OptionType.CONTEST, OptionType.LOAD, OptionType.CONFIG)) {
       if (activatedOptions.containsKey(type)) {
         final String path = activatedOptions.get(type);
@@ -250,7 +249,7 @@ public final class CommandLineOptions {
   private static void processOptions(
       final CommandLine cmd,
       final Map<String, String> defaultArgs,
-      final HashMap<OptionType, String> activatedOptions,
+      final Map<OptionType, String> activatedOptions,
       final Options options,
       final Runtime runtime) {
     for (final OptionType option : OptionType.values()) {
@@ -330,7 +329,7 @@ public final class CommandLineOptions {
    *
    * @param activatedOptions The map containing the currently activated options.
    */
-  public static void validateAiOptions(final HashMap<OptionType, String> activatedOptions) {
+  public static void validateAiOptions(final Map<OptionType, String> activatedOptions) {
     if (!activatedOptions.containsKey(OptionType.AI)) {
       for (final OptionType aiOption :
           new OptionType[] {

@@ -1,6 +1,6 @@
 package pdp.model.board;
 
-import java.util.AbstractMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -10,7 +10,7 @@ public class BitboardCache {
   private final int maxNb;
 
   /** Map storing a hash of a board and a cache result. Structure used for the cache. */
-  private final AbstractMap<Long, CachedResult> cache = new ConcurrentHashMap<>();
+  private final Map<Long, CachedResult> cache = new ConcurrentHashMap<>();
 
   /**
    * Queue to store the access to the different cache elements. Helps for the replacement of values

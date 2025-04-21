@@ -426,7 +426,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testConfigFileWrongExtension() {
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> map =
+    Map<OptionType, String> map =
         CommandLineOptions.parseOptions(new String[] {"--config=invalid.txt"}, mockRuntime);
     assertTrue(map.get(OptionType.CONFIG).contains(".chessSettings/default.chessrc"));
   }
@@ -486,7 +486,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testAIActivation() {
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> activatedOptions;
+    Map<OptionType, String> activatedOptions;
     // activate AI option with white
     activatedOptions =
         CommandLineOptions.parseOptions(new String[] {"--debug", "--ai=W"}, mockRuntime);
@@ -517,7 +517,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testMissingAIActivation() {
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> activatedOptions;
+    Map<OptionType, String> activatedOptions;
     // activate AI mode
     activatedOptions =
         CommandLineOptions.parseOptions(new String[] {"--debug", "--ai-mode=MINIMAX"}, mockRuntime);
@@ -550,7 +550,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testBlitz() throws Exception {
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> activatedOptions;
+    Map<OptionType, String> activatedOptions;
     activatedOptions = CommandLineOptions.parseOptions(new String[] {"-b"}, mockRuntime);
     assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
   }
@@ -558,7 +558,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testBlitzWithTime() throws Exception {
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> activatedOptions;
+    Map<OptionType, String> activatedOptions;
     activatedOptions = CommandLineOptions.parseOptions(new String[] {"-b", "-t=10"}, mockRuntime);
     assertTrue(activatedOptions.containsKey(OptionType.BLITZ));
     assertTrue(activatedOptions.containsKey(OptionType.TIME));
@@ -568,7 +568,7 @@ public class CommandLineOptionsTest {
   @Test
   public void testTimeWithoutBlitz() throws Exception {
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> activatedOptions;
+    Map<OptionType, String> activatedOptions;
     activatedOptions = CommandLineOptions.parseOptions(new String[] {"-t=10"}, mockRuntime);
     assertFalse(activatedOptions.containsKey(OptionType.BLITZ));
     assertFalse(activatedOptions.containsKey(OptionType.TIME));
@@ -592,7 +592,7 @@ public class CommandLineOptionsTest {
     outputStream.reset();
 
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> activatedOptions;
+    Map<OptionType, String> activatedOptions;
     activatedOptions = CommandLineOptions.parseOptions(new String[] {"--contest"}, mockRuntime);
     assertFalse(activatedOptions.containsKey(OptionType.CONTEST));
 
@@ -608,7 +608,7 @@ public class CommandLineOptionsTest {
     outputStream.reset();
 
     Runtime mockRuntime = mock(Runtime.class);
-    HashMap<OptionType, String> activatedOptions;
+    Map<OptionType, String> activatedOptions;
     activatedOptions = CommandLineOptions.parseOptions(new String[] {"--contest="}, mockRuntime);
     assertFalse(activatedOptions.containsKey(OptionType.CONTEST));
 
