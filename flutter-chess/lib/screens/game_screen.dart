@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:chess/screens/end_screen.dart';
+import 'package:chess/widgets/chess_infos.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/websocket_service.dart';
@@ -37,7 +41,14 @@ class _GameScreenState extends State<GameScreen> {
             default:
               print("unknown type");
           }
-        } on Exception catch (_) {}
+        } on Exception catch (_) {
+          if (message == "DRAW" ||
+              message == "WIN_WHITE" ||
+              message == "WIN_BLACK") {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => EndScreen(message)));
+          }
+        }
       },
     );
   }
@@ -51,22 +62,31 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameProvider>(context).gameState;
-
+    final screenSize = MediaQuery.of(context).size;
+    final ratio = screenSize.width > screenSize.height;
+    double size = 1;
+    if (ratio) {
+      size = screenSize.height / 1.25;
+    } else {
+      size = screenSize.width / 1.30;
+    }
     return Scaffold(
-        appBar: AppBar(title: Text("Chess Game - ${gameState.currentPlayer}")),
-        body: Column(
+        appBar: AppBar(
+          leading: IconButton(onPressed: () {}, icon: Icon(Icons.info)),
+          title: Text("Chess Game - ${gameState.currentPlayer}"),
+          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
+        ),
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
-              width: MediaQuery.of(context).size.height / 1.25,
-              height: MediaQuery.of(context).size.height / 1.25,
-              child: ChessBoardWidget(gameState.board),
+              width: size,
+              height: size,
+              child: ChessBoardWidget(gameState.board, _socketService),
             ),
-            ElevatedButton(
-              onPressed: () {
-                _socketService.send({'type': 'init'});
-              },
-              child: Text("initialise board"),
-            )
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
+            ChessInfos(_socketService),
           ],
         ));
   }

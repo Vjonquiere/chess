@@ -19,6 +19,7 @@ public class ViewWebSocketHandler implements WebSocketHandler {
     Game.getInstance().addObserver(view);
     sessions.put(session.getId(), view);
     view.start();
+    System.out.println(sessions.size() + " sessions active");
   }
 
   @Override

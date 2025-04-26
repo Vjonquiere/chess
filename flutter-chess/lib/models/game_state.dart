@@ -19,6 +19,6 @@ class GameState {
         foundPieces.add(b[i]);
       }
     }
-    return GameState(foundPieces, 'w');
+    return GameState(foundPieces, data["fen"].split(" ")[1]);
   }
 }

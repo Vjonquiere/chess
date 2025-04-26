@@ -3,7 +3,7 @@ import '../models/game_state.dart';
 
 class GameProvider extends ChangeNotifier {
   GameState _gameState = GameState(
-    List.filled(64, ''),
+    List.filled(64, '_'),
     'w',
   );
 
