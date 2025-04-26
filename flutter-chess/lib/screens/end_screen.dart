@@ -10,7 +10,7 @@ class EndScreen extends StatefulWidget {
     return switch (endType) {
       "DRAW" => _DrawEndScreen(),
       "WIN_WHITE" => _EndScreen(),
-      "BLACK_WHITE" => _EndScreen(),
+      "WIN_BLACK" => _EndScreen(),
       _ => throw UnimplementedError(),
     };
   }

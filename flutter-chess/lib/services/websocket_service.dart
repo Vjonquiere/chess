@@ -1,19 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
 class WebSocketService {
-  WebSocket? _socket;
+  WebSocketChannel? _channel;
 
   Future<void> connect(String url, void Function(dynamic) onMessage) async {
-    _socket = await WebSocket.connect(url);
-    _socket!.listen(onMessage);
+    _channel = WebSocketChannel.connect(Uri.parse(url));
+    _channel!.stream.listen(onMessage);
   }
 
   void send(dynamic data) {
-    _socket?.add(jsonEncode(data));
+    if (_channel != null) {
+      _channel!.sink.add(jsonEncode(data));
+    }
   }
 
   void dispose() {
-    _socket?.close();
+    _channel?.sink.close();
   }
 }

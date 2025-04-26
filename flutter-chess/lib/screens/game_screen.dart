@@ -17,6 +17,8 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final _socketService = WebSocketService();
+  final TextEditingController _input = TextEditingController();
+  String WsAddress = 'ws://localhost:8080/ui';
 
   @override
   void initState() {
@@ -26,7 +28,7 @@ class _GameScreenState extends State<GameScreen> {
 
   void _initWebSocket() async {
     await _socketService.connect(
-      'ws://localhost:8080/ui',
+      WsAddress,
       (message) {
         print("Socket received: " + message);
         try {
@@ -86,7 +88,30 @@ class _GameScreenState extends State<GameScreen> {
             ),
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
-            ChessInfos(_socketService),
+            Flexible(
+              child: Column(
+                children: [
+                  ChessInfos(_socketService),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _input,
+                    decoration: InputDecoration(
+                      labelText: 'Server Address',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          WsAddress = _input.text;
+                          _socketService.dispose();
+                          _initWebSocket();
+                        });
+                      },
+                      child: Text("Connect to server"))
+                ],
+              ),
+            )
           ],
         ));
   }

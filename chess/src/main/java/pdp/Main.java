@@ -16,7 +16,7 @@ import pdp.utils.TextGetter;
 @SpringBootApplication
 public class Main {
 
-  /** Private constructor to avoid instanciating a utility class. */
+  /** Public constructor for Spring Boot to instantiate the application class properly. */
   public Main() {}
 
   /** Logger of the class. */
@@ -29,10 +29,15 @@ public class Main {
    * @param args Command line arguments.
    */
   public static void main(final String[] args) {
-    SpringApplication.run(Main.class, args);
+
     final Map<OptionType, String> options =
         CommandLineOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
+
+    if (options.containsKey(OptionType.WS_VIEW)) {
+      SpringApplication.run(Main.class, args);
+    }
+
     if (!options.containsKey(OptionType.UCI)) {
       print(TextGetter.getText("title"));
       print("options: " + options);
