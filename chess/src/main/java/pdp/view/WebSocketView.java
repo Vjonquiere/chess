@@ -5,9 +5,7 @@ import org.json.JSONObject;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import pdp.controller.BagOfCommands;
-import pdp.controller.commands.CancelMoveCommand;
-import pdp.controller.commands.ProposeDrawCommand;
-import pdp.controller.commands.RestoreMoveCommand;
+import pdp.controller.commands.*;
 import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.board.Move;
@@ -78,6 +76,12 @@ public class WebSocketView implements View {
         /*response.put("type", "update");
         response.put(
                 "fen", FenSaver.saveBoard(new FileBoard(Game.getInstance().getBoard(), Game.getInstance().getGameState().isWhiteTurn(), null)));*/
+        break;
+      case "surrender":
+        BagOfCommands.getInstance().addCommand(new SurrenderCommand(true));
+        break;
+      case "restart":
+        BagOfCommands.getInstance().addCommand(new RestartCommand());
         break;
       default:
         response.put("type", "error");

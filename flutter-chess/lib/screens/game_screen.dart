@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:chess/screens/end_screen.dart';
+import 'package:chess/screens/settings_screen.dart';
 import 'package:chess/widgets/chess_infos.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +77,17 @@ class _GameScreenState extends State<GameScreen> {
         appBar: AppBar(
           leading: IconButton(onPressed: () {}, icon: Icon(Icons.info)),
           title: Text("Chess Game - ${gameState.currentPlayer}"),
-          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              SettingsScreen(_socketService)));
+                },
+                icon: Icon(Icons.settings))
+          ],
         ),
         body: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -92,7 +103,7 @@ class _GameScreenState extends State<GameScreen> {
               child: Column(
                 children: [
                   ChessInfos(_socketService),
-                  SizedBox(height: 20),
+                  // SizedBox(height: 20),
                   TextField(
                     controller: _input,
                     decoration: InputDecoration(

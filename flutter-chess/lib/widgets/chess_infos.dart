@@ -13,10 +13,28 @@ class ChessInfos extends StatelessWidget {
       const Column(
         children: [
           Row(
-            children: [Icon(Icons.person_rounded), Text("White player")],
+            children: [
+              Icon(
+                Icons.person_rounded,
+                size: 50.0,
+              ),
+              Text(
+                "White player",
+                style: TextStyle(fontSize: 25.0),
+              )
+            ],
           ),
           Row(
-            children: [Icon(Icons.person_rounded), Text("Black player")],
+            children: [
+              Icon(
+                Icons.person_rounded,
+                size: 50.0,
+              ),
+              Text(
+                "Black player",
+                style: TextStyle(fontSize: 25.0),
+              )
+            ],
           ),
         ],
       ),
