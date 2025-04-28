@@ -4,6 +4,8 @@ import static pdp.utils.Logging.print;
 
 import java.util.Map;
 import java.util.logging.Logger;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import pdp.controller.GameController;
 import pdp.utils.CommandLineOptions;
 import pdp.utils.Logging;
@@ -11,10 +13,11 @@ import pdp.utils.OptionType;
 import pdp.utils.TextGetter;
 
 /** Base of the application. */
-public final class Main {
+@SpringBootApplication
+public class Main {
 
-  /** Private constructor to avoid instanciating a utility class. */
-  private Main() {}
+  /** Public constructor for Spring Boot to instantiate the application class properly. */
+  public Main() {}
 
   /** Logger of the class. */
   private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -26,9 +29,15 @@ public final class Main {
    * @param args Command line arguments.
    */
   public static void main(final String[] args) {
+
     final Map<OptionType, String> options =
         CommandLineOptions.parseOptions(args, Runtime.getRuntime());
     Logging.configureLogging(LOGGER);
+
+    if (options.containsKey(OptionType.WS_VIEW)) {
+      SpringApplication.run(Main.class, args);
+    }
+
     if (!options.containsKey(OptionType.UCI)) {
       print(TextGetter.getText("title"));
       print("options: " + options);
