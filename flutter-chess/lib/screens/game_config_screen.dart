@@ -2,11 +2,11 @@ import 'package:chess/services/websocket_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SettingsScreen extends StatelessWidget {
+class GameConfigScreen extends StatelessWidget {
   final WebSocketService _socketService;
   final AiChoice _aiChoice = const AiChoice();
 
-  const SettingsScreen(this._socketService, {super.key});
+  const GameConfigScreen(this._socketService, {super.key});
 
   @override
   Widget build(BuildContext context) {

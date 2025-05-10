@@ -33,7 +33,9 @@ class _ChessBoardWidget extends State<ChessBoardWidget> {
           final piece = widget.board[index];
 
           final isLightSquare = (row + col) % 2 == 0;
-          var bgColor = isLightSquare ? Colors.white : Colors.grey;
+          var bgColor = isLightSquare
+              ? Color.fromARGB(255, 65, 90, 119)
+              : Color.fromARGB(255, 119, 141, 169);
 
           if (from != null && from!.x == col && from!.y == (7 - row)) {
             bgColor = Colors.blueAccent;

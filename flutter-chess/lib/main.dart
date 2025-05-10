@@ -1,5 +1,7 @@
 import 'package:chess/providers/game_provider.dart';
 import 'package:chess/screens/game_screen.dart';
+import 'package:chess/theme.dart';
+import 'package:chess/util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,9 +22,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = View.of(context).platformDispatcher.platformBrightness;
+    TextTheme textTheme = createTextTheme(context, "Inter Tight", "Inter");
+
+    MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp(
       title: 'Chess App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      //theme: ThemeData(primarySwatch: Colors.blue),
+      //theme: brightness == Brightness.light ? theme.light() : theme.dark(),
+      theme: theme.light(),
       home: GameScreen(),
     );
   }

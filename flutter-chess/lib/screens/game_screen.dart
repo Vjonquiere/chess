@@ -1,7 +1,8 @@
 import 'dart:math';
 
+import 'package:chess/screens/app_settings.dart';
 import 'package:chess/screens/end_screen.dart';
-import 'package:chess/screens/settings_screen.dart';
+import 'package:chess/screens/game_config_screen.dart';
 import 'package:chess/widgets/chess_infos.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -69,13 +70,52 @@ class _GameScreenState extends State<GameScreen> {
     final ratio = screenSize.width > screenSize.height;
     double size = 1;
     if (ratio) {
-      size = screenSize.height / 1.25;
+      size = screenSize.height / 1.10;
     } else {
       size = screenSize.width / 1.30;
     }
     return Scaffold(
+      drawer: Drawer(child:
+      ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          /*const DrawerHeader(
+            child: Text('Drawer Header'),
+          ),*/
+          ListTile(
+            leading: Icon(Icons.sports_esports),
+            title: const Text('Game'),
+            onTap: () {
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.add),
+            title: const Text('New Game'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          GameConfigScreen(_socketService)));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.replay),
+            title: const Text('Restart'),
+            onTap: () {
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.info, color: Colors.blue,),
+            title: const Text('Infos'),
+            onTap: () {
+            },
+          ),
+        ],
+      ),
+      ),
         appBar: AppBar(
-          leading: IconButton(onPressed: () {}, icon: Icon(Icons.info)),
+         // leading: IconButton(onPressed: () {Scaffold.of(context).openDrawer();}, icon: Icon(Icons.info)),
           title: Text("Chess Game - ${gameState.currentPlayer}"),
           actions: [
             IconButton(
@@ -84,7 +124,7 @@ class _GameScreenState extends State<GameScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              SettingsScreen(_socketService)));
+                              AppSettings()));
                 },
                 icon: Icon(Icons.settings))
           ],
@@ -97,8 +137,8 @@ class _GameScreenState extends State<GameScreen> {
               height: size,
               child: ChessBoardWidget(gameState.board, _socketService),
             ),
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
+            //Padding(
+            //padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
             Flexible(
               child: Column(
                 children: [
