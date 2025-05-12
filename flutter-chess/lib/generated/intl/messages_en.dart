@@ -22,8 +22,37 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "helloWorld": MessageLookupByLibrary.simpleMessage("Hello World!"),
+    "aiColor": MessageLookupByLibrary.simpleMessage(
+      "Color of the artificial player",
+    ),
+    "aiDepth": MessageLookupByLibrary.simpleMessage("AI Depth"),
+    "all": MessageLookupByLibrary.simpleMessage("All"),
+    "black": MessageLookupByLibrary.simpleMessage("Black"),
+    "blackConfig": MessageLookupByLibrary.simpleMessage("Black AI config"),
+    "chooseLang": MessageLookupByLibrary.simpleMessage(
+      "Choose language of the app",
+    ),
+    "draw": MessageLookupByLibrary.simpleMessage("Draw"),
+    "drawMsg": MessageLookupByLibrary.simpleMessage("Game ended in a draw."),
+    "english": MessageLookupByLibrary.simpleMessage("English"),
+    "french": MessageLookupByLibrary.simpleMessage("French"),
+    "game": MessageLookupByLibrary.simpleMessage("Game"),
+    "gameConfig": MessageLookupByLibrary.simpleMessage("Game configuration"),
+    "gameEnd": MessageLookupByLibrary.simpleMessage("Game Ended"),
+    "info": MessageLookupByLibrary.simpleMessage("Infos"),
+    "newGame": MessageLookupByLibrary.simpleMessage("New Game"),
+    "none": MessageLookupByLibrary.simpleMessage("None"),
+    "redo": MessageLookupByLibrary.simpleMessage("Redo"),
+    "resign": MessageLookupByLibrary.simpleMessage("Resign"),
+    "restart": MessageLookupByLibrary.simpleMessage("Restart"),
+    "servAddr": MessageLookupByLibrary.simpleMessage("Server Address"),
+    "servConnect": MessageLookupByLibrary.simpleMessage("Connect to Server"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "start": MessageLookupByLibrary.simpleMessage("Start Game"),
     "title": MessageLookupByLibrary.simpleMessage("Chess"),
+    "undo": MessageLookupByLibrary.simpleMessage("Undo"),
+    "undraw": MessageLookupByLibrary.simpleMessage("Undraw"),
+    "white": MessageLookupByLibrary.simpleMessage("Game ended in a draw."),
+    "whiteConfig": MessageLookupByLibrary.simpleMessage("White AI config"),
   };
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:chess/models/game_state.dart';
 import 'package:chess/models/history.dart';
@@ -94,12 +95,12 @@ class _GameScreenState extends State<GameScreen> {
           ),*/
               ListTile(
                 leading: Icon(Icons.sports_esports),
-                title: const Text('Game'),
+                title: Text(AppLocalizations.of(context)!.game),
                 onTap: () {},
               ),
               ListTile(
                 leading: Icon(Icons.add),
-                title: const Text('New Game'),
+                title: Text(AppLocalizations.of(context)!.newGame),
                 onTap: () {
                   Navigator.push(
                       context,
@@ -110,7 +111,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.replay),
-                title: const Text('Restart'),
+                title:  Text(AppLocalizations.of(context)!.restart),
                 onTap: () {},
               ),
               ListTile(
@@ -118,7 +119,7 @@ class _GameScreenState extends State<GameScreen> {
                   Icons.info,
                   color: Colors.blue,
                 ),
-                title: const Text('Infos'),
+                title:  Text(AppLocalizations.of(context)!.info),
                 onTap: () {},
               ),
             ],

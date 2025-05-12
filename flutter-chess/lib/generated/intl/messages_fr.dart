@@ -22,8 +22,47 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "helloWorld": MessageLookupByLibrary.simpleMessage("Bonjour le monde!"),
+    "aiColor": MessageLookupByLibrary.simpleMessage(
+      "Couleur du joueur Artificiel:",
+    ),
+    "aiDepth": MessageLookupByLibrary.simpleMessage("Profondeur de l\'IA"),
+    "all": MessageLookupByLibrary.simpleMessage("Tous"),
+    "black": MessageLookupByLibrary.simpleMessage("Noir"),
+    "blackConfig": MessageLookupByLibrary.simpleMessage(
+      "Configuration de l\'IA noire",
+    ),
+    "chooseLang": MessageLookupByLibrary.simpleMessage(
+      "Choix de la langue de l\'application",
+    ),
+    "draw": MessageLookupByLibrary.simpleMessage("Nulle"),
+    "drawMsg": MessageLookupByLibrary.simpleMessage(
+      "La partie s\'est terminée sur une égalité.",
+    ),
+    "english": MessageLookupByLibrary.simpleMessage("Anglais"),
+    "french": MessageLookupByLibrary.simpleMessage("Français"),
+    "game": MessageLookupByLibrary.simpleMessage("Partie"),
+    "gameConfig": MessageLookupByLibrary.simpleMessage(
+      "Configuration de la partie",
+    ),
+    "gameEnd": MessageLookupByLibrary.simpleMessage("Partie terminée"),
+    "info": MessageLookupByLibrary.simpleMessage("Informations"),
+    "newGame": MessageLookupByLibrary.simpleMessage("Nouvelle partie"),
+    "none": MessageLookupByLibrary.simpleMessage("Aucun"),
+    "redo": MessageLookupByLibrary.simpleMessage("Refaire"),
+    "resign": MessageLookupByLibrary.simpleMessage("Abandonner"),
+    "restart": MessageLookupByLibrary.simpleMessage("Recommencer la partie"),
+    "servAddr": MessageLookupByLibrary.simpleMessage("Adresse du serveur"),
+    "servConnect": MessageLookupByLibrary.simpleMessage(
+      "Se connecter au serveur",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("Paramètres"),
+    "start": MessageLookupByLibrary.simpleMessage("Lancer la partie"),
     "title": MessageLookupByLibrary.simpleMessage("Jeu d\'Échecs"),
+    "undo": MessageLookupByLibrary.simpleMessage("Annuler"),
+    "undraw": MessageLookupByLibrary.simpleMessage("Annuler la nulle"),
+    "white": MessageLookupByLibrary.simpleMessage("Blanc"),
+    "whiteConfig": MessageLookupByLibrary.simpleMessage(
+      "Configuration de l\'IA blanche",
+    ),
   };
 }
