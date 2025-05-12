@@ -1,13 +1,14 @@
+import 'package:chess/models/game_state.dart';
 import 'package:chess/models/position.dart';
 import 'package:flutter/material.dart';
 
 import '../services/websocket_service.dart';
 
 class ChessBoardWidget extends StatefulWidget {
-  final List<String> board;
+  final GameState gameState;
   final WebSocketService _socketService;
 
-  const ChessBoardWidget(this.board, this._socketService, {super.key});
+  const ChessBoardWidget(this.gameState, this._socketService, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -22,6 +23,7 @@ class _ChessBoardWidget extends State<ChessBoardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> board = widget.gameState.board;
     return GridView.builder(
         itemCount: 64,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -30,12 +32,18 @@ class _ChessBoardWidget extends State<ChessBoardWidget> {
         itemBuilder: (context, index) {
           final row = index ~/ 8;
           final col = index % 8;
-          final piece = widget.board[index];
+          final piece = board[index];
 
           final isLightSquare = (row + col) % 2 == 0;
           var bgColor = isLightSquare
               ? Color.fromARGB(255, 65, 90, 119)
               : Color.fromARGB(255, 119, 141, 169);
+
+          if (widget.gameState.greenSquares.contains(flipSquare(index)))
+            bgColor = Colors.lightGreen.shade300;
+
+          if (widget.gameState.redSquares.contains(flipSquare(index)))
+            bgColor = Colors.redAccent.shade200;
 
           if (from != null && from!.x == col && from!.y == (7 - row)) {
             bgColor = Colors.blueAccent;
@@ -72,6 +80,12 @@ class _ChessBoardWidget extends State<ChessBoardWidget> {
         from = null;
       }
     });
+  }
+
+  int flipSquare(int index) {
+    int row = index ~/ 8;
+    int col = index % 8;
+    return (7 - row) * 8 + col;
   }
 
   void sendMove(Position to) {
