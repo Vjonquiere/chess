@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chess/models/game_state.dart';
 import 'package:chess/models/history.dart';
 import 'package:chess/providers/history_provider.dart';
@@ -14,14 +16,16 @@ import 'dart:convert';
 import '../widgets/chess_board.dart';
 
 class GameScreen extends StatefulWidget {
+  final WebSocketService _socketService;
+  final String wsAddress;
+
+  GameScreen(this._socketService, this.wsAddress, {super.key});
+
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final _socketService = WebSocketService();
-  String WsAddress = 'ws://10.0.2.2:8080/ui';
-
   @override
   void initState() {
     super.initState();
@@ -29,8 +33,8 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _initWebSocket() async {
-    await _socketService.connect(
-      WsAddress,
+    await widget._socketService.connect(
+      widget.wsAddress,
       (message) {
         print("Socket received: " + message);
         try {
@@ -41,11 +45,11 @@ class _GameScreenState extends State<GameScreen> {
             case "update":
               Provider.of<GameProvider>(context, listen: false)
                   .updateFromSocket(decoded);
-              _socketService.send({"type": "history"});
+              widget._socketService.send({"type": "history"});
               break;
             case "history":
               Provider.of<HistoryProvider>(context, listen: false)
-                  .updateFromSocket(decoded, context, _socketService);
+                  .updateFromSocket(decoded, context, widget._socketService);
               break;
             default:
               print("unknown type");
@@ -64,7 +68,7 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   void dispose() {
-    _socketService.dispose();
+    widget._socketService.dispose();
     super.dispose();
   }
 
@@ -101,7 +105,7 @@ class _GameScreenState extends State<GameScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              GameConfigScreen(_socketService)));
+                              GameConfigScreen(widget._socketService)));
                 },
               ),
               ListTile(
@@ -144,7 +148,7 @@ class _GameScreenState extends State<GameScreen> {
         SizedBox(
           width: size,
           height: size,
-          child: ChessBoardWidget(gameState.board, _socketService),
+          child: ChessBoardWidget(gameState.board, widget._socketService),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
         //Padding(
@@ -153,10 +157,10 @@ class _GameScreenState extends State<GameScreen> {
           child: Column(
             children: [
               ChessInfos(
-                _socketService,
+                widget._socketService,
                 historyState.historyNodes,
                 gameState.currentPlayer,
-                historyDirection: Axis.horizontal,
+                hideHistory: true,
               ),
             ],
           ),
@@ -173,14 +177,14 @@ class _GameScreenState extends State<GameScreen> {
         SizedBox(
           width: size,
           height: size,
-          child: ChessBoardWidget(gameState.board, _socketService),
+          child: ChessBoardWidget(gameState.board, widget._socketService),
         ),
         //Padding(
         //padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
         Flexible(
           child: Column(
             children: [
-              ChessInfos(_socketService, historyState.historyNodes,
+              ChessInfos(widget._socketService, historyState.historyNodes,
                   gameState.currentPlayer),
               // SizedBox(height: 20),
               /**/
