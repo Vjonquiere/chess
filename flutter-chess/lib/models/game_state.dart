@@ -1,11 +1,14 @@
 class GameState {
   List<String> board;
   String currentPlayer;
+  List<int> greenSquares;
+  List<int> redSquares;
 
-  GameState(this.board, this.currentPlayer);
+  GameState(this.board, this.currentPlayer, this.greenSquares, this.redSquares);
 
   factory GameState.fromJson(Map<String, dynamic> data) {
-    if (!data.containsKey("fen")) return GameState(List.filled(64, ''), 'w');
+    if (!data.containsKey("fen"))
+      return GameState(List.filled(64, ''), 'w', [], []);
     String b = data["fen"].split(" ").first;
     List<String> foundPieces = [];
     for (int i = 0; i < b.length; i++) {
@@ -19,6 +22,15 @@ class GameState {
         foundPieces.add(b[i]);
       }
     }
-    return GameState(foundPieces, data["fen"].split(" ")[1]);
+    List<int> greenSquares = [];
+    List<int> redSquares = [];
+    if (data.containsKey("greenSquares"))
+      greenSquares =
+          (data['greenSquares'] as List<dynamic>).map((e) => e as int).toList();
+
+    // if (data.containsKey("redSquares")) greenSquares = data["redSquares"];
+
+    return GameState(
+        foundPieces, data["fen"].split(" ")[1], greenSquares, redSquares);
   }
 }

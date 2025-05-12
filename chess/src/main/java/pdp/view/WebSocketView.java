@@ -1,6 +1,7 @@
 package pdp.view;
 
 import java.io.IOException;
+import java.util.List;
 import org.json.JSONObject;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -31,6 +32,8 @@ public class WebSocketView implements View {
     JSONObject request = new JSONObject(text);
     String type = request.getString("type");
     JSONObject response = new JSONObject();
+
+    System.out.println(text);
 
     switch (type) {
       case "init":
@@ -103,6 +106,13 @@ public class WebSocketView implements View {
                 Game.getInstance().getBoard(),
                 Game.getInstance().getGameState().isWhiteTurn(),
                 null)));
+
+    Move lastMove = Game.getInstance().getHistory().getCurrentMove().get().getState().getMove();
+    response.put(
+        "greenSquares",
+        List.of(
+            lastMove.getSource().y() * 8 + lastMove.getSource().x(),
+            lastMove.getDest().y() * 8 + lastMove.getDest().x()));
     sendToClient(response.toString());
   }
 

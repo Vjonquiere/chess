@@ -149,7 +149,7 @@ class _GameScreenState extends State<GameScreen> {
         SizedBox(
           width: size,
           height: size,
-          child: ChessBoardWidget(gameState.board, widget._socketService),
+          child: ChessBoardWidget(gameState, widget._socketService),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
         //Padding(
@@ -178,7 +178,7 @@ class _GameScreenState extends State<GameScreen> {
         SizedBox(
           width: size,
           height: size,
-          child: ChessBoardWidget(gameState.board, widget._socketService),
+          child: ChessBoardWidget(gameState, widget._socketService),
         ),
         //Padding(
         //padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
