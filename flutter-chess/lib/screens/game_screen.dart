@@ -20,7 +20,7 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final _socketService = WebSocketService();
-  String WsAddress = 'ws://10.0.2.2:8080/ui';
+  String WsAddress = 'ws://localhost:8080/ui';
 
   @override
   void initState() {

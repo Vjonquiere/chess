@@ -1,0 +1,14 @@
+{
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "title": "Chess",
+  "@title": {
+    "description": "Title of the application."
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Parameters of the application."
+  }
+}
