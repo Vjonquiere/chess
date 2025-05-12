@@ -1,4 +1,5 @@
 import 'package:chess/providers/game_provider.dart';
+import 'package:chess/providers/history_provider.dart';
 import 'package:chess/screens/game_screen.dart';
 import 'package:chess/theme.dart';
 import 'package:chess/util.dart';
@@ -10,6 +11,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => GameProvider()),
+        ChangeNotifierProvider(create: (_) => HistoryProvider()),
       ],
       child: const MyApp(),
     ),
@@ -22,7 +24,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
     TextTheme textTheme = createTextTheme(context, "Inter Tight", "Inter");
 
     MaterialTheme theme = MaterialTheme(textTheme);

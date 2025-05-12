@@ -1,5 +1,6 @@
-import 'dart:math';
-
+import 'package:chess/models/game_state.dart';
+import 'package:chess/models/history.dart';
+import 'package:chess/providers/history_provider.dart';
 import 'package:chess/screens/app_settings.dart';
 import 'package:chess/screens/end_screen.dart';
 import 'package:chess/screens/game_config_screen.dart';
@@ -19,8 +20,7 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final _socketService = WebSocketService();
-  final TextEditingController _input = TextEditingController();
-  String WsAddress = 'ws://localhost:8080/ui';
+  String WsAddress = 'ws://10.0.2.2:8080/ui';
 
   @override
   void initState() {
@@ -41,6 +41,11 @@ class _GameScreenState extends State<GameScreen> {
             case "update":
               Provider.of<GameProvider>(context, listen: false)
                   .updateFromSocket(decoded);
+              _socketService.send({"type": "history"});
+              break;
+            case "history":
+              Provider.of<HistoryProvider>(context, listen: false)
+                  .updateFromSocket(decoded, context, _socketService);
               break;
             default:
               print("unknown type");
@@ -66,104 +71,123 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameProvider>(context).gameState;
+    final historyState = Provider.of<HistoryProvider>(context).history;
     final screenSize = MediaQuery.of(context).size;
     final ratio = screenSize.width > screenSize.height;
     double size = 1;
     if (ratio) {
       size = screenSize.height / 1.10;
     } else {
-      size = screenSize.width / 1.30;
+      size = screenSize.width / 1.10;
     }
     return Scaffold(
-      drawer: Drawer(child:
-      ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          /*const DrawerHeader(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              /*const DrawerHeader(
             child: Text('Drawer Header'),
           ),*/
-          ListTile(
-            leading: Icon(Icons.sports_esports),
-            title: const Text('Game'),
-            onTap: () {
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.add),
-            title: const Text('New Game'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          GameConfigScreen(_socketService)));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.replay),
-            title: const Text('Restart'),
-            onTap: () {
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.info, color: Colors.blue,),
-            title: const Text('Infos'),
-            onTap: () {
-            },
-          ),
-        ],
-      ),
-      ),
-        appBar: AppBar(
-         // leading: IconButton(onPressed: () {Scaffold.of(context).openDrawer();}, icon: Icon(Icons.info)),
-          title: Text("Chess Game - ${gameState.currentPlayer}"),
-          actions: [
-            IconButton(
-                onPressed: () {
+              ListTile(
+                leading: Icon(Icons.sports_esports),
+                title: const Text('Game'),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(Icons.add),
+                title: const Text('New Game'),
+                onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              AppSettings()));
+                              GameConfigScreen(_socketService)));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.replay),
+                title: const Text('Restart'),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.info,
+                  color: Colors.blue,
+                ),
+                title: const Text('Infos'),
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          // leading: IconButton(onPressed: () {Scaffold.of(context).openDrawer();}, icon: Icon(Icons.info)),
+          title: Text("Chess Game - ${gameState.currentPlayer}"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AppSettings()));
                 },
                 icon: Icon(Icons.settings))
           ],
         ),
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: size,
-              height: size,
-              child: ChessBoardWidget(gameState.board, _socketService),
-            ),
-            //Padding(
-            //padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
-            Flexible(
-              child: Column(
-                children: [
-                  ChessInfos(_socketService),
-                  // SizedBox(height: 20),
-                  TextField(
-                    controller: _input,
-                    decoration: InputDecoration(
-                      labelText: 'Server Address',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          WsAddress = _input.text;
-                          _socketService.dispose();
-                          _initWebSocket();
-                        });
-                      },
-                      child: Text("Connect to server"))
-                ],
+        body: MediaQuery.of(context).orientation == Orientation.portrait
+            ? buildPortrait(size, gameState, historyState)
+            : buildLandscape(size, gameState, historyState));
+  }
+
+  Widget buildPortrait(double size, GameState gameState, History historyState) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: size,
+          height: size,
+          child: ChessBoardWidget(gameState.board, _socketService),
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
+        //Padding(
+        //padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
+        Flexible(
+          child: Column(
+            children: [
+              ChessInfos(
+                _socketService,
+                historyState.historyNodes,
+                gameState.currentPlayer,
+                historyDirection: Axis.horizontal,
               ),
-            )
-          ],
-        ));
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildLandscape(
+      double size, GameState gameState, History historyState) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: size,
+          height: size,
+          child: ChessBoardWidget(gameState.board, _socketService),
+        ),
+        //Padding(
+        //padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0)),
+        Flexible(
+          child: Column(
+            children: [
+              ChessInfos(_socketService, historyState.historyNodes,
+                  gameState.currentPlayer),
+              // SizedBox(height: 20),
+              /**/
+            ],
+          ),
+        )
+      ],
+    );
   }
 }

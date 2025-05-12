@@ -1,10 +1,26 @@
 import 'package:chess/services/websocket_service.dart';
 import 'package:flutter/material.dart';
 
-class ChessInfos extends StatelessWidget {
+class ChessInfos extends StatefulWidget {
+  final WebSocketService _socketService;
+  final List<Card> moves;
+  final String currentPlayer;
+  final bool hideHistory;
+  final Axis historyDirection;
+
+  ChessInfos(this._socketService, this.moves, this.currentPlayer,
+      {this.hideHistory = false, this.historyDirection = Axis.vertical});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ChessInfos(_socketService);
+  }
+}
+
+class _ChessInfos extends State<ChessInfos> {
   final WebSocketService _socketService;
 
-  const ChessInfos(this._socketService, {super.key});
+  _ChessInfos(this._socketService);
 
   @override
   Widget build(BuildContext context) {
@@ -19,98 +35,121 @@ class ChessInfos extends StatelessWidget {
                     style: BorderStyle.solid,
                     color: Theme.of(context).primaryColor),
                 borderRadius: const BorderRadius.all(Radius.circular(5.0))),
-            child: const Column(
+            child: Column(
               children: [
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.person_rounded,
                       size: 50.0,
                     ),
-                    Text(
-                      "White player",
-                      style: TextStyle(fontSize: 25.0),
-                    )
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+                    const Text(
+                      "White",
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.w600),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+                    widget.currentPlayer == "b"
+                        ? Container()
+                        : Icon(
+                            Icons.radio_button_checked,
+                            color: Theme.of(context).primaryColor,
+                          ),
                   ],
                 ),
                 Row(
                   children: [
-                    Icon(
-                      Icons.person_rounded,
+                    const Icon(
+                      Icons.smart_toy,
                       size: 50.0,
                     ),
-                    Text(
-                      "Black player",
-                      style: TextStyle(fontSize: 25.0),
-                    )
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+                    const Text(
+                      "Black",
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.w600),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+                    widget.currentPlayer == "w"
+                        ? Container()
+                        : Icon(
+                            Icons.radio_button_checked,
+                            color: Theme.of(context).primaryColor,
+                          ),
                   ],
                 ),
               ],
             )),
         Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
-        Flexible(
-            child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 2.0,
-                        style: BorderStyle.solid,
-                        color: Theme.of(context).primaryColor),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: ListView(
-                  children:
-                    List.filled(150, ListTile(title: Text("e2-e4"),)),
-                ))),
+        widget.hideHistory
+            ? Container()
+            : Flexible(
+                child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 2.0,
+                            style: BorderStyle.solid,
+                            color: Theme.of(context).primaryColor),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: ListView(
+                      scrollDirection: widget.historyDirection,
+                      clipBehavior: Clip.hardEdge,
+                      children: widget.moves,
+                    ))),
         Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
-        Flexible(
-            child: Container(padding: EdgeInsets.symmetric(vertical: 5.0),decoration: BoxDecoration(
-                border: Border.all(
-                    width: 2.0,
-                    style: BorderStyle.solid,
-                    color: Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Wrap(
-                  runSpacing: 8.0,
-          spacing: 8.0,
-          alignment: WrapAlignment.center,
+        Row(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                _socketService.send({'type': 'init'});
-              },
-              child: Text("initialise board"),
-            ),
-            FilledButton(
-                onPressed: () {
-                  _socketService.send({'type': 'undo'});
-                },
-                child: Text("Undo")),
-            TextButton(
-                onPressed: () {
-                  _socketService.send({'type': 'redo'});
-                },
-                child: Text("Redo")),
-            TextButton(
-                onPressed: () {
-                  _socketService.send({'type': 'draw'});
-                },
-                child: Text("Draw")),
-            TextButton(
-                onPressed: () {
-                  _socketService.send({'type': 'resign'});
-                },
-                child: Text("Resign")),
-            TextButton(
-                onPressed: () {
-                  _socketService.send({'type': 'undraw'});
-                },
-                child: Text("Undraw")),
-            TextButton(
-                onPressed: () {
-                  _socketService.send({'type': 'restart'});
-                },
-                child: Text("Restart")),
+            Expanded(
+                child: Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 2.0,
+                            style: BorderStyle.solid,
+                            color: Theme.of(context).primaryColor),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Wrap(
+                      runSpacing: 8.0,
+                      spacing: 8.0,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              _socketService.send({'type': 'undo'});
+                            },
+                            child: Text("Undo")),
+                        OutlinedButton(
+                            onPressed: () {
+                              _socketService.send({'type': 'redo'});
+                            },
+                            child: Text("Redo")),
+                        OutlinedButton(
+                            onPressed: () {
+                              _socketService.send({'type': 'draw'});
+                            },
+                            child: Text("Draw")),
+                        OutlinedButton(
+                            onPressed: () {
+                              _socketService.send({'type': 'resign'});
+                            },
+                            child: Text("Resign")),
+                        OutlinedButton(
+                            onPressed: () {
+                              _socketService.send({'type': 'undraw'});
+                            },
+                            child: Text("Undraw")),
+                        OutlinedButton(
+                            onPressed: () {
+                              _socketService.send({'type': 'restart'});
+                            },
+                            child: Text("Restart")),
+                      ],
+                    )))
           ],
-        )))
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
       ]),
     ));
   }

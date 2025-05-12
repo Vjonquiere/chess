@@ -44,6 +44,7 @@ public class ViewWebSocketHandler implements WebSocketHandler {
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     System.out.println("WebSocket closed: " + session.getId());
+    Game.getInstance().removeObserver(sessions.get(session.getId()));
     sessions.remove(session.getId());
   }
 

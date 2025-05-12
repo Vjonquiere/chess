@@ -60,22 +60,19 @@ public class WebSocketView implements View {
         break;
       case "undo":
         BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-        /*response.put("type", "update");
-        response.put(
-                "fen", FenSaver.saveBoard(new FileBoard(Game.getInstance().getBoard(), Game.getInstance().getGameState().isWhiteTurn(), null)));*/
+        sendBoard();
+        break;
+      case "Mundo":
+        int count = request.getInt("count");
+        BagOfCommands.getInstance().addCommand(new UndoMultipleMoveCommand(count));
+        sendBoard();
         break;
       case "redo":
         BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
-        /*response.put("type", "update");
-        response.put(
-                "fen", FenSaver.saveBoard(new FileBoard(Game.getInstance().getBoard(), Game.getInstance().getGameState().isWhiteTurn(), null)));*/
         break;
       case "draw":
         BagOfCommands.getInstance()
             .addCommand(new ProposeDrawCommand(Game.getInstance().getGameState().isWhiteTurn()));
-        /*response.put("type", "update");
-        response.put(
-                "fen", FenSaver.saveBoard(new FileBoard(Game.getInstance().getBoard(), Game.getInstance().getGameState().isWhiteTurn(), null)));*/
         break;
       case "surrender":
         BagOfCommands.getInstance().addCommand(new SurrenderCommand(true));
@@ -83,30 +80,38 @@ public class WebSocketView implements View {
       case "restart":
         BagOfCommands.getInstance().addCommand(new RestartCommand());
         break;
+      case "history":
+        response.put("type", "history");
+        response.put("history", Game.getInstance().getHistory());
+        sendToClient(response.toString());
+        break;
       default:
         response.put("type", "error");
         response.put("valid", false);
         response.put("message", "Unknown command");
+        sendToClient(response.toString());
     }
+  }
 
-    // sendToClient(response.toString());
+  void sendBoard() {
+    JSONObject response = new JSONObject();
+    response.put("type", "update");
+    response.put(
+        "fen",
+        FenSaver.saveBoard(
+            new FileBoard(
+                Game.getInstance().getBoard(),
+                Game.getInstance().getGameState().isWhiteTurn(),
+                null)));
+    sendToClient(response.toString());
   }
 
   @Override
   public void onGameEvent(EventType event) {
     System.out.println("Event received: " + event.toString());
     switch (event) {
-      case GAME_STARTED, MOVE_PLAYED, MOVE_UNDO, MOVE_REDO:
-        JSONObject response = new JSONObject();
-        response.put("type", "update");
-        response.put(
-            "fen",
-            FenSaver.saveBoard(
-                new FileBoard(
-                    Game.getInstance().getBoard(),
-                    Game.getInstance().getGameState().isWhiteTurn(),
-                    null)));
-        sendToClient(response.toString());
+      case GAME_STARTED, MOVE_PLAYED, MOVE_REDO:
+        sendBoard();
         break;
       case WIN_BLACK, WIN_WHITE, DRAW:
         sendToClient(event.toString());
