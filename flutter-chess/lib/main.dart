@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:chess/providers/game_provider.dart';
 import 'package:chess/providers/history_provider.dart';
 import 'package:chess/screens/game_screen.dart';
+import 'package:chess/services/websocket_service.dart';
 import 'package:chess/theme.dart';
 import 'package:chess/util.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +47,11 @@ class MyApp extends StatelessWidget {
       //theme: ThemeData(primarySwatch: Colors.blue),
       //theme: brightness == Brightness.light ? theme.light() : theme.dark(),
       theme: theme.light(),
-      home: GameScreen(),
+      home: GameScreen(
+          WebSocketService(),
+          Platform.isAndroid
+              ? 'ws://10.0.2.2:8080/ui'
+              : 'ws://localhost:8080/ui'),
     );
   }
 }

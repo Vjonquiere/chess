@@ -1,6 +1,9 @@
+import 'package:chess/services/websocket_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'game_screen.dart';
 
 class AppSettings extends StatelessWidget {
   final TextEditingController _input = TextEditingController();
@@ -21,11 +24,15 @@ class AppSettings extends StatelessWidget {
         ),
         ElevatedButton(
             onPressed: () {
-              /*setState(() {
-                  WsAddress = _input.text;
-                  _socketService.dispose();
-                  _initWebSocket();
-                });*/
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GameScreen(
+                    WebSocketService(),
+                    _input.text,
+                  ),
+                ),
+              );
             },
             child: Text("Connect to server"))
       ]),
