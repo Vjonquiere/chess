@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EndScreen extends StatefulWidget {
   final String endType;
@@ -20,7 +21,7 @@ class _EndScreen extends State<EndScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Game Ended")),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.gameEnd)),
       body: Row(
         children: [
           Text("Game ended"),
@@ -34,10 +35,10 @@ class _DrawEndScreen extends State<EndScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Game Ended")),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.gameEnd)),
       body: Row(
         children: [
-          Text("Game ended in a draw"),
+          Text(AppLocalizations.of(context)!.draw),
         ],
       ),
     );

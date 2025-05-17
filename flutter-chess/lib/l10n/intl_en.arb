@@ -1,8 +1,5 @@
 {
-  "helloWorld": "Hello World!",
-  "@helloWorld": {
-    "description": "The conventional newborn programmer greeting"
-  },
+  "@@locale": "en",
   "title": "Chess",
   "@title": {
     "description": "Title of the application."
@@ -10,5 +7,106 @@
   "settings": "Settings",
   "@settings": {
     "description": "Parameters of the application."
-  }
+  },
+  "servAddr": "Server Address",
+  "@servAddr": {
+    "description": "Address of the server to retrieve the game from."
+  },
+  "servConnect": "Connect to Server",
+  "@servConnect": {
+    "description": "Button to connect to the server."
+  },
+  "drawMsg": "Game ended in a draw.",
+  "@drawMsg": {
+    "description": "End of game status is a draw."
+  },
+  "gameEnd": "Game Ended",
+  "@gameEnd": {
+    "description": "Title of the end of game window."
+  },
+  "white": "Game ended in a draw.",
+  "@white": {
+    "description": "Color of the player."
+  },
+  "black": "Black",
+  "@black": {
+    "description": "Color of the player."
+  },
+  "none" : "None",
+  "@none": {
+    "description": "Nothing selected."
+  },
+  "all" : "All",
+  "@all": {
+    "description": "Everything selected."
+  },
+  "aiDepth": "AI Depth",
+  "@aiDepth": {
+    "description": "Depth of the AI search algorithm."
+  },
+  "gameConfig": "Game configuration",
+  "@gameConfig": {
+    "description": "Name of the current window."
+  },
+  "aiColor": "Color of the artificial player",
+  "@aiColor": {
+    "description": "Choose a value for the artificial player color's:"
+  },
+  "start": "Start Game",
+  "@start": {
+    "description": "Button to start the game with the given configuration"
+  },
+  "whiteConfig": "White AI config",
+  "@whiteConfig": {
+    "description": "Configuration of the white aI player"
+  },
+  "blackConfig": "Black AI config",
+  "@blackConfig": {
+    "description": "Configuration of the black aI player"
+  },
+  "restart": "Restart",
+  "@restart": {
+    "description": "Button to restart a game with the same configuration as the previous one"
+  },
+  "newGame": "New Game",
+  "@newGame": {
+    "description": "Click here to configure a new game"
+  },
+  "info": "Infos",
+  "@info": {
+    "description": "Button to learn more about the team programming the game"
+  },
+  "game": "Game",
+  "@game": {
+    "description": "Click here to go back to the current game"
+  },
+  "undo": "Undo",
+  "@undo": {
+    "description": "Button to undo the last move"
+  },
+  "redo": "Redo",
+  "@redo": {
+    "description": "Button to play the last move undone"
+  },
+  "resign": "Resign",
+  "@resign": {
+    "description": "Button to resign and give up the game."
+  },
+  "undraw": "Undraw",
+  "@undraw": {
+    "description": "Button to remove the draw proposition"
+  },
+  "draw": "Draw",
+  "@draw": {
+    "description": "Button to ask for a end of game in a draw"
+  },
+  "french": "French",
+  "@french": {
+    "description": "Button to change the application language to french"
+  },
+  "english": "English",
+  "@english": {
+    "description": "Button to change the application language to english"
+  },
+  "chooseLang": "Choose language of the app"
 }

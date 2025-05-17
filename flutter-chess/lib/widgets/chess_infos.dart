@@ -1,5 +1,6 @@
 import 'package:chess/services/websocket_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChessInfos extends StatefulWidget {
   final WebSocketService _socketService;
@@ -44,8 +45,8 @@ class _ChessInfos extends State<ChessInfos> {
                       size: 50.0,
                     ),
                     Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-                    const Text(
-                      "White",
+                    Text(
+                      AppLocalizations.of(context)!.white,
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.w600),
                     ),
@@ -65,8 +66,8 @@ class _ChessInfos extends State<ChessInfos> {
                       size: 50.0,
                     ),
                     Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-                    const Text(
-                      "Black",
+                    Text(
+                      AppLocalizations.of(context)!.black,
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.w600),
                     ),
@@ -119,32 +120,32 @@ class _ChessInfos extends State<ChessInfos> {
                             onPressed: () {
                               _socketService.send({'type': 'undo'});
                             },
-                            child: Text("Undo")),
+                            child: Text(AppLocalizations.of(context)!.undo)),
                         OutlinedButton(
                             onPressed: () {
                               _socketService.send({'type': 'redo'});
                             },
-                            child: Text("Redo")),
+                            child: Text(AppLocalizations.of(context)!.redo)),
                         OutlinedButton(
                             onPressed: () {
                               _socketService.send({'type': 'draw'});
                             },
-                            child: Text("Draw")),
+                            child: Text(AppLocalizations.of(context)!.draw)),
                         OutlinedButton(
                             onPressed: () {
                               _socketService.send({'type': 'resign'});
                             },
-                            child: Text("Resign")),
+                            child: Text(AppLocalizations.of(context)!.resign)),
                         OutlinedButton(
                             onPressed: () {
                               _socketService.send({'type': 'undraw'});
                             },
-                            child: Text("Undraw")),
+                            child: Text(AppLocalizations.of(context)!.undraw)),
                         OutlinedButton(
                             onPressed: () {
                               _socketService.send({'type': 'restart'});
                             },
-                            child: Text("Restart")),
+                            child: Text(AppLocalizations.of(context)!.restart)),
                         OutlinedButton.icon(
                           icon: Icon(Icons.lightbulb),
                           label: Text("Hint"),

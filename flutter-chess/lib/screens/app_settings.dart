@@ -18,7 +18,7 @@ class AppSettings extends StatelessWidget {
         TextField(
           controller: _input,
           decoration: InputDecoration(
-            labelText: 'Server Address',
+            labelText: AppLocalizations.of(context)!.servAddr,
             border: OutlineInputBorder(),
           ),
         ),
@@ -34,7 +34,7 @@ class AppSettings extends StatelessWidget {
                 ),
               );
             },
-            child: Text("Connect to server"))
+            child: Text(AppLocalizations.of(context)!.servConnect)),
       ]),
     );
   }

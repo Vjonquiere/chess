@@ -1,6 +1,7 @@
 import 'package:chess/services/websocket_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GameConfigScreen extends StatelessWidget {
   final WebSocketService _socketService;
@@ -12,17 +13,17 @@ class GameConfigScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Game settings"),
+        title: Text(AppLocalizations.of(context)!.gameConfig),
       ),
       body: Column(children: [
-        Text("AI: "),
+        Text(AppLocalizations.of(context)!.aiColor),
         _aiChoice,
         Padding(padding: EdgeInsets.only(top: 30.0)),
         ElevatedButton(
             onPressed: () {
               _socketService.send({'type': 'restart'});
             },
-            child: Text("Start game"))
+            child: Text(AppLocalizations.of(context)!.start))
       ]),
     );
   }
@@ -48,25 +49,25 @@ class _AiChoiceState extends State<AiChoice> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SegmentedButton<AiModes>(
-          segments: const <ButtonSegment<AiModes>>[
+          segments: <ButtonSegment<AiModes>>[
             ButtonSegment<AiModes>(
               value: AiModes.n,
-              label: Text('None'),
+              label: Text(AppLocalizations.of(context)!.none),
               icon: Icon(Icons.person),
             ),
             ButtonSegment<AiModes>(
               value: AiModes.w,
-              label: Text('White'),
+              label: Text(AppLocalizations.of(context)!.white),
               icon: Icon(Icons.add_circle),
             ),
             ButtonSegment<AiModes>(
               value: AiModes.b,
-              label: Text('Black'),
+              label: Text(AppLocalizations.of(context)!.black),
               icon: Icon(Icons.add_circle),
             ),
             ButtonSegment<AiModes>(
               value: AiModes.a,
-              label: Text('All'),
+              label: Text(AppLocalizations.of(context)!.all),
               icon: Icon(Icons.smart_toy_sharp),
             ),
           ],
@@ -125,7 +126,8 @@ class _AiConfig extends State<AiConfig> {
     return Column(
       children: [
         Padding(padding: EdgeInsets.only(top: 25.0)),
-        Text("${widget.isWhite ? "White" : "Black"} Ai config"),
+        Text(
+            "${widget.isWhite ? AppLocalizations.of(context)!.whiteConfig : AppLocalizations.of(context)!.blackConfig}"),
         DropdownButton<AiAlgorithm>(
             value: selected,
             items: AiAlgorithm.values
@@ -141,7 +143,7 @@ class _AiConfig extends State<AiConfig> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Ai depth"),
+            Text(AppLocalizations.of(context)!.aiDepth),
             Slider(
                 min: 1.0,
                 max: 7.0,
