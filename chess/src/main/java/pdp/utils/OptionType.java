@@ -651,6 +651,46 @@ public enum OptionType {
           .build();
     }
   },
+  WS_VIEW {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "web-socket-view";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(false)
+          .desc("Enable the web socket view")
+          .build();
+    }
+  },
+  WS_VIEW_PORT {
+    @Override
+    public String getShort() {
+      return null;
+    }
+
+    @Override
+    public String getLong() {
+      return "web-socket-view-port";
+    }
+
+    @Override
+    public Option getOption() {
+      return Option.builder()
+          .longOpt(this.getLong())
+          .hasArg(false)
+          .desc("Set the port for the web socket view")
+          .build();
+    }
+  },
   UCI {
     @Override
     public String getShort() {
