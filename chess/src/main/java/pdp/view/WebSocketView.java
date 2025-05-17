@@ -11,7 +11,9 @@ import pdp.events.EventType;
 import pdp.model.Game;
 import pdp.model.board.Move;
 import pdp.model.parsers.FileBoard;
+import pdp.model.piece.Color;
 import pdp.model.savers.FenSaver;
+import pdp.utils.Position;
 
 public class WebSocketView implements View {
   private final WebSocketSession session;
@@ -61,14 +63,17 @@ public class WebSocketView implements View {
           response.put("type", "error");
         }*/
         break;
+      case "hint":
+        BagOfCommands.getInstance().addCommand(new AskHintCommand());
+        break;
       case "undo":
         BagOfCommands.getInstance().addCommand(new CancelMoveCommand());
-        sendBoard();
+        sendToClient(sendBoard().toString());
         break;
       case "Mundo":
         int count = request.getInt("count");
         BagOfCommands.getInstance().addCommand(new UndoMultipleMoveCommand(count));
-        sendBoard();
+        sendToClient(sendBoard().toString());
         break;
       case "redo":
         BagOfCommands.getInstance().addCommand(new RestoreMoveCommand());
@@ -96,7 +101,7 @@ public class WebSocketView implements View {
     }
   }
 
-  void sendBoard() {
+  JSONObject sendBoard() {
     JSONObject response = new JSONObject();
     response.put("type", "update");
     response.put(
@@ -113,18 +118,39 @@ public class WebSocketView implements View {
         List.of(
             lastMove.getSource().y() * 8 + lastMove.getSource().x(),
             lastMove.getDest().y() * 8 + lastMove.getDest().x()));
-    sendToClient(response.toString());
+    if (Game.getInstance()
+        .getGameState()
+        .getBoard()
+        .isCheck(Game.getInstance().getGameState().isWhiteTurn() ? Color.WHITE : Color.BLACK)) {
+      Position kingPosition =
+          Game.getInstance()
+              .getBoard()
+              .getKing(Game.getInstance().getGameState().isWhiteTurn())
+              .get(0);
+      response.put("redSquares", List.of(kingPosition.y() * 8 + kingPosition.x()));
+    }
+    return response;
+  }
+
+  JSONObject sendHint() {
+    JSONObject board = sendBoard();
+    List<Integer> sq = Game.getInstance().getGameState().getHintIntegers();
+    board.put("hintSquares", List.of(sq.get(1) * 8 + sq.get(0), sq.get(3) * 8 + sq.get(2)));
+    return board;
   }
 
   @Override
   public void onGameEvent(EventType event) {
     System.out.println("Event received: " + event.toString());
     switch (event) {
-      case GAME_STARTED, MOVE_PLAYED, MOVE_REDO:
-        sendBoard();
+      case GAME_STARTED, MOVE_PLAYED, MOVE_REDO, GAME_RESTART:
+        sendToClient(sendBoard().toString());
         break;
       case WIN_BLACK, WIN_WHITE, DRAW:
         sendToClient(event.toString());
+        break;
+      case MOVE_HINT:
+        sendToClient(sendHint().toString());
         break;
     }
   }

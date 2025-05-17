@@ -145,6 +145,13 @@ class _ChessInfos extends State<ChessInfos> {
                               _socketService.send({'type': 'restart'});
                             },
                             child: Text("Restart")),
+                        OutlinedButton.icon(
+                          icon: Icon(Icons.lightbulb),
+                          label: Text("Hint"),
+                          onPressed: () {
+                            _socketService.send({'type': 'hint'});
+                          },
+                        ),
                       ],
                     )))
           ],

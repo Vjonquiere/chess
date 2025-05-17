@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/game_state.dart';
 
 class GameProvider extends ChangeNotifier {
-  GameState _gameState = GameState(List.filled(64, '_'), 'w', [], []);
+  GameState _gameState = GameState(List.filled(64, '_'), 'w', [], [], []);
 
   GameState get gameState => _gameState;
 

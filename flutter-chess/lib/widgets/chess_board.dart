@@ -45,6 +45,9 @@ class _ChessBoardWidget extends State<ChessBoardWidget> {
           if (widget.gameState.redSquares.contains(flipSquare(index)))
             bgColor = Colors.redAccent.shade200;
 
+          if (widget.gameState.hintSquares.contains(flipSquare(index)))
+            bgColor = Colors.orangeAccent.shade200;
+
           if (from != null && from!.x == col && from!.y == (7 - row)) {
             bgColor = Colors.blueAccent;
           }
