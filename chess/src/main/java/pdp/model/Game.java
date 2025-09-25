@@ -206,7 +206,7 @@ public final class Game extends GameAbstract {
   /**
    * Sets the value of the field isInitializing.
    *
-   * @param isInit boolean to indicate if the game is initializing
+   * @param isInit boolean to indicate if the game is initializing.
    */
   public void setInitializing(final boolean isInit) {
     this.isInitializing = isInit;
